@@ -1,0 +1,15 @@
+{
+  "userManagement": {
+    "allMembers": "所有会员",
+    "memberTierManagement": "会员层级管理",
+    "title": "用户管理"
+  },
+  "gameManagement": {
+    "title": "游戏管理",
+    "platform": "平台管理",
+    "subgame": "子游戏管理"
+  },
+  "userAccount": {
+    "title": "用户账户"
+  }
+} 

@@ -1,0 +1,67 @@
+{
+  "auth": {
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "codeLogin": "Đăng nhập bằng mã",
+    "qrcodeLogin": "Đăng nhập bằng mã QR",
+    "forgetPassword": "Quên mật khẩu"
+  },
+  "dashboard": {
+    "title": "Bảng điều khiển",
+    "home": "Trang chủ",
+    "analytics": "Phân tích",
+    "workspace": "Không gian làm việc",
+    "todayOverview": "Tổng quan dữ liệu hôm nay",
+    "todayNew": "Mới hôm nay",
+    "newAgents": "Đại lý mới",
+    "bigR": "Big R",
+    "memberRegistration": "Đăng ký thành viên",
+    "todayNewMembers": "Mới hôm nay {0} người",
+    "agentPromotion": "Đại lý quảng bá {0} người",
+    "rechargeWithdraw": "Nạp rút tiền",
+    "todayRecharge": "Nạp hôm nay (R$ {0})",
+    "todayWithdraw": "Rút hôm nay (R$ {0})",
+    "todayProfitLoss": "Lãi lỗ hôm nay",
+    "validBet": "Cược hợp lệ {0}, Lãi lỗ nền tảng R$ {1}",
+    "todayPromotion": "Khuyến mãi hôm nay",
+    "activityRebate": "Hoàn trả hoạt động {0}",
+    "betRebate": "Hoàn trả cược {0}",
+    "totalMembers": "Tổng thành viên",
+    "total": "Tổng {0} người",
+    "active": "Hoạt động {0} người",
+    "todayRankings": "Bảng xếp hạng hôm nay",
+    "rechargeRanking": "Xếp hạng nạp tiền",
+    "betRanking": "Xếp hạng cược",
+    "profitRanking": "Xếp hạng lợi nhuận",
+    "commissionRanking": "Xếp hạng hoa hồng",
+    "loading": "Đang tải...",
+    "noData": "Không có dữ liệu",
+    "rank": "Xếp hạng",
+    "currency": "Loại tiền",
+    "memberId": "ID thành viên",
+    "memberAccount": "Tài khoản thành viên",
+    "uplineAgent": "Đại lý trên",
+    "registrationSource": "Nguồn đăng ký",
+    "amount": "Số tiền",
+    "promotionRegistration": "Đăng ký quảng bá",
+    "officialWebsite": "Trang web chính thức"
+  },
+  "mission": {
+    "title": "Trung tâm nhiệm vụ",
+    "noviceTask": "Phúc lợi người mới"
+  },
+  "header": {
+    "home": "Trang chủ",
+    "online": "Trực tuyến",
+    "guestOnline": "Khách trực tuyến",
+    "suspectedBots": "Nghi ngờ bot",
+    "lobbyOnline": "Sảnh trực tuyến",
+    "selfOperatedOnline": "Tự vận hành trực tuyến",
+    "thirdPartyOnline": "Bên thứ ba trực tuyến",
+    "onlineRechargeError": "Lỗi nạp tiền trực tuyến",
+    "brazilLocalTime": "Giờ địa phương Brazil",
+    "vietnamLocalTime": "Giờ địa phương Việt Nam",
+    "chinaLocalTime": "Giờ địa phương Trung Quốc"
+  }
+}
+

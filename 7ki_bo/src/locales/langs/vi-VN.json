@@ -1,0 +1,18 @@
+{
+  "userManagement": {
+    "allMembers": "Tất cả thành viên",
+    "memberTierManagement": "Quản lý cấp độ thành viên",
+    "title": "Quản lý người dùng"
+  },
+  "gameManagement": {
+    "title": "Quản lý trò chơi",
+    "platform": "Quản lý nền tảng",
+    "subgame": "Quản lý trò chơi phụ"
+  },
+  "userAccount": {
+    "title": "Tài khoản người dùng"
+  }
+}
+
+
+

@@ -1,4 +1,5 @@
 import { requestClient } from '#/api/request';
+import { requestQueue, REQUEST_PRIORITY } from '#/api/request-queue';
 
 export interface GamePlatformItem {
   id: number;
@@ -83,11 +84,19 @@ export interface TogglePlatformParams {
 
 /**
  * Get game platform list
+ * ✅ PERFORMANCE: Uses request queue to prevent connection limit exhaustion
  */
 export async function getGamePlatformListApi(params: GamePlatformListParams) {
-  return requestClient.get<GamePlatformListResponse>('/game-platforms', {
-    params,
-  });
+  // Use request queue for non-critical requests to prevent queueing delays
+  const priority = params.page === 1 && params.pageSize === 20 
+    ? REQUEST_PRIORITY.HIGH  // Main table data = high priority
+    : REQUEST_PRIORITY.NORMAL; // Other requests = normal priority
+  
+  return requestQueue.enqueue(
+    () => requestClient.get<GamePlatformListResponse>('/game-platforms', { params }),
+    priority,
+    `game-platforms-${JSON.stringify(params)}` // Deduplicate identical requests
+  );
 }
 
 /**

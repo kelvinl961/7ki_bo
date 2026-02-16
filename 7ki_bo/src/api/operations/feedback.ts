@@ -97,7 +97,10 @@ export const feedbackApi = {
     params: UpdateFeedbackStatusParams
   ): Promise<ApiResponse<Feedback>> => {
     const response = await requestClient.put(`/feedback/admin/${feedbackId}/status`, params);
-    return response.data || response;
+    // ✅ FIX: Return the whole response object (includes success, message, data)
+    // The response interceptor already returns {success: true, message: "...", data: {...}}
+    // So we should return response directly, not response.data
+    return response;
   },
 
   /**

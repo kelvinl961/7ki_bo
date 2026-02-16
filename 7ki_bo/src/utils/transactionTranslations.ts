@@ -10,6 +10,91 @@ import {
   TRANSACTION_SUBCATEGORY_MAPPINGS,
   TRANSACTION_PATTERN_HANDLERS,
 } from './transactionMappings';
+import { getActivityById } from '#/api/activity';
+
+// Cache for activity names to avoid repeated API calls
+const activityNameCache = new Map<number, string>();
+const activityNameCacheExpiry = new Map<number, number>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+/**
+ * Fetch activity name by ID with caching
+ */
+async function getActivityName(activityId: number | string): Promise<string | null> {
+  const id = typeof activityId === 'string' ? parseInt(activityId, 10) : activityId;
+  
+  if (isNaN(id)) {
+    return null;
+  }
+
+  // Check cache first
+  const cached = activityNameCache.get(id);
+  const expiry = activityNameCacheExpiry.get(id);
+  if (cached && expiry && Date.now() < expiry) {
+    return cached;
+  }
+
+  try {
+    const activity = await getActivityById(id);
+    const activityName = activity?.locales?.[0]?.title || 
+                        activity?.config?.title || 
+                        activity?.title || 
+                        null;
+    
+    if (activityName) {
+      // Cache the result
+      activityNameCache.set(id, activityName);
+      activityNameCacheExpiry.set(id, Date.now() + CACHE_TTL);
+    }
+    
+    return activityName;
+  } catch (error) {
+    console.warn(`[translateSubcategory] Failed to fetch activity ${id}:`, error);
+    return null;
+  }
+}
+
+/**
+ * Pre-load activity names for a list of transactions
+ * This populates the cache so translateSubcategory can use them synchronously
+ * 
+ * @param transactions - Array of transaction objects with metadata containing activityId
+ */
+export async function preloadActivityNames(transactions: any[]): Promise<void> {
+  // Extract unique activity IDs from recharge activity transactions
+  const activityIds = new Set<number>();
+  
+  transactions.forEach(tx => {
+    if (tx.metadata?.activityId && 
+        tx.metadata?.activityType === 'recharge' && 
+        (!tx.metadata?.activityTitle || tx.metadata?.activityTitle === 'recharge')) {
+      const id = typeof tx.metadata.activityId === 'string' 
+        ? parseInt(tx.metadata.activityId, 10) 
+        : tx.metadata.activityId;
+      if (!isNaN(id)) {
+        activityIds.add(id);
+      }
+    }
+  });
+  
+  // Filter out already cached activities
+  const uncachedIds = Array.from(activityIds).filter(id => {
+    const cached = activityNameCache.get(id);
+    const expiry = activityNameCacheExpiry.get(id);
+    return !(cached && expiry && Date.now() < expiry);
+  });
+  
+  if (uncachedIds.length === 0) {
+    return;
+  }
+  
+  // Fetch all activity names in parallel
+  console.log(`[preloadActivityNames] Pre-loading ${uncachedIds.length} activity names...`);
+  await Promise.allSettled(
+    uncachedIds.map(id => getActivityName(id))
+  );
+  console.log(`[preloadActivityNames] Pre-loaded ${uncachedIds.length} activity names`);
+}
 
 /**
  * Translate transaction type to Chinese (账变大类)
@@ -40,6 +125,8 @@ export function translateTransactionType(type: string | null | undefined): strin
  * translateSubcategory('checkin') // Returns '签到活动'
  * translateSubcategory('PG game session entry', { gameCategory: 'SLOT' }) // Returns '大厅转到PG电子'
  * translateSubcategory('withdrawal_success-PIX') // Returns '提现成功-PIX'
+ * 
+ * Note: For async version that fetches activity names, use translateSubcategoryAsync
  */
 export function translateSubcategory(
   subcategory: string | null | undefined,
@@ -70,14 +157,54 @@ export function translateSubcategory(
     return directMatch;
   }
   
-  // Special handling for "recharge" activity rewards - show activity name
-  // When subcategoryDetails is "recharge" and it's an activity reward, map to activity name
+  // Special handling for "recharge" activity rewards - show activity name from metadata
+  // When subcategoryDetails is "recharge" and it's an activity reward, use activity title from metadata
   // This handles transactions where subcategoryDetails is "recharge" from recharge activity rewards
   if (trimmed === 'recharge') {
     // Check if this is a recharge activity reward (has activityId and activityType)
     if (metadata?.activityId && metadata?.activityType === 'recharge') {
-      // For recharge activity rewards, show the activity name
-      // Default to "充值累计活动" (Accumulated Recharge Activity) for recharge type activities
+      // ✅ PRIORITY 1: Use activity title from metadata if available and valid
+      const activityTitle = metadata?.activityTitle || metadata?.subcategoryDetails;
+      
+      if (activityTitle && activityTitle !== 'recharge' && activityTitle.trim() !== '') {
+        return activityTitle;
+      }
+      
+      // ✅ PRIORITY 2: Check cache for activity name (populated by async version or pre-loading)
+      const activityId = metadata.activityId;
+      if (activityId) {
+        const id = typeof activityId === 'string' ? parseInt(activityId, 10) : activityId;
+        if (!isNaN(id)) {
+          const cached = activityNameCache.get(id);
+          const expiry = activityNameCacheExpiry.get(id);
+          if (cached && expiry && Date.now() < expiry) {
+            return cached;
+          }
+        }
+      }
+      
+      // ✅ FALLBACK: Check condition from metadata to determine correct translation
+      const condition = metadata?.condition || 
+                        metadata?.rewardMetadata?.condition || 
+                        metadata?.participationInput?.condition ||
+                        metadata?.participationInput?.participationMethod;
+      
+      // ✅ FIX: Also check description pattern as fallback (首充奖励 vs 累计充值奖励)
+      const description = metadata?.description || metadata?.rowDescription || '';
+      const isFirstDepositFromDescription = description.includes('首充奖励') || description.includes('首充');
+      const isAccumulateFromDescription = description.includes('累计充值奖励') || description.includes('累计充值');
+      
+      if (condition === 'first_deposit' || isFirstDepositFromDescription) {
+        return '首充活动'; // First Deposit Activity (fallback)
+      } else if (condition === 'accumulate_recharge' || isAccumulateFromDescription) {
+        return '充值累计活动'; // Accumulated Recharge Activity (fallback)
+      } else if (condition === 'single_recharge') {
+        return '单笔充值活动'; // Single Deposit Activity (fallback)
+      } else if (condition === 'recharge_count') {
+        return '充值次数活动'; // Deposit Count Activity (fallback)
+      }
+      
+      // Default to "充值累计活动" (Accumulated Recharge Activity) if condition not found
       return '充值累计活动';
     }
     // If it's just "recharge" without activity context, use default mapping
@@ -127,6 +254,74 @@ export function translateSubcategory(
   
   // Return original if no match found
   return trimmed;
+}
+
+/**
+ * Async version of translateSubcategory that fetches real activity names from API
+ * Use this when you need the actual activity name from the database
+ * 
+ * @param subcategory - Subcategory string
+ * @param metadata - Optional metadata object
+ * @returns Promise<string> - Chinese translation or original value if not found
+ */
+export async function translateSubcategoryAsync(
+  subcategory: string | null | undefined,
+  metadata?: any
+): Promise<string> {
+  if (!subcategory) return '-';
+  
+  const trimmed = subcategory.trim();
+  if (!trimmed) return '-';
+  
+  // For "recharge" activity rewards, fetch real activity name from API
+  if (trimmed === 'recharge') {
+    if (metadata?.activityId && metadata?.activityType === 'recharge') {
+      // ✅ PRIORITY 1: Use activity title from metadata if available
+      const activityTitle = metadata?.activityTitle || metadata?.subcategoryDetails;
+      
+      if (activityTitle && activityTitle !== 'recharge' && activityTitle.trim() !== '') {
+        return activityTitle;
+      }
+      
+      // ✅ PRIORITY 2: Fetch actual activity name from API using activityId
+      const activityId = metadata.activityId;
+      if (activityId) {
+        try {
+          const realActivityName = await getActivityName(activityId);
+          if (realActivityName && realActivityName.trim() !== '') {
+            return realActivityName;
+          }
+        } catch (error) {
+          console.warn(`[translateSubcategoryAsync] Failed to fetch activity name for ${activityId}:`, error);
+        }
+      }
+      
+      // ✅ FALLBACK: Use condition-based translation
+      const condition = metadata?.condition || 
+                        metadata?.rewardMetadata?.condition || 
+                        metadata?.participationInput?.condition ||
+                        metadata?.participationInput?.participationMethod;
+      
+      const description = metadata?.description || metadata?.rowDescription || '';
+      const isFirstDepositFromDescription = description.includes('首充奖励') || description.includes('首充');
+      const isAccumulateFromDescription = description.includes('累计充值奖励') || description.includes('累计充值');
+      
+      if (condition === 'first_deposit' || isFirstDepositFromDescription) {
+        return '首充活动';
+      } else if (condition === 'accumulate_recharge' || isAccumulateFromDescription) {
+        return '充值累计活动';
+      } else if (condition === 'single_recharge') {
+        return '单笔充值活动';
+      } else if (condition === 'recharge_count') {
+        return '充值次数活动';
+      }
+      
+      return '充值累计活动';
+    }
+  }
+  
+  // For all other cases, use the synchronous version
+  return translateSubcategory(subcategory, metadata);
 }
 
 /**

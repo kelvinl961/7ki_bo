@@ -1666,7 +1666,7 @@ const loadPlatformOptions = async () => {
     console.log('Platform API response:', response);
     
     const options = response.list?.map((platform: GamePlatformItem) => ({
-      label: platform.platformName,
+      label: `${platform.platformName} (${platform.platformId})`,
       value: platform.id,
     })) || [];
     

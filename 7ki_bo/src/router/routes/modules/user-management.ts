@@ -1,4 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router';
+// ✅ PERFORMANCE: Eager load frequently used User Management page
+import AllMembers from '../../../views/user-management/all-members/index.vue';
 
 const routes: RouteRecordRaw[] = [
    {
@@ -17,7 +19,7 @@ const routes: RouteRecordRaw[] = [
          },
          name: 'AllMembers',
          path: '/user-management/all-members',
-         component: () => import('../../../views/user-management/all-members/index.vue'),
+         component: AllMembers, // Static import - no loading delay
        },
        {
          meta: {

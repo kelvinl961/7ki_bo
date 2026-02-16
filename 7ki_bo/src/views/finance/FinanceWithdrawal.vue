@@ -2574,10 +2574,10 @@ const showForceRejectModal = (row: WithdrawalRecord) => {
   forceRejectModal.auditMultiplier = 1;
   forceRejectModal.selectedPlatform = availableProviders.value[0]?.platformId || 'PG';
   
-  // Initialize platform selections
-  const newPlatforms: Record<string, boolean> = { all: false };
+  // ✅ FIX: Initialize platform selections with "all platforms" selected by default
+  const newPlatforms: Record<string, boolean> = { all: true };
   availableProviders.value.forEach(provider => {
-    newPlatforms[provider.platformId] = false;
+    newPlatforms[provider.platformId] = true; // ✅ FIX: Select all platforms by default
   });
   forceRejectModal.platforms = newPlatforms;
   

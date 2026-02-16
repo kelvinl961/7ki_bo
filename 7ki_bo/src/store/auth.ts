@@ -122,9 +122,9 @@ export const useAuthStore = defineStore('auth', () => {
     });
   }
 
-  async function fetchUserInfo() {
-    // If user info is already stored, return it
-    if (userStore.userInfo) {
+  async function fetchUserInfo(forceRefresh = false) {
+    // ✅ INSTANT REFRESH: If forceRefresh is true, always fetch fresh data
+    if (!forceRefresh && userStore.userInfo) {
       return userStore.userInfo;
     }
 
@@ -204,15 +204,50 @@ export const useAuthStore = defineStore('auth', () => {
     return null;
   }
 
+  /**
+   * ✅ INSTANT REFRESH: Force refresh user info and permissions immediately
+   * Call this function to get fresh permissions without logout/login
+   * Can be called from browser console: window.$refreshPermissions()
+   */
+  async function refreshUserInfo() {
+    // Clear cached user info to force fresh fetch
+    userStore.setUserInfo(null);
+    // Clear access codes cache
+    accessStore.setAccessCodes([]);
+    // Fetch fresh user info (will also trigger access codes fetch if needed)
+    const freshUserInfo = await fetchUserInfo(true);
+    
+    // Also refresh access codes for permissions
+    try {
+      const accessCodesResponse = await getAccessCodesApi();
+      accessStore.setAccessCodes(accessCodesResponse);
+    } catch (error) {
+      console.warn('Failed to refresh access codes:', error);
+    }
+    
+    console.log('✅ User info and permissions refreshed!');
+    return freshUserInfo;
+  }
+
   function $reset() {
     loginLoading.value = false;
   }
 
-  return {
+  const store = {
     $reset,
     authLogin,
     fetchUserInfo,
+    refreshUserInfo, // ✅ Export refresh function for instant permission updates
     loginLoading,
     logout,
   };
+  
+  // ✅ INSTANT REFRESH: Expose refresh function globally for browser console access
+  // Users can now call: window.$refreshPermissions() from browser console
+  if (typeof window !== 'undefined') {
+    (window as any).$refreshPermissions = refreshUserInfo;
+    console.log('✅ Permission refresh function available: window.$refreshPermissions()');
+  }
+
+  return store;
 });

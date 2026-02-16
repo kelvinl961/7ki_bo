@@ -1312,6 +1312,8 @@ const open = () => {
   fetchUserStats();
   fetchBonusStats();
   if (props.user?.id) {
+    // ✅ FIX: Only call refreshUserData once - it will fetch all user data
+    // Removed duplicate calls to prevent double API requests
     refreshUserData();
     fetchRecentTransactions();
     fetchAllTransactions();

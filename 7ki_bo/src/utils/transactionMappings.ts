@@ -82,6 +82,7 @@ export const TRANSACTION_SUBCATEGORY_MAPPINGS: Record<string, string> = {
   'redpacket': '红包活动',
   'newbie': '新人彩金',
   'newbie_activity': '新人彩金活动',
+  'feedback': '反馈奖励', // ✅ FIX: Translate "feedback" to "反馈奖励"
   'activity': '活动',
   'activity_reward': '活动奖励',
   

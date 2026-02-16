@@ -228,9 +228,9 @@
         </template>
       </n-modal>
 
-      <!-- User Detail Modal -->
+      <!-- User Detail Modal - same binding as user management (v-model:visible) -->
       <UserDetailModal
-        v-model:show="showUserDetailModal"
+        v-model:visible="showUserDetailModal"
         :user-id="currentUserId"
       />
     </div>

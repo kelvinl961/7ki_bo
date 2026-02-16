@@ -46,13 +46,9 @@ async function bootstrap(namespace: string) {
   // 配置 pinia-tore
   await initStores(app, { namespace });
 
-  // Set default access token for development
-  if (import.meta.env.DEV) {
-    const { useAccessStore } = await import('@vben/stores');
-    const accessStore = useAccessStore();
-    // Set a default token for development
-    accessStore.setAccessToken('dev-token-12345');
-  }
+  // 🔧 REMOVED: Don't set dev token in bootstrap - it caused a redirect loop:
+  // dev token → redirect to /home → fetchUserInfo 401 → clear token → layout requests with dev token → 401 → redirect to login → reload → repeat.
+  // In dev, use real login; no token = stay on login page.
 
   // 安装权限指令
   registerAccessDirective(app);

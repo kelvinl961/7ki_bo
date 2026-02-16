@@ -1,4 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router';
+// ✅ PERFORMANCE: Eager load frequently used Order List page
+import RechargeOrderList from '#/views/finance/RechargeOrderList.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -25,7 +27,7 @@ const routes: RouteRecordRaw[] = [
         },
         name: 'OnlineRecharge',
         path: '/finance/online-recharge',
-        component: () => import('#/views/finance/RechargeOrderList.vue'),
+        component: RechargeOrderList, // Static import - no loading delay
       },
       {
         meta: {

@@ -454,7 +454,7 @@ const formData = reactive<CreateVIPLevelData & {
   id: undefined, // Will be set when editing
   level: 0,
   name: '',
-  color: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1756084723456-975551315-style_1_vip_color7.avif', // Default to green color
+  color: 'https://media.cheshi8899.com/media/media-1756084723456-975551315-style_1_vip_color7.avif', // Default to green color
   icon: '', // VIP style icon URL
   vipStyle: '',
   currency: 'BRL',
@@ -483,30 +483,30 @@ const currencyOptions = CURRENCY_OPTIONS;
 
 // VIP颜色选项 - 使用实际上传的图片
 const vipColors = [
-  { id: 'color1', name: '金色', image: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1756084724117-248517786-style_1_vip_color2.avif' },
-  { id: 'color2', name: '银色', image: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1756084723983-980058730-style_1_vip_color3.avif' },
-  { id: 'color3', name: '铜色', image: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1756084723850-421767660-style_1_vip_color4.avif' },
-  { id: 'color4', name: '红色', image: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1756084723734-656919956-style_1_vip_color5.avif' },
-  { id: 'color5', name: '蓝色', image: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1756084723591-416052528-style_1_vip_color6.avif' },
-  { id: 'color6', name: '绿色', image: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1756084723456-975551315-style_1_vip_color7.avif' },
-  { id: 'color7', name: '紫色', image: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1756084723321-874400306-style_1_vip_color8.avif' },
-  { id: 'color8', name: '橙色', image: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1756084723183-411276279-style_1_vip_color9.avif' },
-  { id: 'color9', name: '粉色', image: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1756084723041-541182858-style_1_vip_color10.avif' },
-  { id: 'color10', name: '青色', image: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1756084722928-768032392-style_1_vip_style0.avif' }
+  { id: 'color1', name: '金色', image: 'https://media.cheshi8899.com/media/media-1756084724117-248517786-style_1_vip_color2.avif' },
+  { id: 'color2', name: '银色', image: 'https://media.cheshi8899.com/media/media-1756084723983-980058730-style_1_vip_color3.avif' },
+  { id: 'color3', name: '铜色', image: 'https://media.cheshi8899.com/media/media-1756084723850-421767660-style_1_vip_color4.avif' },
+  { id: 'color4', name: '红色', image: 'https://media.cheshi8899.com/media/media-1756084723734-656919956-style_1_vip_color5.avif' },
+  { id: 'color5', name: '蓝色', image: 'https://media.cheshi8899.com/media/media-1756084723591-416052528-style_1_vip_color6.avif' },
+  { id: 'color6', name: '绿色', image: 'https://media.cheshi8899.com/media/media-1756084723456-975551315-style_1_vip_color7.avif' },
+  { id: 'color7', name: '紫色', image: 'https://media.cheshi8899.com/media/media-1756084723321-874400306-style_1_vip_color8.avif' },
+  { id: 'color8', name: '橙色', image: 'https://media.cheshi8899.com/media/media-1756084723183-411276279-style_1_vip_color9.avif' },
+  { id: 'color9', name: '粉色', image: 'https://media.cheshi8899.com/media/media-1756084723041-541182858-style_1_vip_color10.avif' },
+  { id: 'color10', name: '青色', image: 'https://media.cheshi8899.com/media/media-1756084722928-768032392-style_1_vip_style0.avif' }
 ];
 
 // VIP样式选项 - 使用实际上传的图片
 const vipStyles = [
-  { id: 'style1', name: '1星', image: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1756084722842-582069789-style_1_vip_style1.avif' },
-  { id: 'style2', name: '2星', image: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1756084722740-802103472-style_1_vip_style2.avif' },
-  { id: 'style3', name: '3星', image: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1756084722636-333894626-style_1_vip_style3.avif' },
-  { id: 'style4', name: '4星', image: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1756084722532-886989642-style_1_vip_style4.avif' },
-  { id: 'style5', name: '5星', image: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1756084722447-561278426-style_1_vip_style5.avif' },
-  { id: 'style6', name: '3钻', image: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1756084722361-747879972-style_1_vip_style6.avif' },
-  { id: 'style7', name: '5钻', image: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1756084722271-216094122-style_1_vip_style7.avif' },
-  { id: 'style8', name: '皇冠1', image: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1756084722181-225699275-style_1_vip_style8.avif' },
-  { id: 'style9', name: '皇冠2', image: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1756084722063-17229909-style_1_vip_style9.avif' },
-  { id: 'style10', name: '皇冠3', image: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1756084721842-860245261-style_1_vip_style10.avif' }
+  { id: 'style1', name: '1星', image: 'https://media.cheshi8899.com/media/media-1756084722842-582069789-style_1_vip_style1.avif' },
+  { id: 'style2', name: '2星', image: 'https://media.cheshi8899.com/media/media-1756084722740-802103472-style_1_vip_style2.avif' },
+  { id: 'style3', name: '3星', image: 'https://media.cheshi8899.com/media/media-1756084722636-333894626-style_1_vip_style3.avif' },
+  { id: 'style4', name: '4星', image: 'https://media.cheshi8899.com/media/media-1756084722532-886989642-style_1_vip_style4.avif' },
+  { id: 'style5', name: '5星', image: 'https://media.cheshi8899.com/media/media-1756084722447-561278426-style_1_vip_style5.avif' },
+  { id: 'style6', name: '3钻', image: 'https://media.cheshi8899.com/media/media-1756084722361-747879972-style_1_vip_style6.avif' },
+  { id: 'style7', name: '5钻', image: 'https://media.cheshi8899.com/media/media-1756084722271-216094122-style_1_vip_style7.avif' },
+  { id: 'style8', name: '皇冠1', image: 'https://media.cheshi8899.com/media/media-1756084722181-225699275-style_1_vip_style8.avif' },
+  { id: 'style9', name: '皇冠2', image: 'https://media.cheshi8899.com/media/media-1756084722063-17229909-style_1_vip_style9.avif' },
+  { id: 'style10', name: '皇冠3', image: 'https://media.cheshi8899.com/media/media-1756084721842-860245261-style_1_vip_style10.avif' }
 ];
 
 // 选择颜色
@@ -805,7 +805,7 @@ const resetForm = () => {
     Object.assign(formData, {
       level: 0,
       name: '',
-      color: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1756084723456-975551315-style_1_vip_color7.avif', // Default to green color
+      color: 'https://media.cheshi8899.com/media/media-1756084723456-975551315-style_1_vip_color7.avif', // Default to green color
       icon: '',
       currency: 'BRL',
       requiredDeposit: 0,

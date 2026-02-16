@@ -1211,6 +1211,9 @@ const noteTypeOptions = [
 const batchActionOptions = [
   { label: '批量锁定', value: 'lock' },
   { label: '批量解锁', value: 'unlock' },
+  { label: '批量审核出款', value: 'approve' },
+  { label: '批量拒绝', value: 'reject' },
+  { label: '批量强制取消', value: 'cancel' },
   { label: '批量更新状态', value: 'update-status' },
   { label: '批量导出', value: 'export' }
 ];

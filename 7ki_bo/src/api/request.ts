@@ -95,22 +95,10 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
                                  config.url?.includes('/certificates');
       
       if (!isDomainManagement) {
-        // 🔧 FIX: Only use dev token in development mode
-        // In production, if no token exists, don't send Authorization header (will trigger proper 401)
-        const isDevelopment = import.meta.env.DEV || import.meta.env.MODE === 'development';
+        // Only send Authorization when we have a real token (from login).
+        // Don't send a fake dev token when no token - it causes 401 → redirect loop on backoffice load.
         const token = accessStore.accessToken;
-        
-        if (token) {
-          // Use real token if available
-          config.headers.Authorization = formatToken(token);
-        } else if (isDevelopment) {
-          // Only use dev token in development
-          const devToken = 'dev-token-12345';
-          config.headers.Authorization = formatToken(devToken);
-        } else {
-          // Production: No token = no Authorization header (will get proper 401)
-          config.headers.Authorization = null;
-        }
+        config.headers.Authorization = token ? formatToken(token) : null;
       }
       
       config.headers['Accept-Language'] = preferences.app.locale;

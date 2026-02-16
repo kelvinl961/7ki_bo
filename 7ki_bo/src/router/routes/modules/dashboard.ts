@@ -1,4 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router';
+// ✅ PERFORMANCE: Eager load Dashboard - most frequently accessed page
+import DashboardAnalytics from '#/views/dashboard/analytics/index.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -9,7 +11,7 @@ const routes: RouteRecordRaw[] = [
     },
     name: 'Home',
     path: '/home',
-    component: () => import('#/views/dashboard/analytics/index.vue'),
+    component: DashboardAnalytics, // Static import - no loading delay
   },
 ];
 

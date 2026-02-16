@@ -22,6 +22,7 @@ import { requestClient } from '#/api/request';
 import { useIdleTimeout } from '#/composables/useIdleTimeout';
 import { useDialog } from 'naive-ui';
 import TimezoneDisplay from '#/components/timezone/TimezoneDisplay.vue';
+import { useSmartPolling } from '#/composables/useSmartPolling';
 
 // Real-time notifications state
 // Real-time notifications state
@@ -496,9 +497,36 @@ async function fetchNotificationCounts() {
   }
 }
 
-// Store interval IDs for cleanup
+// Store interval IDs for cleanup (legacy, now using useSmartPolling)
 let onlineUsersInterval: NodeJS.Timeout | null = null;
 let notificationInterval: NodeJS.Timeout | null = null;
+
+// ✅ PERFORMANCE: Smart polling with adaptive intervals
+// - Starts at 60 seconds (less frequent, was 30s)
+// - Increases to 2-5 minutes if response > 1s
+// - Pauses when tab is hidden (saves resources)
+// - Resumes when tab becomes visible
+const { start: startOnlineUsersPolling, stop: stopOnlineUsersPolling } = useSmartPolling(
+  fetchOnlineUsersCount,
+  {
+    initialInterval: 60000,  // Start at 60 seconds (was 30s)
+    minInterval: 30000,      // Minimum 30 seconds
+    maxInterval: 300000,     // Maximum 5 minutes (if slow)
+    pauseOnHidden: true,     // Pause when tab hidden
+    adaptive: true,          // Adjust based on response time
+  }
+);
+
+const { start: startNotificationPolling, stop: stopNotificationPolling } = useSmartPolling(
+  fetchNotificationCounts,
+  {
+    initialInterval: 60000,  // Start at 60 seconds (was 30s)
+    minInterval: 30000,      // Minimum 30 seconds
+    maxInterval: 300000,     // Maximum 5 minutes (if slow)
+    pauseOnHidden: true,     // Pause when tab hidden
+    adaptive: true,          // Adjust based on response time
+  }
+);
 
 // Initialize notification system
 onMounted(async () => {
@@ -529,17 +557,12 @@ onMounted(async () => {
   // Setup real-time notification stream
   setupNotificationStream();
   
-  // Fetch initial online users count
+  // Fetch initial data (useSmartPolling will handle periodic updates)
   await fetchOnlineUsersCount();
-  
-  // Fetch initial notification counts
   await fetchNotificationCounts();
   
-  // Set up periodic refresh for online users count (every 30 seconds)
-  onlineUsersInterval = setInterval(fetchOnlineUsersCount, 30000);
-  
-  // Set up periodic refresh for notification counts (every 30 seconds)
-  notificationInterval = setInterval(fetchNotificationCounts, 30000);
+  // Note: useSmartPolling automatically starts polling on mount
+  // No need to manually start - it's already running
   
   // Retry setup if no token initially (user might not be logged in yet)
   if (!accessStore.accessToken) {
@@ -563,7 +586,11 @@ onUnmounted(() => {
   cleanupNotificationStream();
   document.removeEventListener('click', handleClickOutside);
   
-  // Clear intervals
+  // ✅ Cleanup smart polling
+  if (typeof stopOnlineUsersPolling === 'function') stopOnlineUsersPolling();
+  if (typeof stopNotificationPolling === 'function') stopNotificationPolling();
+  
+  // Legacy cleanup (for compatibility)
   if (onlineUsersInterval) {
     clearInterval(onlineUsersInterval);
     onlineUsersInterval = null;

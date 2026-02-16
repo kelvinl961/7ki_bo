@@ -3314,27 +3314,27 @@ const allRedPacketStyles = [
   {
     value: 'modal',
     label: '红包',
-    imageUrl: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1758164088476-327616913-style0.126acc89cddaa21ea37c.avif'
+    imageUrl: 'https://media.cheshi8899.com/media/media-1758164088476-327616913-style0.126acc89cddaa21ea37c.avif'
   },
   {
     value: 'banner',
     label: '福袋',
-    imageUrl: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1758164096103-86127679-style3.0bebc3c7351d85ed90e6.avif'
+    imageUrl: 'https://media.cheshi8899.com/media/media-1758164096103-86127679-style3.0bebc3c7351d85ed90e6.avif'
   },
   {
     value: 'floating',
     label: '礼包',
-    imageUrl: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1758164105287-572717226-style2.300901be34962fe97975.avif'
+    imageUrl: 'https://media.cheshi8899.com/media/media-1758164105287-572717226-style2.300901be34962fe97975.avif'
   },
   {
     value: 'treasurechest',
     label: '宝箱',
-    imageUrl: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1758164113679-778866272-style1.b0289469b16cd12697b4.avif'
+    imageUrl: 'https://media.cheshi8899.com/media/media-1758164113679-778866272-style1.b0289469b16cd12697b4.avif'
   },
   {
     value: 'treasurechest2',
     label: '宝箱2',
-    imageUrl: 'https://my-media-bucket-sp-1353364131.cos.sa-saopaulo.myqcloud.com/media/media-1758164509457-995019276-style4.332d1817313bf49a4341.avif'
+    imageUrl: 'https://media.cheshi8899.com/media/media-1758164509457-995019276-style4.332d1817313bf49a4341.avif'
   }
 ];
 

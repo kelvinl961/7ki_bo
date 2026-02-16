@@ -1075,7 +1075,7 @@
 import { ref, computed, watch, reactive, h, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { formatDateTimeInTimezone } from '#/utils/timezoneUtils';
-import { translateTransactionType, translateSubcategory } from '#/utils/transactionTranslations';
+import { translateTransactionType, translateSubcategory, preloadActivityNames } from '#/utils/transactionTranslations';
 import { 
   NModal, 
   NTabs, 
@@ -1526,6 +1526,14 @@ const transactionColumns: DataTableColumns<WalletTransaction> = [
       
       // 🎁 Enhanced VIP level extraction for VIP_UPGRADE_BONUS
       let enhancedMetadata = { ...(row.metadata || {}) };
+      
+      // ✅ FIX: Include description in metadata for recharge activity translation
+      // Description is needed to determine first_deposit vs accumulate_recharge
+      if (row.description && !enhancedMetadata.description) {
+        enhancedMetadata.description = row.description;
+        enhancedMetadata.rowDescription = row.description; // Also add as rowDescription for fallback
+      }
+      
       if (subcategoryText === 'VIP_UPGRADE_BONUS' || subcategoryText.toUpperCase() === 'VIP_UPGRADE_BONUS') {
         // Try multiple sources for VIP level
         if (!enhancedMetadata.vipLevel) {
@@ -1694,28 +1702,24 @@ const netFlow = computed(() => {
 });
 
 
-// Watch for userId changes
-watch(() => props.userId, (newUserId) => {
-  if (newUserId && props.visible) {
-    loadUserDetail(true); // 🎯 ALWAYS force refresh to get latest data
-  }
-});
-
-watch(() => props.visible, (newVisible) => {
-  if (newVisible && props.userId) {
-    loadUserDetail(true); // 🎯 ALWAYS force refresh to get latest data
-    
-    // Initialize date range and load transactions if on transactions tab
-    if (activeTab.value === 'transactions') {
-      // Initialize date range if not set (first time opening)
-      if (startDate.value === null && endDate.value === null) {
-        setDateRangeFromFilter('today'); // This will also load records
-      } else {
-        loadTransactionRecords(); // Just reload with existing date range
+// Single watcher for visible + userId to avoid double API call when opening from feedback/other pages
+// (Both props change in same tick → previously two watchers each called loadUserDetail once)
+watch(
+  () => [props.visible, props.userId] as const,
+  ([newVisible, newUserId]) => {
+    if (newVisible && newUserId) {
+      loadUserDetail(true);
+      // Initialize date range and load transactions if on transactions tab
+      if (activeTab.value === 'transactions') {
+        if (startDate.value === null && endDate.value === null) {
+          setDateRangeFromFilter('today');
+        } else {
+          loadTransactionRecords();
+        }
       }
     }
   }
-});
+);
 
 // Watch for tab changes to load transaction records
 watch(() => activeTab.value, (newTab) => {
@@ -2081,6 +2085,12 @@ const loadTransactionRecords = async () => {
       calculatedPages: Math.ceil(transactionPagination.itemCount / transactionPagination.pageSize),
       responseTotal: response.pagination.total,
       responseTotalPages: response.pagination.totalPages
+    });
+    
+    // ✅ Pre-load activity names for recharge activities (non-blocking)
+    // This populates the cache so translateSubcategory can use real activity names
+    preloadActivityNames(processedRecords).catch(error => {
+      console.warn('⚠️ Failed to pre-load activity names:', error);
     });
     
   } catch (error) {

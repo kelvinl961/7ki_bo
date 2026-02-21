@@ -21,15 +21,15 @@
             <!-- Basic Info Section -->
             <div class="form-section">
               <h4 class="section-title">基本信息</h4>
-              
+
               <n-form-item label="品牌ID" path="brandId">
                 <n-input v-model:value="formModel.brandId" readonly />
               </n-form-item>
-              
+
               <n-form-item label="品牌编号" path="brandCode">
                 <n-input v-model:value="formModel.brandCode" readonly />
               </n-form-item>
-              
+
               <n-form-item label="品牌名称" path="brandName">
                 <n-text>{{ formModel.brandName }}</n-text>
               </n-form-item>
@@ -38,14 +38,14 @@
             <!-- Template Configuration -->
             <div class="form-section">
               <h4 class="section-title">模板配置</h4>
-              
+
               <n-form-item label="模板类型" path="templateType">
                 <n-radio-group v-model:value="formModel.templateType">
                   <n-radio value="main-site">主站</n-radio>
                   <n-radio value="skin-template">皮肤模板</n-radio>
                 </n-radio-group>
               </n-form-item>
-              
+
               <n-form-item label="品牌皮肤" path="skinStyle">
                 <n-select
                   v-model:value="formModel.skinStyle"
@@ -53,16 +53,12 @@
                   placeholder="选择皮肤风格"
                 />
               </n-form-item>
-              
-              
             </div>
 
             <!-- Brand Icons Section -->
             <div class="form-section">
               <h4 class="section-title">品牌图标</h4>
-              
-              
-              
+
               <n-form-item label="玩法颜色" path="gameColor">
                 <n-radio-group v-model:value="formModel.gameColor">
                   <n-radio value="有底色">有底色</n-radio>
@@ -71,7 +67,10 @@
               </n-form-item>
 
               <n-form-item label="皮肤颜色" path="skinColor">
-                <n-radio-group v-model:value="formModel.skinColor" class="skin-color-group">
+                <n-radio-group
+                  v-model:value="formModel.skinColor"
+                  class="skin-color-group"
+                >
                   <div class="skin-color-grid">
                     <n-radio
                       v-for="color in skinColorOptions"
@@ -88,7 +87,7 @@
             <!-- Language Settings -->
             <div class="form-section">
               <h4 class="section-title">语言设置</h4>
-              
+
               <div class="language-section">
                 <div
                   v-for="clientType in clientTypes"
@@ -96,7 +95,9 @@
                   class="client-type-group"
                 >
                   <h5 class="client-type-title">{{ clientType.label }}</h5>
-                  <n-checkbox-group v-model:value="formModel.clientLanguages[clientType.key]">
+                  <n-checkbox-group
+                    v-model:value="formModel.clientLanguages[clientType.key]"
+                  >
                     <div class="language-checkboxes">
                       <n-checkbox
                         v-for="lang in availableLanguages"
@@ -113,7 +114,7 @@
             <!-- Additional Settings -->
             <div class="form-section">
               <h4 class="section-title">其他设置</h4>
-              
+
               <n-form-item label="请求认证模式" path="authMode">
                 <n-select
                   v-model:value="formModel.authMode"
@@ -121,11 +122,14 @@
                   placeholder="选择认证模式"
                 />
               </n-form-item>
-              
+
               <n-form-item label="APP配置" path="appSetting">
-                <n-input v-model:value="formModel.appSetting" placeholder="输入APP配置" />
+                <n-input
+                  v-model:value="formModel.appSetting"
+                  placeholder="输入APP配置"
+                />
               </n-form-item>
-              
+
               <n-form-item label="备注信息" path="backendRemark">
                 <n-input
                   v-model:value="formModel.backendRemark"
@@ -156,24 +160,32 @@
               <n-tag size="small" type="info">移动端预览</n-tag>
             </div>
           </div>
-          
+
           <div class="preview-container">
             <div class="device-frame" :style="previewContainerStyle">
               <div v-if="isLoading" class="preview-loading">
                 <n-spin />
                 <div>正在生成预览...</div>
               </div>
-              
+
               <div v-else-if="previewError" class="preview-error">
                 <n-icon size="24" color="#f56565">
                   <svg viewBox="0 0 24 24">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                    <path
+                      d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+                    />
                   </svg>
                 </n-icon>
                 <div>{{ previewError }}</div>
               </div>
-              
-              <div v-else class="image-container" :style="{ background: getSkinColorRGB(formModel.skinColor || '15') }">
+
+              <div
+                v-else
+                class="image-container"
+                :style="{
+                  background: getSkinColorRGB(formModel.skinColor || '15'),
+                }"
+              >
                 <img
                   :src="previewImageUrl"
                   alt="皮肤预览"
@@ -181,20 +193,27 @@
                   @load="handleImageLoad"
                   @error="handleImageError"
                 />
-              </div>            </div>
-            
+              </div>
+            </div>
+
             <div class="preview-info">
               <div class="preview-meta">
-                <n-tag size="small" type="success">{{ formModel.skinTemplate }}</n-tag>
-                <n-tag size="small" type="warning">{{ formModel.gameColor }}</n-tag>
-                <n-tag size="small" type="primary">{{ getSkinColorLabel(formModel.skinColor) }}</n-tag>
+                <n-tag size="small" type="success">{{
+                  formModel.skinTemplate
+                }}</n-tag>
+                <n-tag size="small" type="warning">{{
+                  formModel.gameColor
+                }}</n-tag>
+                <n-tag size="small" type="primary">{{
+                  getSkinColorLabel(formModel.skinColor)
+                }}</n-tag>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    
+
     <template #action>
       <div class="dialog-actions">
         <n-button @click="handleCancel">取消</n-button>
@@ -226,11 +245,18 @@ import {
   NSpin,
   NIcon,
   type FormInst,
-  type FormRules
+  type FormRules,
 } from 'naive-ui';
-import { useSkinPreview, getSkinColorRGB, getSkinColorValues } from '#/composables/useSkinPreview';
+import {
+  useSkinPreview,
+  getSkinColorRGB,
+  getSkinColorValues,
+} from '#/composables/useSkinPreview';
 import { notification } from '#/adapter/naive';
-import type { BrandSkinLangConfig, BrandSkinLangCreateRequest } from '#/api/skinLang';
+import type {
+  BrandSkinLangConfig,
+  BrandSkinLangCreateRequest,
+} from '#/api/skinLang';
 
 interface Props {
   show: boolean;
@@ -243,7 +269,7 @@ interface Emits {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  editingItem: null
+  editingItem: null,
 });
 
 const emit = defineEmits<Emits>();
@@ -253,11 +279,18 @@ const formRef = ref<FormInst>();
 const submitting = ref(false);
 const visible = computed({
   get: () => props.show,
-  set: (value) => emit('update:show', value)
+  set: (value) => emit('update:show', value),
 });
 
 // Form model
-const formModel = reactive<BrandSkinLangCreateRequest & { updatedAt?: string; skinColor?: string; skinColorRgb?: string; skinColorHex?: string }>({
+const formModel = reactive<
+  BrandSkinLangCreateRequest & {
+    updatedAt?: string;
+    skinColor?: string;
+    skinColorRgb?: string;
+    skinColorHex?: string;
+  }
+>({
   brandId: '',
   brandCode: '',
   brandName: '',
@@ -267,20 +300,21 @@ const formModel = reactive<BrandSkinLangCreateRequest & { updatedAt?: string; sk
   skinStyle: '欧风风',
   gameColor: '有底色',
   skinColor: '15',
-  skinColorRgb: 'rgb(5, 65, 70)', 
+  skinColorRgb: 'rgb(5, 65, 70)',
   skinColorHex: '#054146', // Default hex
-  skinTemplate: 'rolex',  clientLanguages: {
+  skinTemplate: 'rolex',
+  clientLanguages: {
     desktop: ['zh-CN'],
     h5: ['zh-CN'],
     ios: ['zh-CN'],
-    android: ['zh-CN']
+    android: ['zh-CN'],
   },
   authMode: '系统默认认证',
   appSetting: '标准',
   backendRemark: '',
   brandIcon: 'rolex',
   operator: '当前用户',
-  updatedAt: new Date().toISOString()
+  updatedAt: new Date().toISOString(),
 });
 
 // Preview setup - mobile only
@@ -290,7 +324,7 @@ const previewConfig = reactive({
   gameColor: computed(() => formModel.gameColor),
   skinColor: computed(() => formModel.skinColor || '15'),
   language: computed(() => formModel.clientLanguages.desktop[0] || 'zh-CN'),
-  clientType: computed(() => 'mobile')
+  clientType: computed(() => 'mobile'),
 });
 
 const {
@@ -302,7 +336,7 @@ const {
   previewContainerStyle,
   setPreviewDevice,
   handleImageError,
-  handleImageLoad
+  handleImageLoad,
 } = useSkinPreview(previewConfig);
 
 // Options
@@ -310,68 +344,70 @@ const skinStyleOptions = [
   { label: '欧风风', value: '欧风风' },
   { label: '现代风', value: '现代风' },
   { label: '经典风', value: '经典风' },
-  { label: '简约风', value: '简约风' }
+  { label: '简约风', value: '简约风' },
 ];
 
 const templateOptions = [
   {
     value: 'rolex',
     label: 'Rolex',
-    preview: 'https://images.unsplash.com/photo-1587836374616-b92fd5b67b79?w=100&h=60&fit=crop'
+    preview:
+      'https://images.unsplash.com/photo-1587836374616-b92fd5b67b79?w=100&h=60&fit=crop',
   },
   {
     value: 'tomford',
     label: 'Tom Ford',
-    preview: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=100&h=60&fit=crop'
+    preview:
+      'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=100&h=60&fit=crop',
   },
   {
     value: 'burberry',
     label: 'Burberry',
-    preview: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=100&h=60&fit=crop'
+    preview:
+      'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=100&h=60&fit=crop',
   },
   {
     value: 'cartier',
     label: 'Cartier',
-    preview: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=100&h=60&fit=crop'
-  }
+    preview:
+      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=100&h=60&fit=crop',
+  },
 ];
 
 const brandIconOptions = [
   {
     value: 'rolex',
     label: 'Rolex',
-    logo: 'https://images.unsplash.com/photo-1587836374616-b92fd5b67b79?w=60&h=40&fit=crop'
+    logo: 'https://images.unsplash.com/photo-1587836374616-b92fd5b67b79?w=60&h=40&fit=crop',
   },
   {
     value: 'tomford',
     label: 'Tom Ford',
-    logo: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=60&h=40&fit=crop'
+    logo: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=60&h=40&fit=crop',
   },
   {
     value: 'burberry',
     label: 'Burberry',
-    logo: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=60&h=40&fit=crop'
+    logo: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=60&h=40&fit=crop',
   },
   {
     value: 'cartier',
     label: 'Cartier',
-    logo: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=60&h=40&fit=crop'
+    logo: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=60&h=40&fit=crop',
   },
   {
     value: 'omega',
     label: 'Omega',
-    logo: 'https://images.unsplash.com/photo-1524805444973-af331f73afbc?w=60&h=40&fit=crop'
+    logo: 'https://images.unsplash.com/photo-1524805444973-af331f73afbc?w=60&h=40&fit=crop',
   },
   {
     value: 'tag-heuer',
     label: 'TAG Heuer',
-    logo: 'https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=60&h=40&fit=crop'
-  }
+    logo: 'https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=60&h=40&fit=crop',
+  },
 ];
 
-const clientTypes = [
-  { key: 'desktop', label: '普通客户端' },
-];
+const clientTypes = [{ key: 'desktop', label: '普通客户端' }];
 
 const availableLanguages = [
   { value: 'zh-CN', label: '简体中文' },
@@ -381,14 +417,14 @@ const availableLanguages = [
   { value: 'ko-KR', label: '韩语' },
   { value: 'ja-JP', label: '日语' },
   { value: 'th-TH', label: '泰语' },
-  { value: 'vi-VN', label: '越南语' }
+  { value: 'vi-VN', label: '越南语' },
 ];
 
 const authModeOptions = [
   { label: '系统默认认证', value: '系统默认认证' },
   { label: '双重认证', value: '双重认证' },
   { label: '生物识别认证', value: '生物识别认证' },
-  { label: '短信验证', value: '短信验证' }
+  { label: '短信验证', value: '短信验证' },
 ];
 
 // Skin color options from the HTML source
@@ -439,7 +475,7 @@ const skinColorOptions = [
   { value: '1697165753468780546', label: 'Bottega Veneta绿' },
   { value: '1822080907778543618', label: 'Rolex绿' },
   { value: '1822084756339769345', label: 'Guerlain紫' },
-  { value: '1924287844941955073', label: 'Gucci黑' }
+  { value: '1924287844941955073', label: 'Gucci黑' },
 ];
 
 // Form validation rules
@@ -452,7 +488,7 @@ const formRules: FormRules = {
   skinTemplate: [{ required: true, message: '请选择模板' }],
   gameColor: [{ required: true, message: '请选择玩法颜色' }],
   skinColor: [{ required: true, message: '请选择皮肤颜色' }],
-  authMode: [{ required: true, message: '请选择认证模式' }]
+  authMode: [{ required: true, message: '请选择认证模式' }],
 };
 
 // Computed
@@ -463,13 +499,17 @@ const nextUpdateTime = computed(() => {
 });
 
 // Watch for skin color changes and auto-update RGB/hex values
-watch(() => formModel.skinColor, (newSkinColor) => {
-  if (newSkinColor) {
-    const colorValues = getSkinColorValues(newSkinColor);
-    formModel.skinColorRgb = colorValues.rgb;
-    formModel.skinColorHex = colorValues.hex;
-  }
-}, { immediate: true });
+watch(
+  () => formModel.skinColor,
+  (newSkinColor) => {
+    if (newSkinColor) {
+      const colorValues = getSkinColorValues(newSkinColor);
+      formModel.skinColorRgb = colorValues.rgb;
+      formModel.skinColorHex = colorValues.hex;
+    }
+  },
+  { immediate: true },
+);
 // Watch for editing item changes
 watch(
   () => props.editingItem,
@@ -482,12 +522,16 @@ watch(
           desktop: newItem.clientLanguages || ['zh-CN'],
           h5: newItem.clientLanguages || ['zh-CN'],
           ios: newItem.clientLanguages || ['zh-CN'],
-          android: newItem.clientLanguages || ['zh-CN']
+          android: newItem.clientLanguages || ['zh-CN'],
         },
         brandIcon: newItem.skinTemplate || 'rolex',
         skinColor: newItem.skinColor || '15',
-        skinColorRgb: newItem.skinColorRgb || getSkinColorValues(newItem.skinColor || '15').rgb,
-        skinColorHex: newItem.skinColorHex || getSkinColorValues(newItem.skinColor || '15').hex
+        skinColorRgb:
+          newItem.skinColorRgb ||
+          getSkinColorValues(newItem.skinColor || '15').rgb,
+        skinColorHex:
+          newItem.skinColorHex ||
+          getSkinColorValues(newItem.skinColor || '15').hex,
       });
     } else {
       // Reset form for new item
@@ -508,32 +552,38 @@ watch(
           desktop: ['zh-CN'],
           h5: ['zh-CN'],
           ios: ['zh-CN'],
-          android: ['zh-CN']
+          android: ['zh-CN'],
         },
         authMode: '系统默认认证',
         appSetting: '标准',
         backendRemark: '',
         brandIcon: 'rolex',
         operator: '当前用户',
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       });
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 // Watch for form changes to update preview
 watch(
-  () => [formModel.skinTemplate, formModel.brandIcon, formModel.gameColor, formModel.skinColor, formModel.clientLanguages.desktop],
+  () => [
+    formModel.skinTemplate,
+    formModel.brandIcon,
+    formModel.gameColor,
+    formModel.skinColor,
+    formModel.clientLanguages.desktop,
+  ],
   () => {
     // Preview will automatically update via reactive previewConfig
   },
-  { deep: true }
+  { deep: true },
 );
 
 // Helper function to get skin color label
 const getSkinColorLabel = (value: string) => {
-  const color = skinColorOptions.find(option => option.value === value);
+  const color = skinColorOptions.find((option) => option.value === value);
   return color ? color.label : '';
 };
 
@@ -545,20 +595,20 @@ const formatDate = (date: string | undefined) => {
 
 const handleSubmit = async () => {
   if (!formRef.value) return;
-  
+
   try {
     await formRef.value.validate();
     submitting.value = true;
-    
+
     // Flatten client languages
     const allLanguages = [
       ...formModel.clientLanguages.desktop,
       ...formModel.clientLanguages.h5,
       ...formModel.clientLanguages.ios,
-      ...formModel.clientLanguages.android
+      ...formModel.clientLanguages.android,
     ];
     const uniqueLanguages = [...new Set(allLanguages)];
-    
+
     const submitData: BrandSkinLangCreateRequest = {
       brandId: formModel.brandId,
       brandCode: formModel.brandCode,
@@ -575,17 +625,17 @@ const handleSubmit = async () => {
       operator: formModel.operator,
       skinColor: formModel.skinColor,
       skinColorRgb: formModel.skinColorRgb,
-      skinColorHex: formModel.skinColorHex
+      skinColorHex: formModel.skinColorHex,
     };
-    
+
     await nextTick();
     emit('submit', submitData);
-    
+
     notification.success({
       content: props.editingItem ? '配置更新成功' : '配置创建成功',
-      duration: 3000
+      duration: 3000,
     });
-    
+
     visible.value = false;
   } catch (error) {
     console.error('Form validation failed:', error);
@@ -838,20 +888,16 @@ const handleClose = () => {
   border-radius: 8px;
 }
 
-
-
-
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0.6;
-  mix-blend-mode: multiply;
-  background-blend-mode: overlay;
-  border-radius: 8px;
-  pointer-events: none;
-
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+opacity: 0.6;
+mix-blend-mode: multiply;
+background-blend-mode: overlay;
+border-radius: 8px;
+pointer-events: none;
 
 .preview-info {
   width: 100%;
@@ -924,4 +970,4 @@ const handleClose = () => {
   border-left: 1px solid #e0e0e0;
   padding-left: 24px;
 }
-</style> 
+</style>

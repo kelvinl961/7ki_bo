@@ -25,7 +25,7 @@
                 :options="languageOptions"
               />
             </n-form-item>
-            
+
             <n-form-item label="币种" path="currency">
               <n-select
                 v-model:value="formData.currency"
@@ -33,7 +33,7 @@
                 :options="currencyOptions"
               />
             </n-form-item>
-            
+
             <n-form-item label="收件人类型" path="receiverType">
               <n-select
                 v-model:value="formData.receiverType"
@@ -41,7 +41,7 @@
                 :options="receiverTypeOptions"
               />
             </n-form-item>
-            
+
             <n-form-item label="排序" path="sortOrder">
               <n-input-number
                 v-model:value="formData.sortOrder"
@@ -51,7 +51,7 @@
               />
             </n-form-item>
           </div>
-          
+
           <n-form-item label="公告标题" path="title">
             <n-input
               v-model:value="formData.title"
@@ -60,7 +60,7 @@
               show-count
             />
           </n-form-item>
-          
+
           <n-form-item label="公告内容" path="content">
             <n-input
               v-model:value="formData.content"
@@ -71,7 +71,7 @@
               show-count
             />
           </n-form-item>
-          
+
           <div class="grid grid-cols-2 gap-4">
             <n-form-item label="弹窗入口">
               <n-switch
@@ -83,7 +83,7 @@
                 <template #unchecked>禁用</template>
               </n-switch>
             </n-form-item>
-            
+
             <n-form-item label="视频推送">
               <n-switch
                 v-model:value="formData.videoPushEnabled"
@@ -116,7 +116,7 @@
                 style="width: 100%"
               />
             </n-form-item>
-            
+
             <n-form-item label="结束时间" path="endTime">
               <n-date-picker
                 v-model:value="formData.endTime"
@@ -126,10 +126,10 @@
               />
             </n-form-item>
           </div>
-          
+
           <!-- 时间预设选项 -->
           <div class="mb-4">
-            <label class="text-sm font-medium mb-2 block">快速设置</label>
+            <label class="mb-2 block text-sm font-medium">快速设置</label>
             <n-space>
               <n-button size="small" @click="setTimeRange(1)">1小时</n-button>
               <n-button size="small" @click="setTimeRange(6)">6小时</n-button>
@@ -138,7 +138,7 @@
               <n-button size="small" @click="setTimeRange(720)">30天</n-button>
             </n-space>
           </div>
-          
+
           <n-alert type="info" :show-icon="false">
             <template #header>
               <span class="font-medium">时间说明</span>
@@ -167,14 +167,14 @@
                 :show-alpha="false"
               />
             </n-form-item>
-            
+
             <n-form-item label="文字颜色">
               <n-color-picker
                 v-model:value="formData.displaySettings.textColor"
                 :show-alpha="false"
               />
             </n-form-item>
-            
+
             <n-form-item label="字体大小">
               <n-input-number
                 v-model:value="formData.displaySettings.fontSize"
@@ -184,7 +184,7 @@
                 :step="1"
               />
             </n-form-item>
-            
+
             <n-form-item label="显示位置">
               <n-select
                 v-model:value="formData.displaySettings.position"
@@ -193,21 +193,25 @@
               />
             </n-form-item>
           </div>
-          
+
           <n-form-item label="预览效果">
-            <div 
+            <div
               class="preview-container"
               :style="{
-                backgroundColor: formData.displaySettings.backgroundColor || '#ffffff',
+                backgroundColor:
+                  formData.displaySettings.backgroundColor || '#ffffff',
                 color: formData.displaySettings.textColor || '#000000',
                 fontSize: `${formData.displaySettings.fontSize || 14}px`,
                 padding: '15px',
                 borderRadius: '8px',
                 border: '1px solid #e0e0e6',
-                minHeight: '80px'
+                minHeight: '80px',
               }"
             >
-              <div class="preview-title" style="font-weight: bold; margin-bottom: 8px;">
+              <div
+                class="preview-title"
+                style="font-weight: bold; margin-bottom: 8px"
+              >
                 {{ formData.title || '公告标题预览' }}
               </div>
               <div class="preview-content">
@@ -234,7 +238,7 @@
                 :options="priorityOptions"
               />
             </n-form-item>
-            
+
             <n-form-item label="点击行为">
               <n-select
                 v-model:value="formData.clickAction"
@@ -243,14 +247,17 @@
               />
             </n-form-item>
           </div>
-          
-          <n-form-item v-if="formData.clickAction === 'redirect'" label="跳转链接">
+
+          <n-form-item
+            v-if="formData.clickAction === 'redirect'"
+            label="跳转链接"
+          >
             <n-input
               v-model:value="formData.redirectUrl"
               placeholder="输入跳转链接"
             />
           </n-form-item>
-          
+
           <n-form-item label="状态">
             <n-switch
               v-model:value="formData.enabled"
@@ -261,7 +268,7 @@
               <template #unchecked>停用</template>
             </n-switch>
           </n-form-item>
-          
+
           <n-form-item label="后台备注">
             <n-input
               v-model:value="formData.remark"
@@ -290,9 +297,23 @@
 <script setup lang="ts">
 import { ref, computed, watch, nextTick } from 'vue';
 import {
-  NModal, NTabs, NTabPane, NForm, NFormItem, NInput, NInputNumber,
-  NSelect, NDatePicker, NColorPicker, NSwitch, NButton, NSpace, NAlert, useMessage,
-  type FormInst, type FormRules
+  NModal,
+  NTabs,
+  NTabPane,
+  NForm,
+  NFormItem,
+  NInput,
+  NInputNumber,
+  NSelect,
+  NDatePicker,
+  NColorPicker,
+  NSwitch,
+  NButton,
+  NSpace,
+  NAlert,
+  useMessage,
+  type FormInst,
+  type FormRules,
 } from 'naive-ui';
 import { createGG, updateGG, type GGMessage } from '#/api/operationMessageGG';
 
@@ -310,7 +331,7 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   show: false,
-  editingItem: null
+  editingItem: null,
 });
 
 const emit = defineEmits<Emits>();
@@ -318,7 +339,7 @@ const emit = defineEmits<Emits>();
 // 响应式数据
 const modalShow = computed({
   get: () => props.show,
-  set: (val) => emit('update:show', val)
+  set: (val) => emit('update:show', val),
 });
 
 const activeTab = ref('basic');
@@ -347,13 +368,13 @@ const formData = ref({
     backgroundColor: '#ffffff',
     textColor: '#000000',
     fontSize: 14,
-    position: 'center'
+    position: 'center',
   },
   priority: 'normal',
   clickAction: 'none',
   redirectUrl: '',
   enabled: true,
-  remark: ''
+  remark: '',
 });
 
 // 计算属性
@@ -365,7 +386,7 @@ const languageOptions = [
   { label: '英文', value: 'en-US' },
   { label: '葡语', value: 'pt-BR' },
   { label: '西班牙语', value: 'es-ES' },
-  { label: '日语', value: 'ja-JP' }
+  { label: '日语', value: 'ja-JP' },
 ];
 
 const currencyOptions = [
@@ -373,14 +394,14 @@ const currencyOptions = [
   { label: 'CNY', value: 'CNY' },
   { label: 'USD', value: 'USD' },
   { label: 'EUR', value: 'EUR' },
-  { label: 'JPY', value: 'JPY' }
+  { label: 'JPY', value: 'JPY' },
 ];
 
 const receiverTypeOptions = [
   { label: '全部用户', value: 'all' },
   { label: '会员层级', value: 'vip' },
   { label: '新用户', value: 'new' },
-  { label: '活跃用户', value: 'active' }
+  { label: '活跃用户', value: 'active' },
 ];
 
 const positionOptions = [
@@ -388,46 +409,52 @@ const positionOptions = [
   { label: '底部', value: 'bottom' },
   { label: '中部', value: 'center' },
   { label: '左上角', value: 'top-left' },
-  { label: '右上角', value: 'top-right' }
+  { label: '右上角', value: 'top-right' },
 ];
 
 const priorityOptions = [
   { label: '低', value: 'low' },
   { label: '普通', value: 'normal' },
   { label: '高', value: 'high' },
-  { label: '紧急', value: 'urgent' }
+  { label: '紧急', value: 'urgent' },
 ];
 
 const clickActionOptions = [
   { label: '无操作', value: 'none' },
   { label: '页面跳转', value: 'redirect' },
   { label: '弹出详情', value: 'popup' },
-  { label: '关闭公告', value: 'close' }
+  { label: '关闭公告', value: 'close' },
 ];
 
 // 表单验证规则
 const basicRules: FormRules = {
-  language: [
-    { required: true, message: '请选择语言', trigger: 'change' }
-  ],
-  currency: [
-    { required: true, message: '请选择币种', trigger: 'change' }
-  ],
+  language: [{ required: true, message: '请选择语言', trigger: 'change' }],
+  currency: [{ required: true, message: '请选择币种', trigger: 'change' }],
   receiverType: [
-    { required: true, message: '请选择收件人类型', trigger: 'change' }
+    { required: true, message: '请选择收件人类型', trigger: 'change' },
   ],
   title: [
     { required: true, message: '请输入公告标题', trigger: 'input' },
-    { min: 1, max: 100, message: '标题长度应在1-100字符之间', trigger: 'input' }
+    {
+      min: 1,
+      max: 100,
+      message: '标题长度应在1-100字符之间',
+      trigger: 'input',
+    },
   ],
   content: [
     { required: true, message: '请输入公告内容', trigger: 'input' },
-    { min: 1, max: 2000, message: '内容长度应在1-2000字符之间', trigger: 'input' }
+    {
+      min: 1,
+      max: 2000,
+      message: '内容长度应在1-2000字符之间',
+      trigger: 'input',
+    },
   ],
   sortOrder: [
-    { 
-      required: true, 
-      message: '请输入排序数值', 
+    {
+      required: true,
+      message: '请输入排序数值',
       trigger: 'change',
       validator: (rule, value) => {
         if (value === null || value === undefined || value === '') {
@@ -437,9 +464,9 @@ const basicRules: FormRules = {
           return new Error('排序数值应在0-9999之间');
         }
         return true;
-      }
-    }
-  ]
+      },
+    },
+  ],
 };
 
 const timeRules: FormRules = {
@@ -453,25 +480,25 @@ const timeRules: FormRules = {
         if (value === null || value === undefined || value === '') {
           return new Error('请选择开始时间');
         }
-        
+
         // Check if it's a valid number
         if (isNaN(value) || typeof value !== 'number') {
           return new Error('请选择有效的开始时间');
         }
-        
+
         // Check if it's a reasonable timestamp (within 1 year from now)
         const now = Date.now();
-        const oneYearFromNow = now + (365 * 24 * 60 * 60 * 1000);
-        const oneYearAgo = now - (365 * 24 * 60 * 60 * 1000);
-        
+        const oneYearFromNow = now + 365 * 24 * 60 * 60 * 1000;
+        const oneYearAgo = now - 365 * 24 * 60 * 60 * 1000;
+
         if (value < oneYearAgo || value > oneYearFromNow) {
           return new Error('开始时间应在合理范围内');
         }
-        
+
         return true;
-      }
-    }
-  ]
+      },
+    },
+  ],
 };
 
 // 方法
@@ -497,13 +524,13 @@ const resetForm = () => {
       backgroundColor: '#ffffff',
       textColor: '#000000',
       fontSize: 14,
-      position: 'center'
+      position: 'center',
     },
     priority: 'normal',
     clickAction: 'none',
     redirectUrl: '',
     enabled: true,
-    remark: ''
+    remark: '',
   };
   activeTab.value = 'basic';
 };
@@ -519,7 +546,7 @@ const handleModalClose = () => {
 const handleSubmit = async () => {
   try {
     console.log('Submitting form data:', formData.value);
-    
+
     // 验证基本表单
     if (basicFormRef.value) {
       try {
@@ -548,8 +575,10 @@ const handleSubmit = async () => {
       ...formData.value,
       status: formData.value.enabled ? 'enabled' : 'disabled',
       // 转换时间戳
-      startTime: formData.value.startTime ? new Date(formData.value.startTime) : null,
-      endTime: formData.value.endTime ? new Date(formData.value.endTime) : null
+      startTime: formData.value.startTime
+        ? new Date(formData.value.startTime)
+        : null,
+      endTime: formData.value.endTime ? new Date(formData.value.endTime) : null,
     };
 
     console.log('Submitting to API:', submitData);
@@ -570,11 +599,14 @@ const handleSubmit = async () => {
     modalShow.value = false;
   } catch (error) {
     console.error('Error submitting form:', error);
-    
+
     // Since the data is actually being created, we'll treat this as a success
     // but log the error for debugging
-    console.log('Data was created successfully, but response parsing failed:', error);
-    
+    console.log(
+      'Data was created successfully, but response parsing failed:',
+      error,
+    );
+
     message.success('创建成功');
     emit('success');
     modalShow.value = false;
@@ -599,19 +631,22 @@ watch(
           content: newItem.content,
           popupEntry: newItem.popupEntry,
           videoPushEnabled: newItem.videoPushEnabled,
-          startTime: newItem.startTime ? new Date(newItem.startTime).getTime() : null,
+          startTime: newItem.startTime
+            ? new Date(newItem.startTime).getTime()
+            : null,
           endTime: newItem.endTime ? new Date(newItem.endTime).getTime() : null,
           displaySettings: {
-            backgroundColor: newItem.displaySettings?.backgroundColor || '#ffffff',
+            backgroundColor:
+              newItem.displaySettings?.backgroundColor || '#ffffff',
             textColor: newItem.displaySettings?.textColor || '#000000',
             fontSize: newItem.displaySettings?.fontSize || 14,
-            position: newItem.displaySettings?.position || 'center'
+            position: newItem.displaySettings?.position || 'center',
           },
           priority: newItem.priority || 'normal',
           clickAction: newItem.clickAction || 'none',
           redirectUrl: newItem.redirectUrl || '',
           enabled: newItem.status === 'enabled',
-          remark: newItem.remark || ''
+          remark: newItem.remark || '',
         };
       });
     } else {
@@ -621,7 +656,7 @@ watch(
       });
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 // 监听模态框显示状态
@@ -634,7 +669,7 @@ watch(
         resetForm();
       });
     }
-  }
+  },
 );
 </script>
 
@@ -687,4 +722,4 @@ watch(
 .preview-content {
   line-height: 1.5;
 }
-</style> 
+</style>

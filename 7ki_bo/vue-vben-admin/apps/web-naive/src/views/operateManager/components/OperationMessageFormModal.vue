@@ -24,7 +24,7 @@
                 :options="languageOptions"
               />
             </n-form-item>
-            
+
             <n-form-item label="币种" path="currency">
               <n-select
                 v-model:value="formData.currency"
@@ -32,7 +32,7 @@
                 :options="currencyOptions"
               />
             </n-form-item>
-            
+
             <n-form-item label="收件人类型" path="receiverType">
               <n-select
                 v-model:value="formData.receiverType"
@@ -40,7 +40,7 @@
                 :options="receiverTypeOptions"
               />
             </n-form-item>
-            
+
             <n-form-item label="触发条件" path="triggerCondition">
               <n-select
                 v-model:value="formData.triggerCondition"
@@ -48,7 +48,7 @@
                 :options="triggerConditionOptions"
               />
             </n-form-item>
-            
+
             <n-form-item label="状态" path="status">
               <n-select
                 v-model:value="formData.status"
@@ -57,7 +57,7 @@
               />
             </n-form-item>
           </div>
-          
+
           <n-form-item label="标题" path="title">
             <n-input
               v-model:value="formData.title"
@@ -65,7 +65,7 @@
               clearable
             />
           </n-form-item>
-          
+
           <n-form-item label="内容" path="content">
             <n-input
               v-model:value="formData.content"
@@ -76,7 +76,7 @@
             />
           </n-form-item>
         </n-tab-pane>
-        
+
         <n-tab-pane name="schedule" tab="时间设置">
           <div class="grid grid-cols-2 gap-4">
             <n-form-item label="开始时间" path="startTime">
@@ -88,7 +88,7 @@
                 clearable
               />
             </n-form-item>
-            
+
             <n-form-item label="结束时间" path="endTime">
               <n-date-picker
                 v-model:value="formData.endTime"
@@ -99,7 +99,7 @@
               />
             </n-form-item>
           </div>
-          
+
           <n-form-item label="是否立即发送">
             <n-switch v-model:value="formData.sendImmediately" />
             <span class="ml-2 text-sm text-gray-500">
@@ -107,7 +107,7 @@
             </span>
           </n-form-item>
         </n-tab-pane>
-        
+
         <n-tab-pane name="display" tab="显示设置">
           <div class="grid grid-cols-2 gap-4">
             <n-form-item label="弹窗入口">
@@ -116,21 +116,21 @@
                 开启后通知将以弹窗形式显示
               </span>
             </n-form-item>
-            
+
             <n-form-item label="视频推送">
               <n-switch v-model:value="formData.videoPush" />
               <span class="ml-2 text-sm text-gray-500">
                 开启后支持视频内容推送
               </span>
             </n-form-item>
-            
+
             <n-form-item label="已读/发送">
               <n-switch v-model:value="formData.readOrSent" />
               <span class="ml-2 text-sm text-gray-500">
                 标记为已读或已发送状态
               </span>
             </n-form-item>
-            
+
             <n-form-item label="消息优先级">
               <n-select
                 v-model:value="formData.priority"
@@ -139,7 +139,7 @@
               />
             </n-form-item>
           </div>
-          
+
           <n-form-item label="消息图标（可选）">
             <MediaLibrarySelector
               v-model="formData.icon"
@@ -151,12 +151,12 @@
             <div class="field-hint">
               选择一个图标来增强消息的视觉效果（可选）
             </div>
-            
+
             <!-- 预览区域 -->
             <div v-if="formData.icon" class="mt-2">
               <div class="icon-preview">
-                <img 
-                  :src="getImageUrlByEnvironment(formData.icon)" 
+                <img
+                  :src="getImageUrlByEnvironment(formData.icon)"
                   alt="消息图标预览"
                   class="icon-preview-image"
                 />
@@ -164,7 +164,7 @@
             </div>
           </n-form-item>
         </n-tab-pane>
-        
+
         <n-tab-pane name="advanced" tab="高级设置">
           <n-form-item label="目标用户筛选">
             <n-checkbox-group v-model:value="formData.targetUsers">
@@ -177,7 +177,7 @@
               </n-space>
             </n-checkbox-group>
           </n-form-item>
-          
+
           <n-form-item label="发送限制">
             <div class="grid grid-cols-2 gap-4">
               <n-input-number
@@ -194,7 +194,7 @@
               />
             </div>
           </n-form-item>
-          
+
           <n-form-item label="跳转链接">
             <n-input
               v-model:value="formData.actionUrl"
@@ -202,7 +202,7 @@
               clearable
             />
           </n-form-item>
-          
+
           <n-form-item label="后台备注">
             <n-input
               v-model:value="formData.remark"
@@ -215,9 +215,9 @@
         </n-tab-pane>
       </n-tabs>
     </n-form>
-    
+
     <template #action>
-      <div class="flex gap-2 justify-end">
+      <div class="flex justify-end gap-2">
         <n-button @click="handleCancel">取消</n-button>
         <n-button type="primary" :loading="submitting" @click="handleSubmit">
           {{ editingItem ? '更新' : '创建' }}
@@ -245,17 +245,19 @@ import {
   NSwitch,
   NTabs,
   NTabPane,
-  type SelectOption
+  type SelectOption,
 } from 'naive-ui';
 import { notification } from '#/adapter/naive';
 import {
   createOperationMessage,
   updateOperationMessage,
-  type OperationMessageCreateRequest
+  type OperationMessageCreateRequest,
 } from '#/api/operationMessage';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking modal load
 import { defineAsyncComponent } from 'vue';
-const MediaLibrarySelector = defineAsyncComponent(() => import('#/components/MediaLibrarySelector.vue'));
+const MediaLibrarySelector = defineAsyncComponent(
+  () => import('#/components/MediaLibrarySelector.vue'),
+);
 import type { MediaFile } from '#/api/mediaLibrary';
 import { getImageUrlByEnvironment } from '../../../utils/imageUtils';
 
@@ -377,35 +379,35 @@ const priorityOptions: SelectOption[] = [
 
 // Form validation rules
 const formRules: FormRules = {
-  language: [
-    { required: true, message: '请选择语言', trigger: 'change' }
-  ],
-  currency: [
-    { required: true, message: '请选择币种', trigger: 'change' }
-  ],
+  language: [{ required: true, message: '请选择语言', trigger: 'change' }],
+  currency: [{ required: true, message: '请选择币种', trigger: 'change' }],
   receiverType: [
-    { required: true, message: '请选择收件人类型', trigger: 'change' }
+    { required: true, message: '请选择收件人类型', trigger: 'change' },
   ],
   title: [
     { required: true, message: '请输入标题', trigger: 'blur' },
-    { min: 2, max: 100, message: '标题长度应在2-100个字符之间', trigger: 'blur' }
+    {
+      min: 2,
+      max: 100,
+      message: '标题长度应在2-100个字符之间',
+      trigger: 'blur',
+    },
   ],
   content: [
     { required: true, message: '请输入内容', trigger: 'blur' },
-    { min: 10, max: 1000, message: '内容长度应在10-1000个字符之间', trigger: 'blur' }
+    {
+      min: 10,
+      max: 1000,
+      message: '内容长度应在10-1000个字符之间',
+      trigger: 'blur',
+    },
   ],
   triggerCondition: [
-    { required: true, message: '请选择触发条件', trigger: 'change' }
+    { required: true, message: '请选择触发条件', trigger: 'change' },
   ],
-  status: [
-    { required: true, message: '请选择状态', trigger: 'change' }
-  ],
-  startTime: [
-    { required: true, message: '请选择开始时间', trigger: 'change' }
-  ],
-  endTime: [
-    { required: true, message: '请选择结束时间', trigger: 'change' }
-  ],
+  status: [{ required: true, message: '请选择状态', trigger: 'change' }],
+  startTime: [{ required: true, message: '请选择开始时间', trigger: 'change' }],
+  endTime: [{ required: true, message: '请选择结束时间', trigger: 'change' }],
 };
 
 // Computed
@@ -413,7 +415,7 @@ const showModal = computed({
   get: () => props.show,
   set: (value: boolean) => {
     emit('update:show', value);
-  }
+  },
 });
 
 // Methods
@@ -424,11 +426,11 @@ const handleIconSelected = (file: MediaFile) => {
 
 const handleSubmit = async () => {
   if (!formRef.value) return;
-  
+
   try {
     await formRef.value.validate();
     submitting.value = true;
-    
+
     const submitData: OperationMessageCreateRequest = {
       language: formData.language,
       currency: formData.currency,
@@ -436,8 +438,12 @@ const handleSubmit = async () => {
       title: formData.title,
       content: formData.content,
       popupEntrance: formData.popupEntrance,
-      startTime: formData.startTime ? new Date(formData.startTime).toISOString() : undefined,
-      endTime: formData.endTime ? new Date(formData.endTime).toISOString() : undefined,
+      startTime: formData.startTime
+        ? new Date(formData.startTime).toISOString()
+        : undefined,
+      endTime: formData.endTime
+        ? new Date(formData.endTime).toISOString()
+        : undefined,
       readOrSent: formData.readOrSent,
       videoPush: formData.videoPush,
       triggerCondition: formData.triggerCondition,
@@ -451,24 +457,24 @@ const handleSubmit = async () => {
       sendImmediately: formData.sendImmediately,
       remark: formData.remark,
     };
-    
+
     if (props.editingItem) {
       await updateOperationMessage(props.editingItem.id!, submitData);
     } else {
       await createOperationMessage(submitData);
     }
-    
+
     notification.success({
       content: props.editingItem ? '更新成功' : '创建成功',
-      duration: 3000
+      duration: 3000,
     });
-    
+
     emit('success');
   } catch (error) {
     console.error('Error submitting operation message:', error);
     notification.error({
       content: '提交失败',
-      duration: 3000
+      duration: 3000,
     });
   } finally {
     submitting.value = false;
@@ -502,7 +508,7 @@ const resetForm = () => {
     sendImmediately: false,
     remark: '',
   });
-  
+
   activeTab.value = 'basic';
 };
 
@@ -513,12 +519,14 @@ watch(
     if (newItem) {
       Object.assign(formData, {
         ...newItem,
-        startTime: newItem.startTime ? new Date(newItem.startTime).getTime() : null,
+        startTime: newItem.startTime
+          ? new Date(newItem.startTime).getTime()
+          : null,
         endTime: newItem.endTime ? new Date(newItem.endTime).getTime() : null,
       });
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 
@@ -592,4 +600,4 @@ watch(
   border-radius: 4px;
   border: 1px solid #d9d9d9;
 }
-</style> 
+</style>

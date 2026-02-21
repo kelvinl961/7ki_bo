@@ -3,7 +3,9 @@
  * Provides utilities for search inputs and date ranges
  */
 
-import { computed, type Ref, ref, watch } from 'vue';
+import type { Ref } from 'vue';
+
+import { computed, ref, watch } from 'vue';
 
 /**
  * Auto-trim search input
@@ -38,8 +40,8 @@ export function useTrimmedSearch(initialValue = '') {
  * Shows: "2024-01-01 00:00:00 ~ 2024-01-31 23:59:59"
  */
 export function formatDateRangeWithTime(
-  startDate: number | string | Date | null,
-  endDate: number | string | Date | null,
+  startDate: Date | null | number | string,
+  endDate: Date | null | number | string,
 ): string {
   if (!startDate || !endDate) return '';
 
@@ -65,8 +67,8 @@ export function formatDateRangeWithTime(
  * Sets startDate to 00:00:00 and endDate to 23:59:59
  */
 export function normalizeDateRangeForAPI(dateRange: [number, number] | null): {
-  startDate?: string;
   endDate?: string;
+  startDate?: string;
 } {
   if (!dateRange || dateRange.length !== 2) {
     return {};
@@ -130,6 +132,3 @@ export function watchAndTrim(input: Ref<string>) {
     { immediate: false },
   );
 }
-
-
-

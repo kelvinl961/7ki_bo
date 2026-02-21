@@ -35,7 +35,7 @@
           style="width: 150px"
           size="small"
         />
-        
+
         <n-select
           v-model:value="filters.status"
           :options="statusOptions"
@@ -44,7 +44,7 @@
           style="width: 140px"
           size="small"
         />
-        
+
         <n-input
           v-model:value="filters.search"
           placeholder="域名搜索"
@@ -53,14 +53,12 @@
           size="small"
           @keyup.enter="fetchDomains"
         />
-        
+
         <n-button type="primary" size="small" @click="fetchDomains">
           搜索
         </n-button>
-        
-        <n-button size="small" @click="resetFilters">
-          重置
-        </n-button>
+
+        <n-button size="small" @click="resetFilters"> 重置 </n-button>
       </n-space>
     </n-card>
 
@@ -71,12 +69,14 @@
           <n-button type="primary" size="small" @click="showCreateModal = true">
             新增
           </n-button>
-          <n-button size="small" :disabled="selectedRowKeys.length === 0" @click="handleBulkDelete">
+          <n-button
+            size="small"
+            :disabled="selectedRowKeys.length === 0"
+            @click="handleBulkDelete"
+          >
             批量删除
           </n-button>
-          <n-button size="small" @click="fetchDomains">
-            刷新
-          </n-button>
+          <n-button size="small" @click="fetchDomains"> 刷新 </n-button>
         </n-space>
         <span style="font-size: 13px; color: #666">
           共 {{ pagination.itemCount || 0 }} 条记录
@@ -124,22 +124,35 @@
         </div>
         <div>
           <div style="margin-bottom: 8px; font-weight: 500">当前CDN</div>
-          <n-tag :type="'info'" size="small">{{ selectedDomain?.cdnProvider }}</n-tag>
+          <n-tag :type="'info'" size="small">{{
+            selectedDomain?.cdnProvider
+          }}</n-tag>
         </div>
         <div>
-          <div style="margin-bottom: 8px; font-weight: 500">目标CDN节点 <span style="color: red">*</span></div>
+          <div style="margin-bottom: 8px; font-weight: 500">
+            目标CDN节点 <span style="color: red">*</span>
+          </div>
           <n-select
             v-model:value="targetCDN"
-            :options="cdnProviderOptions.filter(o => o.value && o.value !== selectedDomain?.cdnProvider)"
+            :options="
+              cdnProviderOptions.filter(
+                (o) => o.value && o.value !== selectedDomain?.cdnProvider,
+              )
+            "
             placeholder="请选择目标CDN节点"
           />
         </div>
-        <n-alert type="warning" :show-icon="false" style="margin-top: 12px;">
-          <div style="font-size: 13px; line-height: 1.8;">
-            <div style="font-weight: 500; margin-bottom: 8px;">功能说明：</div>
-            <div>• 仅限域名已托管DNS厂商（阿里云与Cloudflare），切换过程无感知，预计5-10分钟域名生效</div>
-            <div style="margin-top: 8px; font-weight: 500;">支持CDN节点：</div>
-            <div>Cloudflare、AWS、网宿、火山云、阿里云、腾讯云、华为云、SuperEdge、Funnull、云盾</div>
+        <n-alert type="warning" :show-icon="false" style="margin-top: 12px">
+          <div style="font-size: 13px; line-height: 1.8">
+            <div style="font-weight: 500; margin-bottom: 8px">功能说明：</div>
+            <div>
+              •
+              仅限域名已托管DNS厂商（阿里云与Cloudflare），切换过程无感知，预计5-10分钟域名生效
+            </div>
+            <div style="margin-top: 8px; font-weight: 500">支持CDN节点：</div>
+            <div>
+              Cloudflare、AWS、网宿、火山云、阿里云、腾讯云、华为云、SuperEdge、Funnull、云盾
+            </div>
           </div>
         </n-alert>
       </n-space>
@@ -171,9 +184,13 @@
           <div style="font-size: 13px">
             <div>• 为特定域名分配代理，以便管理流量和推广策略</div>
             <div>• 上级归属判定优先级：</div>
-            <div style="padding-left: 16px">1. 推广链接的上级（最高优先级）</div>
+            <div style="padding-left: 16px">
+              1. 推广链接的上级（最高优先级）
+            </div>
             <div style="padding-left: 16px">2. 渠道ID配置的强制绑定上级</div>
-            <div style="padding-left: 16px">3. 域名管理中配置的强制绑定上级</div>
+            <div style="padding-left: 16px">
+              3. 域名管理中配置的强制绑定上级
+            </div>
           </div>
         </n-alert>
       </n-space>
@@ -197,7 +214,7 @@
         />
       </n-spin>
       <template #footer>
-        <div style="display: flex; justify-content: flex-end;">
+        <div style="display: flex; justify-content: flex-end">
           <n-button type="primary" @click="showSubdomainModal = false">
             关闭
           </n-button>
@@ -209,11 +226,11 @@
 
 <script setup lang="ts">
 import { ref, h, onMounted, reactive, computed } from 'vue';
-import { 
-  NButton, 
-  NTag, 
-  NSpace, 
-  NPopconfirm, 
+import {
+  NButton,
+  NTag,
+  NSpace,
+  NPopconfirm,
   NGrid,
   NGi,
   NCard,
@@ -226,12 +243,14 @@ import {
   NSpin,
   useMessage,
   type DataTableColumn,
-  type SelectOption
+  type SelectOption,
 } from 'naive-ui';
 import { domainApi } from '../api/domainApi';
 // ✅ PERFORMANCE FIX: Lazy load modal components - they only load when modals are opened
 import { defineAsyncComponent } from 'vue';
-const CreateDomainModal = defineAsyncComponent(() => import('../components/CreateDomainModal.vue'));
+const CreateDomainModal = defineAsyncComponent(
+  () => import('../components/CreateDomainModal.vue'),
+);
 import type { Domain } from '../types';
 
 interface Props {
@@ -244,7 +263,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  title: '域名管理'
+  title: '域名管理',
 });
 
 const message = useMessage();
@@ -276,21 +295,21 @@ const stats = ref({
   total: 0,
   cloudflare: 0,
   aws: 0,
-  verified: 0
+  verified: 0,
 });
 
 // Filters
 const filters = ref({
   cdnProvider: null as string | null,
   status: null as string | null,
-  search: ''
+  search: '',
 });
 
 // Pagination
 const pagination = reactive({
   page: 1,
   pageSize: 20,
-  itemCount: 0
+  itemCount: 0,
 });
 
 const paginationConfig = reactive({
@@ -307,7 +326,7 @@ const paginationConfig = reactive({
     pagination.pageSize = pageSize;
     pagination.page = 1;
     fetchDomains();
-  }
+  },
 });
 
 // Expanded rows state (for verification method expand/collapse)
@@ -325,7 +344,7 @@ const cdnProviderOptions: SelectOption[] = [
   { label: '华为云 (Huawei)', value: 'HUAWEI_CLOUD' },
   { label: 'SuperEdge', value: 'SUPEREDGE' },
   { label: 'Funnull', value: 'FUNNULL' },
-  { label: '云盾 (Yundun)', value: 'YUNDUN' }
+  { label: '云盾 (Yundun)', value: 'YUNDUN' },
 ];
 
 const statusOptions: SelectOption[] = [
@@ -334,13 +353,13 @@ const statusOptions: SelectOption[] = [
   { label: '已过期', value: 'EXPIRED' },
   { label: '即将过期', value: 'EXPIRING_SOON' },
   { label: '验证中', value: 'VERIFICATION_PENDING' },
-  { label: '已停用', value: 'DISABLED' }
+  { label: '已停用', value: 'DISABLED' },
 ];
 
 // Table Columns (computed to react to expandedRows changes)
 const columns = computed<DataTableColumn<Domain>[]>(() => [
   {
-    type: 'selection' as const
+    type: 'selection' as const,
   },
   {
     title: 'CDN节点名称',
@@ -352,10 +371,14 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
         AWS: 'warning',
         TENCENT_CLOUD: 'success',
         ALIYUN: 'error',
-        HUAWEI_CLOUD: 'default'
+        HUAWEI_CLOUD: 'default',
       };
-      return h(NTag, { type: colorMap[row.cdnProvider] as any, size: 'small' }, () => row.cdnProvider);
-    }
+      return h(
+        NTag,
+        { type: colorMap[row.cdnProvider] as any, size: 'small' },
+        () => row.cdnProvider,
+      );
+    },
   },
   {
     title: '主域名(子域名数)',
@@ -363,26 +386,40 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
     width: 220,
     render(row: Domain) {
       const count = subdomainCounts.value[row.id] || 0;
-      return h('div', { 
-        style: 'display: flex; align-items: center; gap: 8px; cursor: pointer;',
-        onClick: () => handleShowSubdomains(row)
-      }, [
-        h('span', {}, `${row.domainName}(${count})`),
-        h(NButton, {
-          text: true,
-          size: 'tiny',
-          type: 'info',
-          onClick: (e: Event) => {
-            e.stopPropagation();
-            handleShowSubdomains(row);
-          }
-        }, { 
-          default: () => h('span', { 
-            style: 'font-size: 16px;' 
-          }, '')
-        })
-      ]);
-    }
+      return h(
+        'div',
+        {
+          style:
+            'display: flex; align-items: center; gap: 8px; cursor: pointer;',
+          onClick: () => handleShowSubdomains(row),
+        },
+        [
+          h('span', {}, `${row.domainName}(${count})`),
+          h(
+            NButton,
+            {
+              text: true,
+              size: 'tiny',
+              type: 'info',
+              onClick: (e: Event) => {
+                e.stopPropagation();
+                handleShowSubdomains(row);
+              },
+            },
+            {
+              default: () =>
+                h(
+                  'span',
+                  {
+                    style: 'font-size: 16px;',
+                  },
+                  '',
+                ),
+            },
+          ),
+        ],
+      );
+    },
   },
   {
     title: '验证方式',
@@ -393,46 +430,79 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
         DNS_VALIDATION: 'DNS验证',
         WHEN_DNS_COMPLETED: '当DNS完成为',
         HTTP_VALIDATION: 'HTTP验证',
-        EMAIL_VALIDATION: '邮箱验证'
+        EMAIL_VALIDATION: '邮箱验证',
       };
-      
+
       const nameservers = Array.isArray(row.nameservers) ? row.nameservers : [];
       const hasNameservers = nameservers.length > 0;
       const isExpanded = expandedRows.value[row.id] || false;
-      
-      return h('div', { style: 'display: flex; flex-direction: column; gap: 4px;' }, [
-        h('div', { style: 'display: flex; align-items: center; gap: 8px;' }, [
-          h('span', {}, methodMap[row.verificationMethod] || row.verificationMethod),
-          hasNameservers && h(NButton, {
-            text: true,
-            size: 'tiny',
-            type: 'primary',
-            onClick: () => {
-              expandedRows.value[row.id] = !expandedRows.value[row.id];
-            }
-          }, { default: () => isExpanded ? '收起' : '展开' })
-        ]),
-        isExpanded && hasNameservers && h('div', { 
-          style: 'padding: 8px; background: #f5f7fa; border-radius: 4px; font-size: 12px;'
-        }, nameservers.map((ns: string, index: number) => 
-          h('div', { 
-            key: index,
-            style: 'display: flex; align-items: center; gap: 4px; margin-bottom: 4px;'
-          }, [
-            h('span', { style: 'color: #666;' }, `ns${index + 1}:`),
-            h('span', { style: 'color: #18a058; font-family: monospace;' }, ns),
-            h(NButton, {
-              text: true,
-              size: 'tiny',
-              onClick: () => {
-                navigator.clipboard.writeText(ns);
-                message.success('已复制');
-              }
-            }, { default: () => '' })
-          ])
-        ))
-      ]);
-    }
+
+      return h(
+        'div',
+        { style: 'display: flex; flex-direction: column; gap: 4px;' },
+        [
+          h('div', { style: 'display: flex; align-items: center; gap: 8px;' }, [
+            h(
+              'span',
+              {},
+              methodMap[row.verificationMethod] || row.verificationMethod,
+            ),
+            hasNameservers &&
+              h(
+                NButton,
+                {
+                  text: true,
+                  size: 'tiny',
+                  type: 'primary',
+                  onClick: () => {
+                    expandedRows.value[row.id] = !expandedRows.value[row.id];
+                  },
+                },
+                { default: () => (isExpanded ? '收起' : '展开') },
+              ),
+          ]),
+          isExpanded &&
+            hasNameservers &&
+            h(
+              'div',
+              {
+                style:
+                  'padding: 8px; background: #f5f7fa; border-radius: 4px; font-size: 12px;',
+              },
+              nameservers.map((ns: string, index: number) =>
+                h(
+                  'div',
+                  {
+                    key: index,
+                    style:
+                      'display: flex; align-items: center; gap: 4px; margin-bottom: 4px;',
+                  },
+                  [
+                    h('span', { style: 'color: #666;' }, `ns${index + 1}:`),
+                    h(
+                      'span',
+                      { style: 'color: #18a058; font-family: monospace;' },
+                      ns,
+                    ),
+                    h(
+                      NButton,
+                      {
+                        text: true,
+                        size: 'tiny',
+                        onClick: () => {
+                          navigator.clipboard.writeText(ns);
+                          message.success('已复制');
+                        },
+                      },
+                      { default: () => '' },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      );
+    },
   },
   {
     title: '主域名状态',
@@ -443,63 +513,100 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
         NORMAL: { type: 'success', text: '正常' },
         VERIFICATION_PENDING: { type: 'warning', text: '验证中' },
         DISABLED: { type: 'error', text: '已禁用' },
-        EXPIRED: { type: 'default', text: '已过期' }
+        EXPIRED: { type: 'default', text: '已过期' },
       };
-      const status = statusMap[row.status] || statusMap.NORMAL || { type: 'success', text: '正常' };
-      
+      const status = statusMap[row.status] ||
+        statusMap.NORMAL || { type: 'success', text: '正常' };
+
       // Show verification button for pending domains
       if (row.status === 'VERIFICATION_PENDING') {
         // Check if domain is in cooldown period (10 minutes = 600 seconds)
         const lastCheck = (row as any).lastVerificationCheck;
-        const isInCooldown = lastCheck ? 
-          ((Date.now() - new Date(lastCheck).getTime()) / 1000) < 600 : 
-          false;
-        
+        const isInCooldown = lastCheck
+          ? (Date.now() - new Date(lastCheck).getTime()) / 1000 < 600
+          : false;
+
         // If currently verifying, show "验证中..."
         if (isVerifying.value[row.id]) {
-          return h('div', { style: 'display: flex; align-items: center; gap: 8px;' }, [
-            h(NTag, { type: status.type as any, size: 'small' }, () => status.text),
-            h('span', { style: 'color: #999; font-size: 12px;' }, '验证中...')
-          ]);
+          return h(
+            'div',
+            { style: 'display: flex; align-items: center; gap: 8px;' },
+            [
+              h(
+                NTag,
+                { type: status.type as any, size: 'small' },
+                () => status.text,
+              ),
+              h(
+                'span',
+                { style: 'color: #999; font-size: 12px;' },
+                '验证中...',
+              ),
+            ],
+          );
         }
-        
+
         // If in cooldown, hide the button completely
         if (isInCooldown) {
-          return h(NTag, { type: status.type as any, size: 'small' }, () => status.text);
+          return h(
+            NTag,
+            { type: status.type as any, size: 'small' },
+            () => status.text,
+          );
         }
-        
+
         // Show verification button if not in cooldown
-        return h('div', { style: 'display: flex; align-items: center; gap: 8px;' }, [
-          h(NTag, { type: status.type as any, size: 'small' }, () => status.text),
-          h(NButton, {
-            text: true,
-            size: 'tiny',
-            type: 'info',
-            onClick: () => handleVerifyDomain(row)
-          }, { 
-            default: () => '点击验证'
-          })
-        ]);
+        return h(
+          'div',
+          { style: 'display: flex; align-items: center; gap: 8px;' },
+          [
+            h(
+              NTag,
+              { type: status.type as any, size: 'small' },
+              () => status.text,
+            ),
+            h(
+              NButton,
+              {
+                text: true,
+                size: 'tiny',
+                type: 'info',
+                onClick: () => handleVerifyDomain(row),
+              },
+              {
+                default: () => '点击验证',
+              },
+            ),
+          ],
+        );
       }
-      
-      return h(NTag, { type: status.type as any, size: 'small' }, () => status.text);
-    }
+
+      return h(
+        NTag,
+        { type: status.type as any, size: 'small' },
+        () => status.text,
+      );
+    },
   },
   {
     title: '域名过期日',
     key: 'expiryDate',
     width: 140,
     render(row: Domain) {
-      return row.expiryDate ? new Date(row.expiryDate).toLocaleDateString('zh-CN') : '-';
-    }
+      return row.expiryDate
+        ? new Date(row.expiryDate).toLocaleDateString('zh-CN')
+        : '-';
+    },
   },
   {
     title: '证书过期日',
     key: 'certificateExpiryDate',
     width: 140,
     render(row: Domain) {
-      return row.certificateExpiryDate ? new Date(row.certificateExpiryDate).toLocaleDateString('zh-CN') : '-';
-    }
+      return row.certificateExpiryDate
+        ? new Date(row.certificateExpiryDate).toLocaleDateString('zh-CN')
+        : '-';
+    },
   },
   {
     title: '使用场景',
@@ -507,7 +614,7 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
     width: 120,
     render(row: Domain) {
       return row.usageScenario || '全部';
-    }
+    },
   },
   {
     title: '备注',
@@ -516,7 +623,7 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
     ellipsis: { tooltip: true },
     render(row: Domain) {
       return row.备注 || '-';
-    }
+    },
   },
   {
     title: '操作人',
@@ -524,7 +631,7 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
     width: 100,
     render(row: any) {
       return row.operatedBy || '-';
-    }
+    },
   },
   {
     title: '操作',
@@ -534,42 +641,81 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
     render(row: Domain) {
       const isDisabled = (row.status || 'NORMAL') === 'DISABLED';
       return h('div', { style: 'display: flex; gap: 4px; flex-wrap: wrap;' }, [
-        h(NButton, {
-          size: 'small',
-          onClick: () => handleSwitchCDN(row)
-        }, () => '更换节点'),
-        h(NButton, {
-          size: 'small',
-          onClick: () => handleBindAgent(row)
-        }, () => '绑定代理'),
-        h(NButton, {
-          size: 'small',
-          type: isDisabled ? 'success' : 'warning',
-          onClick: () => handleToggleStatus(row)
-        }, () => isDisabled ? '启用' : '停用'),
-        h(NButton, {
-          size: 'small',
-          onClick: () => handleClearCache(row)
-        }, () => '清缓存'),
-        h(NPopconfirm, {
-          onPositiveClick: () => handleDelete(row.id),
-          positiveText: '确认删除',
-          negativeText: '取消',
-          style: { width: '500px' }
-        }, {
-          default: () => h('div', { style: 'font-size: 14px; padding: 10px 0;' }, [
-            h('div', { style: 'font-weight: 600; margin-bottom: 8px; font-size: 16px;' }, '确认删除域名？'),
-            h('div', { style: 'color: #666;' }, `域名: ${row.domainName}`),
-            h('div', { style: 'color: #ff4d4f; margin-top: 8px; font-size: 13px;' }, '删除后将无法恢复，请谨慎操作！')
-          ]),
-          trigger: () => h(NButton, {
+        h(
+          NButton,
+          {
             size: 'small',
-            type: 'error'
-          }, () => '删除')
-        })
+            onClick: () => handleSwitchCDN(row),
+          },
+          () => '更换节点',
+        ),
+        h(
+          NButton,
+          {
+            size: 'small',
+            onClick: () => handleBindAgent(row),
+          },
+          () => '绑定代理',
+        ),
+        h(
+          NButton,
+          {
+            size: 'small',
+            type: isDisabled ? 'success' : 'warning',
+            onClick: () => handleToggleStatus(row),
+          },
+          () => (isDisabled ? '启用' : '停用'),
+        ),
+        h(
+          NButton,
+          {
+            size: 'small',
+            onClick: () => handleClearCache(row),
+          },
+          () => '清缓存',
+        ),
+        h(
+          NPopconfirm,
+          {
+            onPositiveClick: () => handleDelete(row.id),
+            positiveText: '确认删除',
+            negativeText: '取消',
+            style: { width: '500px' },
+          },
+          {
+            default: () =>
+              h('div', { style: 'font-size: 14px; padding: 10px 0;' }, [
+                h(
+                  'div',
+                  {
+                    style:
+                      'font-weight: 600; margin-bottom: 8px; font-size: 16px;',
+                  },
+                  '确认删除域名？',
+                ),
+                h('div', { style: 'color: #666;' }, `域名: ${row.domainName}`),
+                h(
+                  'div',
+                  {
+                    style: 'color: #ff4d4f; margin-top: 8px; font-size: 13px;',
+                  },
+                  '删除后将无法恢复，请谨慎操作！',
+                ),
+              ]),
+            trigger: () =>
+              h(
+                NButton,
+                {
+                  size: 'small',
+                  type: 'error',
+                },
+                () => '删除',
+              ),
+          },
+        ),
       ]);
-    }
-  }
+    },
+  },
 ]);
 
 // Subdomain Columns
@@ -578,7 +724,7 @@ const subdomainColumns: DataTableColumn<Domain>[] = [
     title: '子域名',
     key: 'domainName',
     width: 250,
-    ellipsis: { tooltip: true }
+    ellipsis: { tooltip: true },
   },
   {
     title: 'CDN节点名称',
@@ -590,10 +736,14 @@ const subdomainColumns: DataTableColumn<Domain>[] = [
         AWS: 'warning',
         TENCENT_CLOUD: 'success',
         ALIYUN: 'error',
-        HUAWEI_CLOUD: 'default'
+        HUAWEI_CLOUD: 'default',
       };
-      return h(NTag, { type: colorMap[row.cdnProvider] as any, size: 'small' }, () => row.cdnProvider);
-    }
+      return h(
+        NTag,
+        { type: colorMap[row.cdnProvider] as any, size: 'small' },
+        () => row.cdnProvider,
+      );
+    },
   },
   {
     title: '域名用途',
@@ -607,10 +757,10 @@ const subdomainColumns: DataTableColumn<Domain>[] = [
         BACKEND_API: '后端加速域名',
         OSS_ACCELERATION: 'OSS加速',
         TRANSFER_PAGE: '中转页',
-        APP_UPDATE: 'APP更新'
+        APP_UPDATE: 'APP更新',
       };
       return useTypeMap[row.useType || ''] || row.useType || '-';
-    }
+    },
   },
   {
     title: '使用状态',
@@ -618,12 +768,16 @@ const subdomainColumns: DataTableColumn<Domain>[] = [
     width: 120,
     render(row: Domain) {
       const isDisabled = row.status === 'DISABLED';
-      return h(NTag, { 
-        type: isDisabled ? 'error' : 'success', 
-        size: 'small' 
-      }, () => isDisabled ? '已停用' : '启用成功');
-    }
-  }
+      return h(
+        NTag,
+        {
+          type: isDisabled ? 'error' : 'success',
+          size: 'small',
+        },
+        () => (isDisabled ? '已停用' : '启用成功'),
+      );
+    },
+  },
 ];
 
 // Methods
@@ -633,27 +787,32 @@ const fetchDomains = async () => {
     const params: any = {
       page: pagination.page,
       pageSize: pagination.pageSize,
-      isParentDomain: true // ⭐ Only show parent domains in 域名管理 tab
+      isParentDomain: true, // ⭐ Only show parent domains in 域名管理 tab
     };
-    
-    if (filters.value.cdnProvider) params.cdnProvider = filters.value.cdnProvider;
+
+    if (filters.value.cdnProvider)
+      params.cdnProvider = filters.value.cdnProvider;
     if (filters.value.status) params.status = filters.value.status;
     if (filters.value.search) params.search = filters.value.search;
-    
-    if (props.initialFilter?.useType) params.useType = props.initialFilter.useType;
-    if (props.initialFilter?.cdnProvider) params.cdnProvider = props.initialFilter.cdnProvider;
+
+    if (props.initialFilter?.useType)
+      params.useType = props.initialFilter.useType;
+    if (props.initialFilter?.cdnProvider)
+      params.cdnProvider = props.initialFilter.cdnProvider;
     if (props.initialFilter?.status) params.status = props.initialFilter.status;
-    
+
     const response: any = await domainApi.getDomains(params);
     // Response interceptor unwraps the data, so response is already the data part
     const responseData = response.data?.data || response;
-    
+
     domains.value = responseData.list || responseData.domains || [];
-    pagination.itemCount = responseData.pagination?.total || responseData.total || 0;
-    paginationConfig.itemCount = responseData.pagination?.total || responseData.total || 0;
+    pagination.itemCount =
+      responseData.pagination?.total || responseData.total || 0;
+    paginationConfig.itemCount =
+      responseData.pagination?.total || responseData.total || 0;
 
     updateStats();
-    
+
     // Fetch subdomain counts for each parent domain
     fetchSubdomainCounts();
   } catch (error: any) {
@@ -668,9 +827,11 @@ const fetchDomains = async () => {
 const updateStats = () => {
   stats.value = {
     total: domains.value.length,
-    cloudflare: domains.value.filter((d: Domain) => d.cdnProvider === 'CLOUDFLARE').length,
+    cloudflare: domains.value.filter(
+      (d: Domain) => d.cdnProvider === 'CLOUDFLARE',
+    ).length,
     aws: domains.value.filter((d: Domain) => d.cdnProvider === 'AWS').length,
-    verified: domains.value.filter((d: Domain) => d.verificationStatus).length
+    verified: domains.value.filter((d: Domain) => d.verificationStatus).length,
   };
 };
 
@@ -683,17 +844,17 @@ const fetchSubdomainCounts = async () => {
         const response: any = await domainApi.getDomains({
           parentId: domain.id,
           isParentDomain: false,
-          pageSize: 1 // Just need count, not actual data
+          pageSize: 1, // Just need count, not actual data
         });
         const responseData = response.data?.data || response;
         return {
           domainId: domain.id,
-          count: responseData.pagination?.total || responseData.total || 0
+          count: responseData.pagination?.total || responseData.total || 0,
         };
       } catch (error) {
         return {
           domainId: domain.id,
-          count: 0
+          count: 0,
         };
       }
     });
@@ -712,12 +873,12 @@ const handleShowSubdomains = async (domain: Domain) => {
   selectedDomain.value = domain;
   showSubdomainModal.value = true;
   subdomainLoading.value = true;
-  
+
   try {
     const response: any = await domainApi.getDomains({
       parentId: domain.id,
       isParentDomain: false,
-      pageSize: 100 // Get all subdomains
+      pageSize: 100, // Get all subdomains
     });
     const responseData = response.data?.data || response;
     subdomains.value = responseData.list || responseData.domains || [];
@@ -733,7 +894,7 @@ const resetFilters = () => {
   filters.value = {
     cdnProvider: null,
     status: null,
-    search: ''
+    search: '',
   };
   pagination.page = 1;
   fetchDomains();
@@ -784,7 +945,7 @@ const confirmSwitchCDN = async () => {
     await domainApi.switchCDN(selectedDomain.value.id, {
       targetProvider: targetCDN.value,
       migrateData: false,
-      updateDNS: true
+      updateDNS: true,
     });
     message.success('CDN节点切换成功，预计5-30分钟生效');
     showSwitchCDNModal.value = false;
@@ -811,7 +972,7 @@ const confirmBindAgent = async () => {
   loading.value = true;
   try {
     await domainApi.updateDomain(selectedDomain.value.id, {
-      boundAgentId: agentId.value || null
+      boundAgentId: agentId.value || null,
     } as any);
     message.success(agentId.value ? '代理绑定成功' : '代理解绑成功');
     showBindAgentModal.value = false;
@@ -828,13 +989,13 @@ const handleVerifyDomain = async (domain: Domain) => {
   if (isVerifying.value[domain.id]) {
     return; // Prevent double clicks
   }
-  
+
   isVerifying.value[domain.id] = true;
-  
+
   try {
     const response: any = await domainApi.verifyDomain(domain.id);
     const result = response.data || response;
-    
+
     if (result.code === 0) {
       message.success(result.data.message || '验证完成');
       // Refresh domains to show updated status
@@ -862,7 +1023,7 @@ const handleToggleStatus = async (row: Domain) => {
   loading.value = true;
   try {
     await domainApi.updateDomain(row.id, {
-      status: newStatus
+      status: newStatus,
     } as any);
     message.success(`域名${action}成功`);
     fetchDomains();

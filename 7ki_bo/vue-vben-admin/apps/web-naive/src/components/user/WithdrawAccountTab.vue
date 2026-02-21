@@ -1,17 +1,15 @@
 <template>
   <div class="withdraw-account-tab">
-    <div v-if="loading" class="flex justify-center items-center h-96">
+    <div v-if="loading" class="flex h-96 items-center justify-center">
       <n-spin size="large" />
     </div>
 
     <div v-else class="withdraw-account-content">
       <!-- Header Actions -->
-      <div class="flex justify-between items-center mb-4">
+      <div class="mb-4 flex items-center justify-between">
         <h3 class="text-lg font-medium">提现账号管理</h3>
         <div class="flex gap-2">
-          <n-button @click="handleRefresh">
-            刷新
-          </n-button>
+          <n-button @click="handleRefresh"> 刷新 </n-button>
           <n-button type="primary" @click="handleAddAccount">
             添加会员提现账号
           </n-button>
@@ -32,7 +30,11 @@
       </n-card>
 
       <!-- Edit Note Modal -->
-      <n-modal v-model:show="showEditNoteModal" preset="dialog" title="编辑后台备注">
+      <n-modal
+        v-model:show="showEditNoteModal"
+        preset="dialog"
+        title="编辑后台备注"
+      >
         <n-input
           v-model:value="editingNote"
           type="textarea"
@@ -42,7 +44,11 @@
         <template #action>
           <div class="flex gap-2">
             <n-button @click="showEditNoteModal = false">取消</n-button>
-            <n-button type="primary" :loading="noteLoading" @click="handleSaveNote">
+            <n-button
+              type="primary"
+              :loading="noteLoading"
+              @click="handleSaveNote"
+            >
               保存
             </n-button>
           </div>
@@ -72,14 +78,14 @@ import {
   NSpin,
   NPopconfirm,
   useMessage,
-  type DataTableColumns
+  type DataTableColumns,
 } from 'naive-ui';
 import {
   getWithdrawAccountsByUserIdApi,
   toggleWithdrawAccountStatusApi,
   updateWithdrawAccountApi,
   deleteWithdrawAccountApi,
-  type WithdrawAccount
+  type WithdrawAccount,
 } from '#/api/core/withdrawal-account';
 import WithdrawAccountForm from './WithdrawAccountForm.vue';
 
@@ -130,8 +136,12 @@ const columns: DataTableColumns<WithdrawAccount> = [
     width: 80,
     align: 'center',
     render: (row) => {
-      return h(NTag, { type: 'info', size: 'small' }, { default: () => row.currency });
-    }
+      return h(
+        NTag,
+        { type: 'info', size: 'small' },
+        { default: () => row.currency },
+      );
+    },
   },
   {
     title: '提现方式',
@@ -139,14 +149,19 @@ const columns: DataTableColumns<WithdrawAccount> = [
     width: 100,
     render: (row) => {
       const typeMap = {
-        'PIX': 'PIX',
-        'BANK_TRANSFER': '银行转账',
-        'TED': 'TED',
-        'DOC': 'DOC'
+        PIX: 'PIX',
+        BANK_TRANSFER: '银行转账',
+        TED: 'TED',
+        DOC: 'DOC',
       };
-      const type = typeMap[row.methodType as keyof typeof typeMap] || row.methodType;
-      return h(NTag, { type: 'default', size: 'small' }, { default: () => type });
-    }
+      const type =
+        typeMap[row.methodType as keyof typeof typeMap] || row.methodType;
+      return h(
+        NTag,
+        { type: 'default', size: 'small' },
+        { default: () => type },
+      );
+    },
   },
   {
     title: '提现账户类型',
@@ -154,23 +169,25 @@ const columns: DataTableColumns<WithdrawAccount> = [
     width: 120,
     render: (row) => {
       const typeMap = {
-        'PHONE': '手机号',
-        'CPF': 'CPF',
-        'EMAIL': '邮箱',
-        'RANDOM_KEY': '随机密钥',
-        'BANK_ACCOUNT': '银行账户',
+        PHONE: '手机号',
+        CPF: 'CPF',
+        EMAIL: '邮箱',
+        RANDOM_KEY: '随机密钥',
+        BANK_ACCOUNT: '银行账户',
         'Individual Tax Number': 'CPF', // Map database value to CPF
-        'PIX_CPF': 'CPF' // Alternative format
+        PIX_CPF: 'CPF', // Alternative format
       };
-      return typeMap[row.accountType as keyof typeof typeMap] || row.accountType;
-    }
+      return (
+        typeMap[row.accountType as keyof typeof typeMap] || row.accountType
+      );
+    },
   },
   {
     title: '提现账号/地址',
     key: 'accountValue',
     width: 200,
     ellipsis: true,
-    tooltip: true
+    tooltip: true,
   },
   {
     title: '银行信息',
@@ -181,11 +198,11 @@ const columns: DataTableColumns<WithdrawAccount> = [
         return h('div', { class: 'text-sm' }, [
           row.bankName && h('div', {}, `银行: ${row.bankName}`),
           row.bankHolderName && h('div', {}, `户名: ${row.bankHolderName}`),
-          row.bankCode && h('div', {}, `代码: ${row.bankCode}`)
+          row.bankCode && h('div', {}, `代码: ${row.bankCode}`),
         ]);
       }
       return '-';
-    }
+    },
   },
   {
     title: '后台备注',
@@ -195,14 +212,18 @@ const columns: DataTableColumns<WithdrawAccount> = [
     render: (row) => {
       return h('div', { class: 'flex items-center gap-2' }, [
         h('span', {}, row.backendNote || '-'),
-        h(NButton, {
-          text: true,
-          size: 'small',
-          type: 'primary',
-          onClick: () => handleEditNote(row)
-        }, { default: () => '编辑' })
+        h(
+          NButton,
+          {
+            text: true,
+            size: 'small',
+            type: 'primary',
+            onClick: () => handleEditNote(row),
+          },
+          { default: () => '编辑' },
+        ),
       ]);
-    }
+    },
   },
   {
     title: '添加时间',
@@ -210,7 +231,7 @@ const columns: DataTableColumns<WithdrawAccount> = [
     width: 160,
     render: (row) => {
       return new Date(row.createdAt).toLocaleString('zh-CN');
-    }
+    },
   },
   {
     title: '状态',
@@ -219,11 +240,15 @@ const columns: DataTableColumns<WithdrawAccount> = [
     align: 'center',
     render: (row) => {
       const isActive = row.status === 'ACTIVE';
-      return h(NTag, {
-        type: isActive ? 'success' : 'error',
-        size: 'small'
-      }, { default: () => isActive ? '启用' : '禁用' });
-    }
+      return h(
+        NTag,
+        {
+          type: isActive ? 'success' : 'error',
+          size: 'small',
+        },
+        { default: () => (isActive ? '启用' : '禁用') },
+      );
+    },
   },
   {
     title: '操作',
@@ -233,31 +258,48 @@ const columns: DataTableColumns<WithdrawAccount> = [
     render: (row) => {
       const isActive = row.status === 'ACTIVE';
       return h('div', { class: 'flex gap-1' }, [
-        h(NButton, {
-          text: true,
-          size: 'small',
-          type: 'primary',
-          onClick: () => handleEditAccount(row)
-        }, { default: () => '编辑' }),
-        h(NButton, {
-          text: true,
-          size: 'small',
-          type: isActive ? 'warning' : 'success',
-          onClick: () => handleToggleStatus(row)
-        }, { default: () => isActive ? '停用' : '启用' }),
-        h(NPopconfirm, {
-          onPositiveClick: () => handleDeleteAccount(row.id)
-        }, {
-          default: () => '确定删除这个提现账号吗？',
-          trigger: () => h(NButton, {
+        h(
+          NButton,
+          {
             text: true,
             size: 'small',
-            type: 'error'
-          }, { default: () => '删除' })
-        })
+            type: 'primary',
+            onClick: () => handleEditAccount(row),
+          },
+          { default: () => '编辑' },
+        ),
+        h(
+          NButton,
+          {
+            text: true,
+            size: 'small',
+            type: isActive ? 'warning' : 'success',
+            onClick: () => handleToggleStatus(row),
+          },
+          { default: () => (isActive ? '停用' : '启用') },
+        ),
+        h(
+          NPopconfirm,
+          {
+            onPositiveClick: () => handleDeleteAccount(row.id),
+          },
+          {
+            default: () => '确定删除这个提现账号吗？',
+            trigger: () =>
+              h(
+                NButton,
+                {
+                  text: true,
+                  size: 'small',
+                  type: 'error',
+                },
+                { default: () => '删除' },
+              ),
+          },
+        ),
       ]);
-    }
-  }
+    },
+  },
 ];
 
 // Methods
@@ -267,9 +309,9 @@ const loadAccounts = async () => {
     const response = await getWithdrawAccountsByUserIdApi({
       userId: props.userId,
       page: pagination.current,
-      pageSize: pagination.pageSize
+      pageSize: pagination.pageSize,
     });
-    
+
     accountList.value = response.list;
     pagination.total = response.pagination.total;
   } catch (error) {
@@ -306,13 +348,13 @@ const handleEditNote = (account: WithdrawAccount) => {
 
 const handleSaveNote = async () => {
   if (!editingAccountId.value) return;
-  
+
   noteLoading.value = true;
   try {
     await updateWithdrawAccountApi(editingAccountId.value, {
-      backendNote: editingNote.value
+      backendNote: editingNote.value,
     });
-    
+
     message.success('备注更新成功');
     showEditNoteModal.value = false;
     loadAccounts();
@@ -328,7 +370,7 @@ const handleToggleStatus = async (account: WithdrawAccount) => {
   try {
     const newStatus = account.status === 'ACTIVE' ? 'DISABLED' : 'ACTIVE';
     await toggleWithdrawAccountStatusApi(account.id, newStatus);
-    
+
     message.success(`账号已${newStatus === 'ACTIVE' ? '启用' : '停用'}`);
     loadAccounts();
   } catch (error) {
@@ -406,4 +448,4 @@ onMounted(() => {
 .font-medium {
   font-weight: 500;
 }
-</style> 
+</style>

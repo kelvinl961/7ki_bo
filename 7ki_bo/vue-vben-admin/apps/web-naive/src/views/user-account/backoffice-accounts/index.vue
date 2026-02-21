@@ -1,8 +1,5 @@
 <template>
-  <Page
-    description="后台账号管理页面"
-    title="后台账号"
-  >
+  <Page description="后台账号管理页面" title="后台账号">
     <!-- 面包屑导航 -->
     <div class="mb-4">
       <n-breadcrumb>
@@ -13,7 +10,7 @@
 
     <!-- 筛选器区域 -->
     <n-card class="mb-4">
-      <div class="flex flex-wrap gap-4 items-end">
+      <div class="flex flex-wrap items-end gap-4">
         <!-- 角色筛选 -->
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium">角色</label>
@@ -50,12 +47,8 @@
               style="width: 240px"
               @keyup.enter="handleFilter"
             />
-            <n-button type="primary" @click="handleFilter">
-              搜索
-            </n-button>
-            <n-button @click="resetFilter">
-              重置
-            </n-button>
+            <n-button type="primary" @click="handleFilter"> 搜索 </n-button>
+            <n-button @click="resetFilter"> 重置 </n-button>
           </div>
         </div>
       </div>
@@ -78,7 +71,7 @@
     >
       <template #actionBar="{ selectedCount, selectedRows }">
         <n-card :bordered="false" class="rounded-16px shadow-sm">
-          <div class="flex justify-between items-center">
+          <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <!-- 主要操作按钮 -->
               <div class="flex gap-2">
@@ -86,16 +79,17 @@
                   新增账号
                 </n-button>
               </div>
-              
+
               <!-- 选择信息 -->
               <div class="text-sm text-gray-600">
-                已选择 {{ selectedCount }} 条数据，共 {{ paginationReactive.total }} 条
+                已选择 {{ selectedCount }} 条数据，共
+                {{ paginationReactive.total }} 条
               </div>
             </div>
-            
+
             <div class="flex gap-2">
               <!-- 批量操作 -->
-             <!-- <n-button 
+              <!-- <n-button 
                 v-if="selectedCount > 0" 
                 type="error" 
                 size="small"
@@ -142,7 +136,11 @@
             {{ formatDateTime(currentAccount.createdDate) }}
           </n-descriptions-item>
           <n-descriptions-item label="最后登录">
-            {{ currentAccount.lastLoginDate ? formatDateTime(currentAccount.lastLoginDate) : '从未登录' }}
+            {{
+              currentAccount.lastLoginDate
+                ? formatDateTime(currentAccount.lastLoginDate)
+                : '从未登录'
+            }}
           </n-descriptions-item>
           <n-descriptions-item label="最后登录IP">
             {{ currentAccount.lastLoginIp || '无' }}
@@ -151,13 +149,13 @@
             {{ currentAccount.failedLoginAttempt || 0 }} 次
           </n-descriptions-item>
         </n-descriptions>
-        
-        <div class="flex justify-end mt-4 gap-2">
+
+        <div class="mt-4 flex justify-end gap-2">
           <n-button @click="showDetailModal = false">关闭</n-button>
           <n-button type="info" @click="handleEditAccount(currentAccount)">
             编辑
           </n-button>
-          <n-button 
+          <n-button
             :type="currentAccount.isSuspended ? 'success' : 'warning'"
             @click="handleToggleStatus(currentAccount)"
           >
@@ -199,7 +197,11 @@
             show-password-on="click"
           />
         </n-form-item>
-        <n-form-item label="确认密码" path="confirmPassword" v-if="editMode === 'add'">
+        <n-form-item
+          label="确认密码"
+          path="confirmPassword"
+          v-if="editMode === 'add'"
+        >
           <n-input
             v-model:value="editForm.confirmPassword"
             type="password"
@@ -225,8 +227,8 @@
           </n-switch>
         </n-form-item>
       </n-form>
-      
-      <div class="flex justify-end gap-2 mt-4">
+
+      <div class="mt-4 flex justify-end gap-2">
         <n-button @click="showEditModal = false">取消</n-button>
         <n-button type="primary" @click="handleSubmitEdit">
           {{ editMode === 'add' ? '创建' : '保存' }}
@@ -239,12 +241,14 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, h, defineAsyncComponent } from 'vue';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
-const SmartDataGrid = defineAsyncComponent(() => import('../../../components/smart/SmartDataGrid/index.vue'));
+const SmartDataGrid = defineAsyncComponent(
+  () => import('../../../components/smart/SmartDataGrid/index.vue'),
+);
 import { Page } from '@vben/common-ui';
-import { 
-  NCard, 
-  NButton, 
-  NSelect, 
+import {
+  NCard,
+  NButton,
+  NSelect,
   NInput,
   NModal,
   NTag,
@@ -258,16 +262,16 @@ import {
   useMessage,
   type DataTableColumns,
   type FormInst,
-  type FormRules
+  type FormRules,
 } from 'naive-ui';
-import { 
+import {
   getBackofficeAccountsApi,
   createBackofficeAccountApi,
   updateBackofficeAccountApi,
   deleteBackofficeAccountApi,
   toggleAccountStatusApi,
   type BackofficeAccount,
-  type BackofficeAccountListParams
+  type BackofficeAccountListParams,
 } from '#/api/core/user-account';
 
 const message = useMessage();
@@ -302,11 +306,11 @@ const editForm = reactive({
 const formRules: FormRules = {
   username: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
-    { min: 3, max: 20, message: '用户名长度在3-20个字符', trigger: 'blur' }
+    { min: 3, max: 20, message: '用户名长度在3-20个字符', trigger: 'blur' },
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, message: '密码长度至少6个字符', trigger: 'blur' }
+    { min: 6, message: '密码长度至少6个字符', trigger: 'blur' },
   ],
   confirmPassword: [
     { required: true, message: '请再次输入密码', trigger: 'blur' },
@@ -317,12 +321,10 @@ const formRules: FormRules = {
         }
         return true;
       },
-      trigger: 'blur'
-    }
+      trigger: 'blur',
+    },
   ],
-  role: [
-    { required: true, message: '请选择角色', trigger: 'change' }
-  ]
+  role: [{ required: true, message: '请选择角色', trigger: 'change' }],
 };
 
 // 分页配置 (simplified for SmartDataGrid)
@@ -348,7 +350,7 @@ const statusOptions = [
 // 工具函数 - Fixed to handle invalid dates
 const formatDateTime = (dateString: string | null | undefined) => {
   if (!dateString) return '无';
-  
+
   try {
     const date = new Date(dateString);
     // Check if date is valid
@@ -362,7 +364,7 @@ const formatDateTime = (dateString: string | null | undefined) => {
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
-      hour12: false
+      hour12: false,
     });
   } catch (error) {
     console.warn('Invalid date string:', dateString, error);
@@ -370,22 +372,27 @@ const formatDateTime = (dateString: string | null | undefined) => {
   }
 };
 
-const getRoleType = (role: string): 'error' | 'warning' | 'info' | 'success' | 'default' => {
-  const roleMap: Record<string, 'error' | 'warning' | 'info' | 'success' | 'default'> = {
-    'SUPER_ADMIN': 'error',
-    'ADMIN': 'warning',
-    'STAFF': 'info',
-    'CUSTOMER_SERVICE': 'success'
+const getRoleType = (
+  role: string,
+): 'error' | 'warning' | 'info' | 'success' | 'default' => {
+  const roleMap: Record<
+    string,
+    'error' | 'warning' | 'info' | 'success' | 'default'
+  > = {
+    SUPER_ADMIN: 'error',
+    ADMIN: 'warning',
+    STAFF: 'info',
+    CUSTOMER_SERVICE: 'success',
   };
   return roleMap[role] || 'default';
 };
 
 const getRoleLabel = (role: string) => {
   const roleMap: Record<string, string> = {
-    'SUPER_ADMIN': '超级管理员',
-    'ADMIN': '管理员',
-    'STAFF': '员工',
-    'CUSTOMER_SERVICE': '客服'
+    SUPER_ADMIN: '超级管理员',
+    ADMIN: '管理员',
+    STAFF: '员工',
+    CUSTOMER_SERVICE: '客服',
   };
   return roleMap[role] || role;
 };
@@ -398,26 +405,34 @@ const columns: DataTableColumns<BackofficeAccount> = [
     key: 'id',
     width: 80,
     render(row) {
-      return h('span', { style: 'color: #2080f0; cursor: pointer' }, String(row.id));
-    }
+      return h(
+        'span',
+        { style: 'color: #2080f0; cursor: pointer' },
+        String(row.id),
+      );
+    },
   },
   {
     title: '用户名',
     key: 'username',
     width: 150,
-    ellipsis: { tooltip: true }
+    ellipsis: { tooltip: true },
   },
   {
     title: '角色',
     key: 'role',
     width: 120,
     render(row) {
-      return h(NTag, { 
-        type: getRoleType(row.role) 
-      }, { 
-        default: () => getRoleLabel(row.role)
-      });
-    }
+      return h(
+        NTag,
+        {
+          type: getRoleType(row.role),
+        },
+        {
+          default: () => getRoleLabel(row.role),
+        },
+      );
+    },
   },
   {
     title: '状态',
@@ -427,9 +442,9 @@ const columns: DataTableColumns<BackofficeAccount> = [
       return h(NSwitch, {
         value: !row.isSuspended,
         disabled: true,
-        size: 'small'
+        size: 'small',
       });
-    }
+    },
   },
   {
     title: '创建时间',
@@ -437,7 +452,7 @@ const columns: DataTableColumns<BackofficeAccount> = [
     width: 160,
     render(row) {
       return formatDateTime(row.createdDate);
-    }
+    },
   },
   {
     title: '最后登录',
@@ -446,18 +461,24 @@ const columns: DataTableColumns<BackofficeAccount> = [
     render(row) {
       if (!row.lastLoginDate) return '从未登录';
       const formatted = formatDateTime(row.lastLoginDate);
-      return formatted === '无' || formatted === '无效日期' ? '从未登录' : formatted;
-    }
+      return formatted === '无' || formatted === '无效日期'
+        ? '从未登录'
+        : formatted;
+    },
   },
   {
     title: '登录失败次数',
     key: 'failedLoginAttempt',
     width: 120,
     render(row) {
-      return h('span', { 
-        style: row.failedLoginAttempt > 3 ? 'color: #f56565' : '' 
-      }, `${row.failedLoginAttempt} 次`);
-    }
+      return h(
+        'span',
+        {
+          style: row.failedLoginAttempt > 3 ? 'color: #f56565' : '',
+        },
+        `${row.failedLoginAttempt} 次`,
+      );
+    },
   },
   {
     title: '操作',
@@ -465,20 +486,27 @@ const columns: DataTableColumns<BackofficeAccount> = [
     width: 200,
     render(row) {
       return h('div', { class: 'flex gap-1' }, [
-        h(NButton, {
-          size: 'small',
-          type: 'primary',
-          onClick: () => handleViewDetail(row)
-        }, { default: () => '详情' }),
-        h(NButton, {
-          size: 'small',
-          type: 'info',
-          onClick: () => handleEditAccount(row)
-        }, { default: () => '编辑' }),
-        
+        h(
+          NButton,
+          {
+            size: 'small',
+            type: 'primary',
+            onClick: () => handleViewDetail(row),
+          },
+          { default: () => '详情' },
+        ),
+        h(
+          NButton,
+          {
+            size: 'small',
+            type: 'info',
+            onClick: () => handleEditAccount(row),
+          },
+          { default: () => '编辑' },
+        ),
       ]);
-    }
-  }
+    },
+  },
 ];
 
 // 事件处理函数
@@ -525,7 +553,7 @@ const clearSelection = () => {
 };
 
 const selectAll = () => {
-  checkedRowKeys.value = tableData.value.map(account => account.id);
+  checkedRowKeys.value = tableData.value.map((account) => account.id);
   message.success('已全选');
 };
 
@@ -560,16 +588,16 @@ const handleEditAccount = (account: BackofficeAccount) => {
 
 const handleSubmitEdit = async () => {
   if (!formRef.value) return;
-  
+
   try {
     await formRef.value.validate();
-    
+
     if (editMode.value === 'add') {
       await createBackofficeAccountApi({
         username: editForm.username,
         password: editForm.password,
         role: editForm.role,
-        status: editForm.isSuspended ? 0 : 1
+        status: editForm.isSuspended ? 0 : 1,
       });
       message.success('账号创建成功');
     } else {
@@ -577,12 +605,12 @@ const handleSubmitEdit = async () => {
       if (currentAccount.value) {
         await updateBackofficeAccountApi(currentAccount.value.id, {
           role: editForm.role,
-          isSuspended: editForm.isSuspended
+          isSuspended: editForm.isSuspended,
         });
         message.success('账号更新成功');
       }
     }
-    
+
     showEditModal.value = false;
     loadTableData();
   } catch (error) {
@@ -621,21 +649,23 @@ const handleToggleStatus = async (account: BackofficeAccount) => {
 };
 
 const handleBulkDelete = async (selectedRows?: BackofficeAccount[]) => {
-  const accountsToDelete = selectedRows || tableData.value.filter(account => 
-    checkedRowKeys.value.includes(account.id)
-  );
-  
+  const accountsToDelete =
+    selectedRows ||
+    tableData.value.filter((account) =>
+      checkedRowKeys.value.includes(account.id),
+    );
+
   if (accountsToDelete.length === 0) {
     message.warning('请选择要删除的账号');
     return;
   }
-  
+
   try {
     // Delete accounts one by one since no bulk delete endpoint exists
-    const promises = accountsToDelete.map(account => 
-      deleteBackofficeAccountApi(Number(account.id))
+    const promises = accountsToDelete.map((account) =>
+      deleteBackofficeAccountApi(Number(account.id)),
     );
-    
+
     await Promise.all(promises);
     message.success(`成功删除 ${accountsToDelete.length} 个账号`);
     checkedRowKeys.value = [];
@@ -657,7 +687,7 @@ const loadTableData = async () => {
       role: filterForm.role || undefined,
       status: filterForm.status || undefined,
       sortBy: 'createdDate',
-      sortOrder: 'desc'
+      sortOrder: 'desc',
     };
 
     const response = await getBackofficeAccountsApi(params);
@@ -675,4 +705,4 @@ const loadTableData = async () => {
 onMounted(() => {
   loadTableData();
 });
-</script> 
+</script>

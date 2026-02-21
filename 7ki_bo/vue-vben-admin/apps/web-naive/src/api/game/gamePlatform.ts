@@ -66,14 +66,21 @@ export interface UpdateGamePlatformParams extends CreateGamePlatformParams {
 }
 
 export interface ToggleGamePlatformParams {
-  field: 'isHot' | 'isFeatured' | 'showToStreamer' | 'isEnabled' | 'streamerVisible';
+  field:
+    | 'isEnabled'
+    | 'isFeatured'
+    | 'isHot'
+    | 'showToStreamer'
+    | 'streamerVisible';
   value: boolean;
 }
 
 /**
  * Get game platforms list with pagination and filters
  */
-export async function getGamePlatformList(params?: GamePlatformListParams): Promise<GamePlatformListResponse> {
+export async function getGamePlatformList(
+  params?: GamePlatformListParams,
+): Promise<GamePlatformListResponse> {
   return requestClient.get('/game-platforms', {
     params,
   });
@@ -82,21 +89,27 @@ export async function getGamePlatformList(params?: GamePlatformListParams): Prom
 /**
  * Get game platform by ID
  */
-export async function getGamePlatformById(id: number): Promise<GamePlatformRecord> {
+export async function getGamePlatformById(
+  id: number,
+): Promise<GamePlatformRecord> {
   return requestClient.get(`/game-platforms/${id}`);
 }
 
 /**
  * Create new game platform
  */
-export async function createGamePlatform(data: CreateGamePlatformParams): Promise<GamePlatformRecord> {
+export async function createGamePlatform(
+  data: CreateGamePlatformParams,
+): Promise<GamePlatformRecord> {
   return requestClient.post('/game-platforms', data);
 }
 
 /**
  * Update game platform
  */
-export async function updateGamePlatform(data: UpdateGamePlatformParams): Promise<GamePlatformRecord> {
+export async function updateGamePlatform(
+  data: UpdateGamePlatformParams,
+): Promise<GamePlatformRecord> {
   const { id, ...updateData } = data;
   return requestClient.put(`/game-platforms/${id}`, updateData);
 }
@@ -104,8 +117,11 @@ export async function updateGamePlatform(data: UpdateGamePlatformParams): Promis
 /**
  * Toggle game platform status (hot, featured, enabled, etc.)
  */
-export async function toggleGamePlatformStatus(id: number, data: ToggleGamePlatformParams): Promise<GamePlatformRecord> {
-   //@ts-ignore
+export async function toggleGamePlatformStatus(
+  id: number,
+  data: ToggleGamePlatformParams,
+): Promise<GamePlatformRecord> {
+  // @ts-ignore
   return requestClient.patch(`/game-platforms/${id}/toggle`, data);
 }
 
@@ -113,8 +129,10 @@ export async function toggleGamePlatformStatus(id: number, data: ToggleGamePlatf
  * Set game platform to top position
  */
 
-export async function setGamePlatformTop(id: number): Promise<GamePlatformRecord> {
-   //@ts-ignore
+export async function setGamePlatformTop(
+  id: number,
+): Promise<GamePlatformRecord> {
+  // @ts-ignore
   return requestClient.patch(`/game-platforms/${id}/top`);
 }
 
@@ -138,4 +156,4 @@ export async function bulkDeleteGamePlatformsApi(ids: number[]): Promise<void> {
  */
 export async function getEnabledGamePlatforms(): Promise<GamePlatformRecord[]> {
   return requestClient.get('/game-platforms/enabled');
-} 
+}

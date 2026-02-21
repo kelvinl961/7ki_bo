@@ -4,6 +4,7 @@
  */
 
 import type { DataTableColumns } from 'naive-ui';
+
 import { useMessage } from 'naive-ui';
 
 /**
@@ -13,8 +14,8 @@ export interface ExportColumn {
   key: string;
   title: string;
   children?: ExportColumn[]; // For nested/grouped columns
-  render?: (row: any, rowIndex: number) => string | number; // Custom formatter
-  format?: 'number' | 'currency' | 'percentage' | 'date' | 'datetime'; // Auto formatting
+  render?: (row: any, rowIndex: number) => number | string; // Custom formatter
+  format?: 'currency' | 'date' | 'datetime' | 'number' | 'percentage'; // Auto formatting
   decimals?: number; // Decimal places for numbers
 }
 
@@ -25,7 +26,7 @@ export interface ExportOptions {
   filename?: string; // Custom filename (without extension)
   sheetName?: string; // Excel sheet name
   includeHeaders?: boolean; // Include column headers (default: true)
-  format?: 'xlsx' | 'csv' | 'json'; // Export format (default: xlsx)
+  format?: 'csv' | 'json' | 'xlsx'; // Export format (default: xlsx)
   dateFormat?: string; // Date format for date columns
   currencySymbol?: string; // Currency symbol (default: none)
 }
@@ -35,7 +36,7 @@ export interface ExportOptions {
  * Automatically extracts column information from Naive UI table columns
  */
 export function convertNaiveColumnsToExportColumns(
-  naiveColumns: DataTableColumns<any>
+  naiveColumns: DataTableColumns<any>,
 ): ExportColumn[] {
   const result: ExportColumn[] = [];
 
@@ -93,8 +94,8 @@ export function convertNaiveColumnsToExportColumns(
 function formatCellValue(
   value: any,
   column: ExportColumn,
-  options: ExportOptions
-): string | number {
+  options: ExportOptions,
+): number | string {
   if (value === null || value === undefined || value === '') return '';
 
   // Use custom render if provided
@@ -104,27 +105,33 @@ function formatCellValue(
 
   // Auto formatting based on format type
   switch (column.format) {
-    case 'number':
-      const decimals = column.decimals ?? 0;
-      return Number(value).toFixed(decimals);
-
-    case 'currency':
+    case 'currency': {
       const currencyDecimals = column.decimals ?? 2;
       const symbol = options.currencySymbol || '';
       return `${symbol}${Number(value).toFixed(currencyDecimals)}`;
+    }
 
-    case 'percentage':
+    case 'date': {
+      return new Date(value).toLocaleDateString('zh-CN');
+    }
+
+    case 'datetime': {
+      return new Date(value).toLocaleString('zh-CN');
+    }
+
+    case 'number': {
+      const decimals = column.decimals ?? 0;
+      return Number(value).toFixed(decimals);
+    }
+
+    case 'percentage': {
       const percentDecimals = column.decimals ?? 2;
       return `${(Number(value) * 100).toFixed(percentDecimals)}%`;
+    }
 
-    case 'date':
-      return new Date(value).toLocaleDateString('zh-CN');
-
-    case 'datetime':
-      return new Date(value).toLocaleString('zh-CN');
-
-    default:
+    default: {
       return value;
+    }
   }
 }
 
@@ -158,11 +165,11 @@ function flattenColumns(columns: ExportColumn[]): ExportColumn[] {
  */
 function extractValue(row: any, key: string): any {
   if (!key) return '';
-  
+
   // Support nested keys like 'user.name'
   const keys = key.split('.');
   let value = row;
-  
+
   for (const k of keys) {
     if (value && typeof value === 'object') {
       value = value[k];
@@ -170,21 +177,21 @@ function extractValue(row: any, key: string): any {
       return '';
     }
   }
-  
+
   return value;
 }
 
 /**
  * Main export function - exports grid data to Excel/CSV/JSON
- * 
+ *
  * @param columns - Array of column definitions (can be Naive UI columns or ExportColumns)
  * @param data - Array of data rows
  * @param options - Export options (filename, format, etc.)
- * 
+ *
  * @example
  * // Simple usage with Naive UI columns
  * exportGridData(tableColumns, tableData, { filename: 'my-report' });
- * 
+ *
  * // With custom columns
  * exportGridData([
  *   { key: 'id', title: 'ID' },
@@ -193,9 +200,9 @@ function extractValue(row: any, key: string): any {
  * ], data, { filename: 'users' });
  */
 export async function exportGridData(
-  columns: ExportColumn[] | DataTableColumns<any>,
+  columns: DataTableColumns<any> | ExportColumn[],
   data: any[],
-  options: ExportOptions = {}
+  options: ExportOptions = {},
 ): Promise<void> {
   const message = useMessage();
 
@@ -228,29 +235,42 @@ export async function exportGridData(
     // Prepare data rows
     const exportData = data.map((row, rowIndex) => {
       const exportRow: any = {};
-      
+
       for (const col of flatColumns) {
         const rawValue = extractValue(row, col.key);
         const formattedValue = formatCellValue(rawValue, col, options);
         exportRow[col.title] = formattedValue;
       }
-      
+
       return exportRow;
     });
 
     // Export based on format
-    if (format === 'xlsx') {
-      await exportToExcel(exportData, filename, sheetName);
-    } else if (format === 'csv') {
-      exportToCSV(exportData, filename);
-    } else if (format === 'json') {
-      exportToJSON(exportData, filename);
+    switch (format) {
+      case 'csv': {
+        exportToCSV(exportData, filename);
+
+        break;
+      }
+      case 'json': {
+        exportToJSON(exportData, filename);
+
+        break;
+      }
+      case 'xlsx': {
+        await exportToExcel(exportData, filename, sheetName);
+
+        break;
+      }
+      // No default
     }
 
     message.success(`导出成功！共 ${data.length} 条记录`);
   } catch (error) {
     console.error('Export error:', error);
-    message.error('导出失败: ' + (error instanceof Error ? error.message : '未知错误'));
+    message.error(
+      `导出失败: ${error instanceof Error ? error.message : '未知错误'}`,
+    );
   }
 }
 
@@ -268,27 +288,28 @@ function isNaiveUIColumns(columns: any): boolean {
 async function exportToExcel(
   data: any[],
   filename: string,
-  sheetName: string
+  sheetName: string,
 ): Promise<void> {
   // Dynamically import xlsx to reduce bundle size
   const XLSX = await import('xlsx');
-  
+
   // Create worksheet from data
   const ws = XLSX.utils.json_to_sheet(data);
-  
+
   // Auto-size columns (optional - makes it look better)
-  const colWidths = Object.keys(data[0] || {}).map(key => ({
-    wch: Math.max(
-      key.length,
-      ...data.map(row => String(row[key] || '').length)
-    ) + 2
+  const colWidths = Object.keys(data[0] || {}).map((key) => ({
+    wch:
+      Math.max(
+        key.length,
+        ...data.map((row) => String(row[key] || '').length),
+      ) + 2,
   }));
   ws['!cols'] = colWidths;
-  
+
   // Create workbook
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, sheetName);
-  
+
   // Write file
   XLSX.writeFile(wb, `${filename}.xlsx`);
 }
@@ -301,25 +322,33 @@ function exportToCSV(data: any[], filename: string): void {
 
   // Get headers
   const headers = Object.keys(data[0]);
-  
+
   // Create CSV content
   const csvContent = [
     headers.join(','), // Header row
-    ...data.map(row =>
-      headers.map(header => {
-        const value = row[header];
-        // Escape values containing commas or quotes
-        const stringValue = String(value || '');
-        if (stringValue.includes(',') || stringValue.includes('"') || stringValue.includes('\n')) {
-          return `"${stringValue.replace(/"/g, '""')}"`;
-        }
-        return stringValue;
-      }).join(',')
-    )
+    ...data.map((row) =>
+      headers
+        .map((header) => {
+          const value = row[header];
+          // Escape values containing commas or quotes
+          const stringValue = String(value || '');
+          if (
+            stringValue.includes(',') ||
+            stringValue.includes('"') ||
+            stringValue.includes('\n')
+          ) {
+            return `"${stringValue.replaceAll('"', '""')}"`;
+          }
+          return stringValue;
+        })
+        .join(','),
+    ),
   ].join('\n');
 
   // Create blob and download
-  const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const blob = new Blob([`\uFEFF${csvContent}`], {
+    type: 'text/csv;charset=utf-8;',
+  });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
   link.download = `${filename}.csv`;
@@ -343,14 +372,14 @@ function exportToJSON(data: any[], filename: string): void {
 /**
  * Quick export function for Naive UI tables
  * Automatically uses the table's columns and data
- * 
+ *
  * @example
  * <n-button @click="quickExport(columns, data, 'my-report')">导出</n-button>
  */
 export function quickExport(
   columns: DataTableColumns<any>,
   data: any[],
-  filename: string
+  filename: string,
 ): Promise<void> {
   return exportGridData(columns, data, { filename });
 }
@@ -358,7 +387,7 @@ export function quickExport(
 /**
  * Export with custom column mapping
  * Useful when you want to export specific columns with custom titles
- * 
+ *
  * @example
  * exportWithMapping(data, {
  *   'id': '用户ID',
@@ -370,13 +399,14 @@ export async function exportWithMapping(
   data: any[],
   columnMapping: Record<string, string>,
   filename: string,
-  options: ExportOptions = {}
+  options: ExportOptions = {},
 ): Promise<void> {
-  const columns: ExportColumn[] = Object.entries(columnMapping).map(([key, title]) => ({
-    key,
-    title,
-  }));
+  const columns: ExportColumn[] = Object.entries(columnMapping).map(
+    ([key, title]) => ({
+      key,
+      title,
+    }),
+  );
 
   return exportGridData(columns, data, { ...options, filename });
 }
-

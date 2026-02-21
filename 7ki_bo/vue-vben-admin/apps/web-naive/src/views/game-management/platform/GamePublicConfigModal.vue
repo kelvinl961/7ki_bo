@@ -15,7 +15,10 @@
             <!-- 返回大厅按钮 -->
             <div class="setting-row">
               <div class="setting-label">返回大厅按钮</div>
-              <n-radio-group v-model:value="config.lobby_return_mode" class="setting-control">
+              <n-radio-group
+                v-model:value="config.lobby_return_mode"
+                class="setting-control"
+              >
                 <n-space>
                   <n-radio value="confirm">二次弹窗确认(默认)</n-radio>
                   <n-radio value="direct">直接返回</n-radio>
@@ -25,8 +28,13 @@
 
             <!-- 已首充才能进入游戏 -->
             <div class="setting-row">
-              <div class="setting-label">已首充才能进入游戏(未充值无法进入)</div>
-              <n-radio-group v-model:value="config.deposit_requirement" class="setting-control">
+              <div class="setting-label">
+                已首充才能进入游戏(未充值无法进入)
+              </div>
+              <n-radio-group
+                v-model:value="config.deposit_requirement"
+                class="setting-control"
+              >
                 <n-space>
                   <n-radio value="disabled">不限制(默认)</n-radio>
                   <n-radio value="enabled">开启</n-radio>
@@ -36,8 +44,13 @@
 
             <!-- 游戏名只显示一行 -->
             <div class="setting-row">
-              <div class="setting-label">游戏名只显示一行, 超过使用省略号展示</div>
-              <n-radio-group v-model:value="config.game_name_display" class="setting-control">
+              <div class="setting-label">
+                游戏名只显示一行, 超过使用省略号展示
+              </div>
+              <n-radio-group
+                v-model:value="config.game_name_display"
+                class="setting-control"
+              >
                 <n-space>
                   <n-radio value="multi_line">关闭(默认)</n-radio>
                   <n-radio value="single_line">开启</n-radio>
@@ -52,7 +65,10 @@
           <n-space vertical :size="16" class="pt-4">
             <div class="setting-row">
               <div class="setting-label">启用强制下载</div>
-              <n-switch v-model:value="config.force_download_enabled" class="setting-control" />
+              <n-switch
+                v-model:value="config.force_download_enabled"
+                class="setting-control"
+              />
             </div>
 
             <div class="setting-row">
@@ -62,7 +78,7 @@
                 placeholder="请输入APP下载链接"
                 :disabled="!config.force_download_enabled"
                 class="setting-control"
-                style="max-width: 500px;"
+                style="max-width: 500px"
               />
             </div>
           </n-space>
@@ -73,7 +89,10 @@
           <n-space vertical :size="16" class="pt-4">
             <div class="setting-row">
               <div class="setting-label">赔率模式</div>
-              <n-radio-group v-model:value="config.wg_sports_odds_mode" class="setting-control">
+              <n-radio-group
+                v-model:value="config.wg_sports_odds_mode"
+                class="setting-control"
+              >
                 <n-space vertical>
                   <n-radio value="standard">标准赔率</n-radio>
                   <n-radio value="custom">自定义赔率</n-radio>
@@ -81,7 +100,10 @@
               </n-radio-group>
             </div>
 
-            <div v-if="config.wg_sports_odds_mode === 'custom'" class="setting-row">
+            <div
+              v-if="config.wg_sports_odds_mode === 'custom'"
+              class="setting-row"
+            >
               <div class="setting-label">自定义赔率值</div>
               <n-input-number
                 v-model:value="config.wg_sports_odds_value"
@@ -90,7 +112,7 @@
                 :step="0.1"
                 placeholder="请输入赔率值"
                 class="setting-control"
-                style="width: 200px;"
+                style="width: 200px"
               />
             </div>
           </n-space>
@@ -122,10 +144,13 @@ import {
   NSwitch,
   NInput,
   NInputNumber,
-  useMessage
+  useMessage,
 } from 'naive-ui';
 import type { GamePublicConfig } from '#/api/gamePublicConfig';
-import { getGamePublicConfig, updateGamePublicConfig } from '#/api/gamePublicConfig';
+import {
+  getGamePublicConfig,
+  updateGamePublicConfig,
+} from '#/api/gamePublicConfig';
 
 const message = useMessage();
 
@@ -157,14 +182,17 @@ const handleUpdateShow = (value: boolean) => {
 };
 
 // Load config when modal opens
-watch(() => props.show, async (visible) => {
-  if (visible) {
-    await loadConfig();
-  } else {
-    // Reset to first tab when closed
-    activeTab.value = 'game-settings';
-  }
-});
+watch(
+  () => props.show,
+  async (visible) => {
+    if (visible) {
+      await loadConfig();
+    } else {
+      // Reset to first tab when closed
+      activeTab.value = 'game-settings';
+    }
+  },
+);
 
 const loadConfig = async () => {
   try {

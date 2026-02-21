@@ -2,9 +2,9 @@ import { requestClient } from '#/api/request';
 
 export interface AgentRebateSummary {
   agentId: number;
-  totalCommission: number;      // 累计佣金
-  claimedCommission: number;    // 累计领取
-  unclaimedCommission: number;  // 未领取
+  totalCommission: number; // 累计佣金
+  claimedCommission: number; // 累计领取
+  unclaimedCommission: number; // 未领取
   recordCount: number;
 }
 
@@ -27,17 +27,17 @@ export async function getAgentRebateSummariesApi(): Promise<AgentRebateSummaries
 export async function getAgentRebateHistoryApi(
   agentId: number,
   params?: {
-    startDate?: string;
     endDate?: string;
-  }
+    startDate?: string;
+  },
 ) {
   const query = new URLSearchParams();
   if (params?.startDate) query.append('startDate', params.startDate);
   if (params?.endDate) query.append('endDate', params.endDate);
-  
+
   const queryString = query.toString();
   const url = `/rebates/agents/${agentId}/history${queryString ? `?${queryString}` : ''}`;
-  
+
   return requestClient.get(url);
 }
 

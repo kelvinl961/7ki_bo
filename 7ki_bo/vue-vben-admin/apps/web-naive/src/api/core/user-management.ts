@@ -39,12 +39,12 @@ export interface UserListParams {
   pageSize?: number;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
-  
+
   // Time-based filters
   timeType?: string; // 'registrationTime' | 'lastLoginTime' | 'firstDepositTime'
   startDate?: string;
   endDate?: string;
-  
+
   // Search filters
   searchCondition?: string; // Search category (memberLevel, vipLevel, accountStatus, etc.)
   searchConditionValue?: string; // Value for search condition
@@ -52,7 +52,7 @@ export interface UserListParams {
   searchValue?: string; // Search value
   searchMode?: 'exact' | 'fuzzy'; // Search mode
   search?: string; // Legacy general search
-  
+
   // Status and type filters
   accountType?: string;
   accountStatus?: string;
@@ -60,7 +60,7 @@ export interface UserListParams {
   vipLevel?: string;
   registrationMethod?: string;
   currency?: string;
-  
+
   // Advanced filters
   minBalance?: number;
   maxBalance?: number;
@@ -99,9 +99,9 @@ export async function getUserListApi(params: UserListParams) {
   const response = await requestClient.get<any>('/users/', {
     params,
   });
-  
+
   console.log('🔍 [getUserListApi] Raw response:', response);
-  
+
   // Handle different response structures from requestClient
   // Backend returns: { code: 0, data: { list: [...], pagination: {...} } }
   // requestClient might return the full response or just the data part
@@ -109,7 +109,7 @@ export async function getUserListApi(params: UserListParams) {
     // If response has a data property, return that
     return response.data;
   }
-  
+
   // Otherwise return as-is
   return response;
 }
@@ -118,15 +118,21 @@ export async function getUserListApi(params: UserListParams) {
  * Update user status (ban/unban)
  */
 export async function updateUserStatusApi(userId: string, isBanned: boolean) {
-  return requestClient.put<ApiResponse<{ success: boolean }>>(`/users/${userId}/ban-status`, {
-    isBanned,
-  });
+  return requestClient.put<ApiResponse<{ success: boolean }>>(
+    `/users/${userId}/ban-status`,
+    {
+      isBanned,
+    },
+  );
 }
 
 /**
  * Update user information
  */
-export async function updateUserInfoApi(userId: string, data: Partial<UserItem>) {
+export async function updateUserInfoApi(
+  userId: string,
+  data: Partial<UserItem>,
+) {
   return requestClient.put<ApiResponse<UserItem>>(`/users/${userId}`, data);
 }
 
@@ -141,7 +147,9 @@ export async function getUserByIdApi(userId: string) {
  * Delete user
  */
 export async function deleteUserApi(userId: string) {
-  return requestClient.delete<ApiResponse<{ success: boolean }>>(`/users/${userId}`);
+  return requestClient.delete<ApiResponse<{ success: boolean }>>(
+    `/users/${userId}`,
+  );
 }
 
 /**
@@ -166,13 +174,16 @@ export interface UserSearchParams {
 export async function searchUsersApi(params: UserSearchParams) {
   console.log('🔍 searchUsersApi called with params:', params);
   try {
-    const response = await requestClient.get<ApiResponse<UserSearchItem[]>>('/users/search', {
-      params,
-    });
+    const response = await requestClient.get<ApiResponse<UserSearchItem[]>>(
+      '/users/search',
+      {
+        params,
+      },
+    );
     console.log('✅ searchUsersApi response:', response);
     return response;
   } catch (error) {
     console.error('❌ searchUsersApi error:', error);
     throw error;
   }
-} 
+}

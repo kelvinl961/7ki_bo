@@ -14,13 +14,13 @@
       </template>
 
       <!-- Loading State -->
-      <div v-if="loading" class="flex justify-center items-center py-20">
+      <div v-if="loading" class="flex items-center justify-center py-20">
         <n-spin size="large" />
         <span class="ml-4">加载中...</span>
       </div>
 
       <!-- Error State -->
-      <div v-else-if="error" class="text-center py-20">
+      <div v-else-if="error" class="py-20 text-center">
         <n-alert type="error" :title="error" />
         <n-button class="mt-4" @click="loadMediaFiles">重试</n-button>
       </div>
@@ -49,7 +49,9 @@
           </template>
 
           <div class="file-info">
-            <h3 class="file-name" :title="file.filename">{{ file.filename }}</h3>
+            <h3 class="file-name" :title="file.filename">
+              {{ file.filename }}
+            </h3>
             <div class="file-meta">
               <span class="file-size">{{ formatFileSize(file.size) }}</span>
               <span class="file-type">{{ file.type }}</span>
@@ -65,7 +67,9 @@
 
           <template #action>
             <div class="file-actions">
-              <n-button size="small" @click="copyFileUrl(file)">复制链接</n-button>
+              <n-button size="small" @click="copyFileUrl(file)"
+                >复制链接</n-button
+              >
               <n-button size="small" type="error" @click="deleteFile(file.id)">
                 删除
               </n-button>
@@ -75,7 +79,7 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else class="text-center py-20">
+      <div v-else class="py-20 text-center">
         <n-empty description="暂无媒体文件">
           <template #extra>
             <n-button type="primary">上传文件</n-button>
@@ -112,7 +116,11 @@ import {
   useMessage,
 } from 'naive-ui';
 import { Refresh as RefreshIcon } from '@vicons/ionicons5';
-import { getMediaFiles, deleteMediaFile, type MediaFile } from '#/api/mediaLibrary';
+import {
+  getMediaFiles,
+  deleteMediaFile,
+  type MediaFile,
+} from '#/api/mediaLibrary';
 
 defineOptions({
   name: 'MediaManagerIndex',
@@ -160,7 +168,8 @@ const loadMediaFiles = async () => {
           pagination.total = response.pagination.total || 0;
           pagination.totalPages = response.pagination.totalPages || 0;
           pagination.page = response.pagination.page || pagination.page;
-          pagination.pageSize = response.pagination.pageSize || pagination.pageSize;
+          pagination.pageSize =
+            response.pagination.pageSize || pagination.pageSize;
         }
         console.log('✅ Loaded media files:', mediaFiles.value.length);
       } else if (Array.isArray(response)) {
@@ -237,7 +246,7 @@ const formatFileSize = (bytes: number): string => {
   const k = 1024;
   const sizes = ['B', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+  return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
 };
 
 const formatDate = (dateString: string): string => {
@@ -274,7 +283,8 @@ const deleteFile = async (fileId: number) => {
 
 const handleImageError = (event: Event) => {
   const img = event.target as HTMLImageElement;
-  img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%23ddd" width="200" height="200"/%3E%3Ctext fill="%23999" font-family="sans-serif" font-size="14" dy="10.5" font-weight="bold" x="50%25" y="50%25" text-anchor="middle"%3E图片加载失败%3C/text%3E%3C/svg%3E';
+  img.src =
+    'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%23ddd" width="200" height="200"/%3E%3Ctext fill="%23999" font-family="sans-serif" font-size="14" dy="10.5" font-weight="bold" x="50%25" y="50%25" text-anchor="middle"%3E图片加载失败%3C/text%3E%3C/svg%3E';
 };
 
 onMounted(() => {
@@ -366,4 +376,3 @@ onMounted(() => {
   padding-top: 12px;
 }
 </style>
-

@@ -2,16 +2,12 @@
   <div class="activity-dashboard p-6">
     <!-- Header Section -->
     <div class="mb-6">
-      <div class="flex items-center justify-between mb-4">
+      <div class="mb-4 flex items-center justify-between">
         <div>
           <h1 class="text-2xl font-bold text-gray-800">活动中心</h1>
-          <p class="text-gray-600 mt-1">参与活动，赢取丰富奖励</p>
+          <p class="mt-1 text-gray-600">参与活动，赢取丰富奖励</p>
         </div>
-        <n-button 
-          type="primary" 
-          @click="refreshData"
-          :loading="loading"
-        >
+        <n-button type="primary" @click="refreshData" :loading="loading">
           <template #icon>
             <n-icon><Refresh /></n-icon>
           </template>
@@ -20,17 +16,23 @@
       </div>
 
       <!-- User Stats -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
         <n-card>
-          <n-statistic label="今日参与" :value="userStats.todayParticipations" />
+          <n-statistic
+            label="今日参与"
+            :value="userStats.todayParticipations"
+          />
         </n-card>
         <n-card>
-          <n-statistic label="总参与次数" :value="userStats.totalParticipations" />
+          <n-statistic
+            label="总参与次数"
+            :value="userStats.totalParticipations"
+          />
         </n-card>
         <n-card>
-          <n-statistic 
-            label="累计奖励" 
-            :value="userStats.totalRewardValue" 
+          <n-statistic
+            label="累计奖励"
+            :value="userStats.totalRewardValue"
             :formatter="formatCurrency"
           />
         </n-card>
@@ -71,12 +73,12 @@
     </div>
 
     <!-- Activity Cards Grid -->
-    <div v-if="loading" class="text-center py-8">
+    <div v-if="loading" class="py-8 text-center">
       <n-spin size="large" />
       <p class="mt-4 text-gray-500">加载活动数据中...</p>
     </div>
 
-    <div v-else-if="filteredActivities.length === 0" class="text-center py-12">
+    <div v-else-if="filteredActivities.length === 0" class="py-12 text-center">
       <n-empty description="暂无可参与的活动">
         <template #extra>
           <n-button @click="refreshData">重新加载</n-button>
@@ -84,37 +86,34 @@
       </n-empty>
     </div>
 
-    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div v-else class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
       <n-card
         v-for="activity in filteredActivities"
         :key="activity.id"
-        class="activity-card cursor-pointer hover:shadow-lg transition-shadow"
+        class="activity-card cursor-pointer transition-shadow hover:shadow-lg"
         @click="openActivityModal(activity)"
       >
         <!-- Activity Header -->
-        <div class="flex items-start justify-between mb-3">
+        <div class="mb-3 flex items-start justify-between">
           <div class="flex-1">
-            <h3 class="text-lg font-semibold text-gray-800 mb-1">
+            <h3 class="mb-1 text-lg font-semibold text-gray-800">
               {{ getActivityTitle(activity) }}
             </h3>
             <p class="text-sm text-gray-600">
               {{ getActivityDescription(activity) }}
             </p>
           </div>
-          <n-tag 
-            :type="getActivityStatusType(activity)"
-            size="small"
-          >
+          <n-tag :type="getActivityStatusType(activity)" size="small">
             {{ getActivityStatusText(activity) }}
           </n-tag>
         </div>
 
         <!-- Activity Progress -->
         <div v-if="activity.userStatus" class="mb-4">
-          <div class="flex items-center justify-between mb-2">
+          <div class="mb-2 flex items-center justify-between">
             <span class="text-sm text-gray-600">今日进度</span>
             <span class="text-sm font-medium">
-              {{ activity.userStatus.summary.claimedToday }} / 
+              {{ activity.userStatus.summary.claimedToday }} /
               {{ getMaxDailyClaims(activity) }}
             </span>
           </div>
@@ -126,7 +125,7 @@
         </div>
 
         <!-- Activity Stats -->
-        <div class="grid grid-cols-2 gap-4 mb-4">
+        <div class="mb-4 grid grid-cols-2 gap-4">
           <div class="text-center">
             <div class="text-lg font-semibold text-blue-600">
               {{ formatCurrency(getActivityReward(activity)) }}
@@ -162,17 +161,13 @@
           >
             {{ activity.userStatus.summary.reason || '暂不可领取' }}
           </n-button>
-          <n-button
-            v-else
-            block
-            @click.stop="openActivityModal(activity)"
-          >
+          <n-button v-else block @click.stop="openActivityModal(activity)">
             查看详情
           </n-button>
         </div>
 
         <!-- Time Info -->
-        <div v-if="activity.endsAt" class="mt-3 pt-3 border-t">
+        <div v-if="activity.endsAt" class="mt-3 border-t pt-3">
           <div class="flex items-center text-xs text-gray-500">
             <n-icon size="14" class="mr-1"><Time /></n-icon>
             <span>{{ getTimeRemaining(activity.endsAt) }}</span>
@@ -204,16 +199,18 @@
             <n-icon size="64" color="#52c41a">
               <CheckmarkCircle />
             </n-icon>
-            <h3 class="text-lg font-semibold mt-3 mb-2">领取成功！</h3>
+            <h3 class="mb-2 mt-3 text-lg font-semibold">领取成功！</h3>
             <p class="text-gray-600">
-              获得奖励：{{ formatCurrency(claimResult.data?.claim.amount || 0) }}
+              获得奖励：{{
+                formatCurrency(claimResult.data?.claim.amount || 0)
+              }}
             </p>
           </div>
           <div v-else class="mb-4">
             <n-icon size="64" color="#f5222d">
               <CloseCircle />
             </n-icon>
-            <h3 class="text-lg font-semibold mt-3 mb-2">领取失败</h3>
+            <h3 class="mb-2 mt-3 text-lg font-semibold">领取失败</h3>
             <p class="text-gray-600">{{ claimResult?.error || '未知错误' }}</p>
           </div>
         </div>
@@ -244,12 +241,12 @@ import {
   useMessage,
   useDialog,
 } from 'naive-ui';
-import { 
-  Refresh, 
-  Gift, 
-  Time, 
-  CheckmarkCircle, 
-  CloseCircle 
+import {
+  Refresh,
+  Gift,
+  Time,
+  CheckmarkCircle,
+  CloseCircle,
 } from '@vicons/ionicons5';
 import {
   getActiveActivities,
@@ -262,7 +259,9 @@ import {
 } from '#/api/activityClaim';
 // ✅ PERFORMANCE FIX: Lazy load modal components - they only load when modals are opened
 import { defineAsyncComponent } from 'vue';
-const ActivityDetailModal = defineAsyncComponent(() => import('./components/ActivityDetailModal.vue'));
+const ActivityDetailModal = defineAsyncComponent(
+  () => import('./components/ActivityDetailModal.vue'),
+);
 
 // Reactive Data
 const loading = ref(false);
@@ -271,7 +270,7 @@ const userStats = reactive({
   todayParticipations: 0,
   totalParticipations: 0,
   totalRewardValue: 0,
-  recentActivities: []
+  recentActivities: [],
 });
 
 const filters = reactive({
@@ -284,7 +283,11 @@ const showDetailModal = ref(false);
 const selectedActivity = ref<UserActivity | null>(null);
 const claimingActivities = ref<Set<string>>(new Set());
 const showClaimResult = ref(false);
-const claimResult = ref<{ success: boolean; data?: ClaimResponse; error?: string } | null>(null);
+const claimResult = ref<{
+  success: boolean;
+  data?: ClaimResponse;
+  error?: string;
+} | null>(null);
 
 const message = useMessage();
 const dialog = useDialog();
@@ -294,13 +297,18 @@ let refreshInterval: NodeJS.Timeout | null = null;
 
 // Computed Properties
 const filteredActivities = computed(() => {
-  return activities.value.filter(activity => {
+  return activities.value.filter((activity) => {
     if (filters.type && activity.type !== filters.type) return false;
-    if (filters.category && activity.category !== filters.category) return false;
+    if (filters.category && activity.category !== filters.category)
+      return false;
     if (filters.status) {
       const eligible = activity.userStatus?.summary.eligible;
       if (filters.status === 'eligible' && !eligible) return false;
-      if (filters.status === 'claimed' && (eligible !== false || !activity.userStatus?.summary.claimedToday)) return false;
+      if (
+        filters.status === 'claimed' &&
+        (eligible !== false || !activity.userStatus?.summary.claimedToday)
+      )
+        return false;
       if (filters.status === 'locked' && eligible !== false) return false;
     }
     return true;
@@ -308,7 +316,7 @@ const filteredActivities = computed(() => {
 });
 
 const availableRewards = computed(() => {
-  return activities.value.filter(activity => canClaim(activity)).length;
+  return activities.value.filter((activity) => canClaim(activity)).length;
 });
 
 // Options for filters
@@ -340,11 +348,11 @@ const loadActivities = async () => {
   try {
     loading.value = true;
     const response = await getActiveActivities({
-      currency: 'BRL'
+      currency: 'BRL',
     });
-    
+
     activities.value = response.data || [];
-    
+
     // Load status for each activity
     await Promise.all(
       activities.value.map(async (activity) => {
@@ -352,9 +360,12 @@ const loadActivities = async () => {
           const statusResponse = await getActivityStatus(activity.id);
           activity.userStatus = statusResponse.data;
         } catch (error) {
-          console.warn(`Failed to load status for activity ${activity.id}:`, error);
+          console.warn(
+            `Failed to load status for activity ${activity.id}:`,
+            error,
+          );
         }
-      })
+      }),
     );
   } catch (error) {
     console.error('Failed to load activities:', error);
@@ -374,10 +385,7 @@ const loadUserStats = async () => {
 };
 
 const refreshData = async () => {
-  await Promise.all([
-    loadActivities(),
-    loadUserStats()
-  ]);
+  await Promise.all([loadActivities(), loadUserStats()]);
 };
 
 const handleFilterChange = () => {
@@ -392,37 +400,41 @@ const openActivityModal = (activity: UserActivity) => {
 const canClaim = (activity: UserActivity): boolean => {
   const status = activity.userStatus;
   if (!status) return false;
-  
-  return status.summary.eligible && 
-         status.units.some(unit => unit.state === 'eligible');
+
+  return (
+    status.summary.eligible &&
+    status.units.some((unit) => unit.state === 'eligible')
+  );
 };
 
 const quickClaim = async (activity: UserActivity) => {
   if (claimingActivities.value.has(activity.id)) return;
-  
+
   try {
     claimingActivities.value.add(activity.id);
-    
+
     // Find the first eligible unit
-    const eligibleUnit = activity.userStatus?.units.find(unit => unit.state === 'eligible');
-    
+    const eligibleUnit = activity.userStatus?.units.find(
+      (unit) => unit.state === 'eligible',
+    );
+
     const response = await claimActivityReward(activity.id, {
-      unitKey: eligibleUnit?.unitKey
+      unitKey: eligibleUnit?.unitKey,
     });
-    
+
     claimResult.value = { success: true, data: response.data };
     showClaimResult.value = true;
-    
+
     // Refresh activity status
     await refreshActivityStatus(activity.id);
     await loadUserStats();
-    
+
     message.success('奖励领取成功！');
   } catch (error) {
     console.error('Claim failed:', error);
-    claimResult.value = { 
-      success: false, 
-      error: error instanceof Error ? error.message : '领取失败' 
+    claimResult.value = {
+      success: false,
+      error: error instanceof Error ? error.message : '领取失败',
     };
     showClaimResult.value = true;
   } finally {
@@ -431,13 +443,13 @@ const quickClaim = async (activity: UserActivity) => {
 };
 
 const handleClaimFromModal = async (activityId: string, unitKey?: string) => {
-  await quickClaim(activities.value.find(a => a.id === activityId)!);
+  await quickClaim(activities.value.find((a) => a.id === activityId)!);
   showDetailModal.value = false;
 };
 
 const refreshActivityStatus = async (activityId: string) => {
   try {
-    const activity = activities.value.find(a => a.id === activityId);
+    const activity = activities.value.find((a) => a.id === activityId);
     if (activity) {
       const statusResponse = await getActivityStatus(activityId);
       activity.userStatus = statusResponse.data;
@@ -449,12 +461,14 @@ const refreshActivityStatus = async (activityId: string) => {
 
 // Helper Functions
 const getActivityTitle = (activity: UserActivity): string => {
-  const locale = activity.locales.find(l => l.locale === 'zh-CN') || activity.locales[0];
+  const locale =
+    activity.locales.find((l) => l.locale === 'zh-CN') || activity.locales[0];
   return locale?.title || activity.type;
 };
 
 const getActivityDescription = (activity: UserActivity): string => {
-  const locale = activity.locales.find(l => l.locale === 'zh-CN') || activity.locales[0];
+  const locale =
+    activity.locales.find((l) => l.locale === 'zh-CN') || activity.locales[0];
   return locale?.description || locale?.subtitle || '';
 };
 
@@ -493,7 +507,7 @@ const getProgressColor = (activity: UserActivity): string => {
 
 const getActivityReward = (activity: UserActivity): number => {
   const units = activity.userStatus?.units || [];
-  const eligibleUnit = units.find(unit => unit.state === 'eligible');
+  const eligibleUnit = units.find((unit) => unit.state === 'eligible');
   return eligibleUnit?.reward?.amount || 0;
 };
 
@@ -501,12 +515,12 @@ const getTimeRemaining = (endTime: string): string => {
   const end = new Date(endTime);
   const now = new Date();
   const diff = end.getTime() - now.getTime();
-  
+
   if (diff <= 0) return '已结束';
-  
+
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
   const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  
+
   if (days > 0) return `剩余 ${days} 天 ${hours} 小时`;
   return `剩余 ${hours} 小时`;
 };
@@ -518,11 +532,14 @@ const formatCurrency = (amount: number): string => {
 // Lifecycle
 onMounted(() => {
   refreshData();
-  
+
   // Auto refresh every 5 minutes
-  refreshInterval = setInterval(() => {
-    refreshData();
-  }, 5 * 60 * 1000);
+  refreshInterval = setInterval(
+    () => {
+      refreshData();
+    },
+    5 * 60 * 1000,
+  );
 });
 
 onUnmounted(() => {

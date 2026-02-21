@@ -16,7 +16,7 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'MediaLibraryIndex',
         path: '',
-        //@ts-ignore
+        // @ts-ignore
         component: () => import('#/views/media-library/index.vue'),
         meta: {
           title: '媒体库',

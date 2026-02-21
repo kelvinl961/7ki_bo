@@ -1,5 +1,5 @@
 import { requestClient } from '#/api/request';
-import { requestQueue, REQUEST_PRIORITY } from '#/api/request-queue';
+import { REQUEST_PRIORITY, requestQueue } from '#/api/request-queue';
 
 export interface GamePlatformItem {
   id: number;
@@ -14,13 +14,13 @@ export interface GamePlatformItem {
   streamerVisible: boolean;
   subGameCount: number;
   minEntryAmount: number;
-  imageUrl: string | null;
-  logoUrl: string | null;
-  remark: string | null;
+  imageUrl: null | string;
+  logoUrl: null | string;
+  remark: null | string;
   sortOrder: number;
   createdAt: string;
   updatedAt: string;
-  creatorId: number | null;
+  creatorId: null | number;
 }
 
 export interface GamePlatformListParams {
@@ -78,7 +78,12 @@ export interface UpdateGamePlatformParams {
 }
 
 export interface TogglePlatformParams {
-  field: 'isHot' | 'isFeatured' | 'isEnabled' | 'showToStreamer' | 'streamerVisible';
+  field:
+    | 'isEnabled'
+    | 'isFeatured'
+    | 'isHot'
+    | 'showToStreamer'
+    | 'streamerVisible';
   value: boolean;
 }
 
@@ -88,14 +93,18 @@ export interface TogglePlatformParams {
  */
 export async function getGamePlatformListApi(params: GamePlatformListParams) {
   // Use request queue for non-critical requests to prevent queueing delays
-  const priority = params.page === 1 && params.pageSize === 20 
-    ? REQUEST_PRIORITY.HIGH  // Main table data = high priority
-    : REQUEST_PRIORITY.NORMAL; // Other requests = normal priority
-  
+  const priority =
+    params.page === 1 && params.pageSize === 20
+      ? REQUEST_PRIORITY.HIGH // Main table data = high priority
+      : REQUEST_PRIORITY.NORMAL; // Other requests = normal priority
+
   return requestQueue.enqueue(
-    () => requestClient.get<GamePlatformListResponse>('/game-platforms', { params }),
+    () =>
+      requestClient.get<GamePlatformListResponse>('/game-platforms', {
+        params,
+      }),
     priority,
-    `game-platforms-${JSON.stringify(params)}` // Deduplicate identical requests
+    `game-platforms-${JSON.stringify(params)}`, // Deduplicate identical requests
   );
 }
 
@@ -109,7 +118,10 @@ export async function createGamePlatformApi(data: CreateGamePlatformParams) {
 /**
  * Update game platform
  */
-export async function updateGamePlatformApi(id: number, data: UpdateGamePlatformParams) {
+export async function updateGamePlatformApi(
+  id: number,
+  data: UpdateGamePlatformParams,
+) {
   return requestClient.put<GamePlatformItem>(`/game-platforms/${id}`, data);
 }
 
@@ -130,25 +142,33 @@ export async function getGamePlatformByIdApi(id: number) {
 /**
  * Toggle platform status/settings
  */
-export async function toggleGamePlatformApi(id: number, data: TogglePlatformParams) {
-   //@ts-ignore
-    return requestClient.put<GamePlatformItem>(`/game-platforms/${id}/toggle`, data);
+export async function toggleGamePlatformApi(
+  id: number,
+  data: TogglePlatformParams,
+) {
+  // @ts-ignore
+  return requestClient.put<GamePlatformItem>(
+    `/game-platforms/${id}/toggle`,
+    data,
+  );
 }
 
 /**
  * Set platform to top
  */
 export async function setGamePlatformTopApi(id: number) {
-  //@ts-ignore
-    return requestClient.put<GamePlatformItem>(`/game-platforms/${id}/top`);
+  // @ts-ignore
+  return requestClient.put<GamePlatformItem>(`/game-platforms/${id}/top`);
 }
 
 /**
  * Update platform remark
  */
 export async function updateGamePlatformRemarkApi(id: number, remark: string) {
-   //@ts-ignore
-    return requestClient.put<GamePlatformItem>(`/game-platforms/${id}/remark`, { remark });
+  // @ts-ignore
+  return requestClient.put<GamePlatformItem>(`/game-platforms/${id}/remark`, {
+    remark,
+  });
 }
 
 /**
@@ -164,10 +184,14 @@ export async function bulkDeleteGamePlatformsApi(ids: number[]) {
 export async function uploadPlatformImageApi(platformId: number, file: File) {
   const formData = new FormData();
   formData.append('image', file);
-  
-  return requestClient.post(`/game-platforms/${platformId}/upload-image`, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
+
+  return requestClient.post(
+    `/game-platforms/${platformId}/upload-image`,
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     },
-  });
-} 
+  );
+}

@@ -1,7 +1,7 @@
 /**
  * API Cache Helper
  * Provides helper functions to check and use IndexedDB cache before making API calls
- * 
+ *
  * Benefits:
  * - Faster page loads (instant cache hits)
  * - Reduced server load
@@ -17,11 +17,11 @@ import { indexedDBCache } from './indexedDBCache';
 export async function getCachedResponse<T>(
   url: string,
   method: string = 'GET',
-  params?: any
-): Promise<T | null> {
+  params?: any,
+): Promise<null | T> {
   try {
     return await indexedDBCache.get<T>(url, method, params);
-  } catch (error) {
+  } catch {
     return null;
   }
 }
@@ -34,11 +34,11 @@ export async function cacheResponse<T>(
   data: T,
   method: string = 'GET',
   params?: any,
-  ttl?: number
+  ttl?: number,
 ): Promise<void> {
   try {
     await indexedDBCache.set(url, data, method, params, ttl);
-  } catch (error) {
+  } catch {
     // Silently fail
   }
 }
@@ -53,10 +53,10 @@ export async function cachedApiCall<T>(
   method: string = 'GET',
   params?: any,
   options?: {
-    useCache?: boolean;
-    ttl?: number;
     forceRefresh?: boolean;
-  }
+    ttl?: number;
+    useCache?: boolean;
+  },
 ): Promise<T> {
   const { useCache = true, ttl, forceRefresh = false } = options || {};
 
@@ -87,7 +87,7 @@ export async function clearCachePattern(pattern: string): Promise<void> {
   // For now, just clear all cache (can be optimized later)
   try {
     await indexedDBCache.clearAll();
-  } catch (error) {
+  } catch {
     // Silently fail
   }
 }
@@ -101,8 +101,7 @@ export async function getCacheStats(): Promise<{
   try {
     const entryCount = await indexedDBCache.getSize();
     return { entryCount };
-  } catch (error) {
+  } catch {
     return { entryCount: 0 };
   }
 }
-

@@ -15,8 +15,8 @@ export interface ThirdPartyChannel {
   minAmount?: number;
   maxAmount?: number;
   channelLimit: {
-    min: number;
     max: number;
+    min: number;
   };
   bonusRate: number;
   terminal: string[];
@@ -51,13 +51,13 @@ export interface ThirdPartyChannelListParams {
 export interface ThirdPartyChannelListResponse {
   success: boolean;
   data: {
-    records: ThirdPartyChannel[];
     pagination: {
-      total: number;
-      page: number;
       limit: number;
+      page: number;
+      total: number;
       totalPages: number;
     };
+    records: ThirdPartyChannel[];
   };
   message?: string;
 }
@@ -71,24 +71,38 @@ export interface ApiResponse<T> {
 /**
  * Get third-party channels list
  */
-export async function getThirdPartyChannelList(params: ThirdPartyChannelListParams) {
-  return requestClient.get<ThirdPartyChannelListResponse>('/third-party-channels', {
-    params,
-  });
+export async function getThirdPartyChannelList(
+  params: ThirdPartyChannelListParams,
+) {
+  return requestClient.get<ThirdPartyChannelListResponse>(
+    '/third-party-channels',
+    {
+      params,
+    },
+  );
 }
 
 /**
  * Create third-party channel
  */
 export async function createThirdPartyChannel(data: ThirdPartyChannel) {
-  return requestClient.post<ApiResponse<ThirdPartyChannel>>('/third-party-channels', data);
+  return requestClient.post<ApiResponse<ThirdPartyChannel>>(
+    '/third-party-channels',
+    data,
+  );
 }
 
 /**
  * Update third-party channel
  */
-export async function updateThirdPartyChannel(id: string, data: ThirdPartyChannel) {
-  return requestClient.put<ApiResponse<ThirdPartyChannel>>(`/third-party-channels/${id}`, data);
+export async function updateThirdPartyChannel(
+  id: string,
+  data: ThirdPartyChannel,
+) {
+  return requestClient.put<ApiResponse<ThirdPartyChannel>>(
+    `/third-party-channels/${id}`,
+    data,
+  );
 }
 
 /**
@@ -102,35 +116,48 @@ export async function deleteThirdPartyChannel(id: string) {
  * Update bonus rate for channel
  */
 export async function updateChannelBonusRate(id: string, bonusRate: number) {
-  return requestClient.put<ApiResponse<any>>(`/third-party-channels/${id}/bonus-rate`, {
-    bonusRate,
-  });
+  return requestClient.put<ApiResponse<any>>(
+    `/third-party-channels/${id}/bonus-rate`,
+    {
+      bonusRate,
+    },
+  );
 }
 
 /**
  * Get channel statistics
  */
-export async function getChannelStatistics(params: ThirdPartyChannelListParams) {
-  return requestClient.get<ApiResponse<any>>('/third-party-channels/statistics', {
-    params,
-  });
+export async function getChannelStatistics(
+  params: ThirdPartyChannelListParams,
+) {
+  return requestClient.get<ApiResponse<any>>(
+    '/third-party-channels/statistics',
+    {
+      params,
+    },
+  );
 }
 
 /**
  * Test channel connection
  */
 export async function testChannelConnection(id: string) {
-  return requestClient.post<ApiResponse<any>>(`/third-party-channels/${id}/test-connection`);
+  return requestClient.post<ApiResponse<any>>(
+    `/third-party-channels/${id}/test-connection`,
+  );
 }
 
 /**
  * Enable/disable channel
  */
 export async function toggleChannelStatus(id: string, enabled: boolean) {
-  return requestClient.request<ApiResponse<any>>(`/third-party-channels/${id}/toggle-status`, {
-    method: 'PATCH',
-    data: { enabled },
-  });
+  return requestClient.request<ApiResponse<any>>(
+    `/third-party-channels/${id}/toggle-status`,
+    {
+      method: 'PATCH',
+      data: { enabled },
+    },
+  );
 }
 
 const thirdPartyChannelApi = {
@@ -144,4 +171,4 @@ const thirdPartyChannelApi = {
   toggleStatus: toggleChannelStatus,
 };
 
-export default thirdPartyChannelApi; 
+export default thirdPartyChannelApi;

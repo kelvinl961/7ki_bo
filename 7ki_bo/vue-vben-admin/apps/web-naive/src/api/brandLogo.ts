@@ -6,7 +6,7 @@ export interface BrandLogoSetting {
   isEnabled: boolean;
   brandName?: string;
   webTitle?: string;
-  logoClickType?: 'homepage' | 'custom';
+  logoClickType?: 'custom' | 'homepage';
   logoClickUrl?: string;
   enableSkeleton?: boolean;
   loginImage?: string;
@@ -44,7 +44,7 @@ export interface BrandLogoSettingCreateRequest {
   isEnabled?: boolean;
   brandName?: string;
   webTitle?: string;
-  logoClickType?: 'homepage' | 'custom';
+  logoClickType?: 'custom' | 'homepage';
   logoClickUrl?: string;
   enableSkeleton?: boolean;
   loginImage?: string;
@@ -67,7 +67,8 @@ export interface BrandLogoSettingCreateRequest {
   operator?: string;
 }
 
-export interface BrandLogoSettingUpdateRequest extends BrandLogoSettingCreateRequest {
+export interface BrandLogoSettingUpdateRequest
+  extends BrandLogoSettingCreateRequest {
   id: number;
 }
 
@@ -96,19 +97,30 @@ export async function getBrandLogoSettingById(id: number) {
 }
 
 // Create a new brand logo setting
-export async function createBrandLogoSetting(data: BrandLogoSettingCreateRequest) {
+export async function createBrandLogoSetting(
+  data: BrandLogoSettingCreateRequest,
+) {
   return requestClient.post<ApiResponse<BrandLogoSetting>>('/brand-logo', data);
 }
 
 // Update a brand logo setting
-export async function updateBrandLogoSetting(id: number, data: BrandLogoSettingCreateRequest) {
-  return requestClient.put<ApiResponse<BrandLogoSetting>>(`/brand-logo/${id}`, data);
+export async function updateBrandLogoSetting(
+  id: number,
+  data: BrandLogoSettingCreateRequest,
+) {
+  return requestClient.put<ApiResponse<BrandLogoSetting>>(
+    `/brand-logo/${id}`,
+    data,
+  );
 }
 
 // Toggle brand logo setting enabled status
 export async function toggleBrandLogoSetting(id: number, isEnabled: boolean) {
-  //@ts-ignore
-  return requestClient.patch<ApiResponse<BrandLogoSetting>>(`/brand-logo/${id}/toggle`, { isEnabled });
+  // @ts-ignore
+  return requestClient.patch<ApiResponse<BrandLogoSetting>>(
+    `/brand-logo/${id}/toggle`,
+    { isEnabled },
+  );
 }
 
 // Delete a brand logo setting
@@ -118,5 +130,7 @@ export async function deleteBrandLogoSetting(id: number) {
 
 // Bulk delete brand logo settings
 export async function bulkDeleteBrandLogoSettings(ids: number[]) {
-  return requestClient.delete<ApiResponse<null>>('/brand-logo/bulk', { data: { ids } });
-} 
+  return requestClient.delete<ApiResponse<null>>('/brand-logo/bulk', {
+    data: { ids },
+  });
+}

@@ -3,28 +3,26 @@
     <!-- Page Header -->
     <div class="mb-6">
       <h1 class="text-2xl font-bold text-gray-800">会员层级管理</h1>
-      <p class="text-gray-600 mt-1">管理会员层级配置和晋级规则</p>
+      <p class="mt-1 text-gray-600">管理会员层级配置和晋级规则</p>
     </div>
 
     <!-- Tier Type Tabs -->
     <n-card class="mb-4">
-      <n-tabs 
-        v-model:value="activeTab" 
-        type="line" 
+      <n-tabs
+        v-model:value="activeTab"
+        type="line"
         animated
         @update:value="handleTabChange"
       >
-        <n-tab name="auto_upgrade" tab="自动晋级">
-        </n-tab>
-        <n-tab name="fixed_tier" tab="固定等级">
-        </n-tab>
+        <n-tab name="auto_upgrade" tab="自动晋级"> </n-tab>
+        <n-tab name="fixed_tier" tab="固定等级"> </n-tab>
       </n-tabs>
     </n-card>
 
     <!-- Filters and Search -->
     <n-card class="mb-4">
-      <div class="flex flex-wrap gap-4 items-center">
-        <div class="flex-1 min-w-64">
+      <div class="flex flex-wrap items-center gap-4">
+        <div class="min-w-64 flex-1">
           <n-input
             v-model:value="searchKeyword"
             placeholder="搜索等级名称、代码或描述..."
@@ -32,7 +30,7 @@
             @input="handleSearch"
           />
         </div>
-        
+
         <n-select
           v-model:value="statusFilter"
           placeholder="状态筛选"
@@ -41,7 +39,7 @@
           :options="statusOptions"
           @update:value="handleFilter"
         />
-        
+
         <n-select
           v-model:value="sortBy"
           placeholder="排序方式"
@@ -49,10 +47,8 @@
           :options="sortOptions"
           @update:value="handleSort"
         />
-        
-        <n-button @click="handleResetFilters">
-          重置筛选
-        </n-button>
+
+        <n-button @click="handleResetFilters"> 重置筛选 </n-button>
       </div>
     </n-card>
 
@@ -73,7 +69,7 @@
     >
       <template #actionBar>
         <n-card :bordered="false" class="rounded-16px shadow-sm">
-          <div class="flex justify-between items-center">
+          <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <!-- 主要操作按钮 -->
               <div class="flex gap-2">
@@ -84,13 +80,14 @@
                   刷新统计
                 </n-button>
               </div>
-              
+
               <!-- 当前标签页信息 -->
               <div class="text-sm text-gray-600">
-                {{ activeTab === 'auto_upgrade' ? '自动晋级' : '固定等级' }} - 共 {{ paginationReactive.total }} 条记录
+                {{ activeTab === 'auto_upgrade' ? '自动晋级' : '固定等级' }} -
+                共 {{ paginationReactive.total }} 条记录
               </div>
             </div>
-            
+
             <div class="flex gap-2">
               <!-- 刷新按钮 -->
               <n-button size="small" @click="handleRefresh">刷新数据</n-button>
@@ -119,7 +116,7 @@
         >
           <!-- Basic Information -->
           <n-divider title-placement="left">基本信息</n-divider>
-          
+
           <n-form-item label="等级类型" path="tierType">
             <n-select
               v-model:value="formData.tierType"
@@ -128,14 +125,14 @@
               placeholder="选择等级类型"
             />
           </n-form-item>
-          
+
           <n-form-item label="等级名称" path="tierName">
             <n-input
               v-model:value="formData.tierName"
               placeholder="输入等级名称"
             />
           </n-form-item>
-          
+
           <n-form-item label="等级代码" path="tierCode">
             <n-input
               v-model:value="formData.tierCode"
@@ -143,7 +140,7 @@
               :disabled="isEditing"
             />
           </n-form-item>
-          
+
           <n-form-item label="描述" path="description">
             <n-input
               v-model:value="formData.description"
@@ -152,14 +149,14 @@
               :rows="2"
             />
           </n-form-item>
-          
+
           <n-form-item label="关键标签" path="keyTags">
             <n-dynamic-tags
               v-model:value="formData.keyTags"
               placeholder="添加标签"
             />
           </n-form-item>
-          
+
           <n-form-item label="排序顺序" path="sortOrder">
             <n-input-number
               v-model:value="formData.sortOrder"
@@ -172,7 +169,7 @@
           <!-- Auto Upgrade Criteria (only for auto_upgrade type) -->
           <template v-if="formData.tierType === 'auto_upgrade'">
             <n-divider title-placement="left">晋级条件</n-divider>
-            
+
             <n-form-item label="最低充值金额" path="minDepositAmount">
               <n-input-number
                 v-model:value="formData.minDepositAmount"
@@ -184,7 +181,7 @@
                 <template #suffix>BRL</template>
               </n-input-number>
             </n-form-item>
-            
+
             <n-form-item label="最低投注金额" path="minBetAmount">
               <n-input-number
                 v-model:value="formData.minBetAmount"
@@ -196,7 +193,7 @@
                 <template #suffix>BRL</template>
               </n-input-number>
             </n-form-item>
-            
+
             <n-form-item label="最低有效投注" path="minValidBetAmount">
               <n-input-number
                 v-model:value="formData.minValidBetAmount"
@@ -208,7 +205,7 @@
                 <template #suffix>BRL</template>
               </n-input-number>
             </n-form-item>
-            
+
             <n-form-item label="评估周期" path="evaluationPeriodDays">
               <n-input-number
                 v-model:value="formData.evaluationPeriodDays"
@@ -223,7 +220,7 @@
 
           <!-- Benefits -->
           <n-divider title-placement="left">等级权益</n-divider>
-          
+
           <div class="grid grid-cols-2 gap-4">
             <n-form-item label="充值奖励比例" path="depositBonusRate">
               <n-input-number
@@ -238,7 +235,7 @@
                 <template #suffix>%</template>
               </n-input-number>
             </n-form-item>
-            
+
             <n-form-item label="返水比例" path="rebateRate">
               <n-input-number
                 v-model:value="formData.rebateRate"
@@ -252,7 +249,7 @@
                 <template #suffix>%</template>
               </n-input-number>
             </n-form-item>
-            
+
             <n-form-item label="提现限额" path="withdrawLimit">
               <n-input-number
                 v-model:value="formData.withdrawLimit"
@@ -264,7 +261,7 @@
                 <template #suffix>BRL</template>
               </n-input-number>
             </n-form-item>
-            
+
             <n-form-item label="日提现限额" path="dailyWithdrawLimit">
               <n-input-number
                 v-model:value="formData.dailyWithdrawLimit"
@@ -276,7 +273,7 @@
                 <template #suffix>BRL</template>
               </n-input-number>
             </n-form-item>
-            
+
             <n-form-item label="生日奖金" path="birthdayBonus">
               <n-input-number
                 v-model:value="formData.birthdayBonus"
@@ -288,7 +285,7 @@
                 <template #suffix>BRL</template>
               </n-input-number>
             </n-form-item>
-            
+
             <n-form-item label="月度奖金" path="monthlyBonus">
               <n-input-number
                 v-model:value="formData.monthlyBonus"
@@ -301,12 +298,12 @@
               </n-input-number>
             </n-form-item>
           </div>
-          
+
           <div class="grid grid-cols-2 gap-4">
             <n-form-item label="优先客服" path="prioritySupport">
               <n-switch v-model:value="formData.prioritySupport" />
             </n-form-item>
-            
+
             <n-form-item label="专属活动" path="exclusivePromotions">
               <n-switch v-model:value="formData.exclusivePromotions" />
             </n-form-item>
@@ -314,27 +311,27 @@
 
           <!-- Status and Appearance -->
           <n-divider title-placement="left">状态设置</n-divider>
-          
+
           <div class="grid grid-cols-2 gap-4">
             <n-form-item label="启用状态" path="isActive">
               <n-switch v-model:value="formData.isActive" />
             </n-form-item>
-            
+
             <n-form-item label="默认等级" path="isDefault">
               <n-switch v-model:value="formData.isDefault" />
             </n-form-item>
-            
+
             <n-form-item label="背景色" path="backgroundColor">
               <n-color-picker v-model:value="formData.backgroundColor" />
             </n-form-item>
-            
+
             <n-form-item label="文字色" path="textColor">
               <n-color-picker v-model:value="formData.textColor" />
             </n-form-item>
           </div>
         </n-form>
       </n-scrollbar>
-      
+
       <template #footer>
         <div class="flex justify-end gap-2">
           <n-button @click="handleCancel">取消</n-button>
@@ -363,16 +360,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, h, defineAsyncComponent } from 'vue';
+import {
+  ref,
+  reactive,
+  computed,
+  onMounted,
+  h,
+  defineAsyncComponent,
+} from 'vue';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
-const SmartDataGrid = defineAsyncComponent(() => import('../../../components/smart/SmartDataGrid/index.vue'));
-import { 
-  NButton, 
-  NCard, 
-  NTabs, 
-  NTab, 
-  NInput, 
-  NSelect, 
+const SmartDataGrid = defineAsyncComponent(
+  () => import('../../../components/smart/SmartDataGrid/index.vue'),
+);
+import {
+  NButton,
+  NCard,
+  NTabs,
+  NTab,
+  NInput,
+  NSelect,
   NModal,
   NForm,
   NFormItem,
@@ -386,7 +392,7 @@ import {
   NSpace,
   NPopconfirm,
   useMessage,
-  type DataTableColumns
+  type DataTableColumns,
 } from 'naive-ui';
 
 import {
@@ -397,9 +403,11 @@ import {
   updateAllTierStatisticsApi,
   type MemberTier,
   type MemberTierListParams,
-  type CreateMemberTierParams
+  type CreateMemberTierParams,
 } from '#/api/core/memberTier';
-const TierMemberList = defineAsyncComponent(() => import('./components/TierMemberList.vue'));
+const TierMemberList = defineAsyncComponent(
+  () => import('./components/TierMemberList.vue'),
+);
 
 // ===================================
 // REACTIVE DATA
@@ -441,14 +449,14 @@ const formData = reactive<CreateMemberTierParams>({
   description: '',
   keyTags: [],
   sortOrder: 0,
-  
+
   // Upgrade criteria
   minDepositAmount: undefined,
   minBetAmount: undefined,
   minValidBetAmount: undefined,
   minCommissionAmount: undefined,
   evaluationPeriodDays: undefined,
-  
+
   // Benefits
   depositBonusRate: 0,
   rebateRate: 0,
@@ -459,29 +467,31 @@ const formData = reactive<CreateMemberTierParams>({
   monthlyBonus: 0,
   prioritySupport: false,
   exclusivePromotions: false,
-  
+
   // Status
   isActive: true,
   isDefault: false,
   backgroundColor: '#f0f0f0',
-  textColor: '#333333'
+  textColor: '#333333',
 });
 
 // ===================================
 // COMPUTED PROPERTIES
 // ===================================
 
-const modalTitle = computed(() => isEditing.value ? '编辑会员层级' : '新增会员层级');
+const modalTitle = computed(() =>
+  isEditing.value ? '编辑会员层级' : '新增会员层级',
+);
 
 // Options
 const tierTypeOptions = [
   { label: '自动晋级', value: 'auto_upgrade' },
-  { label: '固定等级', value: 'fixed_tier' }
+  { label: '固定等级', value: 'fixed_tier' },
 ];
 
 const statusOptions = [
   { label: '启用', value: true },
-  { label: '禁用', value: false }
+  { label: '禁用', value: false },
 ] as const;
 
 const sortOptions = [
@@ -489,7 +499,7 @@ const sortOptions = [
   { label: '等级名称', value: 'tierName' },
   { label: '当前人数', value: 'currentMemberCount' },
   { label: '晋级次数', value: 'totalUpgradeCount' },
-  { label: '创建时间', value: 'createdAt' }
+  { label: '创建时间', value: 'createdAt' },
 ];
 
 // Form validation rules
@@ -497,18 +507,18 @@ const formRules = {
   tierType: {
     required: true,
     message: '请选择等级类型',
-    trigger: 'blur'
+    trigger: 'blur',
   },
   tierName: {
     required: true,
     message: '请输入等级名称',
-    trigger: 'blur'
+    trigger: 'blur',
   },
   tierCode: {
     required: true,
     message: '请输入等级代码',
-    trigger: 'blur'
-  }
+    trigger: 'blur',
+  },
 };
 
 // Table columns
@@ -517,7 +527,7 @@ const columns: DataTableColumns<MemberTier> = [
     title: 'ID',
     key: 'id',
     width: 60,
-    align: 'center'
+    align: 'center',
   },
   {
     title: '层级类型',
@@ -525,38 +535,46 @@ const columns: DataTableColumns<MemberTier> = [
     width: 100,
     render: (row) => {
       const isAuto = row.tierType === 'auto_upgrade';
-      return h(NTag, {
-        type: isAuto ? 'success' : 'info',
-        size: 'small'
-      }, {
-        default: () => isAuto ? '自动晋级' : '固定等级'
-      });
-    }
+      return h(
+        NTag,
+        {
+          type: isAuto ? 'success' : 'info',
+          size: 'small',
+        },
+        {
+          default: () => (isAuto ? '自动晋级' : '固定等级'),
+        },
+      );
+    },
   },
   {
     title: '层级名称',
     key: 'tierName',
     width: 120,
     render: (row) => {
-      return h('div', {
-        style: {
-          padding: '4px 8px',
-          borderRadius: '4px',
-          backgroundColor: row.backgroundColor || '#f0f0f0',
-          color: row.textColor || '#333333',
-          fontWeight: 'bold',
-          textAlign: 'center'
-        }
-      }, row.tierName);
-    }
+      return h(
+        'div',
+        {
+          style: {
+            padding: '4px 8px',
+            borderRadius: '4px',
+            backgroundColor: row.backgroundColor || '#f0f0f0',
+            color: row.textColor || '#333333',
+            fontWeight: 'bold',
+            textAlign: 'center',
+          },
+        },
+        row.tierName,
+      );
+    },
   },
   {
     title: '描述',
     key: 'description',
     width: 100,
     ellipsis: {
-      tooltip: true
-    }
+      tooltip: true,
+    },
   },
   {
     title: '关键标签',
@@ -567,12 +585,17 @@ const columns: DataTableColumns<MemberTier> = [
       if (tags.length === 0) {
         return h('span', { class: 'text-gray-400' }, '-');
       }
-      return h(NSpace, { size: 'small' }, {
-        default: () => tags.map(tag => 
-          h(NTag, { size: 'small', type: 'info' }, { default: () => tag })
-        )
-      });
-    }
+      return h(
+        NSpace,
+        { size: 'small' },
+        {
+          default: () =>
+            tags.map((tag) =>
+              h(NTag, { size: 'small', type: 'info' }, { default: () => tag }),
+            ),
+        },
+      );
+    },
   },
   {
     title: '晋级次数',
@@ -581,8 +604,12 @@ const columns: DataTableColumns<MemberTier> = [
     align: 'center',
     render: (row) => {
       const count = row.totalUpgradeCount || 0;
-      return h('span', { class: 'font-semibold text-green-600' }, count.toLocaleString());
-    }
+      return h(
+        'span',
+        { class: 'font-semibold text-green-600' },
+        count.toLocaleString(),
+      );
+    },
   },
   {
     title: '最低充值要求',
@@ -591,8 +618,12 @@ const columns: DataTableColumns<MemberTier> = [
     align: 'right',
     render: (row) => {
       const amount = row.minDepositAmount || 0;
-      return h('span', { class: 'font-mono text-blue-600' }, `R$ ${amount.toFixed(2)}`);
-    }
+      return h(
+        'span',
+        { class: 'font-mono text-blue-600' },
+        `R$ ${amount.toFixed(2)}`,
+      );
+    },
   },
   {
     title: '层级人数',
@@ -601,15 +632,24 @@ const columns: DataTableColumns<MemberTier> = [
     align: 'center',
     render: (row) => {
       const count = row.currentMemberCount || 0;
-      return h(NButton, {
-        text: true,
-        type: 'primary',
-        size: 'small',
-        onClick: () => handleViewMembers(row.id, row.tierName)
-      }, {
-        default: () => h('span', { class: 'font-semibold' }, `${count.toLocaleString()} 人`)
-      });
-    }
+      return h(
+        NButton,
+        {
+          text: true,
+          type: 'primary',
+          size: 'small',
+          onClick: () => handleViewMembers(row.id, row.tierName),
+        },
+        {
+          default: () =>
+            h(
+              'span',
+              { class: 'font-semibold' },
+              `${count.toLocaleString()} 人`,
+            ),
+        },
+      );
+    },
   },
   {
     title: '状态',
@@ -617,13 +657,17 @@ const columns: DataTableColumns<MemberTier> = [
     width: 80,
     align: 'center',
     render: (row) => {
-      return h(NTag, {
-        type: row.isActive ? 'success' : 'error',
-        size: 'small'
-      }, {
-        default: () => row.isActive ? '启用' : '禁用'
-      });
-    }
+      return h(
+        NTag,
+        {
+          type: row.isActive ? 'success' : 'error',
+          size: 'small',
+        },
+        {
+          default: () => (row.isActive ? '启用' : '禁用'),
+        },
+      );
+    },
   },
   {
     title: '操作',
@@ -632,32 +676,48 @@ const columns: DataTableColumns<MemberTier> = [
     align: 'center',
     fixed: 'right',
     render: (row) => {
-      return h(NSpace, { size: 'small' }, {
-        default: () => [
-          h(NButton, {
-            size: 'small',
-            type: 'primary',
-            onClick: () => handleEdit(row)
-          }, {
-            default: () => '编辑'
-          }),
-          h(NPopconfirm, {
-            onPositiveClick: () => handleDelete(row.id)
-          }, {
-            trigger: () => h(NButton, {
-              size: 'small',
-              type: 'error'
-            }, {
-              default: () => '删除'
-            }),
-            default: () => '确定删除这个等级吗？删除后无法恢复！'
-          })
-        ]
-      });
-    }
-  }
+      return h(
+        NSpace,
+        { size: 'small' },
+        {
+          default: () => [
+            h(
+              NButton,
+              {
+                size: 'small',
+                type: 'primary',
+                onClick: () => handleEdit(row),
+              },
+              {
+                default: () => '编辑',
+              },
+            ),
+            h(
+              NPopconfirm,
+              {
+                onPositiveClick: () => handleDelete(row.id),
+              },
+              {
+                trigger: () =>
+                  h(
+                    NButton,
+                    {
+                      size: 'small',
+                      type: 'error',
+                    },
+                    {
+                      default: () => '删除',
+                    },
+                  ),
+                default: () => '确定删除这个等级吗？删除后无法恢复！',
+              },
+            ),
+          ],
+        },
+      );
+    },
+  },
 ];
-
 
 // ===================================
 // METHODS
@@ -673,11 +733,11 @@ const loadData = async () => {
       isActive: statusFilter.value ?? undefined,
       search: searchKeyword.value || undefined,
       sortBy: sortBy.value,
-      sortOrder: 'asc'
+      sortOrder: 'asc',
     };
 
     const response = await getMemberTiersApi(params);
-    
+
     tableData.value = response.list;
     paginationReactive.total = response.pagination.total;
   } catch (error) {
@@ -752,7 +812,7 @@ const handleCreateTier = () => {
 const handleEdit = (tier: MemberTier) => {
   isEditing.value = true;
   editingId.value = tier.id;
-  
+
   // Fill form with tier data
   Object.assign(formData, {
     tierType: tier.tierType,
@@ -761,13 +821,13 @@ const handleEdit = (tier: MemberTier) => {
     description: tier.description,
     keyTags: [...tier.keyTags],
     sortOrder: tier.sortOrder,
-    
+
     minDepositAmount: tier.minDepositAmount,
     minBetAmount: tier.minBetAmount,
     minValidBetAmount: tier.minValidBetAmount,
     minCommissionAmount: tier.minCommissionAmount,
     evaluationPeriodDays: tier.evaluationPeriodDays,
-    
+
     depositBonusRate: tier.depositBonusRate,
     rebateRate: tier.rebateRate,
     withdrawLimit: tier.withdrawLimit,
@@ -777,14 +837,14 @@ const handleEdit = (tier: MemberTier) => {
     monthlyBonus: tier.monthlyBonus,
     prioritySupport: tier.prioritySupport,
     exclusivePromotions: tier.exclusivePromotions,
-    
+
     isActive: tier.isActive,
     isDefault: tier.isDefault,
     backgroundColor: tier.backgroundColor,
     textColor: tier.textColor,
-    iconUrl: tier.iconUrl
+    iconUrl: tier.iconUrl,
   });
-  
+
   showModal.value = true;
 };
 
@@ -856,13 +916,13 @@ const resetForm = () => {
     description: '',
     keyTags: [],
     sortOrder: 0,
-    
+
     minDepositAmount: undefined,
     minBetAmount: undefined,
     minValidBetAmount: undefined,
     minCommissionAmount: undefined,
     evaluationPeriodDays: undefined,
-    
+
     depositBonusRate: 0,
     rebateRate: 0,
     withdrawLimit: 0,
@@ -872,14 +932,14 @@ const resetForm = () => {
     monthlyBonus: 0,
     prioritySupport: false,
     exclusivePromotions: false,
-    
+
     isActive: true,
     isDefault: false,
     backgroundColor: '#f0f0f0',
     textColor: '#333333',
-    iconUrl: undefined
+    iconUrl: undefined,
   });
-  
+
   formRef.value?.restoreValidation();
 };
 
@@ -928,4 +988,4 @@ onMounted(() => {
   font-weight: 600;
   color: #1f2937;
 }
-</style> 
+</style>

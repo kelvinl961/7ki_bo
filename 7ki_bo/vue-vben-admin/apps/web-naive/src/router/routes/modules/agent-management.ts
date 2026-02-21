@@ -25,7 +25,8 @@ const routes: RouteRecordRaw[] = [
         },
         name: 'CommissionManagement',
         path: '/agency/commission-management',
-        component: () => import('../../../views/agency/CommissionManagement.vue'),
+        component: () =>
+          import('../../../views/agency/CommissionManagement.vue'),
       },
       {
         meta: {
@@ -33,7 +34,8 @@ const routes: RouteRecordRaw[] = [
         },
         name: 'RebateSettings',
         path: '/agency/rebate-settings',
-        component: () => import('../../../views/agency/AgencyRebateSettings.vue'),
+        component: () =>
+          import('../../../views/agency/AgencyRebateSettings.vue'),
       },
       {
         meta: {
@@ -47,4 +49,4 @@ const routes: RouteRecordRaw[] = [
   },
 ];
 
-export default routes; 
+export default routes;

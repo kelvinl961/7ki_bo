@@ -7,19 +7,11 @@
         size="large"
         :on-update:value="handleTabChange"
       >
-        <n-tab-pane
-          name="logoSetting"
-          tab="LOGO及图片设置"
-        >
+        <n-tab-pane name="logoSetting" tab="LOGO及图片设置">
           <BrandLogoSetting />
         </n-tab-pane>
-        
-        <n-tab-pane
-          name="basicSetting"
-          tab="基础设置"
-        >
-         
-        </n-tab-pane>
+
+        <n-tab-pane name="basicSetting" tab="基础设置"> </n-tab-pane>
       </n-tabs>
     </n-card>
   </div>
@@ -29,7 +21,9 @@
 import { ref, onMounted, defineAsyncComponent } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 // ✅ PERFORMANCE FIX: Lazy load tab component - it only loads when tab is opened
-const BrandLogoSetting = defineAsyncComponent(() => import('./BrandLogoSetting.vue'));
+const BrandLogoSetting = defineAsyncComponent(
+  () => import('./BrandLogoSetting.vue'),
+);
 
 const route = useRoute();
 const router = useRouter();
@@ -83,4 +77,4 @@ onMounted(() => {
   height: 100%;
   padding: 0;
 }
-</style> 
+</style>

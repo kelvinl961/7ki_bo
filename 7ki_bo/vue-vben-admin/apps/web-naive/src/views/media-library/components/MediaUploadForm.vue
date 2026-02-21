@@ -1,6 +1,11 @@
 <template>
   <div class="media-upload-form">
-    <n-form ref="formRef" :model="formData" :rules="rules" label-placement="top">
+    <n-form
+      ref="formRef"
+      :model="formData"
+      :rules="rules"
+      label-placement="top"
+    >
       <!-- File Upload -->
       <n-form-item label="选择文件" path="file">
         <n-upload
@@ -18,7 +23,14 @@
             <div class="upload-dragger-content">
               <div class="upload-icon">📁</div>
               <div class="upload-text">点击或拖拽文件到该区域上传</div>
-              <div class="upload-hint">支持格式: {{ Array.isArray(acceptTypes) ? acceptTypes.join(', ') : acceptTypes }}</div>
+              <div class="upload-hint">
+                支持格式:
+                {{
+                  Array.isArray(acceptTypes)
+                    ? acceptTypes.join(', ')
+                    : acceptTypes
+                }}
+              </div>
             </div>
           </n-upload-dragger>
         </n-upload>
@@ -76,18 +88,18 @@
           <template #checked>公开</template>
           <template #unchecked>私有</template>
         </n-switch>
-        <div class="text-xs text-gray-500 mt-1">
+        <div class="mt-1 text-xs text-gray-500">
           公开文件可以被其他用户在选择器中看到
         </div>
       </n-form-item>
     </n-form>
 
     <!-- Actions -->
-    <div class="flex justify-end gap-3 mt-6">
+    <div class="mt-6 flex justify-end gap-3">
       <n-button @click="handleCancel">取消</n-button>
-      <n-button 
-        type="primary" 
-        @click="handleSubmit" 
+      <n-button
+        type="primary"
+        @click="handleSubmit"
         :loading="submitting"
         :disabled="!selectedFile"
       >
@@ -175,16 +187,12 @@ const getCategoryDisplayName = (category: string): string => {
 
 // Validation rules
 const rules: FormRules = {
-  filename: [
-    { required: true, message: '请输入显示名称', trigger: 'blur' }
-  ],
-  category: [
-    { required: true, message: '请选择文件分类', trigger: 'change' }
-  ],
+  filename: [{ required: true, message: '请输入显示名称', trigger: 'blur' }],
+  category: [{ required: true, message: '请选择文件分类', trigger: 'change' }],
 };
 
 // Options
-const categoryOptions = MEDIA_CATEGORIES.map(cat => ({
+const categoryOptions = MEDIA_CATEGORIES.map((cat) => ({
   label: getCategoryDisplayName(cat),
   value: cat,
 }));
@@ -198,15 +206,15 @@ const isImageFile = computed(() => {
 // Methods
 const handleFileListChange = (newFileList: UploadFileInfo[]) => {
   fileList.value = newFileList;
-  
+
   if (newFileList.length > 0 && newFileList[0].file) {
     selectedFile.value = newFileList[0].file;
-    
+
     // Auto-fill filename if empty
     if (!formData.filename) {
       formData.filename = selectedFile.value.name;
     }
-    
+
     // Auto-detect category if empty
     if (!formData.category) {
       formData.category = detectCategory(selectedFile.value);
@@ -218,7 +226,7 @@ const handleFileListChange = (newFileList: UploadFileInfo[]) => {
 
 const detectCategory = (file: File): string => {
   const type = file.type;
-  
+
   if (type.startsWith('image/')) {
     if (type.includes('icon') || file.name.toLowerCase().includes('icon')) {
       return 'icons';
@@ -232,7 +240,10 @@ const detectCategory = (file: File): string => {
     if (type.includes('background') || file.name.toLowerCase().includes('bg')) {
       return 'backgrounds';
     }
-    if (type.includes('template') || file.name.toLowerCase().includes('template')) {
+    if (
+      type.includes('template') ||
+      file.name.toLowerCase().includes('template')
+    ) {
       return 'templates';
     }
     if (type.includes('avatar') || file.name.toLowerCase().includes('avatar')) {
@@ -240,15 +251,15 @@ const detectCategory = (file: File): string => {
     }
     return 'other';
   }
-  
+
   if (type.startsWith('video/')) {
     return 'videos';
   }
-  
+
   if (type.startsWith('audio/')) {
     return 'audio';
   }
-  
+
   return 'documents';
 };
 
@@ -260,14 +271,14 @@ const handleSubmit = async () => {
 
   try {
     await formRef.value?.validate();
-    
+
     submitting.value = true;
 
     if (!formData.category) {
       message.error('请选择文件分类');
       return;
     }
-    
+
     const response = await uploadMediaFile(selectedFile.value, {
       filename: formData.filename,
       category: formData.category,
@@ -278,7 +289,7 @@ const handleSubmit = async () => {
     });
 
     console.log('📁 Upload response:', response);
-    
+
     // Handle different response formats
     if (response && response.success && response.data) {
       // Format: {success: true, data: {...}, message: "..."}
@@ -309,9 +320,12 @@ const handleCancel = () => {
 };
 
 // Watch for props changes
-watch(() => props.category, (newCategory) => {
-  formData.category = newCategory;
-});
+watch(
+  () => props.category,
+  (newCategory) => {
+    formData.category = newCategory;
+  },
+);
 </script>
 
 <style scoped>
@@ -340,4 +354,4 @@ watch(() => props.category, (newCategory) => {
   font-size: 12px;
   color: #666;
 }
-</style> 
+</style>

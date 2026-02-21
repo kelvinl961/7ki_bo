@@ -4,7 +4,6 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { LOGIN_PATH } from '@vben/constants';
-import { preferences } from '@vben/preferences';
 import { resetAllStores, useAccessStore, useUserStore } from '@vben/stores';
 
 import { defineStore } from 'pinia';
@@ -34,12 +33,13 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       loginLoading.value = true;
       const response = await loginApi(params);
-      
+
       // The request client automatically unwraps the response.data
       // So response is already the data part of { code: 0, data: {...} }
-      const { accessToken, id, realName, roles, username, homePath } = response as any;
+      const { accessToken, id, realName, roles, username, homePath } =
+        response as any;
 
-        // 如果成功获取到 token
+      // 如果成功获取到 token
       if (accessToken) {
         // 将 token 存储到 accessStore 中
         accessStore.setAccessToken(accessToken);
@@ -54,7 +54,7 @@ export const useAuthStore = defineStore('auth', () => {
           desc: '',
           token: accessToken,
           avatar: '',
-          userId: String(id)
+          userId: String(id),
         } as UserInfo;
 
         // ✅ FIX: Set user info immediately (don't wait for codes)
@@ -135,7 +135,7 @@ export const useAuthStore = defineStore('auth', () => {
         console.log('📡 Fetching user info on page refresh...');
         const response = await getUserInfoApi();
         const { id, realName, roles, username, homePath } = response;
-        
+
         const userInfo = {
           id,
           realName,
@@ -145,32 +145,34 @@ export const useAuthStore = defineStore('auth', () => {
           desc: '',
           token: accessStore.accessToken,
           avatar: '',
-          userId: String(id)
+          userId: String(id),
         } as UserInfo;
-        
+
         userStore.setUserInfo(userInfo);
         console.log('✅ User info restored after page refresh');
         return userInfo;
       } catch (error: any) {
         console.error('❌ Failed to fetch user info:', error);
-        
+
         // 🔧 FIX: Better error handling - only clear token on 401/403 errors
         // For network errors or 5xx errors, retry instead of logging out
         const status = error?.response?.status;
-        
+
         if (status === 401 || status === 403) {
           console.warn('🔒 Token invalid or expired - clearing token');
           accessStore.setAccessToken(null);
           return null;
         }
-        
+
         // For other errors (network, 500, etc), try to retry once
-        console.warn('⚠️ Non-auth error fetching user info, will retry once...');
+        console.warn(
+          '⚠️ Non-auth error fetching user info, will retry once...',
+        );
         try {
-          await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+          await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second
           const retryResponse = await getUserInfoApi();
           const { id, realName, roles, username, homePath } = retryResponse;
-          
+
           const userInfo = {
             id,
             realName,
@@ -180,16 +182,16 @@ export const useAuthStore = defineStore('auth', () => {
             desc: '',
             token: accessStore.accessToken,
             avatar: '',
-            userId: String(id)
+            userId: String(id),
           } as UserInfo;
-          
+
           userStore.setUserInfo(userInfo);
           console.log('✅ User info restored after retry');
           return userInfo;
         } catch (retryError: any) {
           console.error('❌ Retry failed:', retryError);
           const retryStatus = retryError?.response?.status;
-          
+
           // Only clear token if retry also returns 401/403
           if (retryStatus === 401 || retryStatus === 403) {
             console.warn('🔒 Token invalid after retry - clearing token');
@@ -216,7 +218,7 @@ export const useAuthStore = defineStore('auth', () => {
     accessStore.setAccessCodes([]);
     // Fetch fresh user info (will also trigger access codes fetch if needed)
     const freshUserInfo = await fetchUserInfo(true);
-    
+
     // Also refresh access codes for permissions
     try {
       const accessCodesResponse = await getAccessCodesApi();
@@ -224,7 +226,7 @@ export const useAuthStore = defineStore('auth', () => {
     } catch (error) {
       console.warn('Failed to refresh access codes:', error);
     }
-    
+
     console.log('✅ User info and permissions refreshed!');
     return freshUserInfo;
   }
@@ -241,12 +243,14 @@ export const useAuthStore = defineStore('auth', () => {
     loginLoading,
     logout,
   };
-  
+
   // ✅ INSTANT REFRESH: Expose refresh function globally for browser console access
   // Users can now call: window.$refreshPermissions() from browser console
   if (typeof window !== 'undefined') {
     (window as any).$refreshPermissions = refreshUserInfo;
-    console.log('✅ Permission refresh function available: window.$refreshPermissions()');
+    console.log(
+      '✅ Permission refresh function available: window.$refreshPermissions()',
+    );
   }
 
   return store;

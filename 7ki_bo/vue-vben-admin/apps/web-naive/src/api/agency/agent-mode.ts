@@ -6,13 +6,13 @@ export interface AgentModeDTO {
   currency: string;
   name: string;
   source: '系统自带' | '自定义';
-  settlementCycle: '日结' | '周结' | '月结';
-  commissionBasis: '有效投注' | '净盈利' | '组合指标';
-  calcLevels: '只算一级' | '最多二级' | '最多三级' | '无级数';
+  settlementCycle: '周结' | '日结' | '月结';
+  commissionBasis: '净盈利' | '有效投注' | '组合指标';
+  calcLevels: '最多三级' | '最多二级' | '只算一级' | '无级数';
   overflowSummary: string;
   isDefault: boolean;
   isEnabled: boolean;
-  lastCycleClosedDate: string | null;
+  lastCycleClosedDate: null | string;
   usedCount: number;
   remark: string;
   operator: string;
@@ -22,7 +22,7 @@ export interface AgentModeDTO {
 export interface AgentModeTier {
   id?: number;
   levelNo: number;
-  metricType: 'VALID_BET' | 'NET_PROFIT' | 'DEPOSIT' | 'RECHARGE' | 'COMPOSITE';
+  metricType: 'COMPOSITE' | 'DEPOSIT' | 'NET_PROFIT' | 'RECHARGE' | 'VALID_BET';
   rangeMin?: number;
   rangeMax?: number;
   ratePercent?: number;
@@ -41,14 +41,14 @@ export interface AgentProfile {
 export interface CreateAgentModeRequest {
   name: string;
   currency: string;
-  source?: 'SYSTEM' | 'CUSTOM';
-  settlementCycle?: 'DAILY' | 'WEEKLY' | 'MONTHLY';
-  commissionBasis?: 'VALID_BET' | 'NET_PROFIT' | 'COMPOSITE';
-  calcLevels?: 'LEVEL_ONE' | 'MAX_TWO' | 'MAX_THREE' | 'UNLIMITED';
+  source?: 'CUSTOM' | 'SYSTEM';
+  settlementCycle?: 'DAILY' | 'MONTHLY' | 'WEEKLY';
+  commissionBasis?: 'COMPOSITE' | 'NET_PROFIT' | 'VALID_BET';
+  calcLevels?: 'LEVEL_ONE' | 'MAX_THREE' | 'MAX_TWO' | 'UNLIMITED';
   overflowRule?: {
+    rate?: number;
     text?: string;
     threshold?: number;
-    rate?: number;
   };
   isDefault?: boolean;
   isEnabled?: boolean;
@@ -58,14 +58,14 @@ export interface CreateAgentModeRequest {
 export interface UpdateAgentModeRequest {
   name?: string;
   currency?: string;
-  source?: 'SYSTEM' | 'CUSTOM';
-  settlementCycle?: 'DAILY' | 'WEEKLY' | 'MONTHLY';
-  commissionBasis?: 'VALID_BET' | 'NET_PROFIT' | 'COMPOSITE';
-  calcLevels?: 'LEVEL_ONE' | 'MAX_TWO' | 'MAX_THREE' | 'UNLIMITED';
+  source?: 'CUSTOM' | 'SYSTEM';
+  settlementCycle?: 'DAILY' | 'MONTHLY' | 'WEEKLY';
+  commissionBasis?: 'COMPOSITE' | 'NET_PROFIT' | 'VALID_BET';
+  calcLevels?: 'LEVEL_ONE' | 'MAX_THREE' | 'MAX_TWO' | 'UNLIMITED';
   overflowRule?: {
+    rate?: number;
     text?: string;
     threshold?: number;
-    rate?: number;
   };
   remark?: string;
 }
@@ -77,25 +77,25 @@ export interface AgentModeQueryParams {
   sortOrder?: 'asc' | 'desc';
   name?: string;
   currency?: string;
-  source?: 'SYSTEM' | 'CUSTOM';
+  source?: 'CUSTOM' | 'SYSTEM';
   isEnabled?: boolean;
   isDefault?: boolean;
-  settlementCycle?: 'DAILY' | 'WEEKLY' | 'MONTHLY';
+  settlementCycle?: 'DAILY' | 'MONTHLY' | 'WEEKLY';
 }
 
 export interface AgentModeListResponse {
   success: boolean;
   data: {
     list: AgentModeDTO[];
-    total: number;
     page: number;
     pageSize: number;
+    total: number;
   };
 }
 
 export interface AgentModeSummary {
   usedCount: number;
-  lastCycleClosedDate: string | null;
+  lastCycleClosedDate: null | string;
   enabled: boolean;
   isDefault: boolean;
 }
@@ -103,62 +103,108 @@ export interface AgentModeSummary {
 // API functions
 export const agentModeApi = {
   // Get paginated list of agent modes with filtering
-  getAgentModeList: (params?: AgentModeQueryParams): Promise<AgentModeListResponse> => {
+  getAgentModeList: (
+    params?: AgentModeQueryParams,
+  ): Promise<AgentModeListResponse> => {
     return requestClient.get('/agent-modes', { params });
   },
 
   // Create new agent mode
-  createAgentMode: (data: CreateAgentModeRequest): Promise<{ success: boolean; data: AgentModeDTO; message: string }> => {
+  createAgentMode: (
+    data: CreateAgentModeRequest,
+  ): Promise<{ data: AgentModeDTO; message: string; success: boolean }> => {
     return requestClient.post('/agent-modes', data);
   },
 
   // Update agent mode
-  updateAgentMode: (id: number, data: UpdateAgentModeRequest): Promise<{ success: boolean; data: AgentModeDTO; message: string }> => {
+  updateAgentMode: (
+    id: number,
+    data: UpdateAgentModeRequest,
+  ): Promise<{ data: AgentModeDTO; message: string; success: boolean }> => {
     return requestClient.put(`/agent-modes/${id}`, data);
   },
 
   // Update agent mode enabled status
-  updateAgentModeStatus: (id: number, isEnabled: boolean): Promise<{ success: boolean; data: AgentModeDTO; message: string }> => {
+  updateAgentModeStatus: (
+    id: number,
+    isEnabled: boolean,
+  ): Promise<{ data: AgentModeDTO; message: string; success: boolean }> => {
     return requestClient.put(`/agent-modes/${id}/enable`, { isEnabled });
   },
 
   // Set agent mode as default
-  setAgentModeDefault: (id: number, isDefault: boolean): Promise<{ success: boolean; data: AgentModeDTO; message: string }> => {
+  setAgentModeDefault: (
+    id: number,
+    isDefault: boolean,
+  ): Promise<{ data: AgentModeDTO; message: string; success: boolean }> => {
     return requestClient.put(`/agent-modes/${id}/default`, { isDefault });
   },
 
   // Update settlement cycle
-  updateSettlementCycle: (id: number, settlementCycle: 'DAILY' | 'WEEKLY' | 'MONTHLY'): Promise<{ success: boolean; data: AgentModeDTO; message: string }> => {
+  updateSettlementCycle: (
+    id: number,
+    settlementCycle: 'DAILY' | 'MONTHLY' | 'WEEKLY',
+  ): Promise<{ data: AgentModeDTO; message: string; success: boolean }> => {
     return requestClient.put(`/agent-modes/${id}/cycle`, { settlementCycle });
   },
 
   // Get agent mode tiers
-  getAgentModeTiers: (id: number): Promise<{ success: boolean; data: AgentModeTier[] }> => {
+  getAgentModeTiers: (
+    id: number,
+  ): Promise<{ data: AgentModeTier[]; success: boolean }> => {
     return requestClient.get(`/agent-modes/${id}/tiers`);
   },
 
   // Update agent mode tiers
-  updateAgentModeTiers: (id: number, tiers: AgentModeTier[]): Promise<{ success: boolean; data: AgentModeTier[]; message: string }> => {
+  updateAgentModeTiers: (
+    id: number,
+    tiers: AgentModeTier[],
+  ): Promise<{ data: AgentModeTier[]; message: string; success: boolean }> => {
     return requestClient.put(`/agent-modes/${id}/tiers`, tiers);
   },
 
   // Get agents using this mode
-  getAgentModeAgents: (id: number, page?: number, pageSize?: number): Promise<{ success: boolean; data: { list: AgentProfile[]; total: number; page: number; pageSize: number } }> => {
-    return requestClient.get(`/agent-modes/${id}/agents`, { params: { page, pageSize } });
+  getAgentModeAgents: (
+    id: number,
+    page?: number,
+    pageSize?: number,
+  ): Promise<{
+    data: {
+      list: AgentProfile[];
+      page: number;
+      pageSize: number;
+      total: number;
+    };
+    success: boolean;
+  }> => {
+    return requestClient.get(`/agent-modes/${id}/agents`, {
+      params: { page, pageSize },
+    });
   },
 
   // Batch switch agents to this mode
-  batchSwitchAgents: (id: number, agentUids: string[]): Promise<{ success: boolean; data: { affected: number; agentUids: string[] }; message: string }> => {
+  batchSwitchAgents: (
+    id: number,
+    agentUids: string[],
+  ): Promise<{
+    data: { affected: number; agentUids: string[] };
+    message: string;
+    success: boolean;
+  }> => {
     return requestClient.post(`/agent-modes/${id}/batch-switch`, { agentUids });
   },
 
   // Get agent mode summary
-  getAgentModeSummary: (id: number): Promise<{ success: boolean; data: AgentModeSummary }> => {
+  getAgentModeSummary: (
+    id: number,
+  ): Promise<{ data: AgentModeSummary; success: boolean }> => {
     return requestClient.get(`/agent-modes/${id}/summary`);
   },
 
   // Delete agent mode
-  deleteAgentMode: (id: number): Promise<{ success: boolean; message: string }> => {
+  deleteAgentMode: (
+    id: number,
+  ): Promise<{ message: string; success: boolean }> => {
     return requestClient.delete(`/agent-modes/${id}`);
   },
 
@@ -172,7 +218,16 @@ export const agentModeApi = {
 export interface GameRebateConfig {
   id?: number;
   modeId: number;
-  gameCategory: 'ARCADE' | 'BLOCKCHAIN' | 'CHESS_CARDS' | 'COCKFIGHT' | 'HUNTING' | 'LIVE' | 'LOTTERY' | 'SLOT' | 'SPORTS';
+  gameCategory:
+    | 'ARCADE'
+    | 'BLOCKCHAIN'
+    | 'CHESS_CARDS'
+    | 'COCKFIGHT'
+    | 'HUNTING'
+    | 'LIVE'
+    | 'LOTTERY'
+    | 'SLOT'
+    | 'SPORTS';
   gameCategoryDisplay: string;
   tierLevel: number; // New field for tier level
   minValidUsers: number;
@@ -187,7 +242,16 @@ export interface GameRebateConfig {
 }
 
 export interface GameRebateConfigRequest {
-  gameCategory: 'ARCADE' | 'BLOCKCHAIN' | 'CHESS_CARDS' | 'COCKFIGHT' | 'HUNTING' | 'LIVE' | 'LOTTERY' | 'SLOT' | 'SPORTS';
+  gameCategory:
+    | 'ARCADE'
+    | 'BLOCKCHAIN'
+    | 'CHESS_CARDS'
+    | 'COCKFIGHT'
+    | 'HUNTING'
+    | 'LIVE'
+    | 'LOTTERY'
+    | 'SLOT'
+    | 'SPORTS';
   tierLevel: number; // New field for tier level
   minValidUsers: number;
   minValidBetAmount: number;
@@ -206,14 +270,14 @@ export interface CommissionCalculationRequest {
 export interface CommissionCalculationResponse {
   success: boolean;
   data: {
-    commission: number;
-    reason: string;
     calculation?: {
       betAmount: number;
-      rebatePercentage: number;
       rebateAmount: number;
+      rebatePercentage: number;
       validUserCount: number;
     };
+    commission: number;
+    reason: string;
     rebateConfig: GameRebateConfig;
   };
 }
@@ -221,17 +285,31 @@ export interface CommissionCalculationResponse {
 // Add to agentModeApi object
 export const gameRebateApi = {
   // Get game rebate configurations for an agent mode
-  getGameRebateConfigs: (modeId: number): Promise<{ success: boolean; data: GameRebateConfig[] }> => {
+  getGameRebateConfigs: (
+    modeId: number,
+  ): Promise<{ data: GameRebateConfig[]; success: boolean }> => {
     return requestClient.get(`/agent-modes/${modeId}/game-rebate-configs`);
   },
 
   // Update game rebate configurations for an agent mode
-  updateGameRebateConfigs: (modeId: number, configs: GameRebateConfigRequest[]): Promise<{ success: boolean; data: GameRebateConfig[]; message: string }> => {
-    return requestClient.put(`/agent-modes/${modeId}/game-rebate-configs`, configs);
+  updateGameRebateConfigs: (
+    modeId: number,
+    configs: GameRebateConfigRequest[],
+  ): Promise<{
+    data: GameRebateConfig[];
+    message: string;
+    success: boolean;
+  }> => {
+    return requestClient.put(
+      `/agent-modes/${modeId}/game-rebate-configs`,
+      configs,
+    );
   },
 
   // Calculate commission for an agent
-  calculateCommission: (request: CommissionCalculationRequest): Promise<CommissionCalculationResponse> => {
+  calculateCommission: (
+    request: CommissionCalculationRequest,
+  ): Promise<CommissionCalculationResponse> => {
     return requestClient.post('/agent-modes/calculate-commission', request);
   },
 };

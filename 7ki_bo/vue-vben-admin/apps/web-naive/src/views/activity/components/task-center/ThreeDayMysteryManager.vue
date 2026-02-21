@@ -6,9 +6,7 @@
           <SparklesOutline size="48" />
         </template>
         <template #extra>
-          <n-button size="small" @click="handleComingSoon">
-            敬请期待
-          </n-button>
+          <n-button size="small" @click="handleComingSoon"> 敬请期待 </n-button>
         </template>
       </n-empty>
     </n-card>
@@ -38,4 +36,4 @@ const handleComingSoon = () => {
   width: 400px;
   text-align: center;
 }
-</style> 
+</style>

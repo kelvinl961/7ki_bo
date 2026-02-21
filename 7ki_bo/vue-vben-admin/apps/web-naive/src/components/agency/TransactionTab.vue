@@ -2,7 +2,7 @@
   <div class="transaction-tab">
     <!-- Transaction Summary -->
     <n-card title="交易概览" class="mb-4">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
         <div class="stat-card">
           <div class="stat-value">{{ formatCurrency(totalTransactions) }}</div>
           <div class="stat-label">总交易金额</div>
@@ -24,7 +24,7 @@
 
     <!-- Filter Section -->
     <n-card title="筛选条件" class="mb-4">
-      <div class="flex flex-wrap gap-4 items-end">
+      <div class="flex flex-wrap items-end gap-4">
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium text-gray-700">交易类型</label>
           <n-select
@@ -67,7 +67,11 @@
             @update:value="loadTransactions"
           />
         </div>
-        <n-button type="primary" @click="loadTransactions" class="flex items-center gap-1">
+        <n-button
+          type="primary"
+          @click="loadTransactions"
+          class="flex items-center gap-1"
+        >
           🔍 查询
         </n-button>
         <n-button @click="handleResetFilter" class="flex items-center gap-1">
@@ -107,19 +111,19 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, h, onMounted } from 'vue';
-import { 
-  NCard, 
-  NButton, 
-  NDataTable, 
-  NDatePicker, 
-  NSelect, 
-  NTag, 
+import {
+  NCard,
+  NButton,
+  NDataTable,
+  NDatePicker,
+  NSelect,
+  NTag,
   useMessage,
-  type DataTableColumns 
+  type DataTableColumns,
 } from 'naive-ui';
-import { 
+import {
   getAgentTransactionsApi,
-  type AgentTransactionRecord 
+  type AgentTransactionRecord,
 } from '#/api/agency/agent-details';
 
 interface Props {
@@ -127,7 +131,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  agentId: 0
+  agentId: 0,
 });
 
 const message = useMessage();
@@ -169,32 +173,35 @@ const transactionTypeOptions = [
   { label: '投注', value: 'betting' },
   { label: '中奖', value: 'winning' },
   { label: '活动', value: 'bonus' },
-  { label: '其他', value: 'other' }
+  { label: '其他', value: 'other' },
 ];
 
 const transactionStatusOptions = [
   { label: '成功', value: 'success' },
   { label: '处理中', value: 'processing' },
   { label: '失败', value: 'failed' },
-  { label: '已取消', value: 'cancelled' }
+  { label: '已取消', value: 'cancelled' },
 ];
 
 // Computed
 const totalTransactions = computed(() => {
-  return transactions.value.reduce((sum, record) => sum + Math.abs(record.amount), 0);
+  return transactions.value.reduce(
+    (sum, record) => sum + Math.abs(record.amount),
+    0,
+  );
 });
 
 const totalCount = computed(() => transactions.value.length);
 
 const totalInflow = computed(() => {
   return transactions.value
-    .filter(record => record.amount > 0)
+    .filter((record) => record.amount > 0)
     .reduce((sum, record) => sum + record.amount, 0);
 });
 
 const totalOutflow = computed(() => {
   return transactions.value
-    .filter(record => record.amount < 0)
+    .filter((record) => record.amount < 0)
     .reduce((sum, record) => sum + Math.abs(record.amount), 0);
 });
 
@@ -206,8 +213,12 @@ const transactionColumns: DataTableColumns<AgentTransactionRecord> = [
     width: 80,
     align: 'center',
     render: (row) => {
-      return h('span', { class: 'text-xs text-gray-500 font-mono' }, `#${row.id}`);
-    }
+      return h(
+        'span',
+        { class: 'text-xs text-gray-500 font-mono' },
+        `#${row.id}`,
+      );
+    },
   },
   {
     title: '交易类型',
@@ -215,20 +226,28 @@ const transactionColumns: DataTableColumns<AgentTransactionRecord> = [
     width: 120,
     render: (row) => {
       const typeMap = {
-        'deposit': { label: '充值', type: 'success', icon: '💰' },
-        'withdrawal': { label: '提现', type: 'warning', icon: '💸' },
-        'commission': { label: '佣金', type: 'info', icon: '💼' },
-        'betting': { label: '投注', type: 'error', icon: '🎯' },
-        'winning': { label: '中奖', type: 'success', icon: '🎉' },
-        'bonus': { label: '活动', type: 'info', icon: '🎁' },
-        'other': { label: '其他', type: 'default', icon: '📝' }
+        deposit: { label: '充值', type: 'success', icon: '💰' },
+        withdrawal: { label: '提现', type: 'warning', icon: '💸' },
+        commission: { label: '佣金', type: 'info', icon: '💼' },
+        betting: { label: '投注', type: 'error', icon: '🎯' },
+        winning: { label: '中奖', type: 'success', icon: '🎉' },
+        bonus: { label: '活动', type: 'info', icon: '🎁' },
+        other: { label: '其他', type: 'default', icon: '📝' },
       };
-      const typeInfo = typeMap[row.type as keyof typeof typeMap] || { label: row.type, type: 'default', icon: '❓' };
+      const typeInfo = typeMap[row.type as keyof typeof typeMap] || {
+        label: row.type,
+        type: 'default',
+        icon: '❓',
+      };
       return h('div', { class: 'flex items-center gap-2' }, [
         h('span', { class: 'text-lg' }, typeInfo.icon),
-        h(NTag, { type: typeInfo.type, size: 'small' }, { default: () => typeInfo.label })
+        h(
+          NTag,
+          { type: typeInfo.type, size: 'small' },
+          { default: () => typeInfo.label },
+        ),
       ]);
-    }
+    },
   },
   {
     title: '交易金额',
@@ -241,9 +260,9 @@ const transactionColumns: DataTableColumns<AgentTransactionRecord> = [
       const sign = isPositive ? '+' : '';
       return h('div', { class: `font-semibold ${color}` }, [
         h('span', { class: 'text-sm' }, sign),
-        h('span', formatCurrency(Math.abs(row.amount)))
+        h('span', formatCurrency(Math.abs(row.amount))),
       ]);
-    }
+    },
   },
   {
     title: '账户余额',
@@ -251,8 +270,12 @@ const transactionColumns: DataTableColumns<AgentTransactionRecord> = [
     width: 140,
     align: 'right',
     render: (row) => {
-      return h('span', { class: 'font-semibold text-blue-600' }, formatCurrency(row.balance));
-    }
+      return h(
+        'span',
+        { class: 'font-semibold text-blue-600' },
+        formatCurrency(row.balance),
+      );
+    },
   },
   {
     title: '状态',
@@ -261,24 +284,32 @@ const transactionColumns: DataTableColumns<AgentTransactionRecord> = [
     align: 'center',
     render: (row) => {
       const statusMap = {
-        'success': { label: '成功', type: 'success', icon: '✅' },
-        'processing': { label: '处理中', type: 'warning', icon: '⏳' },
-        'failed': { label: '失败', type: 'error', icon: '❌' },
-        'cancelled': { label: '已取消', type: 'default', icon: '🚫' }
+        success: { label: '成功', type: 'success', icon: '✅' },
+        processing: { label: '处理中', type: 'warning', icon: '⏳' },
+        failed: { label: '失败', type: 'error', icon: '❌' },
+        cancelled: { label: '已取消', type: 'default', icon: '🚫' },
       };
-      const status = statusMap[row.status as keyof typeof statusMap] || { label: row.status, type: 'default', icon: '❓' };
+      const status = statusMap[row.status as keyof typeof statusMap] || {
+        label: row.status,
+        type: 'default',
+        icon: '❓',
+      };
       return h('div', { class: 'flex items-center justify-center gap-1' }, [
         h('span', { class: 'text-sm' }, status.icon),
-        h(NTag, { type: status.type, size: 'small' }, { default: () => status.label })
+        h(
+          NTag,
+          { type: status.type, size: 'small' },
+          { default: () => status.label },
+        ),
       ]);
-    }
+    },
   },
   {
     title: '描述',
     key: 'description',
     width: 200,
     ellipsis: true,
-    tooltip: true
+    tooltip: true,
   },
   {
     title: '交易时间',
@@ -286,17 +317,23 @@ const transactionColumns: DataTableColumns<AgentTransactionRecord> = [
     width: 180,
     render: (row) => {
       return h('div', { class: 'text-sm' }, [
-        h('div', { class: 'font-medium' }, formatDateTime(row.transactionTime))
+        h('div', { class: 'font-medium' }, formatDateTime(row.transactionTime)),
       ]);
-    }
+    },
   },
   {
     title: '参考号',
     key: 'referenceId',
     width: 120,
     render: (row) => {
-      return row.referenceId ? h('span', { class: 'text-xs font-mono text-gray-600' }, row.referenceId) : h('span', { class: 'text-gray-400' }, '--');
-    }
+      return row.referenceId
+        ? h(
+            'span',
+            { class: 'text-xs font-mono text-gray-600' },
+            row.referenceId,
+          )
+        : h('span', { class: 'text-gray-400' }, '--');
+    },
   },
   {
     title: '操作员',
@@ -305,50 +342,55 @@ const transactionColumns: DataTableColumns<AgentTransactionRecord> = [
     render: (row) => {
       if (!row.operator) return h('span', { class: 'text-gray-400' }, '--');
       const operatorMap = {
-        'system': { label: '系统', type: 'info' },
-        'user': { label: '用户', type: 'success' },
-        'admin': { label: '管理员', type: 'warning' }
+        system: { label: '系统', type: 'info' },
+        user: { label: '用户', type: 'success' },
+        admin: { label: '管理员', type: 'warning' },
       };
-      const operator = operatorMap[row.operator as keyof typeof operatorMap] || { label: row.operator, type: 'default' };
-      return h(NTag, { type: operator.type, size: 'small' }, { default: () => operator.label });
-    }
-  }
+      const operator = operatorMap[
+        row.operator as keyof typeof operatorMap
+      ] || { label: row.operator, type: 'default' };
+      return h(
+        NTag,
+        { type: operator.type, size: 'small' },
+        { default: () => operator.label },
+      );
+    },
+  },
 ];
 
 // Methods
 const loadTransactions = async () => {
   if (!props.agentId) return;
-  
+
   transactionLoading.value = true;
   try {
     const params: any = {
       page: transactionPagination.current,
-      pageSize: transactionPagination.pageSize
+      pageSize: transactionPagination.pageSize,
     };
-    
+
     if (transactionTypeFilter.value) {
       params.type = transactionTypeFilter.value;
     }
-    
+
     if (transactionStatusFilter.value) {
       params.status = transactionStatusFilter.value;
     }
-    
+
     if (startDate.value) {
       params.startDate = new Date(startDate.value).toISOString();
     }
-    
+
     if (endDate.value) {
       const end = new Date(endDate.value);
       end.setHours(23, 59, 59, 999);
       params.endDate = end.toISOString();
     }
-    
+
     const response = await getAgentTransactionsApi(props.agentId, params);
     transactions.value = response.list;
     transactionPagination.total = response.pagination.total;
     transactionPagination.current = 1;
-    
   } catch (error) {
     console.error('Failed to load transactions:', error);
     message.error('加载交易记录失败');
@@ -419,7 +461,9 @@ onMounted(() => {
 }
 
 .font-mono {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  font-family:
+    ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', Menlo,
+    monospace;
 }
 
 .text-gray-500 {

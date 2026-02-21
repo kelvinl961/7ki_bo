@@ -17,8 +17,9 @@ const routes: RouteRecordRaw[] = [
         },
         name: 'CustomerService',
         path: '/operations/customer-service',
-        //@ts-ignore
-        component: () => import('../../../views/operations/CustomerService.vue'),
+        // @ts-ignore
+        component: () =>
+          import('../../../views/operations/CustomerService.vue'),
       },
       {
         meta: {
@@ -26,14 +27,12 @@ const routes: RouteRecordRaw[] = [
         },
         name: 'FeedbackManagement',
         path: '/operations/feedback-management',
-        //@ts-ignore
-        component: () => import('../../../views/operations/FeedbackManagement.vue'),
+        // @ts-ignore
+        component: () =>
+          import('../../../views/operations/FeedbackManagement.vue'),
       },
     ],
   },
 ];
 
 export default routes;
-
-
-

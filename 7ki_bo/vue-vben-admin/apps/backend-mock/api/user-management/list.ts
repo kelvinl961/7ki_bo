@@ -26,17 +26,25 @@ function generateMockUserList(count: number) {
       upperAgent: faker.person.fullName(),
       topAgentId: `T${topAgentId}`,
       topAgent: faker.person.fullName(),
-      registrationTime: faker.date.between({ 
-        from: '2022-01-01T00:00:00.000Z', 
-        to: '2024-12-01T00:00:00.000Z' 
+      registrationTime: faker.date.between({
+        from: '2022-01-01T00:00:00.000Z',
+        to: '2024-12-01T00:00:00.000Z',
       }),
       vipLevel: faker.helpers.arrayElement(vipLevels),
       memberLevel: faker.number.int({ min: 1, max: 10 }),
       registrationMethod: faker.helpers.arrayElement(registrationMethods),
-      balance: faker.number.float({ min: 0, max: 100000, fractionDigits: 2 }),
+      balance: faker.number.float({ min: 0, max: 100_000, fractionDigits: 2 }),
       lastLoginTime: faker.date.recent(),
-      totalDeposit: faker.number.float({ min: 0, max: 500000, fractionDigits: 2 }),
-      totalWithdraw: faker.number.float({ min: 0, max: 300000, fractionDigits: 2 }),
+      totalDeposit: faker.number.float({
+        min: 0,
+        max: 500_000,
+        fractionDigits: 2,
+      }),
+      totalWithdraw: faker.number.float({
+        min: 0,
+        max: 300_000,
+        fractionDigits: 2,
+      }),
       loginCount: faker.number.int({ min: 1, max: 1000 }),
       deviceCount: faker.number.int({ min: 1, max: 5 }),
     };
@@ -57,10 +65,10 @@ export default eventHandler(async (event) => {
 
   await sleep(400);
 
-  const { 
-    page = 1, 
-    pageSize = 20, 
-    sortBy, 
+  const {
+    page = 1,
+    pageSize = 20,
+    sortBy,
     sortOrder,
     accountStatus,
     registrationMethod,
@@ -68,33 +76,37 @@ export default eventHandler(async (event) => {
     vipLevel,
     startDate,
     endDate,
-    search
+    search,
   } = getQuery(event);
 
   let filteredData = structuredClone(mockUserData);
 
   // 筛选条件
   if (accountStatus) {
-    filteredData = filteredData.filter(user => user.accountStatus === accountStatus);
+    filteredData = filteredData.filter(
+      (user) => user.accountStatus === accountStatus,
+    );
   }
 
   if (registrationMethod) {
-    filteredData = filteredData.filter(user => user.registrationMethod === registrationMethod);
+    filteredData = filteredData.filter(
+      (user) => user.registrationMethod === registrationMethod,
+    );
   }
 
   if (currency) {
-    filteredData = filteredData.filter(user => user.currency === currency);
+    filteredData = filteredData.filter((user) => user.currency === currency);
   }
 
   if (vipLevel) {
-    filteredData = filteredData.filter(user => user.vipLevel === vipLevel);
+    filteredData = filteredData.filter((user) => user.vipLevel === vipLevel);
   }
 
   // 日期筛选
   if (startDate && endDate) {
     const start = new Date(startDate as string);
     const end = new Date(endDate as string);
-    filteredData = filteredData.filter(user => {
+    filteredData = filteredData.filter((user) => {
       const regTime = new Date(user.registrationTime);
       return regTime >= start && regTime <= end;
     });
@@ -103,11 +115,12 @@ export default eventHandler(async (event) => {
   // 搜索功能
   if (search) {
     const searchTerm = (search as string).toLowerCase();
-    filteredData = filteredData.filter(user => 
-      user.memberAccount.toLowerCase().includes(searchTerm) ||
-      user.memberId.toLowerCase().includes(searchTerm) ||
-      user.upperAgent.toLowerCase().includes(searchTerm) ||
-      user.topAgent.toLowerCase().includes(searchTerm)
+    filteredData = filteredData.filter(
+      (user) =>
+        user.memberAccount.toLowerCase().includes(searchTerm) ||
+        user.memberId.toLowerCase().includes(searchTerm) ||
+        user.upperAgent.toLowerCase().includes(searchTerm) ||
+        user.topAgent.toLowerCase().includes(searchTerm),
     );
   }
 
@@ -116,7 +129,7 @@ export default eventHandler(async (event) => {
     filteredData.sort((a, b) => {
       const aValue = a[sortBy as string];
       const bValue = b[sortBy as string];
-      
+
       if (sortOrder === 'asc') {
         if (typeof aValue === 'number') {
           return aValue - bValue;
@@ -131,5 +144,9 @@ export default eventHandler(async (event) => {
     });
   }
 
-  return usePageResponseSuccess(page as string, pageSize as string, filteredData);
-}); 
+  return usePageResponseSuccess(
+    page as string,
+    pageSize as string,
+    filteredData,
+  );
+});

@@ -188,7 +188,7 @@
             </n-form-item>
 
             <n-form-item label="图标">
-              <MediaLibrarySelector 
+              <MediaLibrarySelector
                 v-model="categoryForm.icon"
                 :accept-types="['image']"
                 category="customer-service/faq-categories"
@@ -268,7 +268,9 @@ import {
 } from '#/api/operations/customerService';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 import { defineAsyncComponent } from 'vue';
-const MediaLibrarySelector = defineAsyncComponent(() => import('#/components/MediaLibrarySelector.vue'));
+const MediaLibrarySelector = defineAsyncComponent(
+  () => import('#/components/MediaLibrarySelector.vue'),
+);
 
 const message = useMessage();
 
@@ -400,7 +402,9 @@ const columns = computed<DataTableColumns<FAQ>>(() => [
     key: 'faqType',
     width: 120,
     render: (row) => {
-      const typeLabel = faqTypeOptions.find((opt) => opt.value === row.faqType)?.label || row.faqType;
+      const typeLabel =
+        faqTypeOptions.find((opt) => opt.value === row.faqType)?.label ||
+        row.faqType;
       return h(NTag, { size: 'small' }, () => typeLabel);
     },
   },
@@ -422,7 +426,7 @@ const columns = computed<DataTableColumns<FAQ>>(() => [
       return h(
         NTag,
         { type: row.status === 'PUBLISHED' ? 'success' : 'warning' },
-        () => row.status === 'PUBLISHED' ? '已发布' : '待发布'
+        () => (row.status === 'PUBLISHED' ? '已发布' : '待发布'),
       );
     },
   },
@@ -436,7 +440,9 @@ const columns = computed<DataTableColumns<FAQ>>(() => [
     key: 'createdAt',
     width: 180,
     render: (row) => {
-      return row.createdAt ? new Date(row.createdAt).toLocaleString('zh-CN') : '-';
+      return row.createdAt
+        ? new Date(row.createdAt).toLocaleString('zh-CN')
+        : '-';
     },
   },
   {
@@ -452,7 +458,7 @@ const columns = computed<DataTableColumns<FAQ>>(() => [
             size: 'small',
             onClick: () => showEditModal(row.id!),
           },
-          () => '修改'
+          () => '修改',
         ),
         row.status === 'DRAFT'
           ? h(
@@ -462,7 +468,7 @@ const columns = computed<DataTableColumns<FAQ>>(() => [
                 type: 'success',
                 onClick: () => handlePublish(row.id!),
               },
-              () => '发布'
+              () => '发布',
             )
           : h(
               NButton,
@@ -471,7 +477,7 @@ const columns = computed<DataTableColumns<FAQ>>(() => [
                 type: 'warning',
                 onClick: () => handleUnpublish(row.id!),
               },
-              () => '撤回'
+              () => '撤回',
             ),
         h(
           NPopconfirm,
@@ -479,9 +485,10 @@ const columns = computed<DataTableColumns<FAQ>>(() => [
             onPositiveClick: () => handleDelete(row.id!),
           },
           {
-            trigger: () => h(NButton, { size: 'small', type: 'error' }, () => '删除'),
+            trigger: () =>
+              h(NButton, { size: 'small', type: 'error' }, () => '删除'),
             default: () => '确定删除此FAQ吗？',
-          }
+          },
         ),
       ]);
     },
@@ -544,7 +551,7 @@ const categoryColumns = computed<DataTableColumns<FAQCategory>>(() => [
             size: 'small',
             onClick: () => handleEditCategory(row),
           },
-          () => '修改'
+          () => '修改',
         ),
         h(
           NPopconfirm,
@@ -552,9 +559,10 @@ const categoryColumns = computed<DataTableColumns<FAQCategory>>(() => [
             onPositiveClick: () => handleDeleteCategory(row.id!),
           },
           {
-            trigger: () => h(NButton, { size: 'small', type: 'error' }, () => '删除'),
+            trigger: () =>
+              h(NButton, { size: 'small', type: 'error' }, () => '删除'),
             default: () => '确定删除此类别吗？',
-          }
+          },
         ),
       ]);
     },
@@ -658,7 +666,10 @@ const submitCategory = async () => {
     let response;
     if (editingCategoryId.value) {
       // Update existing category
-      response = await updateFAQCategory(editingCategoryId.value, categoryForm.value);
+      response = await updateFAQCategory(
+        editingCategoryId.value,
+        categoryForm.value,
+      );
       if (response.success) {
         message.success('类别更新成功');
       }
@@ -710,7 +721,7 @@ const handleEditCategory = (category: FAQCategory) => {
     icon: category.icon || '',
     displayOrder: category.displayOrder,
   };
-  
+
   // Scroll to form
   const formElement = document.querySelector('.faq-tab .n-card');
   if (formElement) {
@@ -809,4 +820,3 @@ onMounted(() => {
   cursor: move;
 }
 </style>
-

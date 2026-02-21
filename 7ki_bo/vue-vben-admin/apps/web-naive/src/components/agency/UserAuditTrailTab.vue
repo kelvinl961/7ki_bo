@@ -2,7 +2,7 @@
   <div class="user-audit-trail-tab">
     <!-- Filter Section -->
     <n-card title="筛选条件" class="mb-4">
-      <div class="flex flex-wrap gap-4 items-end">
+      <div class="flex flex-wrap items-end gap-4">
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium text-gray-700">操作类型</label>
           <n-select
@@ -45,7 +45,11 @@
             @update:value="loadAuditTrail"
           />
         </div>
-        <n-button type="primary" @click="loadAuditTrail" class="flex items-center gap-1">
+        <n-button
+          type="primary"
+          @click="loadAuditTrail"
+          class="flex items-center gap-1"
+        >
           🔍 查询
         </n-button>
         <n-button @click="handleResetFilter" class="flex items-center gap-1">
@@ -83,7 +87,7 @@
 
     <!-- Statistics Summary -->
     <n-card title="操作统计" class="mt-4">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
         <div class="stat-card">
           <div class="stat-value">{{ totalActions }}</div>
           <div class="stat-label">总操作数</div>
@@ -107,20 +111,20 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, h, onMounted } from 'vue';
-import { 
-  NCard, 
-  NButton, 
-  NDataTable, 
-  NDatePicker, 
-  NSelect, 
-  NTag, 
+import {
+  NCard,
+  NButton,
+  NDataTable,
+  NDatePicker,
+  NSelect,
+  NTag,
   NIcon,
   useMessage,
-  type DataTableColumns 
+  type DataTableColumns,
 } from 'naive-ui';
-import { 
+import {
   getAgentAuditTrailApi,
-  type AgentAuditRecord 
+  type AgentAuditRecord,
 } from '#/api/agency/agent-details';
 
 interface Props {
@@ -128,7 +132,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  agentId: 0
+  agentId: 0,
 });
 
 const message = useMessage();
@@ -169,29 +173,31 @@ const actionTypeOptions = [
   { label: '状态变更', value: 'status_change' },
   { label: '佣金操作', value: 'commission' },
   { label: '系统操作', value: 'system' },
-  { label: '其他操作', value: 'other' }
+  { label: '其他操作', value: 'other' },
 ];
 
 const actionStatusOptions = [
   { label: '成功', value: 'success' },
   { label: '失败', value: 'failed' },
   { label: '部分成功', value: 'partial' },
-  { label: '待处理', value: 'pending' }
+  { label: '待处理', value: 'pending' },
 ];
 
 // Computed
 const totalActions = computed(() => auditRecords.value.length);
 
-const successfulActions = computed(() => 
-  auditRecords.value.filter(record => record.status === 'success').length
+const successfulActions = computed(
+  () =>
+    auditRecords.value.filter((record) => record.status === 'success').length,
 );
 
-const failedActions = computed(() => 
-  auditRecords.value.filter(record => record.status === 'failed').length
+const failedActions = computed(
+  () =>
+    auditRecords.value.filter((record) => record.status === 'failed').length,
 );
 
 const uniqueUsers = computed(() => {
-  const users = new Set(auditRecords.value.map(record => record.operator));
+  const users = new Set(auditRecords.value.map((record) => record.operator));
   return users.size;
 });
 
@@ -203,8 +209,12 @@ const auditColumns: DataTableColumns<AgentAuditRecord> = [
     width: 80,
     align: 'center',
     render: (row) => {
-      return h('span', { class: 'text-xs text-gray-500 font-mono' }, `#${row.id}`);
-    }
+      return h(
+        'span',
+        { class: 'text-xs text-gray-500 font-mono' },
+        `#${row.id}`,
+      );
+    },
   },
   {
     title: '操作类型',
@@ -212,24 +222,32 @@ const auditColumns: DataTableColumns<AgentAuditRecord> = [
     width: 120,
     render: (row) => {
       const typeMap = {
-        'login': { label: '登录操作', type: 'info', icon: '' },
-        'profile_update': { label: '资料修改', type: 'warning', icon: '' },
-        'status_change': { label: '状态变更', type: 'error', icon: '' },
-        'commission': { label: '佣金操作', type: 'success', icon: '' },
-        'system': { label: '系统操作', type: 'default', icon: '' },
-        'other': { label: '其他操作', type: 'default', icon: '' }
+        login: { label: '登录操作', type: 'info', icon: '' },
+        profile_update: { label: '资料修改', type: 'warning', icon: '' },
+        status_change: { label: '状态变更', type: 'error', icon: '' },
+        commission: { label: '佣金操作', type: 'success', icon: '' },
+        system: { label: '系统操作', type: 'default', icon: '' },
+        other: { label: '其他操作', type: 'default', icon: '' },
       };
-      const typeInfo = typeMap[row.actionType as keyof typeof typeMap] || { label: row.actionType, type: 'default', icon: '❓' };
+      const typeInfo = typeMap[row.actionType as keyof typeof typeMap] || {
+        label: row.actionType,
+        type: 'default',
+        icon: '❓',
+      };
       return h('div', { class: 'flex items-center gap-2' }, [
         h('span', { class: 'text-lg' }, typeInfo.icon),
-        h(NTag, { type: typeInfo.type as any, size: 'small' }, { default: () => typeInfo.label })
+        h(
+          NTag,
+          { type: typeInfo.type as any, size: 'small' },
+          { default: () => typeInfo.label },
+        ),
       ]);
-    }
+    },
   },
   {
     title: '操作名称',
     key: 'actionName',
-    width: 120
+    width: 120,
   },
   {
     title: '描述',
@@ -244,17 +262,25 @@ const auditColumns: DataTableColumns<AgentAuditRecord> = [
     align: 'center',
     render: (row) => {
       const statusMap = {
-        'success': { label: '成功', type: 'success', icon: '✅' },
-        'failed': { label: '失败', type: 'error', icon: '❌' },
-        'partial': { label: '部分成功', type: 'warning', icon: '⚠️' },
-        'pending': { label: '待处理', type: 'info', icon: '⏳' }
+        success: { label: '成功', type: 'success', icon: '✅' },
+        failed: { label: '失败', type: 'error', icon: '❌' },
+        partial: { label: '部分成功', type: 'warning', icon: '⚠️' },
+        pending: { label: '待处理', type: 'info', icon: '⏳' },
       };
-      const status = statusMap[row.status as keyof typeof statusMap] || { label: row.status, type: 'default', icon: '❓' };
+      const status = statusMap[row.status as keyof typeof statusMap] || {
+        label: row.status,
+        type: 'default',
+        icon: '❓',
+      };
       return h('div', { class: 'flex items-center justify-center gap-1' }, [
         h('span', { class: 'text-sm' }, status.icon),
-        h(NTag, { type: status.type as any, size: 'small' }, { default: () => status.label })
+        h(
+          NTag,
+          { type: status.type as any, size: 'small' },
+          { default: () => status.label },
+        ),
       ]);
-    }
+    },
   },
   {
     title: '操作员',
@@ -263,25 +289,31 @@ const auditColumns: DataTableColumns<AgentAuditRecord> = [
     render: (row) => {
       return h('div', { class: 'text-sm' }, [
         h('div', { class: 'font-medium' }, row.operator),
-        h('div', { class: 'text-xs text-gray-500' }, row.operatorRole)
+        h('div', { class: 'text-xs text-gray-500' }, row.operatorRole),
       ]);
-    }
+    },
   },
   {
     title: '目标用户',
     key: 'targetUser',
     width: 120,
     render: (row) => {
-      return row.targetUser ? h('span', { class: 'text-sm' }, row.targetUser) : h('span', { class: 'text-gray-400' }, '--');
-    }
+      return row.targetUser
+        ? h('span', { class: 'text-sm' }, row.targetUser)
+        : h('span', { class: 'text-gray-400' }, '--');
+    },
   },
   {
     title: 'IP地址',
     key: 'ipAddress',
     width: 120,
     render: (row) => {
-      return h('span', { class: 'text-xs font-mono text-gray-600' }, row.ipAddress);
-    }
+      return h(
+        'span',
+        { class: 'text-xs font-mono text-gray-600' },
+        row.ipAddress,
+      );
+    },
   },
   {
     title: '操作时间',
@@ -289,9 +321,9 @@ const auditColumns: DataTableColumns<AgentAuditRecord> = [
     width: 180,
     render: (row) => {
       return h('div', { class: 'text-sm' }, [
-        h('div', { class: 'font-medium' }, formatDateTime(row.actionTime))
+        h('div', { class: 'font-medium' }, formatDateTime(row.actionTime)),
       ]);
-    }
+    },
   },
   {
     title: '详情',
@@ -300,49 +332,52 @@ const auditColumns: DataTableColumns<AgentAuditRecord> = [
     align: 'center',
     render: (row) => {
       if (!row.details) return h('span', { class: 'text-gray-400' }, '--');
-      return h(NButton, {
-        size: 'tiny',
-        type: 'info',
-        onClick: () => handleViewDetails(row)
-      }, { default: () => '查看' });
-    }
-  }
+      return h(
+        NButton,
+        {
+          size: 'tiny',
+          type: 'info',
+          onClick: () => handleViewDetails(row),
+        },
+        { default: () => '查看' },
+      );
+    },
+  },
 ];
 
 // Methods
 const loadAuditTrail = async () => {
   if (!props.agentId) return;
-  
+
   auditLoading.value = true;
   try {
     const params: any = {
       page: auditPagination.current,
-      pageSize: auditPagination.pageSize
+      pageSize: auditPagination.pageSize,
     };
-    
+
     if (actionTypeFilter.value) {
       params.actionType = actionTypeFilter.value;
     }
-    
+
     if (actionStatusFilter.value) {
       params.status = actionStatusFilter.value;
     }
-    
+
     if (startDate.value) {
       params.startDate = new Date(startDate.value).toISOString();
     }
-    
+
     if (endDate.value) {
       const end = new Date(endDate.value);
       end.setHours(23, 59, 59, 999);
       params.endDate = end.toISOString();
     }
-    
+
     const response = await getAgentAuditTrailApi(props.agentId, params);
     auditRecords.value = response.list;
     auditPagination.total = response.pagination.total;
     auditPagination.current = 1;
-    
   } catch (error) {
     console.error('Failed to load audit trail:', error);
     message.error('加载审计日志失败');
@@ -417,7 +452,9 @@ onMounted(() => {
 }
 
 .font-mono {
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  font-family:
+    ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', Menlo,
+    monospace;
 }
 
 .text-gray-500 {

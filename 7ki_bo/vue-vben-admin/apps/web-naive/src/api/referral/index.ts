@@ -4,41 +4,41 @@ export interface ReferralValidationResult {
   valid: boolean;
   agent?: {
     agentId: string;
-    username: string;
-    referralCode: string;
-    isActive: boolean;
     currency: string;
+    isActive: boolean;
+    referralCode: string;
+    username: string;
   };
 }
 
 export interface ReferralStats {
   agent: {
     agentId: string;
-    username: string;
-    referralCode: string;
     isActive: boolean;
+    referralCode: string;
+    username: string;
   };
   referredUsers: Array<{
-    id: number;
-    name: string;
-    email: string;
     account: string;
     createdAt: string;
+    email: string;
+    id: number;
+    name: string;
   }>;
   referralRegistrations: Array<{
     id: number;
-    registeredUserId?: number;
+    registeredAt: string;
     registeredUserEmail?: string;
+    registeredUserId?: number;
     registeredUserPhone?: string;
     visitorIp: string;
-    registeredAt: string;
   }>;
   statistics: {
-    totalReferredUsers: number;
-    totalVisits: number;
-    totalUniqueVisitors: number;
-    totalRegistrations: number;
     conversionRate: string;
+    totalReferredUsers: number;
+    totalRegistrations: number;
+    totalUniqueVisitors: number;
+    totalVisits: number;
   };
 }
 
@@ -56,15 +56,21 @@ export interface RegistrationData {
 /**
  * Validate referral code before registration
  */
-export async function validateReferralCode(referralCode: string): Promise<ReferralValidationResult> {
-  const response = await requestClient.get(`/referral/validate/${referralCode}`);
+export async function validateReferralCode(
+  referralCode: string,
+): Promise<ReferralValidationResult> {
+  const response = await requestClient.get(
+    `/referral/validate/${referralCode}`,
+  );
   return response.data;
 }
 
 /**
  * Register user with referral code
  */
-export async function registerWithReferral(data: RegistrationData): Promise<any> {
+export async function registerWithReferral(
+  data: RegistrationData,
+): Promise<any> {
   const response = await requestClient.post('/users/register', data);
   return response.data;
 }
@@ -72,7 +78,9 @@ export async function registerWithReferral(data: RegistrationData): Promise<any>
 /**
  * Get agent referral statistics
  */
-export async function getAgentReferralStats(agentId: string): Promise<ReferralStats> {
+export async function getAgentReferralStats(
+  agentId: string,
+): Promise<ReferralStats> {
   const response = await requestClient.get(`/referral/agent/${agentId}/stats`);
   return response.data;
 }
@@ -88,9 +96,12 @@ export async function trackReferralVisit(referralCode: string): Promise<void> {
 /**
  * Get referral statistics for a specific referral code
  */
-export async function getReferralStats(referralCode: string, days: number = 30): Promise<any> {
+export async function getReferralStats(
+  referralCode: string,
+  days: number = 30,
+): Promise<any> {
   const response = await requestClient.get(`/referral/stats/${referralCode}`, {
-    params: { days }
+    params: { days },
   });
   return response.data;
 }
@@ -98,7 +109,7 @@ export async function getReferralStats(referralCode: string, days: number = 30):
 /**
  * Extract referral code from URL parameters
  */
-export function extractReferralCodeFromUrl(): string | null {
+export function extractReferralCodeFromUrl(): null | string {
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get('ref');
 }
@@ -107,10 +118,10 @@ export function extractReferralCodeFromUrl(): string | null {
  * Store referral code in localStorage for later use
  */
 export function storeReferralCode(referralCode: string): void {
-  if (referralCode && referralCode.match(/^7KI[A-Z0-9]+$/)) {
+  if (referralCode && /^7KI[A-Z0-9]+$/.test(referralCode)) {
     localStorage.setItem('referralCode', referralCode);
     // Set expiration (7 days)
-    const expiration = Date.now() + (7 * 24 * 60 * 60 * 1000);
+    const expiration = Date.now() + 7 * 24 * 60 * 60 * 1000;
     localStorage.setItem('referralCodeExpiration', expiration.toString());
   }
 }
@@ -118,21 +129,21 @@ export function storeReferralCode(referralCode: string): void {
 /**
  * Get stored referral code from localStorage
  */
-export function getStoredReferralCode(): string | null {
+export function getStoredReferralCode(): null | string {
   const referralCode = localStorage.getItem('referralCode');
   const expiration = localStorage.getItem('referralCodeExpiration');
-  
+
   if (!referralCode || !expiration) {
     return null;
   }
-  
+
   // Check if expired
-  if (Date.now() > parseInt(expiration)) {
+  if (Date.now() > Number.parseInt(expiration)) {
     localStorage.removeItem('referralCode');
     localStorage.removeItem('referralCodeExpiration');
     return null;
   }
-  
+
   return referralCode;
 }
 
@@ -147,20 +158,23 @@ export function clearStoredReferralCode(): void {
 /**
  * Generate referral link for an agent
  */
-export function generateReferralLink(referralCode: string, baseUrl: string = 'https://sevenki.118br.com'): string {
+export function generateReferralLink(
+  referralCode: string,
+  baseUrl: string = 'https://sevenki.118br.com',
+): string {
   return `${baseUrl}/?ref=${referralCode}`;
 }
 
 /**
  * Auto-detect and store referral code on page load
  */
-export function autoDetectReferralCode(): string | null {
+export function autoDetectReferralCode(): null | string {
   const urlReferralCode = extractReferralCodeFromUrl();
-  
+
   if (urlReferralCode) {
     storeReferralCode(urlReferralCode);
     return urlReferralCode;
   }
-  
+
   return getStoredReferralCode();
 }

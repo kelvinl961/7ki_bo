@@ -1,40 +1,118 @@
 <template>
   <Page>
     <n-card>
-      <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 16px; flex-wrap: wrap;">
+      <div
+        style="
+          display: flex;
+          gap: 8px;
+          align-items: center;
+          margin-bottom: 16px;
+          flex-wrap: wrap;
+        "
+      >
         <!-- Tab buttons -->
         <n-button-group>
-          <n-button :type="activeTab === 'day' ? 'primary' : 'default'" @click="activeTab = 'day'">日</n-button>
-          <n-button :type="activeTab === 'week' ? 'primary' : 'default'" @click="activeTab = 'week'">周</n-button>
-          <n-button :type="activeTab === 'month' ? 'primary' : 'default'" @click="activeTab = 'month'">月</n-button>
+          <n-button
+            :type="activeTab === 'day' ? 'primary' : 'default'"
+            @click="activeTab = 'day'"
+            >日</n-button
+          >
+          <n-button
+            :type="activeTab === 'week' ? 'primary' : 'default'"
+            @click="activeTab = 'week'"
+            >周</n-button
+          >
+          <n-button
+            :type="activeTab === 'month' ? 'primary' : 'default'"
+            @click="activeTab = 'month'"
+            >月</n-button
+          >
         </n-button-group>
 
         <!-- Date Range -->
-        <div style="display: flex; gap: 4px; align-items: center;">
-          <span style="font-size: 12px;">开始时间</span>
-          <n-date-picker v-model:value="searchForm.startDate" type="datetime" placeholder="选择时间" style="width: 200px;" />
+        <div style="display: flex; gap: 4px; align-items: center">
+          <span style="font-size: 12px">开始时间</span>
+          <n-date-picker
+            v-model:value="searchForm.startDate"
+            type="datetime"
+            placeholder="选择时间"
+            style="width: 200px"
+          />
         </div>
-        <div style="display: flex; gap: 4px; align-items: center;">
-          <span style="font-size: 12px;">结束时间</span>
-          <n-date-picker v-model:value="searchForm.endDate" type="datetime" placeholder="选择时间" style="width: 200px;" />
+        <div style="display: flex; gap: 4px; align-items: center">
+          <span style="font-size: 12px">结束时间</span>
+          <n-date-picker
+            v-model:value="searchForm.endDate"
+            type="datetime"
+            placeholder="选择时间"
+            style="width: 200px"
+          />
         </div>
 
         <!-- Filters -->
-        <n-select v-model:value="searchForm.label" placeholder="标签标签" style="width: 150px;" :options="labelOptions" clearable />
-        <n-select v-model:value="searchForm.registrationSource" placeholder="父注册邀请金、可用余额" style="width: 200px;" :options="registrationSourceOptions" clearable />
-        <n-select v-model:value="searchForm.totalInvites" placeholder="累计邀请" style="width: 150px;" :options="totalInvitesOptions" clearable />
-        <n-select v-model:value="searchForm.profitLoss" placeholder="盈亏问题" style="width: 150px;" :options="profitLossOptions" clearable />
-        <n-select v-model:value="searchForm.sortBy" placeholder="金额排序用户式" style="width: 150px;" :options="sortOptions" clearable />
-        <n-select v-model:value="searchForm.agentMethod" placeholder="全部代理用方式" style="width: 150px;" :options="agentMethodOptions" clearable />
-        <n-select v-model:value="searchForm.agentType" placeholder="全部代理类型报" style="width: 150px;" :options="agentTypeOptions" clearable />
-        <n-select v-model:value="searchForm.superiorAgent" placeholder="全部上线粤家" style="width: 150px;" :options="superiorAgentOptions" clearable />
+        <n-select
+          v-model:value="searchForm.label"
+          placeholder="标签标签"
+          style="width: 150px"
+          :options="labelOptions"
+          clearable
+        />
+        <n-select
+          v-model:value="searchForm.registrationSource"
+          placeholder="父注册邀请金、可用余额"
+          style="width: 200px"
+          :options="registrationSourceOptions"
+          clearable
+        />
+        <n-select
+          v-model:value="searchForm.totalInvites"
+          placeholder="累计邀请"
+          style="width: 150px"
+          :options="totalInvitesOptions"
+          clearable
+        />
+        <n-select
+          v-model:value="searchForm.profitLoss"
+          placeholder="盈亏问题"
+          style="width: 150px"
+          :options="profitLossOptions"
+          clearable
+        />
+        <n-select
+          v-model:value="searchForm.sortBy"
+          placeholder="金额排序用户式"
+          style="width: 150px"
+          :options="sortOptions"
+          clearable
+        />
+        <n-select
+          v-model:value="searchForm.agentMethod"
+          placeholder="全部代理用方式"
+          style="width: 150px"
+          :options="agentMethodOptions"
+          clearable
+        />
+        <n-select
+          v-model:value="searchForm.agentType"
+          placeholder="全部代理类型报"
+          style="width: 150px"
+          :options="agentTypeOptions"
+          clearable
+        />
+        <n-select
+          v-model:value="searchForm.superiorAgent"
+          placeholder="全部上线粤家"
+          style="width: 150px"
+          :options="superiorAgentOptions"
+          clearable
+        />
 
         <!-- Search button -->
         <n-button type="primary" @click="handleSearch">搜索</n-button>
       </div>
 
       <!-- Action buttons -->
-      <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+      <div style="display: flex; gap: 8px; margin-bottom: 16px">
         <n-button type="primary" @click="handleCreate">
           <template #icon>
             <span>+</span>
@@ -54,7 +132,7 @@
           分出提取
         </n-button>
       </div>
-      
+
       <!-- Table -->
       <n-data-table
         :columns="columns"
@@ -66,22 +144,34 @@
         :summary="createSummary"
         remote
       />
-      
+
       <!-- Summary Rows -->
-      <div v-if="tableData.length > 0" style="margin-top: 16px; padding: 12px; background: #fafafa; border-radius: 4px;">
+      <div
+        v-if="tableData.length > 0"
+        style="
+          margin-top: 16px;
+          padding: 12px;
+          background: #fafafa;
+          border-radius: 4px;
+        "
+      >
         <n-space vertical :size="8">
           <!-- 小计 (Page Subtotal) -->
           <n-space :size="24">
-            <span style="font-weight: bold; width: 80px;">小计</span>
+            <span style="font-weight: bold; width: 80px">小计</span>
             <span>直属会员: {{ pageSubtotal.memberCount }}</span>
             <span>下级代理: {{ pageSubtotal.downlineCount }}</span>
             <span>累计佣金: {{ pageSubtotal.commissionTotal.toFixed(2) }}</span>
-            <span>累计领取: {{ pageSubtotal.claimedCommission.toFixed(2) }}</span>
-            <span>未领取: {{ pageSubtotal.unclaimedCommission.toFixed(2) }}</span>
+            <span
+              >累计领取: {{ pageSubtotal.claimedCommission.toFixed(2) }}</span
+            >
+            <span
+              >未领取: {{ pageSubtotal.unclaimedCommission.toFixed(2) }}</span
+            >
           </n-space>
           <!-- 总计 (Grand Total) -->
           <n-space :size="24">
-            <span style="font-weight: bold; width: 80px;">总计</span>
+            <span style="font-weight: bold; width: 80px">总计</span>
             <span>直属会员: {{ grandTotal.memberCount }}</span>
             <span>下级代理: {{ grandTotal.downlineCount }}</span>
             <span>累计佣金: {{ grandTotal.commissionTotal.toFixed(2) }}</span>
@@ -93,131 +183,206 @@
     </n-card>
 
     <!-- 新增/编辑代理弹窗 -->
-    <n-modal 
-      v-model:show="modalVisible" 
+    <n-modal
+      v-model:show="modalVisible"
       preset="card"
-      title="新增代理" 
+      title="新增代理"
       size="medium"
       :style="{ width: '600px', maxWidth: '90vw' }"
       :segmented="false"
       :mask-closable="false"
       transform-origin="center"
     >
-        <n-form 
-          ref="formRef" 
-          :model="formData" 
-          :rules="rules" 
-          label-placement="left" 
-          label-width="120px"
-          :show-feedback="true"
-          size="medium"
-        >
-          <n-grid :cols="2" :x-gap="12" :y-gap="8">
-            <!-- 代理币种 -->
-            <n-gi>
-              <n-form-item label="* 代理币种" path="currency" :show-feedback="true">
-                <n-select v-model:value="formData.currency" :options="currencyOptions" placeholder="巴西(BRL)" />
-              </n-form-item>
-            </n-gi>
-            
-            <!-- 代理模式 -->
-            <n-gi>
-              <n-form-item label="代理模式" path="mode">
-                <n-select v-model:value="formData.mode" :options="modeOptions" placeholder="一级代理" />
-              </n-form-item>
-            </n-gi>
+      <n-form
+        ref="formRef"
+        :model="formData"
+        :rules="rules"
+        label-placement="left"
+        label-width="120px"
+        :show-feedback="true"
+        size="medium"
+      >
+        <n-grid :cols="2" :x-gap="12" :y-gap="8">
+          <!-- 代理币种 -->
+          <n-gi>
+            <n-form-item
+              label="* 代理币种"
+              path="currency"
+              :show-feedback="true"
+            >
+              <n-select
+                v-model:value="formData.currency"
+                :options="currencyOptions"
+                placeholder="巴西(BRL)"
+              />
+            </n-form-item>
+          </n-gi>
 
-            <!-- 代理账号 -->
-            <n-gi>
-              <n-form-item label="* 代理账号" path="username" :show-feedback="true">
-                <n-input v-model:value="formData.username" placeholder="请输入代理账号" />
-              </n-form-item>
-            </n-gi>
+          <!-- 代理模式 -->
+          <n-gi>
+            <n-form-item label="代理模式" path="mode">
+              <n-select
+                v-model:value="formData.mode"
+                :options="modeOptions"
+                placeholder="一级代理"
+              />
+            </n-form-item>
+          </n-gi>
 
-            <!-- 登录密码 -->
-            <n-gi>
-              <n-form-item label="* 登录密码" path="loginPassword" :show-feedback="true">
-                <n-input v-model:value="formData.loginPassword" type="password" placeholder="请输入登录密码" />
-              </n-form-item>
-            </n-gi>
+          <!-- 代理账号 -->
+          <n-gi>
+            <n-form-item
+              label="* 代理账号"
+              path="username"
+              :show-feedback="true"
+            >
+              <n-input
+                v-model:value="formData.username"
+                placeholder="请输入代理账号"
+              />
+            </n-form-item>
+          </n-gi>
 
-            <!-- 提现密码 -->
-            <n-gi>
-              <n-form-item label="提现密码" path="withdrawalPassword" :show-feedback="true">
-                <n-input v-model:value="formData.withdrawalPassword" type="password" placeholder="请输入限6位纯数字密码" />
-              </n-form-item>
-            </n-gi>
+          <!-- 登录密码 -->
+          <n-gi>
+            <n-form-item
+              label="* 登录密码"
+              path="loginPassword"
+              :show-feedback="true"
+            >
+              <n-input
+                v-model:value="formData.loginPassword"
+                type="password"
+                placeholder="请输入登录密码"
+              />
+            </n-form-item>
+          </n-gi>
 
-            <!-- 代理本人层级 -->
-            <n-gi>
-              <n-form-item label="* 代理本人层级" path="level" :show-feedback="true">
-                <n-select v-model:value="formData.level" :options="memberTierOptions" placeholder="请选择代理本人层级" />
-              </n-form-item>
-            </n-gi>
+          <!-- 提现密码 -->
+          <n-gi>
+            <n-form-item
+              label="提现密码"
+              path="withdrawalPassword"
+              :show-feedback="true"
+            >
+              <n-input
+                v-model:value="formData.withdrawalPassword"
+                type="password"
+                placeholder="请输入限6位纯数字密码"
+              />
+            </n-form-item>
+          </n-gi>
 
-            <!-- 代理本人标签 -->
-            <n-gi>
-              <n-form-item label="代理本人标签" path="agentTag">
-                <n-select v-model:value="formData.agentTag" :options="agentTagOptions" placeholder="默认标签" />
-              </n-form-item>
-            </n-gi>
+          <!-- 代理本人层级 -->
+          <n-gi>
+            <n-form-item
+              label="* 代理本人层级"
+              path="level"
+              :show-feedback="true"
+            >
+              <n-select
+                v-model:value="formData.level"
+                :options="memberTierOptions"
+                placeholder="请选择代理本人层级"
+              />
+            </n-form-item>
+          </n-gi>
 
-            <!-- 直属强制绑定层级 -->
-            <n-gi>
-              <n-form-item label="* 直属强制绑定层级" path="directForcedLevel" :show-feedback="true">
-                <n-select v-model:value="formData.directForcedLevel" :options="memberTierOptions" placeholder="请选择直属强制绑定层级" />
-              </n-form-item>
-            </n-gi>
+          <!-- 代理本人标签 -->
+          <n-gi>
+            <n-form-item label="代理本人标签" path="agentTag">
+              <n-select
+                v-model:value="formData.agentTag"
+                :options="agentTagOptions"
+                placeholder="默认标签"
+              />
+            </n-form-item>
+          </n-gi>
 
-            <!-- 直属强制绑定标签 -->
-            <n-gi>
-              <n-form-item label="直属强制绑定标签" path="directForcedTag">
-                <n-select v-model:value="formData.directForcedTag" :options="directForcedTagOptions" placeholder="默认标签" />
-              </n-form-item>
-            </n-gi>
+          <!-- 直属强制绑定层级 -->
+          <n-gi>
+            <n-form-item
+              label="* 直属强制绑定层级"
+              path="directForcedLevel"
+              :show-feedback="true"
+            >
+              <n-select
+                v-model:value="formData.directForcedLevel"
+                :options="memberTierOptions"
+                placeholder="请选择直属强制绑定层级"
+              />
+            </n-form-item>
+          </n-gi>
 
-            <!-- 代理提佣方式 -->
-            <n-gi>
-              <n-form-item label="* 代理提佣方式" path="commissionMode" :show-feedback="true">
-                <n-select v-model:value="formData.commissionMode" :options="commissionModeOptions" placeholder="不限制（自由领取）" />
-              </n-form-item>
-            </n-gi>
-          </n-grid>
+          <!-- 直属强制绑定标签 -->
+          <n-gi>
+            <n-form-item label="直属强制绑定标签" path="directForcedTag">
+              <n-select
+                v-model:value="formData.directForcedTag"
+                :options="directForcedTagOptions"
+                placeholder="默认标签"
+              />
+            </n-form-item>
+          </n-gi>
 
-
-
-
-
-        </n-form>
-        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; padding-top: 12px; border-top: 1px solid #e5e7eb;">
-          <n-button @click="modalVisible = false">取消</n-button>
-          <n-button type="primary" @click="handleSubmit" :loading="submitting">
-            确认
-          </n-button>
-        </div>
+          <!-- 代理提佣方式 -->
+          <n-gi>
+            <n-form-item
+              label="* 代理提佣方式"
+              path="commissionMode"
+              :show-feedback="true"
+            >
+              <n-select
+                v-model:value="formData.commissionMode"
+                :options="commissionModeOptions"
+                placeholder="不限制（自由领取）"
+              />
+            </n-form-item>
+          </n-gi>
+        </n-grid>
+      </n-form>
+      <div
+        style="
+          display: flex;
+          justify-content: flex-end;
+          gap: 12px;
+          margin-top: 20px;
+          padding-top: 12px;
+          border-top: 1px solid #e5e7eb;
+        "
+      >
+        <n-button @click="modalVisible = false">取消</n-button>
+        <n-button type="primary" @click="handleSubmit" :loading="submitting">
+          确认
+        </n-button>
+      </div>
     </n-modal>
 
-  <!-- 代理详情弹窗 -->
-  <AgentDetailModal
-    v-model:visible="agentDetailModalVisible"
-    :agent-id="selectedAgentId"
-    @refresh="fetchData"
-  />
-</Page>
+    <!-- 代理详情弹窗 -->
+    <AgentDetailModal
+      v-model:visible="agentDetailModalVisible"
+      :agent-id="selectedAgentId"
+      @refresh="fetchData"
+    />
+  </Page>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, h, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { Page } from '@vben/common-ui';
-import { getNowInTimezone, convertTimezoneToUTC, getDisplayTimezone } from '#/utils/timezoneUtils';
-import { 
-  NCard, 
-  NForm, 
-  NFormItem, 
-  NInput, 
-  NButton, 
-  NSelect, 
+import {
+  getNowInTimezone,
+  convertTimezoneToUTC,
+  getDisplayTimezone,
+} from '#/utils/timezoneUtils';
+import {
+  NCard,
+  NForm,
+  NFormItem,
+  NInput,
+  NButton,
+  NSelect,
   NModal,
   NTag,
   NSpace,
@@ -229,25 +394,30 @@ import {
   NButtonGroup,
   NDataTable,
   useMessage,
-  type DataTableColumns
+  type DataTableColumns,
 } from 'naive-ui';
-import { 
-  getAgentList, 
-  createAgent, 
-  updateAgent, 
+import {
+  getAgentList,
+  createAgent,
+  updateAgent,
   deleteAgent,
   formatCurrency,
   type AgentRecord,
   type AgentListParams,
   type CreateAgentParams,
-  type UpdateAgentParams
+  type UpdateAgentParams,
 } from '#/api/agency/agent';
 import { getMemberTiersApi, type MemberTier } from '#/api/core/memberTier';
 import { agentModeApi } from '#/api/agency/agent-mode';
-import { getAgentRebateSummariesApi, type AgentRebateSummary } from '#/api/agency/rebate';
+import {
+  getAgentRebateSummariesApi,
+  type AgentRebateSummary,
+} from '#/api/agency/rebate';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 import { defineAsyncComponent } from 'vue';
-const AgentDetailModal = defineAsyncComponent(() => import('#/components/agency/AgentDetailModal.vue'));
+const AgentDetailModal = defineAsyncComponent(
+  () => import('#/components/agency/AgentDetailModal.vue'),
+);
 import { notification } from '#/adapter/naive';
 
 const message = useMessage();
@@ -271,9 +441,9 @@ const selectedAgentId = ref<number>(0);
 // Member tiers for level dropdown
 const memberTiers = ref<MemberTier[]>([]);
 const memberTierOptions = computed(() => {
-  return memberTiers.value.map(tier => ({
+  return memberTiers.value.map((tier) => ({
     label: tier.tierName,
-    value: tier.id
+    value: tier.id,
   }));
 });
 
@@ -323,7 +493,7 @@ const paginationReactive = reactive({
   pageSize: 10,
   total: 0,
   showSizePicker: true,
-  pageSizes: [10, 20, 50, 100]
+  pageSizes: [10, 20, 50, 100],
 });
 
 // Pagination config for n-data-table
@@ -332,13 +502,17 @@ const paginationConfig = computed(() => {
     page: paginationReactive.page,
     pageSize: paginationReactive.pageSize,
     total: paginationReactive.total,
-    pageCount: Math.ceil(paginationReactive.total / paginationReactive.pageSize)
+    pageCount: Math.ceil(
+      paginationReactive.total / paginationReactive.pageSize,
+    ),
   });
-  
+
   return {
     page: paginationReactive.page,
     pageSize: paginationReactive.pageSize,
-    pageCount: Math.ceil(paginationReactive.total / paginationReactive.pageSize),
+    pageCount: Math.ceil(
+      paginationReactive.total / paginationReactive.pageSize,
+    ),
     itemCount: paginationReactive.total,
     showSizePicker: true,
     pageSizes: [10, 20, 50, 100],
@@ -352,17 +526,17 @@ const paginationConfig = computed(() => {
       paginationReactive.pageSize = pageSize;
       paginationReactive.page = 1;
       fetchData();
-    }
+    },
   };
 });
 
 // Agent mode options (dynamic)
 const agentModes = ref<any[]>([]);
 const modeOptions = computed(() => {
-  return agentModes.value.map(mode => ({
+  return agentModes.value.map((mode) => ({
     label: mode.name,
-    value: mode.id,     // Use unique mode ID as value
-    modeType: 'REFERRAL' // Store the backend enum value separately
+    value: mode.id, // Use unique mode ID as value
+    modeType: 'REFERRAL', // Store the backend enum value separately
   }));
 });
 const currencyOptions = [
@@ -371,13 +545,9 @@ const currencyOptions = [
   { label: 'BTC', value: 'BTC' },
   { label: 'ETH', value: 'ETH' },
 ];
-const agentTagOptions = [
-  { label: '默认标签', value: '默认标签' },
-];
+const agentTagOptions = [{ label: '默认标签', value: '默认标签' }];
 
-const directForcedTagOptions = [
-  { label: '默认标签', value: '默认标签' },
-];
+const directForcedTagOptions = [{ label: '默认标签', value: '默认标签' }];
 
 const commissionModeOptions = [
   { label: '不限制（自由领取）', value: '不限制' },
@@ -427,9 +597,7 @@ const agentTypeOptions = [
   { label: '二级代理', value: '2' },
 ];
 
-const superiorAgentOptions = [
-  { label: '全部上级', value: null },
-];
+const superiorAgentOptions = [{ label: '全部上级', value: null }];
 
 // 表格列配置
 const columns: DataTableColumns<AgentRecord> = [
@@ -454,17 +622,29 @@ const columns: DataTableColumns<AgentRecord> = [
     key: 'username',
     width: 140,
     render: (row) => {
-      const tier = memberTiers.value.find(t => t.id === row.level);
+      const tier = memberTiers.value.find((t) => t.id === row.level);
       const levelText = tier ? tier.tierName : `LV${row.level || 1}`;
-      return h('div', { style: 'display: flex; align-items: center; gap: 4px;' }, [
-        h('span', { style: 'color: #666; font-size: 11px; white-space: nowrap;' }, levelText),
-        h(NButton, {
-          text: true,
-          type: 'primary',
-          onClick: () => handleViewAgentDetail(row),
-          style: 'padding: 0;'
-        }, { default: () => row.username }),
-      ]);
+      return h(
+        'div',
+        { style: 'display: flex; align-items: center; gap: 4px;' },
+        [
+          h(
+            'span',
+            { style: 'color: #666; font-size: 11px; white-space: nowrap;' },
+            levelText,
+          ),
+          h(
+            NButton,
+            {
+              text: true,
+              type: 'primary',
+              onClick: () => handleViewAgentDetail(row),
+              style: 'padding: 0;',
+            },
+            { default: () => row.username },
+          ),
+        ],
+      );
     },
   },
   {
@@ -472,7 +652,7 @@ const columns: DataTableColumns<AgentRecord> = [
     key: 'mode',
     width: 100,
     align: 'center',
-    render: (row) => row.mode === 'MANUAL' ? '人工代理' : '推广注册',
+    render: (row) => (row.mode === 'MANUAL' ? '人工代理' : '推广注册'),
   },
   {
     title: '上级代理',
@@ -520,15 +700,19 @@ const columns: DataTableColumns<AgentRecord> = [
     render: (row) => {
       // 🔧 FIX: Show memberCount (subordinate players) instead of downlineCount (sub-agents)
       const count = row.memberCount || 0;
-      return h(NButton, {
-        text: true,
-        type: 'primary',
-        size: 'small',
-        onClick: () => handleViewDirectMembers(row),
-        style: 'font-weight: 600;'
-      }, {
-        default: () => count.toLocaleString()
-      });
+      return h(
+        NButton,
+        {
+          text: true,
+          type: 'primary',
+          size: 'small',
+          onClick: () => handleViewDirectMembers(row),
+          style: 'font-weight: 600;',
+        },
+        {
+          default: () => count.toLocaleString(),
+        },
+      );
     },
   },
   {
@@ -556,7 +740,8 @@ const columns: DataTableColumns<AgentRecord> = [
     align: 'right',
     render: (row) => {
       const rebateData = rebateSummaries.value[row.id];
-      const amount = rebateData?.claimedCommission ?? row.claimedCommission ?? 0;
+      const amount =
+        rebateData?.claimedCommission ?? row.claimedCommission ?? 0;
       return Number(amount).toFixed(2);
     },
   },
@@ -567,7 +752,8 @@ const columns: DataTableColumns<AgentRecord> = [
     align: 'right',
     render: (row) => {
       const rebateData = rebateSummaries.value[row.id];
-      const amount = rebateData?.unclaimedCommission ?? row.unclaimedCommission ?? 0;
+      const amount =
+        rebateData?.unclaimedCommission ?? row.unclaimedCommission ?? 0;
       return Number(amount).toFixed(2);
     },
   },
@@ -577,15 +763,17 @@ const columns: DataTableColumns<AgentRecord> = [
     width: 160,
     render: (row) => {
       const date = new Date(row.createdAt);
-      return date.toLocaleString('zh-CN', { 
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-      }).replace(/\//g, '-');
+      return date
+        .toLocaleString('zh-CN', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false,
+        })
+        .replace(/\//g, '-');
     },
   },
   {
@@ -600,20 +788,35 @@ const columns: DataTableColumns<AgentRecord> = [
     width: 180,
     render: (row) => {
       const referralUrl = `https://sevenki.118br.com/?ref=${row.agentId || row.invitationCode}`;
-      return h('div', { style: 'display: flex; align-items: center; gap: 4px;' }, [
-        h('a', {
-          href: referralUrl,
-          target: '_blank',
-          style: 'color: #1890ff; text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;'
-        }, referralUrl.length > 30 ? referralUrl.substring(0, 30) + '...' : referralUrl),
-        h('span', { 
-          style: 'cursor: pointer;',
-          onClick: () => {
-            navigator.clipboard.writeText(referralUrl);
-            window.$message?.success('推广链接已复制');
-          }
-        }, '📋')
-      ]);
+      return h(
+        'div',
+        { style: 'display: flex; align-items: center; gap: 4px;' },
+        [
+          h(
+            'a',
+            {
+              href: referralUrl,
+              target: '_blank',
+              style:
+                'color: #1890ff; text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;',
+            },
+            referralUrl.length > 30
+              ? referralUrl.substring(0, 30) + '...'
+              : referralUrl,
+          ),
+          h(
+            'span',
+            {
+              style: 'cursor: pointer;',
+              onClick: () => {
+                navigator.clipboard.writeText(referralUrl);
+                window.$message?.success('推广链接已复制');
+              },
+            },
+            '📋',
+          ),
+        ],
+      );
     },
   },
   {
@@ -642,11 +845,15 @@ const columns: DataTableColumns<AgentRecord> = [
     fixed: 'right',
     align: 'center',
     render: (row) => {
-      return h(NButton, {
-        text: true,
-        type: 'primary',
-        onClick: () => handleViewAgentDetail(row),
-      }, { default: () => '详情 查看 >' });
+      return h(
+        NButton,
+        {
+          text: true,
+          type: 'primary',
+          onClick: () => handleViewAgentDetail(row),
+        },
+        { default: () => '详情 查看 >' },
+      );
     },
   },
 ];
@@ -654,25 +861,19 @@ const columns: DataTableColumns<AgentRecord> = [
 // 表单验证规则
 const rules = computed(() => {
   return {
-    username: [
-      { required: true, message: '请输入代理账号', trigger: 'blur' },
-    ],
+    username: [{ required: true, message: '请输入代理账号', trigger: 'blur' }],
     loginPassword: [
       { required: true, message: '请输入登录密码', trigger: 'blur' },
     ],
     withdrawalPassword: [
-      { 
-        pattern: /^\d{6}$/, 
-        message: '提现密码必须为6位数字', 
-        trigger: 'blur' 
+      {
+        pattern: /^\d{6}$/,
+        message: '提现密码必须为6位数字',
+        trigger: 'blur',
       },
     ],
-    currency: [
-      { required: true, message: '请选择代理币种', trigger: 'blur' },
-    ],
-    level: [
-      { required: true, message: '请选择代理本人层级', trigger: 'blur' },
-    ],
+    currency: [{ required: true, message: '请选择代理币种', trigger: 'blur' }],
+    level: [{ required: true, message: '请选择代理本人层级', trigger: 'blur' }],
     directForcedLevel: [
       { required: true, message: '请选择直属强制绑定层级', trigger: 'blur' },
     ],
@@ -685,11 +886,26 @@ const rules = computed(() => {
 // 小计 (Page Subtotal) - Sum of current page
 const pageSubtotal = computed(() => {
   return {
-    memberCount: tableData.value.reduce((sum, row) => sum + (row.memberCount || row.otherCount || 0), 0),
-    downlineCount: tableData.value.reduce((sum, row) => sum + (row.downlineCount || 0), 0),
-    commissionTotal: tableData.value.reduce((sum, row) => sum + Number(row.commissionTotal || 0), 0),
-    claimedCommission: tableData.value.reduce((sum, row) => sum + Number(row.claimedCommission || 0), 0),
-    unclaimedCommission: tableData.value.reduce((sum, row) => sum + Number(row.unclaimedCommission || 0), 0),
+    memberCount: tableData.value.reduce(
+      (sum, row) => sum + (row.memberCount || row.otherCount || 0),
+      0,
+    ),
+    downlineCount: tableData.value.reduce(
+      (sum, row) => sum + (row.downlineCount || 0),
+      0,
+    ),
+    commissionTotal: tableData.value.reduce(
+      (sum, row) => sum + Number(row.commissionTotal || 0),
+      0,
+    ),
+    claimedCommission: tableData.value.reduce(
+      (sum, row) => sum + Number(row.claimedCommission || 0),
+      0,
+    ),
+    unclaimedCommission: tableData.value.reduce(
+      (sum, row) => sum + Number(row.unclaimedCommission || 0),
+      0,
+    ),
   };
 });
 
@@ -723,19 +939,19 @@ const fetchData = async () => {
     if (searchForm.startDate && searchForm.endDate) {
       params.dateRange = [
         new Date(searchForm.startDate).toISOString(),
-        new Date(searchForm.endDate).toISOString()
+        new Date(searchForm.endDate).toISOString(),
       ];
     }
 
     const response = await getAgentList(params);
     console.log('API Response:', {
       listLength: response.list.length,
-      pagination: response.pagination
+      pagination: response.pagination,
     });
-    
+
     tableData.value = response.list;
     paginationReactive.total = response.pagination.total;
-    
+
     // Update grand total from API summary
     if (response.summary) {
       grandTotal.value = {
@@ -746,13 +962,13 @@ const fetchData = async () => {
         unclaimedCommission: response.summary.totalUnclaimed || 0,
       };
     }
-    
+
     console.log('Updated pagination state:', {
       page: paginationReactive.page,
       pageSize: paginationReactive.pageSize,
-      total: paginationReactive.total
+      total: paginationReactive.total,
     });
-    
+
     // Fetch rebate summaries to update commission displays
     await fetchRebateSummaries();
   } catch (error) {
@@ -771,7 +987,7 @@ const fetchMemberTiers = async () => {
   try {
     const response = await getMemberTiersApi({
       isActive: true,
-      pageSize: 100 // Get all active tiers
+      pageSize: 100, // Get all active tiers
     });
     memberTiers.value = response.list;
   } catch (error) {
@@ -790,10 +1006,10 @@ const fetchAgentModes = async () => {
       isEnabled: true, // Only get enabled/active agent modes
       pageSize: 100, // Get all active modes
       sortBy: 'id', // Sort by ID
-      sortOrder: 'asc' // Ascending order
+      sortOrder: 'asc', // Ascending order
     });
     agentModes.value = response.data.list;
-    
+
     // Set default mode to first available agent mode
     if (agentModes.value.length > 0 && formData.mode === null) {
       formData.mode = agentModes.value[0].id;
@@ -812,7 +1028,11 @@ const fetchRebateSummaries = async () => {
   try {
     const response = await getAgentRebateSummariesApi();
     rebateSummaries.value = response.data;
-    console.log('📊 Rebate summaries loaded:', Object.keys(response.data).length, 'agents');
+    console.log(
+      '📊 Rebate summaries loaded:',
+      Object.keys(response.data).length,
+      'agents',
+    );
   } catch (error) {
     console.error('获取代理返佣数据失败:', error);
     // Don't show error notification as this is supplementary data
@@ -879,23 +1099,23 @@ const handleViewDirectMembers = (record: AgentRecord) => {
   // 🔧 Users are invited by userID (9-digit), so use that for filtering
   // Fallback to username if userID is not available
   const agentIdentifier = record.userID || record.username || '';
-  
+
   if (!agentIdentifier) {
     message.warning('无法获取代理信息');
     return;
   }
-  
+
   // Navigate to all members page with pre-filled superior agent filter
   // Use upper_agent_id if we have userID, otherwise use upper_agent_account
   const searchField = record.userID ? 'upper_agent_id' : 'upper_agent_account';
-  
+
   router.push({
     path: '/user-management/all-members',
     query: {
       searchField: searchField,
-      searchValue: agentIdentifier
+      searchValue: agentIdentifier,
       // ✅ FIX: Don't set dateQuickSelect - show all downlines without date filter
-    }
+    },
   });
 };
 
@@ -963,9 +1183,11 @@ const handleSubmit = async () => {
       const createData: CreateAgentParams = {
         agentId: genAgentId(),
         username: formData.username,
-        referralCode: formData.referralCode && /^([A-Z0-9]{6,20})$/.test(formData.referralCode)
-          ? formData.referralCode
-          : genReferralCode(),
+        referralCode:
+          formData.referralCode &&
+          /^([A-Z0-9]{6,20})$/.test(formData.referralCode)
+            ? formData.referralCode
+            : genReferralCode(),
         level: Number(formData.level) || 1,
         invitedByCode: formData.invitedByCode || undefined,
         topAgentCode: formData.topAgentCode || undefined,
@@ -1019,8 +1241,6 @@ const resetForm = () => {
   });
 };
 
-
-
 function genReferralCode(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let code = '';
@@ -1042,22 +1262,38 @@ onMounted(() => {
   if (!searchForm.startDate && !searchForm.endDate) {
     const tz = getDisplayTimezone(); // Defaults to 'America/Sao_Paulo' (UTC-3)
     const now = getNowInTimezone(tz);
-    
+
     // Get today's start (00:00:00) and end (23:59:59) in UTC-3 timezone
-    const todayStartUTC = convertTimezoneToUTC(now.year, now.month, now.day, 0, 0, 0, tz);
-    const todayEndUTC = convertTimezoneToUTC(now.year, now.month, now.day, 23, 59, 59, tz);
-    
+    const todayStartUTC = convertTimezoneToUTC(
+      now.year,
+      now.month,
+      now.day,
+      0,
+      0,
+      0,
+      tz,
+    );
+    const todayEndUTC = convertTimezoneToUTC(
+      now.year,
+      now.month,
+      now.day,
+      23,
+      59,
+      59,
+      tz,
+    );
+
     searchForm.startDate = todayStartUTC.getTime();
     searchForm.endDate = todayEndUTC.getTime();
-    
+
     console.log('📅 Set default date range (UTC-3):', {
       timezone: tz,
       today: `${now.year}-${now.month}-${now.day}`,
       start: todayStartUTC.toISOString(),
-      end: todayEndUTC.toISOString()
+      end: todayEndUTC.toISOString(),
     });
   }
-  
+
   fetchData();
   fetchMemberTiers();
   fetchAgentModes();
@@ -1068,4 +1304,4 @@ onMounted(() => {
 .n-card {
   margin: 16px 0;
 }
-</style> 
+</style>

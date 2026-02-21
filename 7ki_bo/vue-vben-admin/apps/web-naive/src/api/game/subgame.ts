@@ -2,18 +2,31 @@ import { requestClient } from '#/api/request';
 
 export interface GameItem {
   id: number | string; // Allow both for third-party games
-  platformId: number | null;
+  platformId: null | number;
   platform?: {
-    id: number | null;
-    platformName: string;
     gameType: string;
+    id: null | number;
+    platformName: string;
   };
   gameId: string;
   gameDisplayId?: string; // Display ID for games
   gameName: string;
   gameNameEn?: string; // English name for imported games
   gameType?: string; // Game type for imported games
-  gameTypeEnum?: 'VIDEO' | 'LIVE' | 'SLOT' | 'LOTTERY' | 'SPORTS' | 'ESPORTS' | 'HUNTING' | 'CHESS_CARDS' | 'TABLE' | 'ARCADE' | 'SIMULATION' | 'COCKFIGHT' | 'OTHER';
+  gameTypeEnum?:
+    | 'ARCADE'
+    | 'CHESS_CARDS'
+    | 'COCKFIGHT'
+    | 'ESPORTS'
+    | 'HUNTING'
+    | 'LIVE'
+    | 'LOTTERY'
+    | 'OTHER'
+    | 'SIMULATION'
+    | 'SLOT'
+    | 'SPORTS'
+    | 'TABLE'
+    | 'VIDEO';
   currency: string;
   isHot1: boolean;
   isHot2: boolean;
@@ -21,13 +34,13 @@ export interface GameItem {
   isEnabled: boolean;
   isUnderMaintenance: boolean;
   showToStreamer: boolean;
-  iconUrl: string | null;
-  brandLogoUrl: string | null;
-  remark: string | null;
+  iconUrl: null | string;
+  brandLogoUrl: null | string;
+  remark: null | string;
   sortOrder: number;
   createdAt: string;
   updatedAt: string;
-  thirdPartyData?: { vendor?: string } | null; // Vendor information from thirdPartyData
+  thirdPartyData?: null | { vendor?: string }; // Vendor information from thirdPartyData
   isThirdParty?: boolean; // Flag for third-party games
   source?: 'LOCAL' | 'THIRD_PARTY'; // Track game origin
   thirdPartyId?: string; // Original third-party game ID
@@ -67,7 +80,20 @@ export interface CreateGameParams {
   vendor: string;
   gameNameEn?: string;
   gameType?: string;
-  gameTypeEnum?: 'VIDEO' | 'LIVE' | 'SLOT' | 'LOTTERY' | 'SPORTS' | 'ESPORTS' | 'HUNTING' | 'CHESS_CARDS' | 'TABLE' | 'ARCADE' | 'SIMULATION' | 'COCKFIGHT' | 'OTHER';
+  gameTypeEnum?:
+    | 'ARCADE'
+    | 'CHESS_CARDS'
+    | 'COCKFIGHT'
+    | 'ESPORTS'
+    | 'HUNTING'
+    | 'LIVE'
+    | 'LOTTERY'
+    | 'OTHER'
+    | 'SIMULATION'
+    | 'SLOT'
+    | 'SPORTS'
+    | 'TABLE'
+    | 'VIDEO';
   currency?: string;
   isHot1?: boolean;
   isHot2?: boolean;
@@ -86,7 +112,20 @@ export interface UpdateGameParams {
   gameName?: string;
   gameNameEn?: string;
   gameType?: string;
-  gameTypeEnum?: 'VIDEO' | 'LIVE' | 'SLOT' | 'LOTTERY' | 'SPORTS' | 'ESPORTS' | 'HUNTING' | 'CHESS_CARDS' | 'TABLE' | 'ARCADE' | 'SIMULATION' | 'COCKFIGHT' | 'OTHER';
+  gameTypeEnum?:
+    | 'ARCADE'
+    | 'CHESS_CARDS'
+    | 'COCKFIGHT'
+    | 'ESPORTS'
+    | 'HUNTING'
+    | 'LIVE'
+    | 'LOTTERY'
+    | 'OTHER'
+    | 'SIMULATION'
+    | 'SLOT'
+    | 'SPORTS'
+    | 'TABLE'
+    | 'VIDEO';
   currency?: string;
   isHot1?: boolean;
   isHot2?: boolean;
@@ -101,7 +140,13 @@ export interface UpdateGameParams {
 }
 
 export interface ToggleGameParams {
-  field: 'isHot1' | 'isHot2' | 'isRecommended' | 'isEnabled' | 'isUnderMaintenance' | 'showToStreamer';
+  field:
+    | 'isEnabled'
+    | 'isHot1'
+    | 'isHot2'
+    | 'isRecommended'
+    | 'isUnderMaintenance'
+    | 'showToStreamer';
   value: boolean;
 }
 
@@ -120,7 +165,7 @@ export interface BulkImportGameParams {
 
 export interface ImportResult {
   thirdPartyId: string;
-  status: 'success' | 'skipped' | 'error';
+  status: 'error' | 'skipped' | 'success';
   message: string;
   gameId?: number;
 }
@@ -128,10 +173,10 @@ export interface ImportResult {
 export interface BulkImportResponse {
   results: ImportResult[];
   summary: {
-    total: number;
-    success: number;
-    skipped: number;
     error: number;
+    skipped: number;
+    success: number;
+    total: number;
   };
 }
 
@@ -160,7 +205,7 @@ export interface FileImportResult {
   row: number;
   gameId: string;
   gameNameCn: string;
-  status: 'success' | 'error' | 'skipped';
+  status: 'error' | 'skipped' | 'success';
   message: string;
   id?: number;
 }
@@ -168,10 +213,10 @@ export interface FileImportResult {
 export interface FileImportResponse {
   results: FileImportResult[];
   summary: {
-    total: number;
-    success: number;
     error: number;
     skipped: number;
+    success: number;
+    total: number;
   };
 }
 
@@ -186,9 +231,9 @@ export interface ImportPreviewData {
   games: ImportGameData[];
   errors: ImportValidationError[];
   summary: {
+    invalid: number;
     total: number;
     valid: number;
-    invalid: number;
   };
 }
 
@@ -233,21 +278,21 @@ export async function getGameByIdApi(id: number) {
  * Toggle game status/settings
  */
 export async function toggleGameApi(id: number, data: ToggleGameParams) {
-    return requestClient.put<GameItem>(`/games/${id}/toggle`, data);
+  return requestClient.put<GameItem>(`/games/${id}/toggle`, data);
 }
 
 /**
  * Set game to top
  */
 export async function setGameTopApi(id: number) {
-    return requestClient.put<GameItem>(`/games/${id}/top`, {});
+  return requestClient.put<GameItem>(`/games/${id}/top`, {});
 }
 
 /**
  * Update game remark
  */
 export async function updateGameRemarkApi(id: number, remark: string) {
-    return requestClient.put<GameItem>(`/games/${id}/remark`, { remark });
+  return requestClient.put<GameItem>(`/games/${id}/remark`, { remark });
 }
 
 /**
@@ -263,7 +308,7 @@ export async function bulkDeleteGamesApi(ids: number[]) {
 export async function uploadGameIconApi(gameId: number, file: File) {
   const formData = new FormData();
   formData.append('icon', file);
-  
+
   return requestClient.post(`/games/${gameId}/upload-icon`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -277,7 +322,7 @@ export async function uploadGameIconApi(gameId: number, file: File) {
 export async function uploadGameBrandLogoApi(gameId: number, file: File) {
   const formData = new FormData();
   formData.append('brandLogo', file);
-  
+
   return requestClient.post(`/games/${gameId}/upload-brand-logo`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -288,17 +333,21 @@ export async function uploadGameBrandLogoApi(gameId: number, file: File) {
 /**
  * Upload both game icon and brand logo
  */
-export async function uploadGameImagesApi(gameId: number, iconFile?: File, brandLogoFile?: File) {
+export async function uploadGameImagesApi(
+  gameId: number,
+  iconFile?: File,
+  brandLogoFile?: File,
+) {
   const formData = new FormData();
-  
+
   if (iconFile) {
     formData.append('icon', iconFile);
   }
-  
+
   if (brandLogoFile) {
     formData.append('brandLogo', brandLogoFile);
   }
-  
+
   return requestClient.post(`/games/${gameId}/upload-images`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -333,21 +382,29 @@ export async function syncThirdPartyGameApi(gameId: number) {
 export async function parseImportFileApi(file: File) {
   const formData = new FormData();
   formData.append('file', file);
-  
-  return requestClient.post<ImportPreviewData>('/games/parse-import-file', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
+
+  return requestClient.post<ImportPreviewData>(
+    '/games/parse-import-file',
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     },
-  });
+  );
 }
 
 /**
  * Import games from file
  */
 export async function importGamesFromFileApi(data: FileImportParams) {
-  return requestClient.post<FileImportResponse>('/games/import-from-file', data, {
-    timeout: 0, // No timeout for large file imports
-  });
+  return requestClient.post<FileImportResponse>(
+    '/games/import-from-file',
+    data,
+    {
+      timeout: 0, // No timeout for large file imports
+    },
+  );
 }
 
 /**
@@ -357,4 +414,4 @@ export async function downloadImportTemplateApi() {
   return requestClient.get('/games/import-template', {
     responseType: 'blob',
   });
-} 
+}

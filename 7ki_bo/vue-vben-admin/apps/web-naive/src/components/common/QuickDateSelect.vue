@@ -30,4 +30,3 @@ const handleChange = (value: 'day' | 'week' | 'month' | null) => {
   display: inline-block;
 }
 </style>
-

@@ -2,7 +2,7 @@
   <div class="gg-management">
     <!-- 筛选器区域 -->
     <n-card class="mb-4">
-      <div class="flex flex-wrap gap-4 items-end">
+      <div class="flex flex-wrap items-end gap-4">
         <!-- 语言选择 -->
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium">语言</label>
@@ -99,12 +99,8 @@
 
         <!-- 搜索按钮 -->
         <div class="flex gap-2">
-          <n-button type="primary" @click="handleFilter">
-            搜索
-          </n-button>
-          <n-button @click="resetFilter">
-            重置
-          </n-button>
+          <n-button type="primary" @click="handleFilter"> 搜索 </n-button>
+          <n-button @click="resetFilter"> 重置 </n-button>
         </div>
       </div>
     </n-card>
@@ -126,7 +122,7 @@
     >
       <template #actionBar="{ selectedCount, selectedRows }">
         <n-card :bordered="false" class="rounded-16px shadow-sm">
-          <div class="flex justify-between items-center">
+          <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <!-- 主要操作按钮 -->
               <div class="flex gap-2">
@@ -134,32 +130,33 @@
                   新增公告
                 </n-button>
               </div>
-              
+
               <!-- 选择信息 -->
               <div class="text-sm text-gray-600">
-                已选择 {{ selectedCount }} 条数据，共 {{ paginationReactive.total }} 条
+                已选择 {{ selectedCount }} 条数据，共
+                {{ paginationReactive.total }} 条
               </div>
             </div>
-            
+
             <div class="flex gap-2">
               <!-- 批量操作 -->
-              <n-button 
-                v-if="selectedCount > 0" 
-                type="warning" 
+              <n-button
+                v-if="selectedCount > 0"
+                type="warning"
                 size="small"
                 @click="handleBatchDisable(selectedRows)"
               >
                 批量停用 ({{ selectedCount }})
               </n-button>
-              <n-button 
-                v-if="selectedCount > 0" 
-                type="error" 
+              <n-button
+                v-if="selectedCount > 0"
+                type="error"
                 size="small"
                 @click="handleBatchDelete(selectedRows)"
               >
                 批量删除 ({{ selectedCount }})
               </n-button>
-              
+
               <!-- 选择控制 -->
               <n-button size="small" @click="clearSelection">清空选择</n-button>
               <n-button size="small" @click="selectAll">全选</n-button>
@@ -179,20 +176,45 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed, h, defineAsyncComponent } from 'vue';
+import {
+  ref,
+  reactive,
+  onMounted,
+  computed,
+  h,
+  defineAsyncComponent,
+} from 'vue';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
-const SmartDataGrid = defineAsyncComponent(() => import('../../../components/smart/SmartDataGrid/index.vue'));
-import { 
-  NCard, NButton, NSelect, NInput, NDatePicker, 
-  NSwitch, NTooltip, NTag, NSpace, useDialog, useNotification,
-  type DataTableColumns, type DataTableRowKey
+const SmartDataGrid = defineAsyncComponent(
+  () => import('../../../components/smart/SmartDataGrid/index.vue'),
+);
+import {
+  NCard,
+  NButton,
+  NSelect,
+  NInput,
+  NDatePicker,
+  NSwitch,
+  NTooltip,
+  NTag,
+  NSpace,
+  useDialog,
+  useNotification,
+  type DataTableColumns,
+  type DataTableRowKey,
 } from 'naive-ui';
-import { 
-  getGGList, deleteGG, batchDeleteGG, toggleGGStatus, 
-  type GGMessage, type GGListParams 
+import {
+  getGGList,
+  deleteGG,
+  batchDeleteGG,
+  toggleGGStatus,
+  type GGMessage,
+  type GGListParams,
 } from '#/api/operationMessageGG';
 
-const OperationMessageGGFormModal = defineAsyncComponent(() => import('./OperationMessageGGFormModal.vue'));
+const OperationMessageGGFormModal = defineAsyncComponent(
+  () => import('./OperationMessageGGFormModal.vue'),
+);
 
 // 数据状态
 const loading = ref(false);
@@ -213,7 +235,7 @@ const filters = reactive({
   popupEntry: null,
   videoPushEnabled: null,
   keyword: '',
-  timeRange: null
+  timeRange: null,
 });
 
 // 对话框和通知
@@ -226,7 +248,7 @@ const languageOptions = [
   { label: '英文', value: 'en-US' },
   { label: '葡语', value: 'pt-BR' },
   { label: '西班牙语', value: 'es-ES' },
-  { label: '日语', value: 'ja-JP' }
+  { label: '日语', value: 'ja-JP' },
 ];
 
 const currencyOptions = [
@@ -234,19 +256,19 @@ const currencyOptions = [
   { label: 'CNY', value: 'CNY' },
   { label: 'USD', value: 'USD' },
   { label: 'EUR', value: 'EUR' },
-  { label: 'JPY', value: 'JPY' }
+  { label: 'JPY', value: 'JPY' },
 ];
 
 const receiverTypeOptions = [
   { label: '全部用户', value: 'all' },
   { label: '会员层级', value: 'vip' },
   { label: '新用户', value: 'new' },
-  { label: '活跃用户', value: 'active' }
+  { label: '活跃用户', value: 'active' },
 ];
 
 const statusOptions = [
   { label: '已启用', value: 'enabled' },
-  { label: '已停用', value: 'disabled' }
+  { label: '已停用', value: 'disabled' },
 ];
 
 // Pagination (simplified for SmartDataGrid)
@@ -260,41 +282,43 @@ const paginationReactive = reactive({
 const columns: DataTableColumns<GGMessage> = [
   {
     type: 'selection',
-    width: 50
+    width: 50,
   },
   {
     title: '排序',
     key: 'sortOrder',
     width: 80,
-    sorter: true
+    sorter: true,
   },
   {
     title: 'ID',
     key: 'id',
-    width: 80
+    width: 80,
   },
   {
     title: '语言',
     key: 'language',
     width: 80,
     render: (row) => {
-      const lang = languageOptions.find(item => item.value === row.language);
+      const lang = languageOptions.find((item) => item.value === row.language);
       return lang ? lang.label : row.language;
-    }
+    },
   },
   {
     title: '币种',
     key: 'currency',
-    width: 80
+    width: 80,
   },
   {
     title: '收件人',
     key: 'receiverType',
     width: 100,
     render: (row) => {
-      const receiver = receiverTypeOptions.find(item => item.value === row.receiverType);
+      const receiver = receiverTypeOptions.find(
+        (item) => item.value === row.receiverType,
+      );
       return receiver ? receiver.label : row.receiverType;
-    }
+    },
   },
   {
     title: '标题',
@@ -302,16 +326,17 @@ const columns: DataTableColumns<GGMessage> = [
     width: 200,
     render: (row) => {
       const title = row.title || '';
-      const truncated = title.length > 30 ? title.substring(0, 30) + '...' : title;
+      const truncated =
+        title.length > 30 ? title.substring(0, 30) + '...' : title;
       return h(
         NTooltip,
         { trigger: 'hover' },
         {
           trigger: () => h('span', { class: 'cursor-pointer' }, truncated),
-          default: () => title
-        }
+          default: () => title,
+        },
       );
-    }
+    },
   },
   {
     title: '弹窗入口',
@@ -321,21 +346,21 @@ const columns: DataTableColumns<GGMessage> = [
       return h(
         NTag,
         { type: row.popupEntry ? 'success' : 'default' },
-        { default: () => row.popupEntry ? '是' : '否' }
+        { default: () => (row.popupEntry ? '是' : '否') },
       );
-    }
+    },
   },
   {
     title: '开始时间',
     key: 'startTime',
     width: 160,
-    render: (row) => formatDate(row.startTime)
+    render: (row) => formatDate(row.startTime),
   },
   {
     title: '结束时间',
     key: 'endTime',
     width: 160,
-    render: (row) => formatDate(row.endTime)
+    render: (row) => formatDate(row.endTime),
   },
   {
     title: '视频推送',
@@ -345,9 +370,9 @@ const columns: DataTableColumns<GGMessage> = [
       return h(
         NTag,
         { type: row.videoPushEnabled ? 'success' : 'default' },
-        { default: () => row.videoPushEnabled ? '是' : '否' }
+        { default: () => (row.videoPushEnabled ? '是' : '否') },
       );
-    }
+    },
   },
   {
     title: '状态',
@@ -355,14 +380,11 @@ const columns: DataTableColumns<GGMessage> = [
     width: 100,
     render: (row) => {
       const isEnabled = row.status === 'enabled';
-      return h(
-        NSwitch,
-        {
-          value: isEnabled,
-          onUpdateValue: () => handleToggleStatus(row)
-        }
-      );
-    }
+      return h(NSwitch, {
+        value: isEnabled,
+        onUpdateValue: () => handleToggleStatus(row),
+      });
+    },
   },
   {
     title: '后台备注',
@@ -370,22 +392,23 @@ const columns: DataTableColumns<GGMessage> = [
     width: 150,
     render: (row) => {
       const remark = row.remark || '';
-      const truncated = remark.length > 20 ? remark.substring(0, 20) + '...' : remark;
+      const truncated =
+        remark.length > 20 ? remark.substring(0, 20) + '...' : remark;
       return h(
         NTooltip,
         { trigger: 'hover' },
         {
           trigger: () => h('span', { class: 'cursor-pointer' }, truncated),
-          default: () => remark
-        }
+          default: () => remark,
+        },
       );
-    }
+    },
   },
   {
     title: '操作时间',
     key: 'updatedAt',
     width: 160,
-    render: (row) => formatDate(row.updatedAt)
+    render: (row) => formatDate(row.updatedAt),
   },
   {
     title: '操作',
@@ -404,9 +427,9 @@ const columns: DataTableColumns<GGMessage> = [
                 size: 'small',
                 type: 'primary',
                 ghost: true,
-                onClick: () => handleEdit(row)
+                onClick: () => handleEdit(row),
               },
-              { default: () => '编辑' }
+              { default: () => '编辑' },
             ),
             h(
               NButton,
@@ -414,9 +437,9 @@ const columns: DataTableColumns<GGMessage> = [
                 size: 'small',
                 type: 'info',
                 ghost: true,
-                onClick: () => handleCopy(row)
+                onClick: () => handleCopy(row),
               },
-              { default: () => '复制' }
+              { default: () => '复制' },
             ),
             h(
               NButton,
@@ -424,9 +447,9 @@ const columns: DataTableColumns<GGMessage> = [
                 size: 'small',
                 type: 'warning',
                 ghost: true,
-                onClick: () => handleDisable(row)
+                onClick: () => handleDisable(row),
               },
-              { default: () => '停用' }
+              { default: () => '停用' },
             ),
             h(
               NButton,
@@ -434,15 +457,15 @@ const columns: DataTableColumns<GGMessage> = [
                 size: 'small',
                 type: 'error',
                 ghost: true,
-                onClick: () => handleDelete(row)
+                onClick: () => handleDelete(row),
               },
-              { default: () => '删除' }
-            )
-          ]
-        }
+              { default: () => '删除' },
+            ),
+          ],
+        },
       );
-    }
-  }
+    },
+  },
 ];
 
 // 数据加载
@@ -452,22 +475,27 @@ const loadData = async () => {
     const params: GGListParams = {
       page: paginationReactive.page,
       pageSize: paginationReactive.pageSize,
-      ...filters
+      ...filters,
     };
-    
+
     console.log('🔍 Loading GG data with params:', params);
     const response = await getGGList(params);
     console.log('📡 GG API Response:', response);
-    
-    if (response && typeof response === 'object' && response.data && typeof response.total === 'number') {
+
+    if (
+      response &&
+      typeof response === 'object' &&
+      response.data &&
+      typeof response.total === 'number'
+    ) {
       tableData.value = response.data;
       paginationReactive.total = response.total;
-      console.log('✅ GG data loaded successfully:', { 
-        dataLength: response.data.length, 
+      console.log('✅ GG data loaded successfully:', {
+        dataLength: response.data.length,
         total: response.total,
         page: response.page,
         pageSize: response.pageSize,
-        firstItem: response.data[0]?.title || 'No items'
+        firstItem: response.data[0]?.title || 'No items',
       });
     } else {
       console.warn('❌ Unexpected response format:', response);
@@ -478,7 +506,7 @@ const loadData = async () => {
     console.error('❌ Error loading GG data:', error);
     notification.error({
       content: '加载数据失败',
-      duration: 3000
+      duration: 3000,
     });
     tableData.value = [];
     totalCount.value = 0;
@@ -502,7 +530,7 @@ const resetFilter = () => {
     popupEntry: null,
     videoPushEnabled: null,
     keyword: '',
-    timeRange: null
+    timeRange: null,
   });
   paginationReactive.page = 1;
   loadData();
@@ -535,14 +563,14 @@ const handleDisable = async (row: GGMessage) => {
     await toggleGGStatus(row.id, false);
     notification.success({
       content: '停用成功',
-      duration: 3000
+      duration: 3000,
     });
     loadData();
   } catch (error) {
     console.error('Error disabling GG:', error);
     notification.error({
       content: '停用失败',
-      duration: 3000
+      duration: 3000,
     });
   }
 };
@@ -553,14 +581,14 @@ const handleToggleStatus = async (row: GGMessage) => {
     await toggleGGStatus(row.id, newStatus === 'enabled');
     notification.success({
       content: `${newStatus === 'enabled' ? '启用' : '停用'}成功`,
-      duration: 3000
+      duration: 3000,
     });
     loadData();
   } catch (error) {
     console.error('Error toggling GG status:', error);
     notification.error({
       content: '状态更新失败',
-      duration: 3000
+      duration: 3000,
     });
   }
 };
@@ -576,17 +604,17 @@ const handleDelete = async (row: GGMessage) => {
         await deleteGG(row.id);
         notification.success({
           content: '删除成功',
-          duration: 3000
+          duration: 3000,
         });
         loadData();
       } catch (error) {
         console.error('Error deleting GG:', error);
         notification.error({
           content: '删除失败',
-          duration: 3000
+          duration: 3000,
         });
       }
-    }
+    },
   });
 };
 
@@ -595,15 +623,15 @@ const handleSelectionChange = (keys: DataTableRowKey[]) => {
 };
 
 const handleBatchDelete = (selectedRows?: GGMessage[]) => {
-  const ggsToDelete = selectedRows || tableData.value.filter(gg => 
-    selectedRowKeys.value.includes(gg.id)
-  );
-  
+  const ggsToDelete =
+    selectedRows ||
+    tableData.value.filter((gg) => selectedRowKeys.value.includes(gg.id));
+
   if (ggsToDelete.length === 0) {
     console.log('No GGs selected for batch delete');
     return;
   }
-  
+
   dialog.warning({
     title: '确认批量删除',
     content: `确定要删除选中的 ${ggsToDelete.length} 条系统公告吗？`,
@@ -611,11 +639,11 @@ const handleBatchDelete = (selectedRows?: GGMessage[]) => {
     negativeText: '取消',
     onPositiveClick: async () => {
       try {
-        const ids = ggsToDelete.map(gg => Number(gg.id));
+        const ids = ggsToDelete.map((gg) => Number(gg.id));
         await batchDeleteGG({ ids });
         notification.success({
           content: `成功删除 ${ggsToDelete.length} 条系统公告`,
-          duration: 3000
+          duration: 3000,
         });
         selectedRowKeys.value = [];
         loadData();
@@ -623,23 +651,23 @@ const handleBatchDelete = (selectedRows?: GGMessage[]) => {
         console.error('Error batch deleting GG:', error);
         notification.error({
           content: '批量删除失败',
-          duration: 3000
+          duration: 3000,
         });
       }
-    }
+    },
   });
 };
 
 const handleBatchDisable = (selectedRows?: GGMessage[]) => {
-  const ggsToDisable = selectedRows || tableData.value.filter(gg => 
-    selectedRowKeys.value.includes(gg.id)
-  );
-  
+  const ggsToDisable =
+    selectedRows ||
+    tableData.value.filter((gg) => selectedRowKeys.value.includes(gg.id));
+
   if (ggsToDisable.length === 0) {
     console.log('No GGs selected for batch disable');
     return;
   }
-  
+
   dialog.warning({
     title: '确认批量停用',
     content: `确定要停用选中的 ${ggsToDisable.length} 条系统公告吗？`,
@@ -647,11 +675,11 @@ const handleBatchDisable = (selectedRows?: GGMessage[]) => {
     negativeText: '取消',
     onPositiveClick: async () => {
       try {
-        const ids = ggsToDisable.map(gg => Number(gg.id));
+        const ids = ggsToDisable.map((gg) => Number(gg.id));
         await batchToggleGGStatus({ ids }, false);
         notification.success({
           content: `成功停用 ${ggsToDisable.length} 条系统公告`,
-          duration: 3000
+          duration: 3000,
         });
         selectedRowKeys.value = [];
         loadData();
@@ -659,15 +687,17 @@ const handleBatchDisable = (selectedRows?: GGMessage[]) => {
         console.error('Error batch disabling GG:', error);
         notification.error({
           content: '批量停用失败',
-          duration: 3000
+          duration: 3000,
         });
       }
-    }
+    },
   });
 };
 
 const handleModalSuccess = () => {
-  console.log('🎉 Modal success event received, closing modal and reloading data...');
+  console.log(
+    '🎉 Modal success event received, closing modal and reloading data...',
+  );
   showModal.value = false;
   loadData();
 };
@@ -696,7 +726,7 @@ const clearSelection = () => {
 };
 
 const selectAll = () => {
-  selectedRowKeys.value = tableData.value.map(gg => gg.id);
+  selectedRowKeys.value = tableData.value.map((gg) => gg.id);
   console.log('All selected');
 };
 
@@ -780,4 +810,4 @@ onMounted(() => {
 .text-xs {
   font-size: 0.75rem;
 }
-</style> 
+</style>

@@ -1,10 +1,10 @@
 <template>
   <div class="smart-data-grid-demo">
-    <h2 class="text-2xl font-bold mb-6">SmartDataGrid Demo</h2>
-    
+    <h2 class="mb-6 text-2xl font-bold">SmartDataGrid Demo</h2>
+
     <!-- Demo 1: Basic Usage -->
     <div class="demo-section mb-8">
-      <h3 class="text-lg font-semibold mb-4">1. Basic Usage</h3>
+      <h3 class="mb-4 text-lg font-semibold">1. Basic Usage</h3>
       <SmartDataGrid
         :data="basicData"
         :columns="basicColumns"
@@ -15,10 +15,10 @@
         @refresh="handleRefresh1"
       />
     </div>
-    
+
     <!-- Demo 2: With Selection -->
     <div class="demo-section mb-8">
-      <h3 class="text-lg font-semibold mb-4">2. With Row Selection</h3>
+      <h3 class="mb-4 text-lg font-semibold">2. With Row Selection</h3>
       <SmartDataGrid
         :data="selectionData"
         :columns="selectionColumns"
@@ -34,14 +34,14 @@
       >
         <template #actionBar="{ selectedCount, selectedRows }">
           <n-card :bordered="false" class="rounded-16px shadow-sm">
-            <div class="flex justify-between items-center">
+            <div class="flex items-center justify-between">
               <div class="flex items-center gap-4">
                 <span class="text-sm text-gray-600">
                   已选择 {{ selectedCount }} 条数据
                 </span>
-                <n-button 
-                  v-if="selectedCount > 0" 
-                  type="error" 
+                <n-button
+                  v-if="selectedCount > 0"
+                  type="error"
                   size="small"
                   @click="handleBulkDelete(selectedRows)"
                 >
@@ -49,7 +49,9 @@
                 </n-button>
               </div>
               <div class="flex gap-2">
-                <n-button size="small" @click="clearSelection">清空选择</n-button>
+                <n-button size="small" @click="clearSelection"
+                  >清空选择</n-button
+                >
                 <n-button size="small" @click="selectAll">全选</n-button>
               </div>
             </div>
@@ -57,10 +59,10 @@
         </template>
       </SmartDataGrid>
     </div>
-    
+
     <!-- Demo 3: With Auto-Refresh -->
     <div class="demo-section mb-8">
-      <h3 class="text-lg font-semibold mb-4">3. With Auto-Refresh</h3>
+      <h3 class="mb-4 text-lg font-semibold">3. With Auto-Refresh</h3>
       <SmartDataGrid
         :data="autoRefreshData"
         :columns="autoRefreshColumns"
@@ -74,10 +76,10 @@
         @refresh="handleRefresh3"
       />
     </div>
-    
+
     <!-- Demo 4: With Summary -->
     <div class="demo-section mb-8">
-      <h3 class="text-lg font-semibold mb-4">4. With Summary</h3>
+      <h3 class="mb-4 text-lg font-semibold">4. With Summary</h3>
       <SmartDataGrid
         :data="summaryData"
         :columns="summaryColumns"
@@ -94,19 +96,27 @@
           <n-card :bordered="false" class="rounded-16px shadow-sm">
             <div class="grid grid-cols-4 gap-4 text-center">
               <div>
-                <div class="text-2xl font-bold text-blue-600">{{ summary.totalCount }}</div>
+                <div class="text-2xl font-bold text-blue-600">
+                  {{ summary.totalCount }}
+                </div>
                 <div class="text-sm text-gray-600">总记录数</div>
               </div>
               <div>
-                <div class="text-2xl font-bold text-green-600">¥{{ summary.totalAmount?.toLocaleString() }}</div>
+                <div class="text-2xl font-bold text-green-600">
+                  ¥{{ summary.totalAmount?.toLocaleString() }}
+                </div>
                 <div class="text-sm text-gray-600">总金额</div>
               </div>
               <div>
-                <div class="text-2xl font-bold text-orange-600">{{ summary.activeCount }}</div>
+                <div class="text-2xl font-bold text-orange-600">
+                  {{ summary.activeCount }}
+                </div>
                 <div class="text-sm text-gray-600">活跃用户</div>
               </div>
               <div>
-                <div class="text-2xl font-bold text-purple-600">{{ summary.avgAmount?.toFixed(2) }}</div>
+                <div class="text-2xl font-bold text-purple-600">
+                  {{ summary.avgAmount?.toFixed(2) }}
+                </div>
                 <div class="text-sm text-gray-600">平均金额</div>
               </div>
             </div>
@@ -136,7 +146,7 @@ const basicData = ref([
 const pagination1 = reactive({
   page: 1,
   pageSize: 10,
-  total: 3
+  total: 3,
 });
 
 const basicColumns: DataTableColumns = [
@@ -147,10 +157,15 @@ const basicColumns: DataTableColumns = [
     title: '状态',
     key: 'status',
     width: 100,
-    render: (row: any) => h(NTag, {
-      type: row.status === 'active' ? 'success' : 'default'
-    }, { default: () => row.status === 'active' ? '活跃' : '非活跃' })
-  }
+    render: (row: any) =>
+      h(
+        NTag,
+        {
+          type: row.status === 'active' ? 'success' : 'default',
+        },
+        { default: () => (row.status === 'active' ? '活跃' : '非活跃') },
+      ),
+  },
 ];
 
 // Demo 2: With Selection
@@ -166,7 +181,7 @@ const selectionData = ref([
 const pagination2 = reactive({
   page: 1,
   pageSize: 10,
-  total: 4
+  total: 4,
 });
 
 const selectionColumns: DataTableColumns = [
@@ -178,25 +193,48 @@ const selectionColumns: DataTableColumns = [
     title: '操作',
     key: 'actions',
     width: 150,
-    render: (row: any) => h('div', { class: 'flex gap-2' }, [
-      h(NButton, { size: 'small', type: 'primary' }, { default: () => '编辑' }),
-      h(NButton, { size: 'small', type: 'error' }, { default: () => '删除' })
-    ])
-  }
+    render: (row: any) =>
+      h('div', { class: 'flex gap-2' }, [
+        h(
+          NButton,
+          { size: 'small', type: 'primary' },
+          { default: () => '编辑' },
+        ),
+        h(NButton, { size: 'small', type: 'error' }, { default: () => '删除' }),
+      ]),
+  },
 ];
 
 // Demo 3: Auto-Refresh
 const loading3 = ref(false);
 const autoRefreshData = ref([
-  { id: 1, metric: 'CPU使用率', value: '45%', status: 'normal', timestamp: new Date().toLocaleTimeString() },
-  { id: 2, metric: '内存使用率', value: '67%', status: 'warning', timestamp: new Date().toLocaleTimeString() },
-  { id: 3, metric: '磁盘使用率', value: '23%', status: 'normal', timestamp: new Date().toLocaleTimeString() },
+  {
+    id: 1,
+    metric: 'CPU使用率',
+    value: '45%',
+    status: 'normal',
+    timestamp: new Date().toLocaleTimeString(),
+  },
+  {
+    id: 2,
+    metric: '内存使用率',
+    value: '67%',
+    status: 'warning',
+    timestamp: new Date().toLocaleTimeString(),
+  },
+  {
+    id: 3,
+    metric: '磁盘使用率',
+    value: '23%',
+    status: 'normal',
+    timestamp: new Date().toLocaleTimeString(),
+  },
 ]);
 
 const pagination3 = reactive({
   page: 1,
   pageSize: 10,
-  total: 3
+  total: 3,
 });
 
 const autoRefreshColumns: DataTableColumns = [
@@ -207,54 +245,87 @@ const autoRefreshColumns: DataTableColumns = [
     title: '状态',
     key: 'status',
     width: 100,
-    render: (row: any) => h(NTag, {
-      type: row.status === 'normal' ? 'success' : 'warning'
-    }, { default: () => row.status === 'normal' ? '正常' : '警告' })
+    render: (row: any) =>
+      h(
+        NTag,
+        {
+          type: row.status === 'normal' ? 'success' : 'warning',
+        },
+        { default: () => (row.status === 'normal' ? '正常' : '警告') },
+      ),
   },
-  { title: '更新时间', key: 'timestamp', width: 150 }
+  { title: '更新时间', key: 'timestamp', width: 150 },
 ];
 
 // Demo 4: With Summary
 const loading4 = ref(false);
 const summaryData = ref([
-  { id: 1, name: '订单A', amount: 1500, status: 'completed', category: 'electronics' },
-  { id: 2, name: '订单B', amount: 2300, status: 'pending', category: 'clothing' },
+  {
+    id: 1,
+    name: '订单A',
+    amount: 1500,
+    status: 'completed',
+    category: 'electronics',
+  },
+  {
+    id: 2,
+    name: '订单B',
+    amount: 2300,
+    status: 'pending',
+    category: 'clothing',
+  },
   { id: 3, name: '订单C', amount: 800, status: 'completed', category: 'books' },
-  { id: 4, name: '订单D', amount: 3200, status: 'completed', category: 'electronics' },
+  {
+    id: 4,
+    name: '订单D',
+    amount: 3200,
+    status: 'completed',
+    category: 'electronics',
+  },
 ]);
 
 const pagination4 = reactive({
   page: 1,
   pageSize: 10,
-  total: 4
+  total: 4,
 });
 
 const summaryColumns: DataTableColumns = [
   { title: 'ID', key: 'id', width: 80 },
   { title: '订单名称', key: 'name', width: 120 },
-  { title: '金额', key: 'amount', width: 100, render: (row: any) => `¥${row.amount}` },
+  {
+    title: '金额',
+    key: 'amount',
+    width: 100,
+    render: (row: any) => `¥${row.amount}`,
+  },
   {
     title: '状态',
     key: 'status',
     width: 100,
-    render: (row: any) => h(NTag, {
-      type: row.status === 'completed' ? 'success' : 'warning'
-    }, { default: () => row.status === 'completed' ? '已完成' : '待处理' })
+    render: (row: any) =>
+      h(
+        NTag,
+        {
+          type: row.status === 'completed' ? 'success' : 'warning',
+        },
+        { default: () => (row.status === 'completed' ? '已完成' : '待处理') },
+      ),
   },
-  { title: '类别', key: 'category', width: 120 }
+  { title: '类别', key: 'category', width: 120 },
 ];
 
 const summaryInfo = computed(() => {
   const data = summaryData.value;
   const totalAmount = data.reduce((sum, item) => sum + item.amount, 0);
-  const activeCount = data.filter(item => item.status === 'completed').length;
+  const activeCount = data.filter((item) => item.status === 'completed').length;
   const avgAmount = totalAmount / data.length;
-  
+
   return {
     totalCount: data.length,
     totalAmount,
     activeCount,
-    avgAmount
+    avgAmount,
   };
 });
 
@@ -301,7 +372,10 @@ const handleSelectionChange = (keys: (string | number)[]) => {
   selectedKeys.value = keys;
 };
 
-const handleSelectionChange2 = (selectedRows: any[], keys: (string | number)[]) => {
+const handleSelectionChange2 = (
+  selectedRows: any[],
+  keys: (string | number)[],
+) => {
   message.info(`选择了 ${selectedRows.length} 条数据`);
 };
 
@@ -315,7 +389,7 @@ const clearSelection = () => {
 };
 
 const selectAll = () => {
-  selectedKeys.value = selectionData.value.map(item => item.id);
+  selectedKeys.value = selectionData.value.map((item) => item.id);
   message.info('已全选');
 };
 
@@ -333,12 +407,12 @@ const handlePageSizeChange3 = (pageSize: number) => {
 const handleRefresh3 = () => {
   loading3.value = true;
   // Simulate data update
-  autoRefreshData.value = autoRefreshData.value.map(item => ({
+  autoRefreshData.value = autoRefreshData.value.map((item) => ({
     ...item,
     value: `${Math.floor(Math.random() * 100)}%`,
-    timestamp: new Date().toLocaleTimeString()
+    timestamp: new Date().toLocaleTimeString(),
   }));
-  
+
   setTimeout(() => {
     loading3.value = false;
     message.success('Auto-Refresh Demo: 数据已自动刷新');

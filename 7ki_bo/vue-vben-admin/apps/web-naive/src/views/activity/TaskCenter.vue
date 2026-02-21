@@ -55,11 +55,21 @@ import { useRoute, useRouter } from 'vue-router';
 import { NBreadcrumb, NBreadcrumbItem, NTabs, NTabPane } from 'naive-ui';
 import { Page } from '@vben/common-ui';
 // ✅ PERFORMANCE FIX: Lazy load tab components - they only load when their tab is opened
-const NoviceWelfareManager = defineAsyncComponent(() => import('./components/task-center/NoviceWelfareManager.vue'));
-const DailyTaskManager = defineAsyncComponent(() => import('./components/task-center/DailyTaskManager.vue'));
-const WeeklyTaskManager = defineAsyncComponent(() => import('./components/task-center/WeeklyTaskManager.vue'));
-const ThreeDayMysteryManager = defineAsyncComponent(() => import('./components/task-center/ThreeDayMysteryManager.vue'));
-const ActivitySettingManager = defineAsyncComponent(() => import('./components/task-center/ActivitySettingManager.vue'));
+const NoviceWelfareManager = defineAsyncComponent(
+  () => import('./components/task-center/NoviceWelfareManager.vue'),
+);
+const DailyTaskManager = defineAsyncComponent(
+  () => import('./components/task-center/DailyTaskManager.vue'),
+);
+const WeeklyTaskManager = defineAsyncComponent(
+  () => import('./components/task-center/WeeklyTaskManager.vue'),
+);
+const ThreeDayMysteryManager = defineAsyncComponent(
+  () => import('./components/task-center/ThreeDayMysteryManager.vue'),
+);
+const ActivitySettingManager = defineAsyncComponent(
+  () => import('./components/task-center/ActivitySettingManager.vue'),
+);
 
 const route = useRoute();
 const router = useRouter();
@@ -83,12 +93,21 @@ onMounted(() => {
   console.log('🚀 TaskCenter page mounted');
   console.log('📍 Current route:', route.path);
   console.log('🔗 Query params:', route.query);
-  
+
   const tabFromUrl = route.query.activeName as string;
-  if (tabFromUrl && ['novice_welfare', 'daily_task', 'weekly_task', 'three_day_mystery', 'activity_setting'].includes(tabFromUrl)) {
+  if (
+    tabFromUrl &&
+    [
+      'novice_welfare',
+      'daily_task',
+      'weekly_task',
+      'three_day_mystery',
+      'activity_setting',
+    ].includes(tabFromUrl)
+  ) {
     activeTab.value = tabFromUrl;
   }
-  
+
   console.log(' Active tab:', activeTab.value);
 });
 </script>
@@ -110,4 +129,4 @@ onMounted(() => {
   height: 100%;
   overflow-y: auto;
 }
-</style> 
+</style>

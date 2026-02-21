@@ -41,8 +41,8 @@
           </div>
         </div>
         <div v-else class="upload-placeholder">
-          <p class="text-gray-500 mt-2">点击或拖拽上传图片</p>
-          <p v-if="description" class="text-xs text-gray-400 mt-1">
+          <p class="mt-2 text-gray-500">点击或拖拽上传图片</p>
+          <p v-if="description" class="mt-1 text-xs text-gray-400">
             {{ description }}
           </p>
         </div>
@@ -121,43 +121,46 @@ watch(
       ];
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
-const handleBeforeUpload = (data: { file: UploadFileInfo; fileList: UploadFileInfo[] }) => {
+const handleBeforeUpload = (data: {
+  file: UploadFileInfo;
+  fileList: UploadFileInfo[];
+}) => {
   const { file } = data;
-  
+
   // Check file size
   if (file.file && file.file.size > props.maxSize * 1024 * 1024) {
     message.error(`文件大小不能超过 ${props.maxSize}MB`);
     return false;
   }
-  
+
   // Check file type
   if (file.file && !file.file.type.startsWith('image/')) {
     message.error('只能上传图片文件');
     return false;
   }
-  
+
   return true;
 };
 
 const handleCustomRequest = async (options: UploadCustomRequestOptions) => {
   const { file, onProgress, onFinish, onError } = options;
-  
+
   try {
     uploading.value = true;
-    
+
     // Simulate progress
     onProgress?.({ percent: 30 });
-    
+
     const response = await uploadImageApi(file.file as File);
-    
+
     onProgress?.({ percent: 100 });
-    
+
     // Update image URL
     imageUrl.value = response.url;
-    
+
     onFinish();
     message.success('上传成功');
   } catch (error) {
@@ -244,4 +247,4 @@ const handlePreview = () => {
 :deep(.n-upload-file-list .n-upload-file) {
   margin: 0;
 }
-</style> 
+</style>

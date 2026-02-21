@@ -98,11 +98,7 @@
     <template #action>
       <div class="flex gap-2">
         <n-button @click="handleClose">取消</n-button>
-        <n-button
-          type="primary"
-          :loading="loading"
-          @click="handleSubmit"
-        >
+        <n-button type="primary" :loading="loading" @click="handleSubmit">
           {{ isEdit ? '更新' : '创建' }}
         </n-button>
       </div>
@@ -121,14 +117,14 @@ import {
   NButton,
   useMessage,
   type FormInst,
-  type FormRules
+  type FormRules,
 } from 'naive-ui';
 import {
   createWithdrawAccountApi,
   updateWithdrawAccountApi,
   type WithdrawAccount,
   type CreateWithdrawAccountParams,
-  type UpdateWithdrawAccountParams
+  type UpdateWithdrawAccountParams,
 } from '#/api/core/withdrawal-account';
 
 interface Props {
@@ -144,7 +140,7 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   visible: false,
-  editData: null
+  editData: null,
 });
 
 const emit = defineEmits<Emits>();
@@ -157,7 +153,7 @@ const loading = ref(false);
 // Computed
 const visibleModel = computed({
   get: () => props.visible,
-  set: (value) => emit('update:visible', value)
+  set: (value) => emit('update:visible', value),
 });
 
 const isEdit = computed(() => !!props.editData);
@@ -172,21 +168,21 @@ const formData = reactive({
   bankName: '',
   bankHolderName: '',
   bankRouting: '',
-  backendNote: ''
+  backendNote: '',
 });
 
 // Options
 const currencyOptions = [
   { label: 'BRL (巴西雷亚尔)', value: 'BRL' },
   { label: 'USD (美元)', value: 'USD' },
-  { label: 'EUR (欧元)', value: 'EUR' }
+  { label: 'EUR (欧元)', value: 'EUR' },
 ];
 
 const methodTypeOptions = [
   { label: 'PIX', value: 'PIX' },
   { label: '银行转账', value: 'BANK_TRANSFER' },
   { label: 'TED', value: 'TED' },
-  { label: 'DOC', value: 'DOC' }
+  { label: 'DOC', value: 'DOC' },
 ];
 
 const accountTypeOptionsMap = {
@@ -194,21 +190,19 @@ const accountTypeOptionsMap = {
     { label: '手机号', value: 'PHONE' },
     { label: 'CPF', value: 'CPF' },
     { label: '邮箱', value: 'EMAIL' },
-    { label: '随机密钥', value: 'RANDOM_KEY' }
+    { label: '随机密钥', value: 'RANDOM_KEY' },
   ],
-  BANK_TRANSFER: [
-    { label: '银行账户', value: 'BANK_ACCOUNT' }
-  ],
-  TED: [
-    { label: '银行账户', value: 'BANK_ACCOUNT' }
-  ],
-  DOC: [
-    { label: '银行账户', value: 'BANK_ACCOUNT' }
-  ]
+  BANK_TRANSFER: [{ label: '银行账户', value: 'BANK_ACCOUNT' }],
+  TED: [{ label: '银行账户', value: 'BANK_ACCOUNT' }],
+  DOC: [{ label: '银行账户', value: 'BANK_ACCOUNT' }],
 };
 
 const currentAccountTypeOptions = computed(() => {
-  return accountTypeOptionsMap[formData.methodType as keyof typeof accountTypeOptionsMap] || [];
+  return (
+    accountTypeOptionsMap[
+      formData.methodType as keyof typeof accountTypeOptionsMap
+    ] || []
+  );
 });
 
 // Form rules
@@ -216,22 +210,22 @@ const formRules: FormRules = {
   currency: {
     required: true,
     message: '请选择币种',
-    trigger: 'blur'
+    trigger: 'blur',
   },
   methodType: {
     required: true,
     message: '请选择提现方式',
-    trigger: 'blur'
+    trigger: 'blur',
   },
   accountType: {
     required: true,
     message: '请选择账户类型',
-    trigger: 'blur'
+    trigger: 'blur',
   },
   accountValue: {
     required: true,
     message: '请输入提现账号/地址',
-    trigger: 'blur'
+    trigger: 'blur',
   },
   bankName: {
     required: false,
@@ -241,7 +235,7 @@ const formRules: FormRules = {
       }
       return true;
     },
-    trigger: 'blur'
+    trigger: 'blur',
   },
   bankHolderName: {
     required: false,
@@ -251,8 +245,8 @@ const formRules: FormRules = {
       }
       return true;
     },
-    trigger: 'blur'
-  }
+    trigger: 'blur',
+  },
 };
 
 // Methods
@@ -288,7 +282,7 @@ const resetForm = () => {
     bankName: '',
     bankHolderName: '',
     bankRouting: '',
-    backendNote: ''
+    backendNote: '',
   });
 };
 
@@ -303,7 +297,7 @@ const loadEditData = () => {
       bankName: props.editData.bankName || '',
       bankHolderName: props.editData.bankHolderName || '',
       bankRouting: props.editData.bankRouting || '',
-      backendNote: props.editData.backendNote || ''
+      backendNote: props.editData.backendNote || '',
     });
   } else {
     resetForm();
@@ -327,7 +321,7 @@ const handleSubmit = async () => {
         bankName: formData.bankName || undefined,
         bankHolderName: formData.bankHolderName || undefined,
         bankRouting: formData.bankRouting || undefined,
-        backendNote: formData.backendNote || undefined
+        backendNote: formData.backendNote || undefined,
       };
 
       await updateWithdrawAccountApi(props.editData.id, updateParams);
@@ -344,7 +338,7 @@ const handleSubmit = async () => {
         bankName: formData.bankName || undefined,
         bankHolderName: formData.bankHolderName || undefined,
         bankRouting: formData.bankRouting || undefined,
-        backendNote: formData.backendNote || undefined
+        backendNote: formData.backendNote || undefined,
       };
 
       await createWithdrawAccountApi(createParams);
@@ -368,11 +362,14 @@ const handleClose = () => {
 
 // Watch for edit data changes
 watch(() => props.editData, loadEditData, { immediate: true });
-watch(() => props.visible, (visible) => {
-  if (visible) {
-    loadEditData();
-  }
-});
+watch(
+  () => props.visible,
+  (visible) => {
+    if (visible) {
+      loadEditData();
+    }
+  },
+);
 </script>
 
 <style scoped>
@@ -383,4 +380,4 @@ watch(() => props.visible, (visible) => {
 .gap-2 {
   gap: 8px;
 }
-</style> 
+</style>

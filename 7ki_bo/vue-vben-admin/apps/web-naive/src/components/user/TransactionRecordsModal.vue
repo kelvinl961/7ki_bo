@@ -1,7 +1,12 @@
 <template>
-  <n-modal v-model:show="visible" preset="card" style="width: 90%; max-width: 1200px;" title="账变记录">
+  <n-modal
+    v-model:show="visible"
+    preset="card"
+    style="width: 90%; max-width: 1200px"
+    title="账变记录"
+  >
     <template #header>
-      <div class="flex items-center justify-between w-full">
+      <div class="flex w-full items-center justify-between">
         <h3 class="text-lg font-medium">账变记录</h3>
         <n-button quaternary circle @click="visible = false">
           <template #icon>
@@ -58,14 +63,21 @@
     />
 
     <!-- 交易详情模态框 -->
-    <n-modal v-model:show="detailVisible" preset="card" style="width: 600px;" title="交易详情">
+    <n-modal
+      v-model:show="detailVisible"
+      preset="card"
+      style="width: 600px"
+      title="交易详情"
+    >
       <div v-if="selectedRecord">
         <n-descriptions :column="2" label-placement="left" bordered>
           <n-descriptions-item label="交易ID">
             {{ selectedRecord.id }}
           </n-descriptions-item>
           <n-descriptions-item label="交易类型">
-            <n-tag :type="getTransactionTypeColor(selectedRecord.transactionType)">
+            <n-tag
+              :type="getTransactionTypeColor(selectedRecord.transactionType)"
+            >
               {{ formatTransactionType(selectedRecord) }}
             </n-tag>
           </n-descriptions-item>
@@ -88,62 +100,108 @@
           <n-descriptions-item label="交易时间" :span="2">
             {{ formatDateTime(selectedRecord.createdAt) }}
           </n-descriptions-item>
-          
+
           <!-- 存款特有字段 -->
           <template v-if="selectedRecord.transactionType === 'deposit'">
             <n-descriptions-item v-if="selectedRecord.trxId" label="交易单号">
               {{ selectedRecord.trxId }}
             </n-descriptions-item>
-            <n-descriptions-item v-if="selectedRecord.paymentMethod" label="支付方式">
+            <n-descriptions-item
+              v-if="selectedRecord.paymentMethod"
+              label="支付方式"
+            >
               {{ selectedRecord.paymentMethod }}
             </n-descriptions-item>
-            <n-descriptions-item v-if="selectedRecord.paymentGateway" label="支付通道">
+            <n-descriptions-item
+              v-if="selectedRecord.paymentGateway"
+              label="支付通道"
+            >
               {{ selectedRecord.paymentGateway }}
             </n-descriptions-item>
-            <n-descriptions-item v-if="selectedRecord.bonusAmount" label="奖金金额">
-              <span class="text-green-600">{{ formatCurrency(selectedRecord.bonusAmount) }}</span>
+            <n-descriptions-item
+              v-if="selectedRecord.bonusAmount"
+              label="奖金金额"
+            >
+              <span class="text-green-600">{{
+                formatCurrency(selectedRecord.bonusAmount)
+              }}</span>
             </n-descriptions-item>
             <n-descriptions-item v-if="selectedRecord.fees" label="手续费">
-              <span class="text-red-600">{{ formatCurrency(selectedRecord.fees) }}</span>
+              <span class="text-red-600">{{
+                formatCurrency(selectedRecord.fees)
+              }}</span>
             </n-descriptions-item>
           </template>
-          
+
           <!-- 提款特有字段 -->
           <template v-if="selectedRecord.transactionType === 'withdrawal'">
-            <n-descriptions-item v-if="selectedRecord.memberBank" label="提款银行">
+            <n-descriptions-item
+              v-if="selectedRecord.memberBank"
+              label="提款银行"
+            >
               {{ selectedRecord.memberBank }}
             </n-descriptions-item>
-            <n-descriptions-item v-if="selectedRecord.memberBankAccount" label="银行账号">
+            <n-descriptions-item
+              v-if="selectedRecord.memberBankAccount"
+              label="银行账号"
+            >
               {{ selectedRecord.memberBankAccount }}
             </n-descriptions-item>
-            <n-descriptions-item v-if="selectedRecord.accountHolderName" label="开户名">
+            <n-descriptions-item
+              v-if="selectedRecord.accountHolderName"
+              label="开户名"
+            >
               {{ selectedRecord.accountHolderName }}
             </n-descriptions-item>
-            <n-descriptions-item v-if="selectedRecord.approvedBy" label="审批人">
+            <n-descriptions-item
+              v-if="selectedRecord.approvedBy"
+              label="审批人"
+            >
               {{ selectedRecord.approvedBy }}
             </n-descriptions-item>
-            <n-descriptions-item v-if="selectedRecord.rejectionReason" label="拒绝原因" :span="2">
-              <span class="text-red-600">{{ selectedRecord.rejectionReason }}</span>
+            <n-descriptions-item
+              v-if="selectedRecord.rejectionReason"
+              label="拒绝原因"
+              :span="2"
+            >
+              <span class="text-red-600">{{
+                selectedRecord.rejectionReason
+              }}</span>
             </n-descriptions-item>
           </template>
-          
+
           <!-- 手动交易特有字段 -->
           <template v-if="selectedRecord.transactionType === 'manual'">
-            <n-descriptions-item v-if="selectedRecord.processedBy" label="操作员">
+            <n-descriptions-item
+              v-if="selectedRecord.processedBy"
+              label="操作员"
+            >
               {{ selectedRecord.processedBy }}
             </n-descriptions-item>
             <n-descriptions-item v-if="selectedRecord.reason" label="操作原因">
               {{ selectedRecord.reason }}
             </n-descriptions-item>
-            <n-descriptions-item v-if="selectedRecord.frontendNotes" label="前台备注" :span="2">
+            <n-descriptions-item
+              v-if="selectedRecord.frontendNotes"
+              label="前台备注"
+              :span="2"
+            >
               {{ selectedRecord.frontendNotes }}
             </n-descriptions-item>
-            <n-descriptions-item v-if="selectedRecord.backendNotes" label="后台备注" :span="2">
+            <n-descriptions-item
+              v-if="selectedRecord.backendNotes"
+              label="后台备注"
+              :span="2"
+            >
               {{ selectedRecord.backendNotes }}
             </n-descriptions-item>
           </template>
-          
-          <n-descriptions-item v-if="selectedRecord.description" label="描述" :span="2">
+
+          <n-descriptions-item
+            v-if="selectedRecord.description"
+            label="描述"
+            :span="2"
+          >
             {{ selectedRecord.description }}
           </n-descriptions-item>
         </n-descriptions>
@@ -217,10 +275,14 @@ const columns: DataTableColumns<TransactionRecord> = [
     key: 'transactionType',
     width: 100,
     render(row) {
-      return h(NTag, { 
-        type: getTransactionTypeColor(row.transactionType),
-        size: 'small'
-      }, { default: () => formatTransactionType(row) });
+      return h(
+        NTag,
+        {
+          type: getTransactionTypeColor(row.transactionType),
+          size: 'small',
+        },
+        { default: () => formatTransactionType(row) },
+      );
     },
   },
   {
@@ -228,9 +290,13 @@ const columns: DataTableColumns<TransactionRecord> = [
     key: 'amount',
     width: 120,
     render(row) {
-      return h('span', { 
-        class: getAmountColor(row.amount)
-      }, formatCurrency(row.amount));
+      return h(
+        'span',
+        {
+          class: getAmountColor(row.amount),
+        },
+        formatCurrency(row.amount),
+      );
     },
   },
   {
@@ -255,10 +321,14 @@ const columns: DataTableColumns<TransactionRecord> = [
     width: 100,
     render(row) {
       const status = formatTransactionStatus(row.status);
-      return h(NTag, { 
-        type: status.type,
-        size: 'small'
-      }, { default: () => status.text });
+      return h(
+        NTag,
+        {
+          type: status.type,
+          size: 'small',
+        },
+        { default: () => status.text },
+      );
     },
   },
   {
@@ -281,12 +351,16 @@ const columns: DataTableColumns<TransactionRecord> = [
     fixed: 'right',
     width: 80,
     render(row) {
-      return h(NButton, {
-        size: 'small',
-        quaternary: true,
-        type: 'primary',
-        onClick: () => handleViewDetail(row),
-      }, { default: () => '详情' });
+      return h(
+        NButton,
+        {
+          size: 'small',
+          quaternary: true,
+          type: 'primary',
+          onClick: () => handleViewDetail(row),
+        },
+        { default: () => '详情' },
+      );
     },
   },
 ];
@@ -315,7 +389,7 @@ const fetchTransactionHistory = async () => {
 
     const response = await getUserTransactionHistory(props.userId, params);
     // Normalize numeric fields for table display
-    const processed = (response.list || []).map(transaction => ({
+    const processed = (response.list || []).map((transaction) => ({
       ...transaction,
       amount: parseFloat(transaction.amount),
       balanceBefore: parseFloat(transaction.balanceBefore),
@@ -372,7 +446,9 @@ const formatDateTime = (dateString: string): string => {
   return new Date(dateString).toLocaleString('pt-BR');
 };
 
-const getTransactionTypeColor = (type: string): 'success' | 'warning' | 'error' | 'info' => {
+const getTransactionTypeColor = (
+  type: string,
+): 'success' | 'warning' | 'error' | 'info' => {
   switch (type) {
     case 'deposit':
       return 'success';
@@ -440,4 +516,4 @@ defineExpose({
 .text-red-600 {
   color: #dc2626;
 }
-</style> 
+</style>

@@ -37,17 +37,17 @@
         </n-form>
       </div>
 
-      <div v-if="reportData" class="text-center py-8">
+      <div v-if="reportData" class="py-8 text-center">
         <n-alert type="info" title="活跃图表功能开发中" />
         <p class="mt-4">此功能正在开发中，敬请期待...</p>
       </div>
 
-      <div v-else-if="loading" class="text-center py-8">
+      <div v-else-if="loading" class="py-8 text-center">
         <n-spin size="large" />
         <p class="mt-4">正在加载数据...</p>
       </div>
 
-      <div v-else-if="error" class="text-center py-8">
+      <div v-else-if="error" class="py-8 text-center">
         <n-alert type="error" :title="error" />
       </div>
     </n-card>
@@ -56,7 +56,16 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { NCard, NForm, NFormItem, NDatePicker, NSelect, NButton, NSpin, NAlert } from 'naive-ui';
+import {
+  NCard,
+  NForm,
+  NFormItem,
+  NDatePicker,
+  NSelect,
+  NButton,
+  NSpin,
+  NAlert,
+} from 'naive-ui';
 import { useMessage } from 'naive-ui';
 
 const message = useMessage();
@@ -88,7 +97,7 @@ const fetchData = async () => {
     // Format dates for API call
     const startDateStr = new Date(startDate.value).toISOString().split('T')[0];
     const endDateStr = new Date(endDate.value).toISOString().split('T')[0];
-    
+
     // TODO: Implement activity charts API
     reportData.value = { placeholder: true };
     message.success('数据加载成功');
@@ -104,7 +113,7 @@ onMounted(() => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const lastWeek = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-  
+
   // ✅ Fix: Use timestamps instead of strings
   startDate.value = lastWeek.getTime();
   endDate.value = today.getTime();

@@ -1,6 +1,11 @@
 <template>
   <div class="media-batch-upload-form">
-    <n-form ref="formRef" :model="formData" :rules="rules" label-placement="top">
+    <n-form
+      ref="formRef"
+      :model="formData"
+      :rules="rules"
+      label-placement="top"
+    >
       <!-- File Upload -->
       <n-form-item label="选择文件" path="files">
         <n-upload
@@ -19,7 +24,14 @@
             <div class="upload-dragger-content">
               <div class="upload-icon">📁</div>
               <div class="upload-text">点击或拖拽多个文件到该区域上传</div>
-              <div class="upload-hint">支持格式: {{ Array.isArray(acceptTypes) ? acceptTypes.join(', ') : acceptTypes }}</div>
+              <div class="upload-hint">
+                支持格式:
+                {{
+                  Array.isArray(acceptTypes)
+                    ? acceptTypes.join(', ')
+                    : acceptTypes
+                }}
+              </div>
               <div class="upload-hint">最多可同时上传 20 个文件</div>
             </div>
           </n-upload-dragger>
@@ -68,16 +80,16 @@
           <template #checked>公开</template>
           <template #unchecked>私有</template>
         </n-switch>
-        <div class="text-xs text-gray-500 mt-1">
+        <div class="mt-1 text-xs text-gray-500">
           公开文件可以被其他用户在选择器中看到
         </div>
       </n-form-item>
 
       <!-- Upload Progress -->
       <div v-if="uploading" class="upload-progress">
-        <n-progress 
-          type="line" 
-          :percentage="uploadProgress" 
+        <n-progress
+          type="line"
+          :percentage="uploadProgress"
           :show-indicator="true"
           :status="uploadProgress === 100 ? 'success' : 'normal'"
         />
@@ -88,13 +100,13 @@
 
       <!-- Upload Results -->
       <div v-if="uploadResults.length > 0" class="upload-results">
-        <h4 class="text-lg font-medium mb-3">上传结果</h4>
+        <h4 class="mb-3 text-lg font-medium">上传结果</h4>
         <div class="results-grid">
-          <div 
-            v-for="result in uploadResults" 
+          <div
+            v-for="result in uploadResults"
             :key="result.id"
             class="result-item"
-            :class="{ 'success': result.success, 'error': !result.success }"
+            :class="{ success: result.success, error: !result.success }"
           >
             <div class="result-icon">
               {{ result.success ? '✅' : '❌' }}
@@ -109,11 +121,11 @@
     </n-form>
 
     <!-- Actions -->
-    <div class="flex justify-end gap-3 mt-6">
+    <div class="mt-6 flex justify-end gap-3">
       <n-button @click="handleCancel">取消</n-button>
-      <n-button 
-        type="primary" 
-        @click="handleSubmit" 
+      <n-button
+        type="primary"
+        @click="handleSubmit"
         :loading="uploading"
         :disabled="!selectedFiles.length"
       >
@@ -174,7 +186,9 @@ const uploading = ref(false);
 const uploadProgress = ref(0);
 const uploadedCount = ref(0);
 const totalFiles = ref(0);
-const uploadResults = ref<Array<{ success: boolean; filename: string; message: string; id?: number }>>([]);
+const uploadResults = ref<
+  Array<{ success: boolean; filename: string; message: string; id?: number }>
+>([]);
 
 // Form data
 const formData = reactive({
@@ -191,29 +205,27 @@ const selectedFiles = ref<File[]>([]);
 
 // Computed
 const hasImageFiles = computed(() => {
-  return selectedFiles.value.some(file => file.type.startsWith('image/'));
+  return selectedFiles.value.some((file) => file.type.startsWith('image/'));
 });
 
 const categoryOptions = computed(() => [
-  ...MEDIA_CATEGORIES.map(cat => ({
+  ...MEDIA_CATEGORIES.map((cat) => ({
     label: getCategoryDisplayName(cat),
     value: cat,
-  }))
+  })),
 ]);
 
 // Validation rules
 const rules: FormRules = {
-  category: [
-    { required: true, message: '请选择文件分类', trigger: 'change' },
-  ],
+  category: [{ required: true, message: '请选择文件分类', trigger: 'change' }],
 };
 
 // Methods
 const handleFileListChange = (newFileList: UploadFileInfo[]) => {
   fileList.value = newFileList;
   selectedFiles.value = newFileList
-    .filter(file => file.file)
-    .map(file => file.file!);
+    .filter((file) => file.file)
+    .map((file) => file.file!);
 };
 
 const getCategoryDisplayName = (category: string): string => {
@@ -240,7 +252,7 @@ const handleSubmit = async () => {
 
   try {
     await formRef.value?.validate();
-    
+
     if (!formData.category) {
       message.error('请选择文件分类');
       return;
@@ -254,12 +266,12 @@ const handleSubmit = async () => {
 
     // Create FormData for batch upload
     const formDataToSend = new FormData();
-    
+
     // Add all files
-    selectedFiles.value.forEach(file => {
+    selectedFiles.value.forEach((file) => {
       formDataToSend.append('files', file);
     });
-    
+
     // Add metadata
     formDataToSend.append('category', formData.category);
     if (formData.alt) {
@@ -282,26 +294,27 @@ const handleSubmit = async () => {
 
     // Upload files
     const response = await uploadMediaFiles(formDataToSend);
-    
+
     clearInterval(progressInterval);
     uploadProgress.value = 100;
 
     console.log('📁 Batch upload response:', response);
-    
+
     if (response && response.success && response.data) {
       // Process results
       const successResults = response.data.map((file: MediaFile) => ({
         success: true,
         filename: file.filename,
         message: '上传成功',
-        id: file.id
+        id: file.id,
       }));
 
-      const errorResults = response.errors?.map((error: any) => ({
-        success: false,
-        filename: error.filename,
-        message: error.error
-      })) || [];
+      const errorResults =
+        response.errors?.map((error: any) => ({
+          success: false,
+          filename: error.filename,
+          message: error.error,
+        })) || [];
 
       uploadResults.value = [...successResults, ...errorResults];
       uploadedCount.value = successResults.length;
@@ -324,9 +337,12 @@ const handleCancel = () => {
 };
 
 // Watch for props changes
-watch(() => props.category, (newCategory) => {
-  formData.category = newCategory;
-});
+watch(
+  () => props.category,
+  (newCategory) => {
+    formData.category = newCategory;
+  },
+);
 </script>
 
 <style scoped>

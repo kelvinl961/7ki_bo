@@ -1,7 +1,7 @@
 <template>
   <n-modal v-model:show="modalShow" :mask-closable="false">
     <n-card
-      style="width: 700px; max-height: 80vh;"
+      style="width: 700px; max-height: 80vh"
       title="活动详情"
       :bordered="false"
       size="huge"
@@ -13,12 +13,12 @@
       <div v-if="activity" class="activity-detail">
         <!-- Activity Header -->
         <div class="mb-6">
-          <div class="flex items-start justify-between mb-4">
+          <div class="mb-4 flex items-start justify-between">
             <div class="flex-1">
-              <h2 class="text-xl font-bold text-gray-800 mb-2">
+              <h2 class="mb-2 text-xl font-bold text-gray-800">
                 {{ getActivityTitle(activity) }}
               </h2>
-              <p class="text-gray-600 mb-3">
+              <p class="mb-3 text-gray-600">
                 {{ getActivityDescription(activity) }}
               </p>
               <div class="flex items-center gap-4">
@@ -33,14 +33,23 @@
           </div>
 
           <!-- Time Information -->
-          <div v-if="activity.startsAt || activity.endsAt" class="bg-gray-50 rounded-lg p-4">
+          <div
+            v-if="activity.startsAt || activity.endsAt"
+            class="rounded-lg bg-gray-50 p-4"
+          >
             <div class="grid grid-cols-2 gap-4">
               <div v-if="activity.startsAt">
-                <label class="text-sm font-medium text-gray-600">开始时间</label>
-                <div class="text-sm">{{ formatDateTime(activity.startsAt) }}</div>
+                <label class="text-sm font-medium text-gray-600"
+                  >开始时间</label
+                >
+                <div class="text-sm">
+                  {{ formatDateTime(activity.startsAt) }}
+                </div>
               </div>
               <div v-if="activity.endsAt">
-                <label class="text-sm font-medium text-gray-600">结束时间</label>
+                <label class="text-sm font-medium text-gray-600"
+                  >结束时间</label
+                >
                 <div class="text-sm">{{ formatDateTime(activity.endsAt) }}</div>
               </div>
             </div>
@@ -49,46 +58,57 @@
 
         <!-- User Progress Summary -->
         <div v-if="activity.userStatus" class="mb-6">
-          <h3 class="text-lg font-semibold mb-4">我的进度</h3>
-          <div class="grid grid-cols-3 gap-4 mb-4">
+          <h3 class="mb-4 text-lg font-semibold">我的进度</h3>
+          <div class="mb-4 grid grid-cols-3 gap-4">
             <n-card>
-              <n-statistic 
-                label="今日已领" 
-                :value="activity.userStatus.summary.claimedToday" 
+              <n-statistic
+                label="今日已领"
+                :value="activity.userStatus.summary.claimedToday"
               />
             </n-card>
             <n-card>
-              <n-statistic 
-                label="累计已领" 
-                :value="activity.userStatus.summary.claimedTotal" 
+              <n-statistic
+                label="累计已领"
+                :value="activity.userStatus.summary.claimedTotal"
               />
             </n-card>
             <n-card>
-              <n-statistic 
-                label="上次领取" 
-                :value="getLastClaimTime()" 
+              <n-statistic
+                label="上次领取"
+                :value="getLastClaimTime()"
                 :formatter="(value) => value || '暂无'"
               />
             </n-card>
           </div>
 
           <!-- Eligibility Status -->
-          <div class="bg-blue-50 rounded-lg p-4 mb-4">
+          <div class="mb-4 rounded-lg bg-blue-50 p-4">
             <div class="flex items-center justify-between">
               <div class="flex items-center">
-                <n-icon 
-                  size="20" 
-                  :color="activity.userStatus.summary.eligible ? '#52c41a' : '#faad14'"
+                <n-icon
+                  size="20"
+                  :color="
+                    activity.userStatus.summary.eligible ? '#52c41a' : '#faad14'
+                  "
                   class="mr-2"
                 >
-                  <CheckmarkCircle v-if="activity.userStatus.summary.eligible" />
+                  <CheckmarkCircle
+                    v-if="activity.userStatus.summary.eligible"
+                  />
                   <Warning v-else />
                 </n-icon>
                 <span class="font-medium">
-                  {{ activity.userStatus.summary.eligible ? '符合参与条件' : '暂不符合条件' }}
+                  {{
+                    activity.userStatus.summary.eligible
+                      ? '符合参与条件'
+                      : '暂不符合条件'
+                  }}
                 </span>
               </div>
-              <div v-if="!activity.userStatus.summary.eligible" class="text-sm text-gray-600">
+              <div
+                v-if="!activity.userStatus.summary.eligible"
+                class="text-sm text-gray-600"
+              >
                 {{ activity.userStatus.summary.reason }}
               </div>
             </div>
@@ -97,35 +117,37 @@
 
         <!-- Activity Units (Claimable Items) -->
         <div v-if="activity.userStatus?.units?.length" class="mb-6">
-          <h3 class="text-lg font-semibold mb-4">奖励详情</h3>
+          <h3 class="mb-4 text-lg font-semibold">奖励详情</h3>
           <div class="space-y-3">
             <div
               v-for="unit in activity.userStatus.units"
               :key="unit.unitKey"
-              class="border rounded-lg p-4 transition-colors"
+              class="rounded-lg border p-4 transition-colors"
               :class="{
-                'bg-green-50 border-green-200': unit.state === 'eligible',
-                'bg-gray-50 border-gray-200': unit.state === 'claimed',
-                'bg-orange-50 border-orange-200': unit.state === 'locked'
+                'border-green-200 bg-green-50': unit.state === 'eligible',
+                'border-gray-200 bg-gray-50': unit.state === 'claimed',
+                'border-orange-200 bg-orange-50': unit.state === 'locked',
               }"
             >
               <div class="flex items-center justify-between">
                 <div class="flex-1">
-                  <div class="flex items-center gap-3 mb-2">
-                    <n-tag 
-                      :type="getUnitStateType(unit.state)" 
-                      size="small"
-                    >
+                  <div class="mb-2 flex items-center gap-3">
+                    <n-tag :type="getUnitStateType(unit.state)" size="small">
                       {{ getUnitStateText(unit.state) }}
                     </n-tag>
                     <span class="font-medium">{{ getUnitTitle(unit) }}</span>
                   </div>
-                  
+
                   <!-- Progress Bar -->
                   <div v-if="unit.progress" class="mb-2">
-                    <div class="flex items-center justify-between text-sm text-gray-600 mb-1">
+                    <div
+                      class="mb-1 flex items-center justify-between text-sm text-gray-600"
+                    >
                       <span>进度</span>
-                      <span>{{ unit.progress.current }} / {{ unit.progress.target }}</span>
+                      <span
+                        >{{ unit.progress.current }} /
+                        {{ unit.progress.target }}</span
+                      >
                     </div>
                     <n-progress
                       :percentage="unit.progress.percentage"
@@ -139,7 +161,7 @@
                     <n-icon size="16" color="#1890ff" class="mr-1">
                       <Gift />
                     </n-icon>
-                    <span class="text-blue-600 font-medium">
+                    <span class="font-medium text-blue-600">
                       {{ formatReward(unit.reward) }}
                     </span>
                   </div>
@@ -163,13 +185,7 @@
                   >
                     已领取
                   </n-button>
-                  <n-button
-                    v-else
-                    size="small"
-                    disabled
-                  >
-                    未解锁
-                  </n-button>
+                  <n-button v-else size="small" disabled> 未解锁 </n-button>
                 </div>
               </div>
             </div>
@@ -178,17 +194,26 @@
 
         <!-- Window Information -->
         <div v-if="activity.userStatus?.window" class="mb-6">
-          <h3 class="text-lg font-semibold mb-4">活动窗口</h3>
-          <div class="bg-gray-50 rounded-lg p-4">
+          <h3 class="mb-4 text-lg font-semibold">活动窗口</h3>
+          <div class="rounded-lg bg-gray-50 p-4">
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="text-sm font-medium text-gray-600">窗口类型</label>
-                <div class="text-sm">{{ getWindowTypeText(activity.userStatus.window.type) }}</div>
-              </div>
-              <div v-if="activity.userStatus.window.remainingClaims !== undefined">
-                <label class="text-sm font-medium text-gray-600">剩余名额</label>
+                <label class="text-sm font-medium text-gray-600"
+                  >窗口类型</label
+                >
                 <div class="text-sm">
-                  {{ activity.userStatus.window.remainingClaims }} / {{ activity.userStatus.window.globalClaimCap }}
+                  {{ getWindowTypeText(activity.userStatus.window.type) }}
+                </div>
+              </div>
+              <div
+                v-if="activity.userStatus.window.remainingClaims !== undefined"
+              >
+                <label class="text-sm font-medium text-gray-600"
+                  >剩余名额</label
+                >
+                <div class="text-sm">
+                  {{ activity.userStatus.window.remainingClaims }} /
+                  {{ activity.userStatus.window.globalClaimCap }}
                 </div>
               </div>
             </div>
@@ -196,7 +221,13 @@
         </div>
 
         <!-- Next Eligible Time -->
-        <div v-if="activity.userStatus?.nextEligibleAt && !activity.userStatus.summary.eligible" class="mb-6">
+        <div
+          v-if="
+            activity.userStatus?.nextEligibleAt &&
+            !activity.userStatus.summary.eligible
+          "
+          class="mb-6"
+        >
           <n-alert type="info" title="下次可参与时间">
             {{ formatDateTime(activity.userStatus.nextEligibleAt) }}
           </n-alert>
@@ -239,11 +270,7 @@ import {
   NAlert,
   useMessage,
 } from 'naive-ui';
-import { 
-  CheckmarkCircle, 
-  Warning, 
-  Gift 
-} from '@vicons/ionicons5';
+import { CheckmarkCircle, Warning, Gift } from '@vicons/ionicons5';
 import type { UserActivity, ActivityUnit } from '#/api/activityClaim';
 
 // Props & Emits
@@ -276,7 +303,11 @@ const modalShow = computed({
 });
 
 const hasEligibleUnits = computed(() => {
-  return props.activity?.userStatus?.units?.some(unit => unit.state === 'eligible') || false;
+  return (
+    props.activity?.userStatus?.units?.some(
+      (unit) => unit.state === 'eligible',
+    ) || false
+  );
 });
 
 // Methods
@@ -286,7 +317,7 @@ const handleClose = () => {
 
 const handleClaim = async (unitKey: string) => {
   if (!props.activity || claiming.value) return;
-  
+
   claiming.value = true;
   try {
     emit('claim', props.activity.id, unitKey);
@@ -298,9 +329,12 @@ const handleClaim = async (unitKey: string) => {
 
 const handleClaimAll = async () => {
   if (!props.activity || claiming.value) return;
-  
-  const eligibleUnits = props.activity.userStatus?.units?.filter(unit => unit.state === 'eligible') || [];
-  
+
+  const eligibleUnits =
+    props.activity.userStatus?.units?.filter(
+      (unit) => unit.state === 'eligible',
+    ) || [];
+
   if (eligibleUnits.length === 0) {
     message.warning('暂无可领取的奖励');
     return;
@@ -318,12 +352,14 @@ const handleClaimAll = async () => {
 
 // Helper Functions
 const getActivityTitle = (activity: UserActivity): string => {
-  const locale = activity.locales.find(l => l.locale === 'zh-CN') || activity.locales[0];
+  const locale =
+    activity.locales.find((l) => l.locale === 'zh-CN') || activity.locales[0];
   return locale?.title || activity.type;
 };
 
 const getActivityDescription = (activity: UserActivity): string => {
-  const locale = activity.locales.find(l => l.locale === 'zh-CN') || activity.locales[0];
+  const locale =
+    activity.locales.find((l) => l.locale === 'zh-CN') || activity.locales[0];
   return locale?.description || locale?.subtitle || '';
 };
 
@@ -344,13 +380,13 @@ const getStatusText = (): string => {
 const getLastClaimTime = (): string => {
   const lastClaimAt = props.activity?.userStatus?.summary.lastClaimAt;
   if (!lastClaimAt) return '';
-  
+
   const date = new Date(lastClaimAt);
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   const diffDays = Math.floor(diffHours / 24);
-  
+
   if (diffDays > 0) return `${diffDays}天前`;
   if (diffHours > 0) return `${diffHours}小时前`;
   return '刚刚';
@@ -358,28 +394,39 @@ const getLastClaimTime = (): string => {
 
 const getUnitStateType = (state: string) => {
   switch (state) {
-    case 'eligible': return 'success';
-    case 'claimed': return 'info';
-    case 'locked': return 'warning';
-    default: return 'default';
+    case 'eligible':
+      return 'success';
+    case 'claimed':
+      return 'info';
+    case 'locked':
+      return 'warning';
+    default:
+      return 'default';
   }
 };
 
 const getUnitStateText = (state: string): string => {
   switch (state) {
-    case 'eligible': return '可领取';
-    case 'claimed': return '已领取';
-    case 'locked': return '未解锁';
-    default: return '未知';
+    case 'eligible':
+      return '可领取';
+    case 'claimed':
+      return '已领取';
+    case 'locked':
+      return '未解锁';
+    default:
+      return '未知';
   }
 };
 
 const getUnitTitle = (unit: ActivityUnit): string => {
   // Generate title based on unit key
   switch (unit.unitKey) {
-    case 'default': return '基础奖励';
-    case 'daily': return '每日奖励';
-    case 'weekly': return '每周奖励';
+    case 'default':
+      return '基础奖励';
+    case 'daily':
+      return '每日奖励';
+    case 'weekly':
+      return '每周奖励';
     default:
       if (unit.unitKey.startsWith('day_')) {
         const day = unit.unitKey.replace('day_', '');
@@ -395,10 +442,14 @@ const getUnitTitle = (unit: ActivityUnit): string => {
 
 const getProgressColor = (state: string): string => {
   switch (state) {
-    case 'eligible': return '#52c41a';
-    case 'claimed': return '#1890ff';
-    case 'locked': return '#faad14';
-    default: return '#d9d9d9';
+    case 'eligible':
+      return '#52c41a';
+    case 'claimed':
+      return '#1890ff';
+    case 'locked':
+      return '#faad14';
+    default:
+      return '#d9d9d9';
   }
 };
 
@@ -409,10 +460,14 @@ const formatReward = (reward: ActivityUnit['reward']): string => {
 
 const getWindowTypeText = (type?: string): string => {
   switch (type) {
-    case 'daily': return '每日窗口';
-    case 'weekly': return '每周窗口';
-    case 'range': return '时段窗口';
-    default: return '未知';
+    case 'daily':
+      return '每日窗口';
+    case 'weekly':
+      return '每周窗口';
+    case 'range':
+      return '时段窗口';
+    default:
+      return '未知';
   }
 };
 

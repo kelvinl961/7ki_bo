@@ -50,22 +50,15 @@
           >
             从收藏移除
           </n-button>
-          <n-button
-            @click="handleCheckFavorite"
-            :loading="isLoading"
-          >
+          <n-button @click="handleCheckFavorite" :loading="isLoading">
             检查收藏状态
           </n-button>
         </n-space>
 
         <n-space>
-          <n-button
-            @click="handleRefresh"
-            :loading="isLoading"
-          >
+          <n-button @click="handleRefresh" :loading="isLoading">
             刷新收藏列表
           </n-button>
-
         </n-space>
       </n-space>
     </n-card>
@@ -73,11 +66,7 @@
     <!-- Favorite Games List -->
     <n-card title="收藏游戏列表" class="mb-4">
       <template #header-extra>
-        <n-button
-          size="small"
-          @click="handleRefresh"
-          :loading="isLoading"
-        >
+        <n-button size="small" @click="handleRefresh" :loading="isLoading">
           刷新
         </n-button>
       </template>
@@ -86,18 +75,13 @@
         <div v-if="favoriteGames.length === 0" class="empty-state">
           <n-empty description="暂无收藏游戏">
             <template #extra>
-              <n-button type="primary" @click="handleRefresh">
-                刷新
-              </n-button>
+              <n-button type="primary" @click="handleRefresh"> 刷新 </n-button>
             </template>
           </n-empty>
         </div>
 
         <n-list v-else>
-          <n-list-item
-            v-for="game in favoriteGames"
-            :key="game.id"
-          >
+          <n-list-item v-for="game in favoriteGames" :key="game.id">
             <template #prefix>
               <n-avatar
                 :src="game.iconUrl || '/uploads/games/default.png'"
@@ -151,9 +135,7 @@
       <n-space vertical>
         <n-descriptions :column="1" bordered>
           <n-descriptions-item label="后端连接">
-            <n-tag type="success">
-              正常
-            </n-tag>
+            <n-tag type="success"> 正常 </n-tag>
           </n-descriptions-item>
         </n-descriptions>
       </n-space>
@@ -176,7 +158,7 @@ const {
   loadFavorites,
   addToFavorites,
   removeFromFavorites,
-  isFavorite
+  isFavorite,
 } = useFavoriteGames();
 
 // State
@@ -222,8 +204,6 @@ const handleRefresh = async () => {
   message.success('刷新成功');
 };
 
-
-
 const formatDate = (date: Date) => {
   return date.toLocaleString('zh-CN');
 };
@@ -247,4 +227,4 @@ onMounted(() => {
   text-align: center;
   padding: 40px 0;
 }
-</style> 
+</style>

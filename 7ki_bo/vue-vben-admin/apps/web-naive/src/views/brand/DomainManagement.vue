@@ -17,7 +17,10 @@
       </n-gi>
       <n-gi>
         <n-card>
-          <n-statistic label="Cloudflare" :value="stats.byProvider.cloudflare" />
+          <n-statistic
+            label="Cloudflare"
+            :value="stats.byProvider.cloudflare"
+          />
         </n-card>
       </n-gi>
       <n-gi>
@@ -34,7 +37,7 @@
 
     <!-- 筛选器 -->
     <n-card class="mb-4">
-      <div class="flex flex-wrap gap-4 items-end">
+      <div class="flex flex-wrap items-end gap-4">
         <!-- CDN节点筛选 -->
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium">CDN节点</label>
@@ -75,29 +78,24 @@
 
         <!-- 操作按钮 -->
         <div class="flex gap-2">
-          <n-button type="primary" @click="handleFilter">
-            搜索
-          </n-button>
-          <n-button @click="resetFilter">
-            重置
-          </n-button>
+          <n-button type="primary" @click="handleFilter"> 搜索 </n-button>
+          <n-button @click="resetFilter"> 重置 </n-button>
         </div>
       </div>
     </n-card>
 
     <!-- 操作栏 -->
     <n-card :bordered="false" class="mb-4">
-      <div class="flex justify-between items-center">
+      <div class="flex items-center justify-between">
         <div class="flex gap-2">
-          <n-button type="primary" @click="handleCreate">
-            新增
-          </n-button>
-          <n-button @click="handleBulkDelete" :disabled="selectedIds.length === 0">
+          <n-button type="primary" @click="handleCreate"> 新增 </n-button>
+          <n-button
+            @click="handleBulkDelete"
+            :disabled="selectedIds.length === 0"
+          >
             批量删除
           </n-button>
-          <n-button @click="handleRefresh">
-            刷新
-          </n-button>
+          <n-button @click="handleRefresh"> 刷新 </n-button>
         </div>
         <div class="text-sm text-gray-600">
           共 {{ pagination.total }} 条记录
@@ -179,7 +177,9 @@
 
         <n-form-item label="验证状态" path="verificationStatus">
           <n-switch v-model:value="formData.verificationStatus" />
-          <span class="ml-2">{{ formData.verificationStatus ? '已验证' : '未验证' }}</span>
+          <span class="ml-2">{{
+            formData.verificationStatus ? '已验证' : '未验证'
+          }}</span>
         </n-form-item>
 
         <n-form-item label="过期日期" path="expiryDate">
@@ -201,7 +201,9 @@
 
         <n-form-item label="启用SSL" path="sslEnabled">
           <n-switch v-model:value="formData.sslEnabled" />
-          <span class="ml-2">{{ formData.sslEnabled ? '已启用' : '未启用' }}</span>
+          <span class="ml-2">{{
+            formData.sslEnabled ? '已启用' : '未启用'
+          }}</span>
         </n-form-item>
 
         <n-form-item label="备注" path="备注">
@@ -215,9 +217,23 @@
 
         <n-form-item label="自动创建" path="createOnCDN" v-if="!isEdit">
           <n-switch v-model:value="formData.createOnCDN" />
-          <span class="ml-2">{{ formData.createOnCDN ? '同时在CDN提供商创建域名' : '仅在系统中记录' }}</span>
-          <n-alert v-if="formData.createOnCDN" title="提示" type="info" class="mt-2" :bordered="false">
-            启用后将自动在 {{ formData.cdnProvider === 'CLOUDFLARE' ? 'Cloudflare' : 'AWS Route53' }} 创建域名、配置DNS和SSL
+          <span class="ml-2">{{
+            formData.createOnCDN ? '同时在CDN提供商创建域名' : '仅在系统中记录'
+          }}</span>
+          <n-alert
+            v-if="formData.createOnCDN"
+            title="提示"
+            type="info"
+            class="mt-2"
+            :bordered="false"
+          >
+            启用后将自动在
+            {{
+              formData.cdnProvider === 'CLOUDFLARE'
+                ? 'Cloudflare'
+                : 'AWS Route53'
+            }}
+            创建域名、配置DNS和SSL
           </n-alert>
         </n-form-item>
       </n-form>
@@ -359,12 +375,15 @@ const formRules: FormRules = {
   domainName: [
     { required: true, message: '请输入域名', trigger: 'blur' },
     {
-      pattern: /^[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/,
+      pattern:
+        /^[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/,
       message: '请输入有效的域名格式',
       trigger: 'blur',
     },
   ],
-  cdnProvider: [{ required: true, message: '请选择CDN平台', trigger: 'change' }],
+  cdnProvider: [
+    { required: true, message: '请选择CDN平台', trigger: 'change' },
+  ],
 };
 
 // Options
@@ -387,7 +406,7 @@ const statusOptions = [
   { label: '已停用', value: 'DISABLED' },
 ];
 
-const statusDetailOptions = statusOptions.filter(opt => opt.value !== 'ALL');
+const statusDetailOptions = statusOptions.filter((opt) => opt.value !== 'ALL');
 
 const verificationMethodOptions = [
   { label: 'DNS验证', value: 'DNS_VALIDATION' },
@@ -441,7 +460,10 @@ const columns: DataTableColumns<DomainManagement> = [
         VERIFICATION_PENDING: { label: '验证中', type: 'info' as const },
         DISABLED: { label: '已停用', type: 'default' as const },
       };
-      const statusInfo = statusMap[row.status] || { label: row.status, type: 'default' as const };
+      const statusInfo = statusMap[row.status] || {
+        label: row.status,
+        type: 'default' as const,
+      };
       return h(NTag, { type: statusInfo.type }, () => statusInfo.label);
     },
   },
@@ -449,13 +471,19 @@ const columns: DataTableColumns<DomainManagement> = [
     title: '域名过期日',
     key: 'expiryDate',
     width: 140,
-    render: (row) => row.expiryDate ? new Date(row.expiryDate).toLocaleDateString('zh-CN') : '-',
+    render: (row) =>
+      row.expiryDate
+        ? new Date(row.expiryDate).toLocaleDateString('zh-CN')
+        : '-',
   },
   {
     title: '证书过期日',
     key: 'certificateExpiryDate',
     width: 140,
-    render: (row) => row.certificateExpiryDate ? new Date(row.certificateExpiryDate).toLocaleDateString('zh-CN') : '-',
+    render: (row) =>
+      row.certificateExpiryDate
+        ? new Date(row.certificateExpiryDate).toLocaleDateString('zh-CN')
+        : '-',
   },
   {
     title: '使用场景',
@@ -483,30 +511,48 @@ const columns: DataTableColumns<DomainManagement> = [
     key: 'actions',
     width: 180,
     fixed: 'right',
-    render: (row) => h('div', { class: 'flex gap-2' }, [
-      h(NButton, {
-        size: 'small',
-        quaternary: true,
-        onClick: () => handleEdit(row),
-      }, () => '编辑'),
-      h(NButton, {
-        size: 'small',
-        quaternary: true,
-        onClick: () => handleCopyDomain(row),
-      }, () => '复制'),
-      h(NPopconfirm, {
-        onPositiveClick: () => handleDelete(row.id),
-        negativeText: '取消',
-        positiveText: '确定',
-      }, {
-        default: () => '确定删除这个域名吗？',
-        trigger: () => h(NButton, {
-          size: 'small',
-          quaternary: true,
-          type: 'error',
-        }, () => '删除'),
-      }),
-    ]),
+    render: (row) =>
+      h('div', { class: 'flex gap-2' }, [
+        h(
+          NButton,
+          {
+            size: 'small',
+            quaternary: true,
+            onClick: () => handleEdit(row),
+          },
+          () => '编辑',
+        ),
+        h(
+          NButton,
+          {
+            size: 'small',
+            quaternary: true,
+            onClick: () => handleCopyDomain(row),
+          },
+          () => '复制',
+        ),
+        h(
+          NPopconfirm,
+          {
+            onPositiveClick: () => handleDelete(row.id),
+            negativeText: '取消',
+            positiveText: '确定',
+          },
+          {
+            default: () => '确定删除这个域名吗？',
+            trigger: () =>
+              h(
+                NButton,
+                {
+                  size: 'small',
+                  quaternary: true,
+                  type: 'error',
+                },
+                () => '删除',
+              ),
+          },
+        ),
+      ]),
   },
 ];
 
@@ -536,7 +582,7 @@ async function fetchData() {
     const response = await getDomainListApi(params);
     tableData.value = response.list;
     pagination.total = response.pagination.total;
-    
+
     paginationReactive.page = response.pagination.current;
     paginationReactive.pageSize = response.pagination.pageSize;
     paginationReactive.itemCount = response.pagination.total;
@@ -594,7 +640,7 @@ function handleEdit(row: DomainManagement) {
   isEdit.value = true;
   modalTitle.value = '编辑域名';
   currentEditId.value = row.id;
-  
+
   Object.assign(formData, {
     domainName: row.domainName,
     cdnProvider: row.cdnProvider,
@@ -603,19 +649,21 @@ function handleEdit(row: DomainManagement) {
     verificationMethod: row.verificationMethod,
     verificationStatus: row.verificationStatus,
     expiryDate: row.expiryDate ? new Date(row.expiryDate).getTime() : undefined,
-    certificateExpiryDate: row.certificateExpiryDate ? new Date(row.certificateExpiryDate).getTime() : undefined,
+    certificateExpiryDate: row.certificateExpiryDate
+      ? new Date(row.certificateExpiryDate).getTime()
+      : undefined,
     usageScenario: row.usageScenario,
     备注: row.备注,
     sslEnabled: row.sslEnabled,
   });
-  
+
   showModal.value = true;
 }
 
 function handleCopyDomain(row: DomainManagement) {
   isEdit.value = false;
   modalTitle.value = '复制域名';
-  
+
   Object.assign(formData, {
     domainName: `${row.domainName}-copy`,
     cdnProvider: row.cdnProvider,
@@ -624,12 +672,14 @@ function handleCopyDomain(row: DomainManagement) {
     verificationMethod: row.verificationMethod,
     verificationStatus: false,
     expiryDate: row.expiryDate ? new Date(row.expiryDate).getTime() : undefined,
-    certificateExpiryDate: row.certificateExpiryDate ? new Date(row.certificateExpiryDate).getTime() : undefined,
+    certificateExpiryDate: row.certificateExpiryDate
+      ? new Date(row.certificateExpiryDate).getTime()
+      : undefined,
     usageScenario: row.usageScenario,
     备注: row.备注,
     sslEnabled: row.sslEnabled,
   });
-  
+
   showModal.value = true;
 }
 
@@ -640,8 +690,12 @@ async function handleSubmit() {
 
     const submitData: CreateDomainRequest | UpdateDomainRequest = {
       ...formData,
-      expiryDate: formData.expiryDate ? new Date(formData.expiryDate).toISOString() : undefined,
-      certificateExpiryDate: formData.certificateExpiryDate ? new Date(formData.certificateExpiryDate).toISOString() : undefined,
+      expiryDate: formData.expiryDate
+        ? new Date(formData.expiryDate).toISOString()
+        : undefined,
+      certificateExpiryDate: formData.certificateExpiryDate
+        ? new Date(formData.certificateExpiryDate).toISOString()
+        : undefined,
     };
 
     if (isEdit.value && currentEditId.value) {
@@ -649,18 +703,23 @@ async function handleSubmit() {
       message.success('更新成功');
     } else {
       const result = await createDomainApi(submitData);
-      
+
       // Show CDN creation result if applicable
       if (formData.createOnCDN && result.cdnCreationResult) {
         if (result.cdnCreationResult.success) {
           message.success(`域名已成功创建在${formData.cdnProvider}和系统中`);
           if (result.cdnCreationResult.nameServers?.length > 0) {
-            message.info(`Nameservers: ${result.cdnCreationResult.nameServers.join(', ')}`, {
-              duration: 10000,
-            });
+            message.info(
+              `Nameservers: ${result.cdnCreationResult.nameServers.join(', ')}`,
+              {
+                duration: 10000,
+              },
+            );
           }
         } else {
-          message.warning(`域名已在系统中创建，但CDN创建失败: ${result.cdnCreationResult.error}`);
+          message.warning(
+            `域名已在系统中创建，但CDN创建失败: ${result.cdnCreationResult.error}`,
+          );
         }
       } else {
         message.success('创建成功');

@@ -5,7 +5,7 @@ export interface GameStatisticsParams {
   endDate: string;
   currency?: string;
   gameType?: string;
-  granularity?: 'day' | 'week' | 'month';
+  granularity?: 'day' | 'month' | 'week';
   forceRefresh?: boolean;
 }
 
@@ -59,9 +59,9 @@ export async function exportGameStatistics(
 /**
  * Clear game statistics cache
  */
-export async function clearGameStatisticsCache(): Promise<{ success: boolean; message: string }> {
+export async function clearGameStatisticsCache(): Promise<{
+  message: string;
+  success: boolean;
+}> {
   return requestClient.post('/game-statistics/clear-cache');
 }
-
-
-

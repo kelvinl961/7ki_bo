@@ -58,12 +58,6 @@ export interface AutoWithdrawalRules {
 export interface GetAutoEligibleResponse {
   success: boolean;
   data: {
-    withdrawals: AutoWithdrawalRecord[];
-    statistics: {
-      autoApprovalEligible: number;
-      todayAutoProcessed: number;
-      totalAmount: number;
-    };
     autoRules: AutoWithdrawalRules;
     pagination: {
       current: number;
@@ -71,6 +65,12 @@ export interface GetAutoEligibleResponse {
       total: number;
       totalPages: number;
     };
+    statistics: {
+      autoApprovalEligible: number;
+      todayAutoProcessed: number;
+      totalAmount: number;
+    };
+    withdrawals: AutoWithdrawalRecord[];
   };
   message?: string;
 }
@@ -92,8 +92,8 @@ export interface BulkOperationResponse {
   data: {
     results: Array<{
       id: string;
-      success: boolean;
       message: string;
+      success: boolean;
     }>;
   };
 }
@@ -107,11 +107,11 @@ export interface OperationResponse {
 export interface AutoWithdrawalStatistics {
   success: boolean;
   data: {
-    totalAutoApproved: number;
-    todayAutoApproved: number;
     autoApprovalRate: string;
-    avgProcessingTime: string;
     autoRulesActive: number;
+    avgProcessingTime: string;
+    todayAutoApproved: number;
+    totalAutoApproved: number;
   };
 }
 
@@ -125,24 +125,40 @@ export const autoWithdrawalApi = {
   /**
    * Get withdrawals eligible for auto-approval
    */
-  async getAutoEligibleWithdrawals(filters: AutoWithdrawalFilters): Promise<GetAutoEligibleResponse> {
-    const response = await requestClient.get('/wallet/auto-withdrawal/eligible-withdrawals', { params: filters });
+  async getAutoEligibleWithdrawals(
+    filters: AutoWithdrawalFilters,
+  ): Promise<GetAutoEligibleResponse> {
+    const response = await requestClient.get(
+      '/wallet/auto-withdrawal/eligible-withdrawals',
+      { params: filters },
+    );
     return response; // Return full response with success flag
   },
 
   /**
    * Process auto-approval for single withdrawal
    */
-  async processAutoApproval(withdrawalId: string, data: AutoApprovalRequest): Promise<OperationResponse> {
-    const response = await requestClient.post(`/wallet/auto-withdrawal/withdrawals/${withdrawalId}/auto-approve`, data);
+  async processAutoApproval(
+    withdrawalId: string,
+    data: AutoApprovalRequest,
+  ): Promise<OperationResponse> {
+    const response = await requestClient.post(
+      `/wallet/auto-withdrawal/withdrawals/${withdrawalId}/auto-approve`,
+      data,
+    );
     return response; // Return full response with success flag
   },
 
   /**
    * Bulk auto-approval for multiple withdrawals
    */
-  async bulkAutoApproval(data: BulkAutoApprovalRequest): Promise<BulkOperationResponse> {
-    const response = await requestClient.post('/wallet/auto-withdrawal/withdrawals/bulk-auto-approve', data);
+  async bulkAutoApproval(
+    data: BulkAutoApprovalRequest,
+  ): Promise<BulkOperationResponse> {
+    const response = await requestClient.post(
+      '/wallet/auto-withdrawal/withdrawals/bulk-auto-approve',
+      data,
+    );
     return response; // Return full response with success flag
   },
 
@@ -157,27 +173,40 @@ export const autoWithdrawalApi = {
   /**
    * Update auto-approval rules
    */
-  async updateAutoApprovalRules(rules: AutoWithdrawalRules): Promise<OperationResponse> {
-    const response = await requestClient.put('/wallet/auto-withdrawal/rules', rules);
+  async updateAutoApprovalRules(
+    rules: AutoWithdrawalRules,
+  ): Promise<OperationResponse> {
+    const response = await requestClient.put(
+      '/wallet/auto-withdrawal/rules',
+      rules,
+    );
     return response; // Return full response with success flag
   },
 
   /**
    * Get auto-withdrawal statistics
    */
-  async getAutoWithdrawalStatistics(params?: { startDate?: string; endDate?: string }): Promise<AutoWithdrawalStatistics> {
-    const response = await requestClient.get('/wallet/auto-withdrawal/statistics', { params });
+  async getAutoWithdrawalStatistics(params?: {
+    endDate?: string;
+    startDate?: string;
+  }): Promise<AutoWithdrawalStatistics> {
+    const response = await requestClient.get(
+      '/wallet/auto-withdrawal/statistics',
+      { params },
+    );
     return response; // Return full response with success flag
   },
 
   /**
    * Export auto-withdrawal data
    */
-  async exportAutoWithdrawalData(filters: AutoWithdrawalFilters): Promise<Blob> {
-    const response = await requestClient.get('/wallet/auto-withdrawal/export', { 
+  async exportAutoWithdrawalData(
+    filters: AutoWithdrawalFilters,
+  ): Promise<Blob> {
+    const response = await requestClient.get('/wallet/auto-withdrawal/export', {
       params: filters,
-      responseType: 'blob' 
+      responseType: 'blob',
     });
     return response.data; // Blob data doesn't need success flag
-  }
+  },
 };

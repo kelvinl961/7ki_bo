@@ -21,7 +21,9 @@ export interface SetPlayerRtpResponse {
   };
 }
 
-export async function setPlayerRtpApi(params: SetPlayerRtpParams): Promise<SetPlayerRtpResponse> {
+export async function setPlayerRtpApi(
+  params: SetPlayerRtpParams,
+): Promise<SetPlayerRtpResponse> {
   return await requestClient.post('/v1/player/setRtp', params);
 }
 
@@ -44,7 +46,7 @@ export interface PlayerRtpHistoryItem {
   personWinMaxMult?: number;
   personWinMaxScore?: number;
   operator?: string;
-  status: 'success' | 'failed' | 'pending';
+  status: 'failed' | 'pending' | 'success';
   createdAt: string;
 }
 
@@ -55,7 +57,9 @@ export interface GetPlayerRtpHistoryResponse {
   pageSize: number;
 }
 
-export async function getPlayerRtpHistoryApi(params: GetPlayerRtpHistoryParams): Promise<GetPlayerRtpHistoryResponse> {
+export async function getPlayerRtpHistoryApi(
+  params: GetPlayerRtpHistoryParams,
+): Promise<GetPlayerRtpHistoryResponse> {
   return await requestClient.get('/v1/player/rtp-history', { params });
 }
 
@@ -75,12 +79,12 @@ export async function searchGamesApi(query: string): Promise<GameOption[]> {
     const response = await requestClient.get('/v1/player/search-games', {
       params: {
         search: query || '',
-        limit: 10
-      }
+        limit: 10,
+      },
     });
-    
+
     console.log('🎮 searchGamesApi response:', response);
-    
+
     // Handle different response formats
     if (response && response.data && Array.isArray(response.data)) {
       return response.data;
@@ -89,7 +93,7 @@ export async function searchGamesApi(query: string): Promise<GameOption[]> {
     } else if (response && response.data) {
       return response.data;
     }
-    
+
     return [];
   } catch (error) {
     console.error('❌ searchGamesApi error:', error);
@@ -100,16 +104,19 @@ export async function searchGamesApi(query: string): Promise<GameOption[]> {
 /**
  * Search games with pagination
  */
-export async function searchGamesWithPagination(query: string, page: number): Promise<GameOption[]> {
+export async function searchGamesWithPagination(
+  query: string,
+  page: number,
+): Promise<GameOption[]> {
   try {
     const response = await requestClient.get('/v1/player/search-games', {
       params: {
         search: query || '',
-        page: page,
-        limit: 20
-      }
+        page,
+        limit: 20,
+      },
     });
-    
+
     // Handle different response formats
     if (response && response.data && Array.isArray(response.data)) {
       return response.data;
@@ -118,11 +125,10 @@ export async function searchGamesWithPagination(query: string, page: number): Pr
     } else if (response && response.data) {
       return response.data;
     }
-    
+
     return [];
   } catch (error) {
     console.error('❌ searchGamesWithPagination error:', error);
     return [];
   }
 }
-

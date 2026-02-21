@@ -41,10 +41,10 @@ export interface RechargeOrderListResponse {
     records: RechargeOrder[];
     total: number;
     totals: {
-      rechargeAmount: number;
-      orderAmount: number;
       bonusAmount: number;
       fee: number;
+      orderAmount: number;
+      rechargeAmount: number;
       totalCredited: number;
     };
   };
@@ -61,9 +61,12 @@ export interface ApiResponse<T> {
  * Get recharge order list (Combined: RechargeOrder + Deposit records)
  */
 export async function getRechargeOrderList(params: RechargeOrderListParams) {
-  return requestClient.get<RechargeOrderListResponse>('/wallet/finance/online-recharge/orders', {
-    params,
-  });
+  return requestClient.get<RechargeOrderListResponse>(
+    '/wallet/finance/online-recharge/orders',
+    {
+      params,
+    },
+  );
 }
 
 /**
@@ -77,7 +80,10 @@ export async function createPresetOrder(data: any) {
  * Create supplement order
  */
 export async function createSupplementOrder(data: any) {
-  return requestClient.post<ApiResponse<any>>('/recharge-orders/supplement', data);
+  return requestClient.post<ApiResponse<any>>(
+    '/recharge-orders/supplement',
+    data,
+  );
 }
 
 /**
@@ -127,4 +133,4 @@ const rechargeOrderApi = {
   getStatistics: getOrderStatistics,
 };
 
-export default rechargeOrderApi; 
+export default rechargeOrderApi;

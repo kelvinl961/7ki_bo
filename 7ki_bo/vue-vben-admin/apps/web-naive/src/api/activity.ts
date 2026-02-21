@@ -9,7 +9,7 @@ export interface Activity {
   type: string;
   category?: string;
   currency: string;
-  status: 'draft' | 'active' | 'paused' | 'archived';
+  status: 'active' | 'archived' | 'draft' | 'paused';
   startsAt?: string;
   endsAt?: string;
   displayFrom?: string;
@@ -23,10 +23,10 @@ export interface Activity {
   createdAt: string;
   updatedAt: string;
   locales?: Array<{
-    locale: string;
-    title?: string;
-    subtitle?: string;
     description?: string;
+    locale: string;
+    subtitle?: string;
+    title?: string;
   }>;
   // Frontend display fields (computed from config)
   title?: string;
@@ -57,7 +57,7 @@ export interface ActivityListParams {
   keyword?: string;
   category?: string;
   type?: string;
-  status?: 'draft' | 'active' | 'paused' | 'archived';
+  status?: 'active' | 'archived' | 'draft' | 'paused';
   currency?: string;
   memberScope?: string;
   platforms?: string;
@@ -77,10 +77,10 @@ export interface ActivityListResponse {
     totalPages: number;
   };
   summary: {
-    totalClaimLimit: number;
-    totalParticipants: number;
-    totalMaxParticipants: number;
     totalActivities: number;
+    totalClaimLimit: number;
+    totalMaxParticipants: number;
+    totalParticipants: number;
   };
 }
 
@@ -88,7 +88,7 @@ export interface CreateActivityInput {
   type: string;
   category?: string;
   currency: string;
-  status?: 'draft' | 'active' | 'paused' | 'archived';
+  status?: 'active' | 'archived' | 'draft' | 'paused';
   startsAt?: Date;
   endsAt?: Date;
   displayFrom?: Date;
@@ -104,10 +104,10 @@ export interface CreateActivityInput {
   floatingIconConfig?: any;
   // Locales for multi-language support
   locales?: Array<{
-    locale: string;
-    title?: string;
-    subtitle?: string;
     description?: string;
+    locale: string;
+    subtitle?: string;
+    title?: string;
   }>;
 }
 
@@ -122,7 +122,7 @@ export interface UpdateActivityInput {
   platforms?: string[];
   startAt?: string;
   endAt?: string;
-  status?: 'DRAFT' | 'ACTIVE' | 'CLOSED' | 'ENDED';
+  status?: 'ACTIVE' | 'CLOSED' | 'DRAFT' | 'ENDED';
   displayOrder?: number;
   description?: string;
   rules?: string;
@@ -144,22 +144,22 @@ export interface ActivitySummary {
   averageClaimLimit: number;
   averageParticipants: number;
   categoryDistribution: Array<{
-    category: string;
     _count: { category: number };
     _sum: { claimLimit: number; currentParticipants: number };
+    category: string;
   }>;
   typeDistribution: Array<{
-    type: string;
     _count: { type: number };
     _sum: { claimLimit: number; currentParticipants: number };
+    type: string;
   }>;
   topPerformingActivities: Array<{
-    id: number;
-    title: string;
-    currentParticipants: number;
-    maxParticipants: number;
     claimLimit: number;
+    currentParticipants: number;
+    id: number;
+    maxParticipants: number;
     participationRate: number;
+    title: string;
   }>;
 }
 
@@ -168,13 +168,13 @@ export interface ActivityStatistics {
   totalParticipants: number;
   totalClaimAmount: number;
   statusDistribution: Array<{
-    status: string;
     _count: { status: number };
+    status: string;
   }>;
   dailyStats: Array<{
-    createdAt: string;
     _count: { createdAt: number };
-    _sum: { currentParticipants: number; claimLimit: number };
+    _sum: { claimLimit: number; currentParticipants: number };
+    createdAt: string;
   }>;
 }
 
@@ -191,7 +191,7 @@ export interface BulkDeleteActivityInput {
 }
 
 export interface UpdateActivityStatusInput {
-  status: 'DRAFT' | 'ACTIVE' | 'CLOSED' | 'ENDED';
+  status: 'ACTIVE' | 'CLOSED' | 'DRAFT' | 'ENDED';
   lastModifiedBy?: string;
 }
 
@@ -204,11 +204,11 @@ export interface CloneActivityInput {
 export interface BatchUpdateActivityInput {
   ids: number[];
   updates: {
-    status?: 'DRAFT' | 'ACTIVE' | 'CLOSED' | 'ENDED';
-    isActive?: boolean;
-    displayOrder?: number;
     category?: string;
+    displayOrder?: number;
+    isActive?: boolean;
     lastModifiedBy?: string;
+    status?: 'ACTIVE' | 'CLOSED' | 'DRAFT' | 'ENDED';
   };
 }
 
@@ -225,10 +225,10 @@ export interface ActivityRecord {
 
 export interface ActivityRecordResponse {
   activity: {
-    id: number;
-    title: string;
     category: string;
+    id: number;
     status: string;
+    title: string;
   };
   records: ActivityRecord[];
   pagination: {
@@ -256,7 +256,9 @@ export interface ActivityRecordQuery {
 /**
  * Get activity list with pagination and filtering
  */
-export async function getActivityList(params: ActivityListParams = {}): Promise<ActivityListResponse> {
+export async function getActivityList(
+  params: ActivityListParams = {},
+): Promise<ActivityListResponse> {
   return requestClient.get('/activities', { params });
 }
 
@@ -270,19 +272,27 @@ export async function getActivityById(id: number): Promise<Activity> {
 /**
  * Create new activity
  */
-export async function createActivity(data: CreateActivityInput): Promise<Activity> {
+export async function createActivity(
+  data: CreateActivityInput,
+): Promise<Activity> {
   return requestClient.post('/activities', data);
 }
 
 /**
  * Update activity
  */
-export async function updateActivity(id: number, data: UpdateActivityInput): Promise<Activity> {
+export async function updateActivity(
+  id: number,
+  data: UpdateActivityInput,
+): Promise<Activity> {
   return requestClient.put(`/activities/${id}`, data);
 }
 
 // V2 update to align with backend schema (type/category/currency/startsAt/endsAt/config...)
-export async function updateActivityV2(id: number, data: any): Promise<Activity> {
+export async function updateActivityV2(
+  id: number,
+  data: any,
+): Promise<Activity> {
   return requestClient.put(`/activities/${id}`, data);
 }
 
@@ -296,21 +306,28 @@ export async function deleteActivity(id: number): Promise<{ message: string }> {
 /**
  * Bulk delete activities
  */
-export async function bulkDeleteActivities(data: BulkDeleteActivityInput): Promise<{ message: string; deletedCount: number }> {
+export async function bulkDeleteActivities(
+  data: BulkDeleteActivityInput,
+): Promise<{ deletedCount: number; message: string }> {
   return requestClient.post('/activities/bulk-delete', data);
 }
 
 /**
  * Batch update display order
  */
-export async function batchUpdateDisplayOrder(updates: Array<{ id: number; displayOrder: number }>): Promise<{ message: string; data: { updatedCount: number } }> {
+export async function batchUpdateDisplayOrder(
+  updates: Array<{ displayOrder: number; id: number }>,
+): Promise<{ data: { updatedCount: number }; message: string }> {
   return requestClient.post('/activities/batch-update-order', { updates });
 }
 
 /**
  * Update activity status
  */
-export async function updateActivityStatus(id: number, data: UpdateActivityStatusInput): Promise<Activity> {
+export async function updateActivityStatus(
+  id: number,
+  data: UpdateActivityStatusInput,
+): Promise<Activity> {
   return requestClient.put(`/activities/${id}/status`, data);
 }
 
@@ -324,28 +341,38 @@ export async function getActivitySummary(): Promise<ActivitySummary> {
 /**
  * Get activity statistics
  */
-export async function getActivityStatistics(params: ActivityStatsQuery = {}): Promise<ActivityStatistics> {
+export async function getActivityStatistics(
+  params: ActivityStatsQuery = {},
+): Promise<ActivityStatistics> {
   return requestClient.get('/activities/statistics', { params });
 }
 
 /**
  * Clone activity
  */
-export async function cloneActivity(id: number, data: CloneActivityInput): Promise<Activity> {
+export async function cloneActivity(
+  id: number,
+  data: CloneActivityInput,
+): Promise<Activity> {
   return requestClient.post(`/activities/${id}/clone`, data);
 }
 
 /**
  * Batch update activities
  */
-export async function batchUpdateActivities(data: BatchUpdateActivityInput): Promise<{ message: string; updatedCount: number }> {
+export async function batchUpdateActivities(
+  data: BatchUpdateActivityInput,
+): Promise<{ message: string; updatedCount: number }> {
   return requestClient.post('/activities/batch-update', data);
 }
 
 /**
  * Get activity participation records
  */
-export async function getActivityRecords(id: number, params: ActivityRecordQuery = {}): Promise<ActivityRecordResponse> {
+export async function getActivityRecords(
+  id: number,
+  params: ActivityRecordQuery = {},
+): Promise<ActivityRecordResponse> {
   return requestClient.get(`/activities/${id}/records`, { params });
 }
 
@@ -359,7 +386,9 @@ export async function getActivityAnalyticsOverview(): Promise<ActivitySummary> {
 /**
  * Get activity performance data
  */
-export async function getActivityPerformanceData(params: ActivityStatsQuery = {}): Promise<ActivityStatistics> {
+export async function getActivityPerformanceData(
+  params: ActivityStatsQuery = {},
+): Promise<ActivityStatistics> {
   return requestClient.get('/activities/analytics/performance', { params });
 }
 
@@ -412,4 +441,4 @@ export const MEMBER_SCOPE_OPTIONS = [
   { label: 'VIP会员', value: 'VIP会员' },
   { label: '新用户', value: '新用户' },
   { label: '老用户', value: '老用户' },
-] as const; 
+] as const;

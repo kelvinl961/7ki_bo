@@ -3,7 +3,7 @@ import { requestClient } from '#/api/request';
 // 交易记录接口
 export interface TransactionRecord {
   id: string;
-  transactionType: 'deposit' | 'withdrawal' | 'manual' | 'bet' | 'bonus';
+  transactionType: 'bet' | 'bonus' | 'deposit' | 'manual' | 'withdrawal';
   type?: string;
   subType?: string;
   amount: number;
@@ -62,7 +62,7 @@ export interface UserStats {
 
 // 交易历史查询参数
 export interface TransactionHistoryParams {
-  type?: 'all' | 'deposit' | 'withdrawal' | 'manual' | 'bet' | 'bonus';
+  type?: 'all' | 'bet' | 'bonus' | 'deposit' | 'manual' | 'withdrawal';
   page?: number;
   pageSize?: number;
 }
@@ -81,31 +81,37 @@ export interface TransactionHistoryResponse {
  * 获取用户交易历史
  */
 export async function getUserTransactionHistory(
-    userId: number,
-    params: TransactionHistoryParams = {}
-  ): Promise<TransactionHistoryResponse> {
-    const { type = 'all', page = 1, pageSize = 20 } = params;
-  
-    const response = await requestClient.get(`/transactions/users/${userId}/history`, {
-      params: { type, page, pageSize }
-    });
-  
-    // ✅ The request client automatically unwraps the response.data
-    // So response is already the data part of { code: 0, data: {...} }
-    if (response && response.list) {
-      return response;
-    }
-  
-    // ❌ If not in expected format, throw
-    throw new Error('Failed to fetch transaction history');
+  userId: number,
+  params: TransactionHistoryParams = {},
+): Promise<TransactionHistoryResponse> {
+  const { type = 'all', page = 1, pageSize = 20 } = params;
+
+  const response = await requestClient.get(
+    `/transactions/users/${userId}/history`,
+    {
+      params: { type, page, pageSize },
+    },
+  );
+
+  // ✅ The request client automatically unwraps the response.data
+  // So response is already the data part of { code: 0, data: {...} }
+  if (response && response.list) {
+    return response;
   }
-  
+
+  // ❌ If not in expected format, throw
+  throw new Error('Failed to fetch transaction history');
+}
 
 /**
  * 获取用户交易统计
  */
-export async function getUserTransactionStats(userId: number): Promise<UserStats> {
-  const response = await requestClient.get(`/transactions/users/${userId}/stats`);
+export async function getUserTransactionStats(
+  userId: number,
+): Promise<UserStats> {
+  const response = await requestClient.get(
+    `/transactions/users/${userId}/stats`,
+  );
   return response;
 }
 
@@ -113,11 +119,13 @@ export async function getUserTransactionStats(userId: number): Promise<UserStats
  * 获取用户余额
  */
 export async function getUserBalance(userId: number): Promise<{
-  userId: number;
   balance: number;
   balanceFormatted: string;
+  userId: number;
 }> {
-  const response = await requestClient.get(`/transactions/users/${userId}/balance`);
+  const response = await requestClient.get(
+    `/transactions/users/${userId}/balance`,
+  );
   return response;
 }
 
@@ -127,7 +135,7 @@ export async function getUserBalance(userId: number): Promise<{
 export async function getDepositHistory(
   userId: number,
   page: number = 1,
-  pageSize: number = 20
+  pageSize: number = 20,
 ): Promise<TransactionHistoryResponse> {
   return getUserTransactionHistory(userId, { type: 'deposit', page, pageSize });
 }
@@ -138,9 +146,13 @@ export async function getDepositHistory(
 export async function getWithdrawalHistory(
   userId: number,
   page: number = 1,
-  pageSize: number = 20
+  pageSize: number = 20,
 ): Promise<TransactionHistoryResponse> {
-  return getUserTransactionHistory(userId, { type: 'withdrawal', page, pageSize });
+  return getUserTransactionHistory(userId, {
+    type: 'withdrawal',
+    page,
+    pageSize,
+  });
 }
 
 /**
@@ -149,7 +161,7 @@ export async function getWithdrawalHistory(
 export async function getManualTransactionHistory(
   userId: number,
   page: number = 1,
-  pageSize: number = 20
+  pageSize: number = 20,
 ): Promise<TransactionHistoryResponse> {
   return getUserTransactionHistory(userId, { type: 'manual', page, pageSize });
 }
@@ -159,18 +171,24 @@ export async function getManualTransactionHistory(
  */
 export function formatTransactionType(record: TransactionRecord): string {
   switch (record.transactionType) {
-    case 'deposit':
-      return '存款';
-    case 'withdrawal':
-      return '提款';
-    case 'manual':
-      return record.type === 'credit' ? '手动加款' : '手动扣款';
-    case 'bet':
+    case 'bet': {
       return '投注';
-    case 'bonus':
+    }
+    case 'bonus': {
       return '奖金';
-    default:
+    }
+    case 'deposit': {
+      return '存款';
+    }
+    case 'manual': {
+      return record.type === 'credit' ? '手动加款' : '手动扣款';
+    }
+    case 'withdrawal': {
+      return '提款';
+    }
+    default: {
       return '未知';
+    }
   }
 }
 
@@ -179,22 +197,27 @@ export function formatTransactionType(record: TransactionRecord): string {
  */
 export function formatTransactionStatus(status: string): {
   text: string;
-  type: 'success' | 'warning' | 'error' | 'info';
+  type: 'error' | 'info' | 'success' | 'warning';
 } {
   switch (status?.toLowerCase()) {
-    case 'success':
-    case 'completed':
-      return { text: '成功', type: 'success' };
-    case 'pending':
-    case 'processing':
-      return { text: '处理中', type: 'warning' };
-    case 'failed':
-    case 'rejected':
-      return { text: '失败', type: 'error' };
     case 'canceled':
-    case 'cancelled':
+    case 'cancelled': {
       return { text: '已取消', type: 'info' };
-    default:
+    }
+    case 'completed':
+    case 'success': {
+      return { text: '成功', type: 'success' };
+    }
+    case 'failed':
+    case 'rejected': {
+      return { text: '失败', type: 'error' };
+    }
+    case 'pending':
+    case 'processing': {
+      return { text: '处理中', type: 'warning' };
+    }
+    default: {
       return { text: status || '未知', type: 'info' };
+    }
   }
-} 
+}

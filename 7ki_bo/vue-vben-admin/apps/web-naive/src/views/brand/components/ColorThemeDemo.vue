@@ -11,7 +11,7 @@
         <template #render-label="{ option }">
           <div class="flex items-center gap-2">
             <div class="color-preview-mini">
-              <div 
+              <div
                 class="color-dot"
                 :style="{ backgroundColor: getPrimaryColor(option.value) }"
               />
@@ -28,7 +28,10 @@
         <h4>自动生成的色彩搭配</h4>
         <div class="color-palette-grid">
           <div class="color-item primary">
-            <div class="color-block" :style="{ backgroundColor: currentPalette.primary }">
+            <div
+              class="color-block"
+              :style="{ backgroundColor: currentPalette.primary }"
+            >
               <div class="color-overlay">
                 <span class="color-type">主色</span>
                 <span class="color-value">{{ currentPalette.primary }}</span>
@@ -36,7 +39,10 @@
             </div>
           </div>
           <div class="color-item secondary">
-            <div class="color-block" :style="{ backgroundColor: currentPalette.secondary }">
+            <div
+              class="color-block"
+              :style="{ backgroundColor: currentPalette.secondary }"
+            >
               <div class="color-overlay">
                 <span class="color-type">次色</span>
                 <span class="color-value">{{ currentPalette.secondary }}</span>
@@ -44,7 +50,10 @@
             </div>
           </div>
           <div class="color-item accent">
-            <div class="color-block" :style="{ backgroundColor: currentPalette.accent }">
+            <div
+              class="color-block"
+              :style="{ backgroundColor: currentPalette.accent }"
+            >
               <div class="color-overlay">
                 <span class="color-type">强调色</span>
                 <span class="color-value">{{ currentPalette.accent }}</span>
@@ -62,29 +71,29 @@
           <div class="demo-group">
             <label>按钮组件</label>
             <div class="button-demo">
-              <button 
+              <button
                 class="demo-button primary"
-                :style="{ 
+                :style="{
                   backgroundColor: currentPalette.primary,
-                  borderColor: currentPalette.primary
+                  borderColor: currentPalette.primary,
                 }"
               >
                 主要按钮
               </button>
-              <button 
+              <button
                 class="demo-button secondary"
-                :style="{ 
+                :style="{
                   backgroundColor: currentPalette.secondary,
-                  borderColor: currentPalette.secondary
+                  borderColor: currentPalette.secondary,
                 }"
               >
                 次要按钮
               </button>
-              <button 
+              <button
                 class="demo-button accent"
-                :style="{ 
+                :style="{
                   backgroundColor: currentPalette.accent,
-                  borderColor: currentPalette.accent
+                  borderColor: currentPalette.accent,
                 }"
               >
                 强调按钮
@@ -96,16 +105,17 @@
           <div class="demo-group">
             <label>卡片组件</label>
             <div class="card-demo">
-              <div 
+              <div
                 class="demo-card"
                 :style="{ borderTopColor: currentPalette.primary }"
               >
-                <div class="card-header" :style="{ color: currentPalette.primary }">
+                <div
+                  class="card-header"
+                  :style="{ color: currentPalette.primary }"
+                >
                   主要内容卡片
                 </div>
-                <div class="card-content">
-                  这是一个使用主题色的卡片组件示例
-                </div>
+                <div class="card-content">这是一个使用主题色的卡片组件示例</div>
               </div>
             </div>
           </div>
@@ -114,19 +124,19 @@
           <div class="demo-group">
             <label>标签组件</label>
             <div class="badge-demo">
-              <span 
+              <span
                 class="demo-badge primary"
                 :style="{ backgroundColor: currentPalette.primary }"
               >
                 主要标签
               </span>
-              <span 
+              <span
                 class="demo-badge secondary"
                 :style="{ backgroundColor: currentPalette.secondary }"
               >
                 次要标签
               </span>
-              <span 
+              <span
                 class="demo-badge accent"
                 :style="{ backgroundColor: currentPalette.accent }"
               >
@@ -155,8 +165,14 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { NCard, NSelect, NEmpty } from 'naive-ui';
-import { useColorTheme, useSkinColorOptions } from '../../../composables/useColorTheme';
-import { getPrimaryColorById, getColorPaletteById } from '../../../utils/colorUtils';
+import {
+  useColorTheme,
+  useSkinColorOptions,
+} from '../../../composables/useColorTheme';
+import {
+  getPrimaryColorById,
+  getColorPaletteById,
+} from '../../../utils/colorUtils';
 
 const { getColorInfo } = useColorTheme();
 const { skinColorOptions } = useSkinColorOptions();
@@ -178,7 +194,7 @@ const handleColorChange = (skinColorId: string) => {
 
 const generateCSSExample = () => {
   if (!currentPalette.value) return '';
-  
+
   return `/* 自动生成的主题色彩 */
 bg-[${currentPalette.value.primary}]   /* 主色背景 */
 bg-[${currentPalette.value.secondary}] /* 次色背景 */
@@ -390,4 +406,4 @@ border-[${currentPalette.value.accent}]    /* 强调色边框 */`;
   text-align: center;
   padding: 48px 0;
 }
-</style> 
+</style>

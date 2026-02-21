@@ -1,7 +1,13 @@
 <template>
   <n-modal
     v-model:show="visible"
-    :title="currentStep === 'upload' ? '导入游戏' : currentStep === 'preview' ? '预览导入数据' : '导入结果'"
+    :title="
+      currentStep === 'upload'
+        ? '导入游戏'
+        : currentStep === 'preview'
+          ? '预览导入数据'
+          : '导入结果'
+    "
     preset="dialog"
     :style="{ width: currentStep === 'upload' ? '600px' : '1000px' }"
     :closable="currentStep !== 'importing'"
@@ -13,11 +19,15 @@
       <div class="mb-6">
         <n-alert type="info" :show-icon="false" class="mb-4">
           <div class="text-sm">
-            <p class="mb-2">支持的文件格式：CSV (.csv) 推荐，Excel (.xlsx, .xls) 实验性支持</p>
+            <p class="mb-2">
+              支持的文件格式：CSV (.csv) 推荐，Excel (.xlsx, .xls) 实验性支持
+            </p>
             <p class="mb-2">文件要求：</p>
-            <ul class="list-disc list-inside ml-4 space-y-1">
+            <ul class="ml-4 list-inside list-disc space-y-1">
               <li>第一行为标题行</li>
-              <li>必填列：Game Name (中文)、Game Name (英文)、游戏类型、GameID</li>
+              <li>
+                必填列：Game Name (中文)、Game Name (英文)、游戏类型、GameID
+              </li>
               <li>可选列：Icon、备注</li>
               <li>支持大文件导入（无行数限制）</li>
               <li>大文件导入可能需要几分钟时间，请耐心等待</li>
@@ -25,8 +35,8 @@
             </ul>
           </div>
         </n-alert>
-        
-        <div class="flex gap-4 mb-4">
+
+        <div class="mb-4 flex gap-4">
           <n-button type="primary" ghost @click="downloadTemplate">
             <template #icon>
               <icon-download />
@@ -39,7 +49,7 @@
         </div>
       </div>
 
-        <n-form ref="uploadFormRef" :model="uploadForm" :rules="uploadRules">
+      <n-form ref="uploadFormRef" :model="uploadForm" :rules="uploadRules">
         <n-form-item label="所属平台" path="platformId">
           <n-select
             v-model:value="uploadForm.platformId"
@@ -51,9 +61,12 @@
           />
         </n-form-item>
 
-          <n-form-item label="游戏厂商" path="vendor">
-            <n-input v-model:value="uploadForm.vendor" placeholder="请输入游戏厂商，如 PG Soft / CQ9 / JILI" />
-          </n-form-item>
+        <n-form-item label="游戏厂商" path="vendor">
+          <n-input
+            v-model:value="uploadForm.vendor"
+            placeholder="请输入游戏厂商，如 PG Soft / CQ9 / JILI"
+          />
+        </n-form-item>
 
         <n-form-item label="默认币种" path="currency">
           <n-select
@@ -80,7 +93,9 @@
                   <icon-upload />
                 </div>
                 <p class="upload-text">点击或拖拽文件到此区域上传</p>
-                <p class="upload-hint">支持 Excel (.xlsx, .xls) 和 CSV (.csv) 文件</p>
+                <p class="upload-hint">
+                  支持 Excel (.xlsx, .xls) 和 CSV (.csv) 文件
+                </p>
               </div>
             </n-upload-dragger>
           </n-upload>
@@ -98,20 +113,29 @@
           class="mb-4"
         >
           <div class="text-sm">
-            <p class="mb-2">发现 {{ previewData.errors.length }} 个数据错误，请检查并修正：</p>
+            <p class="mb-2">
+              发现 {{ previewData.errors.length }} 个数据错误，请检查并修正：
+            </p>
             <div class="max-h-32 overflow-y-auto">
-              <div v-for="error in previewData.errors" :key="`${error.row}-${error.field}`" class="mb-1">
+              <div
+                v-for="error in previewData.errors"
+                :key="`${error.row}-${error.field}`"
+                class="mb-1"
+              >
                 第{{ error.row }}行 {{ error.field }}：{{ error.message }}
               </div>
             </div>
           </div>
         </n-alert>
 
-        <div class="flex justify-between items-center mb-4">
+        <div class="mb-4 flex items-center justify-between">
           <div class="flex gap-4">
             <n-statistic label="总数据" :value="previewData.summary.total" />
             <n-statistic label="有效数据" :value="previewData.summary.valid" />
-            <n-statistic label="错误数据" :value="previewData.summary.invalid" />
+            <n-statistic
+              label="错误数据"
+              :value="previewData.summary.invalid"
+            />
           </div>
           <div class="flex gap-2">
             <n-button @click="currentStep = 'upload'">返回上传</n-button>
@@ -138,14 +162,17 @@
 
     <!-- Step 3: Importing -->
     <div v-else-if="currentStep === 'importing'" class="importing-step">
-      <div class="text-center py-8">
+      <div class="py-8 text-center">
         <n-spin size="large" />
         <p class="mt-4 text-lg">正在导入数据，请稍候...</p>
         <p class="mt-2 text-sm text-gray-500">
-          已处理 {{ importProgress.current }} / {{ importProgress.total }} 条数据
+          已处理 {{ importProgress.current }} /
+          {{ importProgress.total }} 条数据
         </p>
         <p class="mt-2 text-sm text-orange-600">
-          <strong>大文件导入可能需要几分钟时间，请耐心等待，不要关闭页面</strong>
+          <strong
+            >大文件导入可能需要几分钟时间，请耐心等待，不要关闭页面</strong
+          >
         </p>
         <n-progress
           type="line"
@@ -168,14 +195,20 @@
             <p class="mb-2">导入完成！</p>
             <div class="flex gap-6">
               <span>总计：{{ importResults.summary.total }}</span>
-              <span class="text-green-600">成功：{{ importResults.summary.success }}</span>
-              <span class="text-red-600">失败：{{ importResults.summary.error }}</span>
-              <span class="text-orange-600">跳过：{{ importResults.summary.skipped }}</span>
+              <span class="text-green-600"
+                >成功：{{ importResults.summary.success }}</span
+              >
+              <span class="text-red-600"
+                >失败：{{ importResults.summary.error }}</span
+              >
+              <span class="text-orange-600"
+                >跳过：{{ importResults.summary.skipped }}</span
+              >
             </div>
           </div>
         </n-alert>
 
-        <div class="flex justify-end gap-2 mb-4">
+        <div class="mb-4 flex justify-end gap-2">
           <n-button @click="visible = false">关闭</n-button>
           <n-button type="primary" @click="handleImportComplete">
             确定
@@ -194,7 +227,7 @@
     </div>
 
     <template #action>
-      <div v-if="currentStep === 'upload'" class="flex gap-2 justify-end">
+      <div v-if="currentStep === 'upload'" class="flex justify-end gap-2">
         <n-button @click="visible = false">取消</n-button>
         <n-button
           type="primary"
@@ -211,7 +244,12 @@
 
 <script lang="ts" setup>
 import { computed, reactive, ref, watch } from 'vue';
-import type { DataTableColumns, FormInst, FormRules, UploadFileInfo } from 'naive-ui';
+import type {
+  DataTableColumns,
+  FormInst,
+  FormRules,
+  UploadFileInfo,
+} from 'naive-ui';
 import {
   NAlert,
   NButton,
@@ -235,7 +273,11 @@ import {
   type FileImportResult,
   importGamesFromFileApi,
 } from '#/api/game/subgame';
-import { parseFile, validateGameData, downloadTemplate as downloadTemplateUtil } from '#/utils/fileParser';
+import {
+  parseFile,
+  validateGameData,
+  downloadTemplate as downloadTemplateUtil,
+} from '#/utils/fileParser';
 
 // Icons (you may need to import these from your icon library)
 const IconDownload = () => '📥';
@@ -255,7 +297,9 @@ const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
 // Reactive data
-const currentStep = ref<'upload' | 'preview' | 'importing' | 'results'>('upload');
+const currentStep = ref<'upload' | 'preview' | 'importing' | 'results'>(
+  'upload',
+);
 const parsing = ref(false);
 const importing = ref(false);
 const uploadFormRef = ref<FormInst | null>(null);
@@ -298,45 +342,45 @@ const currencyOptions = [
 // Form rules
 const uploadRules: FormRules = {
   platformId: [
-    { 
-      required: true, 
-      message: '请选择所属平台', 
+    {
+      required: true,
+      message: '请选择所属平台',
       trigger: ['blur', 'change'],
       validator: (_, value) => {
         if (!value) {
           return new Error('请选择所属平台');
         }
         return true;
-      }
+      },
     },
   ],
   vendor: [
     { required: true, message: '请输入游戏厂商', trigger: ['blur', 'change'] },
   ],
   currency: [
-    { 
-      required: true, 
-      message: '请选择默认币种', 
+    {
+      required: true,
+      message: '请选择默认币种',
       trigger: ['blur', 'change'],
       validator: (_, value) => {
         if (!value) {
           return new Error('请选择默认币种');
         }
         return true;
-      }
+      },
     },
   ],
   file: [
-    { 
-      required: true, 
-      message: '请选择要导入的文件', 
+    {
+      required: true,
+      message: '请选择要导入的文件',
       trigger: ['blur', 'change'],
       validator: (_, value) => {
         if (!value) {
           return new Error('请选择要导入的文件');
         }
         return true;
-      }
+      },
     },
   ],
 };
@@ -354,7 +398,12 @@ const previewColumns: DataTableColumns<ImportGameData> = [
   { title: '游戏名称(英文)', key: 'gameNameEn', width: 150 },
   { title: '游戏类型', key: 'gameType', width: 100 },
   { title: '游戏ID', key: 'gameId', width: 120 },
-  { title: '图标链接', key: 'iconUrl', width: 200, ellipsis: { tooltip: true } },
+  {
+    title: '图标链接',
+    key: 'iconUrl',
+    width: 200,
+    ellipsis: { tooltip: true },
+  },
   { title: '备注', key: 'remark', width: 150, ellipsis: { tooltip: true } },
 ];
 
@@ -387,12 +436,19 @@ const resetDialog = () => {
   uploadForm.currency = 'BRL';
   uploadForm.file = null;
   fileList.value = [];
-  previewData.value = { games: [], errors: [], summary: { total: 0, valid: 0, invalid: 0 } };
-  importResults.value = { results: [], summary: { total: 0, success: 0, error: 0, skipped: 0 } };
+  previewData.value = {
+    games: [],
+    errors: [],
+    summary: { total: 0, valid: 0, invalid: 0 },
+  };
+  importResults.value = {
+    results: [],
+    summary: { total: 0, success: 0, error: 0, skipped: 0 },
+  };
   importProgress.value = { current: 0, total: 0, percentage: 0 };
   parsing.value = false;
   importing.value = false;
-  
+
   // Clear form validation
   if (uploadFormRef.value) {
     uploadFormRef.value.restoreValidation();
@@ -406,7 +462,7 @@ const handleFileChange = (options: { fileList: UploadFileInfo[] }) => {
   } else {
     uploadForm.file = null;
   }
-  
+
   // Clear file validation error when file is selected
   if (uploadFormRef.value && uploadForm.file) {
     uploadFormRef.value.restoreValidation();
@@ -440,7 +496,7 @@ const debugFormValues = () => {
   console.log('platformOptions:', props.platformOptions);
   console.log('fileList:', fileList.value);
   console.log('uploadFormRef:', uploadFormRef.value);
-  
+
   if (uploadFormRef.value) {
     uploadFormRef.value.validate((errors) => {
       console.log('Form validation errors:', errors);
@@ -456,7 +512,7 @@ const parseFileData = async () => {
     console.log('Current form values:', {
       platformId: uploadForm.platformId,
       currency: uploadForm.currency,
-      file: uploadForm.file?.name
+      file: uploadForm.file?.name,
     });
 
     if (!uploadForm.platformId) {
@@ -480,24 +536,26 @@ const parseFileData = async () => {
     // Parse file using client-side parser
     const rawData = await parseFile(uploadForm.file);
     console.log('解析后的原始数据:', rawData);
-    
+
     if (!rawData || rawData.length === 0) {
       throw new Error('文件为空或无法解析');
     }
 
     const validationResult = validateGameData(rawData);
     console.log('验证结果:', validationResult);
-    
+
     previewData.value = {
       games: validationResult.games,
       errors: validationResult.errors,
       summary: {
         total: validationResult.games.length,
-        valid: validationResult.games.length - validationResult.errors.filter(e => e.row > 1).length,
-        invalid: validationResult.errors.filter(e => e.row > 1).length,
+        valid:
+          validationResult.games.length -
+          validationResult.errors.filter((e) => e.row > 1).length,
+        invalid: validationResult.errors.filter((e) => e.row > 1).length,
       },
     };
-    
+
     currentStep.value = 'preview';
   } catch (error: any) {
     console.error('解析文件失败:', error);
@@ -516,7 +574,7 @@ const startImport = async () => {
 
   try {
     const validGames = previewData.value.games.filter((_, index) => {
-      return !previewData.value.errors.some(error => error.row === index + 2);
+      return !previewData.value.errors.some((error) => error.row === index + 2);
     });
 
     importProgress.value = {
@@ -530,14 +588,14 @@ const startImport = async () => {
       if (importProgress.value.current < importProgress.value.total) {
         importProgress.value.current++;
         importProgress.value.percentage = Math.round(
-          (importProgress.value.current / importProgress.value.total) * 100
+          (importProgress.value.current / importProgress.value.total) * 100,
         );
       }
     }, 500); // Slower progress updates for large files
 
     // Call the real import API with no timeout
     const response = await importGamesFromFileApi({
-      games: validGames.map(game => ({
+      games: validGames.map((game) => ({
         gameId: game.gameId,
         gameNameCn: game.gameNameCn,
         gameNameEn: game.gameNameEn,
@@ -571,7 +629,9 @@ const handleImportComplete = () => {
 };
 
 const getRowClassName = (row: ImportGameData, index: number) => {
-  const hasError = previewData.value.errors.some(error => error.row === index + 2);
+  const hasError = previewData.value.errors.some(
+    (error) => error.row === index + 2,
+  );
   return hasError ? 'error-row' : '';
 };
 
@@ -580,18 +640,24 @@ const getResultRowClassName = (row: FileImportResult) => {
 };
 
 // Watch for platform selection to clear validation
-watch(() => uploadForm.platformId, (newVal) => {
-  if (newVal && uploadFormRef.value) {
-    uploadFormRef.value.restoreValidation();
-  }
-});
+watch(
+  () => uploadForm.platformId,
+  (newVal) => {
+    if (newVal && uploadFormRef.value) {
+      uploadFormRef.value.restoreValidation();
+    }
+  },
+);
 
-// Watch for currency selection to clear validation  
-watch(() => uploadForm.currency, (newVal) => {
-  if (newVal && uploadFormRef.value) {
-    uploadFormRef.value.restoreValidation();
-  }
-});
+// Watch for currency selection to clear validation
+watch(
+  () => uploadForm.currency,
+  (newVal) => {
+    if (newVal && uploadFormRef.value) {
+      uploadFormRef.value.restoreValidation();
+    }
+  },
+);
 </script>
 
 <style scoped>
@@ -644,4 +710,4 @@ watch(() => uploadForm.currency, (newVal) => {
 .space-y-1 > * + * {
   margin-top: 0.25rem;
 }
-</style> 
+</style>

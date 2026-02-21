@@ -11,19 +11,29 @@ export interface UserDetailInfo {
   phone: string;
   cpf: string;
   currency: string;
-  
+
   // Account Status
-  status: 'NORMAL' | 'ACTIVE' | 'BANNED' | 'SUSPENDED' | 'MANUAL_FREEZE' | 'PROHIBIT_BONUS' | 'PROHIBIT_WITHDRAWAL' | 'PROHIBIT_GAME_ENTRY' | 'BLACKLIST' | 'MARGINAL';
+  status:
+    | 'ACTIVE'
+    | 'BANNED'
+    | 'BLACKLIST'
+    | 'MANUAL_FREEZE'
+    | 'MARGINAL'
+    | 'NORMAL'
+    | 'PROHIBIT_BONUS'
+    | 'PROHIBIT_GAME_ENTRY'
+    | 'PROHIBIT_WITHDRAWAL'
+    | 'SUSPENDED';
   accountStatus?: string; // Account status enum
   accountStatusDisplay?: string; // Account status display (Chinese)
   accountStatusReason?: string; // Reason for status change (备注)
   accountType: string;
   selfBanStatus: string;
   isVerified: boolean;
-  registrationMethod: string;  // 注册方式
-  loginMethod: string;  // 登录方式
-  verificationMethod: string;  // 验证方式
-  
+  registrationMethod: string; // 注册方式
+  loginMethod: string; // 登录方式
+  verificationMethod: string; // 验证方式
+
   // Financial Information
   balance: number;
   frozenBalance: number;
@@ -32,7 +42,7 @@ export interface UserDetailInfo {
   totalSavingsEarned: number;
   totalCommission: number;
   depositWithdrawalDiff: number; // 充提差额
-  
+
   // Statistics
   totalDeposit: number;
   totalDepositCount: number;
@@ -45,21 +55,21 @@ export interface UserDetailInfo {
   // Manual transactions (staff adjustments - separate from deposits/withdrawals)
   totalManualDebits?: number; // Staff deductions (should not be mixed with withdrawals)
   totalManualCredits?: number; // Staff credits (already included in deposits)
-  
+
   // Betting Information
   todayValidBet: number;
   todayTotalBet: number;
   todayWinLoss: number;
   totalValidBet: number;
   totalWinLoss: number;
-  
+
   // Member Information
   memberLevel: string;
   memberTags: string[];
   memberTier?: {
     id: number;
-    tierName: string;
     tierCode: string;
+    tierName: string;
     tierType: string;
   };
   vipLevel: string;
@@ -67,12 +77,12 @@ export interface UserDetailInfo {
   loginCount: number;
   rebateSettings: string; // 返水设置
   memberNotes: string; // 会员备注
-  
+
   // Referral Information
   invitedBy: string;
   invitedByAccount?: string; // ✅ FIX: Parent agent account (for display and search)
   referralCode: string;
-  
+
   // Activity Information
   activityCount: number;
   activityReward: number;
@@ -82,45 +92,45 @@ export interface UserDetailInfo {
   depositBonus: number;
   abandonedReward: number;
   withdrawnProvidentFund: number;
-  
+
   // Profile Photo
   avatarUrl?: string; // 个人头像
   idPhotoUrl?: string; // ID Photo URL (same as avatarUrl for backward compatibility)
-  
+
   // VIP Information
   vipRewardsClaimed: number;
   wagerToNextVip: number;
-  vipProgression?: {
+  vipProgression?: null | {
     currentLevel: {
+      color: string;
+      icon: null | string;
       id: number;
       level: number;
       name: string;
-      color: string;
-      icon: string | null;
-      style: string | null;
+      style: null | string;
     };
-    nextLevel: {
+    nextLevel: null | {
+      color: string;
+      icon: null | string;
       id: number;
       level: number;
       name: string;
-      color: string;
-      icon: string | null;
-      style: string | null;
-      requiredDeposit: number;
       requiredBet: number;
+      requiredDeposit: number;
+      style: null | string;
       upgradeBonus: number;
-    } | null;
-    progress: {
-      totalDeposits: number;
-      totalBets: number;
-      depositProgress: number;
-      betProgress: number;
-      overallProgress: number;
-      remainingDeposit: number;
-      remainingBet: number;
     };
-  } | null;
-  
+    progress: {
+      betProgress: number;
+      depositProgress: number;
+      overallProgress: number;
+      remainingBet: number;
+      remainingDeposit: number;
+      totalBets: number;
+      totalDeposits: number;
+    };
+  };
+
   // Registration Information
   registrationIp: string;
   registrationDomain: string;
@@ -130,98 +140,103 @@ export interface UserDetailInfo {
   registrationFingerprint: string;
   registrationSource: string;
   sameRegistrationDeviceCount?: number; // Number of users with same registration device
-  
+
   // Last Login Information
   lastLoginIp: string;
   lastLoginLocation: string;
-  lastLoginTime: string | null;
+  lastLoginTime: null | string;
   lastLoginDomain: string;
   lastLoginDeviceId: string;
   lastLoginFingerprint: string;
-  
+
   // Third-party Bindings
   thirdPartyBindings: string[]; // List of bound platforms
-  
+
   // Channels
   depositChannel: string;
-  
+
   // Security
   passwordCount: number;
   withdrawalPassword: string; // 提现密码 (masked)
   withdrawalAccountCount: number;
-  
+
   // Security Stats (from separate API call)
-  passwordMatchCount?: number;           // 同登录密码人数
-  sameWithdrawalPinCount?: number;       // 同提现密码人数
-  sameAccountCount?: number;             // 同账号人数
-  sameRegIpCount?: number;              // 同注册IP人数
-  sameRealNameCount?: number;           // 同姓名人数
+  passwordMatchCount?: number; // 同登录密码人数
+  sameWithdrawalPinCount?: number; // 同提现密码人数
+  sameAccountCount?: number; // 同账号人数
+  sameRegIpCount?: number; // 同注册IP人数
+  sameRealNameCount?: number; // 同姓名人数
   sameRegistrationDeviceCount?: number; // 同注册设备人数
-  sameLastLoginDeviceCount?: number;    // 同最后登录设备人数
+  sameLastLoginDeviceCount?: number; // 同最后登录设备人数
 }
 
 export interface UserFinancialSummary {
   availableBalance: number;
   frozenBalance: number;
   totalBalance: number;
-  
+
   depositSummary: {
-    total: number;
     count: number;
     todayAmount: number;
+    total: number;
   };
-  
+
   withdrawalSummary: {
-    total: number;
     count: number;
     todayAmount: number;
+    total: number;
   };
-  
+
   bettingSummary: {
-    todayValid: number;
     todayTotal: number;
+    todayValid: number;
     todayWinLoss: number;
   };
-  
+
   activitySummary: {
-    taskReward: number;
     depositReward: number;
+    taskReward: number;
   };
 }
 
 /**
  * Get user detail information - OPTIMIZED SINGLE API CALL
  */
-export async function getUserDetailApi(userId: number, forceRefresh = true): Promise<UserDetailInfo> {
+export async function getUserDetailApi(
+  userId: number,
+  forceRefresh = true,
+): Promise<UserDetailInfo> {
   try {
     // Single API call that includes all necessary data (force refresh to get latest VIP progression)
     // 🔧 FIX: Add timestamp to URL to bypass all cache layers (backend + browser + proxy)
     const timestamp = Date.now();
-    console.log(`📡 Fetching user ${userId} (forceRefresh: ${forceRefresh}, timestamp: ${timestamp})`);
-    
+    console.log(
+      `📡 Fetching user ${userId} (forceRefresh: ${forceRefresh}, timestamp: ${timestamp})`,
+    );
+
     const response = await requestClient.get(`/users/${userId}`, {
-      params: { 
+      params: {
         forceRefresh: forceRefresh ? 'true' : 'false',
-        _t: forceRefresh ? timestamp : undefined // Add cache buster to params
-      }
+        _t: forceRefresh ? timestamp : undefined, // Add cache buster to params
+      },
     });
-    
+
     // Handle the response format: {success: true, data: {...}}
     const userData = response.data || response;
-    
+
     console.log('📦 Raw user data from API:', {
       id: userData?.id,
       memberLevel: userData?.memberLevel,
-      memberTier: userData?.memberTier
+      memberTier: userData?.memberTier,
     });
-    
+
     if (!userData) {
       throw new Error('Failed to fetch user data');
     }
 
     const totalDeposit = Number(userData.totalDeposit) || 0;
     const totalWithdraw = Number(userData.totalWithdraw) || 0;
-    
+
     return {
       id: userData.id,
       userId: userData.id, // Same as id
@@ -232,7 +247,7 @@ export async function getUserDetailApi(userId: number, forceRefresh = true): Pro
       phone: userData.phone || '',
       cpf: userData.cpf || '',
       currency: userData.currency || 'BRL',
-      
+
       status: userData.status || (userData.isBanned ? 'BANNED' : 'NORMAL'), // 🎯 Pass through backend status directly
       accountStatus: userData.accountStatus, // 🎯 NEW: Pass through accountStatus
       accountStatusDisplay: userData.accountStatusDisplay, // 🎯 NEW: Pass through Chinese display
@@ -243,7 +258,7 @@ export async function getUserDetailApi(userId: number, forceRefresh = true): Pro
       registrationMethod: userData.registrationMethod || '手机注册',
       loginMethod: userData.loginMethod || '账号密码',
       verificationMethod: userData.verificationMethod || '手机验证',
-      
+
       balance: Number(userData.balance) || 0,
       frozenBalance: Number(userData.frozenBalance) || 0,
       rewardWallet: Number(userData.rewardWallet) || 0,
@@ -251,32 +266,34 @@ export async function getUserDetailApi(userId: number, forceRefresh = true): Pro
       totalSavingsEarned: Number(userData.totalSavingsEarned) || 0,
       totalCommission: Number(userData.totalCommission) || 0,
       depositWithdrawalDiff: totalDeposit - totalWithdraw,
-      
-      totalDeposit: totalDeposit,
+
+      totalDeposit,
       totalDepositCount: Number(userData.totalDepositCount) || 0,
-      totalWithdraw: totalWithdraw,
+      totalWithdraw,
       totalWithdrawCount: Number(userData.totalWithdrawCount) || 0,
       last24HoursDeposit: Number(userData.last24HoursDeposit) || 0,
       maxSingleDeposit: Number(userData.maxSingleDeposit) || 0,
       last24HoursWithdraw: Number(userData.last24HoursWithdraw) || 0,
       maxSingleWithdraw: Number(userData.maxSingleWithdraw) || 0,
-      
+
       todayValidBet: Number(userData.todayValidBet) || 0,
       todayTotalBet: Number(userData.todayTotalBet) || 0,
       todayWinLoss: Number(userData.todayWinLoss) || 0,
       totalValidBet: Number(userData.totalValidBet) || 0,
       totalWinLoss: Number(userData.totalWinLoss) || 0,
-      
+
       memberLevel: userData.memberLevel || '默认层级',
       memberTags: userData.memberTags || ['普通用户'],
-      memberTier: userData.memberTier ? {
-        id: userData.memberTier.id,
-        tierName: userData.memberTier.tierName,
-        tierCode: userData.memberTier.tierCode,
-        tierType: userData.memberTier.tierType
-      } : undefined,
+      memberTier: userData.memberTier
+        ? {
+            id: userData.memberTier.id,
+            tierName: userData.memberTier.tierName,
+            tierCode: userData.memberTier.tierCode,
+            tierType: userData.memberTier.tierType,
+          }
+        : undefined,
       vipLevel: userData.vipLevel || 'VIP0',
-      
+
       // Profile Photo
       avatarUrl: userData.avatarUrl || '',
       idPhotoUrl: userData.idPhotoUrl || userData.avatarUrl || '',
@@ -285,11 +302,11 @@ export async function getUserDetailApi(userId: number, forceRefresh = true): Pro
       loginCount: Number(userData.loginCount) || 0,
       rebateSettings: userData.rebateSettings || '默认返水',
       memberNotes: userData.memberNotes || userData.notes || '',
-      
+
       invitedBy: userData.invitedBy || '',
       invitedByAccount: userData.invitedByAccount || '', // ✅ FIX: Parent agent account
       referralCode: userData.referralCode || '', // 🎯 9-digit random userID from backend
-      
+
       activityCount: 0,
       activityReward: Number(userData.activityReward) || 0,
       activityAbandoned: 0,
@@ -298,11 +315,11 @@ export async function getUserDetailApi(userId: number, forceRefresh = true): Pro
       depositBonus: Number(userData.depositBonus) || 0,
       abandonedReward: Number(userData.abandonedReward) || 0,
       withdrawnProvidentFund: Number(userData.withdrawnProvidentFund) || 0,
-      
+
       vipRewardsClaimed: Number(userData.vipRewardsClaimed) || 0,
       wagerToNextVip: Number(userData.wagerToNextVip) || 0,
       vipProgression: userData.vipProgression || null,
-      
+
       // Registration Information - directly from backend
       registrationIp: userData.registrationIp || '',
       registrationDomain: userData.registrationDomain || '',
@@ -312,7 +329,7 @@ export async function getUserDetailApi(userId: number, forceRefresh = true): Pro
       registrationFingerprint: userData.registrationFingerprint || '',
       registrationSource: userData.registrationSource || '',
       sameRegistrationDeviceCount: userData.sameRegistrationDeviceCount || 0,
-      
+
       // Last Login Information - directly from backend
       lastLoginIp: userData.lastLoginIp || '',
       lastLoginLocation: userData.lastLoginLocation || '',
@@ -320,15 +337,15 @@ export async function getUserDetailApi(userId: number, forceRefresh = true): Pro
       lastLoginDomain: userData.lastLoginDomain || '',
       lastLoginDeviceId: userData.lastLoginDeviceId || '',
       lastLoginFingerprint: userData.lastLoginFingerprint || '',
-      
+
       // Third-party Bindings - directly from backend
       thirdPartyBindings: userData.thirdPartyBindings || [],
-      
+
       depositChannel: userData.depositChannel || '银行转账',
-      
+
       passwordCount: Number(userData.passwordCount) || 1,
       withdrawalPassword: '******',
-      withdrawalAccountCount: Number(userData.withdrawalAccountCount) || 0
+      withdrawalAccountCount: Number(userData.withdrawalAccountCount) || 0,
     };
   } catch (error: any) {
     console.error('Failed to fetch user data:', error);
@@ -336,12 +353,14 @@ export async function getUserDetailApi(userId: number, forceRefresh = true): Pro
   }
 }
 
-
-
 /**
  * Update user status
  */
-export async function updateUserStatusApi(userId: number, status: string, reason?: string) {
+export async function updateUserStatusApi(
+  userId: number,
+  status: string,
+  reason?: string,
+) {
   return requestClient.put(`/users/${userId}/status`, { status, reason });
 }
 
@@ -349,29 +368,38 @@ export async function updateUserStatusApi(userId: number, status: string, reason
  * Manual transaction operation - REAL API
  */
 export async function createManualTransactionApi(params: {
-  userId: number;
-  type: 'credit' | 'debit' | 'correction' | 'adjustment' | 'bonus_adjustment' | 'penalty';
-  subType: string;
   amount: number;
-  multiplier?: number;
+  backendNotes?: string;
+  currency?: string;
   description: string;
   frontendNotes?: string;
-  backendNotes?: string;
+  multiplier?: number;
   reason?: string;
-  currency?: string;
+  subType: string;
+  type:
+    | 'adjustment'
+    | 'bonus_adjustment'
+    | 'correction'
+    | 'credit'
+    | 'debit'
+    | 'penalty';
+  userId: number;
 }) {
   // 🎯 Transform amount to rewardAmount for backend compatibility
   const { amount, ...restParams } = params;
   return requestClient.post('/transactions/manual', {
     ...restParams,
-    rewardAmount: amount  // ✅ Backend expects 'rewardAmount' not 'amount'
+    rewardAmount: amount, // ✅ Backend expects 'rewardAmount' not 'amount'
   });
 }
 
 /**
  * Update user login password (admin operation)
  */
-export async function updateUserPasswordApi(userId: number, newPassword: string) {
+export async function updateUserPasswordApi(
+  userId: number,
+  newPassword: string,
+) {
   return requestClient.put(`/users/${userId}/password`, { newPassword });
 }
 
@@ -383,7 +411,9 @@ export async function updateUserPasswordApi(userId: number, newPassword: string)
 export async function resetWithdrawalPinApi(userId: number, newPin?: string) {
   if (newPin) {
     // Set specific PIN value
-    return requestClient.post(`/users/${userId}/withdrawal-pin/reset`, { newPin });
+    return requestClient.post(`/users/${userId}/withdrawal-pin/reset`, {
+      newPin,
+    });
   } else {
     // Clear PIN (user needs to set new one)
     return requestClient.delete(`/users/${userId}/withdrawal-pin`);
@@ -392,11 +422,18 @@ export async function resetWithdrawalPinApi(userId: number, newPin?: string) {
 
 export interface TransactionRecord {
   id: number;
-  type: 'DEPOSIT' | 'WITHDRAWAL' | 'MANUAL_CREDIT' | 'MANUAL_DEBIT' | 'BETTING' | 'BONUS' | 'COMMISSION';
+  type:
+    | 'BETTING'
+    | 'BONUS'
+    | 'COMMISSION'
+    | 'DEPOSIT'
+    | 'MANUAL_CREDIT'
+    | 'MANUAL_DEBIT'
+    | 'WITHDRAWAL';
   amount: number;
   balanceBefore: number;
   balanceAfter: number;
-  status: 'PENDING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
+  status: 'CANCELLED' | 'COMPLETED' | 'FAILED' | 'PENDING';
   description: string;
   transactionTime: string;
   operator?: string;
@@ -427,19 +464,23 @@ export interface TransactionListResponse {
 /**
  * Get user transaction records - REAL API
  */
-export async function getUserTransactionRecordsApi(params: TransactionListParams): Promise<TransactionListResponse> {
+export async function getUserTransactionRecordsApi(
+  params: TransactionListParams,
+): Promise<TransactionListResponse> {
   const queryParams = new URLSearchParams({
     page: params.page.toString(),
     pageSize: params.pageSize.toString(),
   });
-  
+
   if (params.type) queryParams.append('type', params.type);
   if (params.status) queryParams.append('status', params.status);
   if (params.startDate) queryParams.append('startDate', params.startDate);
   if (params.endDate) queryParams.append('endDate', params.endDate);
 
-  return requestClient.get(`/transactions/users/${params.userId}/history?${queryParams}`);
-} 
+  return requestClient.get(
+    `/transactions/users/${params.userId}/history?${queryParams}`,
+  );
+}
 
 // ===================================
 // CONTACT INFORMATION TYPES & API
@@ -475,14 +516,19 @@ export interface UpdateContactParams {
 /**
  * Get user contact information
  */
-export async function getUserContactsApi(userId: number): Promise<UserContactInfo> {
+export async function getUserContactsApi(
+  userId: number,
+): Promise<UserContactInfo> {
   return await requestClient.get(`/users/${userId}/contacts`);
 }
 
 /**
  * Update user contact information
  */
-export async function updateUserContactsApi(userId: number, params: UpdateContactParams) {
+export async function updateUserContactsApi(
+  userId: number,
+  params: UpdateContactParams,
+) {
   return await requestClient.put(`/users/${userId}/contacts`, params);
 }
 
@@ -526,27 +572,42 @@ export interface CreateThirdPartyBindingParams {
 /**
  * Get user third-party bindings
  */
-export async function getUserThirdPartyBindingsApi(params: ThirdPartyBindingListParams): Promise<ThirdPartyBindingListResponse> {
+export async function getUserThirdPartyBindingsApi(
+  params: ThirdPartyBindingListParams,
+): Promise<ThirdPartyBindingListResponse> {
   const queryParams = new URLSearchParams({
     page: params.page.toString(),
     pageSize: params.pageSize.toString(),
   });
 
-  return await requestClient.get(`/users/${params.userId}/third-party-bindings?${queryParams}`);
+  return await requestClient.get(
+    `/users/${params.userId}/third-party-bindings?${queryParams}`,
+  );
 }
 
 /**
  * Create third-party binding
  */
-export async function createThirdPartyBindingApi(userId: number, params: CreateThirdPartyBindingParams) {
-  return await requestClient.post(`/users/${userId}/third-party-bindings`, params);
+export async function createThirdPartyBindingApi(
+  userId: number,
+  params: CreateThirdPartyBindingParams,
+) {
+  return await requestClient.post(
+    `/users/${userId}/third-party-bindings`,
+    params,
+  );
 }
 
 /**
  * Remove third-party binding
  */
-export async function removeThirdPartyBindingApi(userId: number, bindingId: string) {
-  return await requestClient.delete(`/users/${userId}/third-party-bindings/${bindingId}`);
+export async function removeThirdPartyBindingApi(
+  userId: number,
+  bindingId: string,
+) {
+  return await requestClient.delete(
+    `/users/${userId}/third-party-bindings/${bindingId}`,
+  );
 }
 
 // ===================================
@@ -562,7 +623,7 @@ export interface UserProfile {
   residence: string;
   occupation: string;
   employer: string;
-  gender: '男' | '女' | '其他' | '';
+  gender: '' | '其他' | '女' | '男';
   birthday: string;
   placeOfBirth: string;
   currentAddress: string;
@@ -589,7 +650,7 @@ export interface UpdateProfileParams {
   residence?: string;
   occupation?: string;
   employer?: string;
-  gender?: '男' | '女' | '其他';
+  gender?: '其他' | '女' | '男';
   birthday?: string;
   placeOfBirth?: string;
   currentAddress?: string;
@@ -606,7 +667,10 @@ export async function getUserProfileApi(userId: number): Promise<UserProfile> {
 /**
  * Update user profile information
  */
-export async function updateUserProfileApi(userId: number, params: UpdateProfileParams) {
+export async function updateUserProfileApi(
+  userId: number,
+  params: UpdateProfileParams,
+) {
   return await requestClient.put(`/users/${userId}/profile`, params);
 }
 
@@ -616,7 +680,7 @@ export async function updateUserProfileApi(userId: number, params: UpdateProfile
 export async function uploadIdPhotoApi(userId: number, file: File) {
   const formData = new FormData();
   formData.append('idPhoto', file);
-  
+
   return await requestClient.post(`/users/${userId}/id-photo`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -628,7 +692,9 @@ export async function uploadIdPhotoApi(userId: number, file: File) {
  * Get user security status
  * @param userId - Optional user ID (for admins viewing other users)
  */
-export async function getUserSecurityStatusApi(userId?: number): Promise<UserSecurityStatus> {
+export async function getUserSecurityStatusApi(
+  userId?: number,
+): Promise<UserSecurityStatus> {
   if (userId) {
     // Admin viewing another user's security status
     return await requestClient.get(`/users/${userId}/security-status`);
@@ -666,39 +732,39 @@ export interface UserInfo {
   lastLogin?: string;
   memberTier?: any;
   vipLevelId?: number;
-  
+
   // VIP progression information
-  vipProgression?: {
+  vipProgression?: null | {
     currentLevel: {
+      color: string;
+      icon: null | string;
       id: number;
       level: number;
       name: string;
-      color: string;
-      icon: string | null;
-      style: string | null;
+      style: null | string;
     };
-    nextLevel: {
+    nextLevel: null | {
+      color: string;
+      icon: null | string;
       id: number;
       level: number;
       name: string;
-      color: string;
-      icon: string | null;
-      style: string | null;
-      requiredDeposit: number;
       requiredBet: number;
+      requiredDeposit: number;
+      style: null | string;
       upgradeBonus: number;
-    } | null;
-    progress: {
-      totalDeposits: number;
-      totalBets: number;
-      depositProgress: number;
-      betProgress: number;
-      overallProgress: number;
-      remainingDeposit: number;
-      remainingBet: number;
     };
-  } | null;
-  
+    progress: {
+      betProgress: number;
+      depositProgress: number;
+      overallProgress: number;
+      remainingBet: number;
+      remainingDeposit: number;
+      totalBets: number;
+      totalDeposits: number;
+    };
+  };
+
   // Profile information
   displayName: string;
   dateOfBirth?: string;
@@ -728,7 +794,7 @@ export async function getUserInfoApi(forceRefresh = false): Promise<UserInfo> {
 export async function updateUserProfilePictureApi(file: File) {
   const formData = new FormData();
   formData.append('profilePicture', file);
-  
+
   return await requestClient.put('/users/profile-picture', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -740,17 +806,19 @@ export async function updateUserProfilePictureApi(file: File) {
  * Get user security statistics (same passwords, IPs, accounts)
  */
 export interface UserSecurityStats {
-  passwordMatchCount: number;           // 同登录密码人数
-  sameWithdrawalPinCount: number;       // 同提现密码人数
-  withdrawAccountCount: number;         // 提现账号数量
-  sameAccountCount: number;             // 同账号人数
-  sameRegIpCount: number;              // 同注册IP人数
-  sameRealNameCount: number;           // 同姓名人数
+  passwordMatchCount: number; // 同登录密码人数
+  sameWithdrawalPinCount: number; // 同提现密码人数
+  withdrawAccountCount: number; // 提现账号数量
+  sameAccountCount: number; // 同账号人数
+  sameRegIpCount: number; // 同注册IP人数
+  sameRealNameCount: number; // 同姓名人数
   sameRegistrationDeviceCount: number; // 同注册设备人数
-  sameLastLoginDeviceCount: number;    // 同最后登录设备人数
+  sameLastLoginDeviceCount: number; // 同最后登录设备人数
 }
 
-export async function getUserSecurityStatsApi(userId: number): Promise<UserSecurityStats> {
+export async function getUserSecurityStatsApi(
+  userId: number,
+): Promise<UserSecurityStats> {
   const response = await requestClient.get(`/users/${userId}/security-stats`);
   return response.data || response;
 }
@@ -787,18 +855,18 @@ export interface VipProgress {
 
 export interface UserVipData {
   user: {
-    id: number;
     account: string;
+    id: number;
+    lastLogin: string;
     name: string;
     registeredAt: string;
-    lastLogin: string;
   };
   currentVipLevel: VipLevel;
   userStats: {
-    totalDeposits: number;
     totalBets: number;
-    totalWithdrawals: number;
     totalBonuses: number;
+    totalDeposits: number;
+    totalWithdrawals: number;
   };
   progress: VipProgress;
   upgradeHistory?: any[];
@@ -818,7 +886,7 @@ export async function getUserVipProgressApi(options?: {
   if (options?.includeHistory) params.includeHistory = 'true';
   if (options?.includeRewards) params.includeRewards = 'true';
   if (options?.includeStatistics) params.includeStatistics = 'true';
-  
+
   return await requestClient.get('/vip-user/progress', { params });
 }
 
@@ -838,7 +906,7 @@ export interface UpdateUserInfoParams {
   name?: string;
   email?: string;
   phone?: string;
-  
+
   // Profile info
   displayName?: string;
   dateOfBirth?: string; // ISO date string
@@ -868,12 +936,12 @@ export interface VipReward {
   id: string;
   activityId: string;
   rewardAmount: number;
-  rewardType: 'upgrade' | 'monthly' | 'birthday' | 'daily' | 'weekly' | string;
+  rewardType: 'birthday' | 'daily' | 'monthly' | 'upgrade' | 'weekly' | string;
   description: string;
   metadata: any;
   createdAt: string;
   expiresAt: string;
-  daysUntilExpiry: number | null;
+  daysUntilExpiry: null | number;
 }
 
 export interface VipRewardsInfo {
@@ -894,7 +962,9 @@ export interface VipRewardClaimResponse {
 /**
  * Claim a VIP reward
  */
-export async function claimVipRewardApi(rewardId: string): Promise<VipRewardClaimResponse> {
+export async function claimVipRewardApi(
+  rewardId: string,
+): Promise<VipRewardClaimResponse> {
   return await requestClient.post('/vip-user/claim-reward', { rewardId });
 }
 
@@ -916,10 +986,10 @@ export interface WalletTransaction {
   metadata?: any;
   subcategoryDetails?: string; // It's a string, not an object!
   provider?: {
-    code: string;
-    name: string;
-    logoUrl: string;
     category: string;
+    code: string;
+    logoUrl: string;
+    name: string;
   };
 }
 
@@ -927,7 +997,7 @@ export interface WalletTransactionListParams {
   userId: number;
   page?: number;
   pageSize?: number;
-  date?: 'today' | 'yesterday' | 'week' | 'month' | 'all' | 'custom';
+  date?: 'all' | 'custom' | 'month' | 'today' | 'week' | 'yesterday';
   category?: string;
   startDate?: string;
   endDate?: string;
@@ -961,39 +1031,50 @@ export interface WalletTransactionListResponse {
  * This shows all wallet transactions including deposits, withdrawals, game transfers, etc.
  */
 export async function getUserWalletTransactionsApi(
-  params: WalletTransactionListParams
+  params: WalletTransactionListParams,
 ): Promise<WalletTransactionListResponse> {
-  const { userId, page = 1, pageSize = 20, date = 'all', category = 'all', startDate, endDate, forceRefresh = false } = params;
-  
+  const {
+    userId,
+    page = 1,
+    pageSize = 20,
+    date = 'all',
+    category = 'all',
+    startDate,
+    endDate,
+    forceRefresh = false,
+  } = params;
+
   const queryParams = new URLSearchParams({
     page: page.toString(),
     limit: pageSize.toString(),
-    date: date,
-    category: category
+    date,
+    category,
   });
-  
+
   if (startDate) queryParams.append('startDate', startDate);
   if (endDate) queryParams.append('endDate', endDate);
   if (forceRefresh) queryParams.append('forceRefresh', 'true');
-  
-  const response = await requestClient.get(`/user-history/admin/users/${userId}/funding-changes?${queryParams}`);
-  
+
+  const response = await requestClient.get(
+    `/user-history/admin/users/${userId}/funding-changes?${queryParams}`,
+  );
+
   // Transform backend response to match our interface
   // Backend structure: { success: true, data: { transactions, pagination, total, summary } }
   const responseData = response.data?.data || response.data || {};
-  console.log('🔍 [API] Funding changes response:', { 
-    total: responseData.total, 
+  console.log('🔍 [API] Funding changes response:', {
+    total: responseData.total,
     paginationPage: responseData.pagination?.page,
-    transactionsCount: responseData.transactions?.length 
+    transactionsCount: responseData.transactions?.length,
   });
-  
+
   return {
     transactions: responseData.transactions || [],
     pagination: {
       current: responseData.pagination?.page || page,
       pageSize: responseData.pagination?.limit || pageSize,
-      total: responseData.total || 0,  // 🎯 FIX: Get total from correct path
-      totalPages: responseData.pagination?.totalPages || 0
+      total: responseData.total || 0, // 🎯 FIX: Get total from correct path
+      totalPages: responseData.pagination?.totalPages || 0,
     },
     summary: responseData.summary || {
       totalTransactions: 0,
@@ -1001,9 +1082,9 @@ export async function getUserWalletTransactionsApi(
       totalWithdrawals: 0,
       totalIncome: 0,
       totalExpense: 0,
-      netChange: 0
+      netChange: 0,
     },
     cached: response.cached,
-    cacheSource: response.cacheSource
+    cacheSource: response.cacheSource,
   };
 }

@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { verifyAccessToken } from '~/utils/jwt-utils';
-import { unAuthorizedResponse, sleep } from '~/utils/response';
+import { sleep, unAuthorizedResponse } from '~/utils/response';
 
 export default eventHandler(async (event) => {
   const userinfo = verifyAccessToken(event);
@@ -18,7 +18,7 @@ export default eventHandler(async (event) => {
     description,
     frontendNotes,
     backendNotes,
-    currency
+    currency,
   } = body;
 
   // Validate required fields
@@ -26,25 +26,40 @@ export default eventHandler(async (event) => {
     setResponseStatus(event, 400);
     return {
       success: false,
-      message: 'Missing required fields'
+      message: 'Missing required fields',
     };
   }
 
   const finalAmount = amount * multiplier;
 
   // Simple mock transaction processing
-  const currentBalance = faker.number.float({ min: 1000, max: 10000, fractionDigits: 2 });
+  const currentBalance = faker.number.float({
+    min: 1000,
+    max: 10_000,
+    fractionDigits: 2,
+  });
   let newBalance = currentBalance;
 
   if (type === 'credit') {
     newBalance = currentBalance + finalAmount;
   } else if (type === 'debit') {
-    if (subType === 'manual_deduct') {
-      newBalance = Math.max(0, currentBalance - finalAmount);
-    } else if (subType === 'deduct_all_assets') {
-      newBalance = 0;
-    } else if (subType === 'recovery_deduct') {
-      newBalance = currentBalance - finalAmount; // Can go negative
+    switch (subType) {
+      case 'deduct_all_assets': {
+        newBalance = 0;
+
+        break;
+      }
+      case 'manual_deduct': {
+        newBalance = Math.max(0, currentBalance - finalAmount);
+
+        break;
+      }
+      case 'recovery_deduct': {
+        newBalance = currentBalance - finalAmount; // Can go negative
+
+        break;
+      }
+      // No default
     }
   }
 
@@ -58,12 +73,12 @@ export default eventHandler(async (event) => {
     amount: finalAmount,
     beforeBalance: currentBalance,
     newBalance,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   return {
     success: true,
     message: 'Transaction completed successfully',
-    data: transactionResult
+    data: transactionResult,
   };
-}); 
+});

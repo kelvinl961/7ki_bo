@@ -2,20 +2,20 @@ import { requestClient } from '#/api/request';
 
 // Activity Status Types
 export interface ActivityStatus {
-  window: {
-    id?: string;
-    type?: string;
-    startsAt?: string;
+  window: null | {
     endsAt?: string;
     globalClaimCap?: number;
+    id?: string;
     remainingClaims?: number;
-  } | null;
+    startsAt?: string;
+    type?: string;
+  };
   summary: {
-    eligible: boolean;
-    reason?: string;
     claimedToday: number;
     claimedTotal: number;
+    eligible: boolean;
     lastClaimAt?: string;
+    reason?: string;
   };
   units: ActivityUnit[];
   nextEligibleAt?: string;
@@ -23,16 +23,16 @@ export interface ActivityStatus {
 
 export interface ActivityUnit {
   unitKey: string;
-  state: 'locked' | 'eligible' | 'claimed';
+  state: 'claimed' | 'eligible' | 'locked';
   progress?: {
     current: number;
-    target: number;
     percentage: number;
+    target: number;
   };
   reward?: {
-    type: string;
     amount: number;
     currency: string;
+    type: string;
   };
 }
 
@@ -43,16 +43,16 @@ export interface ClaimRequest {
 
 export interface ClaimResponse {
   claim: {
-    id: string;
     amount: number;
-    currency: string;
-    status: string;
     claimData: any;
+    currency: string;
+    id: string;
+    status: string;
   };
   userCaps: {
     claimsToday: number;
-    totalClaims: number;
     dailyLimit?: number;
+    totalClaims: number;
   };
   globalCaps: {
     remainingClaims?: number;
@@ -74,10 +74,10 @@ export interface UserActivity {
   isVisible: boolean;
   promoUrl?: string;
   locales: Array<{
-    locale: string;
-    title?: string;
-    subtitle?: string;
     description?: string;
+    locale: string;
+    subtitle?: string;
+    title?: string;
   }>;
   userStatus?: ActivityStatus;
 }
@@ -86,12 +86,12 @@ export interface UserActivity {
  * Get active activities for user
  */
 export function getActiveActivities(params?: {
-  type?: string;
   category?: string;
   currency?: string;
+  type?: string;
 }) {
   return requestClient.get<UserActivity[]>('/api/activities/active', {
-    params
+    params,
   });
 }
 
@@ -99,18 +99,24 @@ export function getActiveActivities(params?: {
  * Get activity status for current user
  */
 export function getActivityStatus(activityId: string) {
-  return requestClient.get<ActivityStatus>(`/api/activities/${activityId}/status`);
+  return requestClient.get<ActivityStatus>(
+    `/api/activities/${activityId}/status`,
+  );
 }
 
 /**
  * Claim activity reward
  */
 export function claimActivityReward(activityId: string, request: ClaimRequest) {
-  return requestClient.post<ClaimResponse>(`/api/activities/${activityId}/claim`, request, {
-    headers: {
-      'Idempotency-Key': `claim_${activityId}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-    }
-  });
+  return requestClient.post<ClaimResponse>(
+    `/api/activities/${activityId}/claim`,
+    request,
+    {
+      headers: {
+        'Idempotency-Key': `claim_${activityId}_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`,
+      },
+    },
+  );
 }
 
 /**
@@ -118,10 +124,10 @@ export function claimActivityReward(activityId: string, request: ClaimRequest) {
  */
 export function getUserActivityStats() {
   return requestClient.get<{
+    recentActivities: any[];
     totalParticipations: number;
     totalRewards: number;
     totalRewardValue: number;
-    recentActivities: any[];
   }>('/api/users/activity-stats');
 }
 
@@ -129,18 +135,18 @@ export function getUserActivityStats() {
  * Get user's activity history
  */
 export function getUserActivityHistory(params?: {
-  page?: number;
   limit?: number;
-  type?: string;
+  page?: number;
   status?: string;
+  type?: string;
 }) {
   return requestClient.get<{
     data: any[];
-    total: number;
-    page: number;
     limit: number;
+    page: number;
+    total: number;
   }>('/api/users/activity-history', {
-    params
+    params,
   });
 }
 
@@ -150,7 +156,7 @@ export function getUserActivityHistory(params?: {
 export function checkActivityEligibility(activityId: string) {
   return requestClient.get<{
     canParticipate: boolean;
-    reason?: string;
     eligibility?: any;
+    reason?: string;
   }>(`/api/activities/${activityId}/can-participate`);
 }

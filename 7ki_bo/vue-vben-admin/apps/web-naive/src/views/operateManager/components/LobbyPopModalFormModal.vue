@@ -25,7 +25,7 @@
                 :options="languageOptions"
               />
             </n-form-item>
-            
+
             <n-form-item label="币种" path="currency">
               <n-select
                 v-model:value="formData.currency"
@@ -33,7 +33,7 @@
                 :options="currencyOptions"
               />
             </n-form-item>
-            
+
             <n-form-item label="排序（可选）" path="sortOrder">
               <n-input-number
                 v-model:value="formData.sortOrder"
@@ -42,7 +42,7 @@
                 :max="9999"
               />
             </n-form-item>
-            
+
             <n-form-item label="受众" path="targetAudience">
               <n-select
                 v-model:value="formData.targetAudience"
@@ -51,7 +51,7 @@
               />
             </n-form-item>
           </div>
-          
+
           <n-form-item label="弹窗标题" path="title">
             <n-input
               v-model:value="formData.title"
@@ -59,7 +59,7 @@
               clearable
             />
           </n-form-item>
-          
+
           <n-form-item label="弹窗图片（可选）" path="imageUrl">
             <MediaLibrarySelector
               v-model="formData.imageUrl"
@@ -68,31 +68,40 @@
               placeholder="从媒体库选择弹窗图片"
               @file-selected="handleImageSelected"
             />
-        
-            
+
             <!-- 预览区域 -->
             <div v-if="formData.imageUrl" class="mt-2">
               <div class="image-preview">
-                <img 
-                  :src="getImageUrlByEnvironment(formData.imageUrl)" 
+                <img
+                  :src="getImageUrlByEnvironment(formData.imageUrl)"
                   alt="弹窗图片预览"
                   class="preview-image"
                 />
               </div>
             </div>
           </n-form-item>
-          
+
           <n-form-item label="弹窗内容" path="content">
             <div class="rich-text-editor">
               <textarea
                 v-model="formData.content"
                 placeholder="请输入弹窗内容，支持HTML格式..."
                 rows="8"
-                style="width: 100%; min-height: 200px; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; font-family: inherit; resize: vertical;"
+                style="
+                  width: 100%;
+                  min-height: 200px;
+                  padding: 8px;
+                  border: 1px solid #d1d5db;
+                  border-radius: 4px;
+                  font-family: inherit;
+                  resize: vertical;
+                "
                 @input="handleEditorChange"
               />
               <div class="mt-2 text-xs text-gray-500">
-                <p>支持HTML标签，例如：&lt;b&gt;粗体&lt;/b&gt;、&lt;i&gt;斜体&lt;/i&gt;、&lt;br&gt;换行等</p>
+                <p>
+                  支持HTML标签，例如：&lt;b&gt;粗体&lt;/b&gt;、&lt;i&gt;斜体&lt;/i&gt;、&lt;br&gt;换行等
+                </p>
               </div>
               <div class="editor-footer">
                 <span class="text-xs text-gray-500">
@@ -103,11 +112,10 @@
                 </span>
               </div>
             </div>
-          
           </n-form-item>
         </n-form>
       </n-tab-pane>
-      
+
       <!-- 时间设置 -->
       <n-tab-pane name="time" tab="时间设置">
         <n-form
@@ -128,11 +136,13 @@
                 :value-format="'timestamp'"
                 :default-value="null"
                 :show-icon="true"
-                :disabled-date="(timestamp) => timestamp < Date.now() - 24 * 60 * 60 * 1000"
+                :disabled-date="
+                  (timestamp) => timestamp < Date.now() - 24 * 60 * 60 * 1000
+                "
                 @update:value="handleStartTimeChange"
               />
             </n-form-item>
-            
+
             <n-form-item label="结束时间（可选）" path="endTime">
               <n-date-picker
                 v-model:value="formData.endTime"
@@ -143,15 +153,17 @@
                 :value-format="'timestamp'"
                 :default-value="null"
                 :show-icon="true"
-                :disabled-date="(timestamp) => timestamp < Date.now() - 24 * 60 * 60 * 1000"
+                :disabled-date="
+                  (timestamp) => timestamp < Date.now() - 24 * 60 * 60 * 1000
+                "
                 @update:value="handleEndTimeChange"
               />
             </n-form-item>
           </div>
-          
+
           <!-- 时间预设选项 -->
           <div class="mb-4">
-            <label class="text-sm font-medium mb-2 block">快速设置</label>
+            <label class="mb-2 block text-sm font-medium">快速设置</label>
             <n-space>
               <n-button size="small" @click="setTimeRange(1)">1小时</n-button>
               <n-button size="small" @click="setTimeRange(6)">6小时</n-button>
@@ -160,7 +172,7 @@
               <n-button size="small" @click="setTimeRange(720)">30天</n-button>
             </n-space>
           </div>
-          
+
           <n-alert type="info" :show-icon="false">
             <template #header>
               <span class="font-medium">时间说明</span>
@@ -192,7 +204,7 @@
                 :max="999"
               />
             </n-form-item>
-            
+
             <n-form-item label="显示间隔（小时）" path="displayInterval">
               <n-input-number
                 v-model:value="formData.displayInterval"
@@ -202,7 +214,7 @@
               />
             </n-form-item>
           </div>
-          
+
           <n-form-item label="展示入口" path="entryPoints">
             <n-checkbox-group v-model:value="formData.entryPoints">
               <n-space vertical>
@@ -215,7 +227,7 @@
               </n-space>
             </n-checkbox-group>
           </n-form-item>
-          
+
           <n-alert type="info" :show-icon="false">
             <template #header>
               <span class="font-medium">展示说明</span>
@@ -246,10 +258,10 @@
                 :options="jumpTypeOptions"
               />
             </n-form-item>
-            
-            <n-form-item 
-              v-if="formData.jumpType !== 'none'" 
-              label="跳转目标" 
+
+            <n-form-item
+              v-if="formData.jumpType !== 'none'"
+              label="跳转目标"
               path="targetUrl"
             >
               <n-input
@@ -259,7 +271,7 @@
               />
             </n-form-item>
           </div>
-          
+
           <n-alert type="info" :show-icon="false">
             <template #header>
               <span class="font-medium">跳转说明</span>
@@ -291,7 +303,7 @@
               :options="statusOptions"
             />
           </n-form-item>
-          
+
           <n-form-item label="是否启用">
             <n-switch
               v-model:value="formData.isActive"
@@ -302,7 +314,7 @@
               <template #unchecked>停用</template>
             </n-switch>
           </n-form-item>
-          
+
           <n-form-item label="后台备注">
             <n-input
               v-model:value="formData.remark"
@@ -331,20 +343,38 @@
 <script setup lang="ts">
 import { ref, computed, watch, nextTick, onMounted } from 'vue';
 import {
-  NModal, NTabs, NTabPane, NForm, NFormItem, NInput, NInputNumber,
-  NSelect, NDatePicker, NButton, NSpace, NAlert, NImage, 
-  NCheckboxGroup, NCheckbox, NSwitch, useMessage,
-  type FormInst, type FormRules, type SelectOption
+  NModal,
+  NTabs,
+  NTabPane,
+  NForm,
+  NFormItem,
+  NInput,
+  NInputNumber,
+  NSelect,
+  NDatePicker,
+  NButton,
+  NSpace,
+  NAlert,
+  NImage,
+  NCheckboxGroup,
+  NCheckbox,
+  NSwitch,
+  useMessage,
+  type FormInst,
+  type FormRules,
+  type SelectOption,
 } from 'naive-ui';
-import { 
-  createPopModal, 
-  updatePopModal, 
-  type LobbyPopModal, 
-  type LobbyPopModalCreateRequest 
+import {
+  createPopModal,
+  updatePopModal,
+  type LobbyPopModal,
+  type LobbyPopModalCreateRequest,
 } from '#/api/lobbyPopModal';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking modal load
 import { defineAsyncComponent } from 'vue';
-const MediaLibrarySelector = defineAsyncComponent(() => import('#/components/MediaLibrarySelector.vue'));
+const MediaLibrarySelector = defineAsyncComponent(
+  () => import('#/components/MediaLibrarySelector.vue'),
+);
 import type { MediaFile } from '#/api/mediaLibrary';
 import { getImageUrlByEnvironment } from '../../../utils/imageUtils';
 // Removed TinyMCE import - using simple textarea instead
@@ -363,7 +393,7 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   show: false,
-  editingItem: null
+  editingItem: null,
 });
 
 const emit = defineEmits<Emits>();
@@ -371,7 +401,7 @@ const emit = defineEmits<Emits>();
 // 响应式数据
 const modalShow = computed({
   get: () => props.show,
-  set: (val) => emit('update:show', val)
+  set: (val) => emit('update:show', val),
 });
 
 const activeTab = ref('basic');
@@ -386,7 +416,12 @@ const jumpFormRef = ref<FormInst | null>(null);
 const advancedFormRef = ref<FormInst | null>(null);
 
 // 表单数据
-const formData = ref<LobbyPopModalCreateRequest & { startTime: number | null; endTime: number | null }>({
+const formData = ref<
+  LobbyPopModalCreateRequest & {
+    startTime: number | null;
+    endTime: number | null;
+  }
+>({
   sortOrder: 0,
   title: '',
   currency: 'BRL',
@@ -403,7 +438,7 @@ const formData = ref<LobbyPopModalCreateRequest & { startTime: number | null; en
   isActive: true,
   maxDisplayTimes: 1,
   displayInterval: 24,
-  remark: ''
+  remark: '',
 });
 
 // Rich text editor - using formData.content directly
@@ -414,7 +449,10 @@ const editorLoaded = ref(true); // Always loaded for textarea
 // Ensure form data is always properly initialized
 const ensureValidFormData = () => {
   // Validate startTime
-  if (formData.value.startTime !== null && formData.value.startTime !== undefined) {
+  if (
+    formData.value.startTime !== null &&
+    formData.value.startTime !== undefined
+  ) {
     const startTime = Number(formData.value.startTime);
     if (isNaN(startTime)) {
       console.warn('Invalid startTime value:', formData.value.startTime);
@@ -423,7 +461,7 @@ const ensureValidFormData = () => {
       formData.value.startTime = startTime;
     }
   }
-  
+
   // Validate endTime
   if (formData.value.endTime !== null && formData.value.endTime !== undefined) {
     const endTime = Number(formData.value.endTime);
@@ -484,7 +522,7 @@ const jumpTypeOptions: SelectOption[] = [
   { label: '公积金', value: 'public_fund' },
   { label: '游戏', value: 'game' },
   { label: '盲盒抽奖', value: 'blind_box_lottery' },
-  { label: '俱乐部申请（合作联营）', value: 'club_application' }
+  { label: '俱乐部申请（合作联营）', value: 'club_application' },
 ];
 
 const targetAudienceOptions: SelectOption[] = [
@@ -501,23 +539,30 @@ const targetAudienceOptions: SelectOption[] = [
 const basicRules: FormRules = {
   title: [
     { required: true, message: '请输入弹窗标题', trigger: 'blur' },
-    { min: 1, max: 100, message: '弹窗标题长度在1到100个字符', trigger: 'blur' }
+    {
+      min: 1,
+      max: 100,
+      message: '弹窗标题长度在1到100个字符',
+      trigger: 'blur',
+    },
   ],
   imageUrl: [
-    { required: false, message: '弹窗图片为可选字段', trigger: 'blur' }
+    { required: false, message: '弹窗图片为可选字段', trigger: 'blur' },
   ],
-  language: [
-    { required: true, message: '请选择语言', trigger: 'change' }
-  ],
-  currency: [
-    { required: true, message: '请选择币种', trigger: 'change' }
-  ],
+  language: [{ required: true, message: '请选择语言', trigger: 'change' }],
+  currency: [{ required: true, message: '请选择币种', trigger: 'change' }],
   targetAudience: [
-    { required: true, message: '请选择受众', trigger: 'change' }
+    { required: true, message: '请选择受众', trigger: 'change' },
   ],
   sortOrder: [
-    { type: 'number', min: 0, max: 9999, message: '排序数值在0到9999之间', trigger: 'blur' }
-  ]
+    {
+      type: 'number',
+      min: 0,
+      max: 9999,
+      message: '排序数值在0到9999之间',
+      trigger: 'blur',
+    },
+  ],
 };
 
 const timeRules: FormRules = {
@@ -531,15 +576,15 @@ const timeRules: FormRules = {
         if (value === null || value === undefined || value === '') {
           return new Error('请选择开始时间');
         }
-        
+
         // Check if it's a valid number
         if (isNaN(value) || typeof value !== 'number') {
           return new Error('请选择有效的开始时间');
         }
-        
+
         return true;
-      }
-    }
+      },
+    },
   ],
   endTime: [
     {
@@ -553,47 +598,63 @@ const timeRules: FormRules = {
             return new Error('请选择有效的结束时间');
           }
         }
-        
+
         return true;
-      }
-    }
-  ]
+      },
+    },
+  ],
 };
 
 const displayRules: FormRules = {
   maxDisplayTimes: [
-    { type: 'number', min: 1, max: 999, message: '最大显示次数在1到999之间', trigger: 'blur' }
+    {
+      type: 'number',
+      min: 1,
+      max: 999,
+      message: '最大显示次数在1到999之间',
+      trigger: 'blur',
+    },
   ],
   displayInterval: [
-    { type: 'number', min: 1, max: 168, message: '显示间隔在1到168小时之间', trigger: 'blur' }
+    {
+      type: 'number',
+      min: 1,
+      max: 168,
+      message: '显示间隔在1到168小时之间',
+      trigger: 'blur',
+    },
   ],
   entryPoints: [
-    { type: 'array', min: 1, message: '请至少选择一个展示入口', trigger: 'change' }
-  ]
+    {
+      type: 'array',
+      min: 1,
+      message: '请至少选择一个展示入口',
+      trigger: 'change',
+    },
+  ],
 };
 
 const jumpRules: FormRules = {
-  jumpType: [
-    { required: true, message: '请选择跳转类型', trigger: 'change' }
-  ],
+  jumpType: [{ required: true, message: '请选择跳转类型', trigger: 'change' }],
   targetUrl: [
-    { 
+    {
       validator: (rule, value) => {
         // Target URL is required only if jump type is not 'none'
-        if (formData.value.jumpType !== 'none' && (!value || value.trim() === '')) {
+        if (
+          formData.value.jumpType !== 'none' &&
+          (!value || value.trim() === '')
+        ) {
           return new Error('请输入跳转目标');
         }
         return true;
       },
-      trigger: 'blur'
-    }
-  ]
+      trigger: 'blur',
+    },
+  ],
 };
 
 const advancedRules: FormRules = {
-  status: [
-    { required: true, message: '请选择状态', trigger: 'change' }
-  ]
+  status: [{ required: true, message: '请选择状态', trigger: 'change' }],
 };
 
 // 方法
@@ -615,73 +676,83 @@ const resetForm = () => {
     isActive: true,
     maxDisplayTimes: 1,
     displayInterval: 24,
-    remark: ''
+    remark: '',
   };
-      formData.value.content = '';
+  formData.value.content = '';
   activeTab.value = 'basic';
   ensureValidFormData();
 };
 
 // 监听编辑项变化
-watch(() => props.editingItem, (newItem) => {
-  if (newItem) {
-    // 安全地处理日期值
-    const formatDateForPicker = (dateStr: string | null | undefined) => {
-      if (!dateStr) return null;
-      try {
-        const date = new Date(dateStr);
-        const timestamp = date.getTime();
-        // Check if the date is valid and reasonable
-        if (isNaN(timestamp)) {
-          console.warn('Invalid date value:', dateStr);
+watch(
+  () => props.editingItem,
+  (newItem) => {
+    if (newItem) {
+      // 安全地处理日期值
+      const formatDateForPicker = (dateStr: string | null | undefined) => {
+        if (!dateStr) return null;
+        try {
+          const date = new Date(dateStr);
+          const timestamp = date.getTime();
+          // Check if the date is valid and reasonable
+          if (isNaN(timestamp)) {
+            console.warn('Invalid date value:', dateStr);
+            return null;
+          }
+          return timestamp;
+        } catch (error) {
+          console.error('Error parsing date:', error, dateStr);
           return null;
         }
-        return timestamp;
-      } catch (error) {
-        console.error('Error parsing date:', error, dateStr);
-        return null;
-      }
-    };
+      };
 
-    formData.value = {
-      sortOrder: newItem.sortOrder,
-      title: newItem.title,
-      currency: newItem.currency,
-      language: newItem.language,
-      imageUrl: newItem.imageUrl,
-      content: newItem.content || '', // Rich text content
-      targetAudience: newItem.targetAudience,
-      entryPoints: newItem.entryPoints || [],
-      jumpType: newItem.jumpType,
-      targetUrl: newItem.targetUrl || '', // Always ensure empty string if undefined
-      startTime: formatDateForPicker(newItem.startTime),
-      endTime: formatDateForPicker(newItem.endTime),
-      status: newItem.status,
-      isActive: newItem.isActive,
-      maxDisplayTimes: newItem.maxDisplayTimes,
-      displayInterval: newItem.displayInterval,
-      remark: newItem.remark || ''
-    };
-    // Content is already set in formData above
-    ensureValidFormData();
-  } else {
-    resetForm();
-  }
-}, { immediate: true });
+      formData.value = {
+        sortOrder: newItem.sortOrder,
+        title: newItem.title,
+        currency: newItem.currency,
+        language: newItem.language,
+        imageUrl: newItem.imageUrl,
+        content: newItem.content || '', // Rich text content
+        targetAudience: newItem.targetAudience,
+        entryPoints: newItem.entryPoints || [],
+        jumpType: newItem.jumpType,
+        targetUrl: newItem.targetUrl || '', // Always ensure empty string if undefined
+        startTime: formatDateForPicker(newItem.startTime),
+        endTime: formatDateForPicker(newItem.endTime),
+        status: newItem.status,
+        isActive: newItem.isActive,
+        maxDisplayTimes: newItem.maxDisplayTimes,
+        displayInterval: newItem.displayInterval,
+        remark: newItem.remark || '',
+      };
+      // Content is already set in formData above
+      ensureValidFormData();
+    } else {
+      resetForm();
+    }
+  },
+  { immediate: true },
+);
 
 const setTimeRange = (hours: number) => {
   const now = new Date();
   const endTime = new Date(now.getTime() + hours * 60 * 60 * 1000);
-  
+
   formData.value.startTime = now.getTime();
   formData.value.endTime = endTime.getTime();
 };
 
 const validateAllForms = async (): Promise<boolean> => {
-  const forms = [basicFormRef.value, timeFormRef.value, displayFormRef.value, jumpFormRef.value, advancedFormRef.value];
-  
+  const forms = [
+    basicFormRef.value,
+    timeFormRef.value,
+    displayFormRef.value,
+    jumpFormRef.value,
+    advancedFormRef.value,
+  ];
+
   try {
-    await Promise.all(forms.map(form => form?.validate()));
+    await Promise.all(forms.map((form) => form?.validate()));
     return true;
   } catch (error) {
     console.error('Form validation error:', error);
@@ -709,7 +780,11 @@ const handleSubmit = async () => {
         }
         return date.toISOString();
       } catch (error) {
-        console.error('Error converting timestamp to ISO string:', error, timestamp);
+        console.error(
+          'Error converting timestamp to ISO string:',
+          error,
+          timestamp,
+        );
         return new Date('2099-12-31T23:59:59.999Z').toISOString();
       }
     };
@@ -717,7 +792,7 @@ const handleSubmit = async () => {
     const submitData = {
       ...formData.value,
       startTime: safeDateToString(formData.value.startTime),
-      endTime: safeDateToString(formData.value.endTime)
+      endTime: safeDateToString(formData.value.endTime),
     };
 
     console.log('Submitting form data:', submitData);
@@ -739,7 +814,7 @@ const handleSubmit = async () => {
       await createPopModal(submitData);
       message.success('弹窗创建成功');
     }
-    
+
     emit('success');
   } catch (error) {
     console.error('Submit error:', error);
@@ -781,7 +856,8 @@ const handleEndTimeChange = (value: number | null) => {
 };
 
 // 创建一个简单的占位符图片数据URL
-const placeholderImageUrl = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5YWFhYSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPuW8ueepuuWbvueJhzwvdGV4dD48L3N2Zz4=';
+const placeholderImageUrl =
+  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5YWFhYSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPuW8ueepuuWbvueJhzwvdGV4dD48L3N2Zz4=';
 
 // Rich text editor functions
 const handleEditorChange = (event: Event) => {
@@ -935,4 +1011,4 @@ const handleModalClose = () => {
   border-radius: 4px;
   border: 1px solid #d9d9d9;
 }
-</style> 
+</style>

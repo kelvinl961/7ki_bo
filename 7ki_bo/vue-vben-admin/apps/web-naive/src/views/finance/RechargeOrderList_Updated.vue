@@ -45,7 +45,7 @@
               <!-- ... other filter fields ... -->
             </div>
           </n-form>
-          
+
           <!-- Action Buttons -->
           <div class="filter-actions">
             <div class="filter-buttons">
@@ -54,8 +54,12 @@
                 <n-button>高级搜索</n-button>
               </n-dropdown>
               <n-button @click="handleReset">重置</n-button>
-              <n-button type="primary" @click="handleCreateOrder">创建在线订单</n-button>
-              <n-button type="warning" @click="handleCreateSupplementOrder">创建补单</n-button>
+              <n-button type="primary" @click="handleCreateOrder"
+                >创建在线订单</n-button
+              >
+              <n-button type="warning" @click="handleCreateSupplementOrder"
+                >创建补单</n-button
+              >
               <n-dropdown :options="exportOptions" trigger="click">
                 <n-button>导出数据</n-button>
               </n-dropdown>
@@ -65,7 +69,7 @@
                 </template>
                 列配置
               </n-button>
-              
+
               <!-- 🚀 NEW: Replace old auto-refresh with SmartAutoRefresh component -->
               <SmartAutoRefresh
                 v-model="autoRefreshEnabled"
@@ -98,7 +102,7 @@
           @update:page="handlePageChange"
           @update:page-size="handlePageSizeChange"
         />
-        
+
         <!-- Totals Summary (existing implementation) -->
         <div class="totals-summary">
           <n-space size="large">
@@ -120,15 +124,28 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue';
-import { 
-  NCard, NBreadcrumb, NBreadcrumbItem, NForm, NFormItem, NInput, 
-  NButton, NDropdown, NIcon, NDataTable, NSpace, NStatistic, NModal,
-  useMessage 
+import {
+  NCard,
+  NBreadcrumb,
+  NBreadcrumbItem,
+  NForm,
+  NFormItem,
+  NInput,
+  NButton,
+  NDropdown,
+  NIcon,
+  NDataTable,
+  NSpace,
+  NStatistic,
+  NModal,
+  useMessage,
 } from 'naive-ui';
 import { Settings } from '@vicons/ionicons5';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 import { defineAsyncComponent } from 'vue';
-const SmartAutoRefresh = defineAsyncComponent(() => import('../../components/smart/SmartAutoRefresh/index.vue'));
+const SmartAutoRefresh = defineAsyncComponent(
+  () => import('../../components/smart/SmartAutoRefresh/index.vue'),
+);
 
 // Types
 interface RechargeOrder {
@@ -164,7 +181,7 @@ const paginationConfig = reactive({
   pageSize: 20,
   itemCount: 0,
   showSizePicker: true,
-  pageSizes: [10, 20, 50, 100]
+  pageSizes: [10, 20, 50, 100],
 });
 
 // Totals (existing)
@@ -172,7 +189,7 @@ const totals = reactive({
   totalOrders: 0,
   totalAmount: 0,
   successOrders: 0,
-  successAmount: 0
+  successAmount: 0,
 });
 
 // Table columns (existing implementation)
@@ -184,19 +201,19 @@ const columns = ref([
   // ... other columns
 ]);
 
-const visibleColumns = computed(() => 
-  columns.value.filter(col => col.visible)
+const visibleColumns = computed(() =>
+  columns.value.filter((col) => col.visible),
 );
 
 // Dropdown options (existing)
 const advancedSearchOptions = [
   { label: '高级筛选', key: 'advanced' },
-  { label: '保存筛选', key: 'save' }
+  { label: '保存筛选', key: 'save' },
 ];
 
 const exportOptions = [
   { label: '导出Excel', key: 'excel' },
-  { label: '导出CSV', key: 'csv' }
+  { label: '导出CSV', key: 'csv' },
 ];
 
 /**
@@ -206,27 +223,27 @@ const exportOptions = [
 const fetchData = async () => {
   try {
     loading.value = true;
-    
+
     // Build API parameters
     const params = {
       page: paginationConfig.page,
       pageSize: paginationConfig.pageSize,
-      ...filters
+      ...filters,
     };
-    
+
     // API call (existing implementation)
     const response = await fetch('/api/recharge-orders', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(params)
+      body: JSON.stringify(params),
     });
-    
+
     const data = await response.json();
-    
+
     if (data.success) {
       tableData.value = data.data.list;
       paginationConfig.itemCount = data.data.total;
-      
+
       // Update totals
       totals.totalOrders = data.data.totals.totalOrders;
       totals.totalAmount = data.data.totals.totalAmount;
@@ -257,7 +274,7 @@ const handleSearch = () => {
 };
 
 const handleReset = () => {
-  Object.keys(filters).forEach(key => {
+  Object.keys(filters).forEach((key) => {
     (filters as any)[key] = '';
   });
   filters.dateRange = null;
@@ -289,10 +306,10 @@ const handleCreateSupplementOrder = () => {
 // Lifecycle
 onMounted(() => {
   fetchData();
-  
+
   // 🚀 REMOVED: No more manual timer setup needed!
   // The SmartAutoRefresh component handles all timer logic
-  
+
   // Load saved refresh interval preference
   const savedInterval = localStorage.getItem('recharge-refresh-interval');
   if (savedInterval) {
@@ -416,7 +433,7 @@ const handleRefreshIntervalChange = (newInterval: number) => {
   .filter-form .filter-row {
     grid-template-columns: 1fr;
   }
-  
+
   .filter-buttons {
     flex-direction: column;
     align-items: stretch;

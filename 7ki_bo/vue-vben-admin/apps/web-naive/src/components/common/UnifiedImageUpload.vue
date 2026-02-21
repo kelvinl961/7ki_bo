@@ -43,7 +43,9 @@
               <CloudUploadOutline />
             </n-icon>
           </div>
-          <div class="upload-text">{{ placeholder || '点击或拖拽上传图片' }}</div>
+          <div class="upload-text">
+            {{ placeholder || '点击或拖拽上传图片' }}
+          </div>
           <div v-if="description" class="upload-hint">{{ description }}</div>
         </div>
       </div>
@@ -132,36 +134,39 @@ watch(
       fileList.value = [];
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
-const handleBeforeUpload = (data: { file: UploadFileInfo; fileList: UploadFileInfo[] }) => {
+const handleBeforeUpload = (data: {
+  file: UploadFileInfo;
+  fileList: UploadFileInfo[];
+}) => {
   const { file } = data;
-  
+
   // Check file size
   if (file.file && file.file.size > props.maxSize * 1024 * 1024) {
     message.error(`文件大小不能超过 ${props.maxSize}MB`);
     return false;
   }
-  
+
   // Check file type
   if (file.file && !file.file.type.startsWith('image/')) {
     message.error('只能上传图片文件');
     return false;
   }
-  
+
   return true;
 };
 
 const handleFileChange = async (options: { fileList: UploadFileInfo[] }) => {
   const { fileList: newFileList } = options;
-  
+
   if (newFileList.length > 0 && newFileList[0].file) {
     const file = newFileList[0].file;
-    
+
     try {
       uploading.value = true;
-      
+
       // Upload to media library
       const response = await uploadMediaFile(file, {
         category: props.category,
@@ -305,4 +310,4 @@ const handlePreview = () => {
   border-radius: 8px;
   z-index: 10;
 }
-</style> 
+</style>

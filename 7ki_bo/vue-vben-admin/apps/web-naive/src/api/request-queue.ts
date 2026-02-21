@@ -1,10 +1,10 @@
 /**
  * ✅ PERFORMANCE: Request Queue Manager
  * Prevents browser connection limit exhaustion
- * 
+ *
  * Problem: Browser has 6 connections per domain (HTTP/1.1)
  * When 10+ API calls happen simultaneously, they queue for 5+ seconds
- * 
+ *
  * Solution: Priority-based request queue with connection pooling
  */
 
@@ -18,10 +18,20 @@ interface QueuedRequest {
 }
 
 class RequestQueue {
-  private queue: QueuedRequest[] = [];
   private activeRequests = 0;
   private maxConcurrent = 6; // Browser HTTP/1.1 limit
   private processing = false;
+  private queue: QueuedRequest[] = [];
+
+  /**
+   * Clear queue
+   */
+  clear() {
+    this.queue.forEach((req) => {
+      req.reject(new Error('Request queue cleared'));
+    });
+    this.queue = [];
+  }
 
   /**
    * Add request to queue
@@ -29,7 +39,7 @@ class RequestQueue {
   async enqueue<T>(
     execute: () => Promise<T>,
     priority: number = 0,
-    id?: string
+    id?: string,
   ): Promise<T> {
     const requestId = id || `req_${Date.now()}_${Math.random()}`;
 
@@ -56,6 +66,17 @@ class RequestQueue {
   }
 
   /**
+   * Get queue status
+   */
+  getStatus() {
+    return {
+      queued: this.queue.length,
+      active: this.activeRequests,
+      maxConcurrent: this.maxConcurrent,
+    };
+  }
+
+  /**
    * Process queue
    */
   private async process() {
@@ -67,7 +88,7 @@ class RequestQueue {
       if (!request) break;
 
       this.activeRequests++;
-      
+
       // Execute request
       request
         .execute()
@@ -91,27 +112,6 @@ class RequestQueue {
     if (this.queue.length === 0) {
       this.processing = false;
     }
-  }
-
-  /**
-   * Get queue status
-   */
-  getStatus() {
-    return {
-      queued: this.queue.length,
-      active: this.activeRequests,
-      maxConcurrent: this.maxConcurrent,
-    };
-  }
-
-  /**
-   * Clear queue
-   */
-  clear() {
-    this.queue.forEach((req) => {
-      req.reject(new Error('Request queue cleared'));
-    });
-    this.queue = [];
   }
 }
 

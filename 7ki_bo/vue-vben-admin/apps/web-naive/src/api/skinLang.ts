@@ -17,17 +17,17 @@ export interface BrandSkinLangConfig {
   secondaryColor?: string;
   accentColor?: string;
   colorPalette?: {
-    primary: string;
-    secondary: string;
     accent: string;
     generated: boolean;
     generatedAt: string;
+    primary: string;
+    secondary: string;
   };
   // New color fields from ColorPalette
-  textPrimary?: string;     // Dark text color for headings
-  textSecondary?: string;   // Light text color for descriptions
-  textAccent?: string;      // Accent text color
-  buttonColor?: string;     // Button background color
+  textPrimary?: string; // Dark text color for headings
+  textSecondary?: string; // Light text color for descriptions
+  textAccent?: string; // Accent text color
+  buttonColor?: string; // Button background color
   // Background image field
   backgroundImage?: string; // URL or path to background image
   skinTemplate: string;
@@ -68,17 +68,17 @@ export interface BrandSkinLangCreateRequest {
   secondaryColor?: string;
   accentColor?: string;
   colorPalette?: {
-    primary: string;
-    secondary: string;
     accent: string;
     generated: boolean;
     generatedAt: string;
+    primary: string;
+    secondary: string;
   };
   // New color fields from ColorPalette
-  textPrimary?: string;     // Dark text color for headings
-  textSecondary?: string;   // Light text color for descriptions
-  textAccent?: string;      // Accent text color
-  buttonColor?: string;     // Button background color
+  textPrimary?: string; // Dark text color for headings
+  textSecondary?: string; // Light text color for descriptions
+  textAccent?: string; // Accent text color
+  buttonColor?: string; // Button background color
   // Background image field
   backgroundImage?: string; // URL or path to background image
   skinTemplate: string;
@@ -105,15 +105,15 @@ export interface ApiResponse<T> {
   };
 }
 
-
 export async function getBrandSkinLangConfigs(filters?: BrandSkinLangFilters) {
   try {
     const params = new URLSearchParams();
-    
+
     // Add pagination parameters
     if (filters?.page) params.append('page', filters.page.toString());
-    if (filters?.pageSize) params.append('pageSize', filters.pageSize.toString());
-    
+    if (filters?.pageSize)
+      params.append('pageSize', filters.pageSize.toString());
+
     // Add filter parameters
     if (filters?.brandId) params.append('brandId', filters.brandId);
     if (filters?.brandCode) params.append('brandCode', filters.brandCode);
@@ -123,7 +123,9 @@ export async function getBrandSkinLangConfigs(filters?: BrandSkinLangFilters) {
     if (filters?.skinStyle) params.append('skinStyle', filters.skinStyle);
     if (filters?.operator) params.append('operator', filters.operator);
 
-    const response = await requestClient.get(`/brand-skin-lang?${params.toString()}`);
+    const response = await requestClient.get(
+      `/brand-skin-lang?${params.toString()}`,
+    );
     return response;
   } catch (error) {
     console.error('获取品牌皮肤语言配置失败:', error);
@@ -141,7 +143,9 @@ export async function getBrandSkinLangConfigById(id: number) {
   }
 }
 
-export async function createBrandSkinLangConfig(data: BrandSkinLangCreateRequest) {
+export async function createBrandSkinLangConfig(
+  data: BrandSkinLangCreateRequest,
+) {
   try {
     const response = await requestClient.post('/brand-skin-lang', data);
     return response;
@@ -151,7 +155,10 @@ export async function createBrandSkinLangConfig(data: BrandSkinLangCreateRequest
   }
 }
 
-export async function updateBrandSkinLangConfig(id: number, data: BrandSkinLangCreateRequest) {
+export async function updateBrandSkinLangConfig(
+  id: number,
+  data: BrandSkinLangCreateRequest,
+) {
   try {
     const response = await requestClient.put(`/brand-skin-lang/${id}`, data);
     return response;
@@ -171,14 +178,14 @@ export async function deleteBrandSkinLangConfig(id: number) {
   }
 }
 
-
-
 export async function bulkDeleteBrandSkinLangConfigs(ids: number[]) {
   try {
-    const response = await requestClient.post('/brand-skin-lang/bulk-delete', { ids });
+    const response = await requestClient.post('/brand-skin-lang/bulk-delete', {
+      ids,
+    });
     return response;
   } catch (error) {
     console.error('批量删除品牌皮肤语言配置失败:', error);
     throw error;
   }
-} 
+}

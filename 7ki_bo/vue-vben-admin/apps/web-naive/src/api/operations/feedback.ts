@@ -10,32 +10,37 @@ export interface Feedback {
   id: number;
   userId: number;
   user?: {
-    id: number;
     account: string;
-    userID: string;
     email?: string;
+    id: number;
+    userID: string;
   };
-  feedbackType: string;      // Feedback category/type
-  content: string;            // Feedback content
-  images: string[];           // Array of image URLs (COS URLs)
+  feedbackType: string; // Feedback category/type
+  content: string; // Feedback content
+  images: string[]; // Array of image URLs (COS URLs)
   status: FeedbackStatus;
-  adminReply?: string;        // Admin response
+  adminReply?: string; // Admin response
   repliedAt?: string;
   repliedBy?: number;
-  reward?: number;            // Reward amount if approved
+  reward?: number; // Reward amount if approved
   rewardGiven: boolean;
   rewardGivenAt?: string;
   createdAt: string;
   updatedAt: string;
 }
 
-export type FeedbackStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'IN_REVIEW' | 'REPLIED';
+export type FeedbackStatus =
+  | 'APPROVED'
+  | 'IN_REVIEW'
+  | 'PENDING'
+  | 'REJECTED'
+  | 'REPLIED';
 
 export interface FeedbackListParams {
   page?: number;
   pageSize?: number;
   status?: FeedbackStatus | string;
-  search?: string;           // Search by content, type, or username
+  search?: string; // Search by content, type, or username
   startDate?: string;
   endDate?: string;
 }
@@ -74,7 +79,9 @@ export const feedbackApi = {
    * Get all feedbacks (Admin)
    * 获取所有反馈（管理员）
    */
-  getAll: async (params: FeedbackListParams = {}): Promise<FeedbackListResponse> => {
+  getAll: async (
+    params: FeedbackListParams = {},
+  ): Promise<FeedbackListResponse> => {
     const response = await requestClient.get('/feedback/admin/all', { params });
     return response;
   },
@@ -94,9 +101,12 @@ export const feedbackApi = {
    */
   updateStatus: async (
     feedbackId: number,
-    params: UpdateFeedbackStatusParams
+    params: UpdateFeedbackStatusParams,
   ): Promise<ApiResponse<Feedback>> => {
-    const response = await requestClient.put(`/feedback/admin/${feedbackId}/status`, params);
+    const response = await requestClient.put(
+      `/feedback/admin/${feedbackId}/status`,
+      params,
+    );
     // ✅ FIX: Return the whole response object (includes success, message, data)
     // The response interceptor already returns {success: true, message: "...", data: {...}}
     // So we should return response directly, not response.data
@@ -110,7 +120,7 @@ export const feedbackApi = {
   approveFeedback: async (
     feedbackId: number,
     reward: number,
-    adminReply?: string
+    adminReply?: string,
   ): Promise<ApiResponse<Feedback>> => {
     return feedbackApi.updateStatus(feedbackId, {
       status: 'APPROVED',
@@ -125,7 +135,7 @@ export const feedbackApi = {
    */
   rejectFeedback: async (
     feedbackId: number,
-    adminReply?: string
+    adminReply?: string,
   ): Promise<ApiResponse<Feedback>> => {
     return feedbackApi.updateStatus(feedbackId, {
       status: 'REJECTED',
@@ -139,7 +149,7 @@ export const feedbackApi = {
    */
   replyFeedback: async (
     feedbackId: number,
-    adminReply: string
+    adminReply: string,
   ): Promise<ApiResponse<Feedback>> => {
     return feedbackApi.updateStatus(feedbackId, {
       status: 'REPLIED',
@@ -179,8 +189,13 @@ export function getStatusLabel(status: FeedbackStatus): string {
  * Get status type for NaiveUI badge
  * 获取状态类型用于徽章显示
  */
-export function getStatusType(status: FeedbackStatus): 'default' | 'info' | 'success' | 'warning' | 'error' {
-  const typeMap: Record<FeedbackStatus, 'default' | 'info' | 'success' | 'warning' | 'error'> = {
+export function getStatusType(
+  status: FeedbackStatus,
+): 'default' | 'error' | 'info' | 'success' | 'warning' {
+  const typeMap: Record<
+    FeedbackStatus,
+    'default' | 'error' | 'info' | 'success' | 'warning'
+  > = {
     PENDING: 'warning',
     IN_REVIEW: 'info',
     REPLIED: 'default',
@@ -189,11 +204,3 @@ export function getStatusType(status: FeedbackStatus): 'default' | 'info' | 'suc
   };
   return typeMap[status] || 'default';
 }
-
-
-
-
-
-
-
-

@@ -17,7 +17,8 @@ const routes: RouteRecordRaw[] = [
         },
         name: 'OperationsStatistics',
         path: '/reports/operations-statistics',
-        component: () => import('../../../views/reports/OperationsStatistics.vue'),
+        component: () =>
+          import('../../../views/reports/OperationsStatistics.vue'),
       },
     ],
   },

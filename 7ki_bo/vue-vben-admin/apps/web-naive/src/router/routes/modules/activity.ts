@@ -17,7 +17,7 @@ const routes: RouteRecordRaw[] = [
         },
         name: 'ActivityCenter',
         path: '/preferentialActivitiesNew/activityCenter',
-        //@ts-ignore
+        // @ts-ignore
         component: () => import('#/views/activity/ActivityCenter.vue'),
       },
       {
@@ -26,7 +26,7 @@ const routes: RouteRecordRaw[] = [
         },
         name: 'TaskCenter',
         path: '/preferentialActivitiesNew/taskCenter',
-        //@ts-ignore
+        // @ts-ignore
         component: () => import('#/views/activity/TaskCenter.vue'),
       },
       {
@@ -35,7 +35,7 @@ const routes: RouteRecordRaw[] = [
         },
         name: 'UserActivityDashboard',
         path: '/preferentialActivitiesNew/user-activities',
-        //@ts-ignore
+        // @ts-ignore
         component: () => import('#/views/user/ActivityDashboard.vue'),
       },
       {
@@ -52,7 +52,7 @@ const routes: RouteRecordRaw[] = [
             },
             name: 'VIPRewardSetting',
             path: '/preferentialActivitiesNew/vip-reward/setting',
-            //@ts-ignore
+            // @ts-ignore
             component: () => import('#/views/vip/VIPRewardSetting.vue'),
           },
           {
@@ -61,7 +61,7 @@ const routes: RouteRecordRaw[] = [
             },
             name: 'VIPRewardOverview',
             path: '/preferentialActivitiesNew/vip-reward/overview',
-            //@ts-ignore
+            // @ts-ignore
             component: () => import('#/views/vip/VIPRewardOverview.vue'),
           },
         ],
@@ -70,4 +70,4 @@ const routes: RouteRecordRaw[] = [
   },
 ];
 
-export default routes; 
+export default routes;

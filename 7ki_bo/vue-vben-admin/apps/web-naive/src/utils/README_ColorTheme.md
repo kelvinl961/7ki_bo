@@ -51,7 +51,10 @@ const processedContent = applyThemeToContent(content, skinColorId);
 ### 3. 获取颜色信息
 
 ```typescript
-import { useColorTheme, useSkinColorOptions } from '@/composables/useColorTheme';
+import {
+  useColorTheme,
+  useSkinColorOptions,
+} from '@/composables/useColorTheme';
 
 const { getColorInfo, generateColorPreview } = useColorTheme();
 const { getSkinColorLabel } = useSkinColorOptions();
@@ -76,17 +79,17 @@ const label = getSkinColorLabel('1687419125085335554'); // 'Tom Ford绿'
 
 系统会自动替换以下CSS类名：
 
-| 原始类名 | 替换为 | 描述 |
-|---------|-------|------|
-| `bg-[#D86682]` | `bg-[{primary}]` | 主色背景 |
-| `bg-[#CC5477]` | `bg-[{secondary}]` | 次色背景 |
-| `bg-[#E06F8B]` | `bg-[{accent}]` | 强调色背景 |
-| `text-[#D86682]` | `text-[{primary}]` | 主色文字 |
-| `text-[#CC5477]` | `text-[{secondary}]` | 次色文字 |
-| `text-[#E06F8B]` | `text-[{accent}]` | 强调色文字 |
-| `border-[#D86682]` | `border-[{primary}]` | 主色边框 |
-| `border-[#CC5477]` | `border-[{secondary}]` | 次色边框 |
-| `border-[#E06F8B]` | `border-[{accent}]` | 强调色边框 |
+| 原始类名           | 替换为                 | 描述       |
+| ------------------ | ---------------------- | ---------- |
+| `bg-[#D86682]`     | `bg-[{primary}]`       | 主色背景   |
+| `bg-[#CC5477]`     | `bg-[{secondary}]`     | 次色背景   |
+| `bg-[#E06F8B]`     | `bg-[{accent}]`        | 强调色背景 |
+| `text-[#D86682]`   | `text-[{primary}]`     | 主色文字   |
+| `text-[#CC5477]`   | `text-[{secondary}]`   | 次色文字   |
+| `text-[#E06F8B]`   | `text-[{accent}]`      | 强调色文字 |
+| `border-[#D86682]` | `border-[{primary}]`   | 主色边框   |
+| `border-[#CC5477]` | `border-[{secondary}]` | 次色边框   |
+| `border-[#E06F8B]` | `border-[{accent}]`    | 强调色边框 |
 
 ## 支持的品牌颜色
 
@@ -108,13 +111,13 @@ interface ColorTheme {
   currentSkinColorId: Ref<string>;
   currentPalette: Ref<ColorPalette | null>;
   currentColorClasses: Ref<ColorClasses | null>;
-  
+
   // 计算属性
   isThemeActive: ComputedRef<boolean>;
   primaryColor: ComputedRef<string>;
   secondaryColor: ComputedRef<string>;
   accentColor: ComputedRef<string>;
-  
+
   // 方法
   setSkinColor: (skinColorId: string) => void;
   applyThemeToContent: (content: string, skinColorId?: string) => string;
@@ -130,9 +133,9 @@ interface ColorTheme {
 
 ```typescript
 interface ColorPalette {
-  primary: string;   // 主色
+  primary: string; // 主色
   secondary: string; // 次色
-  accent: string;    // 强调色
+  accent: string; // 强调色
 }
 ```
 
@@ -141,11 +144,14 @@ interface ColorPalette {
 应用颜色主题到HTML/CSS内容：
 
 ```typescript
-const themedHTML = applyColorTheme(`
+const themedHTML = applyColorTheme(
+  `
   <div class="bg-[#D86682] text-[#CC5477] border-[#E06F8B]">
     主题化内容
   </div>
-`, '1687419125085335554');
+`,
+  '1687419125085335554',
+);
 
 // 输出: <div class="bg-[#10B981] text-[#059669] border-[#34D399]">主题化内容</div>
 ```
@@ -159,4 +165,4 @@ const themedHTML = applyColorTheme(`
 
 ## 示例项目
 
-查看 `BrandLogoSetting.vue` 中的"颜色主题演示"标签页，了解完整的使用示例。 
+查看 `BrandLogoSetting.vue` 中的"颜色主题演示"标签页，了解完整的使用示例。

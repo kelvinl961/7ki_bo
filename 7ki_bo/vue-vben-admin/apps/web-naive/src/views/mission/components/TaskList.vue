@@ -49,10 +49,15 @@
           </n-space>
         </n-form-item>
       </n-form>
-      <div class="flex justify-between items-center">
+      <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
           <n-button type="primary" @click="$emit('add')">新增任务</n-button>
-          <n-button type="error" :disabled="!checkedRowKeys.length" @click="handleBatchDelete">批量删除</n-button>
+          <n-button
+            type="error"
+            :disabled="!checkedRowKeys.length"
+            @click="handleBatchDelete"
+            >批量删除</n-button
+          >
           <n-button @click="fetchData">刷新</n-button>
         </div>
         <div class="flex items-center gap-2">
@@ -89,7 +94,9 @@
       </div>
       <div class="summary-item">
         <span class="label">已用奖励总计：</span>
-        <span class="value important">{{ summary.totalRewardAmount.toFixed(2) }} BRL</span>
+        <span class="value important"
+          >{{ summary.totalRewardAmount.toFixed(2) }} BRL</span
+        >
       </div>
     </div>
   </div>
@@ -97,7 +104,16 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, inject, h } from 'vue';
-import { useMessage, useDialog, NButton, NTag, NSwitch, NTooltip, NPopconfirm, NText } from 'naive-ui';
+import {
+  useMessage,
+  useDialog,
+  NButton,
+  NTag,
+  NSwitch,
+  NTooltip,
+  NPopconfirm,
+  NText,
+} from 'naive-ui';
 import {
   TaskCategory,
   getTaskCenterList,
@@ -107,7 +123,7 @@ import {
   taskTypeOptions,
   taskRewardTypeOptions,
   getTaskTypeLabel,
-  getRewardTypeLabel
+  getRewardTypeLabel,
 } from '../../../api/taskCenter';
 
 interface Props {
@@ -151,13 +167,13 @@ const summary = ref({
   totalTasks: 0,
   completedTasks: 0,
   totalParticipants: 0,
-  totalRewardAmount: 0
+  totalRewardAmount: 0,
 });
 
 // Status options
 const statusOptions = [
   { label: '启用', value: true },
-  { label: '停用', value: false }
+  { label: '停用', value: false },
 ];
 
 // Pagination config
@@ -175,38 +191,38 @@ const paginationConfig = computed(() => ({
     pageSize.value = size;
     currentPage.value = 1;
     fetchData();
-  }
+  },
 }));
 
 // Table columns
 const columns = [
   {
     type: 'selection',
-    width: 40
+    width: 40,
   },
   {
     title: '排序',
     key: 'sortOrder',
     width: 80,
-    render: (row: TaskCenterItem) => row.sortOrder
+    render: (row: TaskCenterItem) => row.sortOrder,
   },
   {
     title: 'ID',
     key: 'id',
     width: 80,
-    render: (row: TaskCenterItem) => row.id
+    render: (row: TaskCenterItem) => row.id,
   },
   {
     title: '任务标题',
     key: 'title',
     width: 200,
-    ellipsis: { tooltip: true }
+    ellipsis: { tooltip: true },
   },
   {
     title: '任务类型',
     key: 'taskType',
     width: 120,
-    render: (row: TaskCenterItem) => getTaskTypeLabel(row.taskType)
+    render: (row: TaskCenterItem) => getTaskTypeLabel(row.taskType),
   },
   {
     title: '任务条件',
@@ -215,31 +231,33 @@ const columns = [
     render: (row: TaskCenterItem) => {
       const conditions = row.taskConditions;
       return `${conditions.conditionType}: ${conditions.targetValue}`;
-    }
+    },
   },
   {
     title: '奖励类型',
     key: 'rewardType',
     width: 100,
-    render: (row: TaskCenterItem) => h(NTag, { size: 'small' }, () => getRewardTypeLabel(row.rewardType))
+    render: (row: TaskCenterItem) =>
+      h(NTag, { size: 'small' }, () => getRewardTypeLabel(row.rewardType)),
   },
   {
     title: '奖励金额',
     key: 'rewardAmount',
     width: 120,
-    render: (row: TaskCenterItem) => `${row.rewardAmount} ${row.rewardCurrency}`
+    render: (row: TaskCenterItem) =>
+      `${row.rewardAmount} ${row.rewardCurrency}`,
   },
   {
     title: '参与人数',
     key: 'participantCount',
     width: 100,
-    render: (row: TaskCenterItem) => row.participantCount
+    render: (row: TaskCenterItem) => row.participantCount,
   },
   {
     title: '完成人数',
     key: 'completedCount',
     width: 100,
-    render: (row: TaskCenterItem) => row.completedCount
+    render: (row: TaskCenterItem) => row.completedCount,
   },
   {
     title: '平台支持',
@@ -252,53 +270,72 @@ const columns = [
       if (row.platforms.h5) platforms.push('H5');
       if (row.platforms.pc) platforms.push('PC');
       return platforms.join(', ');
-    }
+    },
   },
   {
     title: '状态',
     key: 'isActive',
     width: 100,
-    render: (row: TaskCenterItem) => h(NSwitch, {
-      value: row.isActive,
-      onUpdateValue: (value: boolean) => handleStatusChange(row, value)
-    })
+    render: (row: TaskCenterItem) =>
+      h(NSwitch, {
+        value: row.isActive,
+        onUpdateValue: (value: boolean) => handleStatusChange(row, value),
+      }),
   },
   {
     title: '修改时间',
     key: 'updatedAt',
     width: 160,
-    render: (row: TaskCenterItem) => new Date(row.updatedAt).toLocaleString()
+    render: (row: TaskCenterItem) => new Date(row.updatedAt).toLocaleString(),
   },
   {
     title: '操作',
     key: 'actions',
     width: 180,
     fixed: 'right',
-    render: (row: TaskCenterItem) => h('div', { class: 'action-buttons' }, [
-      h(NButton, {
-        size: 'small',
-        quaternary: true,
-        onClick: () => emit('detail', row)
-      }, () => '查看'),
-      h(NButton, {
-        size: 'small',
-        quaternary: true,
-        onClick: () => emit('edit', row)
-      }, () => '编辑'),
-      h(NPopconfirm, {
-        onPositiveClick: () => handleDelete(row.id),
-        negativeText: '取消',
-        positiveText: '确定'
-      }, {
-        default: () => '确定删除这个任务吗？',
-        trigger: () => h(NButton, {
-          size: 'small',
-          quaternary: true,
-          type: 'error'
-        }, () => '删除')
-      })
-    ])
-  }
+    render: (row: TaskCenterItem) =>
+      h('div', { class: 'action-buttons' }, [
+        h(
+          NButton,
+          {
+            size: 'small',
+            quaternary: true,
+            onClick: () => emit('detail', row),
+          },
+          () => '查看',
+        ),
+        h(
+          NButton,
+          {
+            size: 'small',
+            quaternary: true,
+            onClick: () => emit('edit', row),
+          },
+          () => '编辑',
+        ),
+        h(
+          NPopconfirm,
+          {
+            onPositiveClick: () => handleDelete(row.id),
+            negativeText: '取消',
+            positiveText: '确定',
+          },
+          {
+            default: () => '确定删除这个任务吗？',
+            trigger: () =>
+              h(
+                NButton,
+                {
+                  size: 'small',
+                  quaternary: true,
+                  type: 'error',
+                },
+                () => '删除',
+              ),
+          },
+        ),
+      ]),
+  },
 ];
 
 const fetchData = async () => {
@@ -309,11 +346,11 @@ const fetchData = async () => {
       limit: pageSize.value,
       category: props.category,
       search: filterForm.value.keyword || undefined,
-      taskType: filterForm.value.taskType as any || undefined,
-      rewardType: filterForm.value.rewardType as any || undefined,
+      taskType: (filterForm.value.taskType as any) || undefined,
+      rewardType: (filterForm.value.rewardType as any) || undefined,
       isActive: filterForm.value.isActive || undefined,
       sortBy: 'sortOrder',
-      sortOrder: 'asc'
+      sortOrder: 'asc',
     };
     const response = await getTaskCenterList(params);
     tableData.value = response.tasks;
@@ -332,7 +369,7 @@ const resetFilters = () => {
     keyword: '',
     taskType: null,
     rewardType: null,
-    isActive: null
+    isActive: null,
   };
   currentPage.value = 1;
   fetchData();
@@ -364,7 +401,7 @@ const handleBatchDelete = () => {
       emit('delete', checkedRowKeys.value);
       checkedRowKeys.value = [];
       fetchData();
-    }
+    },
   });
 };
 
@@ -407,4 +444,4 @@ onMounted(() => {
     }
   }
 }
-</style> 
+</style>

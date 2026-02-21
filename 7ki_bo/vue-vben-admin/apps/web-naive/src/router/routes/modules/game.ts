@@ -1,6 +1,6 @@
-//import type { RouteRecordRaw } from 'vue-router';
+// import type { RouteRecordRaw } from 'vue-router';
 
-//const routes: RouteRecordRaw[] = [
+// const routes: RouteRecordRaw[] = [
 //  {
 //    meta: {
 //      icon: 'ic:outline-sports-esports',
@@ -21,6 +21,6 @@
 //      },
 //    ],
 //  },
-//];
+// ];
 
-//export default routes; 
+// export default routes;

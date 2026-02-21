@@ -5,9 +5,24 @@ import { requestClient } from '#/api/request';
  * Handles domain configuration with CDN providers (AWS, Cloudflare, etc.)
  */
 
-export type CDNProvider = 'CLOUDFLARE' | 'AWS' | 'HUAWEI_CLOUD' | 'ALIYUN' | 'TENCENT_CLOUD' | 'OTHER';
-export type DomainStatus = 'NORMAL' | 'EXPIRED' | 'EXPIRING_SOON' | 'VERIFICATION_PENDING' | 'DISABLED';
-export type VerificationMethod = 'DNS_VALIDATION' | 'WHEN_DNS_COMPLETED' | 'HTTP_VALIDATION' | 'EMAIL_VALIDATION';
+export type CDNProvider =
+  | 'ALIYUN'
+  | 'AWS'
+  | 'CLOUDFLARE'
+  | 'HUAWEI_CLOUD'
+  | 'OTHER'
+  | 'TENCENT_CLOUD';
+export type DomainStatus =
+  | 'DISABLED'
+  | 'EXPIRED'
+  | 'EXPIRING_SOON'
+  | 'NORMAL'
+  | 'VERIFICATION_PENDING';
+export type VerificationMethod =
+  | 'DNS_VALIDATION'
+  | 'EMAIL_VALIDATION'
+  | 'HTTP_VALIDATION'
+  | 'WHEN_DNS_COMPLETED';
 
 export interface DomainManagement {
   id: number;
@@ -86,12 +101,12 @@ export interface UpdateDomainRequest extends Partial<CreateDomainRequest> {
 export interface DomainStats {
   total: number;
   byProvider: {
-    cloudflare: number;
     aws: number;
+    cloudflare: number;
   };
   byStatus: {
-    normal: number;
     expiringSoon: number;
+    normal: number;
   };
   verified: number;
   unverified: number;
@@ -100,7 +115,9 @@ export interface DomainStats {
 /**
  * Get domain list with filters and pagination
  */
-export async function getDomainListApi(params: DomainListParams = {}): Promise<DomainListResponse> {
+export async function getDomainListApi(
+  params: DomainListParams = {},
+): Promise<DomainListResponse> {
   return requestClient.get<DomainListResponse>('/domain-management', {
     params,
   });
@@ -116,14 +133,19 @@ export async function getDomainApi(id: number): Promise<DomainManagement> {
 /**
  * Create new domain
  */
-export async function createDomainApi(data: CreateDomainRequest): Promise<DomainManagement> {
+export async function createDomainApi(
+  data: CreateDomainRequest,
+): Promise<DomainManagement> {
   return requestClient.post<DomainManagement>('/domain-management', data);
 }
 
 /**
  * Update domain
  */
-export async function updateDomainApi(id: number, data: UpdateDomainRequest): Promise<DomainManagement> {
+export async function updateDomainApi(
+  id: number,
+  data: UpdateDomainRequest,
+): Promise<DomainManagement> {
   return requestClient.put<DomainManagement>(`/domain-management/${id}`, data);
 }
 
@@ -137,8 +159,13 @@ export async function deleteDomainApi(id: number): Promise<void> {
 /**
  * Bulk delete domains
  */
-export async function bulkDeleteDomainsApi(ids: number[]): Promise<{ deletedCount: number }> {
-  return requestClient.post<{ deletedCount: number }>('/domain-management/bulk-delete', { ids });
+export async function bulkDeleteDomainsApi(
+  ids: number[],
+): Promise<{ deletedCount: number }> {
+  return requestClient.post<{ deletedCount: number }>(
+    '/domain-management/bulk-delete',
+    { ids },
+  );
 }
 
 /**
@@ -147,4 +174,3 @@ export async function bulkDeleteDomainsApi(ids: number[]): Promise<{ deletedCoun
 export async function getDomainStatsApi(): Promise<DomainStats> {
   return requestClient.get<DomainStats>('/domain-management/stats');
 }
-

@@ -19,16 +19,16 @@ export interface ApiResponse<T = any> {
  * Google Auth Setup Response
  */
 export interface GoogleAuthSetup {
-  secret: string;            // Base32 encoded secret for manual entry
-  qrCodeUrl: string;         // otpauth:// URL
-  qrCodeDataUrl: string;     // Data URL for QR code image (data:image/png;base64,...)
+  secret: string; // Base32 encoded secret for manual entry
+  qrCodeUrl: string; // otpauth:// URL
+  qrCodeDataUrl: string; // Data URL for QR code image (data:image/png;base64,...)
 }
 
 /**
  * Google Auth Verify Response
  */
 export interface GoogleAuthVerifyResponse {
-  backupCodes: string[];     // 10 backup codes (8-digit)
+  backupCodes: string[]; // 10 backup codes (8-digit)
 }
 
 /**
@@ -36,14 +36,16 @@ export interface GoogleAuthVerifyResponse {
  */
 export interface GoogleAuthStatus {
   enabled: boolean;
-  enabledAt: string | null;
+  enabledAt: null | string;
 }
 
 /**
  * GET /api/users/google-auth/setup
  * Generate QR code and secret for Google Authenticator setup
  */
-export async function setupGoogleAuthApi(): Promise<ApiResponse<GoogleAuthSetup>> {
+export async function setupGoogleAuthApi(): Promise<
+  ApiResponse<GoogleAuthSetup>
+> {
   return await requestClient.get('/users/google-auth/setup');
 }
 
@@ -52,9 +54,11 @@ export async function setupGoogleAuthApi(): Promise<ApiResponse<GoogleAuthSetup>
  * Verify 6-digit code and enable Google Authenticator
  * @param code - 6-digit code from Google Authenticator app
  */
-export async function verifyGoogleAuthApi(code: string): Promise<ApiResponse<GoogleAuthVerifyResponse>> {
+export async function verifyGoogleAuthApi(
+  code: string,
+): Promise<ApiResponse<GoogleAuthVerifyResponse>> {
   return await requestClient.post('/users/google-auth/verify', {
-    code
+    code,
   });
 }
 
@@ -65,8 +69,8 @@ export async function verifyGoogleAuthApi(code: string): Promise<ApiResponse<Goo
  * @param backupCode - 8-digit backup code (optional if password provided)
  */
 export async function disableGoogleAuthApi(params: {
-  password?: string;
   backupCode?: string;
+  password?: string;
 }): Promise<ApiResponse> {
   return await requestClient.post('/users/google-auth/disable', params);
 }
@@ -75,7 +79,9 @@ export async function disableGoogleAuthApi(params: {
  * GET /api/users/google-auth/status
  * Get current Google Authenticator status
  */
-export async function getGoogleAuthStatusApi(): Promise<ApiResponse<GoogleAuthStatus>> {
+export async function getGoogleAuthStatusApi(): Promise<
+  ApiResponse<GoogleAuthStatus>
+> {
   return await requestClient.get('/users/google-auth/status');
 }
 
@@ -84,20 +90,13 @@ export async function getGoogleAuthStatusApi(): Promise<ApiResponse<GoogleAuthSt
  * Regenerate backup codes (requires password)
  * @param password - User's password for verification
  */
-export async function regenerateBackupCodesApi(password: string): Promise<ApiResponse<GoogleAuthVerifyResponse>> {
-  return await requestClient.post('/users/google-auth/regenerate-backup-codes', {
-    password
-  });
+export async function regenerateBackupCodesApi(
+  password: string,
+): Promise<ApiResponse<GoogleAuthVerifyResponse>> {
+  return await requestClient.post(
+    '/users/google-auth/regenerate-backup-codes',
+    {
+      password,
+    },
+  );
 }
-
-
-
-
-
-
-
-
-
-
-
-

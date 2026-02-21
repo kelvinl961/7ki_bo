@@ -2,18 +2,22 @@
   <div class="contact-tab">
     <!-- Security Password Input -->
     <div v-if="!isDecrypted" class="security-section">
-      <n-result status="info" title="需安全码解密" description="请输入安全码以查看联系方式信息">
+      <n-result
+        status="info"
+        title="需安全码解密"
+        description="请输入安全码以查看联系方式信息"
+      >
         <template #footer>
           <n-space>
-            <n-input 
-              v-model:value="securityCode" 
-              type="password" 
+            <n-input
+              v-model:value="securityCode"
+              type="password"
               placeholder="请输入安全码"
               :loading="verifying"
               @keyup.enter="handleVerifyCode"
             />
-            <n-button 
-              type="primary" 
+            <n-button
+              type="primary"
               :loading="verifying"
               @click="handleVerifyCode"
             >
@@ -59,13 +63,17 @@
             </n-gi>
           </n-grid>
         </div>
-        
+
         <template #action>
           <n-space>
             <n-button size="small" @click="handleRefreshContacts">
               刷新
             </n-button>
-            <n-button size="small" type="primary" @click="handleSaveAllContacts">
+            <n-button
+              size="small"
+              type="primary"
+              @click="handleSaveAllContacts"
+            >
               保存所有修改
             </n-button>
           </n-space>
@@ -82,13 +90,17 @@
           size="small"
           :row-key="(row: ThirdPartyBinding) => row.id"
         />
-        
+
         <template #action>
           <n-space>
             <n-button size="small" @click="handleRefreshBindings">
               刷新
             </n-button>
-            <n-button size="small" type="primary" @click="showAddBindingModal = true">
+            <n-button
+              size="small"
+              type="primary"
+              @click="showAddBindingModal = true"
+            >
               添加绑定
             </n-button>
           </n-space>
@@ -97,7 +109,11 @@
     </div>
 
     <!-- Add Binding Modal -->
-    <n-modal v-model:show="showAddBindingModal" preset="dialog" title="添加第三方绑定">
+    <n-modal
+      v-model:show="showAddBindingModal"
+      preset="dialog"
+      title="添加第三方绑定"
+    >
       <n-form ref="bindingFormRef" :model="bindingForm" :rules="bindingRules">
         <n-form-item label="平台名称" path="platformName">
           <n-select
@@ -113,12 +129,12 @@
           />
         </n-form-item>
       </n-form>
-      
+
       <template #action>
         <div class="flex gap-2">
           <n-button @click="showAddBindingModal = false">取消</n-button>
-          <n-button 
-            type="primary" 
+          <n-button
+            type="primary"
             :loading="addingBinding"
             @click="handleAddBinding"
           >
@@ -149,7 +165,7 @@ import {
   useMessage,
   type DataTableColumns,
   type FormInst,
-  type FormRules
+  type FormRules,
 } from 'naive-ui';
 import {
   getUserContactsApi,
@@ -161,7 +177,7 @@ import {
   type UpdateContactParams,
   type ThirdPartyBinding,
   type ThirdPartyBindingListParams,
-  type CreateThirdPartyBindingParams
+  type CreateThirdPartyBindingParams,
 } from '#/api/core/user-detail';
 
 interface Props {
@@ -192,7 +208,7 @@ const contacts = ref<UserContactInfo>({
   twitter: '',
   instagram: '',
   zalo: '',
-  threads: ''
+  threads: '',
 });
 
 // Editing states
@@ -254,12 +270,10 @@ const platformOptions = [
 
 // Form rules
 const bindingRules: FormRules = {
-  platformName: [
-    { required: true, message: '请选择平台', trigger: 'change' }
-  ],
+  platformName: [{ required: true, message: '请选择平台', trigger: 'change' }],
   thirdPartyId: [
-    { required: true, message: '请输入第三方账号', trigger: 'blur' }
-  ]
+    { required: true, message: '请输入第三方账号', trigger: 'blur' },
+  ],
 };
 
 // Table columns
@@ -268,42 +282,44 @@ const bindingColumns: DataTableColumns<ThirdPartyBinding> = [
     title: '绑定时间',
     key: 'boundAt',
     width: 180,
-    render: (row) => new Date(row.boundAt).toLocaleString('zh-CN')
+    render: (row) => new Date(row.boundAt).toLocaleString('zh-CN'),
   },
   {
     title: '三方平台名称',
     key: 'platformName',
-    width: 150
+    width: 150,
   },
   {
     title: '三方帐号',
     key: 'thirdPartyId',
     width: 200,
-    ellipsis: { tooltip: true }
+    ellipsis: { tooltip: true },
   },
   {
     title: '操作',
     key: 'actions',
     width: 100,
-    render: (row) => h(
-      NPopconfirm,
-      {
-        onPositiveClick: () => handleRemoveBinding(row.id)
-      },
-      {
-        default: () => '确定解绑此账号？',
-        trigger: () => h(
-          NButton,
-          {
-            size: 'small',
-            type: 'error',
-            text: true
-          },
-          { default: () => '解绑' }
-        )
-      }
-    )
-  }
+    render: (row) =>
+      h(
+        NPopconfirm,
+        {
+          onPositiveClick: () => handleRemoveBinding(row.id),
+        },
+        {
+          default: () => '确定解绑此账号？',
+          trigger: () =>
+            h(
+              NButton,
+              {
+                size: 'small',
+                type: 'error',
+                text: true,
+              },
+              { default: () => '解绑' },
+            ),
+        },
+      ),
+  },
 ];
 
 // Methods
@@ -317,8 +333,8 @@ const handleVerifyCode = async () => {
   try {
     // For demo purposes, accept any non-empty code
     // In production, this should verify against the actual security code
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     if (securityCode.value === '123456') {
       isDecrypted.value = true;
       await loadContacts();
@@ -352,9 +368,9 @@ const loadBindings = async () => {
     const params: ThirdPartyBindingListParams = {
       userId: props.userId,
       page: bindingsPagination.current,
-      pageSize: bindingsPagination.pageSize
+      pageSize: bindingsPagination.pageSize,
     };
-    
+
     const response = await getUserThirdPartyBindingsApi(params);
     bindings.value = response.list;
     bindingsPagination.total = response.pagination.total;
@@ -368,20 +384,21 @@ const loadBindings = async () => {
 
 const handleEditField = (fieldKey: string) => {
   editingField.value = fieldKey;
-  editingValue.value = contacts.value[fieldKey as keyof UserContactInfo] as string || '';
+  editingValue.value =
+    (contacts.value[fieldKey as keyof UserContactInfo] as string) || '';
 };
 
 const handleSaveField = async () => {
   if (!editingField.value) return;
-  
+
   try {
     const updateParams: UpdateContactParams = {
-      [editingField.value]: editingValue.value
+      [editingField.value]: editingValue.value,
     };
-    
+
     await updateUserContactsApi(props.userId, updateParams);
     (contacts.value as any)[editingField.value] = editingValue.value;
-    
+
     editingField.value = null;
     editingValue.value = '';
     message.success('更新成功');
@@ -418,16 +435,16 @@ const handleRefreshBindings = () => {
 const handleAddBinding = async () => {
   try {
     await bindingFormRef.value?.validate();
-    
+
     addingBinding.value = true;
     await createThirdPartyBindingApi(props.userId, bindingForm);
-    
+
     showAddBindingModal.value = false;
     Object.assign(bindingForm, {
       platformName: '',
-      thirdPartyId: ''
+      thirdPartyId: '',
     });
-    
+
     message.success('添加绑定成功');
     await loadBindings();
   } catch (error) {
@@ -526,4 +543,4 @@ onMounted(() => {
 .gap-2 {
   gap: 8px;
 }
-</style> 
+</style>

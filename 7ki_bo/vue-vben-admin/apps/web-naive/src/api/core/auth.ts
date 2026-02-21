@@ -11,8 +11,8 @@ export namespace AuthApi {
   export interface LoginResult {
     token: string;
     user: {
-      username: string;
       role: string;
+      username: string;
     };
   }
 
@@ -31,8 +31,8 @@ export namespace AuthApi {
   export interface RegisterResult {
     message: string;
     user?: {
-      id: number;
       account: string;
+      id: number;
       name?: string;
     };
   }
@@ -68,7 +68,7 @@ export async function refreshTokenApi() {
     {},
     {
       withCredentials: true, // 🍪 CRITICAL: Send cookies with refresh request
-    }
+    },
   );
 }
 
@@ -80,8 +80,8 @@ export async function logoutApi() {
     '/auth/logout',
     {},
     {
-      withCredentials: true, 
-    }
+      withCredentials: true,
+    },
   );
 }
 

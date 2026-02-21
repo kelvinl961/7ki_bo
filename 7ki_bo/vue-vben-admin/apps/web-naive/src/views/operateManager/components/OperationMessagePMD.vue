@@ -2,7 +2,7 @@
   <div class="pmd-management">
     <!-- 筛选器区域 -->
     <n-card class="mb-4">
-      <div class="flex flex-wrap gap-4 items-end">
+      <div class="flex flex-wrap items-end gap-4">
         <!-- 语言选择 -->
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium">语言</label>
@@ -94,12 +94,8 @@
 
         <!-- 搜索按钮 -->
         <div class="flex gap-2">
-          <n-button type="primary" @click="handleFilter">
-            搜索
-          </n-button>
-          <n-button @click="resetFilter">
-            重置
-          </n-button>
+          <n-button type="primary" @click="handleFilter"> 搜索 </n-button>
+          <n-button @click="resetFilter"> 重置 </n-button>
         </div>
       </div>
     </n-card>
@@ -121,7 +117,7 @@
     >
       <template #actionBar="{ selectedCount, selectedRows }">
         <n-card :bordered="false" class="rounded-16px shadow-sm">
-          <div class="flex justify-between items-center">
+          <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <!-- 主要操作按钮 -->
               <div class="flex gap-2">
@@ -129,32 +125,33 @@
                   新增跑马灯
                 </n-button>
               </div>
-              
+
               <!-- 选择信息 -->
               <div class="text-sm text-gray-600">
-                已选择 {{ selectedCount }} 条数据，共 {{ paginationReactive.total }} 条
+                已选择 {{ selectedCount }} 条数据，共
+                {{ paginationReactive.total }} 条
               </div>
             </div>
-            
+
             <div class="flex gap-2">
               <!-- 批量操作 -->
-              <n-button 
-                v-if="selectedCount > 0" 
-                type="warning" 
+              <n-button
+                v-if="selectedCount > 0"
+                type="warning"
                 size="small"
                 @click="handleBatchPause(selectedRows)"
               >
                 批量暂停 ({{ selectedCount }})
               </n-button>
-              <n-button 
-                v-if="selectedCount > 0" 
-                type="error" 
+              <n-button
+                v-if="selectedCount > 0"
+                type="error"
                 size="small"
                 @click="handleBatchDelete(selectedRows)"
               >
                 批量删除 ({{ selectedCount }})
               </n-button>
-              
+
               <!-- 选择控制 -->
               <n-button size="small" @click="clearSelection">清空选择</n-button>
               <n-button size="small" @click="selectAll">全选</n-button>
@@ -174,21 +171,46 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed, h, defineAsyncComponent } from 'vue';
+import {
+  ref,
+  reactive,
+  onMounted,
+  computed,
+  h,
+  defineAsyncComponent,
+} from 'vue';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
-const SmartDataGrid = defineAsyncComponent(() => import('../../../components/smart/SmartDataGrid/index.vue'));
-import { 
-  NCard, NButton, NSelect, NInput, NDatePicker, 
-  NSwitch, NTooltip, NTag, NSpace, useDialog, useNotification,
-  type DataTableColumns, type DataTableRowKey
+const SmartDataGrid = defineAsyncComponent(
+  () => import('../../../components/smart/SmartDataGrid/index.vue'),
+);
+import {
+  NCard,
+  NButton,
+  NSelect,
+  NInput,
+  NDatePicker,
+  NSwitch,
+  NTooltip,
+  NTag,
+  NSpace,
+  useDialog,
+  useNotification,
+  type DataTableColumns,
+  type DataTableRowKey,
 } from 'naive-ui';
-import { 
-  getPMDList, deletePMD, batchDeletePMD, togglePMDStatus, 
-  type PMDMessage, type PMDListParams 
+import {
+  getPMDList,
+  deletePMD,
+  batchDeletePMD,
+  togglePMDStatus,
+  type PMDMessage,
+  type PMDListParams,
 } from '#/api/operationMessagePMD';
 
 // Note: PMDMessage and PMDListParams types are imported from the API module
-const OperationMessagePMDFormModal = defineAsyncComponent(() => import('./OperationMessagePMDFormModal.vue'));
+const OperationMessagePMDFormModal = defineAsyncComponent(
+  () => import('./OperationMessagePMDFormModal.vue'),
+);
 
 // 数据状态
 const loading = ref(false);
@@ -208,7 +230,7 @@ const filters = reactive({
   status: null,
   displayStatus: null,
   keyword: '',
-  timeRange: null
+  timeRange: null,
 });
 
 // 对话框和通知
@@ -221,7 +243,7 @@ const languageOptions = [
   { label: '英文', value: 'en-US' },
   { label: '葡语', value: 'pt-BR' },
   { label: '西班牙语', value: 'es-ES' },
-  { label: '日语', value: 'ja-JP' }
+  { label: '日语', value: 'ja-JP' },
 ];
 
 const currencyOptions = [
@@ -229,25 +251,25 @@ const currencyOptions = [
   { label: 'CNY', value: 'CNY' },
   { label: 'USD', value: 'USD' },
   { label: 'EUR', value: 'EUR' },
-  { label: 'JPY', value: 'JPY' }
+  { label: 'JPY', value: 'JPY' },
 ];
 
 const receiverTypeOptions = [
   { label: '全部用户', value: 'all' },
   { label: '会员层级', value: 'vip' },
   { label: '新用户', value: 'new' },
-  { label: '活跃用户', value: 'active' }
+  { label: '活跃用户', value: 'active' },
 ];
 
 const statusOptions = [
   { label: '已启用', value: 'enabled' },
-  { label: '已停用', value: 'disabled' }
+  { label: '已停用', value: 'disabled' },
 ];
 
 const displayStatusOptions = [
   { label: '登录前', value: 'before_login' },
   { label: '登录后', value: 'after_login' },
-  { label: '登录前后', value: 'both' }
+  { label: '登录前后', value: 'both' },
 ];
 
 // Pagination (simplified for SmartDataGrid)
@@ -261,68 +283,72 @@ const paginationReactive = reactive({
 const columns: DataTableColumns<PMDMessage> = [
   {
     type: 'selection',
-    width: 50
+    width: 50,
   },
   {
     title: '排序',
     key: 'sortOrder',
     width: 80,
-    sorter: true
+    sorter: true,
   },
   {
     title: 'ID',
     key: 'id',
-    width: 80
+    width: 80,
   },
   {
     title: '语言',
     key: 'language',
     width: 80,
     render: (row) => {
-      const lang = languageOptions.find(item => item.value === row.language);
+      const lang = languageOptions.find((item) => item.value === row.language);
       return lang ? lang.label : row.language;
-    }
+    },
   },
   {
     title: '币种',
     key: 'currency',
-    width: 80
+    width: 80,
   },
   {
     title: '收件人',
     key: 'receiverType',
     width: 100,
     render: (row) => {
-      const receiver = receiverTypeOptions.find(item => item.value === row.receiverType);
+      const receiver = receiverTypeOptions.find(
+        (item) => item.value === row.receiverType,
+      );
       return receiver ? receiver.label : row.receiverType;
-    }
+    },
   },
   {
     title: '展示状态',
     key: 'displayStatus',
     width: 100,
     render: (row) => {
-      const status = displayStatusOptions.find(item => item.value === row.displayStatus);
+      const status = displayStatusOptions.find(
+        (item) => item.value === row.displayStatus,
+      );
       return status ? status.label : row.displayStatus;
-    }
+    },
   },
   {
     title: '开始时间',
     key: 'startTime',
     width: 160,
-    render: (row) => formatDate(row.startTime)
+    render: (row) => formatDate(row.startTime),
   },
   {
     title: '结束时间',
     key: 'endTime',
     width: 160,
-    render: (row) => formatDate(row.endTime)
+    render: (row) => formatDate(row.endTime),
   },
   {
     title: '停留时间(秒)',
     key: 'displayDuration',
     width: 120,
-    render: (row) => `${row.displayDuration || 0}秒`
+    render: (row) => `${row.displayDuration || 0}秒`,
   },
   {
     title: '内容',
@@ -330,16 +356,17 @@ const columns: DataTableColumns<PMDMessage> = [
     width: 200,
     render: (row) => {
       const content = row.content || '';
-      const truncated = content.length > 30 ? content.substring(0, 30) + '...' : content;
+      const truncated =
+        content.length > 30 ? content.substring(0, 30) + '...' : content;
       return h(
         NTooltip,
         { trigger: 'hover' },
         {
           trigger: () => h('span', { class: 'cursor-pointer' }, truncated),
-          default: () => content
-        }
+          default: () => content,
+        },
       );
-    }
+    },
   },
   {
     title: '状态',
@@ -347,14 +374,11 @@ const columns: DataTableColumns<PMDMessage> = [
     width: 100,
     render: (row) => {
       const isEnabled = row.status === 'enabled';
-      return h(
-        NSwitch,
-        {
-          value: isEnabled,
-          onUpdateValue: () => handleToggleStatus(row)
-        }
-      );
-    }
+      return h(NSwitch, {
+        value: isEnabled,
+        onUpdateValue: () => handleToggleStatus(row),
+      });
+    },
   },
   {
     title: '后台备注',
@@ -362,22 +386,23 @@ const columns: DataTableColumns<PMDMessage> = [
     width: 150,
     render: (row) => {
       const remark = row.remark || '';
-      const truncated = remark.length > 20 ? remark.substring(0, 20) + '...' : remark;
+      const truncated =
+        remark.length > 20 ? remark.substring(0, 20) + '...' : remark;
       return h(
         NTooltip,
         { trigger: 'hover' },
         {
           trigger: () => h('span', { class: 'cursor-pointer' }, truncated),
-          default: () => remark
-        }
+          default: () => remark,
+        },
       );
-    }
+    },
   },
   {
     title: '操作时间',
     key: 'updatedAt',
     width: 160,
-    render: (row) => formatDate(row.updatedAt)
+    render: (row) => formatDate(row.updatedAt),
   },
   {
     title: '操作',
@@ -396,9 +421,9 @@ const columns: DataTableColumns<PMDMessage> = [
                 size: 'small',
                 type: 'primary',
                 ghost: true,
-                onClick: () => handleEdit(row)
+                onClick: () => handleEdit(row),
               },
-              { default: () => '编辑' }
+              { default: () => '编辑' },
             ),
             h(
               NButton,
@@ -406,9 +431,9 @@ const columns: DataTableColumns<PMDMessage> = [
                 size: 'small',
                 type: 'info',
                 ghost: true,
-                onClick: () => handleCopy(row)
+                onClick: () => handleCopy(row),
               },
-              { default: () => '复制' }
+              { default: () => '复制' },
             ),
             h(
               NButton,
@@ -416,9 +441,9 @@ const columns: DataTableColumns<PMDMessage> = [
                 size: 'small',
                 type: row.status === 'enabled' ? 'warning' : 'success',
                 ghost: true,
-                onClick: () => handlePauseOrStart(row)
+                onClick: () => handlePauseOrStart(row),
               },
-              { default: () => (row.status === 'enabled' ? '暂停' : '启动') }
+              { default: () => (row.status === 'enabled' ? '暂停' : '启动') },
             ),
             h(
               NButton,
@@ -426,15 +451,15 @@ const columns: DataTableColumns<PMDMessage> = [
                 size: 'small',
                 type: 'error',
                 ghost: true,
-                onClick: () => handleDelete(row)
+                onClick: () => handleDelete(row),
               },
-              { default: () => '删除' }
-            )
-          ]
-        }
+              { default: () => '删除' },
+            ),
+          ],
+        },
       );
-    }
-  }
+    },
+  },
 ];
 
 // 数据加载
@@ -444,21 +469,26 @@ const loadData = async () => {
     const params: PMDListParams = {
       page: paginationReactive.page,
       pageSize: paginationReactive.pageSize,
-      ...filters
+      ...filters,
     };
-    
+
     const response = await getPMDList(params);
     console.log('PMD API Response:', response);
-    
+
     // The response interceptor now handles the format correctly
-    if (response && typeof response === 'object' && response.data && typeof response.total === 'number') {
+    if (
+      response &&
+      typeof response === 'object' &&
+      response.data &&
+      typeof response.total === 'number'
+    ) {
       tableData.value = response.data;
       paginationReactive.total = response.total;
-      console.log('✅ PMD data loaded:', { 
-        dataLength: response.data.length, 
+      console.log('✅ PMD data loaded:', {
+        dataLength: response.data.length,
         total: response.total,
         page: response.page,
-        pageSize: response.pageSize
+        pageSize: response.pageSize,
       });
     } else {
       console.warn('❌ Unexpected response format:', response);
@@ -469,7 +499,7 @@ const loadData = async () => {
     console.error('Error loading PMD data:', error);
     notification.error({
       content: '加载数据失败',
-      duration: 3000
+      duration: 3000,
     });
     tableData.value = [];
     totalCount.value = 0;
@@ -492,7 +522,7 @@ const resetFilter = () => {
     status: null,
     displayStatus: null,
     keyword: '',
-    timeRange: null
+    timeRange: null,
   });
   paginationReactive.page = 1;
   loadData();
@@ -526,14 +556,14 @@ const handlePauseOrStart = async (row: PMDMessage) => {
     await togglePMDStatus(row.id, willEnable);
     notification.success({
       content: willEnable ? '启动成功' : '暂停成功',
-      duration: 3000
+      duration: 3000,
     });
     loadData();
   } catch (error) {
     console.error('Error toggling PMD:', error);
     notification.error({
       content: '操作失败',
-      duration: 3000
+      duration: 3000,
     });
   }
 };
@@ -544,14 +574,14 @@ const handleToggleStatus = async (row: PMDMessage) => {
     await togglePMDStatus(row.id, newStatus === 'enabled');
     notification.success({
       content: `${newStatus === 'enabled' ? '启用' : '停用'}成功`,
-      duration: 3000
+      duration: 3000,
     });
     loadData();
   } catch (error) {
     console.error('Error toggling PMD status:', error);
     notification.error({
       content: '状态更新失败',
-      duration: 3000
+      duration: 3000,
     });
   }
 };
@@ -567,17 +597,17 @@ const handleDelete = async (row: PMDMessage) => {
         await deletePMD(row.id);
         notification.success({
           content: '删除成功',
-          duration: 3000
+          duration: 3000,
         });
         loadData();
       } catch (error) {
         console.error('Error deleting PMD:', error);
         notification.error({
           content: '删除失败',
-          duration: 3000
+          duration: 3000,
         });
       }
-    }
+    },
   });
 };
 
@@ -586,15 +616,15 @@ const handleSelectionChange = (keys: DataTableRowKey[]) => {
 };
 
 const handleBatchDelete = (selectedRows?: PMDMessage[]) => {
-  const pmdsToDelete = selectedRows || tableData.value.filter(pmd => 
-    selectedRowKeys.value.includes(pmd.id)
-  );
-  
+  const pmdsToDelete =
+    selectedRows ||
+    tableData.value.filter((pmd) => selectedRowKeys.value.includes(pmd.id));
+
   if (pmdsToDelete.length === 0) {
     console.log('No PMDs selected for batch delete');
     return;
   }
-  
+
   dialog.warning({
     title: '确认批量删除',
     content: `确定要删除选中的 ${pmdsToDelete.length} 条跑马灯通知吗？`,
@@ -602,11 +632,11 @@ const handleBatchDelete = (selectedRows?: PMDMessage[]) => {
     negativeText: '取消',
     onPositiveClick: async () => {
       try {
-        const ids = pmdsToDelete.map(pmd => Number(pmd.id));
+        const ids = pmdsToDelete.map((pmd) => Number(pmd.id));
         await batchDeletePMD({ ids });
         notification.success({
           content: `成功删除 ${pmdsToDelete.length} 条跑马灯通知`,
-          duration: 3000
+          duration: 3000,
         });
         selectedRowKeys.value = [];
         loadData();
@@ -614,23 +644,23 @@ const handleBatchDelete = (selectedRows?: PMDMessage[]) => {
         console.error('Error batch deleting PMD:', error);
         notification.error({
           content: '批量删除失败',
-          duration: 3000
+          duration: 3000,
         });
       }
-    }
+    },
   });
 };
 
 const handleBatchPause = (selectedRows?: PMDMessage[]) => {
-  const pmdsToPause = selectedRows || tableData.value.filter(pmd => 
-    selectedRowKeys.value.includes(pmd.id)
-  );
-  
+  const pmdsToPause =
+    selectedRows ||
+    tableData.value.filter((pmd) => selectedRowKeys.value.includes(pmd.id));
+
   if (pmdsToPause.length === 0) {
     console.log('No PMDs selected for batch pause');
     return;
   }
-  
+
   dialog.warning({
     title: '确认批量暂停',
     content: `确定要暂停选中的 ${pmdsToPause.length} 条跑马灯通知吗？`,
@@ -638,12 +668,12 @@ const handleBatchPause = (selectedRows?: PMDMessage[]) => {
     negativeText: '取消',
     onPositiveClick: async () => {
       try {
-        const ids = pmdsToPause.map(pmd => Number(pmd.id));
+        const ids = pmdsToPause.map((pmd) => Number(pmd.id));
         // 批量暂停操作
-        await Promise.all(ids.map(id => togglePMDStatus(id, false)));
+        await Promise.all(ids.map((id) => togglePMDStatus(id, false)));
         notification.success({
           content: `成功暂停 ${pmdsToPause.length} 条跑马灯通知`,
-          duration: 3000
+          duration: 3000,
         });
         selectedRowKeys.value = [];
         loadData();
@@ -651,10 +681,10 @@ const handleBatchPause = (selectedRows?: PMDMessage[]) => {
         console.error('Error batch pausing PMD:', error);
         notification.error({
           content: '批量暂停失败',
-          duration: 3000
+          duration: 3000,
         });
       }
-    }
+    },
   });
 };
 
@@ -687,7 +717,7 @@ const clearSelection = () => {
 };
 
 const selectAll = () => {
-  selectedRowKeys.value = tableData.value.map(pmd => pmd.id);
+  selectedRowKeys.value = tableData.value.map((pmd) => pmd.id);
   console.log('All selected');
 };
 
@@ -759,4 +789,4 @@ onMounted(() => {
 .cursor-pointer {
   cursor: pointer;
 }
-</style> 
+</style>

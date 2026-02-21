@@ -20,7 +20,7 @@ export function generateDeviceId(): string {
     navigator.userAgent,
     navigator.language,
     new Date().getTimezoneOffset(),
-    screen.width + 'x' + screen.height,
+    `${screen.width}x${screen.height}`,
     screen.colorDepth,
     navigator.platform,
     navigator.hardwareConcurrency || 0,
@@ -29,10 +29,10 @@ export function generateDeviceId(): string {
 
   // Create hash-like ID from fingerprint
   const deviceId = `dev_${hashString(fingerprint)}_${Date.now().toString(36)}`;
-  
+
   // Store in localStorage for persistence
   localStorage.setItem('deviceId', deviceId);
-  
+
   return deviceId;
 }
 
@@ -60,11 +60,11 @@ function hashString(str: string): string {
     hash = (hash << 5) - hash + char;
     hash = hash & hash; // Convert to 32bit integer
   }
-  
+
   // Convert to base36 and create readable format
   const hashStr = Math.abs(hash).toString(36);
-  const randomPart = Math.random().toString(36).substring(2, 10);
-  
+  const randomPart = Math.random().toString(36).slice(2, 10);
+
   return `${randomPart}_${hashStr}`;
 }
 
@@ -83,10 +83,3 @@ export function getDeviceInfo() {
     timezoneOffset: new Date().getTimezoneOffset(),
   };
 }
-
-
-
-
-
-
-

@@ -1,20 +1,29 @@
 <template>
-  <n-modal v-model:show="visible" preset="card" title="新增手动加款" :style="{ width: '600px' }">
+  <n-modal
+    v-model:show="visible"
+    preset="card"
+    title="新增手动加款"
+    :style="{ width: '600px' }"
+  >
     <div class="space-y-4">
       <!-- User Info Header -->
-      <div class="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded">
+      <div class="grid grid-cols-3 gap-4 rounded bg-gray-50 p-4">
         <div>
           <span class="text-sm text-gray-600">会员ID:</span>
           <span class="ml-2 font-medium text-gray-600">{{ userInfo.id }}</span>
         </div>
         <div>
           <span class="text-sm text-gray-600">会员账号:</span>
-          <span class="ml-2 font-medium text-gray-600">{{ userInfo.account }}</span>
+          <span class="ml-2 font-medium text-gray-600">{{
+            userInfo.account
+          }}</span>
         </div>
         <div class="flex items-center justify-between">
           <div>
             <span class="text-sm text-gray-600">会员币种:</span>
-            <span class="ml-2 font-medium text-gray-600">{{ userInfo.currency }}</span>
+            <span class="ml-2 font-medium text-gray-600">{{
+              userInfo.currency
+            }}</span>
           </div>
           <n-button size="small" @click="refreshBalance" :loading="loading">
             刷新余额
@@ -23,7 +32,13 @@
       </div>
 
       <!-- Form Fields -->
-      <n-form ref="formRef" :model="formData" :rules="rules" label-placement="left" label-width="120px">
+      <n-form
+        ref="formRef"
+        :model="formData"
+        :rules="rules"
+        label-placement="left"
+        label-width="120px"
+      >
         <div class="grid grid-cols-2 gap-4">
           <n-form-item label="会员ID">
             <n-input v-model:value="formData.memberId" readonly />
@@ -78,7 +93,12 @@
         </n-form-item>
 
         <n-form-item label="倍数倍数">
-          <n-input-number v-model:value="formData.multiplier" :min="1" :step="0.1" placeholder="1.00" />
+          <n-input-number
+            v-model:value="formData.multiplier"
+            :min="1"
+            :step="0.1"
+            placeholder="1.00"
+          />
         </n-form-item>
 
         <n-form-item label="补单说明" path="description">
@@ -116,7 +136,9 @@
     <template #footer>
       <div class="flex justify-end gap-3">
         <n-button @click="handleCancel">取消</n-button>
-        <n-button type="primary" :loading="loading" @click="handleConfirm">确认</n-button>
+        <n-button type="primary" :loading="loading" @click="handleConfirm"
+          >确认</n-button
+        >
       </div>
     </template>
   </n-modal>
@@ -140,7 +162,7 @@ import {
   NSpace,
   NText,
   NDivider,
-  type FormRules
+  type FormRules,
 } from 'naive-ui';
 import { notification } from '#/adapter/naive';
 import { requestClient } from '#/api/request';
@@ -166,7 +188,7 @@ const userInfo = computed(() => ({
   account: props.user?.account || '',
   currency: props.user?.currency || 'BRL',
   balance: props.user?.balance || 0,
-  interestBalance: props.user?.savingsWallet || 0
+  interestBalance: props.user?.savingsWallet || 0,
 }));
 
 // Form data
@@ -178,10 +200,10 @@ const formData = reactive({
   totalBalance: '',
   type: 'manual_credit',
   amount: '',
-  multiplier: 1.00,
+  multiplier: 1.0,
   description: '',
   frontendNotes: '',
-  backendNotes: ''
+  backendNotes: '',
 });
 
 // Form rules
@@ -189,18 +211,18 @@ const rules = {
   type: {
     required: true,
     message: '请选择类型',
-    trigger: 'change'
+    trigger: 'change',
   },
   amount: {
     required: true,
     message: '请输入订单金额',
-    trigger: 'blur'
+    trigger: 'blur',
   },
   description: {
     required: true,
     message: '请输入补单说明',
-    trigger: 'blur'
-  }
+    trigger: 'blur',
+  },
 };
 
 // Methods
@@ -210,7 +232,9 @@ const initFormData = () => {
     formData.realName = props.user.realName || '';
     formData.accountBalance = props.user.balance?.toFixed(2) || '0.00';
     formData.interestBalance = props.user.savingsWallet?.toFixed(2) || '0.00';
-    formData.totalBalance = ((props.user.balance || 0) + (props.user.savingsWallet || 0)).toFixed(2);
+    formData.totalBalance = (
+      (props.user.balance || 0) + (props.user.savingsWallet || 0)
+    ).toFixed(2);
   }
 };
 
@@ -218,23 +242,25 @@ const initFormData = () => {
 const refreshBalance = async () => {
   try {
     if (!props.user?.id) return;
-    
+
     console.log('Refreshing balance data for user:', props.user.id);
-    
+
     // Call API to get fresh user data
     const response = await requestClient.get(`/users/${props.user.id}`);
-    
+
     console.log('Balance refresh API response:', response);
-    
+
     // Check if we have data - requestClient might unwrap the response automatically
     const userData = response.data || response;
-    
+
     if (userData && (userData.id || userData.balance !== undefined)) {
       // Update form with fresh balance data
       formData.accountBalance = Number(userData.balance || 0).toFixed(2);
       formData.interestBalance = Number(userData.savingsWallet || 0).toFixed(2);
-      formData.totalBalance = (Number(userData.balance || 0) + Number(userData.savingsWallet || 0)).toFixed(2);
-      
+      formData.totalBalance = (
+        Number(userData.balance || 0) + Number(userData.savingsWallet || 0)
+      ).toFixed(2);
+
       console.log('Balance refreshed successfully');
     } else {
       throw new Error('No user data in response');
@@ -264,33 +290,34 @@ const handleConfirm = async () => {
       description: formData.description,
       frontendNotes: formData.frontendNotes,
       backendNotes: formData.backendNotes,
-      currency: userInfo.value.currency
+      currency: userInfo.value.currency,
     };
 
     console.log('🚀 Submitting manual credit transaction:', apiData);
 
     // Submit to backend API
     const response = await requestClient.post('/transactions/manual', apiData);
-    
+
     console.log('💰 Manual credit API response:', response);
 
     // Handle successful response
     handleTransactionSuccess(response, 'credit');
-
   } catch (error) {
     console.error('Manual credit error:', error);
-    
+
     // Check if this is actually a successful response being thrown as an error
     if (error && typeof error === 'object' && error.success === true) {
-      console.log('🔧 Detected successful response in error - treating as success');
+      console.log(
+        '🔧 Detected successful response in error - treating as success',
+      );
       handleTransactionSuccess(error, 'credit');
       return;
     }
-    
+
     // Show error notification only for real errors
     notification.error({
       content: '操作失败，请重试',
-      duration: 3000
+      duration: 3000,
     });
   } finally {
     loading.value = false;
@@ -300,7 +327,7 @@ const handleConfirm = async () => {
 // Helper function to handle successful transactions
 const handleTransactionSuccess = (response, transactionType) => {
   console.log('💰 Processing successful transaction:', response);
-  
+
   // Immediately close modal
   visible.value = false;
   resetForm();
@@ -308,7 +335,7 @@ const handleTransactionSuccess = (response, transactionType) => {
   // Show success notification
   notification.success({
     content: '手动加款操作成功',
-    duration: 3000
+    duration: 3000,
   });
 
   // Emit transaction data for immediate balance update
@@ -318,11 +345,11 @@ const handleTransactionSuccess = (response, transactionType) => {
     amount: parseFloat(formData.amount) * formData.multiplier,
     currency: userInfo.value.currency,
     userId: props.user?.id,
-    result: response
+    result: response,
   };
 
   console.log('📤 Emitting success event with data:', transactionData);
-  
+
   // Emit success event to trigger immediate refresh
   emit('success', transactionData);
 };
@@ -330,7 +357,7 @@ const handleTransactionSuccess = (response, transactionType) => {
 const resetForm = () => {
   formData.type = 'manual_credit';
   formData.amount = '';
-  formData.multiplier = 1.00;
+  formData.multiplier = 1.0;
   formData.description = '';
   formData.frontendNotes = '';
   formData.backendNotes = '';
@@ -349,7 +376,7 @@ const close = () => {
 // Expose methods
 defineExpose({
   open,
-  close
+  close,
 });
 </script>
 
@@ -413,4 +440,4 @@ defineExpose({
 .justify-end {
   justify-content: flex-end;
 }
-</style> 
+</style>

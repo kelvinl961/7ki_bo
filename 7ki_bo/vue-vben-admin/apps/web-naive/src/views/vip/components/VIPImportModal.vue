@@ -40,7 +40,9 @@
               <div style="margin-bottom: 12px">
                 <n-icon size="48" :depth="3">
                   <svg viewBox="0 0 24 24">
-                    <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                    <path
+                      d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"
+                    />
                   </svg>
                 </n-icon>
               </div>
@@ -60,19 +62,25 @@
               <n-radio value="append">
                 <div>
                   <div>追加模式</div>
-                  <div class="text-sm text-gray-500">在现有数据基础上添加新的VIP等级</div>
+                  <div class="text-sm text-gray-500">
+                    在现有数据基础上添加新的VIP等级
+                  </div>
                 </div>
               </n-radio>
               <n-radio value="overwrite">
                 <div>
                   <div>覆盖模式</div>
-                  <div class="text-sm text-gray-500">清空现有数据后导入新的VIP等级</div>
+                  <div class="text-sm text-gray-500">
+                    清空现有数据后导入新的VIP等级
+                  </div>
                 </div>
               </n-radio>
               <n-radio value="update">
                 <div>
                   <div>更新模式</div>
-                  <div class="text-sm text-gray-500">根据等级编号更新现有VIP等级</div>
+                  <div class="text-sm text-gray-500">
+                    根据等级编号更新现有VIP等级
+                  </div>
                 </div>
               </n-radio>
             </n-space>
@@ -108,7 +116,7 @@
         <n-p depth="3" class="mt-2">
           检测到 {{ previewData.length }} 条VIP等级数据，请确认后导入。
         </n-p>
-        
+
         <n-data-table
           :columns="previewColumns"
           :data="previewData"
@@ -122,9 +130,9 @@
     <template #action>
       <n-space>
         <n-button @click="handleCancel">取消</n-button>
-        <n-button 
-          type="primary" 
-          :loading="submitLoading" 
+        <n-button
+          type="primary"
+          :loading="submitLoading"
           :disabled="!formData.file"
           @click="handleSubmit"
         >
@@ -137,7 +145,12 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue';
-import type { FormInst, FormRules, UploadFileInfo, DataTableColumns } from 'naive-ui';
+import type {
+  FormInst,
+  FormRules,
+  UploadFileInfo,
+  DataTableColumns,
+} from 'naive-ui';
 import {
   NModal,
   NForm,
@@ -212,9 +225,7 @@ const previewColumns: DataTableColumns<any> = [
 
 // 表单验证规则
 const rules: FormRules = {
-  file: [
-    { required: true, message: '请选择要导入的文件', trigger: 'change' },
-  ],
+  file: [{ required: true, message: '请选择要导入的文件', trigger: 'change' }],
   importMode: [
     { required: true, message: '请选择导入模式', trigger: 'change' },
   ],
@@ -227,31 +238,31 @@ const rules: FormRules = {
 const handleBeforeUpload = (data: { file: UploadFileInfo }) => {
   const file = data.file.file;
   if (!file) return false;
-  
+
   // 检查文件类型
   const allowedTypes = [
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     'application/vnd.ms-excel',
     'text/csv',
   ];
-  
+
   if (!allowedTypes.includes(file.type)) {
     message.error('只支持Excel和CSV文件格式');
     return false;
   }
-  
+
   // 检查文件大小 (10MB)
   if (file.size > 10 * 1024 * 1024) {
     message.error('文件大小不能超过10MB');
     return false;
   }
-  
+
   return false; // 阻止自动上传
 };
 
 const handleFileChange = (options: { fileList: UploadFileInfo[] }) => {
   fileList.value = options.fileList;
-  
+
   if (options.fileList.length > 0) {
     const file = options.fileList[0].file;
     if (file) {
@@ -303,7 +314,7 @@ const handleFilePreview = async (file: File) => {
         isActive: true,
       },
     ];
-    
+
     previewData.value = mockPreviewData;
     message.success('文件解析成功，请查看预览数据');
   } catch (error) {
@@ -316,23 +327,93 @@ const handleFilePreview = async (file: File) => {
 const handleDownloadTemplate = () => {
   // 创建模板数据
   const templateData = [
-    ['等级', '名称', '颜色', '币种', '当月充值', '当月投注', '积分要求', '晋级奖金', '月返水', '周任务值', '日任务值', '提现额度', '提现次数', '客服优先级', '状态', '显示顺序'],
-    [1, 'VIP1', '#FFD700', 'USDT', 1000, 5000, 100, 100, 1.0, 50, 10, 10000, 3, '否', '启用', 1],
-    [2, 'VIP2', '#FFA500', 'USDT', 5000, 20000, 500, 200, 1.5, 100, 20, 20000, 5, '否', '启用', 2],
-    [3, 'VIP3', '#FF8C00', 'USDT', 10000, 50000, 1000, 300, 2.0, 150, 30, 50000, 10, '是', '启用', 3],
+    [
+      '等级',
+      '名称',
+      '颜色',
+      '币种',
+      '当月充值',
+      '当月投注',
+      '积分要求',
+      '晋级奖金',
+      '月返水',
+      '周任务值',
+      '日任务值',
+      '提现额度',
+      '提现次数',
+      '客服优先级',
+      '状态',
+      '显示顺序',
+    ],
+    [
+      1,
+      'VIP1',
+      '#FFD700',
+      'USDT',
+      1000,
+      5000,
+      100,
+      100,
+      1.0,
+      50,
+      10,
+      10000,
+      3,
+      '否',
+      '启用',
+      1,
+    ],
+    [
+      2,
+      'VIP2',
+      '#FFA500',
+      'USDT',
+      5000,
+      20000,
+      500,
+      200,
+      1.5,
+      100,
+      20,
+      20000,
+      5,
+      '否',
+      '启用',
+      2,
+    ],
+    [
+      3,
+      'VIP3',
+      '#FF8C00',
+      'USDT',
+      10000,
+      50000,
+      1000,
+      300,
+      2.0,
+      150,
+      30,
+      50000,
+      10,
+      '是',
+      '启用',
+      3,
+    ],
   ];
-  
+
   // 创建CSV内容
-  const csvContent = templateData.map(row => row.join(',')).join('\n');
-  
+  const csvContent = templateData.map((row) => row.join(',')).join('\n');
+
   // 创建并下载文件
-  const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const blob = new Blob(['\ufeff' + csvContent], {
+    type: 'text/csv;charset=utf-8;',
+  });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
   link.download = 'VIP等级导入模板.csv';
   link.click();
   URL.revokeObjectURL(link.href);
-  
+
   message.success('模板下载成功');
 };
 
@@ -340,22 +421,22 @@ const handleDownloadTemplate = () => {
 const handleSubmit = async () => {
   try {
     await formRef.value?.validate();
-    
+
     if (!formData.file) {
       message.error('请选择要导入的文件');
       return;
     }
-    
+
     submitLoading.value = true;
-    
+
     // 这里应该调用实际的导入API
     // 模拟导入过程
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
     message.success('VIP等级导入成功');
     emit('success');
     showModal.value = false;
-    
+
     // 重置表单
     resetForm();
   } catch (error) {
@@ -430,4 +511,4 @@ const resetForm = () => {
 .vip-import-modal::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
-</style> 
+</style>

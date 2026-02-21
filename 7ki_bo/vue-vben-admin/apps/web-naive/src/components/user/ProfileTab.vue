@@ -1,6 +1,6 @@
 <template>
   <div class="profile-tab">
-    <div v-if="loading" class="flex justify-center items-center h-96">
+    <div v-if="loading" class="flex h-96 items-center justify-center">
       <n-spin size="large" />
     </div>
 
@@ -17,12 +17,12 @@
                   :size="80"
                   :src="profile.idPhotoUrl"
                   @click="showProfilePhotoPreview = true"
-                  class="cursor-pointer hover:opacity-80 transition-opacity"
+                  class="cursor-pointer transition-opacity hover:opacity-80"
                 />
                 <n-avatar
                   v-else
                   :size="80"
-                  class="bg-gray-200 flex items-center justify-center"
+                  class="flex items-center justify-center bg-gray-200"
                 >
                   <n-icon size="32" color="#999">
                     <PersonOutline />
@@ -30,8 +30,8 @@
                 </n-avatar>
               </div>
               <div class="profile-picture-info">
-                <h3 class="text-lg font-medium mb-2">个人头像</h3>
-                <p class="text-sm text-gray-600 mb-3">
+                <h3 class="mb-2 text-lg font-medium">个人头像</h3>
+                <p class="mb-3 text-sm text-gray-600">
                   {{ profile.idPhotoUrl ? '已上传头像' : '未上传头像' }}
                 </p>
                 <div class="flex gap-2">
@@ -68,7 +68,6 @@
                   </span>
                   <n-input
                     class="black-input"
-
                     v-else
                     v-model:value="editingValue"
                     size="small"
@@ -99,7 +98,6 @@
                   </span>
                   <n-input
                     class="black-input"
-
                     v-else
                     v-model:value="editingValue"
                     size="small"
@@ -168,7 +166,6 @@
                   </span>
                   <n-input
                     class="black-input"
-
                     v-else
                     v-model:value="editingValue"
                     size="small"
@@ -199,7 +196,6 @@
                   </span>
                   <n-input
                     class="black-input"
-
                     v-else
                     v-model:value="editingValue"
                     size="small"
@@ -230,7 +226,6 @@
                   </span>
                   <n-input
                     class="black-input"
-
                     v-else
                     v-model:value="editingValue"
                     size="small"
@@ -317,8 +312,8 @@
                   <span v-if="!editingField || editingField !== 'placeOfBirth'">
                     {{ profile.placeOfBirth || '--' }}
                   </span>
-                  <n-input  class="black-input"
-
+                  <n-input
+                    class="black-input"
                     v-else
                     v-model:value="editingValue"
                     size="small"
@@ -344,12 +339,13 @@
               <div class="profile-field">
                 <div class="field-label">当前居住地</div>
                 <div class="field-value">
-                  <span v-if="!editingField || editingField !== 'currentAddress'">
+                  <span
+                    v-if="!editingField || editingField !== 'currentAddress'"
+                  >
                     {{ profile.currentAddress || '--' }}
                   </span>
                   <n-input
                     class="black-input"
-
                     v-else
                     v-model:value="editingValue"
                     size="small"
@@ -380,7 +376,6 @@
                   </span>
                   <n-input
                     class="black-input"
-
                     v-else
                     v-model:value="editingValue"
                     size="small"
@@ -450,7 +445,7 @@
             </n-gi>
           </n-grid>
         </div>
-        
+
         <template #action>
           <n-space>
             <n-button size="small" @click="handleRefreshProfile">
@@ -470,7 +465,9 @@
             <n-gi>
               <div class="security-item">
                 <div class="security-label">手机绑定</div>
-                <n-tag :type="securityStatus.phoneBinding ? 'success' : 'warning'">
+                <n-tag
+                  :type="securityStatus.phoneBinding ? 'success' : 'warning'"
+                >
                   {{ securityStatus.phoneBinding ? '已绑定' : '未绑定' }}
                 </n-tag>
               </div>
@@ -478,7 +475,9 @@
             <n-gi>
               <div class="security-item">
                 <div class="security-label">谷歌验证</div>
-                <n-tag :type="securityStatus.googleAuth ? 'success' : 'warning'">
+                <n-tag
+                  :type="securityStatus.googleAuth ? 'success' : 'warning'"
+                >
                   {{ securityStatus.googleAuth ? '已绑定' : '未绑定' }}
                 </n-tag>
               </div>
@@ -486,7 +485,9 @@
             <n-gi>
               <div class="security-item">
                 <div class="security-label">生物识别</div>
-                <n-tag :type="securityStatus.biometricAuth ? 'success' : 'warning'">
+                <n-tag
+                  :type="securityStatus.biometricAuth ? 'success' : 'warning'"
+                >
                   {{ securityStatus.biometricAuth ? '已绑定' : '未绑定' }}
                 </n-tag>
               </div>
@@ -505,26 +506,33 @@
     </div>
 
     <!-- Face Match Logs Modal -->
-    <n-modal v-model:show="showFaceMatchModal" preset="dialog" title="人脸比对记录">
+    <n-modal
+      v-model:show="showFaceMatchModal"
+      preset="dialog"
+      title="人脸比对记录"
+    >
       <div class="face-match-logs">
         <n-empty v-if="!faceMatchLogs.length" description="暂无记录" />
         <div v-else class="space-y-4">
           <div
             v-for="log in faceMatchLogs"
             :key="log.id"
-            class="log-item p-3 border rounded"
+            class="log-item rounded border p-3"
           >
-            <div class="flex justify-between items-center">
+            <div class="flex items-center justify-between">
               <span class="font-medium">{{ log.status }}</span>
-              <span class="text-sm text-gray-500">{{ formatDateTime(log.timestamp) }}</span>
+              <span class="text-sm text-gray-500">{{
+                formatDateTime(log.timestamp)
+              }}</span>
             </div>
-            <div class="text-sm text-gray-600 mt-1">
-              相似度: {{ (log.confidence * 100).toFixed(1) }}% | IP: {{ log.ipAddress }}
+            <div class="mt-1 text-sm text-gray-600">
+              相似度: {{ (log.confidence * 100).toFixed(1) }}% | IP:
+              {{ log.ipAddress }}
             </div>
           </div>
         </div>
       </div>
-      
+
       <template #action>
         <n-button @click="showFaceMatchModal = false">关闭</n-button>
       </template>
@@ -533,30 +541,34 @@
     <!-- Photo Preview Modal -->
     <n-modal v-model:show="showPhotoPreview" preset="dialog" title="身份证照片">
       <div class="photo-preview">
-        <img 
+        <img
           v-if="profile.idPhotoUrl"
           :src="profile.idPhotoUrl"
           alt="身份证照片"
-          class="max-w-full max-h-96 mx-auto"
+          class="mx-auto max-h-96 max-w-full"
         />
       </div>
-      
+
       <template #action>
         <n-button @click="showPhotoPreview = false">关闭</n-button>
       </template>
     </n-modal>
 
     <!-- Profile Photo Preview Modal -->
-    <n-modal v-model:show="showProfilePhotoPreview" preset="dialog" title="个人头像">
+    <n-modal
+      v-model:show="showProfilePhotoPreview"
+      preset="dialog"
+      title="个人头像"
+    >
       <div class="profile-photo-preview">
-        <img 
+        <img
           v-if="profile.idPhotoUrl"
           :src="profile.idPhotoUrl"
           alt="个人头像"
-          class="max-w-full max-h-96 mx-auto rounded-lg"
+          class="mx-auto max-h-96 max-w-full rounded-lg"
         />
       </div>
-      
+
       <template #action>
         <n-button @click="showProfilePhotoPreview = false">关闭</n-button>
       </template>
@@ -583,7 +595,7 @@ import {
   NSpin,
   NIcon,
   useMessage,
-  type UploadFileInfo
+  type UploadFileInfo,
 } from 'naive-ui';
 import { PersonOutline } from '@vicons/ionicons5';
 import {
@@ -593,7 +605,7 @@ import {
   getUserSecurityStatusApi,
   getFaceMatchLogsApi,
   type UserProfile,
-  type UpdateProfileParams
+  type UpdateProfileParams,
 } from '#/api/core/user-detail';
 
 interface Props {
@@ -627,7 +639,7 @@ const profile = ref<UserProfile>({
   incomeSource: '',
   idPhotoUrl: '',
   faceMatchStatus: '',
-  faceMatchLogs: []
+  faceMatchLogs: [],
 });
 
 // Security status - properly typed to match API response
@@ -635,7 +647,7 @@ const securityStatus = ref({
   phoneBinding: false,
   googleAuth: false,
   biometricAuth: false,
-  keyAuth: false
+  keyAuth: false,
 });
 
 // Face match logs
@@ -654,20 +666,20 @@ const nationalityOptions = [
   { label: '英国', value: '英国' },
   { label: '日本', value: '日本' },
   { label: '韩国', value: '韩国' },
-  { label: '其他', value: '其他' }
+  { label: '其他', value: '其他' },
 ];
 
 const genderOptions = [
   { label: '男', value: '男' },
   { label: '女', value: '女' },
-  { label: '其他', value: '其他' }
+  { label: '其他', value: '其他' },
 ];
 
 // Computed
 const maskedIdNumber = computed(() => {
   if (!profile.value.idNumber) return '--';
   if (showFullIdNumber.value) return profile.value.idNumber;
-  
+
   const id = profile.value.idNumber;
   if (id.length <= 4) return id;
   return '***' + id.slice(-4);
@@ -695,7 +707,7 @@ const loadSecurityStatus = async () => {
       phoneBinding: response.isTelephoneNumberSet || false,
       googleAuth: response.isGoogleAuthenticatorSet || false,
       biometricAuth: false, // Not implemented yet in backend
-      keyAuth: response.isWithdrawalPasswordSet || false // Using withdrawal password as "key auth"
+      keyAuth: response.isWithdrawalPasswordSet || false, // Using withdrawal password as "key auth"
     };
   } catch (error) {
     message.error('获取安全状态失败');
@@ -726,15 +738,15 @@ const handleEditDateField = (fieldKey: string) => {
 
 const handleSaveField = async () => {
   if (!editingField.value) return;
-  
+
   try {
     const updateParams: UpdateProfileParams = {
-      [editingField.value]: editingValue.value
+      [editingField.value]: editingValue.value,
     };
-    
+
     await updateUserProfileApi(props.userId, updateParams);
     (profile.value as any)[editingField.value] = editingValue.value;
-    
+
     editingField.value = null;
     editingValue.value = '';
     message.success('更新成功');
@@ -746,7 +758,7 @@ const handleSaveField = async () => {
 
 const handleSaveDateField = async () => {
   if (!editingField.value || editingDateValue.value === null) return;
-  
+
   try {
     // Convert timestamp to date string WITHOUT timezone shifts
     const date = new Date(editingDateValue.value);
@@ -754,14 +766,14 @@ const handleSaveDateField = async () => {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     const dateStr = `${year}-${month}-${day}`;
-    
+
     const updateParams: UpdateProfileParams = {
-      [editingField.value]: dateStr
+      [editingField.value]: dateStr,
     };
-    
+
     await updateUserProfileApi(props.userId, updateParams);
     (profile.value as any)[editingField.value] = dateStr;
-    
+
     editingField.value = null;
     editingDateValue.value = null;
     message.success('更新成功');
@@ -783,7 +795,7 @@ const toggleIdNumberView = () => {
 
 const handlePhotoUpload = async ({ file }: { file: UploadFileInfo }) => {
   if (!file.file) return;
-  
+
   try {
     const response = await uploadIdPhotoApi(props.userId, file.file);
     profile.value.idPhotoUrl = response.photoUrl;
@@ -796,7 +808,7 @@ const handlePhotoUpload = async ({ file }: { file: UploadFileInfo }) => {
 
 const handleProfilePhotoUpload = async ({ file }: { file: UploadFileInfo }) => {
   if (!file.file) return;
-  
+
   try {
     const response = await uploadIdPhotoApi(props.userId, file.file);
     profile.value.idPhotoUrl = response.photoUrl;
@@ -809,11 +821,12 @@ const handleProfilePhotoUpload = async ({ file }: { file: UploadFileInfo }) => {
 
 const handleSaveAllProfile = async () => {
   try {
-    const { id, userId, faceMatchStatus, faceMatchLogs, ...updateParams } = profile.value;
+    const { id, userId, faceMatchStatus, faceMatchLogs, ...updateParams } =
+      profile.value;
     // Fix gender type - convert empty string to undefined
     const params = {
       ...updateParams,
-      gender: updateParams.gender === '' ? undefined : updateParams.gender
+      gender: updateParams.gender === '' ? undefined : updateParams.gender,
     };
     await updateUserProfileApi(props.userId, params);
     message.success('保存成功');
@@ -1024,4 +1037,4 @@ onMounted(() => {
   margin-left: auto;
   margin-right: auto;
 }
-</style> 
+</style>

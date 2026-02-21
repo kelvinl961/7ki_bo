@@ -1,20 +1,29 @@
 <template>
-  <n-modal v-model:show="visible" preset="card" title="手动扣除" :style="{ width: '600px' }">
+  <n-modal
+    v-model:show="visible"
+    preset="card"
+    title="手动扣除"
+    :style="{ width: '600px' }"
+  >
     <div class="space-y-4">
       <!-- Agent Info Header -->
-      <div class="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded">
+      <div class="grid grid-cols-3 gap-4 rounded bg-gray-50 p-4">
         <div>
           <span class="text-sm text-gray-600">代理ID:</span>
           <span class="ml-2 font-medium text-gray-600">{{ agentInfo.id }}</span>
         </div>
         <div>
           <span class="text-sm text-gray-600">代理账号:</span>
-          <span class="ml-2 font-medium text-gray-600">{{ agentInfo.username }}</span>
+          <span class="ml-2 font-medium text-gray-600">{{
+            agentInfo.username
+          }}</span>
         </div>
         <div class="flex items-center justify-between">
           <div>
             <span class="text-sm text-gray-600">代理币种:</span>
-            <span class="ml-2 font-medium text-gray-600">{{ agentInfo.currency }}</span>
+            <span class="ml-2 font-medium text-gray-600">{{
+              agentInfo.currency
+            }}</span>
           </div>
           <n-button size="small" @click="refreshBalance" :loading="loading">
             刷新余额
@@ -23,7 +32,13 @@
       </div>
 
       <!-- Form Fields -->
-      <n-form ref="formRef" :model="formData" :rules="rules" label-placement="left" label-width="120px">
+      <n-form
+        ref="formRef"
+        :model="formData"
+        :rules="rules"
+        label-placement="left"
+        label-width="120px"
+      >
         <div class="grid grid-cols-2 gap-4">
           <n-form-item label="代理ID">
             <n-input v-model:value="formData.agentId" readonly />
@@ -38,14 +53,18 @@
           <n-form-item label="可用余额">
             <n-input-group>
               <n-input v-model:value="formData.availableBalance" readonly />
-              <n-input-group-label>{{ agentInfo.currency }}</n-input-group-label>
+              <n-input-group-label>{{
+                agentInfo.currency
+              }}</n-input-group-label>
             </n-input-group>
           </n-form-item>
 
           <n-form-item label="冻结余额">
             <n-input-group>
               <n-input v-model:value="formData.frozenBalance" readonly />
-              <n-input-group-label>{{ agentInfo.currency }}</n-input-group-label>
+              <n-input-group-label>{{
+                agentInfo.currency
+              }}</n-input-group-label>
             </n-input-group>
           </n-form-item>
         </div>
@@ -153,7 +172,7 @@ interface FormData {
 const props = defineProps<Props>();
 const emit = defineEmits<{
   'update:visible': [value: boolean];
-  'success': [];
+  success: [];
 }>();
 
 const message = useMessage();
@@ -171,14 +190,14 @@ const formData = reactive<FormData>({
   amount: '',
   reason: '',
   frontendNotes: '',
-  backendNotes: ''
+  backendNotes: '',
 });
 
 const rules: FormRules = {
   type: {
     required: true,
     message: '请选择扣除类型',
-    trigger: 'change'
+    trigger: 'change',
   },
   amount: {
     required: true,
@@ -193,31 +212,36 @@ const rules: FormRules = {
         return new Error('扣除金额不能超过可用余额');
       }
       return true;
-    }
+    },
   },
   reason: {
     required: true,
     message: '请输入扣除原因',
-    trigger: 'blur'
-  }
+    trigger: 'blur',
+  },
 };
 
 // Watch for agent info changes
-watch(() => props.agentInfo, (newInfo) => {
-  if (newInfo) {
-    formData.agentId = newInfo.id;
-    formData.agentName = newInfo.username;
-    formData.availableBalance = newInfo.unclaimedCommission || 0;
-    formData.frozenBalance = newInfo.claimedCommission || 0;
-    formData.totalBalance = (newInfo.unclaimedCommission || 0) + (newInfo.claimedCommission || 0);
-  }
-}, { immediate: true });
+watch(
+  () => props.agentInfo,
+  (newInfo) => {
+    if (newInfo) {
+      formData.agentId = newInfo.id;
+      formData.agentName = newInfo.username;
+      formData.availableBalance = newInfo.unclaimedCommission || 0;
+      formData.frozenBalance = newInfo.claimedCommission || 0;
+      formData.totalBalance =
+        (newInfo.unclaimedCommission || 0) + (newInfo.claimedCommission || 0);
+    }
+  },
+  { immediate: true },
+);
 
 const refreshBalance = async () => {
   loading.value = true;
   try {
     // TODO: Implement API call to refresh agent balance
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     message.success('余额刷新成功');
   } catch (error) {
     message.error('余额刷新失败');
@@ -230,10 +254,10 @@ const handleSubmit = async () => {
   try {
     await formRef.value?.validate();
     submitting.value = true;
-    
+
     // TODO: Implement API call to submit manual debit
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     message.success('手动扣除操作成功');
     emit('success');
     emit('update:visible', false);
@@ -247,7 +271,7 @@ const handleSubmit = async () => {
 // Computed
 const visible = computed({
   get: () => props.visible,
-  set: (value) => emit('update:visible', value)
+  set: (value) => emit('update:visible', value),
 });
 </script>
 

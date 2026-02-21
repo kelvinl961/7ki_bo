@@ -1,12 +1,10 @@
-import { requestClient } from '#/api/request';
-
 export interface HotGameItem {
   id: number;
   platformId: number;
   platform?: {
+    gameType: string;
     id: number;
     platformName: string;
-    gameType: string;
   };
   gameId: string;
   gameName: string;
@@ -14,7 +12,7 @@ export interface HotGameItem {
   tagType: 'hot' | 'recycled'; // 热门/回收标识
   gameCategory: string; // 游戏类型 (电子, 体育, 真人, 彩票, 等)
   platformName: string; // 平台名称
-  remark: string | null;
+  remark: null | string;
   sortOrder: number;
   operator: string; // 操作人
   createdAt: string;
@@ -169,57 +167,68 @@ const mockHotGames: HotGameItem[] = [
 /**
  * Get hot game list with pagination and filters
  */
-export async function getHotGameListApi(params: HotGameListParams): Promise<HotGameListResponse> {
+export async function getHotGameListApi(
+  params: HotGameListParams,
+): Promise<HotGameListResponse> {
   // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 500));
-  
+  await new Promise((resolve) => setTimeout(resolve, 500));
+
   let filteredGames = [...mockHotGames];
-  
+
   // Apply filters
   if (params.search) {
     const searchLower = params.search.toLowerCase();
-    filteredGames = filteredGames.filter(game => 
-      game.gameName.toLowerCase().includes(searchLower) ||
-      game.platformName.toLowerCase().includes(searchLower)
+    filteredGames = filteredGames.filter(
+      (game) =>
+        game.gameName.toLowerCase().includes(searchLower) ||
+        game.platformName.toLowerCase().includes(searchLower),
     );
   }
-  
+
   if (params.gameCategory) {
-    filteredGames = filteredGames.filter(game => game.gameCategory === params.gameCategory);
+    filteredGames = filteredGames.filter(
+      (game) => game.gameCategory === params.gameCategory,
+    );
   }
-  
+
   if (params.tagType) {
-    filteredGames = filteredGames.filter(game => game.tagType === params.tagType);
+    filteredGames = filteredGames.filter(
+      (game) => game.tagType === params.tagType,
+    );
   }
-  
+
   if (params.currency) {
-    filteredGames = filteredGames.filter(game => game.currency === params.currency);
+    filteredGames = filteredGames.filter(
+      (game) => game.currency === params.currency,
+    );
   }
-  
+
   if (params.isEnabled !== undefined) {
-    filteredGames = filteredGames.filter(game => game.isEnabled === params.isEnabled);
+    filteredGames = filteredGames.filter(
+      (game) => game.isEnabled === params.isEnabled,
+    );
   }
-  
+
   // Apply sorting
   if (params.sortBy) {
     filteredGames.sort((a, b) => {
       const aValue = (a as any)[params.sortBy!];
       const bValue = (b as any)[params.sortBy!];
-      
+
       if (params.sortOrder === 'desc') {
         return bValue > aValue ? 1 : -1;
       }
       return aValue > bValue ? 1 : -1;
     });
   }
-  
+
   // Apply pagination
   const page = params.page || 1;
   const pageSize = params.pageSize || 100;
   const start = (page - 1) * pageSize;
   const end = start + pageSize;
   const paginatedGames = filteredGames.slice(start, end);
-  
+
   return {
     list: paginatedGames,
     pagination: {
@@ -234,13 +243,19 @@ export async function getHotGameListApi(params: HotGameListParams): Promise<HotG
 /**
  * Create a new hot game
  */
-export async function createHotGameApi(data: CreateHotGameParams): Promise<HotGameItem> {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  
+export async function createHotGameApi(
+  data: CreateHotGameParams,
+): Promise<HotGameItem> {
+  await new Promise((resolve) => setTimeout(resolve, 300));
+
   const newGame: HotGameItem = {
     id: Date.now(),
     platformId: data.platformId,
-    platform: { id: data.platformId, platformName: 'Mock Platform', gameType: data.gameCategory },
+    platform: {
+      id: data.platformId,
+      platformName: 'Mock Platform',
+      gameType: data.gameCategory,
+    },
     gameId: data.gameId,
     gameName: data.gameName,
     currency: data.currency,
@@ -252,9 +267,9 @@ export async function createHotGameApi(data: CreateHotGameParams): Promise<HotGa
     operator: '7ki',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    isEnabled: data.isEnabled !== undefined ? data.isEnabled : true,
+    isEnabled: data.isEnabled === undefined ? true : data.isEnabled,
   };
-  
+
   mockHotGames.push(newGame);
   return newGame;
 }
@@ -262,14 +277,17 @@ export async function createHotGameApi(data: CreateHotGameParams): Promise<HotGa
 /**
  * Update hot game
  */
-export async function updateHotGameApi(id: number, data: UpdateHotGameParams): Promise<HotGameItem> {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  
-  const index = mockHotGames.findIndex(game => game.id === id);
+export async function updateHotGameApi(
+  id: number,
+  data: UpdateHotGameParams,
+): Promise<HotGameItem> {
+  await new Promise((resolve) => setTimeout(resolve, 300));
+
+  const index = mockHotGames.findIndex((game) => game.id === id);
   if (index === -1) {
     throw new Error('热门游戏不存在');
   }
-  
+
   const game = mockHotGames[index];
   const updatedGame: HotGameItem = {
     ...game,
@@ -277,12 +295,12 @@ export async function updateHotGameApi(id: number, data: UpdateHotGameParams): P
     currency: data.currency ?? game.currency,
     tagType: data.tagType ?? game.tagType,
     gameCategory: data.gameCategory ?? game.gameCategory,
-    remark: data.remark !== undefined ? data.remark : game.remark,
+    remark: data.remark === undefined ? game.remark : data.remark,
     sortOrder: data.sortOrder ?? game.sortOrder,
     isEnabled: data.isEnabled ?? game.isEnabled,
     updatedAt: new Date().toISOString(),
   };
-  
+
   mockHotGames[index] = updatedGame;
   return updatedGame;
 }
@@ -291,47 +309,52 @@ export async function updateHotGameApi(id: number, data: UpdateHotGameParams): P
  * Remove hot game
  */
 export async function removeHotGameApi(id: number): Promise<void> {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  
-  const index = mockHotGames.findIndex(game => game.id === id);
+  await new Promise((resolve) => setTimeout(resolve, 300));
+
+  const index = mockHotGames.findIndex((game) => game.id === id);
   if (index === -1) {
     throw new Error('热门游戏不存在');
   }
-  
+
   mockHotGames.splice(index, 1);
 }
 
 /**
  * Update hot game sort order
  */
-export async function updateHotGameSortApi(id: number, sortOrder: number): Promise<HotGameItem> {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  
-  const index = mockHotGames.findIndex(game => game.id === id);
+export async function updateHotGameSortApi(
+  id: number,
+  sortOrder: number,
+): Promise<HotGameItem> {
+  await new Promise((resolve) => setTimeout(resolve, 300));
+
+  const index = mockHotGames.findIndex((game) => game.id === id);
   if (index === -1) {
     throw new Error('热门游戏不存在');
   }
-  
+
   const game = mockHotGames[index];
   if (game) {
     game.sortOrder = sortOrder;
     game.updatedAt = new Date().toISOString();
     return game;
   }
-  
+
   throw new Error('热门游戏不存在');
 }
 
 /**
  * Bulk update hot game sort orders
  */
-export async function bulkUpdateHotGameSortApi(data: BulkUpdateSortParams): Promise<HotGameItem[]> {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  
+export async function bulkUpdateHotGameSortApi(
+  data: BulkUpdateSortParams,
+): Promise<HotGameItem[]> {
+  await new Promise((resolve) => setTimeout(resolve, 300));
+
   const updatedGames: HotGameItem[] = [];
-  
+
   for (const update of data.updates) {
-    const index = mockHotGames.findIndex(game => game.id === update.id);
+    const index = mockHotGames.findIndex((game) => game.id === update.id);
     if (index !== -1) {
       const game = mockHotGames[index];
       if (game) {
@@ -341,28 +364,31 @@ export async function bulkUpdateHotGameSortApi(data: BulkUpdateSortParams): Prom
       }
     }
   }
-  
+
   return updatedGames;
 }
 
 /**
  * Toggle hot game enabled status
  */
-export async function toggleHotGameEnabledApi(id: number, isEnabled: boolean): Promise<HotGameItem> {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  
-  const index = mockHotGames.findIndex(game => game.id === id);
+export async function toggleHotGameEnabledApi(
+  id: number,
+  isEnabled: boolean,
+): Promise<HotGameItem> {
+  await new Promise((resolve) => setTimeout(resolve, 300));
+
+  const index = mockHotGames.findIndex((game) => game.id === id);
   if (index === -1) {
     throw new Error('热门游戏不存在');
   }
-  
+
   const game = mockHotGames[index];
   if (game) {
     game.isEnabled = isEnabled;
     game.updatedAt = new Date().toISOString();
     return game;
   }
-  
+
   throw new Error('热门游戏不存在');
 }
 
@@ -370,7 +396,7 @@ export async function toggleHotGameEnabledApi(id: number, isEnabled: boolean): P
  * Get game categories for filter options
  */
 export async function getGameCategoriesApi(): Promise<string[]> {
-  await new Promise(resolve => setTimeout(resolve, 200));
+  await new Promise((resolve) => setTimeout(resolve, 200));
   return ['电子', '真人', '体育', '彩票', '捕鱼', '棋牌'];
 }
 
@@ -378,6 +404,6 @@ export async function getGameCategoriesApi(): Promise<string[]> {
  * Get available currencies for filter options
  */
 export async function getCurrenciesApi(): Promise<string[]> {
-  await new Promise(resolve => setTimeout(resolve, 200));
+  await new Promise((resolve) => setTimeout(resolve, 200));
   return ['BRL', 'USD', 'EUR', 'CNY'];
-} 
+}

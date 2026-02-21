@@ -37,27 +37,27 @@ export interface RePaymentRecord {
   operator: string;
   notes: string;
   callbackLogs: Array<{
-    timestamp: string;
     message: string;
     status: string;
+    timestamp: string;
   }>;
 }
 
 export interface GetCallbackExceptionsResponse {
   success: boolean;
   data: {
-    withdrawals: RePaymentRecord[];
-    statistics: {
-      pendingRepayment: number;
-      repaymentSuccess: number;
-      repaymentFailed: number;
-    };
     pagination: {
       current: number;
       pageSize: number;
       total: number;
       totalPages: number;
     };
+    statistics: {
+      pendingRepayment: number;
+      repaymentFailed: number;
+      repaymentSuccess: number;
+    };
+    withdrawals: RePaymentRecord[];
   };
   message?: string;
 }
@@ -86,8 +86,8 @@ export interface BulkOperationResponse {
   data: {
     results: Array<{
       id: string;
-      success: boolean;
       message: string;
+      success: boolean;
     }>;
   };
 }
@@ -101,11 +101,11 @@ export interface OperationResponse {
 export interface RePaymentStatistics {
   success: boolean;
   data: {
-    totalExceptions: number;
     pendingRepayment: number;
-    repaymentSuccess: number;
     repaymentFailed: number;
     repaymentRate: string;
+    repaymentSuccess: number;
+    totalExceptions: number;
   };
 }
 
@@ -114,40 +114,67 @@ export const rePaymentApi = {
   /**
    * Get withdrawals with callback exceptions
    */
-  async getCallbackExceptionWithdrawals(filters: RePaymentFilters): Promise<GetCallbackExceptionsResponse> {
-    const response = await requestClient.get('/wallet/re-payment/callback-exceptions', { params: filters });
+  async getCallbackExceptionWithdrawals(
+    filters: RePaymentFilters,
+  ): Promise<GetCallbackExceptionsResponse> {
+    const response = await requestClient.get(
+      '/wallet/re-payment/callback-exceptions',
+      { params: filters },
+    );
     return response.data;
   },
 
   /**
    * Initiate re-payment for single withdrawal
    */
-  async initiateRePayment(withdrawalId: string, data: RePaymentRequest): Promise<OperationResponse> {
-    const response = await requestClient.post(`/wallet/re-payment/withdrawals/${withdrawalId}/repayment`, data);
+  async initiateRePayment(
+    withdrawalId: string,
+    data: RePaymentRequest,
+  ): Promise<OperationResponse> {
+    const response = await requestClient.post(
+      `/wallet/re-payment/withdrawals/${withdrawalId}/repayment`,
+      data,
+    );
     return response.data;
   },
 
   /**
    * Bulk re-payment for multiple withdrawals
    */
-  async bulkRePayment(data: BulkRePaymentRequest): Promise<BulkOperationResponse> {
-    const response = await requestClient.post('/wallet/re-payment/withdrawals/bulk-repayment', data);
+  async bulkRePayment(
+    data: BulkRePaymentRequest,
+  ): Promise<BulkOperationResponse> {
+    const response = await requestClient.post(
+      '/wallet/re-payment/withdrawals/bulk-repayment',
+      data,
+    );
     return response.data;
   },
 
   /**
    * Mark withdrawal as manually processed
    */
-  async markAsManuallyProcessed(withdrawalId: string, data: ManualProcessRequest): Promise<OperationResponse> {
-    const response = await requestClient.post(`/wallet/re-payment/withdrawals/${withdrawalId}/manual-process`, data);
+  async markAsManuallyProcessed(
+    withdrawalId: string,
+    data: ManualProcessRequest,
+  ): Promise<OperationResponse> {
+    const response = await requestClient.post(
+      `/wallet/re-payment/withdrawals/${withdrawalId}/manual-process`,
+      data,
+    );
     return response.data;
   },
 
   /**
    * Get re-payment statistics
    */
-  async getRePaymentStatistics(params?: { startDate?: string; endDate?: string }): Promise<RePaymentStatistics> {
-    const response = await requestClient.get('/wallet/re-payment/statistics', { params });
+  async getRePaymentStatistics(params?: {
+    endDate?: string;
+    startDate?: string;
+  }): Promise<RePaymentStatistics> {
+    const response = await requestClient.get('/wallet/re-payment/statistics', {
+      params,
+    });
     return response.data;
   },
 
@@ -155,10 +182,10 @@ export const rePaymentApi = {
    * Export re-payment data
    */
   async exportRePaymentData(filters: RePaymentFilters): Promise<Blob> {
-    const response = await requestClient.get('/wallet/re-payment/export', { 
+    const response = await requestClient.get('/wallet/re-payment/export', {
       params: filters,
-      responseType: 'blob' 
+      responseType: 'blob',
     });
     return response.data;
-  }
+  },
 };

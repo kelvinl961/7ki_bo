@@ -8,16 +8,20 @@
   >
     <div class="activity-record">
       <!-- 活动信息 -->
-      <div v-if="activityInfo" class="mb-4 p-4 bg-gray-50 rounded-lg">
+      <div v-if="activityInfo" class="mb-4 rounded-lg bg-gray-50 p-4">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
             <n-icon size="24" color="#1890ff">
               <Gift />
             </n-icon>
             <div>
-              <h3 class="font-semibold text-gray-800">{{ activityInfo.title }}</h3>
-              <div class="flex items-center gap-2 mt-1">
-                <n-tag type="info" size="small">{{ activityInfo.category }}</n-tag>
+              <h3 class="font-semibold text-gray-800">
+                {{ activityInfo.title }}
+              </h3>
+              <div class="mt-1 flex items-center gap-2">
+                <n-tag type="info" size="small">{{
+                  activityInfo.category
+                }}</n-tag>
                 <n-tag :type="getStatusType(activityInfo.status)" size="small">
                   {{ getStatusText(activityInfo.status) }}
                 </n-tag>
@@ -26,7 +30,9 @@
           </div>
           <div class="text-right">
             <p class="text-sm text-gray-600">总参与记录</p>
-            <p class="text-2xl font-bold text-blue-600">{{ paginationConfig.itemCount }}</p>
+            <p class="text-2xl font-bold text-blue-600">
+              {{ paginationConfig.itemCount }}
+            </p>
           </div>
         </div>
       </div>
@@ -47,7 +53,7 @@
               clearable
             />
           </n-form-item>
-          
+
           <n-form-item label="参与时间">
             <n-date-picker
               v-model:value="filterForm.dateRange"
@@ -56,7 +62,7 @@
               clearable
             />
           </n-form-item>
-          
+
           <n-form-item>
             <n-space>
               <n-button type="primary" @click="handleSearch">
@@ -94,13 +100,15 @@
     </div>
 
     <template #footer>
-      <div class="flex justify-between items-center">
+      <div class="flex items-center justify-between">
         <div class="flex items-center gap-4">
           <n-statistic label="总参与人数" :value="paginationConfig.itemCount" />
-          <n-statistic 
-            label="总奖励金额" 
-            :value="totalRewardAmount" 
-            :formatter="(value) => `${value} ${activityInfo?.currency || 'BRL'}`"
+          <n-statistic
+            label="总奖励金额"
+            :value="totalRewardAmount"
+            :formatter="
+              (value) => `${value} ${activityInfo?.currency || 'BRL'}`
+            "
           />
         </div>
         <n-button @click="handleClose">关闭</n-button>
@@ -127,8 +135,15 @@ import {
   NStatistic,
   useMessage,
 } from 'naive-ui';
-import { Search, Refresh, Gift, Person, Calendar, Wallet } from '@vicons/ionicons5';
-import { 
+import {
+  Search,
+  Refresh,
+  Gift,
+  Person,
+  Calendar,
+  Wallet,
+} from '@vicons/ionicons5';
+import {
   getActivityRecords,
   type ActivityRecord,
   type ActivityRecordQuery,
@@ -201,47 +216,46 @@ const columns = computed<DataTableColumns<ActivityRecord>>(() => [
     title: '用户信息',
     key: 'userId',
     width: 150,
-    render: (row) => h(
-      'div',
-      { class: 'flex items-center gap-2' },
-      [
+    render: (row) =>
+      h('div', { class: 'flex items-center gap-2' }, [
         h(NIcon, { size: 16, color: '#1890ff' }, { default: () => h(Person) }),
-        h(
-          'div',
-          {},
-          [
-            h('div', { class: 'text-sm font-medium' }, `ID: ${row.userId}`),
-            h('div', { class: 'text-xs text-gray-500' }, row.username),
-          ]
-        ),
-      ]
-    ),
+        h('div', {}, [
+          h('div', { class: 'text-sm font-medium' }, `ID: ${row.userId}`),
+          h('div', { class: 'text-xs text-gray-500' }, row.username),
+        ]),
+      ]),
   },
   {
     title: '参与时间',
     key: 'participatedAt',
     width: 160,
-    render: (row) => h(
-      'div',
-      { class: 'flex items-center gap-2' },
-      [
-        h(NIcon, { size: 16, color: '#52c41a' }, { default: () => h(Calendar) }),
-        h('span', { class: 'text-sm' }, new Date(row.participatedAt).toLocaleString()),
-      ]
-    ),
+    render: (row) =>
+      h('div', { class: 'flex items-center gap-2' }, [
+        h(
+          NIcon,
+          { size: 16, color: '#52c41a' },
+          { default: () => h(Calendar) },
+        ),
+        h(
+          'span',
+          { class: 'text-sm' },
+          new Date(row.participatedAt).toLocaleString(),
+        ),
+      ]),
   },
   {
     title: '奖励金额',
     key: 'amount',
     width: 120,
-    render: (row) => h(
-      'div',
-      { class: 'flex items-center gap-2' },
-      [
+    render: (row) =>
+      h('div', { class: 'flex items-center gap-2' }, [
         h(NIcon, { size: 16, color: '#faad14' }, { default: () => h(Wallet) }),
-        h('span', { class: 'text-sm font-medium text-green-600' }, `${row.amount.toFixed(2)} ${activityInfo.value?.currency || 'BRL'}`),
-      ]
-    ),
+        h(
+          'span',
+          { class: 'text-sm font-medium text-green-600' },
+          `${row.amount.toFixed(2)} ${activityInfo.value?.currency || 'BRL'}`,
+        ),
+      ]),
   },
   {
     title: '状态',
@@ -253,8 +267,15 @@ const columns = computed<DataTableColumns<ActivityRecord>>(() => [
         PENDING: { type: 'warning', text: '处理中' },
         FAILED: { type: 'error', text: '失败' },
       };
-      const config = statusConfig[row.status as keyof typeof statusConfig] || { type: 'default', text: row.status };
-      return h(NTag, { type: config.type as any, size: 'small' }, { default: () => config.text });
+      const config = statusConfig[row.status as keyof typeof statusConfig] || {
+        type: 'default',
+        text: row.status,
+      };
+      return h(
+        NTag,
+        { type: config.type as any, size: 'small' },
+        { default: () => config.text },
+      );
     },
   },
   {
@@ -271,7 +292,7 @@ const columns = computed<DataTableColumns<ActivityRecord>>(() => [
 // 获取活动记录
 const fetchActivityRecords = async () => {
   if (!props.activityId) return;
-  
+
   loading.value = true;
   try {
     const params: ActivityRecordQuery = {
@@ -280,19 +301,19 @@ const fetchActivityRecords = async () => {
       sortBy: 'participatedAt',
       sortOrder: 'desc',
     };
-    
+
     // 添加筛选条件
     if (filterForm.userId) {
       params.userId = parseInt(filterForm.userId);
     }
-    
+
     if (filterForm.dateRange) {
       params.startDate = new Date(filterForm.dateRange[0]).toISOString();
       const endDate = new Date(filterForm.dateRange[1]);
       endDate.setHours(23, 59, 59, 999);
       params.endDate = endDate.toISOString();
     }
-    
+
     const response = await getActivityRecords(props.activityId, params);
     tableData.value = response.records;
     activityInfo.value = response.activity;
@@ -371,7 +392,7 @@ watch(
       fetchActivityRecords();
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 // 监听弹窗显示状态
@@ -381,7 +402,7 @@ watch(
     if (show && props.activityId) {
       fetchActivityRecords();
     }
-  }
+  },
 );
 </script>
 
@@ -412,4 +433,4 @@ watch(
   font-weight: 600;
   color: #333;
 }
-</style> 
+</style>

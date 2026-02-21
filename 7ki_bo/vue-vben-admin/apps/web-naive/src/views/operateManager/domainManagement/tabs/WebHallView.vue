@@ -11,7 +11,7 @@
           size="small"
           @keyup.enter="fetchDomains"
         />
-        
+
         <n-select
           v-model:value="filters.useType"
           placeholder="全部使用状态"
@@ -20,17 +20,15 @@
           size="small"
           :options="[
             { label: '全部', value: '' },
-            { label: 'Web大厅', value: 'WEB_HALL' }
+            { label: 'Web大厅', value: 'WEB_HALL' },
           ]"
         />
-        
+
         <n-button type="primary" size="small" @click="fetchDomains">
           搜索
         </n-button>
-        
-        <n-button size="small" @click="resetFilters">
-          重置
-        </n-button>
+
+        <n-button size="small" @click="resetFilters"> 重置 </n-button>
       </n-space>
     </n-card>
 
@@ -41,19 +39,22 @@
           <n-button type="primary" size="small" @click="showCreateModal = true">
             新增
           </n-button>
-          <n-button size="small" @click="fetchDomains">
-            刷新
-          </n-button>
+          <n-button size="small" @click="fetchDomains"> 刷新 </n-button>
         </n-space>
         <n-space align="center" :size="16">
-          <div style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              font-size: 13px;
+            "
+          >
             <span>H5防控是都开启</span>
-            <span style="color: #18a058; font-size: 16px;">⚫</span>
+            <span style="color: #18a058; font-size: 16px">⚫</span>
           </div>
-          <span style="font-size: 13px; color: #999;">
-            不自动创建
-          </span>
-          <span style="font-size: 13px; color: #666;">
+          <span style="font-size: 13px; color: #999"> 不自动创建 </span>
+          <span style="font-size: 13px; color: #666">
             共 {{ pagination.itemCount || 0 }} 条记录
           </span>
         </n-space>
@@ -89,13 +90,19 @@
         </div>
         <div>
           <div style="margin-bottom: 8px; font-weight: 500">当前CDN</div>
-          <n-tag :type="'info'" size="small">{{ selectedDomain?.cdnProvider }}</n-tag>
+          <n-tag :type="'info'" size="small">{{
+            selectedDomain?.cdnProvider
+          }}</n-tag>
         </div>
         <div>
-          <div style="margin-bottom: 8px; font-weight: 500">目标CDN节点 <span style="color: red">*</span></div>
+          <div style="margin-bottom: 8px; font-weight: 500">
+            目标CDN节点 <span style="color: red">*</span>
+          </div>
           <n-select
             v-model:value="targetCDN"
-            :options="cdnOptions.filter(o => o.value !== selectedDomain?.cdnProvider)"
+            :options="
+              cdnOptions.filter((o) => o.value !== selectedDomain?.cdnProvider)
+            "
             placeholder="请选择目标CDN节点"
           />
         </div>
@@ -140,10 +147,10 @@
 
 <script setup lang="ts">
 import { ref, h, onMounted, reactive } from 'vue';
-import { 
-  NButton, 
-  NTag, 
-  NSpace, 
+import {
+  NButton,
+  NTag,
+  NSpace,
   NCard,
   NInput,
   NSelect,
@@ -151,12 +158,14 @@ import {
   NModal,
   NPopconfirm,
   useMessage,
-  type DataTableColumn
+  type DataTableColumn,
 } from 'naive-ui';
 import { domainApi } from '../api/domainApi';
 // ✅ PERFORMANCE FIX: Lazy load modal components - they only load when modals are opened
 import { defineAsyncComponent } from 'vue';
-const CreateSubdomainModal = defineAsyncComponent(() => import('../components/CreateSubdomainModal.vue'));
+const CreateSubdomainModal = defineAsyncComponent(
+  () => import('../components/CreateSubdomainModal.vue'),
+);
 import type { Domain } from '../types';
 
 const message = useMessage();
@@ -174,14 +183,14 @@ const agentId = ref<string>('');
 // Filters
 const filters = ref({
   search: '',
-  useType: 'WEB_HALL'
+  useType: 'WEB_HALL',
 });
 
 // Pagination
 const pagination = reactive({
   page: 1,
   pageSize: 20,
-  itemCount: 0
+  itemCount: 0,
 });
 
 const paginationConfig = reactive({
@@ -198,7 +207,7 @@ const paginationConfig = reactive({
     pagination.pageSize = pageSize;
     pagination.page = 1;
     fetchDomains();
-  }
+  },
 });
 
 const cdnOptions = [
@@ -206,7 +215,7 @@ const cdnOptions = [
   { label: 'AWS', value: 'AWS' },
   { label: '华为云', value: 'HUAWEI_CLOUD' },
   { label: '腾讯云', value: 'TENCENT_CLOUD' },
-  { label: '阿里云', value: 'ALIYUN' }
+  { label: '阿里云', value: 'ALIYUN' },
 ];
 
 // Web Hall Columns - Based on second screenshot
@@ -214,24 +223,32 @@ const columns: DataTableColumn<Domain>[] = [
   {
     title: 'CDN节点名称',
     key: 'cdnProvider',
-    width: 120
+    width: 120,
   },
   {
     title: '生效域名',
     key: 'domainName',
     width: 180,
     render(row: Domain) {
-      return h('div', { style: 'display: flex; flex-direction: column; gap: 4px;' }, [
-        h('span', {}, row.domainName),
-        h('a', { 
-          style: 'color: #18a058; font-size: 12px; cursor: pointer;',
-          onClick: () => {
-            navigator.clipboard.writeText(row.domainName);
-            message.success('已解析');
-          }
-        }, '已解析')
-      ]);
-    }
+      return h(
+        'div',
+        { style: 'display: flex; flex-direction: column; gap: 4px;' },
+        [
+          h('span', {}, row.domainName),
+          h(
+            'a',
+            {
+              style: 'color: #18a058; font-size: 12px; cursor: pointer;',
+              onClick: () => {
+                navigator.clipboard.writeText(row.domainName);
+                message.success('已解析');
+              },
+            },
+            '已解析',
+          ),
+        ],
+      );
+    },
   },
   {
     title: '端口类型',
@@ -239,7 +256,7 @@ const columns: DataTableColumn<Domain>[] = [
     width: 100,
     render(row: Domain) {
       return row.portType === 'FIXED' ? '固定' : '默认';
-    }
+    },
   },
   {
     title: '端口',
@@ -247,33 +264,53 @@ const columns: DataTableColumn<Domain>[] = [
     width: 80,
     render(row: Domain) {
       return row.customPort || 443;
-    }
+    },
   },
   {
     title: h('div', { style: 'white-space: nowrap;' }, [
       h('div', {}, '解析说明'),
-      h('div', { style: 'font-size: 11px; font-weight: normal; color: #999;' }, '(生效状态如同源)')
+      h(
+        'div',
+        { style: 'font-size: 11px; font-weight: normal; color: #999;' },
+        '(生效状态如同源)',
+      ),
     ]) as any,
     key: 'dnsStatus',
     width: 150,
     render(row: Domain) {
-      return h('div', { style: 'display: flex; align-items: center; gap: 8px;' }, [
-        h(NTag, { 
-          type: row.verificationStatus ? 'success' : 'info',
-          size: 'small'
-        }, () => row.verificationStatus ? '已生效' : '已生效'),
-        h(NButton, {
-          text: true,
-          size: 'tiny',
-          onClick: () => fetchDomains()
-        }, () => '🔄')
-      ]);
-    }
+      return h(
+        'div',
+        { style: 'display: flex; align-items: center; gap: 8px;' },
+        [
+          h(
+            NTag,
+            {
+              type: row.verificationStatus ? 'success' : 'info',
+              size: 'small',
+            },
+            () => (row.verificationStatus ? '已生效' : '已生效'),
+          ),
+          h(
+            NButton,
+            {
+              text: true,
+              size: 'tiny',
+              onClick: () => fetchDomains(),
+            },
+            () => '🔄',
+          ),
+        ],
+      );
+    },
   },
   {
     title: h('div', { style: 'white-space: nowrap;' }, [
       h('div', {}, '出现在其他组织'),
-      h('div', { style: 'font-size: 11px; font-weight: normal; color: #999;' }, '剩余')
+      h(
+        'div',
+        { style: 'font-size: 11px; font-weight: normal; color: #999;' },
+        '剩余',
+      ),
     ]) as any,
     key: 'otherOrg',
     width: 130,
@@ -281,22 +318,31 @@ const columns: DataTableColumn<Domain>[] = [
       return h('div', { style: 'text-align: center;' }, [
         h('input', {
           type: 'checkbox',
-          style: 'transform: scale(1.2);'
-        })
+          style: 'transform: scale(1.2);',
+        }),
       ]);
-    }
+    },
   },
   {
-    title: h('div', { style: 'display: flex; align-items: center; gap: 4px; white-space: nowrap;' }, [
-      h('span', {}, '作为推广域名'),
-      h('span', { style: 'color: #52c41a;' }, '✓')
-    ]) as any,
+    title: h(
+      'div',
+      {
+        style:
+          'display: flex; align-items: center; gap: 4px; white-space: nowrap;',
+      },
+      [
+        h('span', {}, '作为推广域名'),
+        h('span', { style: 'color: #52c41a;' }, '✓'),
+      ],
+    ) as any,
     key: 'isPromotionDomain',
     width: 130,
     render(row: Domain) {
       return h('div', { style: 'display: flex; justify-content: center;' }, [
-        h('div', {
-          style: `
+        h(
+          'div',
+          {
+            style: `
             width: 44px;
             height: 22px;
             background: ${row.isPromotionDomain ? '#52c41a' : '#d9d9d9'};
@@ -305,10 +351,11 @@ const columns: DataTableColumn<Domain>[] = [
             cursor: pointer;
             transition: all 0.3s;
           `,
-          onClick: () => handleTogglePromotion(row)
-        }, [
-          h('div', {
-            style: `
+            onClick: () => handleTogglePromotion(row),
+          },
+          [
+            h('div', {
+              style: `
               width: 18px;
               height: 18px;
               background: white;
@@ -317,11 +364,12 @@ const columns: DataTableColumn<Domain>[] = [
               top: 2px;
               ${row.isPromotionDomain ? 'right: 2px;' : 'left: 2px;'}
               transition: all 0.3s;
-            `
-          })
-        ])
+            `,
+            }),
+          ],
+        ),
       ]);
-    }
+    },
   },
   {
     title: '强制绑定上级',
@@ -329,7 +377,7 @@ const columns: DataTableColumn<Domain>[] = [
     width: 120,
     render(row: Domain) {
       return row.boundAgentId || '无';
-    }
+    },
   },
   {
     title: '启用入口',
@@ -339,13 +387,17 @@ const columns: DataTableColumn<Domain>[] = [
       const map: Record<string, string> = {
         ALL: '全部',
         APP_ONLY: '仅极速APP',
-        H5_PWA: 'H5和PWA'
+        H5_PWA: 'H5和PWA',
       };
-      return h('div', { style: 'display: flex; align-items: center; gap: 4px;' }, [
-        h('span', {}, map[row.enabledEntrance] || '全部'),
-        h('span', { style: 'font-size: 10px; color: #999;' }, '▼')
-      ]);
-    }
+      return h(
+        'div',
+        { style: 'display: flex; align-items: center; gap: 4px;' },
+        [
+          h('span', {}, map[row.enabledEntrance] || '全部'),
+          h('span', { style: 'font-size: 10px; color: #999;' }, '▼'),
+        ],
+      );
+    },
   },
   {
     title: '屏蔽设备',
@@ -355,13 +407,17 @@ const columns: DataTableColumn<Domain>[] = [
       const map: Record<string, string> = {
         NONE: '都不屏蔽',
         BLOCK_MOBILE: '屏蔽手机端',
-        BLOCK_PC: '屏蔽PC端'
+        BLOCK_PC: '屏蔽PC端',
       };
-      return h('div', { style: 'display: flex; align-items: center; gap: 4px;' }, [
-        h('span', {}, map[row.blockedDevice] || '都不屏蔽'),
-        h('span', { style: 'font-size: 10px; color: #999;' }, '▼')
-      ]);
-    }
+      return h(
+        'div',
+        { style: 'display: flex; align-items: center; gap: 4px;' },
+        [
+          h('span', {}, map[row.blockedDevice] || '都不屏蔽'),
+          h('span', { style: 'font-size: 10px; color: #999;' }, '▼'),
+        ],
+      );
+    },
   },
   {
     title: '使用状态',
@@ -369,9 +425,14 @@ const columns: DataTableColumn<Domain>[] = [
     width: 120,
     render(row: Domain) {
       const isEnabled = (row.status || 'NORMAL') !== 'DISABLED';
-      return h('div', { style: 'display: flex; align-items: center; gap: 8px;' }, [
-        h('div', {
-          style: `
+      return h(
+        'div',
+        { style: 'display: flex; align-items: center; gap: 8px;' },
+        [
+          h(
+            'div',
+            {
+              style: `
             width: 44px;
             height: 22px;
             background: ${isEnabled ? '#52c41a' : '#d9d9d9'};
@@ -380,10 +441,11 @@ const columns: DataTableColumn<Domain>[] = [
             cursor: pointer;
             transition: all 0.3s;
           `,
-          onClick: () => handleToggleStatus(row)
-        }, [
-          h('div', {
-            style: `
+              onClick: () => handleToggleStatus(row),
+            },
+            [
+              h('div', {
+                style: `
               width: 18px;
               height: 18px;
               background: white;
@@ -392,11 +454,13 @@ const columns: DataTableColumn<Domain>[] = [
               top: 2px;
               ${isEnabled ? 'right: 2px;' : 'left: 2px;'}
               transition: all 0.3s;
-            `
-          })
-        ])
-      ]);
-    }
+            `,
+              }),
+            ],
+          ),
+        ],
+      );
+    },
   },
   {
     title: '备注',
@@ -405,7 +469,7 @@ const columns: DataTableColumn<Domain>[] = [
     ellipsis: { tooltip: true },
     render(row: Domain) {
       return row.备注 || '';
-    }
+    },
   },
   {
     title: '操作',
@@ -414,63 +478,136 @@ const columns: DataTableColumn<Domain>[] = [
     fixed: 'right' as const,
     render(row: Domain) {
       return h('div', { style: 'display: flex; gap: 4px; flex-wrap: wrap;' }, [
-        h(NButton, {
-          size: 'small',
-          onClick: () => handleSwitchCDN(row)
-        }, { default: () => '更换节点' }),
-        h(NButton, {
-          size: 'small',
-          onClick: () => handleBindAgent(row)
-        }, { default: () => row.boundAgentId ? '修改代理' : '绑定代理' }),
-        h(NPopconfirm, {
-          onPositiveClick: () => handleToggleStatus(row),
-          positiveText: '确认',
-          negativeText: '取消',
-          style: { width: '450px' }
-        }, {
-          default: () => h('div', { style: 'font-size: 14px; padding: 10px 0;' }, [
-            h('div', { style: 'font-weight: 600; margin-bottom: 8px; font-size: 16px;' }, `${row.status === 'DISABLED' ? '✅ 确认启用？' : '⚠️ 确认停用？'}`),
-            h('div', { style: 'color: #666;' }, `域名: ${row.domainName}`)
-          ]),
-          trigger: () => h(NButton, {
+        h(
+          NButton,
+          {
             size: 'small',
-            type: row.status === 'DISABLED' ? 'success' : 'warning'
-          }, { default: () => row.status === 'DISABLED' ? '启用' : '停用' })
-        }),
-        h(NPopconfirm, {
-          onPositiveClick: () => handleClearCache(row),
-          positiveText: '确认清理',
-          negativeText: '取消',
-          style: { width: '450px' }
-        }, {
-          default: () => h('div', { style: 'font-size: 14px; padding: 10px 0;' }, [
-            h('div', { style: 'font-weight: 600; margin-bottom: 8px; font-size: 16px;' }, '🗑️ 确认清理缓存？'),
-            h('div', { style: 'color: #666;' }, `域名: ${row.domainName}`),
-            h('div', { style: 'color: #ff9800; margin-top: 8px; font-size: 13px;' }, '清理后用户可能需要重新加载资源')
-          ]),
-          trigger: () => h(NButton, {
-            size: 'small'
-          }, { default: () => '清缓存' })
-        }),
-        h(NPopconfirm, {
-          onPositiveClick: () => handleDelete(row),
-          positiveText: '确认删除',
-          negativeText: '取消',
-          style: { width: '500px' }
-        }, {
-          default: () => h('div', { style: 'font-size: 14px; padding: 10px 0;' }, [
-            h('div', { style: 'font-weight: 600; margin-bottom: 8px; font-size: 16px;' }, '⚠️ 确认删除域名？'),
-            h('div', { style: 'color: #666;' }, `域名: ${row.domainName}`),
-            h('div', { style: 'color: #ff4d4f; margin-top: 8px; font-size: 13px;' }, '删除后将无法恢复，请谨慎操作！')
-          ]),
-          trigger: () => h(NButton, {
+            onClick: () => handleSwitchCDN(row),
+          },
+          { default: () => '更换节点' },
+        ),
+        h(
+          NButton,
+          {
             size: 'small',
-            type: 'error'
-          }, { default: () => '删除' })
-        })
+            onClick: () => handleBindAgent(row),
+          },
+          { default: () => (row.boundAgentId ? '修改代理' : '绑定代理') },
+        ),
+        h(
+          NPopconfirm,
+          {
+            onPositiveClick: () => handleToggleStatus(row),
+            positiveText: '确认',
+            negativeText: '取消',
+            style: { width: '450px' },
+          },
+          {
+            default: () =>
+              h('div', { style: 'font-size: 14px; padding: 10px 0;' }, [
+                h(
+                  'div',
+                  {
+                    style:
+                      'font-weight: 600; margin-bottom: 8px; font-size: 16px;',
+                  },
+                  `${row.status === 'DISABLED' ? '✅ 确认启用？' : '⚠️ 确认停用？'}`,
+                ),
+                h('div', { style: 'color: #666;' }, `域名: ${row.domainName}`),
+              ]),
+            trigger: () =>
+              h(
+                NButton,
+                {
+                  size: 'small',
+                  type: row.status === 'DISABLED' ? 'success' : 'warning',
+                },
+                {
+                  default: () => (row.status === 'DISABLED' ? '启用' : '停用'),
+                },
+              ),
+          },
+        ),
+        h(
+          NPopconfirm,
+          {
+            onPositiveClick: () => handleClearCache(row),
+            positiveText: '确认清理',
+            negativeText: '取消',
+            style: { width: '450px' },
+          },
+          {
+            default: () =>
+              h('div', { style: 'font-size: 14px; padding: 10px 0;' }, [
+                h(
+                  'div',
+                  {
+                    style:
+                      'font-weight: 600; margin-bottom: 8px; font-size: 16px;',
+                  },
+                  '🗑️ 确认清理缓存？',
+                ),
+                h('div', { style: 'color: #666;' }, `域名: ${row.domainName}`),
+                h(
+                  'div',
+                  {
+                    style: 'color: #ff9800; margin-top: 8px; font-size: 13px;',
+                  },
+                  '清理后用户可能需要重新加载资源',
+                ),
+              ]),
+            trigger: () =>
+              h(
+                NButton,
+                {
+                  size: 'small',
+                },
+                { default: () => '清缓存' },
+              ),
+          },
+        ),
+        h(
+          NPopconfirm,
+          {
+            onPositiveClick: () => handleDelete(row),
+            positiveText: '确认删除',
+            negativeText: '取消',
+            style: { width: '500px' },
+          },
+          {
+            default: () =>
+              h('div', { style: 'font-size: 14px; padding: 10px 0;' }, [
+                h(
+                  'div',
+                  {
+                    style:
+                      'font-weight: 600; margin-bottom: 8px; font-size: 16px;',
+                  },
+                  '⚠️ 确认删除域名？',
+                ),
+                h('div', { style: 'color: #666;' }, `域名: ${row.domainName}`),
+                h(
+                  'div',
+                  {
+                    style: 'color: #ff4d4f; margin-top: 8px; font-size: 13px;',
+                  },
+                  '删除后将无法恢复，请谨慎操作！',
+                ),
+              ]),
+            trigger: () =>
+              h(
+                NButton,
+                {
+                  size: 'small',
+                  type: 'error',
+                },
+                { default: () => '删除' },
+              ),
+          },
+        ),
       ]);
-    }
-  }
+    },
+  },
 ];
 
 // Methods
@@ -481,18 +618,20 @@ const fetchDomains = async () => {
       page: pagination.page,
       pageSize: pagination.pageSize,
       useType: filters.value.useType,
-      isParentDomain: false // ⭐ Only show subdomains in Web大厅 tab
+      isParentDomain: false, // ⭐ Only show subdomains in Web大厅 tab
     };
-    
+
     if (filters.value.search) params.search = filters.value.search;
-    
+
     const response: any = await domainApi.getDomains(params);
     // Response interceptor may unwrap the data, handle both cases
     const responseData = response.data?.data || response.data || response;
-    
+
     domains.value = responseData.list || responseData.domains || [];
-    pagination.itemCount = responseData.pagination?.total || responseData.total || 0;
-    paginationConfig.itemCount = responseData.pagination?.total || responseData.total || 0;
+    pagination.itemCount =
+      responseData.pagination?.total || responseData.total || 0;
+    paginationConfig.itemCount =
+      responseData.pagination?.total || responseData.total || 0;
   } catch (error: any) {
     message.error('获取域名列表失败');
   } finally {
@@ -503,7 +642,7 @@ const fetchDomains = async () => {
 const resetFilters = () => {
   filters.value = {
     search: '',
-    useType: 'WEB_HALL'
+    useType: 'WEB_HALL',
   };
   pagination.page = 1;
   fetchDomains();
@@ -531,7 +670,7 @@ const confirmSwitchCDN = async () => {
     await domainApi.switchCDN(selectedDomain.value.id, {
       targetProvider: targetCDN.value,
       migrateData: false,
-      updateDNS: true
+      updateDNS: true,
     });
     message.success('CDN节点切换成功');
     showSwitchCDNModal.value = false;
@@ -555,7 +694,7 @@ const confirmBindAgent = async () => {
   loading.value = true;
   try {
     await domainApi.updateDomain(selectedDomain.value.id, {
-      boundAgentId: agentId.value || null
+      boundAgentId: agentId.value || null,
     } as any);
     message.success(agentId.value ? '代理绑定成功' : '代理解绑成功');
     showBindAgentModal.value = false;
@@ -571,9 +710,11 @@ const handleTogglePromotion = async (row: Domain) => {
   loading.value = true;
   try {
     await domainApi.updateDomain(row.id, {
-      isPromotionDomain: !row.isPromotionDomain
+      isPromotionDomain: !row.isPromotionDomain,
     } as any);
-    message.success(row.isPromotionDomain ? '已取消推广域名' : '已设为推广域名');
+    message.success(
+      row.isPromotionDomain ? '已取消推广域名' : '已设为推广域名',
+    );
     fetchDomains();
   } catch (error: any) {
     message.error('操作失败');
@@ -583,11 +724,12 @@ const handleTogglePromotion = async (row: Domain) => {
 };
 
 const handleToggleStatus = async (row: Domain) => {
-  const newStatus = (row.status || 'NORMAL') === 'DISABLED' ? 'NORMAL' : 'DISABLED';
+  const newStatus =
+    (row.status || 'NORMAL') === 'DISABLED' ? 'NORMAL' : 'DISABLED';
   loading.value = true;
   try {
     await domainApi.updateDomain(row.id, {
-      status: newStatus
+      status: newStatus,
     } as any);
     message.success(`域名${newStatus === 'DISABLED' ? '停用' : '启用'}成功`);
     fetchDomains();
@@ -613,7 +755,7 @@ const handleClearCache = async (row: Domain) => {
 const handleDelete = async (domain: Domain) => {
   try {
     const response = await domainApi.deleteDomain(domain.id);
-    
+
     if (response.code === 0) {
       message.success('域名删除成功');
       fetchDomains();
@@ -646,4 +788,3 @@ onMounted(() => {
   }
 }
 </style>
-

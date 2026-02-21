@@ -1,67 +1,135 @@
 <template>
-  <n-modal v-model:show="visible" preset="dialog" title="接口导入子游戏" style="width: 900px">
+  <n-modal
+    v-model:show="visible"
+    preset="dialog"
+    title="接口导入子游戏"
+    style="width: 900px"
+  >
     <div class="flex flex-col gap-4">
       <n-tabs v-model:value="activeTab" type="line" animated>
         <n-tab-pane name="curl" tab="cURL 命令">
           <n-form label-placement="left" label-width="110">
             <n-form-item label="cURL">
-              <n-input v-model:value="curlText" type="textarea" :rows="8" placeholder="粘贴从 Postman/浏览器复制的 cURL 命令" />
+              <n-input
+                v-model:value="curlText"
+                type="textarea"
+                :rows="8"
+                placeholder="粘贴从 Postman/浏览器复制的 cURL 命令"
+              />
             </n-form-item>
             <div class="flex gap-2">
-              <n-button @click="handleParseCurl" :disabled="loading">解析 cURL</n-button>
-              <n-button type="primary" @click="handleTestCurl" :loading="loading">解析并测试</n-button>
+              <n-button @click="handleParseCurl" :disabled="loading"
+                >解析 cURL</n-button
+              >
+              <n-button
+                type="primary"
+                @click="handleTestCurl"
+                :loading="loading"
+                >解析并测试</n-button
+              >
             </div>
-            <div class="text-gray-500" style="margin-top:8px">支持 -X、-H/--header、-d/--data/--data-raw、--compressed 等常见参数。解析后会填充到“请求设置”。</div>
+            <div class="text-gray-500" style="margin-top: 8px">
+              支持 -X、-H/--header、-d/--data/--data-raw、--compressed
+              等常见参数。解析后会填充到“请求设置”。
+            </div>
           </n-form>
         </n-tab-pane>
         <n-tab-pane name="request" tab="请求设置">
           <n-form label-placement="left" label-width="110">
             <div class="grid grid-cols-2 gap-4">
               <n-form-item label="HTTP 方法">
-                <n-select v-model:value="form.method" :options="methodOptions" style="width: 120px" />
+                <n-select
+                  v-model:value="form.method"
+                  :options="methodOptions"
+                  style="width: 120px"
+                />
               </n-form-item>
               <n-form-item label="平台">
-                <n-select v-model:value="form.platformId" :options="platformOptions" placeholder="选择平台" />
+                <n-select
+                  v-model:value="form.platformId"
+                  :options="platformOptions"
+                  placeholder="选择平台"
+                />
               </n-form-item>
             </div>
             <n-form-item label="游戏厂商">
-              <n-input v-model:value="form.vendor" placeholder="例如: PG Soft / CQ9 / JILI" />
+              <n-input
+                v-model:value="form.vendor"
+                placeholder="例如: PG Soft / CQ9 / JILI"
+              />
             </n-form-item>
             <div class="grid grid-cols-2 gap-4">
               <n-form-item label="基础域名">
-                <n-input v-model:value="form.baseUrl" placeholder="例如: https://apis.msh.best" />
+                <n-input
+                  v-model:value="form.baseUrl"
+                  placeholder="例如: https://apis.msh.best"
+                />
               </n-form-item>
               <n-form-item label="Endpoint">
-                <n-input v-model:value="form.endpoint" placeholder="例如: /ley/gamelist" />
+                <n-input
+                  v-model:value="form.endpoint"
+                  placeholder="例如: /ley/gamelist"
+                />
               </n-form-item>
             </div>
             <n-form-item label="接口地址">
-              <n-input v-model:value="form.url" placeholder="自动拼接: 基础域名 + Endpoint" readonly />
+              <n-input
+                v-model:value="form.url"
+                placeholder="自动拼接: 基础域名 + Endpoint"
+                readonly
+              />
             </n-form-item>
             <div class="grid grid-cols-2 gap-4">
               <n-form-item label="币种">
-                <n-select v-model:value="form.currency" :options="currencyOptions" style="width: 160px" />
+                <n-select
+                  v-model:value="form.currency"
+                  :options="currencyOptions"
+                  style="width: 160px"
+                />
               </n-form-item>
               <n-form-item label="根数组路径">
-                <n-input v-model:value="form.rootPath" placeholder="响应中列表路径，如 data.list 或 results" />
+                <n-input
+                  v-model:value="form.rootPath"
+                  placeholder="响应中列表路径，如 data.list 或 results"
+                />
               </n-form-item>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
               <n-form-item label="请求头">
-                <n-dynamic-input v-model:value="form.headers" preset="pair" key-placeholder="Header" value-placeholder="Value" />
+                <n-dynamic-input
+                  v-model:value="form.headers"
+                  preset="pair"
+                  key-placeholder="Header"
+                  value-placeholder="Value"
+                />
               </n-form-item>
               <n-form-item label="查询参数">
-                <n-dynamic-input v-model:value="form.query" preset="pair" key-placeholder="key" value-placeholder="value" />
+                <n-dynamic-input
+                  v-model:value="form.query"
+                  preset="pair"
+                  key-placeholder="key"
+                  value-placeholder="value"
+                />
               </n-form-item>
             </div>
 
-            <n-form-item v-if="form.method === 'POST' || form.method === 'PUT'" label="请求Body(JSON)">
-              <n-input v-model:value="form.bodyText" type="textarea" :rows="6" placeholder='例如: { "page": 1, "pageSize": 100 }' />
+            <n-form-item
+              v-if="form.method === 'POST' || form.method === 'PUT'"
+              label="请求Body(JSON)"
+            >
+              <n-input
+                v-model:value="form.bodyText"
+                type="textarea"
+                :rows="6"
+                placeholder='例如: { "page": 1, "pageSize": 100 }'
+              />
             </n-form-item>
 
             <div class="flex gap-2">
-              <n-button type="primary" :loading="loading" @click="sendRequest">测试并解析</n-button>
+              <n-button type="primary" :loading="loading" @click="sendRequest"
+                >测试并解析</n-button
+              >
               <n-button @click="resetAll" :disabled="loading">重置</n-button>
             </div>
           </n-form>
@@ -70,56 +138,125 @@
         <n-tab-pane name="paste" tab="响应提取">
           <n-form label-placement="left" label-width="110">
             <n-form-item label="根数组路径">
-              <n-input v-model:value="form.rootPath" placeholder="例如: data 或 results.items" />
+              <n-input
+                v-model:value="form.rootPath"
+                placeholder="例如: data 或 results.items"
+              />
             </n-form-item>
             <n-form-item label="响应原文">
-              <n-input v-model:value="responseText" type="textarea" :rows="10" placeholder="将第三方接口返回的响应原文粘贴到这里 (JSON 字符串或对象)" />
+              <n-input
+                v-model:value="responseText"
+                type="textarea"
+                :rows="10"
+                placeholder="将第三方接口返回的响应原文粘贴到这里 (JSON 字符串或对象)"
+              />
             </n-form-item>
             <div class="flex gap-2">
-              <n-button type="primary" :loading="loading" @click="parsePastedResponse">解析响应</n-button>
-              <n-button @click="() => { responseText = ''; }" :disabled="loading">清空</n-button>
+              <n-button
+                type="primary"
+                :loading="loading"
+                @click="parsePastedResponse"
+                >解析响应</n-button
+              >
+              <n-button
+                @click="
+                  () => {
+                    responseText = '';
+                  }
+                "
+                :disabled="loading"
+                >清空</n-button
+              >
             </div>
           </n-form>
         </n-tab-pane>
 
         <n-tab-pane name="mapping" tab="字段映射与预览">
-          <div v-if="sampleKeys.length === 0" class="text-gray-500">请先完成“测试并解析”。</div>
+          <div v-if="sampleKeys.length === 0" class="text-gray-500">
+            请先完成“测试并解析”。
+          </div>
           <div v-else class="flex flex-col gap-4">
             <div class="grid grid-cols-2 gap-4">
               <n-form-item label="所属平台">
-                <n-select v-model:value="form.platformId" :options="platformOptions" placeholder="选择平台" />
+                <n-select
+                  v-model:value="form.platformId"
+                  :options="platformOptions"
+                  placeholder="选择平台"
+                />
               </n-form-item>
               <n-form-item label="游戏厂商">
-                <n-input v-model:value="form.vendor" placeholder="例如: PG Soft / CQ9 / JILI" />
+                <n-input
+                  v-model:value="form.vendor"
+                  placeholder="例如: PG Soft / CQ9 / JILI"
+                />
               </n-form-item>
             </div>
             <div class="grid grid-cols-2 gap-4">
               <n-form-item label="游戏ID 字段">
-                <n-select v-model:value="mapping.gameId" :options="pathOptions" filterable placeholder="选择或输入路径" />
+                <n-select
+                  v-model:value="mapping.gameId"
+                  :options="pathOptions"
+                  filterable
+                  placeholder="选择或输入路径"
+                />
               </n-form-item>
               <n-form-item label="中文名称 字段">
-                <n-select v-model:value="mapping.gameName" :options="pathOptions" filterable />
+                <n-select
+                  v-model:value="mapping.gameName"
+                  :options="pathOptions"
+                  filterable
+                />
               </n-form-item>
               <n-form-item label="名称语言优先级">
-                <n-select v-model:value="nameKeyPriority" multiple :options="nameKeyOptions" placeholder="选择语言优先级（可多选拖动排序）" />
+                <n-select
+                  v-model:value="nameKeyPriority"
+                  multiple
+                  :options="nameKeyOptions"
+                  placeholder="选择语言优先级（可多选拖动排序）"
+                />
               </n-form-item>
               <n-form-item label="英文名称 字段">
-                <n-select v-model:value="mapping.gameNameEn" :options="pathOptions" filterable />
+                <n-select
+                  v-model:value="mapping.gameNameEn"
+                  :options="pathOptions"
+                  filterable
+                />
               </n-form-item>
               <n-form-item label="游戏类型 字段">
-                <n-select v-model:value="mapping.gameType" :options="pathOptions" filterable />
+                <n-select
+                  v-model:value="mapping.gameType"
+                  :options="pathOptions"
+                  filterable
+                />
               </n-form-item>
               <n-form-item label="图标URL 字段">
-                <n-select v-model:value="mapping.iconUrl" :options="pathOptions" filterable />
+                <n-select
+                  v-model:value="mapping.iconUrl"
+                  :options="pathOptions"
+                  filterable
+                />
               </n-form-item>
             </div>
 
-            <n-alert type="info" v-if="preview.length">共解析 {{ preview.length }} 条，最多显示 50 条预览。</n-alert>
-            <n-data-table :columns="previewColumns" :data="preview.slice(0,50)" :scroll-x="900" size="small" />
+            <n-alert type="info" v-if="preview.length"
+              >共解析 {{ preview.length }} 条，最多显示 50 条预览。</n-alert
+            >
+            <n-data-table
+              :columns="previewColumns"
+              :data="preview.slice(0, 50)"
+              :scroll-x="900"
+              size="small"
+            />
 
             <div class="flex justify-end gap-2">
               <n-button @click="visible = false">取消</n-button>
-              <n-button type="primary" :disabled="!form.platformId || preview.length === 0" :loading="importing" @click="doImport">开始导入</n-button>
+              <n-button
+                type="primary"
+                :disabled="!form.platformId || preview.length === 0"
+                :loading="importing"
+                @click="doImport"
+                >开始导入</n-button
+              >
             </div>
           </div>
         </n-tab-pane>
@@ -130,14 +267,31 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, watchEffect, h } from 'vue';
-import { NModal, NForm, NFormItem, NInput, NSelect, NDynamicInput, NButton, NDataTable, NTabs, NTabPane, NAlert, NImage, type DataTableColumns } from 'naive-ui';
+import {
+  NModal,
+  NForm,
+  NFormItem,
+  NInput,
+  NSelect,
+  NDynamicInput,
+  NButton,
+  NDataTable,
+  NTabs,
+  NTabPane,
+  NAlert,
+  NImage,
+  type DataTableColumns,
+} from 'naive-ui';
 import { notification } from '#/adapter/naive';
 import { requestClient } from '#/api/request';
 import { createGameApi, type CreateGameParams } from '#/api/game/subgame';
 
 function isLikelyJson(text: string): boolean {
   const t = (text || '').trim();
-  return (t.startsWith('{') && t.endsWith('}')) || (t.startsWith('[') && t.endsWith(']'));
+  return (
+    (t.startsWith('{') && t.endsWith('}')) ||
+    (t.startsWith('[') && t.endsWith(']'))
+  );
 }
 
 function tryParseJsonOrReturn(text: string): any {
@@ -159,11 +313,22 @@ function parseTextToJsonFlexible(text: string): any {
     src = src.slice(0, noiseIdx).trim();
   }
   // If whole content is a quoted JSON string, unquote first
-  if ((src.startsWith('"') && src.endsWith('"')) || (src.startsWith("'") && src.endsWith("'"))) {
-    try { src = JSON.parse(src); } catch { /* ignore */ }
+  if (
+    (src.startsWith('"') && src.endsWith('"')) ||
+    (src.startsWith("'") && src.endsWith("'"))
+  ) {
+    try {
+      src = JSON.parse(src);
+    } catch {
+      /* ignore */
+    }
   }
   if (isLikelyJson(src)) {
-    try { return JSON.parse(src); } catch { /* fallthrough */ }
+    try {
+      return JSON.parse(src);
+    } catch {
+      /* fallthrough */
+    }
   }
   // Try extract data array from text with balanced bracket scan
   const keyIdx = src.indexOf('"data"');
@@ -178,7 +343,11 @@ function parseTextToJsonFlexible(text: string): any {
           depth--;
           if (depth === 0) {
             const arrStr = src.slice(startBracket, i + 1);
-            try { return { data: JSON.parse(arrStr) }; } catch { /* ignore */ }
+            try {
+              return { data: JSON.parse(arrStr) };
+            } catch {
+              /* ignore */
+            }
             break;
           }
         }
@@ -231,7 +400,9 @@ const form = reactive({
 
 const rawItems = ref<any[]>([]);
 const sampleKeys = ref<string[]>([]);
-const pathOptions = computed(() => sampleKeys.value.map(k => ({ label: k, value: k })));
+const pathOptions = computed(() =>
+  sampleKeys.value.map((k) => ({ label: k, value: k })),
+);
 
 const mapping = reactive({
   gameId: 'id',
@@ -243,7 +414,16 @@ const mapping = reactive({
 
 // Preferred language keys for gameName objects
 const nameKeyPriority = ref<string[]>([
-  'zh-hans', 'zh-hant', 'en', 'th', 'vi', 'ko', 'pt', 'ja', 'es', 'id'
+  'zh-hans',
+  'zh-hant',
+  'en',
+  'th',
+  'vi',
+  'ko',
+  'pt',
+  'ja',
+  'es',
+  'id',
 ]);
 const nameKeyOptions = computed(() => {
   const keys = new Set<string>(nameKeyPriority.value);
@@ -251,15 +431,35 @@ const nameKeyOptions = computed(() => {
   const sample = rawItems.value.slice(0, 30);
   for (const it of sample) {
     const candidate = getByPath(it, mapping.gameName);
-    if (candidate && typeof candidate === 'object' && !Array.isArray(candidate)) {
-      Object.keys(candidate).forEach(k => keys.add(k));
+    if (
+      candidate &&
+      typeof candidate === 'object' &&
+      !Array.isArray(candidate)
+    ) {
+      Object.keys(candidate).forEach((k) => keys.add(k));
     }
   }
-  return Array.from(keys).map(k => ({ label: k, value: k }));
+  return Array.from(keys).map((k) => ({ label: k, value: k }));
 });
 
 // Normalize vendor-specific game type to standardized enum
-function normalizeGameTypeToEnum(typeValue: any): 'VIDEO' | 'LIVE' | 'SLOT' | 'LOTTERY' | 'SPORTS' | 'ESPORTS' | 'HUNTING' | 'CHESS_CARDS' | 'TABLE' | 'ARCADE' | 'SIMULATION' | 'COCKFIGHT' | 'OTHER' | undefined {
+function normalizeGameTypeToEnum(
+  typeValue: any,
+):
+  | 'VIDEO'
+  | 'LIVE'
+  | 'SLOT'
+  | 'LOTTERY'
+  | 'SPORTS'
+  | 'ESPORTS'
+  | 'HUNTING'
+  | 'CHESS_CARDS'
+  | 'TABLE'
+  | 'ARCADE'
+  | 'SIMULATION'
+  | 'COCKFIGHT'
+  | 'OTHER'
+  | undefined {
   if (typeValue == null) return undefined;
   const raw = String(typeValue).trim();
   // Numeric mapping as provided by vendor: 1: Video, 2: Slot, 3: Lottery, 4: Sports, 5: E-sports, 6: Hunting, 7: Chess and Cards
@@ -282,7 +482,8 @@ function normalizeGameTypeToEnum(typeValue: any): 'VIDEO' | 'LIVE' | 'SLOT' | 'L
   if (/(sport|sportsbook|betting)/.test(lower)) return 'SPORTS';
   if (/(e-?sport|esports)/.test(lower)) return 'ESPORTS';
   if (/(hunt|fishing|arcade_fishing|捕鱼)/.test(lower)) return 'HUNTING';
-  if (/(chess|cards|poker|baccarat|blackjack|roulette|桌面|棋牌)/.test(lower)) return 'CHESS_CARDS';
+  if (/(chess|cards|poker|baccarat|blackjack|roulette|桌面|棋牌)/.test(lower))
+    return 'CHESS_CARDS';
   if (/(table)/.test(lower)) return 'TABLE';
   if (/(arcade|街机)/.test(lower)) return 'ARCADE';
   if (/(simulation|模拟)/.test(lower)) return 'SIMULATION';
@@ -297,14 +498,23 @@ const previewColumns = computed<DataTableColumns<Record<string, any>>>(() => [
   { title: '英文名称', key: 'gameNameEn', width: 200 },
   { title: '类型', key: 'gameType', width: 120 },
   {
-    title: '图标', key: 'iconUrl', width: 160,
+    title: '图标',
+    key: 'iconUrl',
+    width: 160,
     render: (row) => {
       const url = row.iconUrl as string;
       if (url && /^https?:\/\//i.test(url)) {
-        return h(NImage, { src: url, width: 48, height: 48, objectFit: 'cover', previewDisabled: true, fallbackSrc: '/placeholder-game.png' });
+        return h(NImage, {
+          src: url,
+          width: 48,
+          height: 48,
+          objectFit: 'cover',
+          previewDisabled: true,
+          fallbackSrc: '/placeholder-game.png',
+        });
       }
       return h('span', { style: 'color:#999' }, url || '-');
-    }
+    },
   },
 ]);
 
@@ -351,20 +561,34 @@ function findFirstArray(o: any): any[] | null {
   return null;
 }
 
-function parseCurl(curl: string): { method?: string; url?: string; headers?: Record<string, string>; body?: any } {
+function parseCurl(curl: string): {
+  method?: string;
+  url?: string;
+  headers?: Record<string, string>;
+  body?: any;
+} {
   const result: any = { headers: {} };
-  const lines = curl.split(/\\n|\n/).map(l => l.trim()).filter(Boolean);
+  const lines = curl
+    .split(/\\n|\n/)
+    .map((l) => l.trim())
+    .filter(Boolean);
   let joined = lines.join(' ');
   joined = joined.replace(/^\s*curl\s+/, '');
 
   // Prefer explicit --url option
-  const explicitUrl = joined.match(/--url\s+(["\'])(https?:\/\/[^"\']+)\1/i) || joined.match(/--url\s+(https?:\/\/[^\s]+)/i);
+  const explicitUrl =
+    joined.match(/--url\s+(["\'])(https?:\/\/[^"\']+)\1/i) ||
+    joined.match(/--url\s+(https?:\/\/[^\s]+)/i);
   if (explicitUrl) {
-    result.url = (explicitUrl[2] || explicitUrl[1])?.replace(/^['\"]|['\"]$/g, '');
+    result.url = (explicitUrl[2] || explicitUrl[1])?.replace(
+      /^['\"]|['\"]$/g,
+      '',
+    );
   }
 
   // Extract headers first so URLs inside headers (e.g., Referer) don't confuse URL detection
-  const headerRegex = /(?:-H|--header)\s+(['\"])\s*([^:'\"]+)\s*:\s*([^'\"]*)\1/g;
+  const headerRegex =
+    /(?:-H|--header)\s+(['\"])\s*([^:'\"]+)\s*:\s*([^'\"]*)\1/g;
   let temp = joined;
   let hm: RegExpExecArray | null;
   while ((hm = headerRegex.exec(joined)) !== null) {
@@ -382,19 +606,25 @@ function parseCurl(curl: string): { method?: string; url?: string; headers?: Rec
       result.url = urlTokens[0];
     } else {
       // Also handle quoted URL tokens at start
-      const quoted = temp.match(/^["\'](https?:\/\/[^"\']+)["\']/) || temp.match(/(^|\s)(["\'])(https?:\/\/[^"\']+)\2/);
+      const quoted =
+        temp.match(/^["\'](https?:\/\/[^"\']+)["\']/) ||
+        temp.match(/(^|\s)(["\'])(https?:\/\/[^"\']+)\2/);
       if (quoted) {
-        result.url = (quoted[1] && quoted[1].startsWith('http')) ? quoted[1] : quoted[3];
+        result.url =
+          quoted[1] && quoted[1].startsWith('http') ? quoted[1] : quoted[3];
       }
     }
   }
 
   // Method -X/--request
-  const methodMatch = joined.match(/(?:-X|--request)\s+(GET|POST|PUT|PATCH|DELETE|OPTIONS|HEAD)/i);
+  const methodMatch = joined.match(
+    /(?:-X|--request)\s+(GET|POST|PUT|PATCH|DELETE|OPTIONS|HEAD)/i,
+  );
   if (methodMatch) result.method = methodMatch[1].toUpperCase();
 
   // Data -d/--data/--data-raw
-  const dataRegex = /(?:--data-binary|--data-raw|--data|-d)\s+(['\"])\s*([\s\S]*?)\1/g;
+  const dataRegex =
+    /(?:--data-binary|--data-raw|--data|-d)\s+(['\"])\s*([\s\S]*?)\1/g;
   const dm = dataRegex.exec(joined);
   if (dm) {
     const raw = dm[2];
@@ -409,7 +639,11 @@ function parseCurl(curl: string): { method?: string; url?: string; headers?: Rec
 // Keep form.url in sync with baseUrl + endpoint
 watchEffect(() => {
   const base = (form.baseUrl || '').replace(/\/$/, '');
-  const ep = (form.endpoint || '').startsWith('/') ? form.endpoint : (form.endpoint ? '/' + form.endpoint : '');
+  const ep = (form.endpoint || '').startsWith('/')
+    ? form.endpoint
+    : form.endpoint
+      ? '/' + form.endpoint
+      : '';
   if (base || ep) {
     form.url = `${base}${ep}`;
   } else {
@@ -417,7 +651,12 @@ watchEffect(() => {
   }
 });
 
-function applyParsedToForm(parsed: { method?: string; url?: string; headers?: Record<string, string>; body?: any }) {
+function applyParsedToForm(parsed: {
+  method?: string;
+  url?: string;
+  headers?: Record<string, string>;
+  body?: any;
+}) {
   if (parsed.method) form.method = parsed.method;
   if (parsed.url) {
     form.url = parsed.url;
@@ -428,10 +667,16 @@ function applyParsedToForm(parsed: { method?: string; url?: string; headers?: Re
     } catch {}
   }
   if (parsed.headers) {
-    form.headers = Object.entries(parsed.headers).map(([key, value]) => ({ key, value }));
+    form.headers = Object.entries(parsed.headers).map(([key, value]) => ({
+      key,
+      value,
+    }));
   }
   if (parsed.body !== undefined) {
-    form.bodyText = typeof parsed.body === 'string' ? parsed.body : JSON.stringify(parsed.body, null, 2);
+    form.bodyText =
+      typeof parsed.body === 'string'
+        ? parsed.body
+        : JSON.stringify(parsed.body, null, 2);
   }
 }
 
@@ -461,14 +706,24 @@ async function sendRequest() {
     loading.value = true;
     const headers = toObjectFromPairs(form.headers);
     const params = toObjectFromPairs(form.query);
-    const body = form.bodyText ? tryParseJsonOrReturn(form.bodyText) : undefined;
+    const body = form.bodyText
+      ? tryParseJsonOrReturn(form.bodyText)
+      : undefined;
 
     // Use backend proxy via requestClient so Authorization is attached automatically
-    const wrapped = await requestClient.post<{ success: boolean; status: number; data: any }>(
-      '/analytics/proxy',
-      { url: form.url, method: form.method, headers, query: params, body },
-    );
-    if (!(wrapped as any).success) throw new Error((wrapped as any).message || 'Proxy call failed');
+    const wrapped = await requestClient.post<{
+      success: boolean;
+      status: number;
+      data: any;
+    }>('/analytics/proxy', {
+      url: form.url,
+      method: form.method,
+      headers,
+      query: params,
+      body,
+    });
+    if (!(wrapped as any).success)
+      throw new Error((wrapped as any).message || 'Proxy call failed');
     let resp = parseTextToJsonFlexible((wrapped as any).data);
 
     let arr: any[] | null = null;
@@ -488,7 +743,7 @@ async function sendRequest() {
     // collect keys (depth 1) for mapping options
     const first = arr[0] || {};
     const keys = new Set<string>();
-    Object.keys(first).forEach(k => keys.add(k));
+    Object.keys(first).forEach((k) => keys.add(k));
     sampleKeys.value = Array.from(keys);
 
     buildPreview();
@@ -520,7 +775,7 @@ function parsePastedResponse() {
     }
     const first = arr[0] || {};
     const keys = new Set<string>();
-    Object.keys(first).forEach(k => keys.add(k));
+    Object.keys(first).forEach((k) => keys.add(k));
     sampleKeys.value = Array.from(keys);
     buildPreview();
     activeTab.value = 'mapping';
@@ -533,7 +788,9 @@ function buildPreview() {
   preview.value = rawItems.value.map((it) => ({
     gameId: getByPath(it, mapping.gameId) ?? '',
     gameName: resolveGameName(getByPath(it, mapping.gameName)),
-    gameNameEn: resolveEnglishName(getByPath(it, mapping.gameNameEn || mapping.gameName)),
+    gameNameEn: resolveEnglishName(
+      getByPath(it, mapping.gameNameEn || mapping.gameName),
+    ),
     gameType: getByPath(it, mapping.gameType) ?? '',
     iconUrl: getByPath(it, mapping.iconUrl) ?? '',
     vendor: form.vendor || '',
@@ -548,7 +805,7 @@ function resolveGameName(value: any): string {
       if (value[key]) return String(value[key]);
     }
     // Fallback: first string property
-    const first = Object.values(value).find(v => typeof v === 'string');
+    const first = Object.values(value).find((v) => typeof v === 'string');
     if (first) return String(first);
     return '';
   }
@@ -564,7 +821,7 @@ function resolveEnglishName(value: any): string {
       if (value[key]) return String(value[key]);
     }
     // fallback: if a prioritized Chinese exists and english missing, return any string
-    const first = Object.values(value).find(v => typeof v === 'string');
+    const first = Object.values(value).find((v) => typeof v === 'string');
     if (first) return String(first);
     return '';
   }
@@ -586,9 +843,13 @@ async function doImport() {
   }
   try {
     importing.value = true;
-    let success = 0, failed = 0;
+    let success = 0,
+      failed = 0;
     for (const row of preview.value) {
-      if (!row.gameId || !row.gameName) { failed++; continue; }
+      if (!row.gameId || !row.gameName) {
+        failed++;
+        continue;
+      }
       const payload: CreateGameParams = {
         platformId: Number(form.platformId),
         gameId: String(row.gameId),
@@ -614,7 +875,9 @@ async function doImport() {
         failed++;
       }
     }
-    notification.success({ content: `导入完成：成功 ${success} 条，失败 ${failed} 条` });
+    notification.success({
+      content: `导入完成：成功 ${success} 条，失败 ${failed} 条`,
+    });
     emit('success');
     visible.value = false;
   } finally {
@@ -624,13 +887,25 @@ async function doImport() {
 </script>
 
 <style scoped>
-.grid { display: grid; }
-.grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.gap-4 { gap: 1rem; }
-.flex { display: flex; }
-.flex-col { flex-direction: column; }
-.justify-end { justify-content: flex-end; }
-.text-gray-500 { color: #6b7280; }
+.grid {
+  display: grid;
+}
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.gap-4 {
+  gap: 1rem;
+}
+.flex {
+  display: flex;
+}
+.flex-col {
+  flex-direction: column;
+}
+.justify-end {
+  justify-content: flex-end;
+}
+.text-gray-500 {
+  color: #6b7280;
+}
 </style>
-
-

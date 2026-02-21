@@ -1,6 +1,6 @@
 /**
  * ✅ PERFORMANCE: Smart Polling with Adaptive Intervals
- * 
+ *
  * Features:
  * - Adaptive interval based on response time
  * - Pause when tab is hidden (saves resources)
@@ -8,7 +8,7 @@
  * - Configurable min/max intervals
  */
 
-import { ref, onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 
 interface SmartPollingOptions {
   /**
@@ -16,25 +16,25 @@ interface SmartPollingOptions {
    * Default: 30 seconds
    */
   minInterval?: number;
-  
+
   /**
    * Maximum interval (ms) - slowest polling rate
    * Default: 5 minutes
    */
   maxInterval?: number;
-  
+
   /**
    * Initial interval (ms)
    * Default: 60 seconds
    */
   initialInterval?: number;
-  
+
   /**
    * Pause when tab is hidden?
    * Default: true
    */
   pauseOnHidden?: boolean;
-  
+
   /**
    * Adaptive interval based on response time?
    * If response > 1s, increase interval
@@ -48,12 +48,12 @@ interface SmartPollingOptions {
  */
 export function useSmartPolling(
   callback: () => Promise<void>,
-  options: SmartPollingOptions = {}
+  options: SmartPollingOptions = {},
 ) {
   const {
-    minInterval = 30000,      // 30 seconds minimum
-    maxInterval = 300000,      // 5 minutes maximum
-    initialInterval = 60000,   // 1 minute initial
+    minInterval = 30_000, // 30 seconds minimum
+    maxInterval = 300_000, // 5 minutes maximum
+    initialInterval = 60_000, // 1 minute initial
     pauseOnHidden = true,
     adaptive = true,
   } = options;
@@ -69,40 +69,48 @@ export function useSmartPolling(
    */
   const execute = async () => {
     if (isPaused.value || isRunning.value) return;
-    
+
     isRunning.value = true;
     const startTime = Date.now();
-    
+
     try {
       await callback();
       lastResponseTime = Date.now() - startTime;
-      
+
       // ✅ Adaptive: If response > 1s, increase interval
       if (adaptive && lastResponseTime > 1000) {
         // Increase interval by 50% (capped at maxInterval)
         currentInterval.value = Math.min(
           Math.floor(currentInterval.value * 1.5),
-          maxInterval
+          maxInterval,
         );
-        console.log(`⏱️ Response took ${lastResponseTime}ms, increasing interval to ${currentInterval.value}ms`);
-      } else if (adaptive && lastResponseTime < 500 && currentInterval.value > minInterval) {
+        console.log(
+          `⏱️ Response took ${lastResponseTime}ms, increasing interval to ${currentInterval.value}ms`,
+        );
+      } else if (
+        adaptive &&
+        lastResponseTime < 500 &&
+        currentInterval.value > minInterval
+      ) {
         // If response < 500ms, decrease interval (capped at minInterval)
         currentInterval.value = Math.max(
           Math.floor(currentInterval.value * 0.8),
-          minInterval
+          minInterval,
         );
-        console.log(`⚡ Response took ${lastResponseTime}ms, decreasing interval to ${currentInterval.value}ms`);
+        console.log(
+          `⚡ Response took ${lastResponseTime}ms, decreasing interval to ${currentInterval.value}ms`,
+        );
       }
     } catch (error) {
       console.error('Polling error:', error);
       // On error, increase interval (exponential backoff)
       currentInterval.value = Math.min(
         Math.floor(currentInterval.value * 2),
-        maxInterval
+        maxInterval,
       );
     } finally {
       isRunning.value = false;
-      
+
       // Schedule next execution
       if (!isPaused.value) {
         scheduleNext();
@@ -117,7 +125,7 @@ export function useSmartPolling(
     if (intervalId) {
       clearTimeout(intervalId);
     }
-    
+
     intervalId = setTimeout(() => {
       execute();
     }, currentInterval.value);

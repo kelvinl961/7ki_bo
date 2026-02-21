@@ -13,7 +13,9 @@
           {{ agentDetail?.referralCode || '--' }}
         </n-descriptions-item>
         <n-descriptions-item label="代理等级">
-          <n-tag type="warning" size="small">{{ agentDetail?.level || '--' }}级</n-tag>
+          <n-tag type="warning" size="small"
+            >{{ agentDetail?.level || '--' }}级</n-tag
+          >
         </n-descriptions-item>
         <n-descriptions-item label="状态">
           <n-tag :type="getStatusType(agentDetail?.isActive)" size="small">
@@ -21,13 +23,17 @@
           </n-tag>
         </n-descriptions-item>
         <n-descriptions-item label="币种">
-          <n-tag type="info" size="small">{{ agentDetail?.currency || '--' }}</n-tag>
+          <n-tag type="info" size="small">{{
+            agentDetail?.currency || '--'
+          }}</n-tag>
         </n-descriptions-item>
         <n-descriptions-item label="注册来源">
           {{ agentDetail?.registrationSource || '--' }}
         </n-descriptions-item>
         <n-descriptions-item label="注册模式">
-          <n-tag type="info" size="small">{{ agentDetail?.mode || '--' }}</n-tag>
+          <n-tag type="info" size="small">{{
+            agentDetail?.mode || '--'
+          }}</n-tag>
         </n-descriptions-item>
         <n-descriptions-item label="层级等级">
           {{ agentDetail?.hierarchyLevel || '--' }}
@@ -63,15 +69,25 @@
           </span>
         </n-descriptions-item>
         <n-descriptions-item label="佣金模式">
-          <n-tag type="info" size="small">{{ agentDetail?.commissionMode || '--' }}</n-tag>
+          <n-tag type="info" size="small">{{
+            agentDetail?.commissionMode || '--'
+          }}</n-tag>
         </n-descriptions-item>
         <n-descriptions-item label="下级代理数">
-          <span class="font-semibold">{{ agentDetail?.otherCount || 0 }} 个</span>
+          <span class="font-semibold"
+            >{{ agentDetail?.otherCount || 0 }} 个</span
+          >
         </n-descriptions-item>
         <n-descriptions-item label="推荐链接">
           <div class="flex items-center gap-2">
-            <span class="truncate max-w-32">{{ agentDetail?.referralUrl || '--' }}</span>
-            <n-button size="tiny" v-if="agentDetail?.referralUrl" @click="copyToClipboard(agentDetail.referralUrl)">
+            <span class="max-w-32 truncate">{{
+              agentDetail?.referralUrl || '--'
+            }}</span>
+            <n-button
+              size="tiny"
+              v-if="agentDetail?.referralUrl"
+              @click="copyToClipboard(agentDetail.referralUrl)"
+            >
               复制
             </n-button>
           </div>
@@ -99,13 +115,15 @@
 
     <!-- Activity Statistics -->
     <n-card title="活动统计" class="mb-4">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
         <div class="stat-card">
           <div class="stat-value">{{ agentDetail?.otherCount || 0 }}</div>
           <div class="stat-label">下级代理</div>
         </div>
         <div class="stat-card">
-          <div class="stat-value">{{ formatCurrency(agentDetail?.commissionTotal) }}</div>
+          <div class="stat-value">
+            {{ formatCurrency(agentDetail?.commissionTotal) }}
+          </div>
           <div class="stat-label">累计佣金</div>
         </div>
         <div class="stat-card">
@@ -130,19 +148,17 @@
         <n-button type="warning" @click="handleExportProfile">
           导出资料
         </n-button>
-        <n-button @click="handleRefreshProfile">
-          刷新资料
-        </n-button>
+        <n-button @click="handleRefreshProfile"> 刷新资料 </n-button>
       </div>
     </n-card>
 
     <!-- Profile History -->
     <n-card title="资料变更历史" class="mb-4">
-      <div class="text-center text-gray-500 py-8">
+      <div class="py-8 text-center text-gray-500">
         <n-icon size="48" class="mb-4">
           <TimeOutline />
         </n-icon>
-        <div class="text-lg font-medium mb-2">暂无变更记录</div>
+        <div class="mb-2 text-lg font-medium">暂无变更记录</div>
         <div class="text-sm">代理资料变更历史将在此显示</div>
       </div>
     </n-card>
@@ -151,19 +167,19 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { 
-  NCard, 
-  NDescriptions, 
-  NDescriptionsItem, 
-  NButton, 
-  NTag, 
+import {
+  NCard,
+  NDescriptions,
+  NDescriptionsItem,
+  NButton,
+  NTag,
   NIcon,
-  useMessage 
+  useMessage,
 } from 'naive-ui';
 import { TimeOutline } from '@vicons/ionicons5';
-import { 
-  getAgentProfileInfoApi, 
-  type AgentProfileInfo 
+import {
+  getAgentProfileInfoApi,
+  type AgentProfileInfo,
 } from '#/api/agency/agent-details';
 
 interface Props {
@@ -171,7 +187,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  agentId: 0
+  agentId: 0,
 });
 
 const message = useMessage();
@@ -183,7 +199,7 @@ const agentDetail = ref<AgentProfileInfo | null>(null);
 // Methods
 const loadAgentProfile = async () => {
   if (!props.agentId) return;
-  
+
   loading.value = true;
   try {
     const data = await getAgentProfileInfoApi(props.agentId);

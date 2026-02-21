@@ -90,7 +90,7 @@
     </n-form>
 
     <template #action>
-      <div class="flex gap-2 justify-end">
+      <div class="flex justify-end gap-2">
         <n-button @click="handleCancel">取消</n-button>
         <n-button type="primary" @click="handleSubmit" :loading="submitting">
           {{ isEditing ? '更新' : '创建' }}
@@ -123,7 +123,10 @@ import {
   type CreateHotGameParams,
   type UpdateHotGameParams,
 } from '#/api/game/hotGame';
-import { getGamePlatformListApi, type GamePlatformItem } from '#/api/game/platform';
+import {
+  getGamePlatformListApi,
+  type GamePlatformItem,
+} from '#/api/game/platform';
 
 interface Props {
   visible: boolean;
@@ -165,7 +168,12 @@ const tagTypeOptions = [
 
 const formRules: FormRules = {
   platformId: [
-    { required: true, message: '请选择平台', trigger: 'change', type: 'number' },
+    {
+      required: true,
+      message: '请选择平台',
+      trigger: 'change',
+      type: 'number',
+    },
   ],
   gameId: [
     { required: true, message: '请输入游戏ID', trigger: 'blur' },
@@ -178,19 +186,24 @@ const formRules: FormRules = {
   gameCategory: [
     { required: true, message: '请选择游戏类型', trigger: 'change' },
   ],
-  tagType: [
-    { required: true, message: '请选择标签类型', trigger: 'change' },
-  ],
-  currency: [
-    { required: true, message: '请选择币种', trigger: 'change' },
-  ],
+  tagType: [{ required: true, message: '请选择标签类型', trigger: 'change' }],
+  currency: [{ required: true, message: '请选择币种', trigger: 'change' }],
   sortOrder: [
-    { required: true, message: '请输入排序值', trigger: 'blur', type: 'number' },
-    { min: 0, max: 9999, message: '排序值范围为0-9999', trigger: 'blur', type: 'number' },
+    {
+      required: true,
+      message: '请输入排序值',
+      trigger: 'blur',
+      type: 'number',
+    },
+    {
+      min: 0,
+      max: 9999,
+      message: '排序值范围为0-9999',
+      trigger: 'blur',
+      type: 'number',
+    },
   ],
-  remark: [
-    { max: 200, message: '备注长度不能超过200个字符', trigger: 'blur' },
-  ],
+  remark: [{ max: 200, message: '备注长度不能超过200个字符', trigger: 'blur' }],
 };
 
 // 监听 visible 变化
@@ -202,7 +215,7 @@ watch(
       loadOptions();
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 // 监听 hotGameData 变化
@@ -213,7 +226,7 @@ watch(
       loadFormData();
     }
   },
-  { deep: true }
+  { deep: true },
 );
 
 const loadFormData = () => {
@@ -250,21 +263,22 @@ const loadOptions = async () => {
   try {
     // 加载平台选项
     const platformResponse = await getGamePlatformListApi({ pageSize: 1000 });
-    platformOptions.value = platformResponse.list?.map((platform: GamePlatformItem) => ({
-      label: platform.platformName,
-      value: platform.id,
-    })) || [];
+    platformOptions.value =
+      platformResponse.list?.map((platform: GamePlatformItem) => ({
+        label: platform.platformName,
+        value: platform.id,
+      })) || [];
 
     // 加载游戏类型选项
     const categories = await getGameCategoriesApi();
-    gameCategoryOptions.value = categories.map(category => ({
+    gameCategoryOptions.value = categories.map((category) => ({
       label: category,
       value: category,
     }));
 
     // 加载币种选项
     const currencies = await getCurrenciesApi();
-    currencyOptions.value = currencies.map(currency => ({
+    currencyOptions.value = currencies.map((currency) => ({
       label: currency,
       value: currency,
     }));
@@ -297,7 +311,10 @@ const handleSubmit = async () => {
     };
 
     if (isEditing.value) {
-      await updateHotGameApi(props.hotGameData!.id, data as UpdateHotGameParams);
+      await updateHotGameApi(
+        props.hotGameData!.id,
+        data as UpdateHotGameParams,
+      );
       notification.success({
         content: '更新成功',
         duration: 3000,
@@ -335,4 +352,4 @@ const handleAfterLeave = () => {
   resetForm();
   formRef.value?.restoreValidation();
 };
-</script> 
+</script>

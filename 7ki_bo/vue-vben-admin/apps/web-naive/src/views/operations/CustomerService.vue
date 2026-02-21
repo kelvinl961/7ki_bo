@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="mb-6">
       <h2 class="text-2xl font-bold">客服管理</h2>
-      <p class="text-gray-500 mt-2">管理在线客服、IM客服和常见问题</p>
+      <p class="mt-2 text-gray-500">管理在线客服、IM客服和常见问题</p>
     </div>
 
     <!-- Tabs -->
@@ -30,8 +30,12 @@
 import { ref, defineAsyncComponent } from 'vue';
 import { NTabs, NTabPane } from 'naive-ui';
 // ✅ PERFORMANCE FIX: Lazy load tab components - they only load when their tab is opened
-const OnlineCustomerServiceTab = defineAsyncComponent(() => import('./components/OnlineCustomerServiceTab.vue'));
-const OtherCustomerServiceTab = defineAsyncComponent(() => import('./components/OtherCustomerServiceTab.vue'));
+const OnlineCustomerServiceTab = defineAsyncComponent(
+  () => import('./components/OnlineCustomerServiceTab.vue'),
+);
+const OtherCustomerServiceTab = defineAsyncComponent(
+  () => import('./components/OtherCustomerServiceTab.vue'),
+);
 const FAQTab = defineAsyncComponent(() => import('./components/FAQTab.vue'));
 
 // Active tab
@@ -45,13 +49,3 @@ const activeTab = ref('online');
   min-height: calc(100vh - 120px);
 }
 </style>
-
-
-
-
-
-
-
-
-
-

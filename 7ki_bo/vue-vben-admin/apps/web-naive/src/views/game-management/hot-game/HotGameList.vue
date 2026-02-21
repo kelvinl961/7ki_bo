@@ -2,7 +2,7 @@
   <div class="hot-game-list">
     <!-- 搜索和筛选区域 -->
     <n-card class="mb-4">
-      <div class="flex flex-wrap gap-4 items-end">
+      <div class="flex flex-wrap items-end gap-4">
         <!-- 关键词搜索 -->
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium">关键词搜索</label>
@@ -13,9 +13,7 @@
               style="width: 280px"
               @keyup.enter="handleFilter"
             />
-            <n-button type="primary" @click="handleFilter">
-              搜索
-            </n-button>
+            <n-button type="primary" @click="handleFilter"> 搜索 </n-button>
           </div>
         </div>
 
@@ -46,13 +44,11 @@
         </div>
 
         <!-- 重置按钮 -->
-        <n-button @click="resetFilter">
-          重置
-        </n-button>
+        <n-button @click="resetFilter"> 重置 </n-button>
       </div>
 
       <!-- 是否启用筛选开关 -->
-      <div class="flex justify-end mt-4">
+      <div class="mt-4 flex justify-end">
         <div class="flex items-center gap-2">
           <span class="text-sm">仅显示启用的游戏</span>
           <n-switch
@@ -80,37 +76,48 @@
     >
       <template #actionBar="{ selectedCount, selectedRows }">
         <n-card :bordered="false" class="rounded-16px shadow-sm">
-          <div class="flex justify-between items-center">
+          <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <!-- 描述信息 -->
-              <div class="text-sm text-gray-600">
-                显示所有设置为热门的游戏
-              </div>
-              
+              <div class="text-sm text-gray-600">显示所有设置为热门的游戏</div>
+
               <!-- 选择信息 -->
               <div class="text-sm text-gray-600">
-                已选择 {{ selectedCount }} 条数据，共 {{ paginationReactive.total }} 条
+                已选择 {{ selectedCount }} 条数据，共
+                {{ paginationReactive.total }} 条
               </div>
             </div>
-            
+
             <div class="flex gap-2">
               <!-- 批量操作 -->
-              <n-button 
-                v-if="selectedCount > 0" 
-                type="error" 
+              <n-button
+                v-if="selectedCount > 0"
+                type="error"
                 size="small"
                 @click="handleBulkRemove(selectedRows)"
               >
                 <template #icon>
                   <n-icon>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c0 1 1 2 2 2v2"/>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path
+                        d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c0 1 1 2 2 2v2"
+                      />
                     </svg>
                   </n-icon>
                 </template>
                 批量移除 ({{ selectedCount }})
               </n-button>
-              
+
               <!-- 选择控制 -->
               <n-button size="small" @click="clearSelection">清空选择</n-button>
               <n-button size="small" @click="selectAll">全选</n-button>
@@ -119,15 +126,15 @@
         </n-card>
       </template>
     </SmartDataGrid>
-
-
   </div>
 </template>
 
 <script setup lang="ts">
 import { h, onMounted, reactive, ref, defineAsyncComponent } from 'vue';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
-const SmartDataGrid = defineAsyncComponent(() => import('../../../components/smart/SmartDataGrid/index.vue'));
+const SmartDataGrid = defineAsyncComponent(
+  () => import('../../../components/smart/SmartDataGrid/index.vue'),
+);
 import type { DataTableColumns, DataTableSortState } from 'naive-ui';
 import {
   NButton,
@@ -187,8 +194,6 @@ const currencyOptions = [
   { label: 'CNY', value: 'CNY' },
 ];
 
-
-
 // 表格列定义
 const columns: DataTableColumns<GameItem> = [
   { type: 'selection' },
@@ -201,7 +206,7 @@ const columns: DataTableColumns<GameItem> = [
     render(row) {
       // ✅ 可编辑的排序列
       const isEditing = editingSortOrder.value?.id === Number(row.id);
-      
+
       if (isEditing) {
         return h('div', { class: 'flex items-center gap-1' }, [
           h(NInputNumber, {
@@ -225,30 +230,52 @@ const columns: DataTableColumns<GameItem> = [
               }
             },
           }),
-          h(NButton, {
-            size: 'tiny',
-            type: 'primary',
-            onClick: () => handleSaveSortOrder(row),
-          }, { default: () => '✓' }),
-          h(NButton, {
-            size: 'tiny',
-            onClick: () => { editingSortOrder.value = null; },
-          }, { default: () => '✕' }),
+          h(
+            NButton,
+            {
+              size: 'tiny',
+              type: 'primary',
+              onClick: () => handleSaveSortOrder(row),
+            },
+            { default: () => '✓' },
+          ),
+          h(
+            NButton,
+            {
+              size: 'tiny',
+              onClick: () => {
+                editingSortOrder.value = null;
+              },
+            },
+            { default: () => '✕' },
+          ),
         ]);
       }
-      
-      return h('div', { 
-        class: 'flex items-center gap-2 cursor-pointer hover:bg-blue-50 px-3 py-2 rounded border border-transparent hover:border-blue-200 transition-all',
-        onClick: () => {
-          editingSortOrder.value = { id: Number(row.id), value: row.sortOrder ?? 0 };
+
+      return h(
+        'div',
+        {
+          class:
+            'flex items-center gap-2 cursor-pointer hover:bg-blue-50 px-3 py-2 rounded border border-transparent hover:border-blue-200 transition-all',
+          onClick: () => {
+            editingSortOrder.value = {
+              id: Number(row.id),
+              value: row.sortOrder ?? 0,
+            };
+          },
         },
-      }, [
-        h('span', { class: 'font-mono text-md text-blue-600 min-w-[40px]' }, row.sortOrder ?? 0),
-        h('span', { class: 'text-xs text-gray-400' }, ''),
-      ]);
+        [
+          h(
+            'span',
+            { class: 'font-mono text-md text-blue-600 min-w-[40px]' },
+            row.sortOrder ?? 0,
+          ),
+          h('span', { class: 'text-xs text-gray-400' }, ''),
+        ],
+      );
     },
   },
-  
+
   {
     title: '游戏图标',
     key: 'iconUrl',
@@ -270,15 +297,16 @@ const columns: DataTableColumns<GameItem> = [
             : h(
                 'div',
                 {
-                  class: 'w-10 h-10 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500',
+                  class:
+                    'w-10 h-10 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-500',
                 },
-                '无图片'
+                '无图片',
               ),
-        ]
+        ],
       );
     },
   },
-  
+
   {
     title: '游戏类型',
     key: 'gameType',
@@ -290,7 +318,7 @@ const columns: DataTableColumns<GameItem> = [
           type: 'info',
           size: 'small',
         },
-        { default: () => row.gameType || row.platform?.gameType || '-' }
+        { default: () => row.gameType || row.platform?.gameType || '-' },
       );
     },
   },
@@ -326,7 +354,7 @@ const columns: DataTableColumns<GameItem> = [
           type: 'default',
           size: 'small',
         },
-        { default: () => row.currency }
+        { default: () => row.currency },
       );
     },
   },
@@ -341,7 +369,7 @@ const columns: DataTableColumns<GameItem> = [
           type: row.isEnabled ? 'success' : 'error',
           size: 'small',
         },
-        { default: () => row.isEnabled ? '启用' : '禁用' }
+        { default: () => (row.isEnabled ? '启用' : '禁用') },
       );
     },
   },
@@ -366,33 +394,30 @@ const columns: DataTableColumns<GameItem> = [
     key: 'actions',
     width: 120,
     render(row) {
-      return h(
-        'div',
-        { class: 'flex gap-1' },
-        [
-          h(
-            NPopconfirm,
-            {
-              onPositiveClick: () => handleRemove(row),
-            },
-            {
-              trigger: () => h(
+      return h('div', { class: 'flex gap-1' }, [
+        h(
+          NPopconfirm,
+          {
+            onPositiveClick: () => handleRemove(row),
+          },
+          {
+            trigger: () =>
+              h(
                 NButton,
                 {
                   size: 'small',
                   type: 'error',
                   quaternary: true,
                 },
-                { default: () => '移除' }
+                { default: () => '移除' },
               ),
-              default: () => '确定要将此游戏从热门中移除吗？',
-            }
-          ),
-        ]
-      );
+            default: () => '确定要将此游戏从热门中移除吗？',
+          },
+        ),
+      ]);
     },
   },
-  
+
   {
     title: '创建时间',
     key: 'createdAt',
@@ -461,7 +486,9 @@ const handleBulkRemove = async (selectedRows: GameItem[]) => {
 
   try {
     await Promise.all(
-      selectedRows.map(game => toggleGameApi(Number(game.id), { field: 'isHot1', value: false }))
+      selectedRows.map((game) =>
+        toggleGameApi(Number(game.id), { field: 'isHot1', value: false }),
+      ),
     );
     message.success(`成功移除 ${selectedRows.length} 个热门游戏`);
     checkedRowKeys.value = [];
@@ -475,52 +502,64 @@ const handleBulkRemove = async (selectedRows: GameItem[]) => {
 // ✅ 保存排序值 - 即时重新排序
 const handleSaveSortOrder = async (row: GameItem) => {
   if (!editingSortOrder.value) return;
-  
+
   const newSortOrder = editingSortOrder.value.value;
   const oldSortOrder = row.sortOrder;
-  
+
   // 立即关闭编辑状态
   editingSortOrder.value = null;
-  
+
   try {
     // 先更新本地数据
-    const index = tableData.value.findIndex(g => g.id === row.id);
+    const index = tableData.value.findIndex((g) => g.id === row.id);
     if (index !== -1 && tableData.value[index]) {
       tableData.value[index].sortOrder = newSortOrder;
     }
-    
+
     // ✅ 即时重新排序本地数据 (升序)
     tableData.value = [...tableData.value].sort((a, b) => {
       const aOrder = a.sortOrder ?? 9999;
       const bOrder = b.sortOrder ?? 9999;
       return aOrder - bOrder; // 升序
     });
-    
+
     // 调用API保存到服务器
-    console.log(`🔄 [HOT_GAME] Updating sortOrder for game ${row.id}: ${oldSortOrder} → ${newSortOrder}`);
-    const response = await updateGameApi(Number(row.id), { sortOrder: newSortOrder });
+    console.log(
+      `🔄 [HOT_GAME] Updating sortOrder for game ${row.id}: ${oldSortOrder} → ${newSortOrder}`,
+    );
+    const response = await updateGameApi(Number(row.id), {
+      sortOrder: newSortOrder,
+    });
     console.log(`✅ [HOT_GAME] Update response:`, response);
-    
+
     // ✅ FIX: Verify the response contains the updated sortOrder and preserve iconUrl
     if (response?.data) {
       const savedSortOrder = response.data.sortOrder;
       const savedIconUrl = response.data.iconUrl;
       const savedBrandLogoUrl = response.data.brandLogoUrl;
-      
-      console.log(`✅ [HOT_GAME] Server confirmed sortOrder: ${savedSortOrder} (expected: ${newSortOrder})`);
-      console.log(`✅ [HOT_GAME] Server iconUrl: ${savedIconUrl || 'null/empty'}`);
-      
+
+      console.log(
+        `✅ [HOT_GAME] Server confirmed sortOrder: ${savedSortOrder} (expected: ${newSortOrder})`,
+      );
+      console.log(
+        `✅ [HOT_GAME] Server iconUrl: ${savedIconUrl || 'null/empty'}`,
+      );
+
       if (savedSortOrder !== newSortOrder) {
-        console.warn(`⚠️ [HOT_GAME] SortOrder mismatch! Expected ${newSortOrder}, got ${savedSortOrder}`);
+        console.warn(
+          `⚠️ [HOT_GAME] SortOrder mismatch! Expected ${newSortOrder}, got ${savedSortOrder}`,
+        );
       }
-      
+
       // ✅ FIX: Update local data with server response to ensure iconUrl is preserved
-      const index = tableData.value.findIndex(g => g.id === row.id);
+      const index = tableData.value.findIndex((g) => g.id === row.id);
       if (index !== -1 && tableData.value[index]) {
         // Only update iconUrl if server returned it (preserve existing if server didn't send it)
         if (savedIconUrl !== undefined) {
           tableData.value[index].iconUrl = savedIconUrl;
-          console.log(`✅ [HOT_GAME] Updated local iconUrl from server: ${savedIconUrl || 'null'}`);
+          console.log(
+            `✅ [HOT_GAME] Updated local iconUrl from server: ${savedIconUrl || 'null'}`,
+          );
         }
         if (savedBrandLogoUrl !== undefined) {
           tableData.value[index].brandLogoUrl = savedBrandLogoUrl;
@@ -529,9 +568,9 @@ const handleSaveSortOrder = async (row: GameItem) => {
         tableData.value[index].sortOrder = savedSortOrder;
       }
     }
-    
+
     message.success(`排序已更新: ${oldSortOrder} → ${newSortOrder}`);
-    
+
     // ✅ FIX: Reload immediately after a short delay to ensure cache is cleared and data is fresh
     // This ensures the UI reflects the latest sortOrder from the database
     setTimeout(() => {
@@ -541,7 +580,7 @@ const handleSaveSortOrder = async (row: GameItem) => {
   } catch (error: any) {
     console.error('❌ [HOT_GAME] 更新排序失败:', error);
     message.error(error?.message || '更新排序失败');
-    
+
     // 如果API失败，恢复原值并重新加载
     loadHotGameList();
   }
@@ -551,13 +590,13 @@ const handleSaveSortOrder = async (row: GameItem) => {
 const handleToggleRecommended = async (row: GameItem, value: boolean) => {
   try {
     await toggleGameApi(Number(row.id), { field: 'isRecommended', value });
-    
+
     // 更新本地数据
-    const index = tableData.value.findIndex(g => g.id === row.id);
+    const index = tableData.value.findIndex((g) => g.id === row.id);
     if (index !== -1 && tableData.value[index]) {
       tableData.value[index].isRecommended = value;
     }
-    
+
     message.success(value ? '已设为推荐' : '已取消推荐');
   } catch (error: any) {
     console.error('切换推荐状态失败:', error);
@@ -566,10 +605,6 @@ const handleToggleRecommended = async (row: GameItem, value: boolean) => {
     loadHotGameList();
   }
 };
-
-
-
-
 
 // 分页处理
 const handlePageChange = (page: number) => {
@@ -595,12 +630,9 @@ const clearSelection = () => {
 };
 
 const selectAll = () => {
-  checkedRowKeys.value = tableData.value.map(game => Number(game.id));
+  checkedRowKeys.value = tableData.value.map((game) => Number(game.id));
   message.info('已全选');
 };
-
-
-
 
 // 加载热门游戏列表
 const loadHotGameList = async () => {
@@ -629,8 +661,10 @@ const loadHotGameList = async () => {
     const response = await getGameListApi(params);
     tableData.value = response.list || [];
     paginationReactive.total = response.pagination?.total || 0;
-    
-    console.log(`✅ 加载热门游戏: ${tableData.value.length} 条, 总数: ${paginationReactive.total}`);
+
+    console.log(
+      `✅ 加载热门游戏: ${tableData.value.length} 条, 总数: ${paginationReactive.total}`,
+    );
   } catch (error: any) {
     console.error('加载热门游戏列表失败:', error);
     notification.error({
@@ -647,10 +681,11 @@ const loadOptions = async () => {
   try {
     // 加载平台选项
     const platformResponse = await getGamePlatformListApi({ pageSize: 1000 });
-    platformOptions.value = platformResponse.list?.map(platform => ({
-      label: platform.platformName,
-      value: platform.id,
-    })) || [];
+    platformOptions.value =
+      platformResponse.list?.map((platform) => ({
+        label: platform.platformName,
+        value: platform.id,
+      })) || [];
   } catch (error) {
     console.error('加载选项失败:', error);
   }
@@ -681,4 +716,4 @@ onMounted(() => {
 :deep(.n-data-table-tr:hover .n-data-table-td) {
   background-color: #f8f9fa;
 }
-</style> 
+</style>

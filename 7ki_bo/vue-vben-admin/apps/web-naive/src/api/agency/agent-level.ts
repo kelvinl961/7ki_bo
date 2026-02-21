@@ -52,14 +52,14 @@ export interface AgentLevelResponse {
 export interface AutoUpgradeResponse {
   success: boolean;
   data: {
-    upgradedCount: number;
     upgradedAgents: Array<{
       agentId: number;
-      username: string;
-      oldLevel: number;
-      newLevel: number;
       commission: number;
+      newLevel: number;
+      oldLevel: number;
+      username: string;
     }>;
+    upgradedCount: number;
   };
   message: string;
 }
@@ -74,14 +74,18 @@ export async function getAgentLevelsApi(): Promise<AgentLevelsResponse> {
 /**
  * Create new agent level
  */
-export async function createAgentLevelApi(data: CreateAgentLevelRequest): Promise<AgentLevelResponse> {
+export async function createAgentLevelApi(
+  data: CreateAgentLevelRequest,
+): Promise<AgentLevelResponse> {
   return requestClient.post('/agent-levels', data);
 }
 
 /**
  * Update agent level
  */
-export async function updateAgentLevelApi(data: UpdateAgentLevelRequest): Promise<AgentLevelResponse> {
+export async function updateAgentLevelApi(
+  data: UpdateAgentLevelRequest,
+): Promise<AgentLevelResponse> {
   const { id, ...updateData } = data;
   return requestClient.put(`/agent-levels/${id}`, updateData);
 }
@@ -89,14 +93,18 @@ export async function updateAgentLevelApi(data: UpdateAgentLevelRequest): Promis
 /**
  * Batch update agent levels
  */
-export async function batchUpdateAgentLevelsApi(levels: UpdateAgentLevelRequest[]): Promise<AgentLevelsResponse> {
+export async function batchUpdateAgentLevelsApi(
+  levels: UpdateAgentLevelRequest[],
+): Promise<AgentLevelsResponse> {
   return requestClient.put('/agent-levels/batch', { levels });
 }
 
 /**
  * Delete agent level
  */
-export async function deleteAgentLevelApi(id: number): Promise<{ success: boolean; message: string }> {
+export async function deleteAgentLevelApi(
+  id: number,
+): Promise<{ message: string; success: boolean }> {
   return requestClient.delete(`/agent-levels/${id}`);
 }
 

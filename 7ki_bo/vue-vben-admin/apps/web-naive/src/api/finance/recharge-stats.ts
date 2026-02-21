@@ -4,7 +4,7 @@ import { requestClient } from '#/api/request';
 export interface RechargeStatsParams {
   startDate?: string;
   endDate?: string;
-  groupBy?: 'day' | 'week' | 'month';
+  groupBy?: 'day' | 'month' | 'week';
   paymentMethod?: string;
   status?: string;
   currency?: string;
@@ -88,9 +88,9 @@ export interface ComparisonData {
   };
   changes: {
     amountChange: number;
+    amountTrend: 'down' | 'up';
     countChange: number;
-    amountTrend: 'up' | 'down';
-    countTrend: 'up' | 'down';
+    countTrend: 'down' | 'up';
   };
 }
 
@@ -104,14 +104,18 @@ export interface ApiResponse<T = any> {
 // API Client
 export const rechargeStatsApi = {
   // Get recharge statistics
-  getStats: async (params: RechargeStatsParams): Promise<RechargeStatsResponse> => {
+  getStats: async (
+    params: RechargeStatsParams,
+  ): Promise<RechargeStatsResponse> => {
     const response = await requestClient.get('/recharge-stats', { params });
     return response as unknown as RechargeStatsResponse;
   },
 
   // Get comparison between periods
   getComparison: async (params: ComparisonParams): Promise<ComparisonData> => {
-    const response = await requestClient.get('/recharge-stats/comparison', { params });
+    const response = await requestClient.get('/recharge-stats/comparison', {
+      params,
+    });
     return response as unknown as ComparisonData;
-  }
+  },
 };

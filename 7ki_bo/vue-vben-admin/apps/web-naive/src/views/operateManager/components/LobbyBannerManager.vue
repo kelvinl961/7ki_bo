@@ -2,7 +2,7 @@
   <div class="lobby-banner-management">
     <!-- 筛选器区域 -->
     <n-card class="mb-4">
-      <div class="flex flex-wrap gap-4 items-end">
+      <div class="flex flex-wrap items-end gap-4">
         <!-- Banner名称搜索 -->
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium">Banner名称</label>
@@ -94,12 +94,8 @@
 
         <!-- 搜索按钮 -->
         <div class="flex gap-2">
-          <n-button type="primary" @click="handleFilter">
-            搜索
-          </n-button>
-          <n-button @click="resetFilter">
-            重置
-          </n-button>
+          <n-button type="primary" @click="handleFilter"> 搜索 </n-button>
+          <n-button @click="resetFilter"> 重置 </n-button>
         </div>
       </div>
     </n-card>
@@ -121,7 +117,7 @@
     >
       <template #actionBar="{ selectedCount, selectedRows }">
         <n-card :bordered="false" class="rounded-16px shadow-sm">
-          <div class="flex justify-between items-center">
+          <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <!-- 主要操作按钮 -->
               <div class="flex gap-2">
@@ -129,52 +125,64 @@
                   新增Banner
                 </n-button>
               </div>
-              
+
               <!-- 选择信息 -->
               <div class="text-sm text-gray-600">
-                已选择 {{ selectedCount }} 条数据，共 {{ paginationReactive.total }} 条
+                已选择 {{ selectedCount }} 条数据，共
+                {{ paginationReactive.total }} 条
               </div>
             </div>
-            
+
             <div class="flex gap-2">
               <!-- 批量操作 -->
-              <n-button 
-                v-if="selectedCount > 0" 
-                type="success" 
+              <n-button
+                v-if="selectedCount > 0"
+                type="success"
                 size="small"
                 @click="handleBatchToggleStatus('active', selectedRows)"
               >
                 批量发布 ({{ selectedCount }})
               </n-button>
-              <n-button 
-                v-if="selectedCount > 0" 
-                type="warning" 
+              <n-button
+                v-if="selectedCount > 0"
+                type="warning"
                 size="small"
                 @click="handleBatchToggleStatus('inactive', selectedRows)"
               >
                 批量下架 ({{ selectedCount }})
               </n-button>
-              <n-button 
-                v-if="selectedCount > 0" 
-                type="error" 
+              <n-button
+                v-if="selectedCount > 0"
+                type="error"
                 size="small"
                 @click="handleBatchDelete(selectedRows)"
               >
                 批量删除 ({{ selectedCount }})
               </n-button>
-              
+
               <!-- 选择控制 -->
               <n-button size="small" @click="clearSelection">清空选择</n-button>
               <n-button size="small" @click="selectAll">全选</n-button>
             </div>
           </div>
-          
+
           <!-- 统计信息 -->
-          <div class="flex gap-4 text-sm mt-3 pt-3 border-t border-gray-200">
-            <span>总计: <strong>{{ stats.total }}</strong></span>
-            <span>已发布: <strong class="text-green-600">{{ stats.active }}</strong></span>
-            <span>已下架: <strong class="text-red-600">{{ stats.inactive }}</strong></span>
-            <span>草稿: <strong class="text-orange-600">{{ stats.draft }}</strong></span>
+          <div class="mt-3 flex gap-4 border-t border-gray-200 pt-3 text-sm">
+            <span
+              >总计: <strong>{{ stats.total }}</strong></span
+            >
+            <span
+              >已发布:
+              <strong class="text-green-600">{{ stats.active }}</strong></span
+            >
+            <span
+              >已下架:
+              <strong class="text-red-600">{{ stats.inactive }}</strong></span
+            >
+            <span
+              >草稿:
+              <strong class="text-orange-600">{{ stats.draft }}</strong></span
+            >
           </div>
         </n-card>
       </template>
@@ -195,30 +203,38 @@
       style="width: 800px"
     >
       <div v-if="detailData" class="detail-content">
-        <div class="grid grid-cols-2 gap-4 mb-4">
+        <div class="mb-4 grid grid-cols-2 gap-4">
           <div>
             <label class="text-sm font-medium text-gray-600">ID</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">{{ detailData.id }}</div>
+            <div class="mt-1 rounded bg-gray-50 p-2">{{ detailData.id }}</div>
           </div>
           <div>
             <label class="text-sm font-medium text-gray-600">排序</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">{{ detailData.sortOrder }}</div>
+            <div class="mt-1 rounded bg-gray-50 p-2">
+              {{ detailData.sortOrder }}
+            </div>
           </div>
           <div>
             <label class="text-sm font-medium text-gray-600">语言</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">{{ getLanguageText(detailData.language) }}</div>
+            <div class="mt-1 rounded bg-gray-50 p-2">
+              {{ getLanguageText(detailData.language) }}
+            </div>
           </div>
           <div>
             <label class="text-sm font-medium text-gray-600">币种</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">{{ detailData.currency }}</div>
+            <div class="mt-1 rounded bg-gray-50 p-2">
+              {{ detailData.currency }}
+            </div>
           </div>
           <div>
             <label class="text-sm font-medium text-gray-600">跳转方式</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">{{ getJumpModeText(detailData.jumpMode) }}</div>
+            <div class="mt-1 rounded bg-gray-50 p-2">
+              {{ getJumpModeText(detailData.jumpMode) }}
+            </div>
           </div>
           <div>
             <label class="text-sm font-medium text-gray-600">状态</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">
+            <div class="mt-1 rounded bg-gray-50 p-2">
               <n-tag :type="getStatusType(detailData.status)">
                 {{ getStatusText(detailData.status) }}
               </n-tag>
@@ -228,12 +244,14 @@
 
         <div class="mb-4">
           <label class="text-sm font-medium text-gray-600">Banner名称</label>
-          <div class="mt-1 p-3 bg-gray-50 rounded">{{ detailData.bannerName }}</div>
+          <div class="mt-1 rounded bg-gray-50 p-3">
+            {{ detailData.bannerName }}
+          </div>
         </div>
 
         <div class="mb-4">
           <label class="text-sm font-medium text-gray-600">Banner图片</label>
-          <div class="mt-1 p-3 bg-gray-50 rounded">
+          <div class="mt-1 rounded bg-gray-50 p-3">
             <n-image
               :src="getImageUrlByEnvironment(detailData.bannerImageUrl)"
               :alt="detailData.bannerName"
@@ -249,47 +267,59 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 mb-4">
+        <div class="mb-4 grid grid-cols-2 gap-4">
           <div>
             <label class="text-sm font-medium text-gray-600">停留时间</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">{{ detailData.displayDuration }}秒</div>
+            <div class="mt-1 rounded bg-gray-50 p-2">
+              {{ detailData.displayDuration }}秒
+            </div>
           </div>
           <div>
             <label class="text-sm font-medium text-gray-600">跳转目标</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">{{ detailData.targetUrl || '无' }}</div>
+            <div class="mt-1 rounded bg-gray-50 p-2">
+              {{ detailData.targetUrl || '无' }}
+            </div>
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 mb-4">
+        <div class="mb-4 grid grid-cols-2 gap-4">
           <div>
             <label class="text-sm font-medium text-gray-600">开始时间</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">{{ formatDate(detailData.startTime) }}</div>
+            <div class="mt-1 rounded bg-gray-50 p-2">
+              {{ formatDate(detailData.startTime) }}
+            </div>
           </div>
           <div>
             <label class="text-sm font-medium text-gray-600">结束时间</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">{{ formatDate(detailData.endTime) }}</div>
+            <div class="mt-1 rounded bg-gray-50 p-2">
+              {{ formatDate(detailData.endTime) }}
+            </div>
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 mb-4">
+        <div class="mb-4 grid grid-cols-2 gap-4">
           <div>
             <label class="text-sm font-medium text-gray-600">操作人</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">{{ detailData.updatedBy || '系统' }}</div>
+            <div class="mt-1 rounded bg-gray-50 p-2">
+              {{ detailData.updatedBy || '系统' }}
+            </div>
           </div>
           <div>
             <label class="text-sm font-medium text-gray-600">操作时间</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">{{ formatDate(detailData.updatedAt) }}</div>
+            <div class="mt-1 rounded bg-gray-50 p-2">
+              {{ formatDate(detailData.updatedAt) }}
+            </div>
           </div>
         </div>
 
         <div v-if="detailData.remark" class="mb-4">
           <label class="text-sm font-medium text-gray-600">后台备注</label>
-          <div class="mt-1 p-3 bg-gray-50 rounded">{{ detailData.remark }}</div>
+          <div class="mt-1 rounded bg-gray-50 p-3">{{ detailData.remark }}</div>
         </div>
       </div>
-      
+
       <template #action>
-        <div class="flex gap-2 justify-end">
+        <div class="flex justify-end gap-2">
           <n-button @click="showDetailModal = false">关闭</n-button>
         </div>
       </template>
@@ -312,9 +342,9 @@
           @error="handleImageError"
         />
       </div>
-      
+
       <template #action>
-        <div class="flex gap-2 justify-end">
+        <div class="flex justify-end gap-2">
           <n-button @click="showImageModal = false">关闭</n-button>
         </div>
       </template>
@@ -323,10 +353,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, h, defineAsyncComponent } from 'vue';
+import {
+  ref,
+  reactive,
+  computed,
+  onMounted,
+  h,
+  defineAsyncComponent,
+} from 'vue';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
-const SmartDataGrid = defineAsyncComponent(() => import('../../../components/smart/SmartDataGrid/index.vue'));
-import type { DataTableColumns, DataTableRowKey, DataTableSortState } from 'naive-ui';
+const SmartDataGrid = defineAsyncComponent(
+  () => import('../../../components/smart/SmartDataGrid/index.vue'),
+);
+import type {
+  DataTableColumns,
+  DataTableRowKey,
+  DataTableSortState,
+} from 'naive-ui';
 import {
   NBreadcrumb,
   NBreadcrumbItem,
@@ -340,11 +383,13 @@ import {
   NImage,
   NDatePicker,
   useMessage,
-  type SelectOption
+  type SelectOption,
 } from 'naive-ui';
 import { notification } from '#/adapter/naive';
 import { getImageUrlByEnvironment } from '../../../utils/imageUtils';
-const LobbyBannerFormModal = defineAsyncComponent(() => import('./LobbyBannerFormModal.vue'));
+const LobbyBannerFormModal = defineAsyncComponent(
+  () => import('./LobbyBannerFormModal.vue'),
+);
 import {
   getBannerList,
   deleteBanner,
@@ -358,7 +403,7 @@ import {
   getJumpModeText,
   type LobbyBanner,
   type LobbyBannerFilters,
-  type LobbyBannerStats
+  type LobbyBannerStats,
 } from '#/api/lobbyBanner';
 
 // 响应式数据
@@ -385,7 +430,7 @@ const stats = ref<LobbyBannerStats>({
   total: 0,
   active: 0,
   inactive: 0,
-  draft: 0
+  draft: 0,
 });
 
 // 筛选器
@@ -436,7 +481,7 @@ const jumpModeOptions: SelectOption[] = [
   { label: '公积金', value: 'public_fund' },
   { label: '游戏', value: 'game' },
   { label: '盲盒抽奖', value: 'blind_box_lottery' },
-  { label: '俱乐部申请（合作联营）', value: 'club_application' }
+  { label: '俱乐部申请（合作联营）', value: 'club_application' },
 ];
 
 // Pagination (simplified for SmartDataGrid)
@@ -510,7 +555,7 @@ const columns: DataTableColumns<LobbyBanner> = [
         onClick: () => showImagePreview(row.bannerImageUrl),
         class: 'cursor-pointer',
         fallbackSrc: placeholderImageUrl,
-        onError: (event: Event) => handleImageError(event)
+        onError: (event: Event) => handleImageError(event),
       });
     },
   },
@@ -551,10 +596,14 @@ const columns: DataTableColumns<LobbyBanner> = [
     key: 'status',
     width: 100,
     render(row) {
-      return h(NTag, {
-        type: getStatusType(row.status),
-        size: 'small'
-      }, { default: () => getStatusText(row.status) });
+      return h(
+        NTag,
+        {
+          type: getStatusType(row.status),
+          size: 'small',
+        },
+        { default: () => getStatusText(row.status) },
+      );
     },
   },
   {
@@ -580,37 +629,62 @@ const columns: DataTableColumns<LobbyBanner> = [
     fixed: 'right',
     render(row) {
       return h('div', { class: 'flex gap-1' }, [
-        h(NButton, {
-          size: 'small',
-          type: row.status === 'active' ? 'warning' : 'success',
-          onClick: () => handleToggleStatus(row)
-        }, { default: () => row.status === 'active' ? '停止' : '发布' }),
-        
-        h(NButton, {
-          size: 'small',
-          onClick: () => handleCopy(row)
-        }, { default: () => '复制创建' }),
-        
-        h(NButton, {
-          size: 'small',
-          onClick: () => handleViewDetail(row)
-        }, { default: () => '详情' }),
-        
-        h(NButton, {
-          size: 'small',
-          type: 'primary',
-          onClick: () => handleEdit(row)
-        }, { default: () => '编辑' }),
-        
-        h(NPopconfirm, {
-          onPositiveClick: () => handleDelete(row)
-        }, {
-          default: () => '确定删除这个Banner吗？',
-          trigger: () => h(NButton, {
+        h(
+          NButton,
+          {
             size: 'small',
-            type: 'error'
-          }, { default: () => '删除' })
-        }),
+            type: row.status === 'active' ? 'warning' : 'success',
+            onClick: () => handleToggleStatus(row),
+          },
+          { default: () => (row.status === 'active' ? '停止' : '发布') },
+        ),
+
+        h(
+          NButton,
+          {
+            size: 'small',
+            onClick: () => handleCopy(row),
+          },
+          { default: () => '复制创建' },
+        ),
+
+        h(
+          NButton,
+          {
+            size: 'small',
+            onClick: () => handleViewDetail(row),
+          },
+          { default: () => '详情' },
+        ),
+
+        h(
+          NButton,
+          {
+            size: 'small',
+            type: 'primary',
+            onClick: () => handleEdit(row),
+          },
+          { default: () => '编辑' },
+        ),
+
+        h(
+          NPopconfirm,
+          {
+            onPositiveClick: () => handleDelete(row),
+          },
+          {
+            default: () => '确定删除这个Banner吗？',
+            trigger: () =>
+              h(
+                NButton,
+                {
+                  size: 'small',
+                  type: 'error',
+                },
+                { default: () => '删除' },
+              ),
+          },
+        ),
       ]);
     },
   },
@@ -634,7 +708,7 @@ const loadData = async () => {
     };
 
     const response = await getBannerList(params);
-    
+
     // Handle the actual API response structure: { success: true, data: { list: [...], pagination: {...} } }
     if (response && response.success && response.data) {
       tableData.value = response.data.list || [];
@@ -653,7 +727,7 @@ const loadData = async () => {
     console.error('Error loading banners:', error);
     notification.error({
       content: '加载Banner数据失败',
-      duration: 3000
+      duration: 3000,
     });
   } finally {
     loading.value = false;
@@ -722,7 +796,7 @@ const handleCopy = async (row: LobbyBanner) => {
     await duplicateBanner(row.id);
     notification.success({
       content: '复制创建成功',
-      duration: 3000
+      duration: 3000,
     });
     loadData();
     loadStats();
@@ -730,7 +804,7 @@ const handleCopy = async (row: LobbyBanner) => {
     console.error('Error copying banner:', error);
     notification.error({
       content: '复制创建失败',
-      duration: 3000
+      duration: 3000,
     });
   }
 };
@@ -745,7 +819,7 @@ const handleDelete = async (row: LobbyBanner) => {
     await deleteBanner(row.id);
     notification.success({
       content: '删除成功',
-      duration: 3000
+      duration: 3000,
     });
     loadData();
     loadStats();
@@ -753,7 +827,7 @@ const handleDelete = async (row: LobbyBanner) => {
     console.error('Error deleting banner:', error);
     notification.error({
       content: '删除失败',
-      duration: 3000
+      duration: 3000,
     });
   }
 };
@@ -764,7 +838,7 @@ const handleToggleStatus = async (row: LobbyBanner) => {
     await toggleBannerStatus(row.id, newStatus);
     notification.success({
       content: `${newStatus === 'active' ? '发布' : '下架'}成功`,
-      duration: 3000
+      duration: 3000,
     });
     loadData();
     loadStats();
@@ -772,7 +846,7 @@ const handleToggleStatus = async (row: LobbyBanner) => {
     console.error('Error toggling banner status:', error);
     notification.error({
       content: '状态切换失败',
-      duration: 3000
+      duration: 3000,
     });
   }
 };
@@ -781,22 +855,27 @@ const handleSelectionChange = (keys: DataTableRowKey[]) => {
   selectedRowKeys.value = keys;
 };
 
-const handleBatchToggleStatus = async (status: 'active' | 'inactive' | 'draft', selectedRows?: LobbyBanner[]) => {
-  const bannersToUpdate = selectedRows || tableData.value.filter(banner => 
-    selectedRowKeys.value.includes(banner.id)
-  );
-  
+const handleBatchToggleStatus = async (
+  status: 'active' | 'inactive' | 'draft',
+  selectedRows?: LobbyBanner[],
+) => {
+  const bannersToUpdate =
+    selectedRows ||
+    tableData.value.filter((banner) =>
+      selectedRowKeys.value.includes(banner.id),
+    );
+
   if (bannersToUpdate.length === 0) {
     console.log('No banners selected for batch status toggle');
     return;
   }
-  
+
   try {
-    const ids = bannersToUpdate.map(banner => Number(banner.id));
+    const ids = bannersToUpdate.map((banner) => Number(banner.id));
     await batchToggleStatus({ ids, status });
     notification.success({
       content: `批量${getStatusText(status)}成功`,
-      duration: 3000
+      duration: 3000,
     });
     selectedRowKeys.value = [];
     loadData();
@@ -805,27 +884,29 @@ const handleBatchToggleStatus = async (status: 'active' | 'inactive' | 'draft', 
     console.error('Error batch toggling status:', error);
     notification.error({
       content: '批量操作失败',
-      duration: 3000
+      duration: 3000,
     });
   }
 };
 
 const handleBatchDelete = async (selectedRows?: LobbyBanner[]) => {
-  const bannersToDelete = selectedRows || tableData.value.filter(banner => 
-    selectedRowKeys.value.includes(banner.id)
-  );
-  
+  const bannersToDelete =
+    selectedRows ||
+    tableData.value.filter((banner) =>
+      selectedRowKeys.value.includes(banner.id),
+    );
+
   if (bannersToDelete.length === 0) {
     console.log('No banners selected for batch delete');
     return;
   }
-  
+
   try {
-    const ids = bannersToDelete.map(banner => Number(banner.id));
+    const ids = bannersToDelete.map((banner) => Number(banner.id));
     await batchDeleteBanners({ ids });
     notification.success({
       content: `成功删除 ${bannersToDelete.length} 个Banner`,
-      duration: 3000
+      duration: 3000,
     });
     selectedRowKeys.value = [];
     loadData();
@@ -834,7 +915,7 @@ const handleBatchDelete = async (selectedRows?: LobbyBanner[]) => {
     console.error('Error batch deleting banners:', error);
     notification.error({
       content: '批量删除失败',
-      duration: 3000
+      duration: 3000,
     });
   }
 };
@@ -869,7 +950,7 @@ const clearSelection = () => {
 };
 
 const selectAll = () => {
-  selectedRowKeys.value = tableData.value.map(banner => banner.id);
+  selectedRowKeys.value = tableData.value.map((banner) => banner.id);
   console.log('All selected');
 };
 
@@ -896,7 +977,8 @@ const handleImageError = (event: Event) => {
 };
 
 // 创建一个简单的占位符图片数据URL
-const placeholderImageUrl = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5YWFhYSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkJhbm5lciBJbWFnZTwvdGV4dD48L3N2Zz4=';
+const placeholderImageUrl =
+  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5YWFhYSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkJhbm5lciBJbWFnZTwvdGV4dD48L3N2Zz4=';
 
 const formatDate = (date: string | Date | null) => {
   if (!date) return '-';
@@ -913,10 +995,10 @@ const formatDate = (date: string | Date | null) => {
 const getLanguageText = (language: string): string => {
   const langMap: Record<string, string> = {
     'zh-CN': '中文',
-    'en': '英文',
-    'pt': '葡语',
-    'es': '西班牙语',
-    'ja': '日语',
+    en: '英文',
+    pt: '葡语',
+    es: '西班牙语',
+    ja: '日语',
   };
   return langMap[language] || language;
 };
@@ -1036,4 +1118,4 @@ onMounted(() => {
 .text-center {
   text-align: center;
 }
-</style> 
+</style>

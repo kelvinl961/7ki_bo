@@ -10,7 +10,7 @@ import { message } from '#/adapter/naive';
 import { getAllMenusApi } from '#/api';
 import { BasicLayout, IFrameView } from '#/layouts';
 import { $t } from '#/locales';
- //@ts-ignore
+// @ts-ignore
 const forbiddenComponent = () => import('#/views/_core/fallback/forbidden.vue');
 
 // ✅ PERFORMANCE FIX: Cache menu data to avoid re-fetching on every navigation
@@ -31,7 +31,7 @@ async function generateAccess(options: GenerateMenuAndRoutesOptions) {
     fetchMenuListAsync: async () => {
       // ✅ PERFORMANCE FIX: Use cached menu data if available and not expired
       const now = Date.now();
-      if (cachedMenuData && (now - menuCacheTimestamp) < MENU_CACHE_DURATION) {
+      if (cachedMenuData && now - menuCacheTimestamp < MENU_CACHE_DURATION) {
         console.log('⚡ Using cached menu data');
         return cachedMenuData;
       }
@@ -40,7 +40,7 @@ async function generateAccess(options: GenerateMenuAndRoutesOptions) {
       message.loading(`${$t('common.loadingMenu')}...`, {
         duration: 1.5,
       });
-      
+
       try {
         const menuData = await getAllMenusApi();
         // Cache the menu data

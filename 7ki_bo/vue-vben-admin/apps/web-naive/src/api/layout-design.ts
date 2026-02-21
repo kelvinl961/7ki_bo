@@ -4,72 +4,75 @@ import { requestClient } from '#/api/request';
 export namespace LayoutDesignApi {
   // Get all layout configurations (admin)
   export function getLayoutConfigs(params?: {
-    page?: number;
-    limit?: number;
     brandCode?: string;
+    limit?: number;
+    page?: number;
   }) {
     return requestClient.get<{
-      success: boolean;
       data: {
         configs: LayoutConfig[];
         pagination: {
-          page: number;
           limit: number;
-          total: number;
+          page: number;
           pages: number;
+          total: number;
         };
       };
+      success: boolean;
     }>('/layout-design/configs', { params });
   }
 
   // Get layout configuration by ID (admin)
-  export function getLayoutConfig(id: string | number) {
+  export function getLayoutConfig(id: number | string) {
     return requestClient.get<{
-      success: boolean;
       data: LayoutConfig;
+      success: boolean;
     }>(`/layout-design/configs/${id}`);
   }
 
   // Create layout configuration (admin)
   export function createLayoutConfig(data: LayoutConfigCreateRequest) {
     return requestClient.post<{
-      success: boolean;
-      message: string;
       data: LayoutConfig;
+      message: string;
+      success: boolean;
     }>('/layout-design/configs', data);
   }
 
   // Update layout configuration (admin)
-  export function updateLayoutConfig(id: string | number, data: LayoutConfigCreateRequest) {
+  export function updateLayoutConfig(
+    id: number | string,
+    data: LayoutConfigCreateRequest,
+  ) {
     return requestClient.put<{
-      success: boolean;
-      message: string;
       data: LayoutConfig;
+      message: string;
+      success: boolean;
     }>(`/layout-design/configs/${id}`, data);
   }
 
   // Delete layout configuration (admin)
-  export function deleteLayoutConfig(id: string | number) {
+  export function deleteLayoutConfig(id: number | string) {
     return requestClient.delete<{
-      success: boolean;
       message: string;
+      success: boolean;
     }>(`/layout-design/configs/${id}`);
   }
 
   // Get available icons (admin)
   export function getAvailableIcons(category?: string) {
     return requestClient.get<{
-      success: boolean;
       data: AvailableIcon[];
+      success: boolean;
     }>('/layout-design/icons', { params: { category } });
   }
 
   // Upload icon (admin)
   export function uploadIcon(formData: FormData) {
     return requestClient.post<{
-      success: boolean;
-      message: string;
       data: AvailableIcon;
+      message: string;
+      success: boolean;
     }>('/layout-design/icons/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -86,30 +89,30 @@ export namespace PublicLayoutApi {
     domain?: string;
   }) {
     return requestClient.get<{
-      success: boolean;
       data: LayoutConfig;
       source: 'brand' | 'default';
+      success: boolean;
     }>('/layout-design/public/active-config', { params });
   }
 
   // Get layout theme information
   export function getLayoutTheme(brandCode?: string) {
     return requestClient.get<{
-      success: boolean;
       data: {
-        layout: LayoutTheme;
         brandSkin: BrandSkinConfig | null;
+        layout: LayoutTheme;
       };
-    }>('/layout-design/public/theme', { 
-      params: brandCode ? { brandCode } : undefined 
+      success: boolean;
+    }>('/layout-design/public/theme', {
+      params: brandCode ? { brandCode } : undefined,
     });
   }
 
   // Get public available icons
   export function getPublicAvailableIcons(category?: string) {
     return requestClient.get<{
-      success: boolean;
       data: PublicIcon[];
+      success: boolean;
     }>('/layout-design/public/icons', { params: { category } });
   }
 }
@@ -118,9 +121,9 @@ export namespace PublicLayoutApi {
 export interface LayoutConfig {
   id: number;
   skinName: string;
-  bannerStyle: 'common' | 'small' | 'scroll' | 'large';
+  bannerStyle: 'common' | 'large' | 'scroll' | 'small';
   myPageStyle: 'style1' | 'style2' | 'style3' | 'style4' | 'style5';
-  gameCardIcon: 'european' | 'classic';
+  gameCardIcon: 'classic' | 'european';
   popupStyle: 'style1' | 'style2' | 'style3';
   pageStyle: 'auto' | 'manual';
   lobbyButtonStyle: 'style1' | 'style2' | 'style3';
@@ -131,8 +134,8 @@ export interface LayoutConfig {
   createdAt: string;
   updatedAt: string;
   buttonConfigs: {
-    beforeLogin: ButtonConfig[];
     afterLogin: ButtonConfig[];
+    beforeLogin: ButtonConfig[];
   };
 }
 
@@ -144,22 +147,22 @@ export interface ButtonConfig {
 
 export interface LayoutConfigCreateRequest {
   layoutConfig: {
-    skinName: string;
-    bannerStyle: 'common' | 'small' | 'scroll' | 'large';
-    myPageStyle: 'style1' | 'style2' | 'style3' | 'style4' | 'style5';
-    gameCardIcon: 'european' | 'classic';
-    popupStyle: 'style1' | 'style2' | 'style3';
-    pageStyle: 'auto' | 'manual';
-    lobbyButtonStyle: 'style1' | 'style2' | 'style3';
-    selfPromotionEnabled: boolean;
+    bannerStyle: 'common' | 'large' | 'scroll' | 'small';
     brandCode?: string;
+    gameCardIcon: 'classic' | 'european';
+    lobbyButtonStyle: 'style1' | 'style2' | 'style3';
+    myPageStyle: 'style1' | 'style2' | 'style3' | 'style4' | 'style5';
+    pageStyle: 'auto' | 'manual';
+    popupStyle: 'style1' | 'style2' | 'style3';
+    selfPromotionEnabled: boolean;
+    skinName: string;
   };
   buttonConfig: {
-    beforeLogin: Array<{
+    afterLogin: Array<{
       icon?: string;
       label?: string;
     }>;
-    afterLogin: Array<{
+    beforeLogin: Array<{
       icon?: string;
       label?: string;
     }>;
@@ -210,4 +213,4 @@ export interface BrandSkinConfig {
   accentColor?: string;
   colorPalette?: any;
   skinTemplate: string;
-} 
+}

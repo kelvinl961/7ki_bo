@@ -1,9 +1,6 @@
 <template>
   <div class="activity-center">
-    <Page
-      title="活动中心"
-      description="管理所有活动的创建、编辑、监控和统计"
-    >
+    <Page title="活动中心" description="管理所有活动的创建、编辑、监控和统计">
       <!-- 面包屑导航 -->
       <div class="mb-4">
         <n-breadcrumb>
@@ -39,8 +36,6 @@
         <n-tab-pane name="share" tab="分享管理">
           <ShareManagement />
         </n-tab-pane>
-
-       
       </n-tabs>
     </Page>
   </div>
@@ -52,11 +47,21 @@ import { useRoute, useRouter } from 'vue-router';
 import { NBreadcrumb, NBreadcrumbItem, NTabs, NTabPane } from 'naive-ui';
 import { Page } from '@vben/common-ui';
 // ✅ PERFORMANCE FIX: Lazy load tab components - they only load when their tab is opened
-const ActivityList = defineAsyncComponent(() => import('./components/ActivityList.vue'));
-const ClosedActivityList = defineAsyncComponent(() => import('./components/ClosedActivityList.vue'));
-const ActivityStatistics = defineAsyncComponent(() => import('./components/ActivityStatistics.vue'));
-const ShareManagement = defineAsyncComponent(() => import('./components/ShareManagement.vue'));
-const UserActivityDashboard = defineAsyncComponent(() => import('../user/ActivityDashboard.vue'));
+const ActivityList = defineAsyncComponent(
+  () => import('./components/ActivityList.vue'),
+);
+const ClosedActivityList = defineAsyncComponent(
+  () => import('./components/ClosedActivityList.vue'),
+);
+const ActivityStatistics = defineAsyncComponent(
+  () => import('./components/ActivityStatistics.vue'),
+);
+const ShareManagement = defineAsyncComponent(
+  () => import('./components/ShareManagement.vue'),
+);
+const UserActivityDashboard = defineAsyncComponent(
+  () => import('../user/ActivityDashboard.vue'),
+);
 
 const route = useRoute();
 const router = useRouter();
@@ -79,7 +84,12 @@ const handleTabChange = (value: string) => {
 // 从URL参数初始化标签页
 onMounted(() => {
   const tabFromUrl = route.query.activeName as string;
-  if (tabFromUrl && ['first', 'closed', 'statistics', 'share', 'user-activities'].includes(tabFromUrl)) {
+  if (
+    tabFromUrl &&
+    ['first', 'closed', 'statistics', 'share', 'user-activities'].includes(
+      tabFromUrl,
+    )
+  ) {
     activeTab.value = tabFromUrl;
   }
 });
@@ -102,4 +112,4 @@ onMounted(() => {
   height: 100%;
   overflow-y: auto;
 }
-</style> 
+</style>

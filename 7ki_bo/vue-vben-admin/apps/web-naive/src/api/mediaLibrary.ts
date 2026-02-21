@@ -7,7 +7,7 @@ export interface MediaFile {
   storedName: string;
   url: string;
   category: string;
-  type: 'image' | 'video' | 'audio' | 'document';
+  type: 'audio' | 'document' | 'image' | 'video';
   mimeType: string;
   size: number;
   width?: number;
@@ -63,7 +63,7 @@ export interface ApiResponse<T = any> {
 // Constants
 export const MEDIA_CATEGORIES = [
   'backgrounds',
-  'banners', 
+  'banners',
   'icons',
   'logos',
   'templates',
@@ -71,18 +71,18 @@ export const MEDIA_CATEGORIES = [
   'documents',
   'videos',
   'audio',
-  'other'
+  'other',
 ] as const;
 
 // Utility functions
 export function formatFileSize(bytes: number): string {
   if (bytes === 0) return '0 B';
-  
+
   const k = 1024;
   const sizes = ['B', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+
+  return `${Number.parseFloat((bytes / k ** i).toFixed(2))} ${sizes[i]}`;
 }
 
 export function getFileTypeIcon(mimeType: string): string {
@@ -91,20 +91,22 @@ export function getFileTypeIcon(mimeType: string): string {
   if (mimeType.startsWith('audio/')) return '🎵';
   if (mimeType.includes('pdf')) return '📄';
   if (mimeType.includes('word') || mimeType.includes('document')) return '📝';
-  if (mimeType.includes('excel') || mimeType.includes('spreadsheet')) return '📊';
-  if (mimeType.includes('powerpoint') || mimeType.includes('presentation')) return '📈';
+  if (mimeType.includes('excel') || mimeType.includes('spreadsheet'))
+    return '📊';
+  if (mimeType.includes('powerpoint') || mimeType.includes('presentation'))
+    return '📈';
   return '📁';
 }
 
 // API functions
 export async function getMediaFiles(params: {
+  category?: string;
   page?: number;
   pageSize?: number;
-  category?: string;
-  type?: string;
   search?: string;
   sortBy?: 'createdAt' | 'filename' | 'size' | 'usageCount';
   sortOrder?: 'asc' | 'desc';
+  type?: string;
 }): Promise<MediaFilesResponse> {
   const response = await requestClient.get('/media-library', { params });
   return response;
@@ -121,21 +123,21 @@ export async function getMediaFile(id: number): Promise<MediaFileResponse> {
 }
 
 export async function uploadMediaFile(
-  file: File, 
+  file: File,
   metadata: {
-    filename: string;
-    category: string;
     alt?: string;
+    category: string;
     description?: string;
-    tags?: string[];
+    filename: string;
     isPublic?: boolean;
-  }
+    tags?: string[];
+  },
 ): Promise<MediaFileResponse> {
   const formData = new FormData();
   formData.append('file', file);
   formData.append('filename', metadata.filename);
   formData.append('category', metadata.category);
-  
+
   if (metadata.alt) {
     formData.append('alt', metadata.alt);
   }
@@ -158,26 +160,30 @@ export async function uploadMediaFile(
 }
 
 export async function uploadMediaFiles(
-  formData: FormData
+  formData: FormData,
 ): Promise<MediaFileResponse> {
-  const response = await requestClient.post('/media-library/batch-upload', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
+  const response = await requestClient.post(
+    '/media-library/batch-upload',
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     },
-  });
+  );
   return response;
 }
 
 export async function updateMediaFile(
-  id: number, 
+  id: number,
   updates: {
-    filename?: string;
-    category?: string;
     alt?: string;
+    category?: string;
     description?: string;
-    tags?: string[];
+    filename?: string;
     isPublic?: boolean;
-  }
+    tags?: string[];
+  },
 ): Promise<MediaFileResponse> {
   const response = await requestClient.put(`/media-library/${id}`, updates);
   return response;
@@ -188,22 +194,26 @@ export async function deleteMediaFile(id: number): Promise<ApiResponse> {
   return response;
 }
 
-export async function bulkDeleteMediaFiles(ids: number[]): Promise<ApiResponse> {
+export async function bulkDeleteMediaFiles(
+  ids: number[],
+): Promise<ApiResponse> {
   const response = await requestClient.delete('/media-library/bulk', {
-    data: { ids }
+    data: { ids },
   });
   return response;
 }
 
-export async function getMediaFileUsage(id: number): Promise<ApiResponse<{
-  usageCount: number;
-  lastUsed?: string;
-  usageHistory: Array<{
-    page: string;
-    timestamp: string;
-    user?: string;
-  }>;
-}>> {
+export async function getMediaFileUsage(id: number): Promise<
+  ApiResponse<{
+    lastUsed?: string;
+    usageCount: number;
+    usageHistory: Array<{
+      page: string;
+      timestamp: string;
+      user?: string;
+    }>;
+  }>
+> {
   const response = await requestClient.get(`/media-library/${id}/usage`);
   return response;
-} 
+}

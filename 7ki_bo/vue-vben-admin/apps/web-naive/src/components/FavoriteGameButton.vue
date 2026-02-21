@@ -28,7 +28,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  disabled: false
+  disabled: false,
 });
 
 const { isFavorite, toggleFavorite, isLoading } = useFavoriteGames();
@@ -37,7 +37,7 @@ const isGameFavorite = computed(() => isFavorite(props.gameId));
 
 const handleToggle = async () => {
   if (props.disabled) return;
-  
+
   await toggleFavorite(props.gameId);
 };
 </script>
@@ -50,4 +50,4 @@ const handleToggle = async () => {
 .n-button:hover {
   transform: scale(1.05);
 }
-</style> 
+</style>

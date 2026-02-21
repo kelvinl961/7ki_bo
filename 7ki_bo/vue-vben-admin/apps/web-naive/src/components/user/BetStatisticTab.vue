@@ -1,9 +1,8 @@
 <template>
   <div class="bet-statistic-tab">
     <!-- Enhanced Query Section -->
-    <n-card title="查询条件" class="mb-4 query-card">
-      
-      <div class="flex flex-wrap gap-4 items-end">
+    <n-card title="查询条件" class="query-card mb-4">
+      <div class="flex flex-wrap items-end gap-4">
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium text-gray-700">日期范围</label>
           <n-date-picker
@@ -16,7 +15,7 @@
             clearable
           />
         </div>
-        
+
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium text-gray-700">游戏平台</label>
           <n-select
@@ -28,7 +27,7 @@
             @update:value="handleFilterChange"
           />
         </div>
-        
+
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium text-gray-700">游戏类别</label>
           <n-select
@@ -40,36 +39,49 @@
             @update:value="handleFilterChange"
           />
         </div>
-        
+
         <div class="flex gap-2">
-          <n-button type="primary" @click="loadBetStatistics" :loading="loading" class="action-button">查询统计</n-button>
+          <n-button
+            type="primary"
+            @click="loadBetStatistics"
+            :loading="loading"
+            class="action-button"
+            >查询统计</n-button
+          >
           <n-button @click="handleReset" class="action-button">重置</n-button>
-          <n-button @click="loadBetStatistics" :disabled="loading" class="action-button">刷新</n-button>
+          <n-button
+            @click="loadBetStatistics"
+            :disabled="loading"
+            class="action-button"
+            >刷新</n-button
+          >
         </div>
       </div>
     </n-card>
 
     <!-- Loading State -->
-    <div v-if="loading" class="flex justify-center items-center h-64">
+    <div v-if="loading" class="flex h-64 items-center justify-center">
       <n-spin size="large" />
     </div>
 
     <!-- No Data State -->
-    <div v-else-if="!hasData" class="text-center text-gray-500 py-12">
+    <div v-else-if="!hasData" class="py-12 text-center text-gray-500">
       <div class="text-lg font-medium">暂无投注数据</div>
-      <div class="text-sm text-gray-400 mt-2">请选择日期范围后重新查询</div>
+      <div class="mt-2 text-sm text-gray-400">请选择日期范围后重新查询</div>
     </div>
 
     <!-- Data Content -->
     <div v-else class="bet-statistic-content">
       <!-- Enhanced Summary Cards -->
       <div class="mb-6">
-        <div class="flex items-center justify-between mb-4">
+        <div class="mb-4 flex items-center justify-between">
           <h3 class="text-lg font-semibold text-gray-800">投注统计总览</h3>
           <n-tag type="success" size="small">实时数据</n-tag>
         </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+
+        <div
+          class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6"
+        >
           <!-- Total Bet Count -->
           <n-card size="small" class="summary-card stat-card-blue">
             <div class="stat-content">
@@ -86,7 +98,9 @@
             <div class="stat-content">
               <div class="stat-info">
                 <div class="stat-label">总投注金额</div>
-                <div class="stat-value">{{ formatCurrency(summary.totalBetAmount) }}</div>
+                <div class="stat-value">
+                  {{ formatCurrency(summary.totalBetAmount) }}
+                </div>
                 <div class="stat-unit">BRL</div>
               </div>
             </div>
@@ -97,11 +111,22 @@
             <div class="stat-content">
               <div class="stat-info">
                 <div class="stat-label">总有效投注</div>
-                <div class="stat-value">{{ formatCurrency(summary.totalValidBetAmount) }}</div>
+                <div class="stat-value">
+                  {{ formatCurrency(summary.totalValidBetAmount) }}
+                </div>
                 <div class="stat-unit">BRL</div>
               </div>
             </div>
-            <div class="text-right text-xs text-gray-500 pr-3 pb-2">有效率 {{ ((summary.totalValidBetAmount / (summary.totalBetAmount || 1)) * 100).toFixed(1) }}%</div>
+            <div class="pb-2 pr-3 text-right text-xs text-gray-500">
+              有效率
+              {{
+                (
+                  (summary.totalValidBetAmount /
+                    (summary.totalBetAmount || 1)) *
+                  100
+                ).toFixed(1)
+              }}%
+            </div>
           </n-card>
 
           <!-- Member Count -->
@@ -127,11 +152,21 @@
           </n-card>
 
           <!-- Profit Ratio -->
-          <n-card size="small" class="summary-card" :class="summary.profitRatio >= 0 ? 'stat-card-success' : 'stat-card-danger'">
+          <n-card
+            size="small"
+            class="summary-card"
+            :class="
+              summary.profitRatio >= 0
+                ? 'stat-card-success'
+                : 'stat-card-danger'
+            "
+          >
             <div class="stat-content">
               <div class="stat-info">
                 <div class="stat-label">获利比</div>
-                <div class="stat-value">{{ summary.profitRatio.toFixed(2) }}</div>
+                <div class="stat-value">
+                  {{ summary.profitRatio.toFixed(2) }}
+                </div>
                 <div class="stat-unit">%</div>
               </div>
             </div>
@@ -140,48 +175,82 @@
       </div>
 
       <!-- Enhanced Game Details Table -->
-      <n-card class="mb-4 game-details-card">
+      <n-card class="game-details-card mb-4">
         <template #header>
           <div class="flex items-center gap-2">
             <span class="text-lg font-semibold">游戏投注明细</span>
             <n-tag type="info" size="small">按平台分类</n-tag>
           </div>
         </template>
-        
+
         <template #header-extra>
           <div class="flex items-center gap-3">
             <div class="flex items-center gap-2 text-sm text-gray-600">
-              <span class="font-medium">共 {{ filteredGameDetails.length }} 个游戏</span>
+              <span class="font-medium"
+                >共 {{ filteredGameDetails.length }} 个游戏</span
+              >
               <span class="text-gray-400">|</span>
-              <span>总投注: {{ formatCurrency(filteredGameDetails.reduce((sum, game) => sum + game.betAmount, 0)) }}</span>
+              <span
+                >总投注:
+                {{
+                  formatCurrency(
+                    filteredGameDetails.reduce(
+                      (sum, game) => sum + game.betAmount,
+                      0,
+                    ),
+                  )
+                }}</span
+              >
             </div>
-            <n-button size="tiny" type="primary" @click="loadBetStatistics" :disabled="loading">刷新</n-button>
+            <n-button
+              size="tiny"
+              type="primary"
+              @click="loadBetStatistics"
+              :disabled="loading"
+              >刷新</n-button
+            >
           </div>
         </template>
 
         <!-- Table Filters -->
-        <div v-if="gameDetails.length > 0" class="mb-4 p-3 bg-gray-50 rounded-lg">
-          <div class="flex flex-wrap gap-4 items-center">
+        <div
+          v-if="gameDetails.length > 0"
+          class="mb-4 rounded-lg bg-gray-50 p-3"
+        >
+          <div class="flex flex-wrap items-center gap-4">
             <div class="flex items-center gap-2">
               <span class="text-sm font-medium text-gray-700">快速筛选:</span>
               <n-button-group size="small">
-                <n-button 
-                  :type="!gameProviderFilter && !gameCategoryFilter ? 'primary' : 'default'"
+                <n-button
+                  :type="
+                    !gameProviderFilter && !gameCategoryFilter
+                      ? 'primary'
+                      : 'default'
+                  "
                   @click="clearTableFilters"
                 >
                   全部
                 </n-button>
-                <n-button 
+                <n-button
                   v-for="provider in gameProviderOptions.slice(0, 3)"
                   :key="provider.value"
-                  :type="gameProviderFilter === provider.value ? 'primary' : 'default'"
-                  @click="gameProviderFilter = gameProviderFilter === provider.value ? '' : provider.value"
+                  :type="
+                    gameProviderFilter === provider.value
+                      ? 'primary'
+                      : 'default'
+                  "
+                  @click="
+                    gameProviderFilter =
+                      gameProviderFilter === provider.value
+                        ? ''
+                        : provider.value
+                  "
                 >
                   {{ provider.label }}
                 </n-button>
               </n-button-group>
             </div>
-            
+
             <div class="flex items-center gap-2">
               <span class="text-sm font-medium text-gray-700">排序:</span>
               <n-select
@@ -201,33 +270,75 @@
           :data="filteredGameDetails"
           :pagination="pagination"
           size="small"
-          :row-key="(row: BetGameDetail) => `${row.gameProvider}-${row.gameCategory}-${row.gameName}`"
+          :row-key="
+            (row: BetGameDetail) =>
+              `${row.gameProvider}-${row.gameCategory}-${row.gameName}`
+          "
           :scroll-x="1400"
           bordered
           striped
           :row-class-name="getRowClassName"
         />
-        
+
         <!-- Table Summary -->
-        <div v-if="filteredGameDetails.length > 0" class="mt-4 p-3 bg-blue-50 rounded-lg">
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+        <div
+          v-if="filteredGameDetails.length > 0"
+          class="mt-4 rounded-lg bg-blue-50 p-3"
+        >
+          <div class="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
             <div class="flex justify-between">
               <span class="text-gray-600">汇总投注:</span>
-              <span class="font-semibold text-blue-600">{{ formatCurrency(filteredGameDetails.reduce((sum, game) => sum + game.betAmount, 0)) }}</span>
+              <span class="font-semibold text-blue-600">{{
+                formatCurrency(
+                  filteredGameDetails.reduce(
+                    (sum, game) => sum + game.betAmount,
+                    0,
+                  ),
+                )
+              }}</span>
             </div>
             <div class="flex justify-between">
               <span class="text-gray-600">有效投注:</span>
-              <span class="font-semibold text-purple-600">{{ formatCurrency(filteredGameDetails.reduce((sum, game) => sum + game.validBetAmount, 0)) }}</span>
+              <span class="font-semibold text-purple-600">{{
+                formatCurrency(
+                  filteredGameDetails.reduce(
+                    (sum, game) => sum + game.validBetAmount,
+                    0,
+                  ),
+                )
+              }}</span>
             </div>
             <div class="flex justify-between">
               <span class="text-gray-600">总盈亏:</span>
-              <span class="font-semibold" :class="filteredGameDetails.reduce((sum, game) => sum + game.profitLoss, 0) >= 0 ? 'text-green-600' : 'text-red-600'">
-                {{ formatCurrency(filteredGameDetails.reduce((sum, game) => sum + game.profitLoss, 0)) }}
+              <span
+                class="font-semibold"
+                :class="
+                  filteredGameDetails.reduce(
+                    (sum, game) => sum + game.profitLoss,
+                    0,
+                  ) >= 0
+                    ? 'text-green-600'
+                    : 'text-red-600'
+                "
+              >
+                {{
+                  formatCurrency(
+                    filteredGameDetails.reduce(
+                      (sum, game) => sum + game.profitLoss,
+                      0,
+                    ),
+                  )
+                }}
               </span>
             </div>
             <div class="flex justify-between">
               <span class="text-gray-600">注单数:</span>
-              <span class="font-semibold text-orange-600">{{ filteredGameDetails.reduce((sum, game) => sum + game.betCount, 0) }}</span>
+              <span class="font-semibold text-orange-600">{{
+                filteredGameDetails.reduce(
+                  (sum, game) => sum + game.betCount,
+                  0,
+                )
+              }}</span>
             </div>
           </div>
         </div>
@@ -239,7 +350,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, h } from 'vue';
 import { NCard, NButton, NDatePicker, NDataTable, NSpin, NTag } from 'naive-ui';
-import { getBetStatisticData, type BetStatisticSummary, type BetGameDetail, type BetStatisticRequest } from '#/api/core/betStatistic';
+import {
+  getBetStatisticData,
+  type BetStatisticSummary,
+  type BetGameDetail,
+  type BetStatisticRequest,
+} from '#/api/core/betStatistic';
 
 // ===================================
 // PROPS & EMITS
@@ -262,7 +378,7 @@ const summary = ref<BetStatisticSummary>({
   totalValidBetAmount: 0,
   memberCount: 0,
   subordinateBetCount: 0,
-  profitRatio: 0
+  profitRatio: 0,
 });
 const gameDetails = ref<BetGameDetail[]>([]);
 const dateRange = ref<[number, number] | null>(null);
@@ -270,8 +386,8 @@ const dateRange = ref<[number, number] | null>(null);
 // Enhanced filters
 const gameProviderFilter = ref<string>('');
 const gameCategoryFilter = ref<string>('');
-const gameProviderOptions = ref<Array<{label: string, value: string}>>([]);
-const gameCategoryOptions = ref<Array<{label: string, value: string}>>([]);
+const gameProviderOptions = ref<Array<{ label: string; value: string }>>([]);
+const gameCategoryOptions = ref<Array<{ label: string; value: string }>>([]);
 
 // Query tracking
 const lastQueryInfo = ref<{
@@ -288,7 +404,7 @@ const sortOptions = [
   { label: '注单数量', value: 'betCount' },
   { label: '有效投注', value: 'validBetAmount' },
   { label: '盈亏', value: 'profitLoss' },
-  { label: '游戏名称', value: 'gameName' }
+  { label: '游戏名称', value: 'gameName' },
 ];
 
 // ===================================
@@ -301,22 +417,26 @@ const hasData = computed(() => {
 
 const filteredGameDetails = computed(() => {
   let filtered = gameDetails.value;
-  
+
   // Apply filters
   if (gameProviderFilter.value) {
-    filtered = filtered.filter(game => game.gameProvider === gameProviderFilter.value);
+    filtered = filtered.filter(
+      (game) => game.gameProvider === gameProviderFilter.value,
+    );
   }
-  
+
   if (gameCategoryFilter.value) {
-    filtered = filtered.filter(game => game.gameCategory === gameCategoryFilter.value);
+    filtered = filtered.filter(
+      (game) => game.gameCategory === gameCategoryFilter.value,
+    );
   }
-  
+
   // Apply sorting
   if (sortBy.value) {
     filtered = [...filtered].sort((a, b) => {
       const aValue = a[sortBy.value as keyof BetGameDetail];
       const bValue = b[sortBy.value as keyof BetGameDetail];
-      
+
       if (typeof aValue === 'number' && typeof bValue === 'number') {
         return bValue - aValue; // Descending order for numbers
       } else {
@@ -324,7 +444,7 @@ const filteredGameDetails = computed(() => {
       }
     });
   }
-  
+
   return filtered;
 });
 
@@ -339,7 +459,7 @@ const pagination = ref({
   onUpdatePageSize: (pageSize: number) => {
     pagination.value.pageSize = pageSize;
     pagination.value.page = 1;
-  }
+  },
 });
 
 // ===================================
@@ -347,34 +467,50 @@ const pagination = ref({
 // ===================================
 
 const dateShortcuts = {
-  '今天': () => {
+  今天: () => {
     const today = new Date();
-    const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const start = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate(),
+    );
     const end = new Date(start);
     return [start.getTime(), end.getTime()];
   },
-  '昨天': () => {
+  昨天: () => {
     const today = new Date();
-    const start = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+    const start = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate() - 1,
+    );
     const end = new Date(start);
     return [start.getTime(), end.getTime()];
   },
-  '最近7天': () => {
+  最近7天: () => {
     const end = new Date();
-    const start = new Date(end.getFullYear(), end.getMonth(), end.getDate() - 6);
+    const start = new Date(
+      end.getFullYear(),
+      end.getMonth(),
+      end.getDate() - 6,
+    );
     return [start.getTime(), end.getTime()];
   },
-  '最近30天': () => {
+  最近30天: () => {
     const end = new Date();
-    const start = new Date(end.getFullYear(), end.getMonth(), end.getDate() - 29);
+    const start = new Date(
+      end.getFullYear(),
+      end.getMonth(),
+      end.getDate() - 29,
+    );
     return [start.getTime(), end.getTime()];
   },
-  '本月': () => {
+  本月: () => {
     const now = new Date();
     const start = new Date(now.getFullYear(), now.getMonth(), 1);
     const end = new Date();
     return [start.getTime(), end.getTime()];
-  }
+  },
 };
 
 // ===================================
@@ -386,21 +522,22 @@ const enhancedGameColumns = [
     title: '平台',
     key: 'gameProvider',
     width: 120,
-    fixed: 'left'
+    fixed: 'left',
   },
   {
     title: '类别',
     key: 'gameCategory',
-    width: 120
+    width: 120,
   },
   {
     title: '游戏名称',
     key: 'gameName',
     width: 200,
     ellipsis: {
-      tooltip: true
+      tooltip: true,
     },
-    render: (row: BetGameDetail) => h('div', { class: 'font-medium text-gray-800' }, row.gameName)
+    render: (row: BetGameDetail) =>
+      h('div', { class: 'font-medium text-gray-800' }, row.gameName),
   },
   {
     title: '注单数量',
@@ -408,7 +545,8 @@ const enhancedGameColumns = [
     width: 100,
     align: 'right',
     sorter: true,
-    render: (row: BetGameDetail) => h('span', { class: 'font-bold text-blue-600' }, row.betCount)
+    render: (row: BetGameDetail) =>
+      h('span', { class: 'font-bold text-blue-600' }, row.betCount),
   },
   {
     title: '投注金额',
@@ -416,7 +554,12 @@ const enhancedGameColumns = [
     width: 130,
     align: 'right',
     sorter: true,
-    render: (row: BetGameDetail) => h('span', { class: 'font-bold text-green-600' }, `R$ ${formatCurrency(row.betAmount)}`)
+    render: (row: BetGameDetail) =>
+      h(
+        'span',
+        { class: 'font-bold text-green-600' },
+        `R$ ${formatCurrency(row.betAmount)}`,
+      ),
   },
   {
     title: '有效投注',
@@ -424,7 +567,12 @@ const enhancedGameColumns = [
     width: 130,
     align: 'right',
     sorter: true,
-    render: (row: BetGameDetail) => h('span', { class: 'font-bold text-purple-600' }, `R$ ${formatCurrency(row.validBetAmount)}`)
+    render: (row: BetGameDetail) =>
+      h(
+        'span',
+        { class: 'font-bold text-purple-600' },
+        `R$ ${formatCurrency(row.validBetAmount)}`,
+      ),
   },
   {
     title: '盈亏',
@@ -434,16 +582,21 @@ const enhancedGameColumns = [
     sorter: true,
     render: (row: BetGameDetail) => {
       const isProfit = row.profitLoss >= 0;
-      return h('span', { class: `font-bold ${isProfit ? 'text-green-600' : 'text-red-600'}` }, `${isProfit ? '+' : ''}R$ ${formatCurrency(Math.abs(row.profitLoss))}`);
-    }
+      return h(
+        'span',
+        { class: `font-bold ${isProfit ? 'text-green-600' : 'text-red-600'}` },
+        `${isProfit ? '+' : ''}R$ ${formatCurrency(Math.abs(row.profitLoss))}`,
+      );
+    },
   },
   {
     title: '会员数量',
     key: 'memberCount',
     width: 100,
     align: 'right',
-    render: (row: BetGameDetail) => h('span', { class: 'font-bold text-orange-600' }, row.memberCount)
-  }
+    render: (row: BetGameDetail) =>
+      h('span', { class: 'font-bold text-orange-600' }, row.memberCount),
+  },
 ];
 
 // ===================================
@@ -457,10 +610,10 @@ const loadBetStatistics = async () => {
   }
 
   loading.value = true;
-  
+
   try {
     const params: BetStatisticRequest = {
-      userId: props.userId
+      userId: props.userId,
     };
 
     // Add date range if selected
@@ -468,8 +621,28 @@ const loadBetStatistics = async () => {
       const start = new Date(dateRange.value[0]);
       const end = new Date(dateRange.value[1]);
       // Normalize to full-day boundaries (UTC) to avoid invalid end date
-      const startISO = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate(), 0, 0, 0, 0)).toISOString();
-      const endISO = new Date(Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate(), 23, 59, 59, 999)).toISOString();
+      const startISO = new Date(
+        Date.UTC(
+          start.getUTCFullYear(),
+          start.getUTCMonth(),
+          start.getUTCDate(),
+          0,
+          0,
+          0,
+          0,
+        ),
+      ).toISOString();
+      const endISO = new Date(
+        Date.UTC(
+          end.getUTCFullYear(),
+          end.getUTCMonth(),
+          end.getUTCDate(),
+          23,
+          59,
+          59,
+          999,
+        ),
+      ).toISOString();
       params.startDate = startISO;
       params.endDate = endISO;
     }
@@ -478,7 +651,7 @@ const loadBetStatistics = async () => {
 
     const response = await getBetStatisticData(params);
     console.log('📊 Raw API response:', response);
-    
+
     // Handle both response structures: {code, data} and {summary, gameDetails}
     let data;
     if (response.code === 0 && response.data) {
@@ -495,33 +668,33 @@ const loadBetStatistics = async () => {
         totalValidBetAmount: 0,
         memberCount: 0,
         subordinateBetCount: 0,
-        profitRatio: 0
+        profitRatio: 0,
       };
       gameDetails.value = [];
       return;
     }
-    
+
     // Set the data
     summary.value = data.summary;
     gameDetails.value = data.gameDetails;
-    
+
     // Update filter options
     updateFilterOptions();
-    
+
     // Update query info
     lastQueryInfo.value = {
       timestamp: new Date().toLocaleString('zh-CN'),
-      dateRange: dateRange.value ? 
-        `${dateRange.value[0]} ~ ${dateRange.value[1]}` : 
-        '最近7天',
+      dateRange: dateRange.value
+        ? `${dateRange.value[0]} ~ ${dateRange.value[1]}`
+        : '最近7天',
       gameCount: gameDetails.value.length,
-      totalBet: formatCurrency(summary.value.totalBetAmount)
+      totalBet: formatCurrency(summary.value.totalBetAmount),
     };
-    
+
     console.log('✅ Bet statistics loaded:', {
       summary: summary.value,
       gameCount: gameDetails.value.length,
-      queryInfo: lastQueryInfo.value
+      queryInfo: lastQueryInfo.value,
     });
   } catch (error) {
     console.error('❌ Error loading bet statistics:', error);
@@ -531,7 +704,7 @@ const loadBetStatistics = async () => {
       totalValidBetAmount: 0,
       memberCount: 0,
       subordinateBetCount: 0,
-      profitRatio: 0
+      profitRatio: 0,
     };
     gameDetails.value = [];
   } finally {
@@ -553,7 +726,7 @@ const handleReset = () => {
     totalValidBetAmount: 0,
     memberCount: 0,
     subordinateBetCount: 0,
-    profitRatio: 0
+    profitRatio: 0,
   };
   gameDetails.value = [];
   lastQueryInfo.value = null;
@@ -563,7 +736,7 @@ const handleReset = () => {
 const handleFilterChange = () => {
   console.log('🔧 Filter changed:', {
     provider: gameProviderFilter.value,
-    category: gameCategoryFilter.value
+    category: gameCategoryFilter.value,
   });
 };
 
@@ -574,17 +747,21 @@ const formatCurrency = (amount: number): string => {
 
 const updateFilterOptions = () => {
   // Extract unique providers and categories from game details
-  const providers = [...new Set(gameDetails.value.map(game => game.gameProvider))];
-  const categories = [...new Set(gameDetails.value.map(game => game.gameCategory))];
-  
-  gameProviderOptions.value = providers.map(provider => ({
+  const providers = [
+    ...new Set(gameDetails.value.map((game) => game.gameProvider)),
+  ];
+  const categories = [
+    ...new Set(gameDetails.value.map((game) => game.gameCategory)),
+  ];
+
+  gameProviderOptions.value = providers.map((provider) => ({
     label: provider,
-    value: provider
+    value: provider,
   }));
-  
-  gameCategoryOptions.value = categories.map(category => ({
+
+  gameCategoryOptions.value = categories.map((category) => ({
     label: category,
-    value: category
+    value: category,
   }));
 };
 
@@ -634,45 +811,45 @@ onMounted(() => {
 
 /* Enhanced Summary Card Styles */
 .summary-card {
-  @apply transition-all duration-300 hover:shadow-lg border-0;
+  @apply border-0 transition-all duration-300 hover:shadow-lg;
 }
 
 .summary-card:hover {
-  @apply transform scale-105;
+  @apply scale-105 transform;
 }
 
 /* Stat Card Variants */
 .stat-card-blue {
-  @apply bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200;
+  @apply border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100;
 }
 
 .stat-card-green {
-  @apply bg-gradient-to-br from-green-50 to-green-100 border-green-200;
+  @apply border-green-200 bg-gradient-to-br from-green-50 to-green-100;
 }
 
 .stat-card-purple {
-  @apply bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200;
+  @apply border-purple-200 bg-gradient-to-br from-purple-50 to-purple-100;
 }
 
 .stat-card-orange {
-  @apply bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200;
+  @apply border-orange-200 bg-gradient-to-br from-orange-50 to-orange-100;
 }
 
 .stat-card-indigo {
-  @apply bg-gradient-to-br from-indigo-50 to-indigo-100 border-indigo-200;
+  @apply border-indigo-200 bg-gradient-to-br from-indigo-50 to-indigo-100;
 }
 
 .stat-card-success {
-  @apply bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200;
+  @apply border-emerald-200 bg-gradient-to-br from-emerald-50 to-emerald-100;
 }
 
 .stat-card-danger {
-  @apply bg-gradient-to-br from-red-50 to-red-100 border-red-200;
+  @apply border-red-200 bg-gradient-to-br from-red-50 to-red-100;
 }
 
 /* Stat Content Layout */
 .stat-content {
-  @apply flex items-center justify-between mb-3;
+  @apply mb-3 flex items-center justify-between;
 }
 
 .stat-icon {
@@ -684,15 +861,15 @@ onMounted(() => {
 }
 
 .stat-label {
-  @apply text-xs text-gray-600 font-medium mb-1;
+  @apply mb-1 text-xs font-medium text-gray-600;
 }
 
 .stat-value {
-  @apply text-xl font-bold text-gray-800 leading-tight;
+  @apply text-xl font-bold leading-tight text-gray-800;
 }
 
 .stat-unit {
-  @apply text-xs text-gray-500 font-medium;
+  @apply text-xs font-medium text-gray-500;
 }
 
 /* Trend Indicators */
@@ -701,23 +878,23 @@ onMounted(() => {
 }
 
 .trend-indicator {
-  @apply font-semibold px-2 py-1 rounded-full;
+  @apply rounded-full px-2 py-1 font-semibold;
 }
 
 .trend-indicator.positive {
-  @apply text-green-600 bg-green-100;
+  @apply bg-green-100 text-green-600;
 }
 
 .trend-indicator.negative {
-  @apply text-red-600 bg-red-100;
+  @apply bg-red-100 text-red-600;
 }
 
 .trend-percentage {
-  @apply font-semibold text-gray-700 px-2 py-1 bg-gray-100 rounded-full;
+  @apply rounded-full bg-gray-100 px-2 py-1 font-semibold text-gray-700;
 }
 
 .trend-label {
-  @apply text-gray-500 font-medium;
+  @apply font-medium text-gray-500;
 }
 
 /* Content Sections */
@@ -730,15 +907,15 @@ onMounted(() => {
   .stat-content {
     @apply flex-col items-start;
   }
-  
+
   .stat-info {
-    @apply text-left mt-2;
+    @apply mt-2 text-left;
   }
-  
+
   .stat-icon {
     @apply text-xl;
   }
-  
+
   .stat-value {
     @apply text-lg;
   }
@@ -788,4 +965,4 @@ onMounted(() => {
 :deep(.n-button-group .n-button) {
   @apply min-w-[60px];
 }
-</style> 
+</style>

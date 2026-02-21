@@ -2,7 +2,7 @@
   <div class="associations-tab">
     <!-- Associations Summary -->
     <n-card title="关联账号概览" class="mb-4">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
         <div class="stat-card">
           <div class="stat-value">{{ totalAssociations }}</div>
           <div class="stat-label">总关联数</div>
@@ -28,15 +28,11 @@
         <n-button type="primary" @click="handleAddAssociation">
           添加关联
         </n-button>
-        <n-button type="info" @click="handleBatchVerify">
-          批量验证
-        </n-button>
+        <n-button type="info" @click="handleBatchVerify"> 批量验证 </n-button>
         <n-button type="warning" @click="handleExportAssociations">
           导出关联
         </n-button>
-        <n-button @click="handleRefresh">
-          刷新
-        </n-button>
+        <n-button @click="handleRefresh"> 刷新 </n-button>
       </div>
     </n-card>
 
@@ -53,7 +49,12 @@
     </n-card>
 
     <!-- Add/Edit Association Modal -->
-    <n-modal v-model:show="showAssociationModal" preset="card" title="关联账号" style="width: 600px">
+    <n-modal
+      v-model:show="showAssociationModal"
+      preset="card"
+      title="关联账号"
+      style="width: 600px"
+    >
       <n-form
         ref="formRef"
         :model="associationForm"
@@ -62,17 +63,26 @@
         label-width="120px"
       >
         <n-form-item label="关联类型" path="type">
-          <n-select v-model:value="associationForm.type" :options="associationTypeOptions" />
+          <n-select
+            v-model:value="associationForm.type"
+            :options="associationTypeOptions"
+          />
         </n-form-item>
-        
+
         <n-form-item label="关联账号" path="account">
-          <n-input v-model:value="associationForm.account" placeholder="请输入关联账号" />
+          <n-input
+            v-model:value="associationForm.account"
+            placeholder="请输入关联账号"
+          />
         </n-form-item>
-        
+
         <n-form-item label="关联平台" path="platform">
-          <n-input v-model:value="associationForm.platform" placeholder="请输入关联平台" />
+          <n-input
+            v-model:value="associationForm.platform"
+            placeholder="请输入关联平台"
+          />
         </n-form-item>
-        
+
         <n-form-item label="关联原因" path="reason">
           <n-input
             v-model:value="associationForm.reason"
@@ -81,11 +91,14 @@
             :rows="3"
           />
         </n-form-item>
-        
+
         <n-form-item label="状态" path="status">
-          <n-select v-model:value="associationForm.status" :options="statusOptions" />
+          <n-select
+            v-model:value="associationForm.status"
+            :options="statusOptions"
+          />
         </n-form-item>
-        
+
         <n-form-item label="备注" path="remark">
           <n-input
             v-model:value="associationForm.remark"
@@ -95,11 +108,15 @@
           />
         </n-form-item>
       </n-form>
-      
+
       <template #action>
         <div class="flex gap-2">
           <n-button @click="showAssociationModal = false">取消</n-button>
-          <n-button type="primary" @click="handleSubmitAssociation" :loading="submitting">
+          <n-button
+            type="primary"
+            @click="handleSubmitAssociation"
+            :loading="submitting"
+          >
             {{ isEdit ? '更新' : '添加' }}
           </n-button>
         </div>
@@ -110,18 +127,18 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, h, onMounted } from 'vue';
-import { 
-  NCard, 
-  NButton, 
-  NDataTable, 
-  NModal, 
-  NForm, 
-  NFormItem, 
-  NInput, 
-  NSelect, 
-  NTag, 
+import {
+  NCard,
+  NButton,
+  NDataTable,
+  NModal,
+  NForm,
+  NFormItem,
+  NInput,
+  NSelect,
+  NTag,
   useMessage,
-  type DataTableColumns 
+  type DataTableColumns,
 } from 'naive-ui';
 import type { AgentRecord } from '#/api/agency/agent';
 
@@ -151,7 +168,7 @@ interface AssociationForm {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  agentId: 0
+  agentId: 0,
 });
 
 const message = useMessage();
@@ -174,7 +191,7 @@ const associations = ref<Association[]>([
     status: 'active',
     remark: '用于提现和充值',
     createdAt: '2024-01-01T00:00:00Z',
-    updatedAt: '2024-01-01T00:00:00Z'
+    updatedAt: '2024-01-01T00:00:00Z',
   },
   {
     id: 2,
@@ -185,7 +202,7 @@ const associations = ref<Association[]>([
     status: 'active',
     remark: '日常小额交易',
     createdAt: '2024-01-02T00:00:00Z',
-    updatedAt: '2024-01-02T00:00:00Z'
+    updatedAt: '2024-01-02T00:00:00Z',
   },
   {
     id: 3,
@@ -196,8 +213,8 @@ const associations = ref<Association[]>([
     status: 'pending',
     remark: '待验证身份',
     createdAt: '2024-01-03T00:00:00Z',
-    updatedAt: '2024-01-03T00:00:00Z'
-  }
+    updatedAt: '2024-01-03T00:00:00Z',
+  },
 ]);
 
 const associationForm = reactive<AssociationForm>({
@@ -206,7 +223,7 @@ const associationForm = reactive<AssociationForm>({
   platform: '',
   reason: '',
   status: 'pending',
-  remark: ''
+  remark: '',
 });
 
 // Options
@@ -214,13 +231,13 @@ const associationTypeOptions = [
   { label: '银行账户', value: 'bank' },
   { label: '支付宝', value: 'alipay' },
   { label: '微信支付', value: 'wechat' },
-  { label: '其他平台', value: 'other' }
+  { label: '其他平台', value: 'other' },
 ];
 
 const statusOptions = [
   { label: '活跃', value: 'active' },
   { label: '停用', value: 'inactive' },
-  { label: '待验证', value: 'pending' }
+  { label: '待验证', value: 'pending' },
 ];
 
 // Pagination
@@ -245,16 +262,16 @@ const pagination = reactive({
 // Computed
 const totalAssociations = computed(() => associations.value.length);
 
-const activeAssociations = computed(() => 
-  associations.value.filter(assoc => assoc.status === 'active').length
+const activeAssociations = computed(
+  () => associations.value.filter((assoc) => assoc.status === 'active').length,
 );
 
-const verifiedAssociations = computed(() => 
-  associations.value.filter(assoc => assoc.status === 'active').length
+const verifiedAssociations = computed(
+  () => associations.value.filter((assoc) => assoc.status === 'active').length,
 );
 
-const pendingAssociations = computed(() => 
-  associations.value.filter(assoc => assoc.status === 'pending').length
+const pendingAssociations = computed(
+  () => associations.value.filter((assoc) => assoc.status === 'pending').length,
 );
 
 // Table columns
@@ -263,7 +280,7 @@ const columns: DataTableColumns<Association> = [
     title: 'ID',
     key: 'id',
     width: 80,
-    align: 'center'
+    align: 'center',
   },
   {
     title: '关联类型',
@@ -271,36 +288,44 @@ const columns: DataTableColumns<Association> = [
     width: 120,
     render: (row) => {
       const typeMap = {
-        'bank': { label: '银行账户', type: 'info', icon: '🏦' },
-        'alipay': { label: '支付宝', type: 'success', icon: '💳' },
-        'wechat': { label: '微信支付', type: 'success', icon: '💬' },
-        'other': { label: '其他平台', type: 'default', icon: '🔗' }
+        bank: { label: '银行账户', type: 'info', icon: '🏦' },
+        alipay: { label: '支付宝', type: 'success', icon: '💳' },
+        wechat: { label: '微信支付', type: 'success', icon: '💬' },
+        other: { label: '其他平台', type: 'default', icon: '🔗' },
       };
-      const typeInfo = typeMap[row.type as keyof typeof typeMap] || { label: row.type, type: 'default', icon: '❓' };
+      const typeInfo = typeMap[row.type as keyof typeof typeMap] || {
+        label: row.type,
+        type: 'default',
+        icon: '❓',
+      };
       return h('div', { class: 'flex items-center gap-2' }, [
         h('span', { class: 'text-lg' }, typeInfo.icon),
-        h(NTag, { type: typeInfo.type, size: 'small' }, { default: () => typeInfo.label })
+        h(
+          NTag,
+          { type: typeInfo.type, size: 'small' },
+          { default: () => typeInfo.label },
+        ),
       ]);
-    }
+    },
   },
   {
     title: '关联账号',
     key: 'account',
     width: 200,
     ellipsis: true,
-    tooltip: true
+    tooltip: true,
   },
   {
     title: '关联平台',
     key: 'platform',
-    width: 150
+    width: 150,
   },
   {
     title: '关联原因',
     key: 'reason',
     width: 200,
     ellipsis: true,
-    tooltip: true
+    tooltip: true,
   },
   {
     title: '状态',
@@ -308,16 +333,24 @@ const columns: DataTableColumns<Association> = [
     width: 100,
     render: (row) => {
       const statusMap = {
-        'active': { label: '活跃', type: 'success', icon: '✅' },
-        'inactive': { label: '停用', type: 'error', icon: '❌' },
-        'pending': { label: '待验证', type: 'warning', icon: '⏳' }
+        active: { label: '活跃', type: 'success', icon: '✅' },
+        inactive: { label: '停用', type: 'error', icon: '❌' },
+        pending: { label: '待验证', type: 'warning', icon: '⏳' },
       };
-      const status = statusMap[row.status as keyof typeof statusMap] || { label: row.status, type: 'default', icon: '❓' };
+      const status = statusMap[row.status as keyof typeof statusMap] || {
+        label: row.status,
+        type: 'default',
+        icon: '❓',
+      };
       return h('div', { class: 'flex items-center justify-center gap-1' }, [
         h('span', { class: 'text-sm' }, status.icon),
-        h(NTag, { type: status.type, size: 'small' }, { default: () => status.label })
+        h(
+          NTag,
+          { type: status.type, size: 'small' },
+          { default: () => status.label },
+        ),
       ]);
-    }
+    },
   },
   {
     title: '创建时间',
@@ -325,15 +358,15 @@ const columns: DataTableColumns<Association> = [
     width: 180,
     render: (row) => {
       return h('div', { class: 'text-sm' }, [
-        h('div', { class: 'font-medium' }, formatDateTime(row.createdAt))
+        h('div', { class: 'font-medium' }, formatDateTime(row.createdAt)),
       ]);
-    }
+    },
   },
   {
     title: '备注',
     key: 'remark',
     ellipsis: true,
-    tooltip: true
+    tooltip: true,
   },
   {
     title: '操作',
@@ -342,24 +375,36 @@ const columns: DataTableColumns<Association> = [
     fixed: 'right',
     render: (row) => {
       return h('div', { class: 'flex gap-1' }, [
-        h(NButton, {
-          size: 'tiny',
-          type: 'primary',
-          onClick: () => handleEditAssociation(row)
-        }, { default: () => '编辑' }),
-        h(NButton, {
-          size: 'tiny',
-          type: row.status === 'active' ? 'warning' : 'success',
-          onClick: () => handleToggleStatus(row)
-        }, { default: () => row.status === 'active' ? '停用' : '启用' }),
-        h(NButton, {
-          size: 'tiny',
-          type: 'error',
-          onClick: () => handleDeleteAssociation(row.id)
-        }, { default: () => '删除' })
+        h(
+          NButton,
+          {
+            size: 'tiny',
+            type: 'primary',
+            onClick: () => handleEditAssociation(row),
+          },
+          { default: () => '编辑' },
+        ),
+        h(
+          NButton,
+          {
+            size: 'tiny',
+            type: row.status === 'active' ? 'warning' : 'success',
+            onClick: () => handleToggleStatus(row),
+          },
+          { default: () => (row.status === 'active' ? '停用' : '启用') },
+        ),
+        h(
+          NButton,
+          {
+            size: 'tiny',
+            type: 'error',
+            onClick: () => handleDeleteAssociation(row.id),
+          },
+          { default: () => '删除' },
+        ),
       ]);
-    }
-  }
+    },
+  },
 ];
 
 // Form validation rules
@@ -367,23 +412,23 @@ const rules = {
   type: {
     required: true,
     message: '请选择关联类型',
-    trigger: 'blur'
+    trigger: 'blur',
   },
   account: {
     required: true,
     message: '请输入关联账号',
-    trigger: 'blur'
+    trigger: 'blur',
   },
   platform: {
     required: true,
     message: '请输入关联平台',
-    trigger: 'blur'
+    trigger: 'blur',
   },
   reason: {
     required: true,
     message: '请输入关联原因',
-    trigger: 'blur'
-  }
+    trigger: 'blur',
+  },
 };
 
 // Methods
@@ -391,7 +436,7 @@ const loadAssociations = async () => {
   loading.value = true;
   try {
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
     pagination.itemCount = associations.value.length;
   } catch (error) {
     message.error('加载关联账号失败');
@@ -416,7 +461,7 @@ const handleEditAssociation = (association: Association) => {
     platform: association.platform,
     reason: association.reason,
     status: association.status,
-    remark: association.remark || ''
+    remark: association.remark || '',
   });
   showAssociationModal.value = true;
 };
@@ -424,14 +469,16 @@ const handleEditAssociation = (association: Association) => {
 const handleSubmitAssociation = async () => {
   try {
     submitting.value = true;
-    
+
     if (isEdit.value && currentAssociationId.value) {
       // Update existing association
-      const index = associations.value.findIndex(assoc => assoc.id === currentAssociationId.value);
+      const index = associations.value.findIndex(
+        (assoc) => assoc.id === currentAssociationId.value,
+      );
       if (index !== -1) {
         Object.assign(associations.value[index], {
           ...associationForm,
-          updatedAt: new Date().toISOString()
+          updatedAt: new Date().toISOString(),
         });
       }
       message.success('关联账号更新成功');
@@ -441,12 +488,12 @@ const handleSubmitAssociation = async () => {
         id: Date.now(),
         ...associationForm,
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       };
       associations.value.push(newAssociation);
       message.success('关联账号添加成功');
     }
-    
+
     showAssociationModal.value = false;
     loadAssociations();
   } catch (error) {
@@ -459,11 +506,13 @@ const handleSubmitAssociation = async () => {
 const handleToggleStatus = (association: Association) => {
   association.status = association.status === 'active' ? 'inactive' : 'active';
   association.updatedAt = new Date().toISOString();
-  message.success(`关联账号已${association.status === 'active' ? '启用' : '停用'}`);
+  message.success(
+    `关联账号已${association.status === 'active' ? '启用' : '停用'}`,
+  );
 };
 
 const handleDeleteAssociation = (id: number) => {
-  const index = associations.value.findIndex(assoc => assoc.id === id);
+  const index = associations.value.findIndex((assoc) => assoc.id === id);
   if (index !== -1) {
     associations.value.splice(index, 1);
     message.success('关联账号删除成功');
@@ -491,7 +540,7 @@ const resetForm = () => {
     platform: '',
     reason: '',
     status: 'pending',
-    remark: ''
+    remark: '',
   });
 };
 

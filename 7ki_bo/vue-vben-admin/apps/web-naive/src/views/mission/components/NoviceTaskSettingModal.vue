@@ -21,7 +21,7 @@
         <n-grid-item :span="2">
           <n-divider title-placement="left">基本信息</n-divider>
         </n-grid-item>
-        
+
         <n-grid-item>
           <n-form-item label="任务标题" path="title">
             <n-input
@@ -31,7 +31,7 @@
             />
           </n-form-item>
         </n-grid-item>
-        
+
         <n-grid-item>
           <n-form-item label="任务类型" path="taskType">
             <n-select
@@ -41,7 +41,7 @@
             />
           </n-form-item>
         </n-grid-item>
-        
+
         <n-grid-item>
           <n-form-item label="排序权重" path="sortOrder">
             <n-input-number
@@ -52,7 +52,7 @@
             />
           </n-form-item>
         </n-grid-item>
-        
+
         <n-grid-item>
           <n-form-item label="任务状态" path="isActive">
             <n-switch
@@ -64,7 +64,7 @@
             </n-switch>
           </n-form-item>
         </n-grid-item>
-        
+
         <n-grid-item :span="2">
           <n-form-item label="任务描述" path="description">
             <n-input
@@ -80,7 +80,7 @@
         <n-grid-item :span="2">
           <n-divider title-placement="left">选择平台</n-divider>
         </n-grid-item>
-        
+
         <n-grid-item :span="2">
           <n-form-item label="支持平台" path="platforms">
             <n-checkbox-group v-model:value="selectedPlatforms">
@@ -98,12 +98,15 @@
         <n-grid-item :span="2">
           <n-divider title-placement="left">参与会员组</n-divider>
         </n-grid-item>
-        
+
         <n-grid-item :span="2">
           <n-form-item label="会员组" path="memberGroups">
             <n-checkbox-group v-model:value="formData.memberGroups">
               <n-grid :cols="4" :x-gap="12" :y-gap="8">
-                <n-grid-item v-for="group in memberGroupOptions" :key="group.value">
+                <n-grid-item
+                  v-for="group in memberGroupOptions"
+                  :key="group.value"
+                >
                   <n-checkbox :value="group.value" :label="group.label" />
                 </n-grid-item>
               </n-grid>
@@ -115,7 +118,7 @@
         <n-grid-item :span="2">
           <n-divider title-placement="left">任务校验方式</n-divider>
         </n-grid-item>
-        
+
         <n-grid-item>
           <n-form-item label="校验方式" path="validationMethod">
             <n-radio-group v-model:value="formData.validationMethod">
@@ -126,7 +129,7 @@
             </n-radio-group>
           </n-form-item>
         </n-grid-item>
-        
+
         <n-grid-item v-if="formData.validationMethod === 'LIMITED_TIME'">
           <n-form-item label="限时设置" path="validationTime">
             <n-space>
@@ -151,7 +154,7 @@
         <n-grid-item :span="2">
           <n-divider title-placement="left">领取方式</n-divider>
         </n-grid-item>
-        
+
         <n-grid-item>
           <n-form-item label="领取方式" path="claimMethod">
             <n-radio-group v-model:value="formData.claimMethod">
@@ -162,7 +165,7 @@
             </n-radio-group>
           </n-form-item>
         </n-grid-item>
-        
+
         <n-grid-item>
           <n-form-item label="领取时间" path="claimTimeType">
             <n-radio-group v-model:value="formData.claimTimeType">
@@ -178,7 +181,7 @@
         <n-grid-item :span="2">
           <n-divider title-placement="left">领取入口</n-divider>
         </n-grid-item>
-        
+
         <n-grid-item :span="2">
           <n-form-item label="领取入口" path="claimEntrance">
             <n-checkbox-group v-model:value="selectedClaimEntrance">
@@ -196,22 +199,34 @@
         <n-grid-item :span="2">
           <n-divider title-placement="left">更多领取限制</n-divider>
         </n-grid-item>
-        
+
         <n-grid-item :span="2">
           <n-form-item label="领取限制" path="claimRestrictions">
             <n-checkbox-group v-model:value="selectedRestrictions">
               <n-grid :cols="2" :x-gap="12" :y-gap="8">
                 <n-grid-item>
-                  <n-checkbox value="requireEmailVerification" label="完成邮箱验证才能领取" />
+                  <n-checkbox
+                    value="requireEmailVerification"
+                    label="完成邮箱验证才能领取"
+                  />
                 </n-grid-item>
                 <n-grid-item>
-                  <n-checkbox value="requirePhoneVerification" label="完成手机验证才能领取" />
+                  <n-checkbox
+                    value="requirePhoneVerification"
+                    label="完成手机验证才能领取"
+                  />
                 </n-grid-item>
                 <n-grid-item>
-                  <n-checkbox value="requireBankBinding" label="完成银行卡绑定才能领取" />
+                  <n-checkbox
+                    value="requireBankBinding"
+                    label="完成银行卡绑定才能领取"
+                  />
                 </n-grid-item>
                 <n-grid-item>
-                  <n-checkbox value="requireRealNameAuth" label="完成实名认证才能领取" />
+                  <n-checkbox
+                    value="requireRealNameAuth"
+                    label="完成实名认证才能领取"
+                  />
                 </n-grid-item>
               </n-grid>
             </n-checkbox-group>
@@ -222,7 +237,7 @@
         <n-grid-item :span="2">
           <n-divider title-placement="left">登录相关</n-divider>
         </n-grid-item>
-        
+
         <n-grid-item>
           <n-form-item label="登录新增方式" path="loginAdditionMethod">
             <n-select
@@ -233,7 +248,7 @@
             />
           </n-form-item>
         </n-grid-item>
-        
+
         <n-grid-item>
           <n-form-item label="登录导流方式" path="loginDiversionMethod">
             <n-select
@@ -249,7 +264,7 @@
         <n-grid-item :span="2">
           <n-divider title-placement="left">奖励设置</n-divider>
         </n-grid-item>
-        
+
         <n-grid-item>
           <n-form-item label="奖励类型" path="rewardType">
             <n-select
@@ -259,7 +274,7 @@
             />
           </n-form-item>
         </n-grid-item>
-        
+
         <n-grid-item>
           <n-form-item label="奖励金额" path="rewardAmount">
             <n-input-number
@@ -272,7 +287,7 @@
             </n-input-number>
           </n-form-item>
         </n-grid-item>
-        
+
         <n-grid-item>
           <n-form-item label="奖励币种" path="rewardCurrency">
             <n-select
@@ -282,7 +297,7 @@
             />
           </n-form-item>
         </n-grid-item>
-        
+
         <n-grid-item>
           <n-form-item label="奖励倍数" path="rewardMultiplier">
             <n-input-number
@@ -298,7 +313,7 @@
         <n-grid-item :span="2">
           <n-divider title-placement="left">任务条件</n-divider>
         </n-grid-item>
-        
+
         <n-grid-item>
           <n-form-item label="条件类型" path="taskConditions.conditionType">
             <n-input
@@ -307,7 +322,7 @@
             />
           </n-form-item>
         </n-grid-item>
-        
+
         <n-grid-item>
           <n-form-item label="目标值" path="taskConditions.targetValue">
             <n-input-number
@@ -322,7 +337,7 @@
         <n-grid-item :span="2">
           <n-divider title-placement="left">时间设置</n-divider>
         </n-grid-item>
-        
+
         <n-grid-item>
           <n-form-item label="开始时间" path="startTime">
             <n-date-picker
@@ -334,7 +349,7 @@
             />
           </n-form-item>
         </n-grid-item>
-        
+
         <n-grid-item>
           <n-form-item label="结束时间" path="endTime">
             <n-date-picker
@@ -351,7 +366,7 @@
         <n-grid-item :span="2">
           <n-divider title-placement="left">规则说明</n-divider>
         </n-grid-item>
-        
+
         <n-grid-item :span="2">
           <n-form-item label="规则说明" path="ruleDescription">
             <n-input
@@ -380,14 +395,17 @@
 import { ref, computed, watch, nextTick } from 'vue';
 import { useMessage } from 'naive-ui';
 import type { FormInst, FormRules } from 'naive-ui';
-import { 
-  TaskCategory, 
+import {
+  TaskCategory,
   createTaskCenter,
   updateTaskCenter,
   taskTypeOptions,
-  taskRewardTypeOptions
+  taskRewardTypeOptions,
 } from '../../../api/taskCenter';
-import type { TaskCenterFormData, TaskCenterItem } from '../../../api/taskCenter';
+import type {
+  TaskCenterFormData,
+  TaskCenterItem,
+} from '../../../api/taskCenter';
 
 interface Props {
   visible: boolean;
@@ -413,7 +431,7 @@ const submitting = ref(false);
 // Modal state
 const modalVisible = computed({
   get: () => props.visible,
-  set: (value: boolean) => emit('update:visible', value)
+  set: (value: boolean) => emit('update:visible', value),
 });
 
 const modalTitle = computed(() => {
@@ -427,70 +445,70 @@ const formData = ref<TaskCenterFormData>({
   category: props.category,
   taskType: 'REGISTRATION',
   sortOrder: 0,
-  
+
   // Platform
   platformAndroid: false,
   platformIOS: false,
   platformH5: false,
   platformPC: false,
-  
+
   // Member groups
   memberGroups: [],
-  
+
   // Validation
   validationMethod: 'LONG_TERM',
   validationStartTime: undefined,
   validationEndTime: undefined,
-  
+
   // Claim
   claimMethod: 'MANUAL',
   claimAndroidApp: false,
   claimIOSApp: false,
   claimH5: false,
   claimPC: false,
-  
+
   // Restrictions
   requireEmailVerification: false,
   requirePhoneVerification: false,
   requireBankBinding: false,
   requireRealNameAuth: false,
   claimRestrictions: [],
-  
+
   // Claim time
   claimTimeType: 'REAL_TIME',
-  
+
   // Login
   loginAdditionMethod: '',
   loginDiversionMethod: '',
-  
+
   // Reward
   rewardType: 'CASH',
   rewardAmount: 0,
   rewardCurrency: 'BRL',
   rewardMultiplier: 1.0,
-  
+
   // Trigger conditions
   triggerConditions: {
     platforms: [],
     methods: [],
-    additional: {}
+    additional: {},
   },
-  
+
   // Rule description
   ruleDescription: '',
-  
+
   // Task conditions
   taskConditions: {
     targetValue: 1,
     conditionType: '',
-    parameters: {}
+    parameters: {},
   },
-  
+
   // Time
   startTime: undefined,
   endTime: undefined,
-  
-  isActive: true
+
+  isActive: true,
 });
 
 // Checkbox groups
@@ -511,39 +529,51 @@ const memberGroupOptions = [
   { label: '新注册会员', value: 3 },
   { label: '活跃会员', value: 4 },
   { label: '高价值会员', value: 5 },
-  { label: '流失会员', value: 6 }
+  { label: '流失会员', value: 6 },
 ];
 
 const loginAdditionOptions = [
   { label: '首次登录', value: 'FIRST_LOGIN' },
   { label: '每日登录', value: 'DAILY_LOGIN' },
-  { label: '连续登录', value: 'CONTINUOUS_LOGIN' }
+  { label: '连续登录', value: 'CONTINUOUS_LOGIN' },
 ];
 
 const loginDiversionOptions = [
   { label: '游戏大厅', value: 'GAME_LOBBY' },
   { label: '充值页面', value: 'DEPOSIT_PAGE' },
   { label: '活动页面', value: 'ACTIVITY_PAGE' },
-  { label: '任务中心', value: 'TASK_CENTER' }
+  { label: '任务中心', value: 'TASK_CENTER' },
 ];
 
 const currencyOptions = [
   { label: 'BRL', value: 'BRL' },
   { label: 'USD', value: 'USD' },
-  { label: 'EUR', value: 'EUR' }
+  { label: 'EUR', value: 'EUR' },
 ];
 
 // Form rules
 const formRules: FormRules = {
   title: [{ required: true, message: '请输入任务标题', trigger: 'blur' }],
   taskType: [{ required: true, message: '请选择任务类型', trigger: 'change' }],
-  rewardAmount: [{ required: true, message: '请输入奖励金额', trigger: 'blur' }],
-  'taskConditions.conditionType': [{ required: true, message: '请输入条件类型', trigger: 'blur' }],
-  'taskConditions.targetValue': [{ required: true, message: '请输入目标值', trigger: 'blur' }]
+  rewardAmount: [
+    { required: true, message: '请输入奖励金额', trigger: 'blur' },
+  ],
+  'taskConditions.conditionType': [
+    { required: true, message: '请输入条件类型', trigger: 'blur' },
+  ],
+  'taskConditions.targetValue': [
+    { required: true, message: '请输入目标值', trigger: 'blur' },
+  ],
 };
 
 // Switch rail style
-const switchRailStyle = ({ focused, checked }: { focused: boolean; checked: boolean }) => {
+const switchRailStyle = ({
+  focused,
+  checked,
+}: {
+  focused: boolean;
+  checked: boolean;
+}) => {
   const style: any = {};
   if (checked) {
     style.background = '#13ce66';
@@ -567,72 +597,72 @@ const resetForm = () => {
     category: props.category,
     taskType: 'REGISTRATION',
     sortOrder: 0,
-    
+
     // Platform
     platformAndroid: false,
     platformIOS: false,
     platformH5: false,
     platformPC: false,
-    
+
     // Member groups
     memberGroups: [],
-    
+
     // Validation
     validationMethod: 'LONG_TERM',
     validationStartTime: undefined,
     validationEndTime: undefined,
-    
+
     // Claim
     claimMethod: 'MANUAL',
     claimAndroidApp: false,
     claimIOSApp: false,
     claimH5: false,
     claimPC: false,
-    
+
     // Restrictions
     requireEmailVerification: false,
     requirePhoneVerification: false,
     requireBankBinding: false,
     requireRealNameAuth: false,
     claimRestrictions: [],
-    
+
     // Claim time
     claimTimeType: 'REAL_TIME',
-    
+
     // Login
     loginAdditionMethod: '',
     loginDiversionMethod: '',
-    
+
     // Reward
     rewardType: 'CASH',
     rewardAmount: 0,
     rewardCurrency: 'BRL',
     rewardMultiplier: 1.0,
-    
+
     // Trigger conditions
     triggerConditions: {
       platforms: [],
       methods: [],
-      additional: {}
+      additional: {},
     },
-    
+
     // Rule description
     ruleDescription: '',
-    
+
     // Task conditions
     taskConditions: {
       targetValue: 1,
       conditionType: '',
-      parameters: {}
+      parameters: {},
     },
-    
+
     // Time
     startTime: undefined,
     endTime: undefined,
-    
-    isActive: true
+
+    isActive: true,
   };
-  
+
   selectedPlatforms.value = [];
   selectedClaimEntrance.value = [];
   selectedRestrictions.value = [];
@@ -645,34 +675,35 @@ const resetForm = () => {
 const loadTaskData = () => {
   if (props.taskData) {
     const task = props.taskData;
-    
+
     // Basic info
     formData.value.title = task.title;
     formData.value.description = task.description || '';
     formData.value.taskType = task.taskType;
     formData.value.sortOrder = task.sortOrder;
     formData.value.isActive = task.isActive;
-    
+
     // Platform
     formData.value.platformAndroid = task.platforms.android;
     formData.value.platformIOS = task.platforms.ios;
     formData.value.platformH5 = task.platforms.h5;
     formData.value.platformPC = task.platforms.pc;
-    
+
     // Update checkbox groups
     selectedPlatforms.value = [];
     if (task.platforms.android) selectedPlatforms.value.push('android');
     if (task.platforms.ios) selectedPlatforms.value.push('ios');
     if (task.platforms.h5) selectedPlatforms.value.push('h5');
     if (task.platforms.pc) selectedPlatforms.value.push('pc');
-    
+
     // Claim entrance
     selectedClaimEntrance.value = [];
-    if (task.claimEntrance.androidApp) selectedClaimEntrance.value.push('androidApp');
+    if (task.claimEntrance.androidApp)
+      selectedClaimEntrance.value.push('androidApp');
     if (task.claimEntrance.iosApp) selectedClaimEntrance.value.push('iosApp');
     if (task.claimEntrance.h5) selectedClaimEntrance.value.push('h5');
     if (task.claimEntrance.pc) selectedClaimEntrance.value.push('pc');
-    
+
     // Validation
     formData.value.validationMethod = task.validationMethod;
     if (task.validationStartTime) {
@@ -681,19 +712,19 @@ const loadTaskData = () => {
     if (task.validationEndTime) {
       validationEndTime.value = new Date(task.validationEndTime).getTime();
     }
-    
+
     // Claim
     formData.value.claimMethod = task.claimMethod;
     formData.value.claimTimeType = task.claimTimeType;
-    
+
     // Reward
     formData.value.rewardType = task.rewardType;
     formData.value.rewardAmount = task.rewardAmount;
     formData.value.rewardCurrency = task.rewardCurrency;
-    
+
     // Task conditions
     formData.value.taskConditions = { ...task.taskConditions };
-    
+
     // Time
     if (task.startTime) {
       startTime.value = new Date(task.startTime).getTime();
@@ -710,25 +741,37 @@ const syncCheckboxGroups = () => {
   formData.value.platformIOS = selectedPlatforms.value.includes('ios');
   formData.value.platformH5 = selectedPlatforms.value.includes('h5');
   formData.value.platformPC = selectedPlatforms.value.includes('pc');
-  
+
   // Sync claim entrance
-  formData.value.claimAndroidApp = selectedClaimEntrance.value.includes('androidApp');
+  formData.value.claimAndroidApp =
+    selectedClaimEntrance.value.includes('androidApp');
   formData.value.claimIOSApp = selectedClaimEntrance.value.includes('iosApp');
   formData.value.claimH5 = selectedClaimEntrance.value.includes('h5');
   formData.value.claimPC = selectedClaimEntrance.value.includes('pc');
-  
+
   // Sync restrictions
-  formData.value.requireEmailVerification = selectedRestrictions.value.includes('requireEmailVerification');
-  formData.value.requirePhoneVerification = selectedRestrictions.value.includes('requirePhoneVerification');
-  formData.value.requireBankBinding = selectedRestrictions.value.includes('requireBankBinding');
-  formData.value.requireRealNameAuth = selectedRestrictions.value.includes('requireRealNameAuth');
-  
+  formData.value.requireEmailVerification = selectedRestrictions.value.includes(
+    'requireEmailVerification',
+  );
+  formData.value.requirePhoneVerification = selectedRestrictions.value.includes(
+    'requirePhoneVerification',
+  );
+  formData.value.requireBankBinding =
+    selectedRestrictions.value.includes('requireBankBinding');
+  formData.value.requireRealNameAuth = selectedRestrictions.value.includes(
+    'requireRealNameAuth',
+  );
+
   // Sync time
   if (validationStartTime.value) {
-    formData.value.validationStartTime = new Date(validationStartTime.value).toISOString();
+    formData.value.validationStartTime = new Date(
+      validationStartTime.value,
+    ).toISOString();
   }
   if (validationEndTime.value) {
-    formData.value.validationEndTime = new Date(validationEndTime.value).toISOString();
+    formData.value.validationEndTime = new Date(
+      validationEndTime.value,
+    ).toISOString();
   }
   if (startTime.value) {
     formData.value.startTime = new Date(startTime.value).toISOString();
@@ -740,20 +783,20 @@ const syncCheckboxGroups = () => {
 
 const handleSubmit = async () => {
   if (!formRef.value) return;
-  
+
   try {
     await formRef.value.validate();
-    
+
     syncCheckboxGroups();
-    
+
     submitting.value = true;
-    
+
     if (props.mode === 'add') {
       await createTaskCenter(formData.value);
     } else if (props.taskData) {
       await updateTaskCenter(props.taskData.id, formData.value);
     }
-    
+
     emit('success');
   } catch (error) {
     if (error instanceof Error) {
@@ -772,22 +815,28 @@ const handleClose = () => {
 };
 
 // Watch for modal visibility
-watch(() => props.visible, (visible) => {
-  if (visible) {
-    nextTick(() => {
-      if (props.mode === 'edit' && props.taskData) {
-        loadTaskData();
-      } else {
-        resetForm();
-      }
-    });
-  }
-});
+watch(
+  () => props.visible,
+  (visible) => {
+    if (visible) {
+      nextTick(() => {
+        if (props.mode === 'edit' && props.taskData) {
+          loadTaskData();
+        } else {
+          resetForm();
+        }
+      });
+    }
+  },
+);
 
 // Watch for category changes
-watch(() => props.category, (category) => {
-  formData.value.category = category;
-});
+watch(
+  () => props.category,
+  (category) => {
+    formData.value.category = category;
+  },
+);
 </script>
 
 <style scoped lang="scss">
@@ -796,10 +845,10 @@ watch(() => props.category, (category) => {
     font-weight: 500;
     color: #333;
   }
-  
+
   :deep(.n-divider) {
     margin: 20px 0 16px 0;
-    
+
     .n-divider__title {
       font-weight: 600;
       color: #1890ff;
@@ -813,7 +862,7 @@ watch(() => props.category, (category) => {
     .n-form-item-label {
       color: #fff;
     }
-    
+
     .n-divider {
       .n-divider__title {
         color: #409eff;
@@ -821,4 +870,4 @@ watch(() => props.category, (category) => {
     }
   }
 }
-</style> 
+</style>

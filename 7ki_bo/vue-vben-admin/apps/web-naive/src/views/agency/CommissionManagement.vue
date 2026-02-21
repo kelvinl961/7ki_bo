@@ -2,30 +2,80 @@
   <Page>
     <n-card>
       <!-- Header Actions -->
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-        <n-button type="primary" @click="openRulesModal">
-          佣金设置
-        </n-button>
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 16px;
+        "
+      >
+        <n-button type="primary" @click="openRulesModal"> 佣金设置 </n-button>
       </div>
 
       <n-tabs v-model:value="activeTab" type="line" animated>
         <!-- 1. 待审核 -->
         <n-tab-pane name="pending" tab="待审核">
-          <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
-            <n-date-picker v-model:value="pendingFilters.startDate" type="date" placeholder="开始日期" style="width: 200px;" />
-            <n-date-picker v-model:value="pendingFilters.endDate" type="date" placeholder="结束日期" style="width: 200px;" />
-            <n-input v-model:value="pendingFilters.agentAccount" placeholder="代理账号" style="width: 200px;" clearable />
-            <n-input v-model:value="pendingFilters.agentId" placeholder="代理ID" style="width: 200px;" clearable />
-            <n-select v-model:value="pendingFilters.currency" placeholder="币种" style="width: 150px;" :options="currencyOptions" clearable />
+          <div
+            style="
+              display: flex;
+              gap: 8px;
+              margin-bottom: 16px;
+              flex-wrap: wrap;
+            "
+          >
+            <n-date-picker
+              v-model:value="pendingFilters.startDate"
+              type="date"
+              placeholder="开始日期"
+              style="width: 200px"
+            />
+            <n-date-picker
+              v-model:value="pendingFilters.endDate"
+              type="date"
+              placeholder="结束日期"
+              style="width: 200px"
+            />
+            <n-input
+              v-model:value="pendingFilters.agentAccount"
+              placeholder="代理账号"
+              style="width: 200px"
+              clearable
+            />
+            <n-input
+              v-model:value="pendingFilters.agentId"
+              placeholder="代理ID"
+              style="width: 200px"
+              clearable
+            />
+            <n-select
+              v-model:value="pendingFilters.currency"
+              placeholder="币种"
+              style="width: 150px"
+              :options="currencyOptions"
+              clearable
+            />
             <n-button type="primary" @click="searchPending">搜索</n-button>
             <n-button @click="resetPendingFilters">重置</n-button>
           </div>
 
-          <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-            <n-button type="success" @click="batchApproveAll">全部通过</n-button>
+          <div style="display: flex; gap: 8px; margin-bottom: 16px">
+            <n-button type="success" @click="batchApproveAll"
+              >全部通过</n-button
+            >
             <n-button type="error" @click="batchRejectAll">全部拒绝</n-button>
-            <n-button type="warning" :disabled="selectedPendingKeys.length === 0" @click="batchApprove">批量通过 ({{ selectedPendingKeys.length }})</n-button>
-            <n-button type="error" :disabled="selectedPendingKeys.length === 0" @click="batchReject">批量拒绝 ({{ selectedPendingKeys.length }})</n-button>
+            <n-button
+              type="warning"
+              :disabled="selectedPendingKeys.length === 0"
+              @click="batchApprove"
+              >批量通过 ({{ selectedPendingKeys.length }})</n-button
+            >
+            <n-button
+              type="error"
+              :disabled="selectedPendingKeys.length === 0"
+              @click="batchReject"
+              >批量拒绝 ({{ selectedPendingKeys.length }})</n-button
+            >
           </div>
 
           <n-data-table
@@ -35,23 +85,61 @@
             :pagination="pendingPagination"
             :row-key="(row: any) => row.id"
             v-model:checked-row-keys="selectedPendingKeys"
-            @update:page="(page) => { pendingPagination.page = page; fetchPendingData(); }"
-            @update:page-size="(size) => { pendingPagination.pageSize = size; pendingPagination.page = 1; fetchPendingData(); }"
+            @update:page="
+              (page) => {
+                pendingPagination.page = page;
+                fetchPendingData();
+              }
+            "
+            @update:page-size="
+              (size) => {
+                pendingPagination.pageSize = size;
+                pendingPagination.page = 1;
+                fetchPendingData();
+              }
+            "
           />
         </n-tab-pane>
 
         <!-- 2. 待领取 -->
         <n-tab-pane name="ready" tab="待领取">
-          <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
-            <n-date-picker v-model:value="readyFilters.startDate" type="date" placeholder="开始日期" style="width: 200px;" />
-            <n-date-picker v-model:value="readyFilters.endDate" type="date" placeholder="结束日期" style="width: 200px;" />
-            <n-input v-model:value="readyFilters.agentAccount" placeholder="代理账号" style="width: 200px;" clearable />
+          <div
+            style="
+              display: flex;
+              gap: 8px;
+              margin-bottom: 16px;
+              flex-wrap: wrap;
+            "
+          >
+            <n-date-picker
+              v-model:value="readyFilters.startDate"
+              type="date"
+              placeholder="开始日期"
+              style="width: 200px"
+            />
+            <n-date-picker
+              v-model:value="readyFilters.endDate"
+              type="date"
+              placeholder="结束日期"
+              style="width: 200px"
+            />
+            <n-input
+              v-model:value="readyFilters.agentAccount"
+              placeholder="代理账号"
+              style="width: 200px"
+              clearable
+            />
             <n-button type="primary" @click="searchReady">搜索</n-button>
             <n-button @click="resetReadyFilters">重置</n-button>
           </div>
 
-          <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-            <n-button type="warning" :disabled="selectedReadyKeys.length === 0" @click="batchWithdraw">批量撤回 ({{ selectedReadyKeys.length }})</n-button>
+          <div style="display: flex; gap: 8px; margin-bottom: 16px">
+            <n-button
+              type="warning"
+              :disabled="selectedReadyKeys.length === 0"
+              @click="batchWithdraw"
+              >批量撤回 ({{ selectedReadyKeys.length }})</n-button
+            >
           </div>
 
           <n-data-table
@@ -61,24 +149,67 @@
             :pagination="readyPagination"
             :row-key="(row: any) => row.id"
             v-model:checked-row-keys="selectedReadyKeys"
-            @update:page="(page) => { readyPagination.page = page; fetchReadyData(); }"
-            @update:page-size="(size) => { readyPagination.pageSize = size; readyPagination.page = 1; fetchReadyData(); }"
+            @update:page="
+              (page) => {
+                readyPagination.page = page;
+                fetchReadyData();
+              }
+            "
+            @update:page-size="
+              (size) => {
+                readyPagination.pageSize = size;
+                readyPagination.page = 1;
+                fetchReadyData();
+              }
+            "
           />
         </n-tab-pane>
 
         <!-- 3. 已撤回 -->
         <n-tab-pane name="withdrawn" tab="已撤回">
-          <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
-            <n-date-picker v-model:value="withdrawnFilters.startDate" type="date" placeholder="开始日期" style="width: 200px;" />
-            <n-date-picker v-model:value="withdrawnFilters.endDate" type="date" placeholder="结束日期" style="width: 200px;" />
-            <n-input v-model:value="withdrawnFilters.agentAccount" placeholder="代理账号" style="width: 200px;" clearable />
+          <div
+            style="
+              display: flex;
+              gap: 8px;
+              margin-bottom: 16px;
+              flex-wrap: wrap;
+            "
+          >
+            <n-date-picker
+              v-model:value="withdrawnFilters.startDate"
+              type="date"
+              placeholder="开始日期"
+              style="width: 200px"
+            />
+            <n-date-picker
+              v-model:value="withdrawnFilters.endDate"
+              type="date"
+              placeholder="结束日期"
+              style="width: 200px"
+            />
+            <n-input
+              v-model:value="withdrawnFilters.agentAccount"
+              placeholder="代理账号"
+              style="width: 200px"
+              clearable
+            />
             <n-button type="primary" @click="searchWithdrawn">搜索</n-button>
             <n-button @click="resetWithdrawnFilters">重置</n-button>
           </div>
 
-          <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-            <n-button type="success" :disabled="selectedWithdrawnKeys.length === 0" @click="batchApproveWithdrawn">批量通过 ({{ selectedWithdrawnKeys.length }})</n-button>
-            <n-button type="error" :disabled="selectedWithdrawnKeys.length === 0" @click="batchRejectWithdrawn">批量拒绝 ({{ selectedWithdrawnKeys.length }})</n-button>
+          <div style="display: flex; gap: 8px; margin-bottom: 16px">
+            <n-button
+              type="success"
+              :disabled="selectedWithdrawnKeys.length === 0"
+              @click="batchApproveWithdrawn"
+              >批量通过 ({{ selectedWithdrawnKeys.length }})</n-button
+            >
+            <n-button
+              type="error"
+              :disabled="selectedWithdrawnKeys.length === 0"
+              @click="batchRejectWithdrawn"
+              >批量拒绝 ({{ selectedWithdrawnKeys.length }})</n-button
+            >
           </div>
 
           <n-data-table
@@ -88,17 +219,50 @@
             :pagination="withdrawnPagination"
             :row-key="(row: any) => row.id"
             v-model:checked-row-keys="selectedWithdrawnKeys"
-            @update:page="(page) => { withdrawnPagination.page = page; fetchWithdrawnData(); }"
-            @update:page-size="(size) => { withdrawnPagination.pageSize = size; withdrawnPagination.page = 1; fetchWithdrawnData(); }"
+            @update:page="
+              (page) => {
+                withdrawnPagination.page = page;
+                fetchWithdrawnData();
+              }
+            "
+            @update:page-size="
+              (size) => {
+                withdrawnPagination.pageSize = size;
+                withdrawnPagination.page = 1;
+                fetchWithdrawnData();
+              }
+            "
           />
         </n-tab-pane>
 
         <!-- 4. 已拒绝 -->
         <n-tab-pane name="rejected" tab="已拒绝">
-          <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
-            <n-date-picker v-model:value="rejectedFilters.startDate" type="date" placeholder="开始日期" style="width: 200px;" />
-            <n-date-picker v-model:value="rejectedFilters.endDate" type="date" placeholder="结束日期" style="width: 200px;" />
-            <n-input v-model:value="rejectedFilters.agentAccount" placeholder="代理账号" style="width: 200px;" clearable />
+          <div
+            style="
+              display: flex;
+              gap: 8px;
+              margin-bottom: 16px;
+              flex-wrap: wrap;
+            "
+          >
+            <n-date-picker
+              v-model:value="rejectedFilters.startDate"
+              type="date"
+              placeholder="开始日期"
+              style="width: 200px"
+            />
+            <n-date-picker
+              v-model:value="rejectedFilters.endDate"
+              type="date"
+              placeholder="结束日期"
+              style="width: 200px"
+            />
+            <n-input
+              v-model:value="rejectedFilters.agentAccount"
+              placeholder="代理账号"
+              style="width: 200px"
+              clearable
+            />
             <n-button type="primary" @click="searchRejected">搜索</n-button>
             <n-button @click="resetRejectedFilters">重置</n-button>
           </div>
@@ -108,17 +272,50 @@
             :data="rejectedData"
             :loading="rejectedLoading"
             :pagination="rejectedPagination"
-            @update:page="(page) => { rejectedPagination.page = page; fetchRejectedData(); }"
-            @update:page-size="(size) => { rejectedPagination.pageSize = size; rejectedPagination.page = 1; fetchRejectedData(); }"
+            @update:page="
+              (page) => {
+                rejectedPagination.page = page;
+                fetchRejectedData();
+              }
+            "
+            @update:page-size="
+              (size) => {
+                rejectedPagination.pageSize = size;
+                rejectedPagination.page = 1;
+                fetchRejectedData();
+              }
+            "
           />
         </n-tab-pane>
 
         <!-- 5. 领取记录 -->
         <n-tab-pane name="claimed" tab="领取记录">
-          <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
-            <n-date-picker v-model:value="claimedFilters.startDate" type="date" placeholder="开始日期" style="width: 200px;" />
-            <n-date-picker v-model:value="claimedFilters.endDate" type="date" placeholder="结束日期" style="width: 200px;" />
-            <n-input v-model:value="claimedFilters.agentAccount" placeholder="代理账号" style="width: 200px;" clearable />
+          <div
+            style="
+              display: flex;
+              gap: 8px;
+              margin-bottom: 16px;
+              flex-wrap: wrap;
+            "
+          >
+            <n-date-picker
+              v-model:value="claimedFilters.startDate"
+              type="date"
+              placeholder="开始日期"
+              style="width: 200px"
+            />
+            <n-date-picker
+              v-model:value="claimedFilters.endDate"
+              type="date"
+              placeholder="结束日期"
+              style="width: 200px"
+            />
+            <n-input
+              v-model:value="claimedFilters.agentAccount"
+              placeholder="代理账号"
+              style="width: 200px"
+              clearable
+            />
             <n-button type="primary" @click="searchClaimed">搜索</n-button>
             <n-button @click="resetClaimedFilters">重置</n-button>
           </div>
@@ -128,18 +325,57 @@
             :data="claimedData"
             :loading="claimedLoading"
             :pagination="claimedPagination"
-            @update:page="(page) => { claimedPagination.page = page; fetchClaimedData(); }"
-            @update:page-size="(size) => { claimedPagination.pageSize = size; claimedPagination.page = 1; fetchClaimedData(); }"
+            @update:page="
+              (page) => {
+                claimedPagination.page = page;
+                fetchClaimedData();
+              }
+            "
+            @update:page-size="
+              (size) => {
+                claimedPagination.pageSize = size;
+                claimedPagination.page = 1;
+                fetchClaimedData();
+              }
+            "
           />
         </n-tab-pane>
 
         <!-- 6. 全部记录 -->
         <n-tab-pane name="all" tab="全部记录">
-          <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
-            <n-date-picker v-model:value="allFilters.startDate" type="date" placeholder="开始日期" style="width: 200px;" />
-            <n-date-picker v-model:value="allFilters.endDate" type="date" placeholder="结束日期" style="width: 200px;" />
-            <n-input v-model:value="allFilters.agentAccount" placeholder="代理账号" style="width: 200px;" clearable />
-            <n-select v-model:value="allFilters.status" placeholder="状态" style="width: 150px;" :options="statusOptions" clearable />
+          <div
+            style="
+              display: flex;
+              gap: 8px;
+              margin-bottom: 16px;
+              flex-wrap: wrap;
+            "
+          >
+            <n-date-picker
+              v-model:value="allFilters.startDate"
+              type="date"
+              placeholder="开始日期"
+              style="width: 200px"
+            />
+            <n-date-picker
+              v-model:value="allFilters.endDate"
+              type="date"
+              placeholder="结束日期"
+              style="width: 200px"
+            />
+            <n-input
+              v-model:value="allFilters.agentAccount"
+              placeholder="代理账号"
+              style="width: 200px"
+              clearable
+            />
+            <n-select
+              v-model:value="allFilters.status"
+              placeholder="状态"
+              style="width: 150px"
+              :options="statusOptions"
+              clearable
+            />
             <n-button type="primary" @click="searchAll">搜索</n-button>
             <n-button @click="resetAllFilters">重置</n-button>
           </div>
@@ -149,8 +385,19 @@
             :data="allData"
             :loading="allLoading"
             :pagination="allPagination"
-            @update:page="(page) => { allPagination.page = page; fetchAllData(); }"
-            @update:page-size="(size) => { allPagination.pageSize = size; allPagination.page = 1; fetchAllData(); }"
+            @update:page="
+              (page) => {
+                allPagination.page = page;
+                fetchAllData();
+              }
+            "
+            @update:page-size="
+              (size) => {
+                allPagination.pageSize = size;
+                allPagination.page = 1;
+                fetchAllData();
+              }
+            "
           />
         </n-tab-pane>
       </n-tabs>
@@ -161,35 +408,58 @@
       v-model:show="rulesModalVisible"
       preset="card"
       title="佣金人工审核规则"
-      style="width: 600px;"
+      style="width: 600px"
       :mask-closable="false"
     >
-      <div style="margin-bottom: 24px;">
-        <div v-for="currency in currencyList" :key="currency.code" style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
-          <span style="min-width: 120px; color: #666;">{{ currency.name }}</span>
-          <span style="min-width: 80px;">佣金金额≥</span>
-          <n-input-number 
-            v-model:value="(settingsForm as any)[currency.code]" 
-            :min="0" 
-            :precision="2" 
-            style="flex: 1;" 
-            placeholder="0.00" 
+      <div style="margin-bottom: 24px">
+        <div
+          v-for="currency in currencyList"
+          :key="currency.code"
+          style="
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+          "
+        >
+          <span style="min-width: 120px; color: #666">{{ currency.name }}</span>
+          <span style="min-width: 80px">佣金金额≥</span>
+          <n-input-number
+            v-model:value="(settingsForm as any)[currency.code]"
+            :min="0"
+            :precision="2"
+            style="flex: 1"
+            placeholder="0.00"
           />
         </div>
       </div>
 
-      <div style="background: #f5f7fa; padding: 16px; border-radius: 4px; margin-bottom: 16px;">
-        <div style="font-weight: 500; margin-bottom: 8px;">佣金人工审核规则:</div>
-        <div style="color: #666; line-height: 1.6;">
-          1.若佣金结算之后的佣金超过设置的金额, 将被人工审核；<br/>
+      <div
+        style="
+          background: #f5f7fa;
+          padding: 16px;
+          border-radius: 4px;
+          margin-bottom: 16px;
+        "
+      >
+        <div style="font-weight: 500; margin-bottom: 8px">
+          佣金人工审核规则:
+        </div>
+        <div style="color: #666; line-height: 1.6">
+          1.若佣金结算之后的佣金超过设置的金额, 将被人工审核；<br />
           2.0表示不限制。
         </div>
       </div>
 
       <template #footer>
-        <div style="display: flex; justify-content: flex-end; gap: 12px;">
+        <div style="display: flex; justify-content: flex-end; gap: 12px">
           <n-button @click="rulesModalVisible = false">取消</n-button>
-          <n-button type="primary" @click="saveSettings" :loading="settingsSaving">确认</n-button>
+          <n-button
+            type="primary"
+            @click="saveSettings"
+            :loading="settingsSaving"
+            >确认</n-button
+          >
         </div>
       </template>
     </n-modal>
@@ -199,27 +469,47 @@
       v-model:show="approveModalVisible"
       preset="card"
       title="通过审核"
-      style="width: 500px;"
+      style="width: 500px"
       :mask-closable="false"
     >
-      <n-form ref="approveFormRef" :model="approveForm" label-placement="left" label-width="100px">
+      <n-form
+        ref="approveFormRef"
+        :model="approveForm"
+        label-placement="left"
+        label-width="100px"
+      >
         <n-form-item label="代理账号">
           <n-input :value="currentRecord?.agentAccount" disabled />
         </n-form-item>
         <n-form-item label="原始佣金">
-          <n-input :value="formatCurrency(currentRecord?.commissionAmount)" disabled />
+          <n-input
+            :value="formatCurrency(currentRecord?.commissionAmount)"
+            disabled
+          />
         </n-form-item>
         <n-form-item label="修改后佣金" required>
-          <n-input-number v-model:value="approveForm.adjustedAmount" :min="0" :precision="2" style="width: 100%;" />
+          <n-input-number
+            v-model:value="approveForm.adjustedAmount"
+            :min="0"
+            :precision="2"
+            style="width: 100%"
+          />
         </n-form-item>
         <n-form-item label="备注">
-          <n-input v-model:value="approveForm.remark" type="textarea" :rows="3" placeholder="请输入备注" />
+          <n-input
+            v-model:value="approveForm.remark"
+            type="textarea"
+            :rows="3"
+            placeholder="请输入备注"
+          />
         </n-form-item>
       </n-form>
       <template #footer>
-        <div style="display: flex; justify-content: flex-end; gap: 12px;">
+        <div style="display: flex; justify-content: flex-end; gap: 12px">
           <n-button @click="approveModalVisible = false">取消</n-button>
-          <n-button type="primary" @click="confirmApprove" :loading="approving">确认通过</n-button>
+          <n-button type="primary" @click="confirmApprove" :loading="approving"
+            >确认通过</n-button
+          >
         </div>
       </template>
     </n-modal>
@@ -229,24 +519,39 @@
       v-model:show="rejectModalVisible"
       preset="card"
       title="拒绝佣金"
-      style="width: 500px;"
+      style="width: 500px"
       :mask-closable="false"
     >
-      <n-form ref="rejectFormRef" :model="rejectForm" label-placement="left" label-width="100px">
+      <n-form
+        ref="rejectFormRef"
+        :model="rejectForm"
+        label-placement="left"
+        label-width="100px"
+      >
         <n-form-item label="代理账号">
           <n-input :value="currentRecord?.agentAccount" disabled />
         </n-form-item>
         <n-form-item label="佣金金额">
-          <n-input :value="formatCurrency(currentRecord?.commissionAmount)" disabled />
+          <n-input
+            :value="formatCurrency(currentRecord?.commissionAmount)"
+            disabled
+          />
         </n-form-item>
         <n-form-item label="拒绝原因" required>
-          <n-input v-model:value="rejectForm.reason" type="textarea" :rows="3" placeholder="请输入拒绝原因" />
+          <n-input
+            v-model:value="rejectForm.reason"
+            type="textarea"
+            :rows="3"
+            placeholder="请输入拒绝原因"
+          />
         </n-form-item>
       </n-form>
       <template #footer>
-        <div style="display: flex; justify-content: flex-end; gap: 12px;">
+        <div style="display: flex; justify-content: flex-end; gap: 12px">
           <n-button @click="rejectModalVisible = false">取消</n-button>
-          <n-button type="error" @click="confirmReject" :loading="rejecting">确认拒绝</n-button>
+          <n-button type="error" @click="confirmReject" :loading="rejecting"
+            >确认拒绝</n-button
+          >
         </div>
       </template>
     </n-modal>
@@ -256,18 +561,33 @@
       v-model:show="remarkModalVisible"
       preset="card"
       title="添加备注"
-      style="width: 500px;"
+      style="width: 500px"
       :mask-closable="false"
     >
-      <n-form ref="remarkFormRef" :model="remarkForm" label-placement="left" label-width="100px">
+      <n-form
+        ref="remarkFormRef"
+        :model="remarkForm"
+        label-placement="left"
+        label-width="100px"
+      >
         <n-form-item label="备注内容" required>
-          <n-input v-model:value="remarkForm.remark" type="textarea" :rows="4" placeholder="请输入备注内容" />
+          <n-input
+            v-model:value="remarkForm.remark"
+            type="textarea"
+            :rows="4"
+            placeholder="请输入备注内容"
+          />
         </n-form-item>
       </n-form>
       <template #footer>
-        <div style="display: flex; justify-content: flex-end; gap: 12px;">
+        <div style="display: flex; justify-content: flex-end; gap: 12px">
           <n-button @click="remarkModalVisible = false">取消</n-button>
-          <n-button type="primary" @click="confirmRemark" :loading="remarkSaving">保存</n-button>
+          <n-button
+            type="primary"
+            @click="confirmRemark"
+            :loading="remarkSaving"
+            >保存</n-button
+          >
         </div>
       </template>
     </n-modal>
@@ -336,7 +656,7 @@ const formatDate = (date: string) => {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
-    hour12: false
+    hour12: false,
   });
 };
 
@@ -349,16 +669,14 @@ const settingsForm = reactive({
   BRL: 0,
 });
 
-const currencyList = [
-  { code: 'BRL', name: '巴西雷亚尔(BRL)' },
-];
+const currencyList = [{ code: 'BRL', name: '巴西雷亚尔(BRL)' }];
 
 const fetchSettings = async () => {
   settingsLoading.value = true;
   try {
     const response = await requestClient.get('/commission-management/settings');
     console.log('Settings response:', response);
-    
+
     if (response.success && response.data) {
       settingsData.value = response.data;
       // Update form with fetched values
@@ -388,9 +706,12 @@ const openRulesModal = () => {
 const saveSettings = async () => {
   settingsSaving.value = true;
   try {
-    const response = await requestClient.post('/commission-management/settings', settingsForm);
+    const response = await requestClient.post(
+      '/commission-management/settings',
+      settingsForm,
+    );
     console.log('Save settings response:', response);
-    
+
     if (response.success) {
       message.success('保存成功');
       rulesModalVisible.value = false;
@@ -423,13 +744,13 @@ const getTodayRange = () => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const startOfDay = today.getTime();
-  
+
   const endOfDay = new Date(today);
   endOfDay.setHours(23, 59, 59, 999);
-  
+
   return {
     start: startOfDay,
-    end: endOfDay.getTime()
+    end: endOfDay.getTime(),
   };
 };
 
@@ -494,11 +815,15 @@ const pendingColumns: DataTableColumns<any> = [
     key: 'agentAccount',
     width: 120,
     render: (row) => {
-      return h(NButton, {
-        text: true,
-        type: 'primary',
-        onClick: () => viewAgentDetail(row.agentId),
-      }, { default: () => row.agentAccount });
+      return h(
+        NButton,
+        {
+          text: true,
+          type: 'primary',
+          onClick: () => viewAgentDetail(row.agentId),
+        },
+        { default: () => row.agentAccount },
+      );
     },
   },
   {
@@ -517,11 +842,15 @@ const pendingColumns: DataTableColumns<any> = [
     width: 120,
     align: 'right',
     render: (row) => {
-      return h(NButton, {
-        text: true,
-        type: 'primary',
-        onClick: () => viewCommissionDetail(row.id),
-      }, { default: () => formatCurrency(row.commissionAmount, row.currency) });
+      return h(
+        NButton,
+        {
+          text: true,
+          type: 'primary',
+          onClick: () => viewCommissionDetail(row.id),
+        },
+        { default: () => formatCurrency(row.commissionAmount, row.currency) },
+      );
     },
   },
   {
@@ -529,7 +858,7 @@ const pendingColumns: DataTableColumns<any> = [
     key: 'remark',
     width: 150,
     ellipsis: {
-      tooltip: true
+      tooltip: true,
     },
   },
   {
@@ -550,20 +879,32 @@ const pendingColumns: DataTableColumns<any> = [
     fixed: 'right',
     render: (row) => {
       return h('div', { style: 'display: flex; gap: 8px;' }, [
-        h(NButton, {
-          size: 'small',
-          type: 'success',
-          onClick: () => handleApprove(row),
-        }, { default: () => '通过' }),
-        h(NButton, {
-          size: 'small',
-          type: 'error',
-          onClick: () => handleReject(row),
-        }, { default: () => '拒绝' }),
-        h(NButton, {
-          size: 'small',
-          onClick: () => handleRemark(row),
-        }, { default: () => '备注' }),
+        h(
+          NButton,
+          {
+            size: 'small',
+            type: 'success',
+            onClick: () => handleApprove(row),
+          },
+          { default: () => '通过' },
+        ),
+        h(
+          NButton,
+          {
+            size: 'small',
+            type: 'error',
+            onClick: () => handleReject(row),
+          },
+          { default: () => '拒绝' },
+        ),
+        h(
+          NButton,
+          {
+            size: 'small',
+            onClick: () => handleRemark(row),
+          },
+          { default: () => '备注' },
+        ),
       ]);
     },
   },
@@ -578,7 +919,9 @@ const fetchPendingData = async () => {
       status: 'PENDING',
       ...pendingFilters,
     };
-    const response = await requestClient.get('/commission-management/records', { params });
+    const response = await requestClient.get('/commission-management/records', {
+      params,
+    });
     pendingData.value = response.data.list || [];
     pendingPagination.itemCount = response.data.total || 0;
   } catch (error) {
@@ -617,7 +960,10 @@ const confirmApprove = async () => {
   if (!currentRecord.value) return;
   approving.value = true;
   try {
-    await requestClient.post(`/commission-management/records/${currentRecord.value.id}/approve`, approveForm);
+    await requestClient.post(
+      `/commission-management/records/${currentRecord.value.id}/approve`,
+      approveForm,
+    );
     message.success('审核通过');
     approveModalVisible.value = false;
     fetchPendingData();
@@ -642,7 +988,10 @@ const confirmReject = async () => {
   }
   rejecting.value = true;
   try {
-    await requestClient.post(`/commission-management/records/${currentRecord.value.id}/reject`, rejectForm);
+    await requestClient.post(
+      `/commission-management/records/${currentRecord.value.id}/reject`,
+      rejectForm,
+    );
     message.success('已拒绝');
     rejectModalVisible.value = false;
     fetchPendingData();
@@ -664,7 +1013,10 @@ const confirmRemark = async () => {
   if (!currentRecord.value) return;
   remarkSaving.value = true;
   try {
-    await requestClient.post(`/commission-management/records/${currentRecord.value.id}/remark`, remarkForm);
+    await requestClient.post(
+      `/commission-management/records/${currentRecord.value.id}/remark`,
+      remarkForm,
+    );
     message.success('备注已保存');
     remarkModalVisible.value = false;
     fetchPendingData();
@@ -684,9 +1036,12 @@ const batchApprove = () => {
     negativeText: '取消',
     onPositiveClick: async () => {
       try {
-        await requestClient.post('/commission-management/records/batch-approve', {
-          ids: selectedPendingKeys.value,
-        });
+        await requestClient.post(
+          '/commission-management/records/batch-approve',
+          {
+            ids: selectedPendingKeys.value,
+          },
+        );
         message.success('批量通过成功');
         selectedPendingKeys.value = [];
         fetchPendingData();
@@ -706,9 +1061,12 @@ const batchReject = () => {
     negativeText: '取消',
     onPositiveClick: async () => {
       try {
-        await requestClient.post('/commission-management/records/batch-reject', {
-          ids: selectedPendingKeys.value,
-        });
+        await requestClient.post(
+          '/commission-management/records/batch-reject',
+          {
+            ids: selectedPendingKeys.value,
+          },
+        );
         message.success('批量拒绝成功');
         selectedPendingKeys.value = [];
         fetchPendingData();
@@ -728,7 +1086,10 @@ const batchApproveAll = () => {
     negativeText: '取消',
     onPositiveClick: async () => {
       try {
-        await requestClient.post('/commission-management/records/approve-all', pendingFilters);
+        await requestClient.post(
+          '/commission-management/records/approve-all',
+          pendingFilters,
+        );
         message.success('全部通过成功');
         fetchPendingData();
       } catch (error) {
@@ -747,7 +1108,10 @@ const batchRejectAll = () => {
     negativeText: '取消',
     onPositiveClick: async () => {
       try {
-        await requestClient.post('/commission-management/records/reject-all', pendingFilters);
+        await requestClient.post(
+          '/commission-management/records/reject-all',
+          pendingFilters,
+        );
         message.success('全部拒绝成功');
         fetchPendingData();
       } catch (error) {
@@ -820,15 +1184,24 @@ const readyColumns: DataTableColumns<any> = [
     width: 100,
     fixed: 'right',
     render: (row) => {
-      return h(NPopconfirm, {
-        onPositiveClick: () => handleWithdraw(row.id),
-      }, {
-        default: () => '确定要撤回此佣金吗？',
-        trigger: () => h(NButton, {
-          size: 'small',
-          type: 'warning',
-        }, { default: () => '撤回' }),
-      });
+      return h(
+        NPopconfirm,
+        {
+          onPositiveClick: () => handleWithdraw(row.id),
+        },
+        {
+          default: () => '确定要撤回此佣金吗？',
+          trigger: () =>
+            h(
+              NButton,
+              {
+                size: 'small',
+                type: 'warning',
+              },
+              { default: () => '撤回' },
+            ),
+        },
+      );
     },
   },
 ];
@@ -842,7 +1215,9 @@ const fetchReadyData = async () => {
       status: 'READY',
       ...readyFilters,
     };
-    const response = await requestClient.get('/commission-management/records', { params });
+    const response = await requestClient.get('/commission-management/records', {
+      params,
+    });
     readyData.value = response.data.list || [];
     readyPagination.itemCount = response.data.total || 0;
   } catch (error) {
@@ -887,9 +1262,12 @@ const batchWithdraw = () => {
     negativeText: '取消',
     onPositiveClick: async () => {
       try {
-        await requestClient.post('/commission-management/records/batch-withdraw', {
-          ids: selectedReadyKeys.value,
-        });
+        await requestClient.post(
+          '/commission-management/records/batch-withdraw',
+          {
+            ids: selectedReadyKeys.value,
+          },
+        );
         message.success('批量撤回成功');
         selectedReadyKeys.value = [];
         fetchReadyData();
@@ -958,16 +1336,24 @@ const withdrawnColumns: DataTableColumns<any> = [
     fixed: 'right',
     render: (row) => {
       return h('div', { style: 'display: flex; gap: 8px;' }, [
-        h(NButton, {
-          size: 'small',
-          type: 'success',
-          onClick: () => handleApproveWithdrawn(row),
-        }, { default: () => '通过' }),
-        h(NButton, {
-          size: 'small',
-          type: 'error',
-          onClick: () => handleRejectWithdrawn(row),
-        }, { default: () => '拒绝' }),
+        h(
+          NButton,
+          {
+            size: 'small',
+            type: 'success',
+            onClick: () => handleApproveWithdrawn(row),
+          },
+          { default: () => '通过' },
+        ),
+        h(
+          NButton,
+          {
+            size: 'small',
+            type: 'error',
+            onClick: () => handleRejectWithdrawn(row),
+          },
+          { default: () => '拒绝' },
+        ),
       ]);
     },
   },
@@ -982,7 +1368,9 @@ const fetchWithdrawnData = async () => {
       status: 'WITHDRAWN',
       ...withdrawnFilters,
     };
-    const response = await requestClient.get('/commission-management/records', { params });
+    const response = await requestClient.get('/commission-management/records', {
+      params,
+    });
     withdrawnData.value = response.data.list || [];
     withdrawnPagination.itemCount = response.data.total || 0;
   } catch (error) {
@@ -1029,9 +1417,12 @@ const batchApproveWithdrawn = () => {
     negativeText: '取消',
     onPositiveClick: async () => {
       try {
-        await requestClient.post('/commission-management/records/batch-approve', {
-          ids: selectedWithdrawnKeys.value,
-        });
+        await requestClient.post(
+          '/commission-management/records/batch-approve',
+          {
+            ids: selectedWithdrawnKeys.value,
+          },
+        );
         message.success('批量通过成功');
         selectedWithdrawnKeys.value = [];
         fetchWithdrawnData();
@@ -1051,9 +1442,12 @@ const batchRejectWithdrawn = () => {
     negativeText: '取消',
     onPositiveClick: async () => {
       try {
-        await requestClient.post('/commission-management/records/batch-reject', {
-          ids: selectedWithdrawnKeys.value,
-        });
+        await requestClient.post(
+          '/commission-management/records/batch-reject',
+          {
+            ids: selectedWithdrawnKeys.value,
+          },
+        );
         message.success('批量拒绝成功');
         selectedWithdrawnKeys.value = [];
         fetchWithdrawnData();
@@ -1110,7 +1504,7 @@ const rejectedColumns: DataTableColumns<any> = [
     key: 'rejectReason',
     width: 200,
     ellipsis: {
-      tooltip: true
+      tooltip: true,
     },
   },
   {
@@ -1130,7 +1524,9 @@ const fetchRejectedData = async () => {
       status: 'REJECTED',
       ...rejectedFilters,
     };
-    const response = await requestClient.get('/commission-management/records', { params });
+    const response = await requestClient.get('/commission-management/records', {
+      params,
+    });
     rejectedData.value = response.data.list || [];
     rejectedPagination.itemCount = response.data.total || 0;
   } catch (error) {
@@ -1213,7 +1609,9 @@ const fetchClaimedData = async () => {
       status: 'CLAIMED',
       ...claimedFilters,
     };
-    const response = await requestClient.get('/commission-management/records', { params });
+    const response = await requestClient.get('/commission-management/records', {
+      params,
+    });
     claimedData.value = response.data.list || [];
     claimedPagination.itemCount = response.data.total || 0;
   } catch (error) {
@@ -1286,18 +1684,21 @@ const allColumns: DataTableColumns<any> = [
     width: 100,
     render: (row) => {
       const statusMap: Record<string, { type: any; text: string }> = {
-        'PENDING': { type: 'warning', text: '待审核' },
-        'PENDING_AUDIT': { type: 'warning', text: '待审核' },
-        'READY': { type: 'info', text: '待领取' },
-        'RELEASED': { type: 'info', text: '待领取' },
-        'WITHDRAWN': { type: 'default', text: '已撤回' },
-        'CANCELLED': { type: 'default', text: '已撤回' },
-        'REJECTED': { type: 'error', text: '已拒绝' },
-        'NOT_ELIGIBLE': { type: 'error', text: '已拒绝' },
-        'CLAIMED': { type: 'success', text: '已领取' },
-        'FAILED': { type: 'error', text: '失败' },
+        PENDING: { type: 'warning', text: '待审核' },
+        PENDING_AUDIT: { type: 'warning', text: '待审核' },
+        READY: { type: 'info', text: '待领取' },
+        RELEASED: { type: 'info', text: '待领取' },
+        WITHDRAWN: { type: 'default', text: '已撤回' },
+        CANCELLED: { type: 'default', text: '已撤回' },
+        REJECTED: { type: 'error', text: '已拒绝' },
+        NOT_ELIGIBLE: { type: 'error', text: '已拒绝' },
+        CLAIMED: { type: 'success', text: '已领取' },
+        FAILED: { type: 'error', text: '失败' },
       };
-      const status = statusMap[row.status] || { type: 'default', text: row.status };
+      const status = statusMap[row.status] || {
+        type: 'default',
+        text: row.status,
+      };
       return h(NTag, { type: status.type }, { default: () => status.text });
     },
   },
@@ -1317,7 +1718,9 @@ const fetchAllData = async () => {
       pageSize: allPagination.pageSize,
       ...allFilters,
     };
-    const response = await requestClient.get('/commission-management/records', { params });
+    const response = await requestClient.get('/commission-management/records', {
+      params,
+    });
     allData.value = response.data.list || [];
     allPagination.itemCount = response.data.total || 0;
   } catch (error) {
@@ -1391,4 +1794,3 @@ watch(activeTab, (newTab) => {
   margin: 16px 0;
 }
 </style>
-

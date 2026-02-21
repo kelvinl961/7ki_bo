@@ -1,15 +1,15 @@
-import { ref, computed, onMounted, readonly } from 'vue';
+import type { FavoriteGame } from '#/api/favoriteGames';
+
+import { computed, onMounted, readonly, ref } from 'vue';
+
 import { useMessage } from 'naive-ui';
+
 import {
-  getFavoriteGames,
   addGameToFavorites,
-  removeGameFromFavorites,
   bulkAddGamesToFavorites,
   bulkRemoveGamesFromFavorites,
-  checkGameInFavorites,
-  getFavoriteGamesCount,
-  type FavoriteGame,
-  type FavoriteGameCheckResponse
+  getFavoriteGames,
+  removeGameFromFavorites,
 } from '#/api/favoriteGames';
 
 // State
@@ -31,10 +31,12 @@ const loadFavorites = async () => {
   try {
     isLoading.value = true;
     const response = await getFavoriteGames(currentUserId.value);
-    
+
     if (response && response.success) {
       favoriteGames.value = response.data || [];
-      favoriteGameIds.value = new Set((response.data || []).map(game => game.gameId));
+      favoriteGameIds.value = new Set(
+        (response.data || []).map((game) => game.gameId),
+      );
       lastSyncTime.value = new Date();
     } else {
       console.warn('API returned unsuccessful response:', response);
@@ -88,7 +90,9 @@ const removeFromFavorites = async (gameId: string) => {
   try {
     const response = await removeGameFromFavorites(currentUserId.value, gameId);
     if (response && response.success) {
-      favoriteGames.value = favoriteGames.value.filter(game => game.gameId !== gameId);
+      favoriteGames.value = favoriteGames.value.filter(
+        (game) => game.gameId !== gameId,
+      );
       favoriteGameIds.value.delete(gameId);
       message.success('游戏已从收藏中移除');
       return true;
@@ -107,11 +111,9 @@ const removeFromFavorites = async (gameId: string) => {
 
 // Toggle favorite status
 const toggleFavorite = async (gameId: string) => {
-  if (favoriteGameIds.value.has(gameId)) {
-    return await removeFromFavorites(gameId);
-  } else {
-    return await addToFavorites(gameId);
-  }
+  return await (favoriteGameIds.value.has(gameId)
+    ? removeFromFavorites(gameId)
+    : addToFavorites(gameId));
 };
 
 // Check if game is in favorites
@@ -122,7 +124,10 @@ const isFavorite = (gameId: string): boolean => {
 // Bulk operations
 const bulkAddToFavorites = async (gameIds: string[]) => {
   try {
-    const response = await bulkAddGamesToFavorites(currentUserId.value, gameIds);
+    const response = await bulkAddGamesToFavorites(
+      currentUserId.value,
+      gameIds,
+    );
     if (response && response.success) {
       // Reload favorites to get updated list
       await loadFavorites();
@@ -143,7 +148,10 @@ const bulkAddToFavorites = async (gameIds: string[]) => {
 
 const bulkRemoveFromFavorites = async (gameIds: string[]) => {
   try {
-    const response = await bulkRemoveGamesFromFavorites(currentUserId.value, gameIds);
+    const response = await bulkRemoveGamesFromFavorites(
+      currentUserId.value,
+      gameIds,
+    );
     if (response && response.success) {
       // Reload favorites to get updated list
       await loadFavorites();
@@ -175,11 +183,11 @@ export function useFavoriteGames() {
     favoriteGameIds: readonly(favoriteGameIds),
     isLoading: readonly(isLoading),
     lastSyncTime: readonly(lastSyncTime),
-    
+
     // Computed
     favoriteGamesCount,
     hasFavorites,
-    
+
     // Methods
     loadFavorites,
     addToFavorites,
@@ -187,6 +195,6 @@ export function useFavoriteGames() {
     toggleFavorite,
     isFavorite,
     bulkAddToFavorites,
-    bulkRemoveFromFavorites
+    bulkRemoveFromFavorites,
   };
-} 
+}

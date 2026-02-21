@@ -6,35 +6,41 @@
           修改
         </n-button>
         <n-space v-else>
-          <n-button @click="cancelEdit">
-            取消
-          </n-button>
+          <n-button @click="cancelEdit"> 取消 </n-button>
           <n-button type="primary" :loading="saving" @click="saveConfig">
             保存
           </n-button>
         </n-space>
       </n-space>
-      
+
       <n-card title="基础设置" class="mb-4">
         <n-space vertical :size="20">
           <!-- Skip Message Center -->
           <n-space align="center" justify="space-between">
             <div>
               <div class="font-semibold">跳过消息中心</div>
-              <div class="text-gray-500 text-sm">
+              <div class="text-sm text-gray-500">
                 开启后，用户的客服消息直接跳转至客服页面，不经过消息中心
               </div>
             </div>
-            <n-switch v-model:value="formData.skipMessageCenter" :disabled="!isEditing" />
+            <n-switch
+              v-model:value="formData.skipMessageCenter"
+              :disabled="!isEditing"
+            />
           </n-space>
 
           <!-- Online Service Toggle -->
           <n-space align="center" justify="space-between">
             <div>
               <div class="font-semibold">在线客服开关</div>
-              <div class="text-gray-500 text-sm">控制在线客服功能的启用/关闭</div>
+              <div class="text-sm text-gray-500">
+                控制在线客服功能的启用/关闭
+              </div>
             </div>
-            <n-switch v-model:value="formData.onlineServiceEnabled" :disabled="!isEditing" />
+            <n-switch
+              v-model:value="formData.onlineServiceEnabled"
+              :disabled="!isEditing"
+            />
           </n-space>
         </n-space>
       </n-card>
@@ -52,11 +58,19 @@
 
           <n-form-item label="客服链接设置（H5/APP生效）">
             <n-space vertical class="w-full" :size="12">
-              <n-alert type="info" :show-icon="false" style="margin-bottom: 8px">
+              <n-alert
+                type="info"
+                :show-icon="false"
+                style="margin-bottom: 8px"
+              >
                 注意：APP支持两种方式，H5仅支持外部浏览器打开
               </n-alert>
-              
-              <div v-for="(link, index) in serviceLinkList" :key="index" class="w-full">
+
+              <div
+                v-for="(link, index) in serviceLinkList"
+                :key="index"
+                class="w-full"
+              >
                 <n-space align="center" :size="8" :wrap="false">
                   <n-select
                     v-model:value="link.language"
@@ -84,9 +98,9 @@
                     :disabled="!isEditing"
                     style="flex: 1; min-width: 250px"
                   />
-                  <n-button 
+                  <n-button
                     v-if="isEditing"
-                    @click="addServiceLink" 
+                    @click="addServiceLink"
                     type="primary"
                     circle
                   >
@@ -94,9 +108,9 @@
                       <span>+</span>
                     </template>
                   </n-button>
-                  <n-button 
+                  <n-button
                     v-if="isEditing && serviceLinkList.length > 1"
-                    @click="removeServiceLink(index)" 
+                    @click="removeServiceLink(index)"
                     type="error"
                     circle
                   >
@@ -107,7 +121,10 @@
                 </n-space>
               </div>
 
-              <div v-if="serviceLinkList.length === 0 && !isEditing" class="text-gray-400 text-sm text-center py-4">
+              <div
+                v-if="serviceLinkList.length === 0 && !isEditing"
+                class="py-4 text-center text-sm text-gray-400"
+              >
                 暂无客服链接
               </div>
             </n-space>
@@ -120,12 +137,18 @@
         <n-space vertical :size="16">
           <n-form :model="formData" label-placement="top">
             <n-form-item label="H5悬浮客服">
-              <n-switch v-model:value="formData.h5FloatingEnabled" :disabled="!isEditing" />
+              <n-switch
+                v-model:value="formData.h5FloatingEnabled"
+                :disabled="!isEditing"
+              />
             </n-form-item>
 
             <template v-if="formData.h5FloatingEnabled">
               <n-form-item label="展示方式">
-                <n-radio-group v-model:value="formData.h5DisplayLocation" :disabled="!isEditing">
+                <n-radio-group
+                  v-model:value="formData.h5DisplayLocation"
+                  :disabled="!isEditing"
+                >
                   <n-space>
                     <n-radio value="HOME_ONLY">首页</n-radio>
                     <n-radio value="ALL_PAGES">全部页面</n-radio>
@@ -160,7 +183,10 @@
 
         <n-form :model="formData" label-placement="top">
           <n-form-item label="启用LiveChat SDK">
-            <n-switch v-model:value="formData.livechatEnabled" :disabled="!isEditing" />
+            <n-switch
+              v-model:value="formData.livechatEnabled"
+              :disabled="!isEditing"
+            />
           </n-form-item>
 
           <template v-if="formData.livechatEnabled">
@@ -174,7 +200,10 @@
             </n-form-item>
 
             <n-form-item label="展示位置">
-              <n-radio-group v-model:value="formData.livechatDisplayLocation" :disabled="!isEditing">
+              <n-radio-group
+                v-model:value="formData.livechatDisplayLocation"
+                :disabled="!isEditing"
+              >
                 <n-space>
                   <n-radio value="HOME_ONLY">首页</n-radio>
                   <n-radio value="ALL_PAGES">全部页面</n-radio>
@@ -212,7 +241,7 @@
       </n-card>
 
       <!-- Action Buttons (Hidden - moved to top) -->
-      <div style="display: none;">
+      <div style="display: none">
         <n-space justify="end" class="mt-4">
           <n-button @click="resetForm">重置</n-button>
           <n-button type="primary" @click="saveConfig" :loading="saving">
@@ -249,9 +278,7 @@
       <template #footer>
         <n-space justify="end">
           <n-button @click="showLanguageModal = false">取消</n-button>
-          <n-button type="primary" @click="addLanguageConfig">
-            确认
-          </n-button>
+          <n-button type="primary" @click="addLanguageConfig"> 确认 </n-button>
         </n-space>
       </template>
     </n-modal>
@@ -314,12 +341,14 @@ const formData = ref<OnlineCustomerServiceConfig>({
 });
 
 // Service link list (for multiple links with language info)
-const serviceLinkList = ref<Array<{ 
-  language: string; 
-  serviceName: string;
-  openMethod: string;
-  url: string;
-}>>([]);
+const serviceLinkList = ref<
+  Array<{
+    language: string;
+    serviceName: string;
+    openMethod: string;
+    url: string;
+  }>
+>([]);
 
 // Open method options
 const openMethodOptions = [
@@ -375,49 +404,64 @@ const loadConfig = async () => {
 
       // Parse service links from serviceLinkUrl and combine with languageConfigs
       if (formData.value.serviceLinkUrl && formData.value.languageConfigs) {
-        const links = formData.value.serviceLinkUrl.split('\n').filter(url => url.trim());
+        const links = formData.value.serviceLinkUrl
+          .split('\n')
+          .filter((url) => url.trim());
         const configs = formData.value.languageConfigs || [];
-        
+
         serviceLinkList.value = links.map((url, index) => {
           // Parse format: "openMethod|url" or just "url"
           const parts = url.trim().split('|');
           const openMethod = parts.length === 2 ? parts[0] : 'EXTERNAL_BROWSER';
           const urlValue = parts.length === 2 ? parts[1] : url.trim();
-          
+
           // Match with language config by index
-          const langConfig = configs[index] || { language: 'zh-CN', serviceName: '' };
-          
+          const langConfig = configs[index] || {
+            language: 'zh-CN',
+            serviceName: '',
+          };
+
           return {
             language: langConfig.language,
             serviceName: langConfig.serviceName,
             openMethod: openMethod,
-            url: urlValue
+            url: urlValue,
           };
         });
-      } else if (formData.value.languageConfigs && formData.value.languageConfigs.length > 0) {
+      } else if (
+        formData.value.languageConfigs &&
+        formData.value.languageConfigs.length > 0
+      ) {
         // Only language configs exist, no URLs yet
-        serviceLinkList.value = formData.value.languageConfigs.map(config => ({
-          language: config.language,
-          serviceName: config.serviceName,
-          openMethod: 'EXTERNAL_BROWSER',
-          url: ''
-        }));
+        serviceLinkList.value = formData.value.languageConfigs.map(
+          (config) => ({
+            language: config.language,
+            serviceName: config.serviceName,
+            openMethod: 'EXTERNAL_BROWSER',
+            url: '',
+          }),
+        );
       } else {
         serviceLinkList.value = [];
       }
-      
+
       // If no links exist, add a default empty one
       if (serviceLinkList.value.length === 0) {
-        serviceLinkList.value = [{ 
-          language: 'zh-CN', 
-          serviceName: '', 
-          openMethod: 'EXTERNAL_BROWSER',
-          url: '' 
-        }];
+        serviceLinkList.value = [
+          {
+            language: 'zh-CN',
+            serviceName: '',
+            openMethod: 'EXTERNAL_BROWSER',
+            url: '',
+          },
+        ];
       }
 
       // Update brand IDs input
-      if (formData.value.livechatBrandIds && formData.value.livechatBrandIds.length > 0) {
+      if (
+        formData.value.livechatBrandIds &&
+        formData.value.livechatBrandIds.length > 0
+      ) {
         brandIdsInput.value = formData.value.livechatBrandIds.join(', ');
       }
     }
@@ -439,32 +483,39 @@ const enableEdit = () => {
 const cancelEdit = () => {
   if (originalData.value) {
     formData.value = JSON.parse(JSON.stringify(originalData.value));
-    
+
     // Restore service links with language configs
     if (formData.value.serviceLinkUrl && formData.value.languageConfigs) {
-      const links = formData.value.serviceLinkUrl.split('\n').filter(url => url.trim());
+      const links = formData.value.serviceLinkUrl
+        .split('\n')
+        .filter((url) => url.trim());
       const configs = formData.value.languageConfigs || [];
-      
+
       serviceLinkList.value = links.map((url, index) => {
         const parts = url.trim().split('|');
         const openMethod = parts.length === 2 ? parts[0] : 'EXTERNAL_BROWSER';
         const urlValue = parts.length === 2 ? parts[1] : url.trim();
-        const langConfig = configs[index] || { language: 'zh-CN', serviceName: '' };
-        
+        const langConfig = configs[index] || {
+          language: 'zh-CN',
+          serviceName: '',
+        };
+
         return {
           language: langConfig.language,
           serviceName: langConfig.serviceName,
           openMethod: openMethod,
-          url: urlValue
+          url: urlValue,
         };
       });
     } else {
-      serviceLinkList.value = [{ 
-        language: 'zh-CN', 
-        serviceName: '',
-        openMethod: 'EXTERNAL_BROWSER',
-        url: '' 
-      }];
+      serviceLinkList.value = [
+        {
+          language: 'zh-CN',
+          serviceName: '',
+          openMethod: 'EXTERNAL_BROWSER',
+          url: '',
+        },
+      ];
     }
   }
   isEditing.value = false;
@@ -476,18 +527,18 @@ const saveConfig = async () => {
   try {
     // Extract language configs and service links
     formData.value.languageConfigs = serviceLinkList.value
-      .filter(link => link.language && link.serviceName)
-      .map(link => ({
+      .filter((link) => link.language && link.serviceName)
+      .map((link) => ({
         language: link.language,
-        serviceName: link.serviceName
+        serviceName: link.serviceName,
       }));
-    
+
     // Combine service links into serviceLinkUrl with format: "openMethod|url"
     const linksText = serviceLinkList.value
-      .filter(link => link.url.trim())
-      .map(link => `${link.openMethod}|${link.url.trim()}`)
+      .filter((link) => link.url.trim())
+      .map((link) => `${link.openMethod}|${link.url.trim()}`)
       .join('\n');
-    
+
     formData.value.serviceLinkUrl = linksText;
 
     await updateOnlineCustomerServiceConfig(formData.value);
@@ -508,11 +559,11 @@ const resetForm = () => {
 
 // Add service link
 const addServiceLink = () => {
-  serviceLinkList.value.push({ 
-    language: 'zh-CN', 
+  serviceLinkList.value.push({
+    language: 'zh-CN',
     serviceName: '',
     openMethod: 'EXTERNAL_BROWSER',
-    url: '' 
+    url: '',
   });
 };
 
@@ -534,7 +585,7 @@ const addLanguageConfig = () => {
 
   // Check if language already exists
   const exists = formData.value.languageConfigs.some(
-    (config) => config.language === languageForm.value.language
+    (config) => config.language === languageForm.value.language,
   );
 
   if (exists) {
@@ -556,7 +607,10 @@ const removeLanguageConfig = (index: number) => {
 // Update brand IDs from input
 const updateBrandIds = () => {
   if (brandIdsInput.value) {
-    const ids = brandIdsInput.value.split(',').map((id) => id.trim()).filter((id) => id);
+    const ids = brandIdsInput.value
+      .split(',')
+      .map((id) => id.trim())
+      .filter((id) => id);
     formData.value.livechatBrandIds = ids;
   } else {
     formData.value.livechatBrandIds = [];
@@ -573,4 +627,3 @@ onMounted(() => {
   max-width: 1200px;
 }
 </style>
-

@@ -6,11 +6,11 @@
         <div>
           <h3>基础用法</h3>
           <p>最简单的自动刷新组件，使用默认配置</p>
-          <SmartAutoRefresh 
+          <SmartAutoRefresh
             v-model="basicEnabled"
             :on-refresh="handleBasicRefresh"
           />
-          <n-text depth="3" style="margin-left: 16px;">
+          <n-text depth="3" style="margin-left: 16px">
             刷新次数: {{ basicRefreshCount }}
           </n-text>
         </div>
@@ -21,13 +21,13 @@
         <div>
           <h3>自定义刷新间隔</h3>
           <p>可以自定义可选的刷新间隔选项</p>
-          <SmartAutoRefresh 
+          <SmartAutoRefresh
             v-model="customEnabled"
             :intervals="[10, 20, 30, 60, 300]"
             :default-interval="20"
             :on-refresh="handleCustomRefresh"
           />
-          <n-text depth="3" style="margin-left: 16px;">
+          <n-text depth="3" style="margin-left: 16px">
             刷新次数: {{ customRefreshCount }}
           </n-text>
         </div>
@@ -40,7 +40,7 @@
           <n-space vertical :size="8">
             <div>
               <n-text strong>Small (默认):</n-text>
-              <SmartAutoRefresh 
+              <SmartAutoRefresh
                 v-model="smallEnabled"
                 size="small"
                 :on-refresh="handleSizeRefresh"
@@ -48,7 +48,7 @@
             </div>
             <div>
               <n-text strong>Medium:</n-text>
-              <SmartAutoRefresh 
+              <SmartAutoRefresh
                 v-model="mediumEnabled"
                 size="medium"
                 :on-refresh="handleSizeRefresh"
@@ -56,7 +56,7 @@
             </div>
             <div>
               <n-text strong>Large:</n-text>
-              <SmartAutoRefresh 
+              <SmartAutoRefresh
                 v-model="largeEnabled"
                 size="large"
                 :on-refresh="handleSizeRefresh"
@@ -71,12 +71,12 @@
         <div>
           <h3>自定义标签</h3>
           <p>可以自定义显示的文本标签</p>
-          <SmartAutoRefresh 
+          <SmartAutoRefresh
             v-model="labelEnabled"
             :labels="{
               enabled: '开启自动刷新',
               disabled: '关闭自动刷新',
-              placeholder: '选择间隔'
+              placeholder: '选择间隔',
             }"
             :on-refresh="handleLabelRefresh"
           />
@@ -88,12 +88,12 @@
         <div>
           <h3>编程控制</h3>
           <p>通过 ref 调用组件方法进行控制</p>
-          <SmartAutoRefresh 
+          <SmartAutoRefresh
             ref="programmaticRef"
             v-model="programmaticEnabled"
             :on-refresh="handleProgrammaticRefresh"
           />
-          <n-space style="margin-top: 8px;">
+          <n-space style="margin-top: 8px">
             <n-button @click="startProgrammatic">开始</n-button>
             <n-button @click="stopProgrammatic">停止</n-button>
             <n-button @click="restartProgrammatic">重启</n-button>
@@ -108,17 +108,21 @@
         <div>
           <h3>事件处理</h3>
           <p>监听组件的各种事件</p>
-          <SmartAutoRefresh 
+          <SmartAutoRefresh
             v-model="eventEnabled"
             :on-refresh="handleEventRefresh"
             @update:model-value="handleToggleEvent"
             @interval-change="handleIntervalEvent"
             @refresh="handleRefreshEvent"
           />
-          <n-card style="margin-top: 8px;" size="small">
+          <n-card style="margin-top: 8px" size="small">
             <n-text depth="3">事件日志:</n-text>
-            <div style="max-height: 100px; overflow-y: auto; margin-top: 4px;">
-              <div v-for="(log, index) in eventLogs" :key="index" style="font-size: 12px;">
+            <div style="max-height: 100px; overflow-y: auto; margin-top: 4px">
+              <div
+                v-for="(log, index) in eventLogs"
+                :key="index"
+                style="font-size: 12px"
+              >
                 {{ log }}
               </div>
             </div>
@@ -130,11 +134,11 @@
         <div>
           <h3>异步刷新</h3>
           <p>支持异步刷新函数，显示加载状态</p>
-          <SmartAutoRefresh 
+          <SmartAutoRefresh
             v-model="asyncEnabled"
             :on-refresh="handleAsyncRefresh"
           />
-          <n-text depth="3" style="margin-left: 16px;">
+          <n-text depth="3" style="margin-left: 16px">
             异步刷新次数: {{ asyncRefreshCount }}
           </n-text>
         </div>
@@ -243,7 +247,7 @@ const asyncEnabled = ref(false);
 const asyncRefreshCount = ref(0);
 const handleAsyncRefresh = async () => {
   // Simulate async operation
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 1000));
   asyncRefreshCount.value++;
   console.log('Async refresh completed');
 };

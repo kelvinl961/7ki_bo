@@ -14,10 +14,10 @@ export interface RechargeOrder {
   actualReceived: number;
   fee: number;
   rechargeChannelInfo: {
-    method: string;
-    channel: string;
-    bankName?: string;
     accountNumber?: string;
+    bankName?: string;
+    channel: string;
+    method: string;
     type: string;
   };
   status: string;
@@ -45,11 +45,11 @@ export interface RechargeListParams {
   sortOrder?: 'asc' | 'desc';
   startDate?: string;
   endDate?: string;
-  status?: string | null; // Allow null for frontend compatibility
-  rechargeMethod?: string | null;
-  vipLevel?: string | null;
-  agentMode?: string | null;
-  serviceFilter?: string | null;
+  status?: null | string; // Allow null for frontend compatibility
+  rechargeMethod?: null | string;
+  vipLevel?: null | string;
+  agentMode?: null | string;
+  serviceFilter?: null | string;
   search?: string;
 }
 
@@ -57,11 +57,11 @@ export interface RechargeListResponse {
   records: RechargeOrder[];
   total: number;
   summary: {
-    totalCount: number;
-    totalAmount: number;
-    pendingCount: number;
     confirmedCount: number;
+    pendingCount: number;
     rejectedCount: number;
+    totalAmount: number;
+    totalCount: number;
   };
 }
 
@@ -82,7 +82,7 @@ export interface UpdateRechargeParams {
 }
 
 export interface UpdateNoteParams {
-  type: 'backend' | 'frontend' | 'agency';
+  type: 'agency' | 'backend' | 'frontend';
   content: string;
 }
 
@@ -105,7 +105,9 @@ export interface ApiResponse<T = any> {
 export const rechargeApi = {
   // Get recharge list with pagination and filtering
   // ✅ FIX: Changed to /wallet/recharges (wallet namespace)
-  getList: async (params: RechargeListParams): Promise<RechargeListResponse> => {
+  getList: async (
+    params: RechargeListParams,
+  ): Promise<RechargeListResponse> => {
     const response = await requestClient.get('/wallet/recharges', { params });
     return response as unknown as RechargeListResponse;
   },
@@ -121,15 +123,23 @@ export const rechargeApi = {
 
   // Create new recharge order
   // ✅ FIX: Changed to /wallet/recharges (wallet namespace)
-  create: async (params: CreateRechargeParams): Promise<ApiResponse<RechargeOrder>> => {
+  create: async (
+    params: CreateRechargeParams,
+  ): Promise<ApiResponse<RechargeOrder>> => {
     const response = await requestClient.post('/wallet/recharges', params);
     return response.data;
   },
 
   // Update recharge order
   // ✅ FIX: Changed to /wallet/recharges (wallet namespace)
-  update: async (orderId: string, params: UpdateRechargeParams): Promise<ApiResponse<RechargeOrder>> => {
-    const response = await requestClient.put(`/wallet/recharges/${orderId}`, params);
+  update: async (
+    orderId: string,
+    params: UpdateRechargeParams,
+  ): Promise<ApiResponse<RechargeOrder>> => {
+    const response = await requestClient.put(
+      `/wallet/recharges/${orderId}`,
+      params,
+    );
     return response.data;
   },
 
@@ -142,39 +152,62 @@ export const rechargeApi = {
 
   // Update recharge status
   // ✅ FIX: Changed to /wallet/recharges (wallet namespace)
-  updateStatus: async (orderId: string, status: string): Promise<ApiResponse<RechargeOrder>> => {
-    const response = await requestClient.put(`/wallet/recharges/${orderId}/status`, { status });
+  updateStatus: async (
+    orderId: string,
+    status: string,
+  ): Promise<ApiResponse<RechargeOrder>> => {
+    const response = await requestClient.put(
+      `/wallet/recharges/${orderId}/status`,
+      { status },
+    );
     return response.data;
   },
 
   // Update recharge note
   // ✅ FIX: Changed to /wallet/recharges (wallet namespace)
-  updateNote: async (orderId: string, params: UpdateNoteParams): Promise<ApiResponse<RechargeOrder>> => {
-    const response = await requestClient.put(`/wallet/recharges/${orderId}/note`, params);
+  updateNote: async (
+    orderId: string,
+    params: UpdateNoteParams,
+  ): Promise<ApiResponse<RechargeOrder>> => {
+    const response = await requestClient.put(
+      `/wallet/recharges/${orderId}/note`,
+      params,
+    );
     return response.data;
   },
 
   // Bulk status update
   // ✅ FIX: Changed to /wallet/recharges (wallet namespace)
-  bulkUpdateStatus: async (orderIds: string[], status: string): Promise<ApiResponse<void>> => {
-    const response = await requestClient.put('/wallet/recharges/bulk-status', { orderIds, status });
+  bulkUpdateStatus: async (
+    orderIds: string[],
+    status: string,
+  ): Promise<ApiResponse<void>> => {
+    const response = await requestClient.put('/wallet/recharges/bulk-status', {
+      orderIds,
+      status,
+    });
     return response.data;
   },
 
   // Export data
   // ✅ FIX: Changed to /wallet/recharges (wallet namespace)
   export: async (params: RechargeListParams): Promise<Blob> => {
-    const response = await requestClient.get('/wallet/recharges/export', { 
-      params, 
-      responseType: 'blob' 
+    const response = await requestClient.get('/wallet/recharges/export', {
+      params,
+      responseType: 'blob',
     });
     return response.data;
   },
 
   // Get recharge statistics
   // ✅ FIX: Changed to /wallet/recharges (wallet namespace)
-  getStats: async (params: { startDate?: string; endDate?: string }): Promise<ApiResponse<Summary>> => {
-    const response = await requestClient.get('/wallet/recharges/stats', { params });
+  getStats: async (params: {
+    endDate?: string;
+    startDate?: string;
+  }): Promise<ApiResponse<Summary>> => {
+    const response = await requestClient.get('/wallet/recharges/stats', {
+      params,
+    });
     return response.data;
-  }
-}; 
+  },
+};

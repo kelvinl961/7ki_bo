@@ -15,7 +15,7 @@ export interface LobbyPopModal {
   targetUrl?: string;
   startTime: string;
   endTime: string;
-  status: 'active' | 'expired' | 'draft' | 'inactive';
+  status: 'active' | 'draft' | 'expired' | 'inactive';
   isActive: boolean;
   maxDisplayTimes: number;
   displayInterval: number;
@@ -46,14 +46,15 @@ export interface LobbyPopModalCreateRequest {
   targetUrl?: string;
   startTime: string;
   endTime: string;
-  status?: 'active' | 'expired' | 'draft' | 'inactive';
+  status?: 'active' | 'draft' | 'expired' | 'inactive';
   isActive?: boolean;
   maxDisplayTimes?: number;
   displayInterval?: number;
   remark?: string;
 }
 
-export interface LobbyPopModalUpdateRequest extends Partial<LobbyPopModalCreateRequest> {
+export interface LobbyPopModalUpdateRequest
+  extends Partial<LobbyPopModalCreateRequest> {
   id: number;
 }
 
@@ -97,7 +98,7 @@ export interface BatchRequest {
 }
 
 export interface BatchStatusRequest extends BatchRequest {
-  status: 'active' | 'expired' | 'draft' | 'inactive';
+  status: 'active' | 'draft' | 'expired' | 'inactive';
 }
 
 export interface SortOrderRequest {
@@ -108,18 +109,31 @@ export interface SortOrderRequest {
 }
 
 // API methods
-export const getPopModalList = async (params?: LobbyPopModalFilters): Promise<LobbyPopModalListResponse> => {
-  const response = await requestClient.get<LobbyPopModalListResponse>('/pop-modals', { params });
+export const getPopModalList = async (
+  params?: LobbyPopModalFilters,
+): Promise<LobbyPopModalListResponse> => {
+  const response = await requestClient.get<LobbyPopModalListResponse>(
+    '/pop-modals',
+    { params },
+  );
   return response;
 };
 
-export const createPopModal = async (data: LobbyPopModalCreateRequest): Promise<LobbyPopModal> => {
+export const createPopModal = async (
+  data: LobbyPopModalCreateRequest,
+): Promise<LobbyPopModal> => {
   const response = await requestClient.post<LobbyPopModal>('/pop-modals', data);
   return response;
 };
 
-export const updatePopModal = async (id: number, data: Partial<LobbyPopModalCreateRequest>): Promise<LobbyPopModal> => {
-  const response = await requestClient.put<LobbyPopModal>(`/pop-modals/${id}`, data);
+export const updatePopModal = async (
+  id: number,
+  data: Partial<LobbyPopModalCreateRequest>,
+): Promise<LobbyPopModal> => {
+  const response = await requestClient.put<LobbyPopModal>(
+    `/pop-modals/${id}`,
+    data,
+  );
   return response;
 };
 
@@ -133,80 +147,97 @@ export const getPopModalById = async (id: number): Promise<LobbyPopModal> => {
 };
 
 export const duplicatePopModal = async (id: number): Promise<LobbyPopModal> => {
-  const response = await requestClient.post<LobbyPopModal>(`/pop-modals/${id}/duplicate`);
+  const response = await requestClient.post<LobbyPopModal>(
+    `/pop-modals/${id}/duplicate`,
+  );
   return response;
 };
 
-export const togglePopModalStatus = async (id: number, status: 'active' | 'expired' | 'draft' | 'inactive'): Promise<LobbyPopModal> => {
-  const response = await requestClient.put<LobbyPopModal>(`/pop-modals/${id}/status`, { status });
+export const togglePopModalStatus = async (
+  id: number,
+  status: 'active' | 'draft' | 'expired' | 'inactive',
+): Promise<LobbyPopModal> => {
+  const response = await requestClient.put<LobbyPopModal>(
+    `/pop-modals/${id}/status`,
+    { status },
+  );
   return response;
 };
 
-export const batchDeletePopModals = async (data: BatchRequest): Promise<void> => {
+export const batchDeletePopModals = async (
+  data: BatchRequest,
+): Promise<void> => {
   await requestClient.delete('/pop-modals/batch/delete', { data });
 };
 
-export const batchToggleStatus = async (data: BatchStatusRequest): Promise<void> => {
+export const batchToggleStatus = async (
+  data: BatchStatusRequest,
+): Promise<void> => {
   await requestClient.put('/pop-modals/batch/status', data);
 };
 
-export const updateSortOrder = async (data: SortOrderRequest): Promise<void> => {
+export const updateSortOrder = async (
+  data: SortOrderRequest,
+): Promise<void> => {
   await requestClient.put('/pop-modals/batch/sort-order', data);
 };
 
 export const getPopModalStats = async (): Promise<LobbyPopModalStats> => {
-  const response = await requestClient.get<LobbyPopModalStats>('/pop-modals/stats');
+  const response =
+    await requestClient.get<LobbyPopModalStats>('/pop-modals/stats');
   return response;
 };
 
 // Helper functions
 export const getStatusText = (status: string): string => {
   const statusMap: Record<string, string> = {
-    'active': '生效中',
-    'expired': '已过期',
-    'draft': '草稿',
-    'inactive': '已停用'
+    active: '生效中',
+    expired: '已过期',
+    draft: '草稿',
+    inactive: '已停用',
   };
   return statusMap[status] || status;
 };
 
-export const getStatusType = (status: string): 'success' | 'error' | 'warning' | 'info' => {
-  const typeMap: Record<string, 'success' | 'error' | 'warning' | 'info'> = {
-    'active': 'success',
-    'expired': 'error',
-    'draft': 'warning',
-    'inactive': 'info'
+export const getStatusType = (
+  status: string,
+): 'error' | 'info' | 'success' | 'warning' => {
+  const typeMap: Record<string, 'error' | 'info' | 'success' | 'warning'> = {
+    active: 'success',
+    expired: 'error',
+    draft: 'warning',
+    inactive: 'info',
   };
   return typeMap[status] || 'error';
 };
 
 export const getJumpTypeText = (jumpType: string): string => {
   const typeMap: Record<string, string> = {
-    'none': '无',
-    'external_link': '外部链接',
-    'activity': '活动',
-    'task': '任务',
-    'recharge': '充值',
-    'rebate': '返水',
-    'agent': '代理',
-    'vip': 'VIP',
-    'interest_treasure': '利息宝',
-    'public_fund': '公积金',
-    'game': '游戏',
-    'blind_box_lottery': '盲盒抽奖',
-    'club_application': '俱乐部申请（合作联营）'
+    none: '无',
+    external_link: '外部链接',
+    activity: '活动',
+    task: '任务',
+    recharge: '充值',
+    rebate: '返水',
+    agent: '代理',
+    vip: 'VIP',
+    interest_treasure: '利息宝',
+    public_fund: '公积金',
+    game: '游戏',
+    blind_box_lottery: '盲盒抽奖',
+    club_application: '俱乐部申请（合作联营）',
   };
   return typeMap[jumpType] || jumpType;
 };
 
 export const getEntryPointText = (entryPoint: string): string => {
   const entryMap: Record<string, string> = {
-    'login': '登录后弹窗',
-    'homepage': '首页加载',
-    'deposit': '充值页面',
-    'game_lobby': '游戏大厅',
-    'promotion': '活动页面',
-    'manual': '手动触发'
+    login: '登录后弹窗',
+    homepage: '首页加载',
+    deposit: '充值页面',
+    game_lobby: '游戏大厅',
+    promotion: '活动页面',
+    manual: '手动触发',
   };
   return entryMap[entryPoint] || entryPoint;
-}; 
+};

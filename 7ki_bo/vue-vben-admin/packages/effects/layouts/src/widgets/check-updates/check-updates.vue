@@ -60,7 +60,7 @@ async function getVersionTag() {
 
     const etag = response.headers.get('etag');
     const lastModified = response.headers.get('last-modified');
-    
+
     // 🔧 FIX: Return a consistent version tag
     return etag || lastModified;
   } catch (error) {
@@ -74,9 +74,9 @@ async function checkForUpdates() {
   if (isCheckingUpdates) {
     return;
   }
-  
+
   isCheckingUpdates = true;
-  
+
   try {
     const versionTag = await getVersionTag();
     if (!versionTag) {
@@ -99,7 +99,7 @@ async function checkForUpdates() {
     if (lastVersionTag.value !== versionTag && versionTag) {
       console.log('🔄 New version detected:', {
         old: lastVersionTag.value,
-        new: versionTag
+        new: versionTag,
       });
       clearInterval(timer.value);
       handleNotice(versionTag);
@@ -155,7 +155,7 @@ onMounted(() => {
   } catch (e) {
     console.error('Failed to load version tag:', e);
   }
-  
+
   start();
   document.addEventListener('visibilitychange', handleVisibilitychange);
 });

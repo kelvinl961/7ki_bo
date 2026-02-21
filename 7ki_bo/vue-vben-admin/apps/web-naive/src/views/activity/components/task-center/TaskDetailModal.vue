@@ -1,5 +1,10 @@
 <template>
-  <n-modal v-model:show="showModal" preset="dialog" title="任务详情" style="width: 700px;">
+  <n-modal
+    v-model:show="showModal"
+    preset="dialog"
+    title="任务详情"
+    style="width: 700px"
+  >
     <template #header>
       <div class="flex items-center gap-2">
         <EyeOutline />
@@ -10,7 +15,11 @@
     <div v-if="taskData" class="space-y-6">
       <!-- 基本信息 -->
       <n-card title="基本信息" size="small">
-        <n-descriptions :column="2" label-placement="left" :label-style="{ fontWeight: '500' }">
+        <n-descriptions
+          :column="2"
+          label-placement="left"
+          :label-style="{ fontWeight: '500' }"
+        >
           <n-descriptions-item label="任务ID">
             {{ taskData.id }}
           </n-descriptions-item>
@@ -27,7 +36,10 @@
             {{ getCategoryLabel(taskData.category) }}
           </n-descriptions-item>
           <n-descriptions-item label="状态">
-            <n-tag :type="taskData.isActive ? 'success' : 'default'" size="small">
+            <n-tag
+              :type="taskData.isActive ? 'success' : 'default'"
+              size="small"
+            >
               {{ taskData.isActive ? '启用' : '禁用' }}
             </n-tag>
           </n-descriptions-item>
@@ -36,14 +48,18 @@
 
       <!-- 任务描述 -->
       <n-card v-if="taskData.description" title="任务描述" size="small">
-        <div class="text-gray-700 leading-relaxed">
+        <div class="leading-relaxed text-gray-700">
           {{ taskData.description }}
         </div>
       </n-card>
 
       <!-- 奖励信息 -->
       <n-card title="奖励信息" size="small">
-        <n-descriptions :column="2" label-placement="left" :label-style="{ fontWeight: '500' }">
+        <n-descriptions
+          :column="2"
+          label-placement="left"
+          :label-style="{ fontWeight: '500' }"
+        >
           <n-descriptions-item label="奖励类型">
             <n-tag :type="getRewardTypeColor(taskData.rewardType)" size="small">
               {{ getRewardTypeLabel(taskData.rewardType) }}
@@ -65,21 +81,30 @@
 
       <!-- 规则说明 -->
       <n-card v-if="taskData.ruleDescription" title="规则说明" size="small">
-        <div class="text-gray-700 leading-relaxed whitespace-pre-wrap">
+        <div class="whitespace-pre-wrap leading-relaxed text-gray-700">
           {{ taskData.ruleDescription }}
         </div>
       </n-card>
 
       <!-- 任务条件 -->
       <n-card v-if="taskData.taskConditions" title="任务条件配置" size="small">
-        <n-code :code="JSON.stringify(taskData.taskConditions, null, 2)" language="json" />
+        <n-code
+          :code="JSON.stringify(taskData.taskConditions, null, 2)"
+          language="json"
+        />
       </n-card>
 
       <!-- 时间设置 -->
       <n-card title="时间设置" size="small">
-        <n-descriptions :column="1" label-placement="left" :label-style="{ fontWeight: '500' }">
+        <n-descriptions
+          :column="1"
+          label-placement="left"
+          :label-style="{ fontWeight: '500' }"
+        >
           <n-descriptions-item label="开始时间">
-            {{ taskData.startTime ? formatDateTime(taskData.startTime) : '无限制' }}
+            {{
+              taskData.startTime ? formatDateTime(taskData.startTime) : '无限制'
+            }}
           </n-descriptions-item>
           <n-descriptions-item label="结束时间">
             {{ taskData.endTime ? formatDateTime(taskData.endTime) : '无限制' }}
@@ -89,7 +114,11 @@
 
       <!-- 操作信息 -->
       <n-card title="操作信息" size="small">
-        <n-descriptions :column="2" label-placement="left" :label-style="{ fontWeight: '500' }">
+        <n-descriptions
+          :column="2"
+          label-placement="left"
+          :label-style="{ fontWeight: '500' }"
+        >
           <n-descriptions-item label="创建人">
             {{ taskData.createdBy || '--' }}
           </n-descriptions-item>
@@ -240,4 +269,4 @@ const getRewardTypeColor = (rewardType: string) => {
 .space-y-6 > * + * {
   margin-top: 1.5rem;
 }
-</style> 
+</style>

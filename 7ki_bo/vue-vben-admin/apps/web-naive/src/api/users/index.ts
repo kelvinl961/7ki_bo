@@ -1,18 +1,18 @@
 // Re-export user search functionality from core user-management
-export { 
+export {
   searchUsersApi as searchUsers,
   type UserSearchItem,
-  type UserSearchParams 
+  type UserSearchParams,
 } from '../core/user-management';
 
 // Re-export Google Authenticator API
 export {
-  setupGoogleAuthApi,
-  verifyGoogleAuthApi,
   disableGoogleAuthApi,
   getGoogleAuthStatusApi,
-  regenerateBackupCodesApi,
   type GoogleAuthSetup,
-  type GoogleAuthVerifyResponse,
   type GoogleAuthStatus,
-} from './googleAuth'; 
+  type GoogleAuthVerifyResponse,
+  regenerateBackupCodesApi,
+  setupGoogleAuthApi,
+  verifyGoogleAuthApi,
+} from './googleAuth';

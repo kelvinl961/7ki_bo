@@ -1,9 +1,9 @@
 <template>
   <div class="media-library-page">
     <!-- Page Header -->
-    <div class="flex items-center justify-between mb-6">
+    <div class="mb-6 flex items-center justify-between">
       <div>
-        <h1 class="text-2xl font-semibold text-gray-900 mb-2">媒体库管理</h1>
+        <h1 class="mb-2 text-2xl font-semibold text-gray-900">媒体库管理</h1>
         <p class="text-gray-600">统一管理所有上传的图片、视频和文档</p>
       </div>
       <div class="flex gap-3">
@@ -13,8 +13,8 @@
         <n-button type="success" @click="showBatchUploadModal = true">
           批量上传
         </n-button>
-        <n-button 
-          type="error" 
+        <n-button
+          type="error"
           :disabled="selectedFiles.length === 0"
           @click="handleBulkDelete"
         >
@@ -25,7 +25,7 @@
 
     <!-- Filters and Search -->
     <n-card class="mb-4">
-      <div class="flex flex-wrap gap-4 items-end">
+      <div class="flex flex-wrap items-end gap-4">
         <!-- Search -->
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium">搜索</label>
@@ -74,50 +74,68 @@
 
         <!-- Actions -->
         <div class="flex gap-2">
-          <n-button type="primary" @click="loadMediaFiles">
-            搜索
-          </n-button>
-          <n-button @click="resetFilters">
-            重置
-          </n-button>
+          <n-button type="primary" @click="loadMediaFiles"> 搜索 </n-button>
+          <n-button @click="resetFilters"> 重置 </n-button>
         </div>
       </div>
     </n-card>
 
     <!-- Category Statistics -->
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-      <div 
-        v-for="category in categories" 
+    <div class="mb-6 grid grid-cols-2 gap-4 md:grid-cols-5">
+      <div
+        v-for="category in categories"
         :key="category.name"
         class="stat-card"
-        :class="{ 'active': filters.category === category.name }"
-        @click="filters.category = category.name; loadMediaFiles()"
+        :class="{ active: filters.category === category.name }"
+        @click="
+          filters.category = category.name;
+          loadMediaFiles();
+        "
       >
         <div class="stat-number">{{ category.count }}</div>
-        <div class="stat-label">{{ getCategoryDisplayName(category.name) }}</div>
+        <div class="stat-label">
+          {{ getCategoryDisplayName(category.name) }}
+        </div>
       </div>
     </div>
 
     <!-- Debug Info (temporary - remove in production) -->
-    <n-card v-if="true" style="margin-bottom: 16px; background: #fff3cd; border: 1px solid #ffc107;">
-      <div style="font-size: 12px; font-family: monospace;">
+    <n-card
+      v-if="true"
+      style="
+        margin-bottom: 16px;
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+      "
+    >
+      <div style="font-size: 12px; font-family: monospace">
         <div><strong>Debug Info:</strong></div>
         <div>Loading: {{ loading }}</div>
         <div>Files Count: {{ mediaFiles ? mediaFiles.length : 'null' }}</div>
         <div>Has Files Array: {{ Array.isArray(mediaFiles) }}</div>
         <div>Pagination Total: {{ pagination.total }}</div>
         <div>Pagination Pages: {{ pagination.totalPages }}</div>
-        <div>First File: {{ mediaFiles && mediaFiles.length > 0 ? mediaFiles[0].filename : 'none' }}</div>
+        <div>
+          First File:
+          {{
+            mediaFiles && mediaFiles.length > 0
+              ? mediaFiles[0].filename
+              : 'none'
+          }}
+        </div>
       </div>
     </n-card>
 
     <!-- Media Grid -->
-    <div class="media-grid" v-if="!loading && mediaFiles && mediaFiles.length > 0">
-      <div 
-        v-for="file in mediaFiles" 
+    <div
+      class="media-grid"
+      v-if="!loading && mediaFiles && mediaFiles.length > 0"
+    >
+      <div
+        v-for="file in mediaFiles"
         :key="file.id"
         class="media-item"
-        :class="{ 'selected': selectedFiles.includes(file.id) }"
+        :class="{ selected: selectedFiles.includes(file.id) }"
         @click="toggleSelection(file.id)"
       >
         <!-- Selection Checkbox -->
@@ -127,9 +145,9 @@
 
         <!-- File Preview -->
         <div class="file-preview">
-          <img 
-            v-if="file.type === 'image'" 
-            :src="getImageUrlByEnvironment(file.url)" 
+          <img
+            v-if="file.type === 'image'"
+            :src="getImageUrlByEnvironment(file.url)"
             :alt="file.alt || file.filename"
             class="preview-image"
             loading="lazy"
@@ -144,7 +162,9 @@
           <h3 class="file-name" :title="file.filename">{{ file.filename }}</h3>
           <div class="file-meta">
             <span class="file-size">{{ formatFileSize(file.size) }}</span>
-            <span class="file-category">{{ getCategoryDisplayName(file.category) }}</span>
+            <span class="file-category">{{
+              getCategoryDisplayName(file.category)
+            }}</span>
           </div>
           <div v-if="file.description" class="file-description">
             {{ file.description }}
@@ -158,13 +178,18 @@
         <!-- Actions -->
         <div class="file-actions">
           <n-button size="tiny" @click.stop="editFile(file)">编辑</n-button>
-          <n-button size="tiny" type="error" @click.stop="deleteFile(file.id)">删除</n-button>
+          <n-button size="tiny" type="error" @click.stop="deleteFile(file.id)"
+            >删除</n-button
+          >
         </div>
       </div>
     </div>
 
     <!-- Empty State -->
-    <div v-else-if="!loading && (!mediaFiles || mediaFiles.length === 0)" class="empty-state">
+    <div
+      v-else-if="!loading && (!mediaFiles || mediaFiles.length === 0)"
+      class="empty-state"
+    >
       <div class="empty-icon">📁</div>
       <h3>暂无文件</h3>
       <p>点击上传文件开始使用媒体库</p>
@@ -178,20 +203,18 @@
       <n-spin size="large" />
       <p>加载中...</p>
     </div>
-    
+
     <!-- Error State (if needed) -->
     <div v-else class="empty-state">
       <div class="empty-icon">⚠️</div>
       <h3>无法加载文件</h3>
       <p>请检查网络连接或刷新页面重试</p>
-      <n-button type="primary" @click="loadMediaFiles">
-        重新加载
-      </n-button>
+      <n-button type="primary" @click="loadMediaFiles"> 重新加载 </n-button>
     </div>
 
     <!-- Pagination -->
-    <div class="flex justify-center mt-8" v-if="pagination.totalPages > 1">
-      <n-pagination 
+    <div class="mt-8 flex justify-center" v-if="pagination.totalPages > 1">
+      <n-pagination
         v-model:page="pagination.page"
         :page-count="pagination.totalPages"
         :page-size="pagination.pageSize"
@@ -204,21 +227,42 @@
     </div>
 
     <!-- Upload Modal -->
-    <n-modal v-model:show="showUploadModal" preset="card" title="上传文件" style="width: 600px">
-      <MediaUploadForm @success="handleUploadSuccess" @cancel="showUploadModal = false" />
+    <n-modal
+      v-model:show="showUploadModal"
+      preset="card"
+      title="上传文件"
+      style="width: 600px"
+    >
+      <MediaUploadForm
+        @success="handleUploadSuccess"
+        @cancel="showUploadModal = false"
+      />
     </n-modal>
 
     <!-- Batch Upload Modal -->
-    <n-modal v-model:show="showBatchUploadModal" preset="card" title="批量上传文件" style="width: 800px">
-      <MediaBatchUploadForm @success="handleBatchUploadSuccess" @cancel="showBatchUploadModal = false" />
+    <n-modal
+      v-model:show="showBatchUploadModal"
+      preset="card"
+      title="批量上传文件"
+      style="width: 800px"
+    >
+      <MediaBatchUploadForm
+        @success="handleBatchUploadSuccess"
+        @cancel="showBatchUploadModal = false"
+      />
     </n-modal>
 
     <!-- Edit Modal -->
-    <n-modal v-model:show="showEditModal" preset="card" title="编辑文件" style="width: 500px">
-      <MediaEditForm 
-        :file="editingFile" 
-        @success="handleEditSuccess" 
-        @cancel="showEditModal = false" 
+    <n-modal
+      v-model:show="showEditModal"
+      preset="card"
+      title="编辑文件"
+      style="width: 500px"
+    >
+      <MediaEditForm
+        :file="editingFile"
+        @success="handleEditSuccess"
+        @cancel="showEditModal = false"
       />
     </n-modal>
   </div>
@@ -254,9 +298,15 @@ import {
 } from '#/api/mediaLibrary';
 import { getImageUrlByEnvironment } from '../../utils/imageUtils';
 // Lazy load child components to avoid blocking main component
-const MediaUploadForm = defineAsyncComponent(() => import('./components/MediaUploadForm.vue'));
-const MediaBatchUploadForm = defineAsyncComponent(() => import('./components/MediaBatchUploadForm.vue'));
-const MediaEditForm = defineAsyncComponent(() => import('./components/MediaEditForm.vue'));
+const MediaUploadForm = defineAsyncComponent(
+  () => import('./components/MediaUploadForm.vue'),
+);
+const MediaBatchUploadForm = defineAsyncComponent(
+  () => import('./components/MediaBatchUploadForm.vue'),
+);
+const MediaEditForm = defineAsyncComponent(
+  () => import('./components/MediaEditForm.vue'),
+);
 
 // State
 const loading = ref(false);
@@ -290,10 +340,10 @@ const message = useMessage();
 
 // Options
 const categoryOptions = computed(() => [
-  ...MEDIA_CATEGORIES.map(cat => ({
+  ...MEDIA_CATEGORIES.map((cat) => ({
     label: getCategoryDisplayName(cat),
     value: cat,
-  }))
+  })),
 ]);
 
 const typeOptions = [
@@ -321,7 +371,7 @@ const loadMediaFiles = async () => {
       type: filters.type,
       search: filters.search,
     });
-    
+
     const response = await getMediaFiles({
       page: pagination.page,
       pageSize: pagination.pageSize,
@@ -335,7 +385,7 @@ const loadMediaFiles = async () => {
     console.log('📦 Media files response:', response);
     console.log('📦 Response type:', typeof response);
     console.log('📦 Response keys:', response ? Object.keys(response) : 'null');
-    
+
     // Handle different response formats
     if (response) {
       // Format 1: {success: true, data: [...], pagination: {...}}
@@ -349,12 +399,18 @@ const loadMediaFiles = async () => {
             totalPages: response.pagination.totalPages || 0,
           });
         }
-        console.log('✅ Loaded media files (format 1):', mediaFiles.value.length);
+        console.log(
+          '✅ Loaded media files (format 1):',
+          mediaFiles.value.length,
+        );
       }
       // Format 2: Direct array response
       else if (Array.isArray(response)) {
         mediaFiles.value = response;
-        console.log('✅ Loaded media files (format 2 - array):', mediaFiles.value.length);
+        console.log(
+          '✅ Loaded media files (format 2 - array):',
+          mediaFiles.value.length,
+        );
       }
       // Format 3: {data: [...], pagination: {...}} without success flag
       else if (response.data && Array.isArray(response.data)) {
@@ -367,7 +423,10 @@ const loadMediaFiles = async () => {
             totalPages: response.pagination.totalPages || 0,
           });
         }
-        console.log('✅ Loaded media files (format 3):', mediaFiles.value.length);
+        console.log(
+          '✅ Loaded media files (format 3):',
+          mediaFiles.value.length,
+        );
       }
       // Format 4: {code: 0, data: {...}} - nested data
       else if (response.code === 0 && response.data) {
@@ -379,9 +438,11 @@ const loadMediaFiles = async () => {
             Object.assign(pagination, response.data.pagination);
           }
         }
-        console.log('✅ Loaded media files (format 4):', mediaFiles.value.length);
-      }
-      else {
+        console.log(
+          '✅ Loaded media files (format 4):',
+          mediaFiles.value.length,
+        );
+      } else {
         console.warn('⚠️ Unknown response format:', response);
         mediaFiles.value = [];
       }
@@ -389,8 +450,13 @@ const loadMediaFiles = async () => {
       console.error('❌ Response is null or undefined');
       mediaFiles.value = [];
     }
-    
-    console.log('📊 Final state - Files:', mediaFiles.value.length, 'Pagination:', pagination);
+
+    console.log(
+      '📊 Final state - Files:',
+      mediaFiles.value.length,
+      'Pagination:',
+      pagination,
+    );
   } catch (error) {
     console.error('❌ Load media files error:', error);
     message.error('加载文件失败');
@@ -444,7 +510,9 @@ const deleteFile = async (fileId: number) => {
 };
 
 const handleBulkDelete = async () => {
-  const confirmed = window.confirm(`确认删除选中的 ${selectedFiles.value.length} 个文件吗？此操作不可恢复。`);
+  const confirmed = window.confirm(
+    `确认删除选中的 ${selectedFiles.value.length} 个文件吗？此操作不可恢复。`,
+  );
   if (!confirmed) return;
 
   try {
@@ -676,7 +744,8 @@ onMounted(() => {
 }
 
 /* Empty and Loading States */
-.empty-state, .loading-state {
+.empty-state,
+.loading-state {
   text-align: center;
   padding: 80px 20px;
   color: #666;
@@ -703,18 +772,18 @@ onMounted(() => {
   .media-library-page {
     padding: 16px;
   }
-  
+
   .media-grid {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 16px;
   }
-  
+
   .stat-card {
     padding: 12px;
   }
-  
+
   .stat-number {
     font-size: 20px;
   }
 }
-</style> 
+</style>

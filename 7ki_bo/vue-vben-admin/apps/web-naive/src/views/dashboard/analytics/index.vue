@@ -2,16 +2,24 @@
   <div class="p-5">
     <!-- 今日数据概览 - Summary Cards -->
     <div class="mb-6">
-      <h2 class="text-lg font-semibold mb-4">{{ $t('page.dashboard.todayOverview') }}</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <h2 class="mb-4 text-lg font-semibold">
+        {{ $t('page.dashboard.todayOverview') }}
+      </h2>
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         <!-- 今日新增 -->
-        <div class="bg-orange-500 text-white p-4 rounded-lg">
+        <div class="rounded-lg bg-orange-500 p-4 text-white">
           <div class="flex items-center justify-between">
             <div>
-              <div class="text-2xl font-bold">{{ dashboardData.todayNewAgents }}</div>
-              <div class="text-sm opacity-90">{{ $t('page.dashboard.todayNew') }}</div>
-              <div class="text-xs mt-1">
-                {{ $t('page.dashboard.newAgents') }} {{ dashboardData.todayNewAgents }} | {{ $t('page.dashboard.bigR') }} {{ dashboardData.todayNewVIP }}
+              <div class="text-2xl font-bold">
+                {{ dashboardData.todayNewAgents }}
+              </div>
+              <div class="text-sm opacity-90">
+                {{ $t('page.dashboard.todayNew') }}
+              </div>
+              <div class="mt-1 text-xs">
+                {{ $t('page.dashboard.newAgents') }}
+                {{ dashboardData.todayNewAgents }} |
+                {{ $t('page.dashboard.bigR') }} {{ dashboardData.todayNewVIP }}
               </div>
             </div>
             <div class="flex flex-col items-end">
@@ -23,13 +31,27 @@
         </div>
 
         <!-- 会员注册 -->
-        <div class="bg-blue-500 text-white p-4 rounded-lg">
+        <div class="rounded-lg bg-blue-500 p-4 text-white">
           <div class="flex items-center justify-between">
             <div>
-              <div class="text-2xl font-bold">{{ dashboardData.todayRegistrations }}</div>
-              <div class="text-sm opacity-90">{{ $t('page.dashboard.memberRegistration') }}</div>
-              <div class="text-xs mt-1">
-                {{ $t('page.dashboard.todayNewMembers', [dashboardData.todayRegistrations]) }} | {{ $t('page.dashboard.agentPromotion', [Math.floor(dashboardData.todayRegistrations * 0.8)]) }}
+              <div class="text-2xl font-bold">
+                {{ dashboardData.todayRegistrations }}
+              </div>
+              <div class="text-sm opacity-90">
+                {{ $t('page.dashboard.memberRegistration') }}
+              </div>
+              <div class="mt-1 text-xs">
+                {{
+                  $t('page.dashboard.todayNewMembers', [
+                    dashboardData.todayRegistrations,
+                  ])
+                }}
+                |
+                {{
+                  $t('page.dashboard.agentPromotion', [
+                    Math.floor(dashboardData.todayRegistrations * 0.8),
+                  ])
+                }}
               </div>
             </div>
             <div class="flex flex-col items-end">
@@ -41,13 +63,32 @@
         </div>
 
         <!-- 充值提现 -->
-        <div class="bg-pink-500 text-white p-4 rounded-lg">
+        <div class="rounded-lg bg-pink-500 p-4 text-white">
           <div class="flex items-center justify-between">
             <div>
-              <div class="text-2xl font-bold">R$ {{ Number(dashboardData.todayRecharge - dashboardData.todayWithdraw).toFixed(2) }}</div>
-              <div class="text-sm opacity-90">{{ $t('page.dashboard.rechargeWithdraw') }}</div>
-              <div class="text-xs mt-1">
-                {{ $t('page.dashboard.todayRecharge', [Number(dashboardData.todayRecharge || 0).toFixed(2)]) }} | {{ $t('page.dashboard.todayWithdraw', [Number(dashboardData.todayWithdraw || 0).toFixed(2)]) }}
+              <div class="text-2xl font-bold">
+                R$
+                {{
+                  Number(
+                    dashboardData.todayRecharge - dashboardData.todayWithdraw,
+                  ).toFixed(2)
+                }}
+              </div>
+              <div class="text-sm opacity-90">
+                {{ $t('page.dashboard.rechargeWithdraw') }}
+              </div>
+              <div class="mt-1 text-xs">
+                {{
+                  $t('page.dashboard.todayRecharge', [
+                    Number(dashboardData.todayRecharge || 0).toFixed(2),
+                  ])
+                }}
+                |
+                {{
+                  $t('page.dashboard.todayWithdraw', [
+                    Number(dashboardData.todayWithdraw || 0).toFixed(2),
+                  ])
+                }}
               </div>
             </div>
             <div class="flex flex-col items-end">
@@ -59,13 +100,23 @@
         </div>
 
         <!-- 今日损益 -->
-        <div class="bg-green-500 text-white p-4 rounded-lg">
+        <div class="rounded-lg bg-green-500 p-4 text-white">
           <div class="flex items-center justify-between">
             <div>
-              <div class="text-2xl font-bold">{{ Number(dashboardData.todayProfit || 0) >= 0 ? '+' : '' }}{{ Number(dashboardData.todayProfit || 0).toFixed(2) }}</div>
-              <div class="text-sm opacity-90">{{ $t('page.dashboard.todayProfitLoss') }}</div>
-              <div class="text-xs mt-1">
-                {{ $t('page.dashboard.validBet', [Number(dashboardData.todayValidBet || 0).toLocaleString(), Number(dashboardData.todayProfit || 0).toFixed(2)]) }}
+              <div class="text-2xl font-bold">
+                {{ Number(dashboardData.todayProfit || 0) >= 0 ? '+' : ''
+                }}{{ Number(dashboardData.todayProfit || 0).toFixed(2) }}
+              </div>
+              <div class="text-sm opacity-90">
+                {{ $t('page.dashboard.todayProfitLoss') }}
+              </div>
+              <div class="mt-1 text-xs">
+                {{
+                  $t('page.dashboard.validBet', [
+                    Number(dashboardData.todayValidBet || 0).toLocaleString(),
+                    Number(dashboardData.todayProfit || 0).toFixed(2),
+                  ])
+                }}
               </div>
             </div>
             <div class="flex flex-col items-end">
@@ -77,13 +128,29 @@
         </div>
 
         <!-- 今日优惠 -->
-        <div class="bg-purple-500 text-white p-4 rounded-lg">
+        <div class="rounded-lg bg-purple-500 p-4 text-white">
           <div class="flex items-center justify-between">
             <div>
-              <div class="text-2xl font-bold">{{ Number(dashboardData.todayPromotionBonus || 0).toFixed(2) }}</div>
-              <div class="text-sm opacity-90">{{ $t('page.dashboard.todayPromotion') }}</div>
-              <div class="text-xs mt-1">
-                {{ $t('page.dashboard.activityRebate', [Number(dashboardData.todayPromotionBonus || 0).toFixed(2)]) }} | {{ $t('page.dashboard.betRebate', [Number((dashboardData.todayPromotionBonus || 0) * 0.7).toFixed(2)]) }}
+              <div class="text-2xl font-bold">
+                {{ Number(dashboardData.todayPromotionBonus || 0).toFixed(2) }}
+              </div>
+              <div class="text-sm opacity-90">
+                {{ $t('page.dashboard.todayPromotion') }}
+              </div>
+              <div class="mt-1 text-xs">
+                {{
+                  $t('page.dashboard.activityRebate', [
+                    Number(dashboardData.todayPromotionBonus || 0).toFixed(2),
+                  ])
+                }}
+                |
+                {{
+                  $t('page.dashboard.betRebate', [
+                    Number(
+                      (dashboardData.todayPromotionBonus || 0) * 0.7,
+                    ).toFixed(2),
+                  ])
+                }}
               </div>
             </div>
             <div class="flex flex-col items-end">
@@ -95,13 +162,27 @@
         </div>
 
         <!-- 会员总数 -->
-        <div class="bg-cyan-500 text-white p-4 rounded-lg">
+        <div class="rounded-lg bg-cyan-500 p-4 text-white">
           <div class="flex items-center justify-between">
             <div>
-              <div class="text-2xl font-bold">{{ dashboardData.totalMembers.toLocaleString() }}</div>
-              <div class="text-sm opacity-90">{{ $t('page.dashboard.totalMembers') }}</div>
-              <div class="text-xs mt-1">
-                {{ $t('page.dashboard.total', [dashboardData.totalMembers.toLocaleString()]) }} | {{ $t('page.dashboard.active', [dashboardData.todayActiveMembers.toLocaleString()]) }}
+              <div class="text-2xl font-bold">
+                {{ dashboardData.totalMembers.toLocaleString() }}
+              </div>
+              <div class="text-sm opacity-90">
+                {{ $t('page.dashboard.totalMembers') }}
+              </div>
+              <div class="mt-1 text-xs">
+                {{
+                  $t('page.dashboard.total', [
+                    dashboardData.totalMembers.toLocaleString(),
+                  ])
+                }}
+                |
+                {{
+                  $t('page.dashboard.active', [
+                    dashboardData.todayActiveMembers.toLocaleString(),
+                  ])
+                }}
               </div>
             </div>
             <div class="flex flex-col items-end">
@@ -116,63 +197,121 @@
 
     <!-- 今日排行榜 - Rankings Section -->
     <div>
-      <h2 class="text-lg font-semibold mb-4">{{ $t('page.dashboard.todayRankings') }}</h2>
-      <div class="bg-white rounded-lg shadow p-4">
+      <h2 class="mb-4 text-lg font-semibold">
+        {{ $t('page.dashboard.todayRankings') }}
+      </h2>
+      <div class="rounded-lg bg-white p-4 shadow">
         <div class="border-b border-gray-200">
           <nav class="-mb-px flex space-x-8">
-            <button 
-              v-for="tab in tabs" 
+            <button
+              v-for="tab in tabs"
               :key="tab.key"
               @click="activeTab = tab.key"
               :class="[
                 activeTab === tab.key
                   ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
-                'whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm'
+                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
+                'whitespace-nowrap border-b-2 px-1 py-2 text-sm font-medium',
               ]"
             >
               {{ tab.name }}
             </button>
           </nav>
         </div>
-        
+
         <div class="mt-4">
           <div v-if="loading" class="flex justify-center py-8">
             <div class="text-gray-500">{{ $t('page.dashboard.loading') }}</div>
           </div>
-          
+
           <div v-else class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gray-50">
                 <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ $t('page.dashboard.rank') }}</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ $t('page.dashboard.currency') }}</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ $t('page.dashboard.memberId') }}</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ $t('page.dashboard.memberAccount') }}</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ $t('page.dashboard.uplineAgent') }}</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ $t('page.dashboard.registrationSource') }}</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{{ $t('page.dashboard.amount') }}</th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                  >
+                    {{ $t('page.dashboard.rank') }}
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                  >
+                    {{ $t('page.dashboard.currency') }}
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                  >
+                    {{ $t('page.dashboard.memberId') }}
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                  >
+                    {{ $t('page.dashboard.memberAccount') }}
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                  >
+                    {{ $t('page.dashboard.uplineAgent') }}
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                  >
+                    {{ $t('page.dashboard.registrationSource') }}
+                  </th>
+                  <th
+                    class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                  >
+                    {{ $t('page.dashboard.amount') }}
+                  </th>
                 </tr>
               </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
+              <tbody class="divide-y divide-gray-200 bg-white">
                 <tr v-for="item in currentRankings" :key="item.rank">
-                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <span :class="getRankColor(item.rank)">{{ item.rank }}</span>
+                  <td class="whitespace-nowrap px-6 py-4 text-sm font-medium">
+                    <span :class="getRankColor(item.rank)">{{
+                      item.rank
+                    }}</span>
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ item.currency }}</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ item.memberId }}</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ item.memberAccount }}</td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ item.uplineAgent }}</td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span :class="(item.registrationSource === '推广注册' || item.registrationSource === $t('page.dashboard.promotionRegistration')) ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'" 
-                          class="inline-flex px-2 py-1 text-xs font-semibold rounded-full">
-                      {{ item.registrationSource === '推广注册' ? $t('page.dashboard.promotionRegistration') : (item.registrationSource === '官网' ? $t('page.dashboard.officialWebsite') : item.registrationSource) }}
+                  <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                    {{ item.currency }}
+                  </td>
+                  <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                    {{ item.memberId }}
+                  </td>
+                  <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                    {{ item.memberAccount }}
+                  </td>
+                  <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                    {{ item.uplineAgent }}
+                  </td>
+                  <td class="whitespace-nowrap px-6 py-4">
+                    <span
+                      :class="
+                        item.registrationSource === '推广注册' ||
+                        item.registrationSource ===
+                          $t('page.dashboard.promotionRegistration')
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-blue-100 text-blue-800'
+                      "
+                      class="inline-flex rounded-full px-2 py-1 text-xs font-semibold"
+                    >
+                      {{
+                        item.registrationSource === '推广注册'
+                          ? $t('page.dashboard.promotionRegistration')
+                          : item.registrationSource === '官网'
+                            ? $t('page.dashboard.officialWebsite')
+                            : item.registrationSource
+                      }}
                     </span>
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">R$ {{ Number(item.amount || 0).toFixed(2) }}</td>
+                  <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                    R$ {{ Number(item.amount || 0).toFixed(2) }}
+                  </td>
                 </tr>
                 <tr v-if="currentRankings.length === 0">
-                  <td colspan="7" class="px-6 py-4 text-center text-gray-500">{{ $t('page.dashboard.noData') }}</td>
+                  <td colspan="7" class="px-6 py-4 text-center text-gray-500">
+                    {{ $t('page.dashboard.noData') }}
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -186,7 +325,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
 import { $t } from '@vben/locales';
-import { getDashboardAnalytics, getRankingData, getDashboardDiffApi, subscribeDashboardStream } from '#/api/analytics';
+import {
+  getDashboardAnalytics,
+  getRankingData,
+  getDashboardDiffApi,
+  subscribeDashboardStream,
+} from '#/api/analytics';
 import { getTodayInTimezone } from '#/utils/timezoneUtils';
 
 // 接口定义
@@ -225,7 +369,7 @@ const dashboardData = ref<DashboardData>({
   todayPromotionBonus: 0,
   totalMembers: 0,
   todayActiveMembers: 0,
-  todayValidBet: 0
+  todayValidBet: 0,
 });
 
 const activeTab = ref('recharge');
@@ -238,7 +382,7 @@ const rankings = ref<{
   recharge: [],
   bet: [],
   profit: [],
-  commission: []
+  commission: [],
 });
 
 // 选项配置
@@ -246,7 +390,7 @@ const tabs = computed(() => [
   { key: 'recharge', name: $t('page.dashboard.rechargeRanking') },
   { key: 'bet', name: $t('page.dashboard.betRanking') },
   { key: 'profit', name: $t('page.dashboard.profitRanking') },
-  { key: 'commission', name: $t('page.dashboard.commissionRanking') }
+  { key: 'commission', name: $t('page.dashboard.commissionRanking') },
 ]);
 
 // 计算属性
@@ -311,7 +455,7 @@ const loadTodayStats = async () => {
       recharge: allRankings.recharge?.length || 0,
       bet: allRankings.bet?.length || 0,
       profit: allRankings.profit?.length || 0,
-      commission: allRankings.commission?.length || 0
+      commission: allRankings.commission?.length || 0,
     });
   } catch (error) {
     console.error('💥 Error loading dashboard stats:', error);
@@ -324,7 +468,9 @@ const loadTodayStats = async () => {
 const loadRankingsData = async (type: string) => {
   try {
     // 若已通过统一接口预加载，则不再二次请求
-    if ((rankings.value[type as keyof typeof rankings.value] || []).length > 0) {
+    if (
+      (rankings.value[type as keyof typeof rankings.value] || []).length > 0
+    ) {
       return;
     }
     console.log(`🔄 Loading ${type} rankings...`);
@@ -341,9 +487,13 @@ const loadRankingsData = async (type: string) => {
 };
 
 // 监听tab变化，加载对应排行榜数据
-watch(activeTab, (newTab) => {
-  loadRankingsData(newTab);
-}, { immediate: true });
+watch(
+  activeTab,
+  (newTab) => {
+    loadRankingsData(newTab);
+  },
+  { immediate: true },
+);
 
 // 初始化
 onMounted(async () => {
@@ -367,7 +517,10 @@ onMounted(async () => {
     };
     diffPercents.value = {
       todayNewAgents: calc(t.todayNewAgents || 0, y.todayNewAgents || 0),
-      todayRegistrations: calc(t.todayRegistrations || 0, y.todayRegistrations || 0),
+      todayRegistrations: calc(
+        t.todayRegistrations || 0,
+        y.todayRegistrations || 0,
+      ),
       todayProfit: (() => {
         const today = Number(t.todayProfit || 0);
         const yesterday = Number(y.todayProfit || 0);
@@ -380,7 +533,10 @@ onMounted(async () => {
         const cappedPercentage = Math.max(-1000, Math.min(1000, percentage));
         return `${cappedPercentage >= 0 ? '+' : ''}${cappedPercentage.toFixed(2)}%`;
       })(),
-      todayPromotionBonus: calc(t.todayPromotionBonus || 0, y.todayPromotionBonus || 0),
+      todayPromotionBonus: calc(
+        t.todayPromotionBonus || 0,
+        y.todayPromotionBonus || 0,
+      ),
       // 会员总数百分比：活跃会员 / 会员总数
       totalMembers: (() => {
         const total = Number(t.totalMembers || 0);
@@ -574,7 +730,9 @@ onMounted(async () => {
 }
 
 .shadow {
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
 
 .border-b {

@@ -1,34 +1,43 @@
 <template>
   <div class="vip-reward-setting">
-    <Page
-      title="VIP设置"
-      description="管理VIP等级奖励设置"
-    >
+    <Page title="VIP设置" description="管理VIP等级奖励设置">
       <!-- 操作栏 -->
       <n-card class="mb-4">
-        <div class="flex justify-between items-center">
+        <div class="flex items-center justify-between">
           <div class="flex items-center gap-4">
-            <n-button type="primary" @click="handleApplyToAllCurrencies">应用到所有币种</n-button>
+            <n-button type="primary" @click="handleApplyToAllCurrencies"
+              >应用到所有币种</n-button
+            >
             <div class="flex items-center gap-2">
               <n-text>VIP开关</n-text>
-              <n-switch v-model:value="vipEnabled" @update:value="handleVipToggle" />
+              <n-switch
+                v-model:value="vipEnabled"
+                @update:value="handleVipToggle"
+              />
             </div>
           </div>
           <div class="flex items-center gap-2">
             <n-button @click="handleDetails">详情</n-button>
-            <n-button type="primary" @click="openGlobalSettingModal">VIP公共设置</n-button>
+            <n-button type="primary" @click="openGlobalSettingModal"
+              >VIP公共设置</n-button
+            >
             <n-button type="primary" @click="openLevelModal">新增等级</n-button>
-            <n-button type="primary" @click="handleImportCorrection">导入修正</n-button>
-            <n-button type="error" @click="handleBatchModify">批量修改</n-button>
+            <n-button type="primary" @click="handleImportCorrection"
+              >导入修正</n-button
+            >
+            <n-button type="error" @click="handleBatchModify"
+              >批量修改</n-button
+            >
           </div>
         </div>
       </n-card>
 
       <!-- VIP奖励设置表格 -->
       <n-card>
-        <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
+        <div class="mb-4 rounded border border-blue-200 bg-blue-50 p-3">
           <n-text type="info" class="text-sm">
-            💡 提示：表格中的数值为只读显示，如需修改请点击右侧"修改"按钮进入编辑弹窗
+            💡
+            提示：表格中的数值为只读显示，如需修改请点击右侧"修改"按钮进入编辑弹窗
           </n-text>
         </div>
         <n-data-table
@@ -49,7 +58,6 @@
         :editing-item="editingItem"
         @success="handleLevelSuccess"
       />
-      
 
       <!-- 公共设置弹窗 -->
       <VIPGlobalSettingModal
@@ -62,13 +70,30 @@
 
 <script setup lang="ts">
 import { ref, onMounted, h } from 'vue';
-import { useMessage, useDialog, NButton, NCard, NDataTable, NText, NSwitch } from 'naive-ui';
+import {
+  useMessage,
+  useDialog,
+  NButton,
+  NCard,
+  NDataTable,
+  NText,
+  NSwitch,
+} from 'naive-ui';
 import { Page } from '@vben/common-ui';
-import { getVIPLevels, updateVIPLevel, getVIPGlobalSettings, updateVIPGlobalSettings } from '../../api/vip';
+import {
+  getVIPLevels,
+  updateVIPLevel,
+  getVIPGlobalSettings,
+  updateVIPGlobalSettings,
+} from '../../api/vip';
 // ✅ PERFORMANCE FIX: Lazy load modal components - they only load when modals are opened
 import { defineAsyncComponent } from 'vue';
-const VIPLevelFormModal = defineAsyncComponent(() => import('./components/VIPLevelFormModal.vue'));
-const VIPGlobalSettingModal = defineAsyncComponent(() => import('./components/VIPGlobalSettingModal.vue'));
+const VIPLevelFormModal = defineAsyncComponent(
+  () => import('./components/VIPLevelFormModal.vue'),
+);
+const VIPGlobalSettingModal = defineAsyncComponent(
+  () => import('./components/VIPGlobalSettingModal.vue'),
+);
 
 interface VIPLevelExtended {
   id: number;
@@ -115,15 +140,18 @@ const columns = [
     title: '等级名称',
     key: 'level',
     width: 120,
-    
   },
   {
     title: '当前人数',
     key: 'currentMemberCount',
     width: 100,
     render(row: VIPLevelExtended) {
-      return h(NText, { type: 'info' }, { default: () => row.currentMemberCount || 0 });
-    }
+      return h(
+        NText,
+        { type: 'info' },
+        { default: () => row.currentMemberCount || 0 },
+      );
+    },
   },
   {
     title: '币种',
@@ -131,51 +159,59 @@ const columns = [
     width: 80,
     render(row: VIPLevelExtended) {
       return h(NText, null, { default: () => row.currency || 'BRL' });
-    }
+    },
   },
   {
     title: '预览图',
     key: 'preview',
     width: 80,
     render(row: VIPLevelExtended) {
-      return h('div', { 
-        class: 'w-12 h-12 rounded-full relative overflow-hidden border-2 border-yellow-400 shadow-lg',
-        style: { 
-          backgroundColor: row.color || '#e91e63',
-          background: `linear-gradient(135deg, ${row.color || '#e91e63'}, ${row.color || '#e91e63'}dd)`
-        }
-      }, [
-        // Gradient background
-        h('div', { 
-          class: 'absolute inset-0 rounded-full',
-          style: { 
-            background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent 50%)`
-          }
-        }),
-        // Icon image (if exists)
-        row.icon ? h('img', {
-          src: row.icon,
-          class: 'absolute inset-1 w-10 h-10 object-contain rounded-full',
-          style: { 
-            filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))',
-            zIndex: 10
-          },
-          onError: (e: Event) => {
-            // Hide image if it fails to load
-            const target = e.target as HTMLImageElement;
-            target.style.display = 'none';
-          }
-        }) : null,
-        // Shine effect
-        h('div', {
-          class: 'absolute inset-0 rounded-full',
+      return h(
+        'div',
+        {
+          class:
+            'w-12 h-12 rounded-full relative overflow-hidden border-2 border-yellow-400 shadow-lg',
           style: {
-            background: 'linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(255,255,255,0.1) 100%)',
-            pointerEvents: 'none'
-          }
-        })
-      ]);
-    }
+            backgroundColor: row.color || '#e91e63',
+            background: `linear-gradient(135deg, ${row.color || '#e91e63'}, ${row.color || '#e91e63'}dd)`,
+          },
+        },
+        [
+          // Gradient background
+          h('div', {
+            class: 'absolute inset-0 rounded-full',
+            style: {
+              background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent 50%)`,
+            },
+          }),
+          // Icon image (if exists)
+          row.icon
+            ? h('img', {
+                src: row.icon,
+                class: 'absolute inset-1 w-10 h-10 object-contain rounded-full',
+                style: {
+                  filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))',
+                  zIndex: 10,
+                },
+                onError: (e: Event) => {
+                  // Hide image if it fails to load
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                },
+              })
+            : null,
+          // Shine effect
+          h('div', {
+            class: 'absolute inset-0 rounded-full',
+            style: {
+              background:
+                'linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(255,255,255,0.1) 100%)',
+              pointerEvents: 'none',
+            },
+          }),
+        ],
+      );
+    },
   },
   {
     title: '晋级要求',
@@ -186,26 +222,38 @@ const columns = [
         key: 'requiredDeposit',
         width: 120,
         render(row: VIPLevelExtended) {
-          return h(NText, { type: 'info' }, { default: () => (row.requiredDeposit || 0).toLocaleString() });
-        }
+          return h(
+            NText,
+            { type: 'info' },
+            { default: () => (row.requiredDeposit || 0).toLocaleString() },
+          );
+        },
       },
       {
         title: '晋级需再打码',
         key: 'requiredBet',
         width: 120,
         render(row: VIPLevelExtended) {
-          return h(NText, { type: 'info' }, { default: () => (row.requiredBet || 0).toLocaleString() });
-        }
-      }
-    ]
+          return h(
+            NText,
+            { type: 'info' },
+            { default: () => (row.requiredBet || 0).toLocaleString() },
+          );
+        },
+      },
+    ],
   },
   {
     title: '晋级奖金',
     key: 'upgradeBonus',
     width: 100,
     render(row: VIPLevelExtended) {
-      return h(NText, { type: 'info' }, { default: () => (row.upgradeBonus || 0).toLocaleString() });
-    }
+      return h(
+        NText,
+        { type: 'info' },
+        { default: () => (row.upgradeBonus || 0).toLocaleString() },
+      );
+    },
   },
   {
     title: '月俸禄',
@@ -216,34 +264,55 @@ const columns = [
         key: 'monthlyDepositRequirement',
         width: 100,
         render(row: VIPLevelExtended) {
-          return h(NText, { type: 'info' }, { default: () => (row.monthlyDepositRequirement || 0).toLocaleString() });
-        }
+          return h(
+            NText,
+            { type: 'info' },
+            {
+              default: () =>
+                (row.monthlyDepositRequirement || 0).toLocaleString(),
+            },
+          );
+        },
       },
       {
         title: '当月打码',
         key: 'monthlyBetRequirement',
         width: 100,
         render(row: VIPLevelExtended) {
-          return h(NText, { type: 'info' }, { default: () => (row.monthlyBetRequirement || 0).toLocaleString() });
-        }
+          return h(
+            NText,
+            { type: 'info' },
+            {
+              default: () => (row.monthlyBetRequirement || 0).toLocaleString(),
+            },
+          );
+        },
       },
       {
         title: '月俸禄',
         key: 'monthlyRebate',
         width: 100,
         render(row: VIPLevelExtended) {
-          return h(NText, { type: 'info' }, { default: () => (row.monthlyRebate || 0).toLocaleString() });
-        }
+          return h(
+            NText,
+            { type: 'info' },
+            { default: () => (row.monthlyRebate || 0).toLocaleString() },
+          );
+        },
       },
       {
         title: '月累计封顶',
         key: 'monthlyLimit',
         width: 100,
         render(row: VIPLevelExtended) {
-          return h(NText, { type: 'info' }, { default: () => (row.monthlyLimit || 0).toLocaleString() });
-        }
-      }
-    ]
+          return h(
+            NText,
+            { type: 'info' },
+            { default: () => (row.monthlyLimit || 0).toLocaleString() },
+          );
+        },
+      },
+    ],
   },
   {
     title: '周俸禄',
@@ -254,34 +323,53 @@ const columns = [
         key: 'weeklyDepositRequirement',
         width: 100,
         render(row: VIPLevelExtended) {
-          return h(NText, { type: 'info' }, { default: () => (row.weeklyDepositRequirement || 0).toLocaleString() });
-        }
+          return h(
+            NText,
+            { type: 'info' },
+            {
+              default: () =>
+                (row.weeklyDepositRequirement || 0).toLocaleString(),
+            },
+          );
+        },
       },
       {
         title: '当周打码',
         key: 'weeklyBetRequirement',
         width: 100,
         render(row: VIPLevelExtended) {
-          return h(NText, { type: 'info' }, { default: () => (row.weeklyBetRequirement || 0).toLocaleString() });
-        }
+          return h(
+            NText,
+            { type: 'info' },
+            { default: () => (row.weeklyBetRequirement || 0).toLocaleString() },
+          );
+        },
       },
       {
         title: '周俸禄',
         key: 'weeklyTaskValue',
         width: 100,
         render(row: VIPLevelExtended) {
-          return h(NText, { type: 'info' }, { default: () => (row.weeklyTaskValue || 0).toLocaleString() });
-        }
+          return h(
+            NText,
+            { type: 'info' },
+            { default: () => (row.weeklyTaskValue || 0).toLocaleString() },
+          );
+        },
       },
       {
         title: '周累计封顶',
         key: 'weeklyLimit',
         width: 100,
         render(row: VIPLevelExtended) {
-          return h(NText, { type: 'info' }, { default: () => (row.weeklyLimit || 0).toLocaleString() });
-        }
-      }
-    ]
+          return h(
+            NText,
+            { type: 'info' },
+            { default: () => (row.weeklyLimit || 0).toLocaleString() },
+          );
+        },
+      },
+    ],
   },
   {
     title: '日俸禄',
@@ -292,42 +380,65 @@ const columns = [
         key: 'dailyDepositRequirement',
         width: 100,
         render(row: VIPLevelExtended) {
-          return h(NText, { type: 'info' }, { default: () => (row.dailyDepositRequirement || 0).toLocaleString() });
-        }
+          return h(
+            NText,
+            { type: 'info' },
+            {
+              default: () =>
+                (row.dailyDepositRequirement || 0).toLocaleString(),
+            },
+          );
+        },
       },
       {
         title: '当日打码',
         key: 'dailyBetRequirement',
         width: 100,
         render(row: VIPLevelExtended) {
-          return h(NText, { type: 'info' }, { default: () => (row.dailyBetRequirement || 0).toLocaleString() });
-        }
+          return h(
+            NText,
+            { type: 'info' },
+            { default: () => (row.dailyBetRequirement || 0).toLocaleString() },
+          );
+        },
       },
       {
         title: '日俸禄',
         key: 'dailyTaskValue',
         width: 100,
         render(row: VIPLevelExtended) {
-          return h(NText, { type: 'info' }, { default: () => (row.dailyTaskValue || 0).toLocaleString() });
-        }
+          return h(
+            NText,
+            { type: 'info' },
+            { default: () => (row.dailyTaskValue || 0).toLocaleString() },
+          );
+        },
       },
       {
         title: '日累计封顶',
         key: 'dailyLimit',
         width: 100,
         render(row: VIPLevelExtended) {
-          return h(NText, { type: 'info' }, { default: () => (row.dailyLimit || 0).toLocaleString() });
-        }
-      }
-    ]
+          return h(
+            NText,
+            { type: 'info' },
+            { default: () => (row.dailyLimit || 0).toLocaleString() },
+          );
+        },
+      },
+    ],
   },
   {
     title: '生日礼金',
     key: 'birthdayBonus',
     width: 100,
     render(row: VIPLevelExtended) {
-      return h(NText, { type: 'info' }, { default: () => (row.birthdayBonus || 0).toLocaleString() });
-    }
+      return h(
+        NText,
+        { type: 'info' },
+        { default: () => (row.birthdayBonus || 0).toLocaleString() },
+      );
+    },
   },
   {
     title: '操作',
@@ -335,57 +446,62 @@ const columns = [
     width: 100,
     fixed: 'right' as const,
     render(row: VIPLevelExtended) {
-      return h(NButton, { 
-        size: 'small', 
-        type: 'primary', 
-        onClick: () => openEditLevel(row) 
-      }, { default: () => '修改' });
-    }
-  }
+      return h(
+        NButton,
+        {
+          size: 'small',
+          type: 'primary',
+          onClick: () => openEditLevel(row),
+        },
+        { default: () => '修改' },
+      );
+    },
+  },
 ];
 
 // 数据获取和处理函数
 async function fetchTableData() {
   loading.value = true;
   console.log('🔄 Fetching VIP levels...');
-  
+
   // Check authentication status
   try {
     // Import the auth store to check authentication status
     const { useAuthStore } = await import('#/store');
     const { useAccessStore } = await import('@vben/stores');
-    
+
     const authStore = useAuthStore();
     const accessStore = useAccessStore();
-    
+
     console.log('🔐 Auth store state:', {
       hasUserInfo: !!authStore.fetchUserInfo(),
       accessToken: accessStore.accessToken ? 'Present' : 'Missing',
-      isAccessChecked: accessStore.isAccessChecked
+      isAccessChecked: accessStore.isAccessChecked,
     });
   } catch (authError) {
     console.warn('⚠️ Could not check auth store:', authError);
   }
-  
+
   try {
     console.log('🔄 About to call getVIPLevels API...');
     const res = await getVIPLevels({
       pageSize: 100, // 获取所有VIP等级
       sortBy: 'level',
-      sortOrder: 'asc'
+      sortOrder: 'asc',
     });
-    
+
     console.log('✅ VIP Levels API response:', res);
     console.log('📊 Response type:', typeof res);
     console.log('📊 Response keys:', res ? Object.keys(res) : 'undefined');
     console.log('📊 Full response object:', JSON.stringify(res, null, 2));
-    
+
     // 为每个VIP等级添加默认的奖励字段
     if (res && res.list && Array.isArray(res.list)) {
       console.log(` Found ${res.list.length} VIP levels`);
-      tableData.value = res.list.map(level => ({
+      tableData.value = res.list.map((level) => ({
         ...level,
-        monthlyDepositRequirement: (level as any).monthlyDepositRequirement || 0,
+        monthlyDepositRequirement:
+          (level as any).monthlyDepositRequirement || 0,
         monthlyBetRequirement: (level as any).monthlyBetRequirement || 0,
         monthlyLimit: (level as any).monthlyLimit || 0,
         weeklyDepositRequirement: (level as any).weeklyDepositRequirement || 0,
@@ -406,12 +522,14 @@ async function fetchTableData() {
     console.error('❌ Error details:', {
       name: (error as any).name,
       message: (error as any).message,
-      stack: (error as any).stack
+      stack: (error as any).stack,
     });
-    
+
     // Check if it's an authentication error
     if ((error as any).response?.status === 401) {
-      console.error('🔐 Authentication failed - user not logged in or token expired');
+      console.error(
+        '🔐 Authentication failed - user not logged in or token expired',
+      );
       message.error('请先登录或重新登录');
     } else if ((error as any).response?.status === 403) {
       console.error('🚫 Access denied - insufficient permissions');
@@ -419,7 +537,7 @@ async function fetchTableData() {
     } else {
       message.error('获取VIP等级失败');
     }
-    
+
     tableData.value = [];
   } finally {
     loading.value = false;
@@ -443,8 +561,6 @@ async function loadVipSettings() {
   }
 }
 
-
-
 // VIP开关切换
 async function handleVipToggle(enabled: boolean) {
   try {
@@ -467,7 +583,7 @@ function handleApplyToAllCurrencies() {
     negativeText: '取消',
     onPositiveClick: () => {
       message.info('功能开发中...');
-    }
+    },
   });
 }
 
@@ -482,8 +598,6 @@ function handleImportCorrection() {
 function handleBatchModify() {
   message.info('批量修改功能开发中...');
 }
-
-
 
 function openLevelModal() {
   editingItem.value = null;
@@ -581,4 +695,4 @@ onMounted(() => {
   background-color: white;
   box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
 }
-</style> 
+</style>

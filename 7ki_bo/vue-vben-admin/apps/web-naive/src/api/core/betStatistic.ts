@@ -5,23 +5,23 @@ import { requestClient } from '#/api/request';
 // ===================================
 
 export interface BetStatisticSummary {
-  totalBetCount: number;        // 总注单量
-  totalBetAmount: number;       // 总投注金额
-  totalValidBetAmount: number;  // 总有效投注
-  memberCount: number;          // 会员数量
-  subordinateBetCount: number;  // 占单量
-  profitRatio: number;          // 获利比
+  totalBetCount: number; // 总注单量
+  totalBetAmount: number; // 总投注金额
+  totalValidBetAmount: number; // 总有效投注
+  memberCount: number; // 会员数量
+  subordinateBetCount: number; // 占单量
+  profitRatio: number; // 获利比
 }
 
 export interface BetGameDetail {
-  gameProvider: string;         // 平台
-  gameCategory: string;         // 类别
-  gameName: string;             // 游戏名称
-  betCount: number;             // 注单数量
-  betAmount: number;            // 投注金额
-  validBetAmount: number;       // 有效投注
-  profitLoss: number;           // 盈亏
-  memberCount: number;          // 会员数量
+  gameProvider: string; // 平台
+  gameCategory: string; // 类别
+  gameName: string; // 游戏名称
+  betCount: number; // 注单数量
+  betAmount: number; // 投注金额
+  validBetAmount: number; // 有效投注
+  profitLoss: number; // 盈亏
+  memberCount: number; // 会员数量
 }
 
 export interface BetStatisticRequest {
@@ -44,7 +44,7 @@ export interface BetStatisticResponse {
  */
 export function getBetStatisticSummary(params: BetStatisticRequest) {
   return requestClient.get<BetStatisticSummary>('/bet-statistics/summary', {
-    params
+    params,
   });
 }
 
@@ -53,7 +53,7 @@ export function getBetStatisticSummary(params: BetStatisticRequest) {
  */
 export function getBetGameDetail(params: BetStatisticRequest) {
   return requestClient.get<BetGameDetail[]>('/bet-statistics/game-detail', {
-    params
+    params,
   });
 }
 
@@ -62,6 +62,6 @@ export function getBetGameDetail(params: BetStatisticRequest) {
  */
 export function getBetStatisticData(params: BetStatisticRequest) {
   return requestClient.get<BetStatisticResponse>('/bet-statistics/full', {
-    params
+    params,
   });
-} 
+}

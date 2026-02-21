@@ -42,22 +42,33 @@ export interface CreateVirtualBonusPoolData {
 export async function getVirtualBonusPools(params?: any) {
   return requestClient.get<{
     data: VirtualBonusPool[];
-    total: number;
     page: number;
     pageSize: number;
+    total: number;
   }>('/virtual-bonus-pools', { params });
 }
 
 export async function getVirtualBonusPool(id: number) {
-  return requestClient.get<{ data: VirtualBonusPool }>(`/virtual-bonus-pools/${id}`);
+  return requestClient.get<{ data: VirtualBonusPool }>(
+    `/virtual-bonus-pools/${id}`,
+  );
 }
 
 export async function createVirtualBonusPool(data: CreateVirtualBonusPoolData) {
-  return requestClient.post<{ data: VirtualBonusPool }>('/virtual-bonus-pools', data);
+  return requestClient.post<{ data: VirtualBonusPool }>(
+    '/virtual-bonus-pools',
+    data,
+  );
 }
 
-export async function updateVirtualBonusPool(id: number, data: Partial<CreateVirtualBonusPoolData>) {
-  return requestClient.put<{ data: VirtualBonusPool }>(`/virtual-bonus-pools/${id}`, data);
+export async function updateVirtualBonusPool(
+  id: number,
+  data: Partial<CreateVirtualBonusPoolData>,
+) {
+  return requestClient.put<{ data: VirtualBonusPool }>(
+    `/virtual-bonus-pools/${id}`,
+    data,
+  );
 }
 
 export async function deleteVirtualBonusPool(id: number) {
@@ -69,7 +80,10 @@ export async function toggleVirtualBonusPoolStatus(id: number) {
 }
 
 // Bulk operations
-export async function bulkUpdateVirtualBonusPools(data: { ids: number[]; updates: Partial<CreateVirtualBonusPoolData> }) {
+export async function bulkUpdateVirtualBonusPools(data: {
+  ids: number[];
+  updates: Partial<CreateVirtualBonusPoolData>;
+}) {
   return requestClient.post('/virtual-bonus-pools/bulk-update', data);
 }
 
@@ -79,19 +93,21 @@ export async function bulkDeleteVirtualBonusPools(ids: number[]) {
 
 // Background image operations
 export async function getBackgroundImages() {
-  return requestClient.get<{ data: BackgroundImage[] }>('/virtual-bonus-pools/background-images');
+  return requestClient.get<{ data: BackgroundImage[] }>(
+    '/virtual-bonus-pools/background-images',
+  );
 }
 
 export async function uploadBackgroundImage(file: File) {
   const formData = new FormData();
   formData.append('image', file);
-  
-  return requestClient.post<{ 
-    data: { 
-      url: string; 
-      filename: string; 
-      originalName: string; 
-    } 
+
+  return requestClient.post<{
+    data: {
+      filename: string;
+      originalName: string;
+      url: string;
+    };
   }>('/virtual-bonus-pools/upload-background', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -101,4 +117,4 @@ export async function uploadBackgroundImage(file: File) {
 
 export async function deleteBackgroundImage(id: string) {
   return requestClient.delete(`/virtual-bonus-pools/background-images/${id}`);
-} 
+}

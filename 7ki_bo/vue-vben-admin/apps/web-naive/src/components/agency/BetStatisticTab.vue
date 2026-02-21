@@ -1,7 +1,7 @@
 <template>
   <div class="bet-statistic-tab">
     <!-- Statistics Overview -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
       <n-card size="small" class="summary-card">
         <div class="flex items-center justify-between">
           <div>
@@ -13,7 +13,7 @@
           <div class="text-2xl text-blue-500">🎯</div>
         </div>
       </n-card>
-      
+
       <n-card size="small" class="summary-card">
         <div class="flex items-center justify-between">
           <div>
@@ -25,21 +25,27 @@
           <div class="text-2xl text-green-500">✅</div>
         </div>
       </n-card>
-      
+
       <n-card size="small" class="summary-card">
         <div class="flex items-center justify-between">
           <div>
             <div class="text-sm text-gray-500">总输赢金额</div>
-            <div class="text-xl font-bold" :class="totalWinLoss >= 0 ? 'text-green-600' : 'text-red-600'">
+            <div
+              class="text-xl font-bold"
+              :class="totalWinLoss >= 0 ? 'text-green-600' : 'text-red-600'"
+            >
               {{ formatCurrency(totalWinLoss) }}
             </div>
           </div>
-          <div class="text-2xl" :class="totalWinLoss >= 0 ? 'text-green-500' : 'text-red-500'">
+          <div
+            class="text-2xl"
+            :class="totalWinLoss >= 0 ? 'text-green-500' : 'text-red-500'"
+          >
             {{ totalWinLoss >= 0 ? '💰' : '💸' }}
           </div>
         </div>
       </n-card>
-      
+
       <n-card size="small" class="summary-card">
         <div class="flex items-center justify-between">
           <div>
@@ -55,7 +61,7 @@
 
     <!-- Filter Section -->
     <n-card title="筛选条件" class="mb-4">
-      <div class="flex flex-wrap gap-4 items-end">
+      <div class="flex flex-wrap items-end gap-4">
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium text-gray-700">游戏类型</label>
           <n-select
@@ -98,7 +104,11 @@
             @update:value="loadBetStatistics"
           />
         </div>
-        <n-button type="primary" @click="loadBetStatistics" class="flex items-center gap-1">
+        <n-button
+          type="primary"
+          @click="loadBetStatistics"
+          class="flex items-center gap-1"
+        >
           🔍 查询
         </n-button>
         <n-button @click="handleResetFilter" class="flex items-center gap-1">
@@ -136,11 +146,11 @@
 
     <!-- Chart Section -->
     <n-card title="投注趋势图表" class="mt-4">
-      <div class="text-center text-gray-500 py-12">
+      <div class="py-12 text-center text-gray-500">
         <n-icon size="48" class="mb-4">
           <BarChartOutline />
         </n-icon>
-        <div class="text-lg font-medium mb-2">图表功能开发中</div>
+        <div class="mb-2 text-lg font-medium">图表功能开发中</div>
         <div class="text-sm">投注趋势图表将在此显示</div>
       </div>
     </n-card>
@@ -149,21 +159,21 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, h, onMounted } from 'vue';
-import { 
-  NCard, 
-  NButton, 
-  NDataTable, 
-  NDatePicker, 
-  NSelect, 
-  NTag, 
+import {
+  NCard,
+  NButton,
+  NDataTable,
+  NDatePicker,
+  NSelect,
+  NTag,
   NIcon,
   useMessage,
-  type DataTableColumns 
+  type DataTableColumns,
 } from 'naive-ui';
 import { BarChartOutline } from '@vicons/ionicons5';
-import { 
+import {
   getAgentBetStatisticsApi,
-  type AgentBetRecord 
+  type AgentBetRecord,
 } from '#/api/agency/agent-details';
 
 interface Props {
@@ -171,7 +181,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  agentId: 0
+  agentId: 0,
 });
 
 const message = useMessage();
@@ -212,14 +222,14 @@ const gameTypeOptions = [
   { label: '电子游戏', value: 'slot' },
   { label: '彩票游戏', value: 'lottery' },
   { label: '棋牌游戏', value: 'chess' },
-  { label: '区块链游戏', value: 'blockchain' }
+  { label: '区块链游戏', value: 'blockchain' },
 ];
 
 const betStatusOptions = [
   { label: '已结算', value: 'settled' },
   { label: '未结算', value: 'unsettled' },
   { label: '已取消', value: 'cancelled' },
-  { label: '已退款', value: 'refunded' }
+  { label: '已退款', value: 'refunded' },
 ];
 
 // Computed
@@ -247,8 +257,12 @@ const betColumns: DataTableColumns<AgentBetRecord> = [
     width: 80,
     align: 'center',
     render: (row) => {
-      return h('span', { class: 'text-xs text-gray-500 font-mono' }, `#${row.id}`);
-    }
+      return h(
+        'span',
+        { class: 'text-xs text-gray-500 font-mono' },
+        `#${row.id}`,
+      );
+    },
   },
   {
     title: '游戏类型',
@@ -256,26 +270,34 @@ const betColumns: DataTableColumns<AgentBetRecord> = [
     width: 120,
     render: (row) => {
       const typeMap = {
-        'sports': { label: '体育博彩', type: 'success', icon: '⚽' },
-        'live': { label: '真人娱乐', type: 'info', icon: '🎰' },
-        'slot': { label: '电子游戏', type: 'warning', icon: '🎮' },
-        'lottery': { label: '彩票游戏', type: 'error', icon: '🎲' },
-        'chess': { label: '棋牌游戏', type: 'default', icon: '♟️' },
-        'blockchain': { label: '区块链游戏', type: 'primary', icon: '🔗' }
+        sports: { label: '体育博彩', type: 'success', icon: '⚽' },
+        live: { label: '真人娱乐', type: 'info', icon: '🎰' },
+        slot: { label: '电子游戏', type: 'warning', icon: '🎮' },
+        lottery: { label: '彩票游戏', type: 'error', icon: '🎲' },
+        chess: { label: '棋牌游戏', type: 'default', icon: '♟️' },
+        blockchain: { label: '区块链游戏', type: 'primary', icon: '🔗' },
       };
-      const typeInfo = typeMap[row.gameType as keyof typeof typeMap] || { label: row.gameType, type: 'default', icon: '❓' };
+      const typeInfo = typeMap[row.gameType as keyof typeof typeMap] || {
+        label: row.gameType,
+        type: 'default',
+        icon: '❓',
+      };
       return h('div', { class: 'flex items-center gap-2' }, [
         h('span', { class: 'text-lg' }, typeInfo.icon),
-        h(NTag, { type: typeInfo.type, size: 'small' }, { default: () => typeInfo.label })
+        h(
+          NTag,
+          { type: typeInfo.type, size: 'small' },
+          { default: () => typeInfo.label },
+        ),
       ]);
-    }
+    },
   },
   {
     title: '游戏名称',
     key: 'gameName',
     width: 200,
     ellipsis: true,
-    tooltip: true
+    tooltip: true,
   },
   {
     title: '投注金额',
@@ -283,8 +305,12 @@ const betColumns: DataTableColumns<AgentBetRecord> = [
     width: 120,
     align: 'right',
     render: (row) => {
-      return h('span', { class: 'font-semibold' }, formatCurrency(row.betAmount));
-    }
+      return h(
+        'span',
+        { class: 'font-semibold' },
+        formatCurrency(row.betAmount),
+      );
+    },
   },
   {
     title: '有效投注',
@@ -292,8 +318,12 @@ const betColumns: DataTableColumns<AgentBetRecord> = [
     width: 120,
     align: 'right',
     render: (row) => {
-      return h('span', { class: 'font-semibold text-blue-600' }, formatCurrency(row.validAmount));
-    }
+      return h(
+        'span',
+        { class: 'font-semibold text-blue-600' },
+        formatCurrency(row.validAmount),
+      );
+    },
   },
   {
     title: '输赢金额',
@@ -306,9 +336,13 @@ const betColumns: DataTableColumns<AgentBetRecord> = [
       const icon = isWin ? '↗️' : '↘️';
       return h('div', { class: 'flex items-center justify-end gap-1' }, [
         h('span', { class: 'text-sm' }, icon),
-        h('span', { class: `font-semibold ${color}` }, `${isWin ? '+' : ''}${formatCurrency(row.winLoss)}`)
+        h(
+          'span',
+          { class: `font-semibold ${color}` },
+          `${isWin ? '+' : ''}${formatCurrency(row.winLoss)}`,
+        ),
       ]);
-    }
+    },
   },
   {
     title: '状态',
@@ -317,17 +351,25 @@ const betColumns: DataTableColumns<AgentBetRecord> = [
     align: 'center',
     render: (row) => {
       const statusMap = {
-        'settled': { label: '已结算', type: 'success', icon: '✅' },
-        'unsettled': { label: '未结算', type: 'warning', icon: '⏳' },
-        'cancelled': { label: '已取消', type: 'error', icon: '❌' },
-        'refunded': { label: '已退款', type: 'info', icon: '🔄' }
+        settled: { label: '已结算', type: 'success', icon: '✅' },
+        unsettled: { label: '未结算', type: 'warning', icon: '⏳' },
+        cancelled: { label: '已取消', type: 'error', icon: '❌' },
+        refunded: { label: '已退款', type: 'info', icon: '🔄' },
       };
-      const status = statusMap[row.status as keyof typeof statusMap] || { label: row.status, type: 'default', icon: '❓' };
+      const status = statusMap[row.status as keyof typeof statusMap] || {
+        label: row.status,
+        type: 'default',
+        icon: '❓',
+      };
       return h('div', { class: 'flex items-center justify-center gap-1' }, [
         h('span', { class: 'text-sm' }, status.icon),
-        h(NTag, { type: status.type, size: 'small' }, { default: () => status.label })
+        h(
+          NTag,
+          { type: status.type, size: 'small' },
+          { default: () => status.label },
+        ),
       ]);
-    }
+    },
   },
   {
     title: '平台',
@@ -335,8 +377,12 @@ const betColumns: DataTableColumns<AgentBetRecord> = [
     width: 100,
     align: 'center',
     render: (row) => {
-      return h(NTag, { type: 'info', size: 'small' }, { default: () => row.platform });
-    }
+      return h(
+        NTag,
+        { type: 'info', size: 'small' },
+        { default: () => row.platform },
+      );
+    },
   },
   {
     title: '投注时间',
@@ -345,46 +391,51 @@ const betColumns: DataTableColumns<AgentBetRecord> = [
     render: (row) => {
       return h('div', { class: 'text-sm' }, [
         h('div', { class: 'font-medium' }, formatDateTime(row.betTime)),
-        row.settlementTime ? h('div', { class: 'text-xs text-gray-500' }, `结算: ${formatDateTime(row.settlementTime)}`) : null
+        row.settlementTime
+          ? h(
+              'div',
+              { class: 'text-xs text-gray-500' },
+              `结算: ${formatDateTime(row.settlementTime)}`,
+            )
+          : null,
       ]);
-    }
-  }
+    },
+  },
 ];
 
 // Methods
 const loadBetStatistics = async () => {
   if (!props.agentId) return;
-  
+
   betLoading.value = true;
   try {
     const params: any = {
       page: betPagination.current,
-      pageSize: betPagination.pageSize
+      pageSize: betPagination.pageSize,
     };
-    
+
     if (gameTypeFilter.value) {
       params.gameType = gameTypeFilter.value;
     }
-    
+
     if (betStatusFilter.value) {
       params.status = betStatusFilter.value;
     }
-    
+
     if (startDate.value) {
       params.startDate = new Date(startDate.value).toISOString();
     }
-    
+
     if (endDate.value) {
       const end = new Date(endDate.value);
       end.setHours(23, 59, 59, 999);
       params.endDate = end.toISOString();
     }
-    
+
     const response = await getAgentBetStatisticsApi(props.agentId, params);
     betRecords.value = response.list;
     betPagination.total = response.pagination.total;
     betPagination.current = 1;
-    
   } catch (error) {
     console.error('Failed to load bet statistics:', error);
     message.error('加载投注统计失败');

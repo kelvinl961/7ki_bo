@@ -51,60 +51,60 @@
               <n-space>
                 <n-radio value="LINE">
                   <n-space align="center" :size="8">
-                    <n-avatar 
-                      size="small" 
-                      :src="imIconUrls.LINE" 
-                      fallback-src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ctext y='18' font-size='18'%3E💬%3C/text%3E%3C/svg%3E" 
+                    <n-avatar
+                      size="small"
+                      :src="imIconUrls.LINE"
+                      fallback-src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ctext y='18' font-size='18'%3E💬%3C/text%3E%3C/svg%3E"
                     />
                     <span>LINE</span>
                   </n-space>
                 </n-radio>
                 <n-radio value="TELEGRAM">
                   <n-space align="center" :size="8">
-                    <n-avatar 
-                      size="small" 
-                      :src="imIconUrls.TELEGRAM" 
-                      fallback-src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ctext y='18' font-size='18'%3E✈️%3C/text%3E%3C/svg%3E" 
+                    <n-avatar
+                      size="small"
+                      :src="imIconUrls.TELEGRAM"
+                      fallback-src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ctext y='18' font-size='18'%3E✈️%3C/text%3E%3C/svg%3E"
                     />
                     <span>Telegram</span>
                   </n-space>
                 </n-radio>
                 <n-radio value="WECHAT">
                   <n-space align="center" :size="8">
-                    <n-avatar 
-                      size="small" 
-                      :src="imIconUrls.WECHAT" 
-                      fallback-src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ctext y='18' font-size='18'%3E💬%3C/text%3E%3C/svg%3E" 
+                    <n-avatar
+                      size="small"
+                      :src="imIconUrls.WECHAT"
+                      fallback-src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ctext y='18' font-size='18'%3E💬%3C/text%3E%3C/svg%3E"
                     />
                     <span>WeChat</span>
                   </n-space>
                 </n-radio>
                 <n-radio value="WHATSAPP">
                   <n-space align="center" :size="8">
-                    <n-avatar 
-                      size="small" 
-                      :src="imIconUrls.WHATSAPP" 
-                      fallback-src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ctext y='18' font-size='18'%3E📱%3C/text%3E%3C/svg%3E" 
+                    <n-avatar
+                      size="small"
+                      :src="imIconUrls.WHATSAPP"
+                      fallback-src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ctext y='18' font-size='18'%3E📱%3C/text%3E%3C/svg%3E"
                     />
                     <span>WhatsApp</span>
                   </n-space>
                 </n-radio>
                 <n-radio value="SKYPE">
                   <n-space align="center" :size="8">
-                    <n-avatar 
-                      size="small" 
-                      :src="imIconUrls.SKYPE" 
-                      fallback-src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ctext y='18' font-size='18'%3ES%3C/text%3E%3C/svg%3E" 
+                    <n-avatar
+                      size="small"
+                      :src="imIconUrls.SKYPE"
+                      fallback-src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ctext y='18' font-size='18'%3ES%3C/text%3E%3C/svg%3E"
                     />
                     <span>Skype</span>
                   </n-space>
                 </n-radio>
                 <n-radio value="FACEBOOK">
                   <n-space align="center" :size="8">
-                    <n-avatar 
-                      size="small" 
-                      :src="imIconUrls.FACEBOOK" 
-                      fallback-src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ctext y='18' font-size='18'%3EF%3C/text%3E%3C/svg%3E" 
+                    <n-avatar
+                      size="small"
+                      :src="imIconUrls.FACEBOOK"
+                      fallback-src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ctext y='18' font-size='18'%3EF%3C/text%3E%3C/svg%3E"
                     />
                     <span>Facebook</span>
                   </n-space>
@@ -143,7 +143,7 @@
             placeholder="输入客服账号（如：abc123）"
             maxlength="255"
           />
-          <div class="text-gray-500 text-sm mt-2">
+          <div class="mt-2 text-sm text-gray-500">
             {{ imTypeDescription }}
           </div>
         </n-form-item>
@@ -172,16 +172,16 @@
           </n-form-item>
 
           <n-form-item label="PC链接" path="pcLink">
-            <n-input
-              v-model:value="formData.pcLink"
-              placeholder="输入PC链接"
-            />
+            <n-input v-model:value="formData.pcLink" placeholder="输入PC链接" />
           </n-form-item>
         </template>
 
         <n-form-item label="会员层级（支持多选）" path="memberLevels">
           <n-spin :show="loadingMemberTiers">
-            <n-checkbox-group v-model:value="formData.memberLevels" @update:value="handleMemberTierChange">
+            <n-checkbox-group
+              v-model:value="formData.memberLevels"
+              @update:value="handleMemberTierChange"
+            >
               <n-space vertical>
                 <n-checkbox value="ALL">全部层级</n-checkbox>
                 <n-space wrap>
@@ -275,11 +275,16 @@ const isUpdatingMemberTiers = ref(false);
 // IM Icon URLs
 const imIconUrls = {
   LINE: 'https://9dmu7h-6909-ppp.s3.sa-east-1.amazonaws.com/siteadmin/upload/img/LINE.png',
-  TELEGRAM: 'https://9dmu7h-6909-ppp.s3.sa-east-1.amazonaws.com/siteadmin/upload/img/telegram.png',
-  WECHAT: 'https://9dmu7h-6909-ppp.s3.sa-east-1.amazonaws.com/siteadmin/upload/img/WeChat.png',
-  WHATSAPP: 'https://9dmu7h-6909-ppp.s3.sa-east-1.amazonaws.com/siteadmin/upload/img/WhtasApp.png',
-  SKYPE: 'https://9dmu7h-6909-ppp.s3.sa-east-1.amazonaws.com/siteadmin/upload/img/Skype.png',
-  FACEBOOK: 'https://9dmu7h-6909-ppp.s3.sa-east-1.amazonaws.com/siteadmin/upload/img/Facebook.png',
+  TELEGRAM:
+    'https://9dmu7h-6909-ppp.s3.sa-east-1.amazonaws.com/siteadmin/upload/img/telegram.png',
+  WECHAT:
+    'https://9dmu7h-6909-ppp.s3.sa-east-1.amazonaws.com/siteadmin/upload/img/WeChat.png',
+  WHATSAPP:
+    'https://9dmu7h-6909-ppp.s3.sa-east-1.amazonaws.com/siteadmin/upload/img/WhtasApp.png',
+  SKYPE:
+    'https://9dmu7h-6909-ppp.s3.sa-east-1.amazonaws.com/siteadmin/upload/img/Skype.png',
+  FACEBOOK:
+    'https://9dmu7h-6909-ppp.s3.sa-east-1.amazonaws.com/siteadmin/upload/img/Facebook.png',
 };
 
 // Form data
@@ -304,9 +309,7 @@ const formRules = {
 };
 
 // Currency options - only BRL
-const currencyOptions = [
-  { label: '巴西雷亚尔 (BRL)', value: 'BRL' },
-];
+const currencyOptions = [{ label: '巴西雷亚尔 (BRL)', value: 'BRL' }];
 
 // IM type description
 const imTypeDescription = computed(() => {
@@ -366,7 +369,8 @@ const columns = computed<DataTableColumns<CustomerServiceIMConfig>>(() => [
           ? h(NAvatar, {
               size: 'small',
               src: iconUrl,
-              fallbackSrc: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"%3E%3Ctext y="18" font-size="18"%3E💬%3C/text%3E%3C/svg%3E',
+              fallbackSrc:
+                'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"%3E%3Ctext y="18" font-size="18"%3E💬%3C/text%3E%3C/svg%3E',
             })
           : null,
         h('span', row.imType),
@@ -409,7 +413,9 @@ const columns = computed<DataTableColumns<CustomerServiceIMConfig>>(() => [
       // Map tier IDs to tier names
       const tierNames = row.memberLevels.map((tierId: string) => {
         if (tierId === 'ALL') return '全部层级';
-        const tier = memberTierOptions.value.find((t) => t.value === String(tierId));
+        const tier = memberTierOptions.value.find(
+          (t) => t.value === String(tierId),
+        );
         return tier ? tier.label : `Tier ${tierId}`;
       });
       return tierNames.join(', ');
@@ -420,10 +426,8 @@ const columns = computed<DataTableColumns<CustomerServiceIMConfig>>(() => [
     key: 'isEnabled',
     width: 100,
     render: (row) => {
-      return h(
-        NTag,
-        { type: row.isEnabled ? 'success' : 'error' },
-        () => row.isEnabled ? '启用' : '禁用'
+      return h(NTag, { type: row.isEnabled ? 'success' : 'error' }, () =>
+        row.isEnabled ? '启用' : '禁用',
       );
     },
   },
@@ -439,7 +443,7 @@ const columns = computed<DataTableColumns<CustomerServiceIMConfig>>(() => [
             size: 'small',
             onClick: () => showEditModal(row.id!),
           },
-          () => '修改'
+          () => '修改',
         ),
         h(
           NPopconfirm,
@@ -447,9 +451,10 @@ const columns = computed<DataTableColumns<CustomerServiceIMConfig>>(() => [
             onPositiveClick: () => handleDelete(row.id!),
           },
           {
-            trigger: () => h(NButton, { size: 'small', type: 'error' }, () => '删除'),
+            trigger: () =>
+              h(NButton, { size: 'small', type: 'error' }, () => '删除'),
             default: () => '确定删除此客服配置吗？',
-          }
+          },
         ),
       ]);
     },
@@ -520,7 +525,9 @@ const showEditModal = async (id: number | null) => {
       formData.value = {
         ...config,
         // Ensure memberLevels is an array
-        memberLevels: Array.isArray(config.memberLevels) ? config.memberLevels : [],
+        memberLevels: Array.isArray(config.memberLevels)
+          ? config.memberLevels
+          : [],
         // Ensure currencies is an array
         currencies: Array.isArray(config.currencies) ? config.currencies : [],
       };
@@ -583,7 +590,7 @@ const handleDelete = async (id: number) => {
 // Handle member tier change - SIMPLE VERSION
 const handleMemberTierChange = (value: string[]) => {
   if (isUpdatingMemberTiers.value) return;
-  
+
   const previousValue = formData.value.memberLevels || [];
   const currentValue = value || [];
   const hadAll = previousValue.includes('ALL');
@@ -604,8 +611,10 @@ const handleMemberTierChange = (value: string[]) => {
 
   // User clicked individual tier checkboxes
   const valueWithoutAll = currentValue.filter((v) => v !== 'ALL');
-  const allTiersSelected = allTierIds.length > 0 && allTierIds.every((id) => valueWithoutAll.includes(id));
-  
+  const allTiersSelected =
+    allTierIds.length > 0 &&
+    allTierIds.every((id) => valueWithoutAll.includes(id));
+
   if (allTiersSelected) {
     // All individual tiers selected - add "ALL"
     formData.value.memberLevels = ['ALL', ...allTierIds];
@@ -636,4 +645,3 @@ onMounted(() => {
   cursor: move;
 }
 </style>
-

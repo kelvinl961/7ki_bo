@@ -40,7 +40,14 @@ export interface CustomerServiceIMConfig {
   id?: number;
   currencies?: string[];
   memberLevels?: string[];
-  imType: 'LINE' | 'TELEGRAM' | 'WECHAT' | 'WHATSAPP' | 'SKYPE' | 'FACEBOOK' | 'CUSTOM';
+  imType:
+    | 'CUSTOM'
+    | 'FACEBOOK'
+    | 'LINE'
+    | 'SKYPE'
+    | 'TELEGRAM'
+    | 'WECHAT'
+    | 'WHATSAPP';
   customImIcon?: string;
   serviceName: string;
   serviceAccount: string;
@@ -75,7 +82,14 @@ export interface FAQCategory {
 export interface FAQ {
   id?: number;
   categoryId: number;
-  faqType: 'REGISTRATION' | 'RECHARGE' | 'WITHDRAWAL' | 'GAME' | 'BETTING' | 'COMMON' | 'OTHER';
+  faqType:
+    | 'BETTING'
+    | 'COMMON'
+    | 'GAME'
+    | 'OTHER'
+    | 'RECHARGE'
+    | 'REGISTRATION'
+    | 'WITHDRAWAL';
   language: string;
   question: string;
   answer: string;
@@ -102,14 +116,22 @@ export interface FAQ {
  */
 export async function getOnlineCustomerServiceConfig(brandId?: string) {
   const params = brandId ? { brandId } : {};
-  return requestClient.get<OnlineCustomerServiceConfig>('/customer-service/online/config', { params });
+  return requestClient.get<OnlineCustomerServiceConfig>(
+    '/customer-service/online/config',
+    { params },
+  );
 }
 
 /**
  * Update or create online customer service configuration
  */
-export async function updateOnlineCustomerServiceConfig(config: OnlineCustomerServiceConfig) {
-  return requestClient.post<OnlineCustomerServiceConfig>('/customer-service/online/config', config);
+export async function updateOnlineCustomerServiceConfig(
+  config: OnlineCustomerServiceConfig,
+) {
+  return requestClient.post<OnlineCustomerServiceConfig>(
+    '/customer-service/online/config',
+    config,
+  );
 }
 
 /**
@@ -122,28 +144,43 @@ export async function updateOnlineCustomerServiceConfig(config: OnlineCustomerSe
  * Get all customer service IM configurations
  */
 export async function getCustomerServiceIMConfigs() {
-  return requestClient.get<CustomerServiceIMConfig[]>('/customer-service/im-configs');
+  return requestClient.get<CustomerServiceIMConfig[]>(
+    '/customer-service/im-configs',
+  );
 }
 
 /**
  * Get single customer service IM configuration
  */
 export async function getCustomerServiceIMConfigById(id: number) {
-  return requestClient.get<CustomerServiceIMConfig>(`/customer-service/im-configs/${id}`);
+  return requestClient.get<CustomerServiceIMConfig>(
+    `/customer-service/im-configs/${id}`,
+  );
 }
 
 /**
  * Create customer service IM configuration
  */
-export async function createCustomerServiceIMConfig(config: CustomerServiceIMConfig) {
-  return requestClient.post<CustomerServiceIMConfig>('/customer-service/im-configs', config);
+export async function createCustomerServiceIMConfig(
+  config: CustomerServiceIMConfig,
+) {
+  return requestClient.post<CustomerServiceIMConfig>(
+    '/customer-service/im-configs',
+    config,
+  );
 }
 
 /**
  * Update customer service IM configuration
  */
-export async function updateCustomerServiceIMConfig(id: number, config: CustomerServiceIMConfig) {
-  return requestClient.put<CustomerServiceIMConfig>(`/customer-service/im-configs/${id}`, config);
+export async function updateCustomerServiceIMConfig(
+  id: number,
+  config: CustomerServiceIMConfig,
+) {
+  return requestClient.put<CustomerServiceIMConfig>(
+    `/customer-service/im-configs/${id}`,
+    config,
+  );
 }
 
 /**
@@ -156,7 +193,9 @@ export async function deleteCustomerServiceIMConfig(id: number) {
 /**
  * Batch update display order for IM configs
  */
-export async function updateCustomerServiceIMConfigsOrder(orders: { id: number; displayOrder: number }[]) {
+export async function updateCustomerServiceIMConfigsOrder(
+  orders: { displayOrder: number; id: number }[],
+) {
   return requestClient.post('/customer-service/im-configs/reorder', { orders });
 }
 
@@ -172,21 +211,29 @@ export async function updateCustomerServiceIMConfigsOrder(orders: { id: number; 
  */
 export async function getFAQCategories(language?: string) {
   const params = language ? { language } : {};
-  return requestClient.get<FAQCategory[]>('/customer-service/faq-categories', { params });
+  return requestClient.get<FAQCategory[]>('/customer-service/faq-categories', {
+    params,
+  });
 }
 
 /**
  * Create FAQ category
  */
 export async function createFAQCategory(category: FAQCategory) {
-  return requestClient.post<FAQCategory>('/customer-service/faq-categories', category);
+  return requestClient.post<FAQCategory>(
+    '/customer-service/faq-categories',
+    category,
+  );
 }
 
 /**
  * Update FAQ category
  */
 export async function updateFAQCategory(id: number, category: FAQCategory) {
-  return requestClient.put<FAQCategory>(`/customer-service/faq-categories/${id}`, category);
+  return requestClient.put<FAQCategory>(
+    `/customer-service/faq-categories/${id}`,
+    category,
+  );
 }
 
 /**
@@ -202,12 +249,12 @@ export async function deleteFAQCategory(id: number) {
 export async function uploadFAQCategoryIcon(categoryId: number, file: File) {
   const formData = new FormData();
   formData.append('icon', file);
-  
+
   return requestClient.post<{
-    iconUrl: string;
-    thumbnailUrl?: string;
-    processingTime?: number;
     category: FAQCategory;
+    iconUrl: string;
+    processingTime?: number;
+    thumbnailUrl?: string;
   }>(`/customer-service/faq-categories/${categoryId}/upload-icon`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -220,13 +267,15 @@ export async function uploadFAQCategoryIcon(categoryId: number, file: File) {
  * Get all FAQs with filtering
  */
 export async function getFAQs(filters?: {
-  language?: string;
   categoryId?: number;
   faqType?: string;
-  status?: string;
+  language?: string;
   search?: string;
+  status?: string;
 }) {
-  return requestClient.get<FAQ[]>('/customer-service/faqs', { params: filters });
+  return requestClient.get<FAQ[]>('/customer-service/faqs', {
+    params: filters,
+  });
 }
 
 /**
@@ -274,7 +323,8 @@ export async function unpublishFAQ(id: number) {
 /**
  * Batch update FAQ display order
  */
-export async function updateFAQsOrder(orders: { id: number; displayOrder: number }[]) {
+export async function updateFAQsOrder(
+  orders: { displayOrder: number; id: number }[],
+) {
   return requestClient.post('/customer-service/faqs/reorder', { orders });
 }
-

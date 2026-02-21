@@ -5,7 +5,10 @@
         <template #default>
           <ul>
             <li>✅ 商户级别的RTP调控</li>
-            <li>✅ 支持设置游戏类型模式（心跳型、波动型、仿正型、混合型、稳定型、高中奖率、超高中奖率）</li>
+            <li>
+              ✅
+              支持设置游戏类型模式（心跳型、波动型、仿正型、混合型、稳定型、高中奖率、超高中奖率）
+            </li>
             <li>✅ 支持单个游戏或全部游戏调控</li>
             <li>✅ 支持购买RTP和最大赢钱限制设置</li>
           </ul>
@@ -36,9 +39,7 @@
             placeholder="选择RTP值"
             filterable
           />
-          <template #feedback>
-            注意：当前运营商权限支持10-97的RTP值
-          </template>
+          <template #feedback> 注意：当前运营商权限支持10-97的RTP值 </template>
         </n-form-item>
 
         <n-form-item label="游戏" path="GameId">
@@ -82,9 +83,7 @@
             :default-value="100"
             style="width: 100%"
           />
-          <template #feedback>
-            非必填项，默认值100，范围1-10000
-          </template>
+          <template #feedback> 非必填项，默认值100，范围1-10000 </template>
         </n-form-item>
 
         <n-form-item label="最大赢钱数" path="MaxWinPoints">
@@ -103,12 +102,14 @@
 
         <n-form-item>
           <n-space>
-            <n-button type="primary" @click="handleSubmit" :loading="submitting">
+            <n-button
+              type="primary"
+              @click="handleSubmit"
+              :loading="submitting"
+            >
               设置RTP
             </n-button>
-            <n-button @click="handleReset">
-              重置
-            </n-button>
+            <n-button @click="handleReset"> 重置 </n-button>
           </n-space>
         </n-form-item>
       </n-form>
@@ -130,20 +131,20 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, h } from 'vue';
-import { 
-  NButton, 
-  NTag, 
-  NCard, 
-  NAlert, 
-  NForm, 
-  NFormItem, 
-  NSelect, 
-  NInputNumber, 
-  NSpace, 
+import {
+  NButton,
+  NTag,
+  NCard,
+  NAlert,
+  NForm,
+  NFormItem,
+  NSelect,
+  NInputNumber,
+  NSpace,
   NDataTable,
-  useMessage, 
-  type FormInst, 
-  type DataTableColumns 
+  useMessage,
+  type FormInst,
+  type DataTableColumns,
 } from 'naive-ui';
 import { requestClient } from '#/api/request';
 import { searchGamesWithPagination } from '#/api/core/player-rtp';
@@ -253,12 +254,12 @@ const handleSearchGames = async (query: string) => {
   currentSearchQuery.value = query;
   currentPage.value = 1;
   hasMoreGames.value = true;
-  
+
   if (!query || query.length < 2) {
     await loadInitialGames();
     return;
   }
-  
+
   gamesLoading.value = true;
   try {
     const result = await searchGamesWithPagination(query, 1);
@@ -282,7 +283,7 @@ const loadInitialGames = async () => {
   currentPage.value = 1;
   currentSearchQuery.value = '';
   hasMoreGames.value = true;
-  
+
   try {
     const result = await searchGamesWithPagination('', 1);
     gameOptions.value = [
@@ -302,22 +303,25 @@ const loadInitialGames = async () => {
 
 const loadMoreGames = async () => {
   if (!hasMoreGames.value || gamesLoading.value) return;
-  
+
   gamesLoading.value = true;
   try {
     currentPage.value += 1;
-    const result = await searchGamesWithPagination(currentSearchQuery.value, currentPage.value);
-    
+    const result = await searchGamesWithPagination(
+      currentSearchQuery.value,
+      currentPage.value,
+    );
+
     if (!result || result.length === 0) {
       hasMoreGames.value = false;
       return;
     }
-    
+
     const newGames = result.map((game: any) => ({
       label: game.gameName,
       value: game.gameId,
     }));
-    
+
     gameOptions.value = [...gameOptions.value, ...newGames];
     hasMoreGames.value = result.length >= 20;
   } catch (error) {
@@ -332,7 +336,7 @@ const handleScroll = (e: Event) => {
   const scrollTop = target.scrollTop;
   const scrollHeight = target.scrollHeight;
   const clientHeight = target.clientHeight;
-  
+
   if (scrollTop + clientHeight >= scrollHeight - 5) {
     loadMoreGames();
   }
@@ -340,10 +344,13 @@ const handleScroll = (e: Event) => {
 
 const handleGameSelect = (value: string[]) => {
   if (value && value.includes('ALL') && value.length > 1) {
-    if (formData.GameId.length < value.length && value[value.length - 1] === 'ALL') {
+    if (
+      formData.GameId.length < value.length &&
+      value[value.length - 1] === 'ALL'
+    ) {
       formData.GameId = ['ALL'];
     } else {
-      formData.GameId = value.filter(g => g !== 'ALL');
+      formData.GameId = value.filter((g) => g !== 'ALL');
     }
   }
 };
@@ -352,17 +359,19 @@ const handleGameSelect = (value: string[]) => {
 const handleSubmit = async () => {
   try {
     await formRef.value?.validate();
-    
+
     submitting.value = true;
-    
-    const gameIds = Array.isArray(formData.GameId) ? formData.GameId.join(',') : formData.GameId;
-    
+
+    const gameIds = Array.isArray(formData.GameId)
+      ? formData.GameId.join(',')
+      : formData.GameId;
+
     const requestData: any = {
       GamePattern: formData.GamePattern!,
       Rtp: formData.Rtp!,
       GameId: gameIds,
     };
-    
+
     // Add optional fields
     if (formData.BuyRTP !== undefined && formData.BuyRTP !== null) {
       requestData.BuyRTP = formData.BuyRTP;
@@ -373,17 +382,20 @@ const handleSubmit = async () => {
     if (formData.MaxWinPoints !== undefined && formData.MaxWinPoints !== null) {
       requestData.MaxWinPoints = formData.MaxWinPoints;
     }
-    
-    const response = await requestClient.post('/v1/operator/setRtp', requestData);
-    
+
+    const response = await requestClient.post(
+      '/v1/operator/setRtp',
+      requestData,
+    );
+
     console.log('🔍 Frontend received response:', response);
     console.log('🔍 Response code:', response?.code);
     console.log('🔍 Response error:', response?.error);
     console.log('🔍 Response data:', response?.data);
-    
+
     if (response && response.code === 0) {
       message.success('商户RTP设置成功');
-      
+
       // Reset to page 1 to see the new record
       pagination.page = 1;
       await loadHistory();
@@ -438,7 +450,9 @@ const historyColumns: DataTableColumns<any> = [
     key: 'gamePattern',
     width: 120,
     render: (row) => {
-      const pattern = gamePatternOptions.find(p => p.value === row.gamePattern);
+      const pattern = gamePatternOptions.find(
+        (p) => p.value === row.gamePattern,
+      );
       return pattern?.label || row.gamePattern;
     },
   },
@@ -450,14 +464,20 @@ const historyColumns: DataTableColumns<any> = [
     key: 'maxMultiple',
     width: 120,
     align: 'center',
-    render: (row) => row.maxMultiple !== null && row.maxMultiple !== undefined ? row.maxMultiple : 100,
+    render: (row) =>
+      row.maxMultiple !== null && row.maxMultiple !== undefined
+        ? row.maxMultiple
+        : 100,
   },
   {
     title: '最大赢钱数',
     key: 'maxWinPoints',
     width: 120,
     align: 'center',
-    render: (row) => row.maxWinPoints !== null && row.maxWinPoints !== undefined ? row.maxWinPoints : 1000000,
+    render: (row) =>
+      row.maxWinPoints !== null && row.maxWinPoints !== undefined
+        ? row.maxWinPoints
+        : 1000000,
   },
   {
     title: '状态',
@@ -465,16 +485,27 @@ const historyColumns: DataTableColumns<any> = [
     width: 100,
     align: 'center',
     render: (row) => {
-      const statusMap: Record<string, { label: string; type: 'success' | 'error' | 'warning' }> = {
-        'success': { label: '成功', type: 'success' },
-        'failed': { label: '失败', type: 'error' },
-        'pending': { label: '处理中', type: 'warning' },
+      const statusMap: Record<
+        string,
+        { label: string; type: 'success' | 'error' | 'warning' }
+      > = {
+        success: { label: '成功', type: 'success' },
+        failed: { label: '失败', type: 'error' },
+        pending: { label: '处理中', type: 'warning' },
       };
-      const status = statusMap[row.status] || { label: row.status, type: 'warning' };
+      const status = statusMap[row.status] || {
+        label: row.status,
+        type: 'warning',
+      };
       return h(NTag, { type: status.type }, { default: () => status.label });
     },
   },
-  { title: '操作人', key: 'operator', width: 120, render: (row) => row.operator || '-' },
+  {
+    title: '操作人',
+    key: 'operator',
+    width: 120,
+    render: (row) => row.operator || '-',
+  },
 ];
 
 const loadHistory = async () => {
@@ -486,12 +517,17 @@ const loadHistory = async () => {
         limit: pagination.pageSize,
       },
     });
-    
+
     console.log('🔍 Full response:', response);
     console.log('🔍 Response keys:', Object.keys(response || {}));
-    console.log('🔍 Response.data type:', typeof response?.data, 'isArray:', Array.isArray(response?.data));
+    console.log(
+      '🔍 Response.data type:',
+      typeof response?.data,
+      'isArray:',
+      Array.isArray(response?.data),
+    );
     console.log('🔍 Response.pagination:', response?.pagination);
-    
+
     // Handle response data
     const dataArray = response?.data || response;
     if (dataArray && Array.isArray(dataArray)) {
@@ -499,16 +535,23 @@ const loadHistory = async () => {
         ...item,
         createdAt: new Date(item.createdAt).toLocaleString('zh-CN'),
       }));
-      
+
       console.log('✅ History data loaded:', historyData.value.length, 'items');
     }
-    
+
     // Update pagination total from backend response
     if (response?.pagination) {
       const total = response.pagination.total || 0;
       historyTotal.value = total;
       pagination.itemCount = total;
-      console.log('✅ Pagination updated - Total:', total, 'Current page:', pagination.page, 'Page size:', pagination.pageSize);
+      console.log(
+        '✅ Pagination updated - Total:',
+        total,
+        'Current page:',
+        pagination.page,
+        'Page size:',
+        pagination.pageSize,
+      );
     } else {
       console.warn('⚠️ No pagination object found in response');
       // Fallback: use data length as a temporary measure
@@ -531,30 +574,32 @@ const loadLastConfig = async () => {
         limit: 1,
       },
     });
-    
+
     const dataArray = response?.data || response;
     if (dataArray && Array.isArray(dataArray) && dataArray.length > 0) {
       const lastConfig = dataArray[0];
       console.log('📥 Loading last saved merchant RTP config:', lastConfig);
-      
+
       // Parse gamePattern from string to number
       formData.GamePattern = parseInt(lastConfig.gamePattern) || null;
-      
+
       // Load RTP value
       formData.Rtp = lastConfig.rtp || null;
-      
+
       // Load GameId (split comma-separated string into array)
-      formData.GameId = lastConfig.gameId ? lastConfig.gameId.split(',') : ['ALL'];
-      
+      formData.GameId = lastConfig.gameId
+        ? lastConfig.gameId.split(',')
+        : ['ALL'];
+
       // Load BuyRTP (use ?? operator for proper null/0 handling)
       formData.BuyRTP = lastConfig.buyRtp ?? 0;
-      
+
       // Load MaxMultiple (use ?? operator for proper null handling)
       formData.MaxMultiple = lastConfig.maxMultiple ?? 100;
-      
+
       // Load MaxWinPoints (use ?? operator for proper null handling)
       formData.MaxWinPoints = lastConfig.maxWinPoints ?? 1000000;
-      
+
       console.log('✅ Last merchant RTP config loaded into form:', {
         GamePattern: formData.GamePattern,
         Rtp: formData.Rtp,
@@ -586,4 +631,3 @@ onMounted(async () => {
   margin-bottom: 16px;
 }
 </style>
-

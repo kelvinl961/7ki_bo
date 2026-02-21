@@ -11,14 +11,13 @@ const routes: RouteRecordRaw[] = [
     name: 'OperateManager',
     path: '/operateManager',
     children: [
-      
       {
         meta: {
           title: '品牌LOGO设置',
         },
         name: 'BrandLogoSetting',
         path: '/operateManager/brandLogoSetting',
-        //@ts-ignore
+        // @ts-ignore
         component: () => import('../../../views/brand/BrandLogoSetting.vue'),
       },
       {
@@ -27,8 +26,9 @@ const routes: RouteRecordRaw[] = [
         },
         name: 'DomainManagement',
         path: '/operateManager/domainManagement',
-        //@ts-ignore
-        component: () => import('../../../views/operateManager/domainManagement/index.vue'),
+        // @ts-ignore
+        component: () =>
+          import('../../../views/operateManager/domainManagement/index.vue'),
       },
       {
         meta: {
@@ -36,8 +36,9 @@ const routes: RouteRecordRaw[] = [
         },
         name: 'SystemMessageSet',
         path: '/operateManager/systemMessageSet',
-        //@ts-ignore
-        component: () => import('../../../views/operateManager/OperationMessageTZ.vue'),
+        // @ts-ignore
+        component: () =>
+          import('../../../views/operateManager/OperationMessageTZ.vue'),
       },
       {
         meta: {
@@ -45,11 +46,12 @@ const routes: RouteRecordRaw[] = [
         },
         name: 'LayoutDesign',
         path: '/operateManager/layoutDesign',
-        //@ts-ignore
-        component: () => import('../../../views/operateManager/LayoutDesign.vue'),
+        // @ts-ignore
+        component: () =>
+          import('../../../views/operateManager/LayoutDesign.vue'),
       },
     ],
   },
 ];
 
-export default routes; 
+export default routes;

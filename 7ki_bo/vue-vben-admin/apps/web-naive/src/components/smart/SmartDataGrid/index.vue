@@ -4,19 +4,30 @@
     <div v-if="$slots.header" class="smart-data-grid__header mb-4">
       <slot name="header" />
     </div>
-    
+
     <!-- Action Bar -->
-    <div v-if="$slots.actionBar || showDefaultActionBar" class="smart-data-grid__action-bar mb-4">
-      <n-card v-if="showDefaultActionBar && !$slots.actionBar" :bordered="false" class="rounded-16px shadow-sm">
-        <div class="flex justify-between items-center">
+    <div
+      v-if="$slots.actionBar || showDefaultActionBar"
+      class="smart-data-grid__action-bar mb-4"
+    >
+      <n-card
+        v-if="showDefaultActionBar && !$slots.actionBar"
+        :bordered="false"
+        class="rounded-16px shadow-sm"
+      >
+        <div class="flex items-center justify-between">
           <div class="flex items-center gap-4">
             <!-- Selection Info -->
             <div v-if="props.selectable" class="text-sm text-gray-600">
-              已选择 {{ selectedKeys.length }} 条数据，共 {{ paginationConfig.total }} 条
+              已选择 {{ selectedKeys.length }} 条数据，共
+              {{ paginationConfig.total }} 条
             </div>
-            
+
             <!-- Summary Info -->
-            <div v-if="props.showSummary && props.summary" class="flex items-center gap-4 text-sm">
+            <div
+              v-if="props.showSummary && props.summary"
+              class="flex items-center gap-4 text-sm"
+            >
               <span v-if="props.summary.totalCount" class="text-gray-600">
                 总计: {{ props.summary.totalCount }} 条
               </span>
@@ -25,7 +36,7 @@
               </span>
             </div>
           </div>
-          
+
           <div class="flex items-center gap-3">
             <!-- Auto Refresh -->
             <SmartAutoRefresh
@@ -36,9 +47,13 @@
               :on-refresh="handleRefresh"
               @interval-change="handleRefreshIntervalChange"
             />
-            
+
             <!-- Manual Refresh -->
-            <n-button v-if="!props.autoRefresh" @click="handleRefresh" :loading="props.loading">
+            <n-button
+              v-if="!props.autoRefresh"
+              @click="handleRefresh"
+              :loading="props.loading"
+            >
               <template #icon>
                 <n-icon><ReloadOutline /></n-icon>
               </template>
@@ -47,18 +62,21 @@
           </div>
         </div>
       </n-card>
-      
+
       <!-- Custom Action Bar Slot -->
-      <slot 
-        v-if="$slots.actionBar" 
-        name="actionBar" 
+      <slot
+        v-if="$slots.actionBar"
+        name="actionBar"
         :selected-count="selectedKeys.length"
         :selected-rows="getSelectedRows()"
       />
     </div>
-    
+
     <!-- Data Table -->
-    <n-card :bordered="false" class="smart-data-grid__table rounded-16px shadow-sm">
+    <n-card
+      :bordered="false"
+      class="smart-data-grid__table rounded-16px shadow-sm"
+    >
       <n-data-table
         ref="tableRef"
         :columns="props.columns"
@@ -82,7 +100,7 @@
         <template v-if="$slots.empty" #empty>
           <slot name="empty" />
         </template>
-        
+
         <!-- Loading Slot -->
         <template v-if="$slots.loading" #loading>
           <slot name="loading" />
@@ -90,15 +108,18 @@
       </n-data-table>
     </n-card>
     <div
-    class="smart-data-grid__pagination mt-4 sticky bottom-0 bg-white py-2 z-10 border-t border-gray-100 flex justify-end"
+      class="smart-data-grid__pagination sticky bottom-0 z-10 mt-4 flex justify-end border-t border-gray-100 bg-white py-2"
     >
       <n-pagination v-bind="paginationConfig" />
     </div>
     <!-- Summary Slot -->
-    <div v-if="$slots.summary && props.showSummary" class="smart-data-grid__summary mt-4">
+    <div
+      v-if="$slots.summary && props.showSummary"
+      class="smart-data-grid__summary mt-4"
+    >
       <slot name="summary" :summary="props.summary || {}" />
     </div>
-    
+
     <!-- Footer Slot -->
     <div v-if="$slots.footer" class="smart-data-grid__footer mt-4">
       <slot name="footer" />
@@ -108,21 +129,28 @@
 
 <script setup lang="ts" generic="T extends Record<string, any>">
 import { ref, computed, watch, defineExpose, h } from 'vue';
-import { NCard, NDataTable, NButton, NIcon, NPagination, useMessage } from 'naive-ui';
+import {
+  NCard,
+  NDataTable,
+  NButton,
+  NIcon,
+  NPagination,
+  useMessage,
+} from 'naive-ui';
 import { ReloadOutline } from '@vicons/ionicons5';
 import SmartAutoRefresh from '../SmartAutoRefresh/index.vue';
-import type { 
-  SmartDataGridProps, 
-  SmartDataGridEmits, 
+import type {
+  SmartDataGridProps,
+  SmartDataGridEmits,
   SmartDataGridExpose,
-  SmartPaginationConfig
+  SmartPaginationConfig,
 } from './types';
 import { DEFAULT_PAGINATION, DEFAULT_PROPS } from './types';
 
 // Props with defaults
 const props = withDefaults(defineProps<SmartDataGridProps<T>>(), {
   ...DEFAULT_PROPS,
-  pagination: () => ({ ...DEFAULT_PAGINATION })
+  pagination: () => ({ ...DEFAULT_PAGINATION }),
 });
 
 // Emits
@@ -139,32 +167,38 @@ const autoRefreshEnabled = ref(false);
 const selectedKeys = ref<(string | number)[]>([]);
 
 // Watch for external selectedKeys changes
-watch(() => props.selectedKeys, (newKeys) => {
-  if (newKeys && JSON.stringify(newKeys) !== JSON.stringify(selectedKeys.value)) {
-    selectedKeys.value = [...newKeys];
-  }
-}, { immediate: true, deep: true });
+watch(
+  () => props.selectedKeys,
+  (newKeys) => {
+    if (
+      newKeys &&
+      JSON.stringify(newKeys) !== JSON.stringify(selectedKeys.value)
+    ) {
+      selectedKeys.value = [...newKeys];
+    }
+  },
+  { immediate: true, deep: true },
+);
 
 // Computed pagination config
 const paginationConfig = computed(() => {
   const config = {
     ...DEFAULT_PAGINATION,
-    ...props.pagination
+    ...props.pagination,
   };
-  
+
   return {
     ...config,
     itemCount: config.total, // Map total to itemCount for Naive UI
     onUpdatePage: (page: number) => handlePageChange(page),
-    onUpdatePageSize: (pageSize: number) => handlePageSizeChange(pageSize)
+    onUpdatePageSize: (pageSize: number) => handlePageSizeChange(pageSize),
   };
 });
 
 // Computed table style
 const tableStyle = computed(() => {
   const style: Record<string, any> = {};
-  
-  
+
   return style;
 });
 
@@ -206,18 +240,21 @@ const handleRefresh = () => {
 };
 
 const handleRefreshIntervalChange = (newInterval: number) => {
-  console.log('SmartDataGrid: Refresh interval changed to', newInterval, 'seconds');
+  console.log(
+    'SmartDataGrid: Refresh interval changed to',
+    newInterval,
+    'seconds',
+  );
 };
 
 // Utility functions
 const getSelectedRows = (): T[] => {
   if (!props.data || !selectedKeys.value.length) return [];
-  
+
   const keyField = typeof props.rowKey === 'string' ? props.rowKey : 'id';
-  return props.data.filter(row => {
-    const rowKeyValue = typeof props.rowKey === 'function' 
-      ? props.rowKey(row) 
-      : row[keyField];
+  return props.data.filter((row) => {
+    const rowKeyValue =
+      typeof props.rowKey === 'function' ? props.rowKey(row) : row[keyField];
     return selectedKeys.value.includes(rowKeyValue);
   });
 };
@@ -226,7 +263,7 @@ const formatCurrency = (amount: number): string => {
   return new Intl.NumberFormat('zh-CN', {
     style: 'currency',
     currency: 'CNY',
-    minimumFractionDigits: 2
+    minimumFractionDigits: 2,
   }).format(amount);
 };
 
@@ -243,13 +280,13 @@ const clearSelection = () => {
 
 const selectAll = () => {
   if (!props.data) return;
-  
-  const allKeys = props.data.map(row => {
-    return typeof props.rowKey === 'function' 
-      ? props.rowKey(row) 
+
+  const allKeys = props.data.map((row) => {
+    return typeof props.rowKey === 'function'
+      ? props.rowKey(row)
       : row[typeof props.rowKey === 'string' ? props.rowKey : 'id'];
   });
-  
+
   selectedKeys.value = allKeys;
   emit('update:selectedKeys', allKeys);
   emit('selectionChange', props.data, allKeys);
@@ -277,7 +314,7 @@ const exposedMethods: SmartDataGridExpose<T> = {
   getSelectedRows,
   getSelectedKeys,
   scrollToTop,
-  getTableRef
+  getTableRef,
 };
 
 defineExpose(exposedMethods);
@@ -306,14 +343,15 @@ defineExpose(exposedMethods);
 
 /* Custom scrollbar for better UX */
 .smart-data-grid__table :deep(.n-data-table-wrapper) {
-  max-height: calc(100vh - 450px); /* adjust 320px based on your header/filters height */
+  max-height: calc(
+    100vh - 450px
+  ); /* adjust 320px based on your header/filters height */
   overflow: auto;
 
   /* existing scrollbar styles */
   scrollbar-width: thin;
   scrollbar-color: #d1d5db #f3f4f6;
 }
-
 
 .smart-data-grid__table :deep(.n-data-table-wrapper)::-webkit-scrollbar {
   height: 8px;
@@ -330,7 +368,8 @@ defineExpose(exposedMethods);
   border-radius: 4px;
 }
 
-.smart-data-grid__table :deep(.n-data-table-wrapper)::-webkit-scrollbar-thumb:hover {
+.smart-data-grid__table
+  :deep(.n-data-table-wrapper)::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
 }
 </style>

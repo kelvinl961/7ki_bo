@@ -1,20 +1,25 @@
 /**
  * ✅ PERFORMANCE: Shared Game Platform Cache
  * Prevents duplicate API calls and reduces queueing delays
- * 
+ *
  * Problem: Multiple components call getGamePlatformListApi simultaneously
  * Solution: Single source of truth with caching and request deduplication
  */
 
-import { ref, computed } from 'vue';
-import type { GamePlatformItem, GamePlatformListResponse } from '#/api/game/platform';
+import type {
+  GamePlatformItem,
+  GamePlatformListResponse,
+} from '#/api/game/platform';
+
+import { computed, ref } from 'vue';
+
 import { getGamePlatformListApi } from '#/api/game/platform';
 
 interface GamePlatformCache {
   data: GamePlatformItem[];
   timestamp: number;
   loading: boolean;
-  promise: Promise<GamePlatformListResponse> | null;
+  promise: null | Promise<GamePlatformListResponse>;
 }
 
 // Shared cache state
@@ -45,8 +50,8 @@ export function useGamePlatformCache() {
    * Load game platforms (with deduplication)
    */
   const loadGamePlatforms = async (
-    params: { pageSize?: number; isEnabled?: boolean; search?: string } = {},
-    forceRefresh = false
+    params: { isEnabled?: boolean; pageSize?: number; search?: string } = {},
+    forceRefresh = false,
   ): Promise<GamePlatformListResponse> => {
     // Return cached data if valid and not forcing refresh
     if (!forceRefresh && isCacheValid()) {

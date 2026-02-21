@@ -19,7 +19,7 @@
             @delete="handleDelete"
           />
         </n-tab-pane>
-        
+
         <n-tab-pane name="DAILY_TASK" tab="每日任务">
           <TaskList
             :category="TaskCategory.DAILY_TASK"
@@ -30,7 +30,7 @@
             @delete="handleDelete"
           />
         </n-tab-pane>
-        
+
         <n-tab-pane name="WEEKLY_TASK" tab="每周任务">
           <TaskList
             :category="TaskCategory.WEEKLY_TASK"
@@ -41,7 +41,7 @@
             @delete="handleDelete"
           />
         </n-tab-pane>
-        
+
         <n-tab-pane name="THREE_DAY_RANKING" tab="三日冲榜任务">
           <TaskList
             :category="TaskCategory.THREE_DAY_RANKING"
@@ -77,11 +77,21 @@
 <script setup lang="ts">
 import { ref, onMounted, provide, defineAsyncComponent } from 'vue';
 import { useMessage } from 'naive-ui';
-import { TaskCategory, deleteTaskCenter, type TaskCenterItem } from '../../api/taskCenter';
+import {
+  TaskCategory,
+  deleteTaskCenter,
+  type TaskCenterItem,
+} from '../../api/taskCenter';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
-const TaskList = defineAsyncComponent(() => import('./components/TaskList.vue'));
-const NoviceTaskSettingModal = defineAsyncComponent(() => import('./components/NoviceTaskSettingModal.vue'));
-const TaskDetailModal = defineAsyncComponent(() => import('./components/TaskDetailModal.vue'));
+const TaskList = defineAsyncComponent(
+  () => import('./components/TaskList.vue'),
+);
+const NoviceTaskSettingModal = defineAsyncComponent(
+  () => import('./components/NoviceTaskSettingModal.vue'),
+);
+const TaskDetailModal = defineAsyncComponent(
+  () => import('./components/TaskDetailModal.vue'),
+);
 
 const message = useMessage();
 
@@ -192,18 +202,18 @@ onMounted(() => {
         background: #fafafa;
         border-bottom: 1px solid #e8e8e8;
         padding: 0 24px;
-        
+
         .n-tabs-tab {
           padding: 16px 24px;
           font-weight: 500;
           font-size: 14px;
-          
+
           &.n-tabs-tab--active {
             color: #1890ff;
           }
         }
       }
-      
+
       .n-tabs-content {
         padding: 24px;
       }
@@ -215,23 +225,23 @@ onMounted(() => {
 :deep(.dark) {
   .novice-task-container {
     background: #1a1a1a;
-    
+
     .header-section {
       background: #2a2a2a;
       color: #fff;
-      
+
       h1 {
         color: #fff;
       }
-      
+
       .subtitle {
         color: #ccc;
       }
     }
-    
+
     .tab-navigation {
       background: #2a2a2a;
-      
+
       .n-tabs-nav {
         background: #333;
         border-bottom-color: #444;
@@ -239,4 +249,4 @@ onMounted(() => {
     }
   }
 }
-</style> 
+</style>

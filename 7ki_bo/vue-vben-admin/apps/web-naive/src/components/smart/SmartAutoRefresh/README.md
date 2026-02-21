@@ -29,10 +29,7 @@ import SmartAutoRefresh from '@/components/smart/SmartAutoRefresh/index.vue';
 
 ```vue
 <template>
-  <SmartAutoRefresh
-    v-model="autoRefreshEnabled"
-    :on-refresh="fetchData"
-  />
+  <SmartAutoRefresh v-model="autoRefreshEnabled" :on-refresh="fetchData" />
 </template>
 
 <script setup>
@@ -51,7 +48,7 @@ const fetchData = async () => {
 ## 🎛️ Props
 
 | Prop | Type | Default | Description |
-|------|------|---------|-------------|
+| --- | --- | --- | --- |
 | `modelValue` | `boolean` | `false` | Whether auto-refresh is enabled |
 | `intervals` | `number[]` | `[15, 30, 60, 120]` | Available refresh intervals (seconds) |
 | `defaultInterval` | `number` | `30` | Default refresh interval (seconds) |
@@ -66,30 +63,30 @@ const fetchData = async () => {
 
 ```typescript
 interface Labels {
-  enabled?: string;     // Default: '自动更新'
-  disabled?: string;    // Default: '不自动更新'
+  enabled?: string; // Default: '自动更新'
+  disabled?: string; // Default: '不自动更新'
   placeholder?: string; // Default: '刷新间隔'
 }
 ```
 
 ## 📡 Events
 
-| Event | Payload | Description |
-|-------|---------|-------------|
-| `update:modelValue` | `boolean` | Emitted when toggle state changes |
-| `intervalChange` | `number` | Emitted when refresh interval changes |
-| `refresh` | - | Emitted when refresh is triggered |
+| Event               | Payload   | Description                           |
+| ------------------- | --------- | ------------------------------------- |
+| `update:modelValue` | `boolean` | Emitted when toggle state changes     |
+| `intervalChange`    | `number`  | Emitted when refresh interval changes |
+| `refresh`           | -         | Emitted when refresh is triggered     |
 
 ## 🔧 Methods (via ref)
 
 ```typescript
 interface SmartAutoRefreshExpose {
-  start(): void;              // Start auto-refresh
-  stop(): void;               // Stop auto-refresh
-  restart(): void;            // Restart with current settings
-  getCountdown(): number;     // Get current countdown value
-  getInterval(): number;      // Get current interval
-  triggerRefresh(): void;     // Manually trigger refresh
+  start(): void; // Start auto-refresh
+  stop(): void; // Stop auto-refresh
+  restart(): void; // Restart with current settings
+  getCountdown(): number; // Get current countdown value
+  getInterval(): number; // Get current interval
+  triggerRefresh(): void; // Manually trigger refresh
 }
 ```
 
@@ -156,7 +153,7 @@ const manualStop = () => {
   :labels="{
     enabled: '开启自动刷新',
     disabled: '关闭自动刷新',
-    placeholder: '选择间隔'
+    placeholder: '选择间隔',
   }"
   :on-refresh="fetchData"
 />
@@ -193,10 +190,7 @@ const handleRefresh = () => {
 ### Async Refresh Function
 
 ```vue
-<SmartAutoRefresh
-  v-model="enabled"
-  :on-refresh="asyncFetchData"
-/>
+<SmartAutoRefresh v-model="enabled" :on-refresh="asyncFetchData" />
 
 <script setup>
 const asyncFetchData = async () => {
@@ -222,14 +216,14 @@ const asyncFetchData = async () => {
     <template #checked>自动更新</template>
     <template #unchecked>不自动更新</template>
   </n-switch>
-  
+
   <n-select
     v-if="autoRefresh"
     v-model:value="refreshInterval"
     :options="intervalOptions"
     @update:value="handleIntervalChange"
   />
-  
+
   <n-tag v-if="autoRefresh && countdown > 0">{{ countdown }}s</n-tag>
 </template>
 
@@ -250,16 +244,15 @@ let countdownTimer = null;
 ```vue
 <!-- New clean implementation -->
 <template>
-  <SmartAutoRefresh
-    v-model="autoRefreshEnabled"
-    :on-refresh="fetchData"
-  />
+  <SmartAutoRefresh v-model="autoRefreshEnabled" :on-refresh="fetchData" />
 </template>
 
 <script setup>
 // Just 2 lines!
 const autoRefreshEnabled = ref(false);
-const fetchData = () => { /* your logic */ };
+const fetchData = () => {
+  /* your logic */
+};
 </script>
 ```
 
@@ -282,34 +275,31 @@ You can also use the underlying `useAutoRefresh` composable directly:
 <script setup>
 import { useAutoRefresh } from '@/composables/useAutoRefresh';
 
-const {
-  isEnabled,
-  currentInterval,
-  countdown,
-  start,
-  stop,
-  toggle
-} = useAutoRefresh(fetchData, {
-  defaultInterval: 30,
-  intervals: [15, 30, 60],
-  showMessages: true
-});
+const { isEnabled, currentInterval, countdown, start, stop, toggle } =
+  useAutoRefresh(fetchData, {
+    defaultInterval: 30,
+    intervals: [15, 30, 60],
+    showMessages: true,
+  });
 </script>
 ```
 
 ## 🐛 Troubleshooting
 
 ### Auto-refresh not working
+
 - Ensure `onRefresh` prop is provided
 - Check if `modelValue` is properly bound with `v-model`
 - Verify the refresh function doesn't throw errors
 
 ### Countdown not showing
+
 - Make sure auto-refresh is enabled (`modelValue: true`)
 - Check if component is not paused by user interaction
 - Verify interval is greater than 0
 
 ### Performance issues
+
 - Use `pauseOnInteraction: false` if you don't need smart pausing
 - Ensure refresh function is optimized and doesn't block UI
 - Consider debouncing rapid interval changes

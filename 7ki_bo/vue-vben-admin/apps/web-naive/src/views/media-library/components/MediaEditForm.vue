@@ -2,9 +2,9 @@
   <div class="media-edit-form">
     <div v-if="file" class="file-preview-section">
       <div class="preview-container">
-        <img 
-          v-if="file.type === 'image'" 
-          :src="getImageUrlByEnvironment(file.url)" 
+        <img
+          v-if="file.type === 'image'"
+          :src="getImageUrlByEnvironment(file.url)"
           :alt="file.alt || file.filename"
           class="preview-image"
         />
@@ -25,7 +25,12 @@
       </div>
     </div>
 
-    <n-form ref="formRef" :model="formData" :rules="rules" label-placement="top">
+    <n-form
+      ref="formRef"
+      :model="formData"
+      :rules="rules"
+      label-placement="top"
+    >
       <!-- Filename -->
       <n-form-item label="显示名称" path="filename">
         <n-input
@@ -78,18 +83,14 @@
           <template #checked>公开</template>
           <template #unchecked>私有</template>
         </n-switch>
-        <div class="text-xs text-gray-500 mt-1">
+        <div class="mt-1 text-xs text-gray-500">
           公开文件可以被其他用户在选择器中看到
         </div>
       </n-form-item>
 
       <!-- File URL (read-only) -->
       <n-form-item label="文件URL">
-        <n-input 
-          :value="file?.url" 
-          readonly 
-          placeholder="文件访问地址"
-        >
+        <n-input :value="file?.url" readonly placeholder="文件访问地址">
           <template #suffix>
             <n-button size="tiny" text @click="copyUrl">复制</n-button>
           </template>
@@ -98,13 +99,9 @@
     </n-form>
 
     <!-- Actions -->
-    <div class="flex justify-end gap-3 mt-6">
+    <div class="mt-6 flex justify-end gap-3">
       <n-button @click="handleCancel">取消</n-button>
-      <n-button 
-        type="primary" 
-        @click="handleSubmit" 
-        :loading="submitting"
-      >
+      <n-button type="primary" @click="handleSubmit" :loading="submitting">
         保存
       </n-button>
     </div>
@@ -166,16 +163,12 @@ const formData = reactive({
 
 // Validation rules
 const rules: FormRules = {
-  filename: [
-    { required: true, message: '请输入显示名称', trigger: 'blur' }
-  ],
-  category: [
-    { required: true, message: '请选择文件分类', trigger: 'change' }
-  ],
+  filename: [{ required: true, message: '请输入显示名称', trigger: 'blur' }],
+  category: [{ required: true, message: '请选择文件分类', trigger: 'change' }],
 };
 
 // Options
-const categoryOptions = MEDIA_CATEGORIES.map(cat => ({
+const categoryOptions = MEDIA_CATEGORIES.map((cat) => ({
   label: getCategoryDisplayName(cat),
   value: cat,
 }));
@@ -186,7 +179,7 @@ const handleSubmit = async () => {
 
   try {
     await formRef.value?.validate();
-    
+
     submitting.value = true;
 
     const response = await updateMediaFile(props.file.id, {
@@ -218,9 +211,11 @@ const handleCancel = () => {
 
 const copyUrl = async () => {
   if (!props.file?.url) return;
-  
+
   try {
-    await navigator.clipboard.writeText(window.location.origin + props.file.url);
+    await navigator.clipboard.writeText(
+      window.location.origin + props.file.url,
+    );
     message.success('URL已复制到剪贴板');
   } catch (error) {
     console.error('Copy URL error:', error);
@@ -255,18 +250,22 @@ const formatDate = (dateString: string): string => {
 };
 
 // Watch for props changes
-watch(() => props.file, (newFile) => {
-  if (newFile) {
-    Object.assign(formData, {
-      filename: newFile.filename,
-      category: newFile.category,
-      alt: newFile.alt || '',
-      description: newFile.description || '',
-      tags: newFile.tags || [],
-      isPublic: newFile.isPublic,
-    });
-  }
-}, { immediate: true });
+watch(
+  () => props.file,
+  (newFile) => {
+    if (newFile) {
+      Object.assign(formData, {
+        filename: newFile.filename,
+        category: newFile.category,
+        alt: newFile.alt || '',
+        description: newFile.description || '',
+        tags: newFile.tags || [],
+        isPublic: newFile.isPublic,
+      });
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <style scoped>
@@ -343,9 +342,9 @@ watch(() => props.file, (newFile) => {
     align-items: center;
     text-align: center;
   }
-  
+
   .preview-container {
     align-self: center;
   }
 }
-</style> 
+</style>

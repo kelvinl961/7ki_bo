@@ -11,7 +11,7 @@
     >
       <!-- ID（仅显示） -->
       <n-form-item label="ID">
-        <n-input 
+        <n-input
           :value="formData.id ? formData.id.toString() : '自动生成'"
           disabled
           placeholder="自动生成"
@@ -109,30 +109,50 @@
             placeholder="选择数字样式图片"
             @file-selected="handleNumberStyleSelected"
           />
-          
+
           <!-- Preview -->
           <div v-if="formData.numberStyle" class="mt-3">
-            <div class="text-sm text-gray-600 mb-2">预览:</div>
-            
+            <div class="mb-2 text-sm text-gray-600">预览:</div>
+
             <!-- Image Preview (if it's a URL) -->
-            <div v-if="isImageUrl(formData.numberStyle)" class="w-24 h-24 border rounded-lg overflow-hidden">
-              <img 
-                :src="formData.numberStyle" 
+            <div
+              v-if="isImageUrl(formData.numberStyle)"
+              class="h-24 w-24 overflow-hidden rounded-lg border"
+            >
+              <img
+                :src="formData.numberStyle"
                 :alt="'Number Style Preview'"
-                class="w-full h-full object-cover"
-                @error="console.error('❌ Image load error:', formData.numberStyle)"
-                @load="console.log('✅ Image loaded successfully:', formData.numberStyle)"
+                class="h-full w-full object-cover"
+                @error="
+                  console.error('❌ Image load error:', formData.numberStyle)
+                "
+                @load="
+                  console.log(
+                    '✅ Image loaded successfully:',
+                    formData.numberStyle,
+                  )
+                "
               />
-              <div class="text-xs text-gray-500 mt-1">URL: {{ formData.numberStyle }}</div>
+              <div class="mt-1 text-xs text-gray-500">
+                URL: {{ formData.numberStyle }}
+              </div>
             </div>
-            
+
             <!-- Preset Style Preview (if it's a preset) -->
-            <div v-else class="w-24 h-24 border rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+            <div
+              v-else
+              class="flex h-24 w-24 items-center justify-center overflow-hidden rounded-lg border bg-gray-100"
+            >
               <div class="text-center">
-                <div class="text-lg font-bold" :style="getPresetNumberStyle(formData.numberStyle)">
+                <div
+                  class="text-lg font-bold"
+                  :style="getPresetNumberStyle(formData.numberStyle)"
+                >
                   Aa
                 </div>
-                <div class="text-xs text-gray-500 mt-1">预设样式: {{ formData.numberStyle }}</div>
+                <div class="mt-1 text-xs text-gray-500">
+                  预设样式: {{ formData.numberStyle }}
+                </div>
               </div>
             </div>
           </div>
@@ -150,28 +170,49 @@
             placeholder="选择背景风格图片"
             @file-selected="handleBackgroundStyleSelected"
           />
-          
+
           <!-- Preview -->
           <div v-if="formData.backgroundStyle" class="mt-3">
-            <div class="text-sm text-gray-600 mb-2">预览:</div>
-            
+            <div class="mb-2 text-sm text-gray-600">预览:</div>
+
             <!-- Image Preview (if it's a URL) -->
-            <div v-if="isImageUrl(formData.backgroundStyle)" class="w-32 h-20 border rounded-lg overflow-hidden">
-              <img 
-                :src="formData.backgroundStyle" 
+            <div
+              v-if="isImageUrl(formData.backgroundStyle)"
+              class="h-20 w-32 overflow-hidden rounded-lg border"
+            >
+              <img
+                :src="formData.backgroundStyle"
                 :alt="'Background Style Preview'"
-                class="w-full h-full object-cover"
-                @error="console.error('❌ Background image load error:', formData.backgroundStyle)"
-                @load="console.log('✅ Background image loaded successfully:', formData.backgroundStyle)"
+                class="h-full w-full object-cover"
+                @error="
+                  console.error(
+                    '❌ Background image load error:',
+                    formData.backgroundStyle,
+                  )
+                "
+                @load="
+                  console.log(
+                    '✅ Background image loaded successfully:',
+                    formData.backgroundStyle,
+                  )
+                "
               />
-              <div class="text-xs text-gray-500 mt-1">URL: {{ formData.backgroundStyle }}</div>
+              <div class="mt-1 text-xs text-gray-500">
+                URL: {{ formData.backgroundStyle }}
+              </div>
             </div>
-            
+
             <!-- Preset Style Preview (if it's a preset) -->
-            <div v-else class="w-32 h-20 border rounded-lg overflow-hidden flex items-center justify-center" :style="getPresetBackgroundStyle(formData.backgroundStyle)">
+            <div
+              v-else
+              class="flex h-20 w-32 items-center justify-center overflow-hidden rounded-lg border"
+              :style="getPresetBackgroundStyle(formData.backgroundStyle)"
+            >
               <div class="text-center text-white">
                 <div class="text-sm font-bold">背景样式</div>
-                <div class="text-xs opacity-75 mt-1">预设: {{ formData.backgroundStyle }}</div>
+                <div class="mt-1 text-xs opacity-75">
+                  预设: {{ formData.backgroundStyle }}
+                </div>
               </div>
             </div>
           </div>
@@ -181,33 +222,32 @@
       <n-form-item label="实时预览">
         <div class="live-preview-section">
           <div class="preview-container">
-            <div 
+            <div
               class="bonus-pool-preview"
               :class="`number-${formData.numberStyle}`"
               :style="getBackgroundStyle()"
             >
-              
-                            <div class="pool-amount">
+              <div class="pool-amount">
                 <div class="amount-with-style" :style="getNumberStyleText()">
-                  <span class="currency">{{ getCurrencySymbol(formData.currency) }}</span>
-                  <span class="amount" ref="amountRef">{{ displayAmount }}</span>
+                  <span class="currency">{{
+                    getCurrencySymbol(formData.currency)
+                  }}</span>
+                  <span class="amount" ref="amountRef">{{
+                    displayAmount
+                  }}</span>
                 </div>
               </div>
-              
             </div>
           </div>
-          
+
           <div class="preview-controls">
             <n-button size="small" @click="startCountAnimation">
               播放动画
             </n-button>
-            <n-button size="small" @click="resetAnimation">
-              重置
-            </n-button>
+            <n-button size="small" @click="resetAnimation"> 重置 </n-button>
           </div>
         </div>
       </n-form-item>
-
 
       <!-- 状态 -->
       <n-form-item label="状态" path="status">
@@ -217,7 +257,6 @@
         </n-switch>
       </n-form-item>
 
-      
       <!-- 备注 -->
       <n-form-item label="备注" path="remark">
         <n-input
@@ -235,7 +274,12 @@
     <div class="form-footer">
       <n-space justify="center" :size="16">
         <n-button @click="handleCancel" size="medium">取消</n-button>
-        <n-button type="primary" @click="handleSubmit" :loading="submitting" size="medium">
+        <n-button
+          type="primary"
+          @click="handleSubmit"
+          :loading="submitting"
+          size="medium"
+        >
           确认
         </n-button>
       </n-space>
@@ -265,7 +309,9 @@ import {
 } from 'naive-ui';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking modal load
 import { defineAsyncComponent } from 'vue';
-const MediaLibrarySelector = defineAsyncComponent(() => import('#/components/MediaLibrarySelector.vue'));
+const MediaLibrarySelector = defineAsyncComponent(
+  () => import('#/components/MediaLibrarySelector.vue'),
+);
 import { getMediaFiles, type MediaFile } from '#/api/mediaLibrary';
 import { getImageUrlByEnvironment } from '../../../../utils/imageUtils';
 
@@ -346,8 +392,8 @@ const numberStyleOptions = [
       color: '#ff6b35',
       fontSize: '18px',
       fontWeight: 'bold',
-      fontFamily: 'Arial, sans-serif'
-    }
+      fontFamily: 'Arial, sans-serif',
+    },
   },
   {
     label: '样式二',
@@ -356,8 +402,8 @@ const numberStyleOptions = [
       color: '#4ecdc4',
       fontSize: '18px',
       fontWeight: 'bold',
-      fontFamily: 'Arial, sans-serif'
-    }
+      fontFamily: 'Arial, sans-serif',
+    },
   },
   {
     label: '样式三',
@@ -366,8 +412,8 @@ const numberStyleOptions = [
       color: '#45b7d1',
       fontSize: '18px',
       fontWeight: 'bold',
-      fontFamily: 'Arial, sans-serif'
-    }
+      fontFamily: 'Arial, sans-serif',
+    },
   },
   {
     label: '样式四',
@@ -376,8 +422,8 @@ const numberStyleOptions = [
       color: '#f39c12',
       fontSize: '18px',
       fontWeight: 'bold',
-      fontFamily: 'Arial, sans-serif'
-    }
+      fontFamily: 'Arial, sans-serif',
+    },
   },
   {
     label: '样式五',
@@ -386,8 +432,8 @@ const numberStyleOptions = [
       color: '#e74c3c',
       fontSize: '18px',
       fontWeight: 'bold',
-      fontFamily: 'Arial, sans-serif'
-    }
+      fontFamily: 'Arial, sans-serif',
+    },
   },
 ];
 
@@ -397,86 +443,86 @@ const backgroundStyleOptions = [
     value: 'style1',
     previewStyle: {
       background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      color: 'white'
-    }
+      color: 'white',
+    },
   },
   {
     label: '样式二',
     value: 'style2',
     previewStyle: {
       background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-      color: 'white'
-    }
+      color: 'white',
+    },
   },
   {
     label: '样式三',
     value: 'style3',
     previewStyle: {
       background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-      color: 'white'
-    }
+      color: 'white',
+    },
   },
   {
     label: '样式四',
     value: 'style4',
     previewStyle: {
       background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-      color: 'white'
-    }
+      color: 'white',
+    },
   },
   {
     label: '样式五',
     value: 'style5',
     previewStyle: {
       background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-      color: 'white'
-    }
+      color: 'white',
+    },
   },
 ];
 
 // Validation rules
 const rules: FormRules = {
   currency: [
-    { required: true, message: '请选择币种', trigger: ['blur', 'change'] }
+    { required: true, message: '请选择币种', trigger: ['blur', 'change'] },
   ],
   displayType: [
-    { required: true, message: '请选择展示方式', trigger: ['blur', 'change'] }
+    { required: true, message: '请选择展示方式', trigger: ['blur', 'change'] },
   ],
   displayPosition: [
-    { required: true, message: '请选择展示位置', trigger: ['blur', 'change'] }
+    { required: true, message: '请选择展示位置', trigger: ['blur', 'change'] },
   ],
   clickTarget: [
-    { 
+    {
       validator: (rule: any, value: any) => {
         return value !== null && value !== undefined;
       },
-      message: '请选择点击跳转位置', 
-      trigger: ['blur', 'change'] 
-    }
+      message: '请选择点击跳转位置',
+      trigger: ['blur', 'change'],
+    },
   ],
   maxAmount: [
     {
       required: true,
       type: 'number',
       message: '请输入最大显示金额',
-      trigger: ['blur', 'change']
-    }
+      trigger: ['blur', 'change'],
+    },
   ],
   minAmount: [
     {
       required: true,
       type: 'number',
       message: '请输入最小显示金额',
-      trigger: ['blur', 'change']
-    }
+      trigger: ['blur', 'change'],
+    },
   ],
   decimalPlaces: [
     {
       required: true,
       type: 'number',
       message: '请输入小数点位数',
-      trigger: ['blur', 'change']
-    }
+      trigger: ['blur', 'change'],
+    },
   ],
 };
 
@@ -484,18 +530,18 @@ const rules: FormRules = {
 const handleSubmit = async () => {
   try {
     await formRef.value?.validate();
-    
+
     // Validate amount range
     const minAmount = Number(formData.minAmount);
     const maxAmount = Number(formData.maxAmount);
-    
+
     if (minAmount >= maxAmount) {
       message.error('最小显示金额必须小于最大显示金额');
       return;
     }
-    
+
     submitting.value = true;
-    
+
     // 确保提交的数据类型正确，并排除id字段（创建时不需要）
     const { id, ...submitDataWithoutId } = formData;
     const submitData = {
@@ -504,7 +550,7 @@ const handleSubmit = async () => {
       minAmount: Number(formData.minAmount),
       decimalPlaces: Number(formData.decimalPlaces),
     };
-    
+
     emit('submit', submitData);
   } catch (error) {
     console.error('Form validation failed:', error);
@@ -533,20 +579,23 @@ const handleBackgroundStyleSelected = (file: MediaFile) => {
 
 // Helper functions for preview
 const isImageUrl = (value: string): boolean => {
-  return value && (value.startsWith('http') || value.startsWith('/') || value.startsWith('data:'));
+  return (
+    value &&
+    (value.startsWith('http') ||
+      value.startsWith('/') ||
+      value.startsWith('data:'))
+  );
 };
 
 const getPresetNumberStyle = (style: string) => {
-  const presetStyle = numberStyleOptions.find(opt => opt.value === style);
+  const presetStyle = numberStyleOptions.find((opt) => opt.value === style);
   return presetStyle ? presetStyle.previewStyle : {};
 };
 
 const getPresetBackgroundStyle = (style: string) => {
-  const presetStyle = backgroundStyleOptions.find(opt => opt.value === style);
+  const presetStyle = backgroundStyleOptions.find((opt) => opt.value === style);
   return presetStyle ? presetStyle.previewStyle : {};
 };
-
-
 
 const selectNumberStyle = (numberStyle: MediaFile) => {
   formData.numberStyle = numberStyle.url;
@@ -572,7 +621,10 @@ const openMediaLibrary = () => {
 
 const getBackgroundStyle = () => {
   // If backgroundStyle is a URL (from media library), use it as background image
-  if (formData.backgroundStyle && formData.backgroundStyle.startsWith('http') || formData.backgroundStyle.startsWith('/')) {
+  if (
+    (formData.backgroundStyle && formData.backgroundStyle.startsWith('http')) ||
+    formData.backgroundStyle.startsWith('/')
+  ) {
     return {
       backgroundImage: `url(${formData.backgroundStyle})`,
       backgroundSize: 'cover',
@@ -580,15 +632,21 @@ const getBackgroundStyle = () => {
       backgroundRepeat: 'no-repeat',
     };
   }
-  
+
   // Fallback to preset styles if needed
-  const presetStyle = backgroundStyleOptions.find(style => style.value === formData.backgroundStyle);
+  const presetStyle = backgroundStyleOptions.find(
+    (style) => style.value === formData.backgroundStyle,
+  );
   return presetStyle ? presetStyle.previewStyle : {};
 };
 
 const getNumberStyleText = () => {
   // If numberStyle is a URL (from media library), use it to style the text
-  if (formData.numberStyle && (formData.numberStyle.startsWith('http') || formData.numberStyle.startsWith('/'))) {
+  if (
+    formData.numberStyle &&
+    (formData.numberStyle.startsWith('http') ||
+      formData.numberStyle.startsWith('/'))
+  ) {
     return {
       // Method 1: Use background-clip to create text with image pattern
       backgroundImage: `url(${formData.numberStyle})`,
@@ -603,7 +661,7 @@ const getNumberStyleText = () => {
       filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))',
     };
   }
-  
+
   return {
     // Default styling when no number style is selected
     color: 'white',
@@ -613,53 +671,54 @@ const getNumberStyleText = () => {
 
 const getCurrencySymbol = (currency: string) => {
   const currencyMap: Record<string, string> = {
-    'BRL': 'R$',
-    'USD': '$',
-    'EUR': '€',
-    'CNY': '¥',
-    'JPY': '¥',
+    BRL: 'R$',
+    USD: '$',
+    EUR: '€',
+    CNY: '¥',
+    JPY: '¥',
   };
   return currencyMap[currency] || '$';
 };
 
 const getDisplayTypeLabel = (displayType: string) => {
   const typeMap: Record<string, string> = {
-    'single': '单独模块',
-    'multiple': '多个馆馆',
-    'fixed': '固定金额',
-    'random': '随机金额',
-    'realtime': '实时更新',
-    'increment': '递增金额',
+    single: '单独模块',
+    multiple: '多个馆馆',
+    fixed: '固定金额',
+    random: '随机金额',
+    realtime: '实时更新',
+    increment: '递增金额',
   };
   return typeMap[displayType] || displayType;
 };
 
 const startCountAnimation = () => {
   if (isAnimating.value) return;
-  
+
   isAnimating.value = true;
   const targetAmount = formData.maxAmount || 88888.88;
   const startAmount = 0;
   const duration = 2000; // 2 seconds
   const startTime = Date.now();
-  
+
   const animate = () => {
     const elapsed = Date.now() - startTime;
     const progress = Math.min(elapsed / duration, 1);
-    
+
     // Easing function for smooth animation
     const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-    const currentAmount = startAmount + (targetAmount - startAmount) * easeOutQuart;
-    
+    const currentAmount =
+      startAmount + (targetAmount - startAmount) * easeOutQuart;
+
     displayAmount.value = currentAmount.toFixed(formData.decimalPlaces || 2);
-    
+
     if (progress < 1) {
       requestAnimationFrame(animate);
     } else {
       isAnimating.value = false;
     }
   };
-  
+
   animate();
 };
 
@@ -669,32 +728,51 @@ const resetAnimation = () => {
 };
 
 // Watch for props changes
-watch(() => props.data, (newData) => {
-  if (newData) {
-    // 确保数字字段正确转换
-    Object.assign(formData, {
-      ...newData,
-      maxAmount: typeof newData.maxAmount === 'number' ? newData.maxAmount : Number(newData.maxAmount) || 0,
-      minAmount: typeof newData.minAmount === 'number' ? newData.minAmount : Number(newData.minAmount) || 0,
-      decimalPlaces: typeof newData.decimalPlaces === 'number' ? newData.decimalPlaces : Number(newData.decimalPlaces) || 2,
-    });
-  }
-}, { immediate: true });
+watch(
+  () => props.data,
+  (newData) => {
+    if (newData) {
+      // 确保数字字段正确转换
+      Object.assign(formData, {
+        ...newData,
+        maxAmount:
+          typeof newData.maxAmount === 'number'
+            ? newData.maxAmount
+            : Number(newData.maxAmount) || 0,
+        minAmount:
+          typeof newData.minAmount === 'number'
+            ? newData.minAmount
+            : Number(newData.minAmount) || 0,
+        decimalPlaces:
+          typeof newData.decimalPlaces === 'number'
+            ? newData.decimalPlaces
+            : Number(newData.decimalPlaces) || 2,
+      });
+    }
+  },
+  { immediate: true },
+);
 
 // Watch for amount changes to update display
-watch(() => formData.maxAmount, (newAmount) => {
-  if (!isAnimating.value) {
-    displayAmount.value = (newAmount || 0).toFixed(formData.decimalPlaces || 2);
-  }
-}, { immediate: true });
+watch(
+  () => formData.maxAmount,
+  (newAmount) => {
+    if (!isAnimating.value) {
+      displayAmount.value = (newAmount || 0).toFixed(
+        formData.decimalPlaces || 2,
+      );
+    }
+  },
+  { immediate: true },
+);
 
 // Initialize display amount when component mounts
 onMounted(() => {
   // Initialize display amount
-  displayAmount.value = (formData.maxAmount || 0).toFixed(formData.decimalPlaces || 2);
+  displayAmount.value = (formData.maxAmount || 0).toFixed(
+    formData.decimalPlaces || 2,
+  );
 });
-
-
 </script>
 
 <style scoped>
@@ -1191,11 +1269,11 @@ onMounted(() => {
   .number-style-preview-grid {
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   .background-style-grid {
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   .custom-background-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1205,9 +1283,9 @@ onMounted(() => {
   .background-style-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .custom-background-grid {
     grid-template-columns: repeat(1, 1fr);
   }
 }
-</style> 
+</style>

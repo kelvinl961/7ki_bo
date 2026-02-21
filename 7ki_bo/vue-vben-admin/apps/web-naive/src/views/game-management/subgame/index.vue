@@ -1,8 +1,5 @@
 <template>
-  <Page
-    description="子游戏管理页面"
-    title="子游戏管理"
-  >
+  <Page description="子游戏管理页面" title="子游戏管理">
     <!-- 面包屑导航 -->
     <div class="mb-4">
       <n-breadcrumb>
@@ -13,7 +10,7 @@
 
     <!-- 筛选器区域 -->
     <n-card class="mb-4">
-      <div class="flex flex-wrap gap-4 items-end">
+      <div class="flex flex-wrap items-end gap-4">
         <!-- 游戏厂商筛选 -->
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium">游戏厂商</label>
@@ -103,12 +100,8 @@
               @input="handleSearchInput"
               @keyup.enter="handleFilter"
             />
-            <n-button type="primary" @click="handleFilter">
-              搜索
-            </n-button>
-            <n-button @click="resetFilter">
-              重置
-            </n-button>
+            <n-button type="primary" @click="handleFilter"> 搜索 </n-button>
+            <n-button @click="resetFilter"> 重置 </n-button>
           </div>
         </div>
       </div>
@@ -133,7 +126,7 @@
     >
       <template #actionBar="{ selectedCount, selectedRows }">
         <n-card :bordered="false" class="rounded-16px shadow-sm">
-          <div class="flex justify-between items-center">
+          <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <!-- 主要操作按钮 -->
               <div class="flex gap-2">
@@ -147,16 +140,17 @@
                   新增游戏
                 </n-button>
               </div>
-              
+
               <!-- 选择信息 -->
               <div class="text-sm text-gray-600">
-                已选择 {{ selectedCount }} 条数据，共 {{ paginationReactive.total }} 条
+                已选择 {{ selectedCount }} 条数据，共
+                {{ paginationReactive.total }} 条
               </div>
             </div>
-            
+
             <div class="flex gap-2">
               <!-- 批量操作 -->
-             <!-- <n-button 
+              <!-- <n-button 
                 v-if="selectedCount > 0" 
                 type="error" 
                 size="small"
@@ -219,21 +213,21 @@
             :disabled="!!editingGame"
           />
         </n-form-item>
-        
+
         <n-form-item label="显示ID" path="gameDisplayId">
           <n-input
             v-model:value="formData.gameDisplayId"
             placeholder="请输入显示ID"
           />
         </n-form-item>
-        
+
         <n-form-item label="游戏名称(中文)" path="gameName">
           <n-input
             v-model:value="formData.gameName"
             placeholder="请输入游戏名称(中文)"
           />
         </n-form-item>
-        
+
         <n-form-item label="游戏名称(英文)" path="gameNameEn">
           <n-input
             v-model:value="formData.gameNameEn"
@@ -247,7 +241,7 @@
             placeholder="请输入游戏厂商，如 PG Soft / CQ9 / JILI"
           />
         </n-form-item>
-        
+
         <n-form-item label="游戏类型" path="gameType">
           <n-select
             v-model:value="formData.gameType"
@@ -255,7 +249,7 @@
             :options="gameTypeOptions"
           />
         </n-form-item>
-        
+
         <n-form-item label="币种" path="currency">
           <n-select
             v-model:value="formData.currency"
@@ -277,7 +271,7 @@
         <div class="image-upload-section">
           <n-form-item label="icon图标">
             <!-- 直接拖拽上传区域 -->
-            <div 
+            <div
               class="direct-upload-area"
               @drop="handleIconDrop"
               @dragover.prevent
@@ -286,7 +280,7 @@
             >
               <div v-if="formData.iconUrl" class="uploaded-icon">
                 <n-image
-                  :src="getImageUrlByEnvironment(formData.iconUrl)" 
+                  :src="getImageUrlByEnvironment(formData.iconUrl)"
                   alt="Game Icon"
                   class="uploaded-icon-img"
                   width="100%"
@@ -296,8 +290,12 @@
                 />
                 <div class="icon-overlay">
                   <div class="icon-actions">
-                    <n-button size="tiny" @click.stop="openIconSelector">更换</n-button>
-                    <n-button size="tiny" type="error" @click.stop="clearIcon">清除</n-button>
+                    <n-button size="tiny" @click.stop="openIconSelector"
+                      >更换</n-button
+                    >
+                    <n-button size="tiny" type="error" @click.stop="clearIcon"
+                      >清除</n-button
+                    >
                   </div>
                 </div>
               </div>
@@ -316,7 +314,7 @@
                 <div class="game-icon-preview">
                   <n-image
                     v-if="formData.iconUrl"
-                    :src="getImageUrlByEnvironment(formData.iconUrl)" 
+                    :src="getImageUrlByEnvironment(formData.iconUrl)"
                     alt="Game Icon"
                     class="game-icon-preview-img"
                     width="80"
@@ -339,36 +337,36 @@
             :rows="3"
           />
         </n-form-item>
-        
+
         <div class="grid grid-cols-2 gap-4">
           <n-form-item label="热门一">
             <n-switch v-model:value="formData.isHot1" />
           </n-form-item>
-          
+
           <n-form-item label="热门二">
             <n-switch v-model:value="formData.isHot2" />
           </n-form-item>
-          
+
           <n-form-item label="推荐">
             <n-switch v-model:value="formData.isRecommended" />
           </n-form-item>
-          
+
           <n-form-item label="游戏开关">
             <n-switch v-model:value="formData.isEnabled" />
           </n-form-item>
-          
+
           <n-form-item label="维护状态">
             <n-switch v-model:value="formData.isUnderMaintenance" />
           </n-form-item>
-          
+
           <n-form-item label="展示给主播">
             <n-switch v-model:value="formData.showToStreamer" />
           </n-form-item>
         </div>
       </n-form>
-      
+
       <template #action>
-        <div class="flex gap-2 justify-end">
+        <div class="flex justify-end gap-2">
           <n-button @click="showModal = false">取消</n-button>
           <n-button type="primary" @click="handleSubmit" :loading="submitting">
             {{ editingGame ? '更新' : '创建' }}
@@ -380,10 +378,21 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, h, onMounted, onUnmounted, reactive, ref, watch, nextTick } from 'vue';
+import {
+  computed,
+  h,
+  onMounted,
+  onUnmounted,
+  reactive,
+  ref,
+  watch,
+  nextTick,
+} from 'vue';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 import { defineAsyncComponent } from 'vue';
-const SmartDataGrid = defineAsyncComponent(() => import('../../../components/smart/SmartDataGrid/index.vue'));
+const SmartDataGrid = defineAsyncComponent(
+  () => import('../../../components/smart/SmartDataGrid/index.vue'),
+);
 import type { DataTableColumns, FormInst, FormRules } from 'naive-ui';
 import {
   NBreadcrumb,
@@ -400,11 +409,11 @@ import {
   NSwitch,
   NTag,
   NImage,
-  useMessage
+  useMessage,
 } from 'naive-ui';
 import { Page } from '@vben/common-ui';
 import { notification } from '#/adapter/naive';
-import { 
+import {
   getGameListApi,
   createGameApi,
   updateGameApi,
@@ -412,12 +421,19 @@ import {
   toggleGameApi,
   setGameTopApi,
   bulkDeleteGamesApi,
-  type GameItem 
+  type GameItem,
 } from '#/api/game/subgame';
-import { getGamePlatformListApi, type GamePlatformItem } from '#/api/game/platform';
+import {
+  getGamePlatformListApi,
+  type GamePlatformItem,
+} from '#/api/game/platform';
 import { uploadMediaFile } from '#/api/mediaLibrary';
-const GameImportDialog = defineAsyncComponent(() => import('./GameImportDialog.vue'));
-const ApiImportDialog = defineAsyncComponent(() => import('./ApiImportDialog.vue'));
+const GameImportDialog = defineAsyncComponent(
+  () => import('./GameImportDialog.vue'),
+);
+const ApiImportDialog = defineAsyncComponent(
+  () => import('./ApiImportDialog.vue'),
+);
 import { getImageUrlByEnvironment } from '../../../utils/imageUtils';
 
 // 响应式数据
@@ -492,34 +508,37 @@ const currencyOptions = [
 // 游戏类型多语言映射 - 使用实际的数据库枚举值和文本值
 const gameTypeMapping = {
   // 数据库枚举值 -> 中文显示映射
-  'VIDEO': '电子游戏',
-  'LIVE': '真人游戏', 
-  'SLOT': '电子游戏',
-  'LOTTERY': '彩票游戏',
-  'SPORTS': '体育游戏',
-  'ESPORTS': '体育游戏',
-  'HUNTING': '捕鱼游戏',
-  'CHESS_CARDS': '棋牌游戏',
-  'TABLE': '棋牌游戏',
-  'ARCADE': '街机游戏',
-  'SIMULATION': '电子游戏',
-  'COCKFIGHT': '斗鸡游戏',
-  'BLOCKCHAIN': '区块链游戏',
-  'OTHER': '电子游戏',
+  VIDEO: '电子游戏',
+  LIVE: '真人游戏',
+  SLOT: '电子游戏',
+  LOTTERY: '彩票游戏',
+  SPORTS: '体育游戏',
+  ESPORTS: '体育游戏',
+  HUNTING: '捕鱼游戏',
+  CHESS_CARDS: '棋牌游戏',
+  TABLE: '棋牌游戏',
+  ARCADE: '街机游戏',
+  SIMULATION: '电子游戏',
+  COCKFIGHT: '斗鸡游戏',
+  BLOCKCHAIN: '区块链游戏',
+  OTHER: '电子游戏',
   // 添加文本字段的映射
-  'CHESS_CARD': '棋牌游戏',  // 注意：数据库中是单数形式
-  'CHESS': '棋牌游戏',
-  'CARDS': '棋牌游戏'
+  CHESS_CARD: '棋牌游戏', // 注意：数据库中是单数形式
+  CHESS: '棋牌游戏',
+  CARDS: '棋牌游戏',
 } as const;
 
 // 反向映射：中文 -> 数据库枚举值数组
-const reverseGameTypeMapping = Object.entries(gameTypeMapping).reduce((acc, [enumValue, chinese]) => {
-  if (!acc[chinese]) {
-    acc[chinese] = [];
-  }
-  acc[chinese].push(enumValue);
-  return acc;
-}, {} as Record<string, string[]>);
+const reverseGameTypeMapping = Object.entries(gameTypeMapping).reduce(
+  (acc, [enumValue, chinese]) => {
+    if (!acc[chinese]) {
+      acc[chinese] = [];
+    }
+    acc[chinese].push(enumValue);
+    return acc;
+  },
+  {} as Record<string, string[]>,
+);
 
 // 手动确保棋牌游戏有正确的映射
 reverseGameTypeMapping['棋牌游戏'] = ['CHESS_CARDS', 'TABLE', 'CHESS_CARD'];
@@ -532,7 +551,9 @@ console.log('Reverse Game Type Mapping:', reverseGameTypeMapping);
 const getEnglishGameTypesForFiltering = (chineseType: string) => {
   const enumValues = reverseGameTypeMapping[chineseType];
   if (enumValues && enumValues.length > 0) {
-    console.log(`Game type conversion for filtering: ${chineseType} -> ${enumValues.join(', ')}`);
+    console.log(
+      `Game type conversion for filtering: ${chineseType} -> ${enumValues.join(', ')}`,
+    );
     return enumValues;
   }
   // 如果没有找到映射，直接返回原值
@@ -585,7 +606,9 @@ const vendorOptions = ref<Array<{ label: string; value: string }>>([]);
 // 将数据库枚举值转换为中文显示
 const getChineseGameType = (englishType: string | null | undefined) => {
   if (!englishType) return '-';
-  return gameTypeMapping[englishType as keyof typeof gameTypeMapping] || englishType;
+  return (
+    gameTypeMapping[englishType as keyof typeof gameTypeMapping] || englishType
+  );
 };
 
 const statusOptions = [
@@ -602,18 +625,16 @@ const hotTypeOptions = [
 // 表单验证规则
 const formRules: FormRules = {
   platformId: [
-  {
-    trigger: 'submit',
-    validator: (_, value) => {
-      if (editingGame.value) return Promise.resolve();
-      if (!!value) return Promise.resolve();
-      return Promise.reject(new Error('请选择所属平台'));
-    }
-  }
-],
-  gameId: [
-    { required: true, message: '请输入游戏ID', trigger: 'blur' },
+    {
+      trigger: 'submit',
+      validator: (_, value) => {
+        if (editingGame.value) return Promise.resolve();
+        if (!!value) return Promise.resolve();
+        return Promise.reject(new Error('请选择所属平台'));
+      },
+    },
   ],
+  gameId: [{ required: true, message: '请输入游戏ID', trigger: 'blur' }],
   gameDisplayId: [
     { max: 50, message: '显示ID长度不能超过50个字符', trigger: 'blur' },
   ],
@@ -621,9 +642,7 @@ const formRules: FormRules = {
     { required: true, message: '请输入游戏名称', trigger: 'blur' },
     { min: 2, max: 50, message: '游戏名称长度为2-50个字符', trigger: 'blur' },
   ],
-  vendor: [
-    { required: true, message: '请输入游戏厂商', trigger: 'blur' },
-  ],
+  vendor: [{ required: true, message: '请输入游戏厂商', trigger: 'blur' }],
   currency: [
     { required: true, message: '请选择币种', trigger: ['blur', 'change'] },
   ],
@@ -638,33 +657,37 @@ const formatDate = (date: string | Date | null) => {
 // 表格列配置
 const columns: DataTableColumns<GameItem> = [
   { type: 'selection' },
-  { 
-    title: '排序', 
-    key: 'sortOrder', 
+  {
+    title: '排序',
+    key: 'sortOrder',
     width: 80,
     render(row) {
       return h('div', { class: 'flex items-center gap-1' }, [
         h('span', row.sortOrder),
-        h(NButton, { 
-          size: 'tiny', 
-          quaternary: true,
-          type: 'primary',
-          onClick: () => handleSetTop(row) 
-        }, { default: () => '置顶' }),
+        h(
+          NButton,
+          {
+            size: 'tiny',
+            quaternary: true,
+            type: 'primary',
+            onClick: () => handleSetTop(row),
+          },
+          { default: () => '置顶' },
+        ),
       ]);
     },
   },
-  { 
-    title: '平台名称', 
-    key: 'platform', 
+  {
+    title: '平台名称',
+    key: 'platform',
     width: 150,
     render(row) {
       return row.platform?.platformName || '-';
     },
   },
-  { 
-    title: '游戏厂商', 
-    key: 'vendor', 
+  {
+    title: '游戏厂商',
+    key: 'vendor',
     width: 120,
     render(row) {
       return row.thirdPartyData?.vendor || '-';
@@ -672,33 +695,38 @@ const columns: DataTableColumns<GameItem> = [
   },
   { title: '游戏ID', key: 'gameId', width: 120 },
   { title: '显示ID', key: 'gameDisplayId', width: 120 },
-  { 
-    title: '游戏名称', 
-    key: 'gameName', 
+  {
+    title: '游戏名称',
+    key: 'gameName',
     width: 180,
     render(row) {
       return h('div', [
         h('div', { style: 'font-weight: 500' }, row.gameName),
-        row.gameNameEn && h('div', { style: 'font-size: 12px; color: #666; margin-top: 2px' }, row.gameNameEn),
+        row.gameNameEn &&
+          h(
+            'div',
+            { style: 'font-size: 12px; color: #666; margin-top: 2px' },
+            row.gameNameEn,
+          ),
       ]);
     },
   },
-  { 
-    title: '游戏类型', 
-    key: 'gameType', 
+  {
+    title: '游戏类型',
+    key: 'gameType',
     width: 100,
     render(row) {
       return getChineseGameType(row.gameType);
     },
   },
-  { 
-    title: '游戏图标', 
-    key: 'iconUrl', 
+  {
+    title: '游戏图标',
+    key: 'iconUrl',
     width: 80,
     render(row) {
       if (row.iconUrl) {
         return h('div', { class: 'image-container' }, [
-          h(NImage, { 
+          h(NImage, {
             src: getImageUrlByEnvironment(row.iconUrl),
             alt: '游戏图标',
             width: 40,
@@ -707,8 +735,8 @@ const columns: DataTableColumns<GameItem> = [
             class: 'game-icon',
             fallbackSrc: '/placeholder-game.png',
             lazy: true,
-            previewSrc: getImageUrlByEnvironment(row.iconUrl)
-          })
+            previewSrc: getImageUrlByEnvironment(row.iconUrl),
+          }),
         ]);
       }
       return h('span', { class: 'text-gray-400' }, '无图标');
@@ -720,9 +748,9 @@ const columns: DataTableColumns<GameItem> = [
     key: 'isHot1',
     width: 100,
     render(row) {
-      return h(NSwitch, { 
+      return h(NSwitch, {
         value: row.isHot1,
-        onUpdateValue: (value) => handleToggle(row, 'isHot1', value)
+        onUpdateValue: (value) => handleToggle(row, 'isHot1', value),
       });
     },
   },
@@ -731,9 +759,9 @@ const columns: DataTableColumns<GameItem> = [
     key: 'isHot2',
     width: 100,
     render(row) {
-      return h(NSwitch, { 
+      return h(NSwitch, {
         value: row.isHot2,
-        onUpdateValue: (value) => handleToggle(row, 'isHot2', value)
+        onUpdateValue: (value) => handleToggle(row, 'isHot2', value),
       });
     },
   },
@@ -742,9 +770,9 @@ const columns: DataTableColumns<GameItem> = [
     key: 'isRecommended',
     width: 80,
     render(row) {
-      return h(NSwitch, { 
+      return h(NSwitch, {
         value: row.isRecommended,
-        onUpdateValue: (value) => handleToggle(row, 'isRecommended', value)
+        onUpdateValue: (value) => handleToggle(row, 'isRecommended', value),
       });
     },
   },
@@ -753,9 +781,9 @@ const columns: DataTableColumns<GameItem> = [
     key: 'isEnabled',
     width: 100,
     render(row) {
-      return h(NSwitch, { 
+      return h(NSwitch, {
         value: row.isEnabled,
-        onUpdateValue: (value) => handleToggle(row, 'isEnabled', value)
+        onUpdateValue: (value) => handleToggle(row, 'isEnabled', value),
       });
     },
   },
@@ -764,12 +792,16 @@ const columns: DataTableColumns<GameItem> = [
     key: 'isUnderMaintenance',
     width: 100,
     render(row) {
-      return h(NTag, { 
-        type: row.isUnderMaintenance ? 'warning' : 'success',
-        size: 'small'
-      }, { 
-        default: () => row.isUnderMaintenance ? '维护中' : '正常' 
-      });
+      return h(
+        NTag,
+        {
+          type: row.isUnderMaintenance ? 'warning' : 'success',
+          size: 'small',
+        },
+        {
+          default: () => (row.isUnderMaintenance ? '维护中' : '正常'),
+        },
+      );
     },
   },
   {
@@ -777,9 +809,9 @@ const columns: DataTableColumns<GameItem> = [
     key: 'showToStreamer',
     width: 120,
     render(row) {
-      return h(NSwitch, { 
+      return h(NSwitch, {
         value: row.showToStreamer,
-        onUpdateValue: (value) => handleToggle(row, 'showToStreamer', value)
+        onUpdateValue: (value) => handleToggle(row, 'showToStreamer', value),
       });
     },
   },
@@ -798,20 +830,23 @@ const columns: DataTableColumns<GameItem> = [
     width: 150,
     render(row) {
       const actions = [];
-      
+
       // Edit button
       actions.push(
-        h(NButton, { 
-          size: 'small', 
-          quaternary: true, 
-          type: 'primary',
-          onClick: () => handleEdit(row) 
-        }, { default: () => '编辑' })
+        h(
+          NButton,
+          {
+            size: 'small',
+            quaternary: true,
+            type: 'primary',
+            onClick: () => handleEdit(row),
+          },
+          { default: () => '编辑' },
+        ),
       );
-      
+
       // Delete button
-     
-      
+
       return h('div', { class: 'flex gap-2 flex-wrap' }, actions);
     },
   },
@@ -837,7 +872,7 @@ const clearSelection = () => {
 };
 
 const selectAll = () => {
-  checkedRowKeys.value = tableData.value.map(game => Number(game.id));
+  checkedRowKeys.value = tableData.value.map((game) => Number(game.id));
   message.info('已全选');
 };
 
@@ -847,7 +882,7 @@ const filteredPlatformOptions = computed(() => {
   if (!filterForm.vendor && !filterForm.gameType) {
     return platformOptions.value;
   }
-  
+
   // 如果有厂商或游戏类型选择，使用过滤后的平台数据
   return filteredPlatforms.value;
 });
@@ -865,14 +900,14 @@ const loadFilteredPlatforms = async () => {
     console.log('Platform loading already in progress, skipping...');
     return;
   }
-  
+
   // 如果没有任何筛选条件，显示所有平台
   if (!filterForm.vendor && !filterForm.gameType) {
     console.log('🔄 No vendor or game type filters, showing all platforms');
     filteredPlatforms.value = [...platformOptions.value];
     return;
   }
-  
+
   isLoadingPlatforms.value = true;
 
   try {
@@ -893,29 +928,37 @@ const loadFilteredPlatforms = async () => {
 
     console.log('Loading filtered platforms with params:', params);
     console.log('Game type filter:', filterForm.gameType);
-    console.log('English enum values:', filterForm.gameType ? getEnglishGameTypesForFiltering(filterForm.gameType) : 'none');
-    
+    console.log(
+      'English enum values:',
+      filterForm.gameType
+        ? getEnglishGameTypesForFiltering(filterForm.gameType)
+        : 'none',
+    );
+
     // 策略1: 先尝试通过游戏数据找到平台
     let availablePlatformIds = new Set();
-    
+
     try {
       // 调用API获取游戏数据
       const gameResponse = await getGameListApi(params);
-      
+
       console.log('Game API Response for platform filtering:', {
         totalGames: gameResponse.list?.length || 0,
-        sampleGame: gameResponse.list?.[0] ? {
-          id: gameResponse.list[0].id,
-          platformId: gameResponse.list[0].platformId,
-          platform: gameResponse.list[0].platform,
-          gameName: gameResponse.list[0].gameName
-        } : null
+        sampleGame: gameResponse.list?.[0]
+          ? {
+              id: gameResponse.list[0].id,
+              platformId: gameResponse.list[0].platformId,
+              platform: gameResponse.list[0].platform,
+              gameName: gameResponse.list[0].gameName,
+            }
+          : null,
       });
-      
+
       if (gameResponse.list && gameResponse.list.length > 0) {
         // 从游戏结果中提取平台ID
         gameResponse.list.forEach((game: any) => {
-          const platformId = game.platformId || (game.platform && game.platform.id);
+          const platformId =
+            game.platformId || (game.platform && game.platform.id);
           if (platformId) {
             availablePlatformIds.add(platformId);
           }
@@ -925,63 +968,74 @@ const loadFilteredPlatforms = async () => {
     } catch (gameError) {
       console.warn('Game API failed, trying platform API:', gameError);
     }
-    
+
     // 策略2: 如果游戏API没有返回结果，尝试直接查询平台
     if (availablePlatformIds.size === 0 && filterForm.gameType) {
       try {
         console.log('Trying platform API for game type:', filterForm.gameType);
-        
+
         // 将中文游戏类型转换为平台API可用的值
         let platformGameType = filterForm.gameType;
         if (filterForm.gameType === '棋牌游戏') {
           platformGameType = '棋牌'; // 平台使用"棋牌"，不是"棋牌游戏"
         }
-        
+
         const platformResponse = await getGamePlatformListApi({
           page: 1,
           pageSize: 1000,
-          gameType: platformGameType
+          gameType: platformGameType,
         });
-        
+
         console.log('Platform API Response:', {
           totalPlatforms: platformResponse.list?.length || 0,
-          samplePlatform: platformResponse.list?.[0] ? {
-            id: platformResponse.list[0].id,
-            platformId: platformResponse.list[0].platformId,
-            platformName: platformResponse.list[0].platformName,
-            gameType: platformResponse.list[0].gameType
-          } : null
+          samplePlatform: platformResponse.list?.[0]
+            ? {
+                id: platformResponse.list[0].id,
+                platformId: platformResponse.list[0].platformId,
+                platformName: platformResponse.list[0].platformName,
+                gameType: platformResponse.list[0].gameType,
+              }
+            : null,
         });
-        
+
         if (platformResponse.list && platformResponse.list.length > 0) {
           // 从平台结果中提取平台ID
           platformResponse.list.forEach((platform: any) => {
             availablePlatformIds.add(platform.id);
           });
-          console.log(`Found ${availablePlatformIds.size} platforms from platform API`);
+          console.log(
+            `Found ${availablePlatformIds.size} platforms from platform API`,
+          );
         }
       } catch (platformError) {
         console.warn('Platform API also failed:', platformError);
       }
     }
-    
+
     if (availablePlatformIds.size > 0) {
       // 过滤平台选项
-      const filtered = platformOptions.value.filter(platform => 
-        availablePlatformIds.has(platform.value)
+      const filtered = platformOptions.value.filter((platform) =>
+        availablePlatformIds.has(platform.value),
       );
-      
+
       filteredPlatforms.value = filtered;
-      
-      console.log(`Platform filtering: Found ${availablePlatformIds.size} unique platforms, showing ${filtered.length} platform options`);
+
+      console.log(
+        `Platform filtering: Found ${availablePlatformIds.size} unique platforms, showing ${filtered.length} platform options`,
+      );
       console.log('Available platform IDs:', Array.from(availablePlatformIds));
-      console.log('Filtered platforms:', filtered.map(p => ({ value: p.value, label: p.label })));
+      console.log(
+        'Filtered platforms:',
+        filtered.map((p) => ({ value: p.value, label: p.label })),
+      );
     } else {
       // 如果没有找到平台，显示空数组
       filteredPlatforms.value = [];
-      console.log('No platforms found for current filters, showing 0 platforms');
+      console.log(
+        'No platforms found for current filters, showing 0 platforms',
+      );
     }
-    
+
     // 触发数据筛选
     nextTick(() => {
       handleFilter();
@@ -990,7 +1044,7 @@ const loadFilteredPlatforms = async () => {
     console.error('Failed to load filtered platforms:', error);
     // 出错时显示所有平台
     filteredPlatforms.value = platformOptions.value;
-    
+
     // 出错时也要触发数据筛选
     nextTick(() => {
       handleFilter();
@@ -1004,37 +1058,47 @@ const loadFilteredPlatforms = async () => {
 // 厂商变化处理
 const handleVendorChange = (value: string | undefined) => {
   console.log('🏭 Vendor changed to:', value);
-  console.log('🏭 Filter form before change:', JSON.stringify(filterForm, null, 2));
-  
+  console.log(
+    '🏭 Filter form before change:',
+    JSON.stringify(filterForm, null, 2),
+  );
+
   // 确保 filterForm.vendor 立即更新（防止 v-model 延迟）
   filterForm.vendor = value;
-  console.log('🏭 Filter form after vendor update:', JSON.stringify(filterForm, null, 2));
-  
+  console.log(
+    '🏭 Filter form after vendor update:',
+    JSON.stringify(filterForm, null, 2),
+  );
+
   // Add a small delay to ensure the state is properly set
   console.log('🏭 Scheduling filter update...');
-  
+
   // 当厂商改变时，需要重新筛选平台选项
   if (filterForm.platformId) {
     // 检查当前选中的平台是否还在过滤后的选项中
     const isCurrentPlatformValid = filteredPlatformOptions.value.some(
-      option => option.value === filterForm.platformId
+      (option) => option.value === filterForm.platformId,
     );
-    
+
     if (!isCurrentPlatformValid) {
-      console.log('🔄 Current platform no longer valid, clearing platform selection');
+      console.log(
+        '🔄 Current platform no longer valid, clearing platform selection',
+      );
       filterForm.platformId = undefined;
     }
   }
-  
+
   // 如果厂商被清空，重置平台选项为所有平台
   if (!value) {
-    console.log('🔄 Vendor cleared, resetting platform options to all platforms');
+    console.log(
+      '🔄 Vendor cleared, resetting platform options to all platforms',
+    );
     filteredPlatforms.value = [...platformOptions.value];
   }
-  
+
   // 加载过滤后的平台选项
   loadFilteredPlatforms();
-  
+
   // 触发筛选
   nextTick(() => {
     handleFilter();
@@ -1044,33 +1108,40 @@ const handleVendorChange = (value: string | undefined) => {
 // 游戏类型变化处理
 const handleGameTypeChange = (value: string | undefined) => {
   console.log('🎮 Game type changed to:', value);
-  
+
   // 确保 filterForm.gameType 立即更新（防止 v-model 延迟）
   filterForm.gameType = value;
-  console.log('🎮 Filter form after game type update:', JSON.stringify(filterForm, null, 2));
-  
+  console.log(
+    '🎮 Filter form after game type update:',
+    JSON.stringify(filterForm, null, 2),
+  );
+
   // 当游戏类型改变时，需要重新筛选平台选项
   if (filterForm.platformId) {
     // 检查当前选中的平台是否还在过滤后的选项中
     const isCurrentPlatformValid = filteredPlatformOptions.value.some(
-      option => option.value === filterForm.platformId
+      (option) => option.value === filterForm.platformId,
     );
-    
+
     if (!isCurrentPlatformValid) {
-      console.log('🔄 Current platform no longer valid, clearing platform selection');
+      console.log(
+        '🔄 Current platform no longer valid, clearing platform selection',
+      );
       filterForm.platformId = undefined;
     }
   }
-  
+
   // 如果游戏类型被清空，重置平台选项为所有平台
   if (!value) {
-    console.log('🔄 Game type cleared, resetting platform options to all platforms');
+    console.log(
+      '🔄 Game type cleared, resetting platform options to all platforms',
+    );
     filteredPlatforms.value = [...platformOptions.value];
   }
-  
+
   // 加载过滤后的平台选项
   loadFilteredPlatforms();
-  
+
   // 触发筛选
   nextTick(() => {
     handleFilter();
@@ -1092,14 +1163,14 @@ const handleSearchInput = () => {
   if (searchTimeout.value) {
     clearTimeout(searchTimeout.value);
   }
-  
+
   // 如果搜索框为空，立即触发筛选以显示所有结果
   if (!filterForm.search || filterForm.search.trim() === '') {
     console.log('🔍 Search cleared, filtering immediately');
     handleFilter();
     return;
   }
-  
+
   // 设置新的定时器，500ms 后执行搜索
   searchTimeout.value = setTimeout(() => {
     console.log('🔍 Search input changed, filtering with:', filterForm.search);
@@ -1110,12 +1181,12 @@ const handleSearchInput = () => {
 // 重置筛选
 const resetFilter = () => {
   console.log('🔄 Resetting all filters...');
-  
+
   // 清除搜索定时器
   if (searchTimeout.value) {
     clearTimeout(searchTimeout.value);
   }
-  
+
   // 重置所有筛选表单字段为 undefined/null
   filterForm.gameType = undefined;
   filterForm.platformId = undefined;
@@ -1124,20 +1195,23 @@ const resetFilter = () => {
   filterForm.isEnabled = undefined;
   filterForm.hotType = undefined;
   filterForm.search = '';
-  
+
   // 重置分页到第一页
   paginationReactive.page = 1;
-  
+
   // 重置过滤后的平台为所有平台
   filteredPlatforms.value = [...platformOptions.value];
-  
+
   // 清空选中的行
   checkedRowKeys.value = [];
-  
+
   console.log('✅ All filters cleared. Loading complete dataset...');
-  console.log('🔍 Filter form after reset:', JSON.stringify(filterForm, null, 2));
+  console.log(
+    '🔍 Filter form after reset:',
+    JSON.stringify(filterForm, null, 2),
+  );
   console.log('🔍 Will fetch all games without any filter conditions');
-  
+
   // 使用 nextTick 确保所有状态都已重置
   nextTick(() => {
     loadGameList();
@@ -1177,19 +1251,21 @@ const handleEdit = (record: GameItem) => {
     id: record.id,
     gameDisplayId: record.gameDisplayId,
     gameName: record.gameName,
-    gameId: record.gameId
+    gameId: record.gameId,
   });
-  
+
   // ✅ FIX: Ensure editingGame is set to the correct record
   editingGame.value = { ...record }; // Create a copy to prevent reference issues
-  
+
   formData.platformId = record.platformId || undefined;
   formData.gameId = record.gameId;
   formData.gameDisplayId = record.gameDisplayId || '';
   formData.gameName = record.gameName;
   formData.gameNameEn = record.gameNameEn || '';
   // 将数据库枚举值转换为中文标签用于表单显示
-  formData.gameType = record.gameType ? getChineseGameType(record.gameType) : '';
+  formData.gameType = record.gameType
+    ? getChineseGameType(record.gameType)
+    : '';
   formData.vendor = record.thirdPartyData?.vendor || '';
   formData.currency = record.currency;
   formData.isHot1 = record.isHot1;
@@ -1198,13 +1274,16 @@ const handleEdit = (record: GameItem) => {
   formData.isEnabled = record.isEnabled;
   formData.isUnderMaintenance = record.isUnderMaintenance;
   formData.showToStreamer = record.showToStreamer;
-  formData.sortOrder = typeof record.sortOrder === 'string' ? parseInt(record.sortOrder) : record.sortOrder;
+  formData.sortOrder =
+    typeof record.sortOrder === 'string'
+      ? parseInt(record.sortOrder)
+      : record.sortOrder;
   formData.iconUrl = record.iconUrl || '';
   formData.remark = record.remark || '';
 
   // Reset preview states for editing
   iconPreview.value = '';
-  
+
   showModal.value = true;
 };
 
@@ -1234,7 +1313,7 @@ const handleBulkDelete = async (selectedRows: GameItem[]) => {
   }
 
   try {
-    const gameIds = selectedRows.map(game => Number(game.id));
+    const gameIds = selectedRows.map((game) => Number(game.id));
     await bulkDeleteGamesApi(gameIds);
     message.success(`已成功删除 ${selectedRows.length} 个游戏`);
     checkedRowKeys.value = [];
@@ -1246,11 +1325,15 @@ const handleBulkDelete = async (selectedRows: GameItem[]) => {
 };
 
 // 切换状态
-const handleToggle = async (record: GameItem, field: string, value: boolean) => {
+const handleToggle = async (
+  record: GameItem,
+  field: string,
+  value: boolean,
+) => {
   try {
     await toggleGameApi(Number(record.id), { field: field as any, value });
     // 更新本地数据
-    const index = tableData.value.findIndex(item => item.id === record.id);
+    const index = tableData.value.findIndex((item) => item.id === record.id);
     if (index !== -1) {
       (tableData.value[index] as any)[field] = value;
     }
@@ -1285,8 +1368,6 @@ const handleSetTop = async (record: GameItem) => {
   }
 };
 
-
-
 // 提交表单
 const handleSubmit = async () => {
   if (!formRef.value) return;
@@ -1317,7 +1398,7 @@ const handleSubmit = async () => {
       isUnderMaintenance: formData.isUnderMaintenance,
       showToStreamer: formData.showToStreamer,
       sortOrder: formData.sortOrder,
-      iconUrl: formData.iconUrl || "",
+      iconUrl: formData.iconUrl || '',
       remark: formData.remark || undefined,
     };
 
@@ -1329,43 +1410,62 @@ const handleSubmit = async () => {
       const editingGameDisplayId = editingGame.value.gameDisplayId;
       const editingGameName = editingGame.value.gameName;
       const editingGameId_field = editingGame.value.gameId;
-      
+
       // ✅ FIX: Validate that we're updating the correct game by checking multiple fields match
       // This prevents accidentally updating the wrong game if editingGame.value was changed or formData is polluted
       const validationErrors: string[] = [];
-      
-      if (data.gameId && editingGameId_field && data.gameId !== editingGameId_field) {
-        validationErrors.push(`gameId mismatch: editing=${editingGameId_field}, form=${data.gameId}`);
+
+      if (
+        data.gameId &&
+        editingGameId_field &&
+        data.gameId !== editingGameId_field
+      ) {
+        validationErrors.push(
+          `gameId mismatch: editing=${editingGameId_field}, form=${data.gameId}`,
+        );
       }
-      
-      if (data.gameDisplayId && editingGameDisplayId && data.gameDisplayId !== editingGameDisplayId) {
+
+      if (
+        data.gameDisplayId &&
+        editingGameDisplayId &&
+        data.gameDisplayId !== editingGameDisplayId
+      ) {
         // Allow gameDisplayId to change (user might be updating it)
         console.log('ℹ️ [INFO] gameDisplayId is being changed:', {
           from: editingGameDisplayId,
-          to: data.gameDisplayId
+          to: data.gameDisplayId,
         });
       }
-      
-      if (data.gameName && editingGameName && data.gameName !== editingGameName) {
+
+      if (
+        data.gameName &&
+        editingGameName &&
+        data.gameName !== editingGameName
+      ) {
         // Allow gameName to change (user might be updating it)
         console.log('ℹ️ [INFO] gameName is being changed:', {
           from: editingGameName,
-          to: data.gameName
+          to: data.gameName,
         });
       }
-      
+
       if (validationErrors.length > 0) {
-        console.error('❌ [SAFETY CHECK FAILED] Validation errors:', validationErrors);
+        console.error(
+          '❌ [SAFETY CHECK FAILED] Validation errors:',
+          validationErrors,
+        );
         console.error('❌ Editing game:', {
           id: editingGameId,
           gameId: editingGameId_field,
           gameDisplayId: editingGameDisplayId,
-          gameName: editingGameName
+          gameName: editingGameName,
         });
         console.error('❌ Form data:', data);
-        throw new Error(`安全验证失败: 表单数据与正在编辑的游戏不匹配。请刷新页面后重试。\n错误: ${validationErrors.join(', ')}`);
+        throw new Error(
+          `安全验证失败: 表单数据与正在编辑的游戏不匹配。请刷新页面后重试。\n错误: ${validationErrors.join(', ')}`,
+        );
       }
-      
+
       console.log('🔄 Updating game:', {
         gameId: editingGameId,
         gameId_field: editingGameId_field,
@@ -1373,18 +1473,20 @@ const handleSubmit = async () => {
         gameName: editingGameName,
         formGameId: data.gameId,
         formGameDisplayId: data.gameDisplayId,
-        formGameName: data.gameName
+        formGameName: data.gameName,
       });
-      
+
       gameResult = await updateGameApi(editingGameId, data);
-      
+
       // ✅ FIX: Use the stored editingGameId instead of editingGame.value.id to prevent race conditions
       // Immediately update the local table data for instant UI reflection
-      const gameIndex = tableData.value.findIndex(game => game.id === editingGameId);
+      const gameIndex = tableData.value.findIndex(
+        (game) => game.id === editingGameId,
+      );
       if (gameIndex !== -1) {
         // Update the existing game in the table with proper type handling
         const existingGame = tableData.value[gameIndex];
-        
+
         // ✅ FIX: Only update fields that were actually changed, preserve other fields
         const updatedGame = {
           ...existingGame,
@@ -1392,31 +1494,42 @@ const handleSubmit = async () => {
           id: existingGame.id, // ✅ Ensure ID is never changed
           updatedAt: new Date().toISOString(),
         } as GameItem;
-        
+
         console.log('🔄 Updating local game data:', {
           gameId: editingGameId,
-          before: { id: existingGame.id, gameDisplayId: existingGame.gameDisplayId, gameName: existingGame.gameName },
-          after: { id: updatedGame.id, gameDisplayId: updatedGame.gameDisplayId, gameName: updatedGame.gameName },
-          index: gameIndex
+          before: {
+            id: existingGame.id,
+            gameDisplayId: existingGame.gameDisplayId,
+            gameName: existingGame.gameName,
+          },
+          after: {
+            id: updatedGame.id,
+            gameDisplayId: updatedGame.gameDisplayId,
+            gameName: updatedGame.gameName,
+          },
+          index: gameIndex,
         });
-        
+
         tableData.value[gameIndex] = updatedGame;
-        
+
         // Force Vue reactivity update
         tableData.value = [...tableData.value];
-        
+
         console.log('✅ Local game data updated successfully');
       } else {
-        console.warn('⚠️ Game not found in local table for update:', editingGameId);
+        console.warn(
+          '⚠️ Game not found in local table for update:',
+          editingGameId,
+        );
       }
-      
+
       notification.success({
         content: '更新成功',
         duration: 3000,
       });
     } else {
       gameResult = await createGameApi(data);
-      
+
       // Add the new game to the beginning of the table for instant UI reflection
       if (gameResult && gameResult.id) {
         const newGame: GameItem = {
@@ -1442,11 +1555,11 @@ const handleSubmit = async () => {
           updatedAt: new Date().toISOString(),
         };
         tableData.value.unshift(newGame);
-        
+
         // Update pagination count
         paginationReactive.total += 1;
       }
-      
+
       notification.success({
         content: '创建成功',
         duration: 3000,
@@ -1469,12 +1582,11 @@ const handleSubmit = async () => {
   }
 };
 
-
 // 重置表单
 const resetForm = () => {
   // ✅ FIX: Clear editingGame FIRST to prevent state pollution
   editingGame.value = null;
-  
+
   formData.platformId = undefined;
   formData.gameId = '';
   formData.gameDisplayId = '';
@@ -1492,14 +1604,14 @@ const resetForm = () => {
   formData.sortOrder = 0;
   formData.iconUrl = '';
   formData.remark = '';
-  
+
   // 重置文件预览状态
   iconPreview.value = '';
-  
+
   if (formRef.value) {
     formRef.value.restoreValidation();
   }
-  
+
   console.log('✅ Form reset - editingGame cleared');
 };
 
@@ -1519,7 +1631,7 @@ const handlePageSizeChange = (pageSize: number) => {
 const loadGameList = async () => {
   try {
     loading.value = true;
-    
+
     // 构建参数对象，只包含有值的筛选条件
     const params: any = {
       page: paginationReactive.page,
@@ -1530,18 +1642,18 @@ const loadGameList = async () => {
     if (filterForm.platformId) {
       params.platformId = filterForm.platformId;
     }
-    
+
     if (filterForm.vendor) {
       params.vendor = filterForm.vendor;
       console.log('✅ Vendor parameter added to params:', filterForm.vendor);
     } else {
       console.log('❌ No vendor in filterForm, vendor param not added');
     }
-    
+
     if (filterForm.currency) {
       params.currency = filterForm.currency;
     }
-    
+
     if (filterForm.search && filterForm.search.trim()) {
       params.search = filterForm.search.trim();
     }
@@ -1552,7 +1664,9 @@ const loadGameList = async () => {
       if (enumValues && enumValues.length > 0) {
         // 发送所有游戏类型作为逗号分隔的字符串，后端会处理多个类型
         params.gameType = enumValues.join(',');
-        console.log(`Sending game types for ${filterForm.gameType}: ${enumValues.join(', ')}`);
+        console.log(
+          `Sending game types for ${filterForm.gameType}: ${enumValues.join(', ')}`,
+        );
       }
     }
 
@@ -1577,18 +1691,24 @@ const loadGameList = async () => {
     const response = await getGameListApi(params);
     console.log('📥 API response received:', response);
     console.log('📊 Response data count:', response?.list?.length || 0);
-    console.log('📈 Total games in response:', response?.pagination?.total || 0);
-    
+    console.log(
+      '📈 Total games in response:',
+      response?.pagination?.total || 0,
+    );
+
     if (response?.list?.length > 0) {
-      console.log('🎮 First 3 games vendors:', response.list.slice(0, 3).map(game => ({
-        name: game.gameName,
-        vendor: game.thirdPartyData?.vendor || 'No vendor'
-      })));
+      console.log(
+        '🎮 First 3 games vendors:',
+        response.list.slice(0, 3).map((game) => ({
+          name: game.gameName,
+          vendor: game.thirdPartyData?.vendor || 'No vendor',
+        })),
+      );
     }
-    
+
     tableData.value = response.list || [];
     paginationReactive.total = response.pagination?.total || 0;
-    
+
     // Debug platform filtering
     console.log('Platform debugging:');
     console.log('- Total platforms loaded:', platformOptions.value.length);
@@ -1596,19 +1716,25 @@ const loadGameList = async () => {
     console.log('- Current filter gameType:', filterForm.gameType);
     console.log('- Games loaded:', tableData.value.length);
     console.log('- Total games available:', response.pagination?.total || 0);
-    
+
     // 动态生成厂商选项（取 thirdPartyData.vendor 去重）
     // 注意：这里只更新当前页的厂商，完整厂商列表在 loadAllVendors 中加载
-    const currentPageVendors = Array.from(new Set((tableData.value || [])
-      .map((g: any) => g?.thirdPartyData?.vendor)
-      .filter((v: any) => typeof v === 'string' && v.trim())));
-    
+    const currentPageVendors = Array.from(
+      new Set(
+        (tableData.value || [])
+          .map((g: any) => g?.thirdPartyData?.vendor)
+          .filter((v: any) => typeof v === 'string' && v.trim()),
+      ),
+    );
+
     // 合并现有厂商和新发现的厂商，避免丢失
-    const existingVendors = vendorOptions.value.map(v => v.value);
-    const newVendors = currentPageVendors.filter(v => !existingVendors.includes(v));
-    
+    const existingVendors = vendorOptions.value.map((v) => v.value);
+    const newVendors = currentPageVendors.filter(
+      (v) => !existingVendors.includes(v),
+    );
+
     if (newVendors.length > 0) {
-      const newVendorOptions = newVendors.map(v => ({ label: v, value: v }));
+      const newVendorOptions = newVendors.map((v) => ({ label: v, value: v }));
       vendorOptions.value = [...vendorOptions.value, ...newVendorOptions];
       console.log('Added new vendors:', newVendors);
     }
@@ -1628,20 +1754,22 @@ const loadAllVendors = async () => {
   try {
     console.log('Loading all vendors...');
     // 获取所有游戏的厂商信息，不受筛选限制
-    const response = await getGameListApi({ 
-      page: 1, 
+    const response = await getGameListApi({
+      page: 1,
       pageSize: 1000, // 获取足够多的数据来提取所有厂商
       // 不添加其他筛选条件，确保获取所有厂商
     });
-    
+
     if (response.list && response.list.length > 0) {
-      const allVendors = Array.from(new Set(
-        response.list
-          .map((g: any) => g?.thirdPartyData?.vendor)
-          .filter((v: any) => typeof v === 'string' && v.trim())
-      ));
-      
-      vendorOptions.value = allVendors.map(v => ({ label: v, value: v }));
+      const allVendors = Array.from(
+        new Set(
+          response.list
+            .map((g: any) => g?.thirdPartyData?.vendor)
+            .filter((v: any) => typeof v === 'string' && v.trim()),
+        ),
+      );
+
+      vendorOptions.value = allVendors.map((v) => ({ label: v, value: v }));
       console.log(`Loaded ${allVendors.length} vendors:`, allVendors);
     }
   } catch (error) {
@@ -1664,23 +1792,24 @@ const loadPlatformOptions = async () => {
     console.log('Loading platform options...');
     const response = await getGamePlatformListApi({ pageSize: 1000 }); // 获取所有平台
     console.log('Platform API response:', response);
-    
-    const options = response.list?.map((platform: GamePlatformItem) => ({
-      label: `${platform.platformName} (${platform.platformId})`,
-      value: platform.id,
-    })) || [];
-    
+
+    const options =
+      response.list?.map((platform: GamePlatformItem) => ({
+        label: `${platform.platformName} (${platform.platformId})`,
+        value: platform.id,
+      })) || [];
+
     console.log('Processed platform options:', options.length);
     console.log('Sample platforms:', options.slice(0, 5));
-    
+
     // 缓存平台数据
     platformCache.value = options;
     platformOptions.value = options;
     platformLoaded.value = true;
-    
+
     // 初始化过滤后的平台
     filteredPlatforms.value = options;
-    
+
     console.log('Platforms loaded successfully:', platformOptions.value.length);
   } catch (error) {
     console.error('加载平台选项失败:', error);
@@ -1693,7 +1822,7 @@ onMounted(async () => {
   await Promise.all([
     loadPlatformOptions(),
     loadAllVendors(), // 独立加载所有厂商
-    loadGameList()
+    loadGameList(),
   ]);
 });
 
@@ -1706,13 +1835,16 @@ onUnmounted(() => {
 
 const props = defineProps<{ platformId?: number }>();
 
-watch(() => props.platformId, (newVal) => {
-  if (newVal) {
-    filterForm.platformId = newVal;
-    paginationReactive.page = 1;
-    loadGameList();
-  }
-});
+watch(
+  () => props.platformId,
+  (newVal) => {
+    if (newVal) {
+      filterForm.platformId = newVal;
+      paginationReactive.page = 1;
+      loadGameList();
+    }
+  },
+);
 
 // ===================================
 // MEDIA LIBRARY HANDLERS
@@ -1748,7 +1880,7 @@ const handleIconDrop = (e: DragEvent) => {
   }
 };
 
-  // Upload icon to media library
+// Upload icon to media library
 const uploadIconToMediaLibrary = async (file: File) => {
   // ✅ FIX: Log current editing game state before upload to debug state issues
   console.log('📤 [ICON UPLOAD] Starting icon upload:', {
@@ -1757,9 +1889,9 @@ const uploadIconToMediaLibrary = async (file: File) => {
     editingGameName: editingGame.value?.gameName,
     formGameDisplayId: formData.gameDisplayId,
     formGameName: formData.gameName,
-    fileName: file.name
+    fileName: file.name,
   });
-  
+
   try {
     // Upload to media library API using the correct function
     const response = await uploadMediaFile(file, {
@@ -1769,23 +1901,29 @@ const uploadIconToMediaLibrary = async (file: File) => {
       description: 'Game icon uploaded via drag & drop',
       isPublic: true,
     });
-    
+
     // Debug: Log the actual response structure
     console.log('🔍 Upload response:', response);
     console.log('🔍 Response type:', typeof response);
     console.log('🔍 Response keys:', response ? Object.keys(response) : 'null');
-    
+
     // Handle the correct response structure: {success: true, message: string, data: MediaFile}
-    if (response && typeof response === 'object' && response.success && response.data && response.data.url) {
+    if (
+      response &&
+      typeof response === 'object' &&
+      response.success &&
+      response.data &&
+      response.data.url
+    ) {
       // ✅ FIX: Log before updating formData to track state changes
       console.log('✅ [ICON UPLOAD] Updating formData.iconUrl:', {
         before: formData.iconUrl,
         after: response.data.url,
         editingGameId: editingGame.value?.id,
         editingGameDisplayId: editingGame.value?.gameDisplayId,
-        editingGameName: editingGame.value?.gameName
+        editingGameName: editingGame.value?.gameName,
       });
-      
+
       // Update form with uploaded icon URL
       formData.iconUrl = response.data.url;
       notification.success({
@@ -1797,9 +1935,9 @@ const uploadIconToMediaLibrary = async (file: File) => {
       console.log('✅ [ICON UPLOAD] Updating formData.iconUrl (fallback):', {
         before: formData.iconUrl,
         after: (response as any).url,
-        editingGameId: editingGame.value?.id
+        editingGameId: editingGame.value?.id,
       });
-      
+
       formData.iconUrl = (response as any).url;
       notification.success({
         content: '图标上传成功',
@@ -1833,17 +1971,19 @@ const openIconSelector = () => {
         // ✅ FIX: Validate file type - allow AVIF even if browser doesn't recognize it
         const fileName = file.name.toLowerCase();
         const fileType = file.type || '';
-        const isImage = fileType.startsWith('image/') || 
-                       /\.(jpg|jpeg|png|gif|webp|avif|svg|bmp)$/i.test(fileName);
-        
+        const isImage =
+          fileType.startsWith('image/') ||
+          /\.(jpg|jpeg|png|gif|webp|avif|svg|bmp)$/i.test(fileName);
+
         if (!isImage) {
           notification.error({
-            content: '请选择图片文件（支持 JPG, PNG, GIF, WebP, AVIF, SVG, BMP）',
+            content:
+              '请选择图片文件（支持 JPG, PNG, GIF, WebP, AVIF, SVG, BMP）',
             duration: 3000,
           });
           return;
         }
-        
+
         uploadIconToMediaLibrary(file);
       }
     }
@@ -1855,8 +1995,6 @@ const openIconSelector = () => {
 const clearIcon = () => {
   formData.iconUrl = '';
 };
-
-
 </script>
 
 <style scoped>
@@ -2154,4 +2292,4 @@ const clearIcon = () => {
   font-size: 12px;
   text-align: center;
 }
-</style> 
+</style>

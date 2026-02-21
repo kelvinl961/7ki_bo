@@ -50,11 +50,11 @@ export interface AgentListResponse {
     totalPages: number;
   };
   summary?: {
-    totalCommission: number;
     totalClaimed: number;
-    totalUnclaimed: number;
-    totalMembers: number;
+    totalCommission: number;
     totalDownlines: number;
+    totalMembers: number;
+    totalUnclaimed: number;
   };
 }
 
@@ -111,7 +111,9 @@ export interface AgentSummary {
 /**
  * Get agent list with pagination and filtering
  */
-export async function getAgentList(params?: AgentListParams): Promise<AgentListResponse> {
+export async function getAgentList(
+  params?: AgentListParams,
+): Promise<AgentListResponse> {
   return requestClient.get('/agents', { params });
 }
 
@@ -125,7 +127,10 @@ export async function getAgentByIdApi(id: number): Promise<AgentRecord> {
 /**
  * Update agent status
  */
-export async function updateAgentStatusApi(id: number, data: { isActive: boolean; remark?: string }): Promise<void> {
+export async function updateAgentStatusApi(
+  id: number,
+  data: { isActive: boolean; remark?: string },
+): Promise<void> {
   return requestClient.put(`/agents/${id}/status`, data);
 }
 
@@ -139,14 +144,19 @@ export async function getAgentById(id: number): Promise<AgentRecord> {
 /**
  * Create new agent
  */
-export async function createAgent(data: CreateAgentParams): Promise<AgentRecord> {
+export async function createAgent(
+  data: CreateAgentParams,
+): Promise<AgentRecord> {
   return requestClient.post('/agents', data);
 }
 
 /**
  * Update agent
  */
-export async function updateAgent(id: number, data: UpdateAgentParams): Promise<AgentRecord> {
+export async function updateAgent(
+  id: number,
+  data: UpdateAgentParams,
+): Promise<AgentRecord> {
   return requestClient.put(`/agents/${id}`, data);
 }
 
@@ -171,14 +181,16 @@ export async function getAgentSummary(): Promise<AgentSummary> {
   return requestClient.get('/agents/summary');
 }
 
-export const formatCommission = (amount: number | null | undefined) => {
-  if (amount === null || amount === undefined || isNaN(Number(amount))) return 'R$ 0.00';
+export const formatCommission = (amount: null | number | undefined) => {
+  if (amount === null || amount === undefined || isNaN(Number(amount)))
+    return 'R$ 0.00';
   const numAmount = Number(amount);
   return `R$ ${numAmount.toFixed(2)}`;
 };
 
-export const formatCurrency = (amount: number | null | undefined) => {
-  if (amount === null || amount === undefined || isNaN(Number(amount))) return 'R$ 0.00';
+export const formatCurrency = (amount: null | number | undefined) => {
+  if (amount === null || amount === undefined || isNaN(Number(amount)))
+    return 'R$ 0.00';
   const numAmount = Number(amount);
   return `R$ ${numAmount.toFixed(2)}`;
-}; 
+};

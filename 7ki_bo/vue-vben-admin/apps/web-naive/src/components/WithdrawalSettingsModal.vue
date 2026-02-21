@@ -1,13 +1,13 @@
 <template>
-  <n-modal 
-    :show="visible" 
+  <n-modal
+    :show="visible"
     @update:show="(value: boolean) => $emit('update:visible', value)"
-    preset="card" 
-    title="提现设置" 
-    :style="{ 
-      width: 'min(95vw, 1200px)', 
+    preset="card"
+    title="提现设置"
+    :style="{
+      width: 'min(95vw, 1200px)',
       maxHeight: '85vh',
-      margin: '0 auto'
+      margin: '0 auto',
     }"
     :closable="true"
     :mask-closable="false"
@@ -17,10 +17,14 @@
     <div class="withdrawal-settings-container">
       <!-- Header with Save/Cancel Actions -->
       <div class="settings-header">
-        <div class="flex justify-between items-center mb-4 p-3 bg-gray-50 rounded-lg">
+        <div
+          class="mb-4 flex items-center justify-between rounded-lg bg-gray-50 p-3"
+        >
           <div>
             <h3 class="text-base font-semibold text-gray-800">提现系统配置</h3>
-            <p class="text-xs text-gray-600 mt-1">配置提现流程、限额规则和用户体验设置</p>
+            <p class="mt-1 text-xs text-gray-600">
+              配置提现流程、限额规则和用户体验设置
+            </p>
           </div>
           <div class="flex gap-2">
             <n-button @click="handleCancel" size="small">
@@ -29,7 +33,12 @@
               </template>
               取消
             </n-button>
-            <n-button type="primary" @click="handleSave" :loading="saving" size="small">
+            <n-button
+              type="primary"
+              @click="handleSave"
+              :loading="saving"
+              size="small"
+            >
               <template #icon>
                 <n-icon><SaveOutline /></n-icon>
               </template>
@@ -40,7 +49,12 @@
       </div>
 
       <!-- Enhanced Tabs with Icons -->
-      <n-tabs v-model:value="activeTab" type="line" size="large" class="enhanced-tabs">
+      <n-tabs
+        v-model:value="activeTab"
+        type="line"
+        size="large"
+        class="enhanced-tabs"
+      >
         <!-- 用户界面 Tab -->
         <n-tab-pane name="interface" tab="用户界面">
           <template #tab>
@@ -49,32 +63,34 @@
               <span>用户界面</span>
             </div>
           </template>
-          
+
           <div class="tab-content">
-    <n-form
+            <n-form
               ref="interfaceFormRef"
-      :model="formData"
-      label-placement="left"
+              :model="formData"
+              label-placement="left"
               label-width="220px"
               class="enhanced-form"
-    >
-          <!-- Basic System Settings -->
+            >
+              <!-- Basic System Settings -->
               <div class="form-section">
                 <h4 class="section-title">基础系统设置</h4>
-                
+
                 <!-- Maintenance Window -->
                 <n-form-item label="系统维护时间窗口" path="maintenanceWindow">
                   <div class="flex items-center gap-4">
-                    <n-input 
-                      v-model:value="formData.maintenanceWindow" 
+                    <n-input
+                      v-model:value="formData.maintenanceWindow"
                       placeholder="例: 02:00-04:00"
                       style="width: 200px"
                       size="medium"
                     />
-                    <n-text depth="3">维护时间格式: HH:MM-HH:MM (24小时制)</n-text>
+                    <n-text depth="3"
+                      >维护时间格式: HH:MM-HH:MM (24小时制)</n-text
+                    >
                   </div>
                   <template #feedback>
-                    <n-text depth="3" style="font-size: 12px;">
+                    <n-text depth="3" style="font-size: 12px">
                       在维护时间内，提现功能将暂停服务。留空表示无维护时间。
                     </n-text>
                   </template>
@@ -83,9 +99,9 @@
                 <!-- Daily Limit -->
                 <n-form-item label="每日提现限额" path="dailyLimit">
                   <div class="flex items-center gap-4">
-                    <n-input-number 
-                      v-model:value="formData.dailyLimit" 
-                      :min="0" 
+                    <n-input-number
+                      v-model:value="formData.dailyLimit"
+                      :min="0"
                       :max="10000000"
                       style="width: 200px"
                       size="medium"
@@ -101,9 +117,9 @@
                   <div class="flex items-center gap-4">
                     <div class="flex items-center gap-2">
                       <n-text depth="3">最小:</n-text>
-                      <n-input-number 
-                        v-model:value="formData.minAmount" 
-                        :min="0" 
+                      <n-input-number
+                        v-model:value="formData.minAmount"
+                        :min="0"
                         :max="formData.maxAmount || 1000000"
                         style="width: 120px"
                         size="medium"
@@ -113,9 +129,9 @@
                     </div>
                     <div class="flex items-center gap-2">
                       <n-text depth="3">最大:</n-text>
-                      <n-input-number 
-                        v-model:value="formData.maxAmount" 
-                        :min="formData.minAmount || 0" 
+                      <n-input-number
+                        v-model:value="formData.maxAmount"
+                        :min="formData.minAmount || 0"
                         :max="10000000"
                         style="width: 120px"
                         size="medium"
@@ -130,8 +146,8 @@
                 <!-- Processing Time -->
                 <n-form-item label="预计处理时间" path="processingTime">
                   <div class="flex items-center gap-4">
-                    <n-input 
-                      v-model:value="formData.processingTime" 
+                    <n-input
+                      v-model:value="formData.processingTime"
                       placeholder="例: 1-3个工作日"
                       style="width: 200px"
                       size="medium"
@@ -141,27 +157,36 @@
                 </n-form-item>
               </div>
 
-          <!-- 前台设置任务显示开关 -->
+              <!-- 前台设置任务显示开关 -->
               <div class="form-section">
                 <h4 class="section-title">前台显示设置</h4>
-                <n-form-item label="前台设置任务显示开关" path="frontendTaskDisplayEnabled">
-            <n-radio-group v-model:value="formData.frontendTaskDisplayEnabled">
+                <n-form-item
+                  label="前台设置任务显示开关"
+                  path="frontendTaskDisplayEnabled"
+                >
+                  <n-radio-group
+                    v-model:value="formData.frontendTaskDisplayEnabled"
+                  >
                     <n-space direction="vertical" size="medium">
                       <n-radio :value="true">
                         <div class="radio-content">
                           <div class="radio-title">公开显示设置/提现任务</div>
-                          <div class="radio-desc">用户可以看到提现相关的设置和任务 (可能影响留存)</div>
+                          <div class="radio-desc">
+                            用户可以看到提现相关的设置和任务 (可能影响留存)
+                          </div>
                         </div>
                       </n-radio>
                       <n-radio :value="false">
                         <div class="radio-content">
                           <div class="radio-title">隐藏前台设置任务</div>
-                          <div class="radio-desc">隐藏提现设置，简化用户界面</div>
+                          <div class="radio-desc">
+                            隐藏提现设置，简化用户界面
+                          </div>
                         </div>
                       </n-radio>
                     </n-space>
-            </n-radio-group>
-          </n-form-item>
+                  </n-radio-group>
+                </n-form-item>
               </div>
             </n-form>
           </div>
@@ -175,7 +200,7 @@
               <span>安全验证</span>
             </div>
           </template>
-          
+
           <div class="tab-content">
             <n-form
               ref="securityFormRef"
@@ -184,50 +209,63 @@
               label-width="220px"
               class="enhanced-form"
             >
-          <!-- 提现CPF规则校验 -->
+              <!-- 提现CPF规则校验 -->
               <div class="form-section">
                 <h4 class="section-title">身份验证设置</h4>
-          <n-form-item label="提现CPF规则校验" path="cpfValidationMode">
-            <n-radio-group v-model:value="formData.cpfValidationMode">
+                <n-form-item label="提现CPF规则校验" path="cpfValidationMode">
+                  <n-radio-group v-model:value="formData.cpfValidationMode">
                     <n-space direction="vertical" size="medium">
                       <n-radio value="disabled">
                         <div class="radio-content">
                           <div class="radio-title">关闭验证</div>
-                          <div class="radio-desc text-red-500">⚠️ 不推荐：可能导致无效提现申请</div>
+                          <div class="radio-desc text-red-500">
+                            ⚠️ 不推荐：可能导致无效提现申请
+                          </div>
                         </div>
                       </n-radio>
                       <n-radio value="format_only">
                         <div class="radio-content">
                           <div class="radio-title">只验证CPF格式</div>
-                          <div class="radio-desc text-green-600">✅ 推荐：防止乱填无法出款</div>
+                          <div class="radio-desc text-green-600">
+                            ✅ 推荐：防止乱填无法出款
+                          </div>
                         </div>
                       </n-radio>
                       <n-radio value="third_party">
                         <div class="radio-content">
-                          <div class="radio-title">第三方付费验证CPF和姓名真实性</div>
-                          <div class="radio-desc text-blue-600">🛡️ 合规：最高安全级别</div>
+                          <div class="radio-title">
+                            第三方付费验证CPF和姓名真实性
+                          </div>
+                          <div class="radio-desc text-blue-600">
+                            🛡️ 合规：最高安全级别
+                          </div>
                         </div>
                       </n-radio>
-              </n-space>
-            </n-radio-group>
-          </n-form-item>
+                    </n-space>
+                  </n-radio-group>
+                </n-form-item>
               </div>
 
               <!-- 会员可同时进行提现数 -->
               <div class="form-section">
                 <h4 class="section-title">并发控制</h4>
-                <n-form-item label="会员可同时进行提现数" path="memberConcurrentWithdrawals">
+                <n-form-item
+                  label="会员可同时进行提现数"
+                  path="memberConcurrentWithdrawals"
+                >
                   <div class="flex items-center gap-4">
-            <n-input-number 
-              v-model:value="formData.memberConcurrentWithdrawals" 
-              :min="1" 
-              :max="10"
+                    <n-input-number
+                      v-model:value="formData.memberConcurrentWithdrawals"
+                      :min="1"
+                      :max="10"
                       style="width: 120px"
                       size="medium"
-            />
-                    <n-text depth="3">笔 (建议设置为1-3笔，避免资金风险)</n-text>
+                    />
+                    <n-text depth="3"
+                      >笔 (建议设置为1-3笔，避免资金风险)</n-text
+                    >
                   </div>
-          </n-form-item>
+                </n-form-item>
               </div>
             </n-form>
           </div>
@@ -241,7 +279,7 @@
               <span>流程排序</span>
             </div>
           </template>
-          
+
           <div class="tab-content">
             <n-form
               ref="workflowFormRef"
@@ -266,14 +304,16 @@
                         此排序决定用户提现时的页签显示顺序，影响用户的提现选择流程。请根据业务优先级进行排序。
                       </n-alert>
                     </div>
-                    
+
                     <div class="draggable-list">
                       <div class="tab-list">
-                        <div 
-                          v-for="(element, index) in formData.withdrawalTabOrder" 
+                        <div
+                          v-for="(
+                            element, index
+                          ) in formData.withdrawalTabOrder"
                           :key="element.id"
-                          class="tab-item" 
-                          :class="{ 'dragging': isDragging }"
+                          class="tab-item"
+                          :class="{ dragging: isDragging }"
                           draggable="true"
                           @dragstart="onDragStart($event, index)"
                           @dragover="onDragOver($event)"
@@ -285,42 +325,46 @@
                               <n-icon size="16"><MenuOutline /></n-icon>
                             </div>
                             <div class="tab-info">
-                              <div class="tab-order-number">{{ index + 1 }}</div>
+                              <div class="tab-order-number">
+                                {{ index + 1 }}
+                              </div>
                               <div class="tab-details">
                                 <div class="tab-name">{{ element.name }}</div>
-                                <div class="tab-description">{{ element.description }}</div>
+                                <div class="tab-description">
+                                  {{ element.description }}
+                                </div>
                               </div>
                             </div>
                             <div class="tab-status">
-                              <n-tag 
-                                :type="element.enabled ? 'success' : 'default'" 
+                              <n-tag
+                                :type="element.enabled ? 'success' : 'default'"
                                 size="small"
                               >
                                 {{ element.enabled ? '启用' : '禁用' }}
                               </n-tag>
                             </div>
                             <div class="tab-actions">
-                <n-button 
-                                text 
+                              <n-button
+                                text
                                 @click="toggleTabStatus(element)"
                                 size="small"
                               >
                                 {{ element.enabled ? '禁用' : '启用' }}
-                </n-button>
-              </div>
+                              </n-button>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                    
+
                     <div class="ordering-footer mt-4">
                       <n-text depth="3" class="flex items-center gap-2">
                         <n-icon><HandLeftOutline /></n-icon>
                         拖拽上方项目可重新排序，排序将影响用户提现时的页签显示顺序
-              </n-text>
+                      </n-text>
                     </div>
-            </div>
-          </n-form-item>
+                  </div>
+                </n-form-item>
               </div>
             </n-form>
           </div>
@@ -334,7 +378,7 @@
               <span>业务规则</span>
             </div>
           </template>
-          
+
           <div class="tab-content">
             <n-form
               ref="businessFormRef"
@@ -343,24 +387,24 @@
               label-width="220px"
               class="enhanced-form"
             >
-          <!-- 代付有效时间 -->
+              <!-- 代付有效时间 -->
               <div class="form-section">
                 <h4 class="section-title">支付设置</h4>
-          <n-form-item label="代付有效时间" path="paymentValidityHours">
+                <n-form-item label="代付有效时间" path="paymentValidityHours">
                   <div class="flex items-center gap-4">
-              <n-input-number 
-                v-model:value="formData.paymentValidityHours" 
-                :min="1" 
-                :max="168"
-                style="width: 120px"
+                    <n-input-number
+                      v-model:value="formData.paymentValidityHours"
+                      :min="1"
+                      :max="168"
+                      style="width: 120px"
                       size="medium"
-              />
+                    />
                     <n-text depth="3">小时 (建议设置为24-72小时)</n-text>
                   </div>
-          </n-form-item>
+                </n-form-item>
               </div>
 
-          <!-- 提现手续费 -->
+              <!-- 提现手续费 -->
               <div class="form-section">
                 <h4 class="section-title">手续费设置</h4>
                 <n-form-item label="提现手续费" path="feeRoundingMode">
@@ -369,7 +413,9 @@
                       <n-radio value="down">
                         <div class="radio-content">
                           <div class="radio-title">向下取整</div>
-                          <div class="radio-desc">手续费向下取整，对用户更友好</div>
+                          <div class="radio-desc">
+                            手续费向下取整，对用户更友好
+                          </div>
                         </div>
                       </n-radio>
                       <n-radio value="up">
@@ -379,18 +425,23 @@
                         </div>
                       </n-radio>
                     </n-space>
-              </n-radio-group>
-                  <n-text depth="3" style="margin-top: 8px; display: block;">
-                举例: {{ formData.feeExample }}
-              </n-text>
-          </n-form-item>
+                  </n-radio-group>
+                  <n-text depth="3" style="margin-top: 8px; display: block">
+                    举例: {{ formData.feeExample }}
+                  </n-text>
+                </n-form-item>
               </div>
 
               <!-- 提现审核通知 -->
               <div class="form-section">
                 <h4 class="section-title">通知设置</h4>
-                <n-form-item label="提现审核通知" path="reviewNotificationEnabled">
-                  <n-radio-group v-model:value="formData.reviewNotificationEnabled">
+                <n-form-item
+                  label="提现审核通知"
+                  path="reviewNotificationEnabled"
+                >
+                  <n-radio-group
+                    v-model:value="formData.reviewNotificationEnabled"
+                  >
                     <n-space direction="vertical" size="medium">
                       <n-radio :value="true">
                         <div class="radio-content">
@@ -404,9 +455,9 @@
                           <div class="radio-desc">静默处理，不弹出提醒</div>
                         </div>
                       </n-radio>
-            </n-space>
+                    </n-space>
                   </n-radio-group>
-          </n-form-item>
+                </n-form-item>
 
                 <!-- 查看完整提现限额 -->
                 <n-form-item label="查看完整提现限额" path="showCompleteLimits">
@@ -415,8 +466,10 @@
                       <n-radio :value="true">
                         <div class="radio-content">
                           <div class="radio-title">允许会员查看</div>
-                          <div class="radio-desc">会员可以在前台查看完整提现限额</div>
-              </div>
+                          <div class="radio-desc">
+                            会员可以在前台查看完整提现限额
+                          </div>
+                        </div>
                       </n-radio>
                       <n-radio :value="false">
                         <div class="radio-content">
@@ -424,27 +477,43 @@
                           <div class="radio-desc">隐藏完整限额信息</div>
                         </div>
                       </n-radio>
-            </n-space>
+                    </n-space>
                   </n-radio-group>
-          </n-form-item>
+                </n-form-item>
               </div>
 
               <!-- 添加提现账号限制 -->
               <div class="form-section">
                 <h4 class="section-title">账号限制</h4>
-                <n-form-item label="添加提现账号限制" path="accountRestrictions">
-                  <n-space direction="vertical" size="medium" style="width: 100%;">
-                    <n-checkbox v-model:checked="formData.restrictFirstDepositAccount">
+                <n-form-item
+                  label="添加提现账号限制"
+                  path="accountRestrictions"
+                >
+                  <n-space
+                    direction="vertical"
+                    size="medium"
+                    style="width: 100%"
+                  >
+                    <n-checkbox
+                      v-model:checked="formData.restrictFirstDepositAccount"
+                    >
                       限制未首充成功会员仅能绑定1个提现账号，不能删除
                     </n-checkbox>
-                    <n-checkbox v-model:checked="formData.restrictFirstWithdrawalAccount">
+                    <n-checkbox
+                      v-model:checked="formData.restrictFirstWithdrawalAccount"
+                    >
                       限制未首提成功会员仅能绑定1个提现账号，不能删除
                     </n-checkbox>
-                    <n-checkbox v-model:checked="formData.restrictBankCardBinding">
+                    <n-checkbox
+                      v-model:checked="formData.restrictBankCardBinding"
+                    >
                       绑定数字货币提现地址前，强制绑定银行卡
                     </n-checkbox>
                   </n-space>
-                  <n-text depth="3" style="margin-top: 12px; display: block; color: #6b7280;">
+                  <n-text
+                    depth="3"
+                    style="margin-top: 12px; display: block; color: #6b7280"
+                  >
                     说明: 不勾选表示不限制
                   </n-text>
                 </n-form-item>
@@ -461,7 +530,7 @@
               <span>数字货币</span>
             </div>
           </template>
-          
+
           <div class="tab-content">
             <n-form
               ref="digitalFormRef"
@@ -486,7 +555,10 @@
               <!-- 可转的数字货币 -->
               <div class="form-section">
                 <h4 class="section-title">数字货币配置</h4>
-                <n-form-item label="可转的数字货币" path="allowedDigitalCurrencies">
+                <n-form-item
+                  label="可转的数字货币"
+                  path="allowedDigitalCurrencies"
+                >
                   <div class="digital-currency-container">
                     <n-alert type="warning" :show-icon="false" class="mb-4">
                       <template #header>
@@ -496,32 +568,41 @@
                         </div>
                       </template>
                       <div class="text-sm">
-                        • 勾选表示允许转换为该币种进行提现<br/>
-                        • 若某种数字货币全部不勾选，则不显示该提现方式<br/>
-                        • 至少需要勾选一种货币，会员才能看到数字货币提现选项<br/>
-                        • <span class="text-red-500">不推荐开启过多币种，可能增加刷钱或洗钱风险</span>
+                        • 勾选表示允许转换为该币种进行提现<br />
+                        • 若某种数字货币全部不勾选，则不显示该提现方式<br />
+                        • 至少需要勾选一种货币，会员才能看到数字货币提现选项<br />
+                        •
+                        <span class="text-red-500"
+                          >不推荐开启过多币种，可能增加刷钱或洗钱风险</span
+                        >
                       </div>
                     </n-alert>
-                    
+
                     <div class="digital-currency-grid">
-                      <div 
-                        v-for="currency in digitalCurrencies" 
+                      <div
+                        v-for="currency in digitalCurrencies"
                         :key="currency.value"
                         class="currency-item"
                       >
-            <n-checkbox 
-                          v-model:checked="formData.allowedDigitalCurrencies[currency.value]"
+                        <n-checkbox
+                          v-model:checked="
+                            formData.allowedDigitalCurrencies[currency.value]
+                          "
                           class="currency-checkbox"
-            >
+                        >
                           <div class="currency-info">
-                            <div class="currency-name">{{ currency.label }}</div>
-                            <div class="currency-desc">{{ currency.description }}</div>
+                            <div class="currency-name">
+                              {{ currency.label }}
+                            </div>
+                            <div class="currency-desc">
+                              {{ currency.description }}
+                            </div>
                           </div>
-            </n-checkbox>
+                        </n-checkbox>
                       </div>
                     </div>
-            </div>
-          </n-form-item>
+                  </div>
+                </n-form-item>
 
                 <!-- 提现精确模式 -->
                 <n-form-item label="提现精确模式">
@@ -531,7 +612,7 @@
                     </n-button>
                     <n-text depth="3">控制数字货币提现的精度计算方式</n-text>
                   </div>
-          </n-form-item>
+                </n-form-item>
               </div>
             </n-form>
           </div>
@@ -545,7 +626,7 @@
               <span>会员限制</span>
             </div>
           </template>
-          
+
           <div class="tab-content">
             <n-form
               ref="restrictionsFormRef"
@@ -568,7 +649,7 @@
                     />
                     <n-text depth="3">指定的会员层级将禁止发起提现申请</n-text>
                   </div>
-          </n-form-item>
+                </n-form-item>
               </div>
 
               <!-- 首次提现限制 -->
@@ -582,11 +663,11 @@
                       <div class="header-item">首次提现要求最高提现</div>
                       <div class="header-item">操作</div>
                     </div>
-                    
+
                     <div class="rules-list">
-                      <div 
-                        v-for="(rule, index) in formData.firstWithdrawalRules" 
-                        :key="index" 
+                      <div
+                        v-for="(rule, index) in formData.firstWithdrawalRules"
+                        :key="index"
                         class="rule-item"
                       >
                         <div class="rule-field">
@@ -598,22 +679,22 @@
                           />
                         </div>
                         <div class="rule-field">
-            <n-input
+                          <n-input
                             v-model:value="rule.minRecharge"
                             placeholder="R$ 请输入最低充值金额"
                             size="small"
                           />
                         </div>
                         <div class="rule-field">
-            <n-input
+                          <n-input
                             v-model:value="rule.maxWithdrawal"
                             placeholder="R$ 请输入最高提现金额"
                             size="small"
                           />
                         </div>
                         <div class="rule-actions">
-                          <n-button 
-                            size="small" 
+                          <n-button
+                            size="small"
                             @click="addFirstWithdrawalRule"
                             type="primary"
                             circle
@@ -622,8 +703,8 @@
                               <n-icon><SaveOutline /></n-icon>
                             </template>
                           </n-button>
-                          <n-button 
-                            size="small" 
+                          <n-button
+                            size="small"
                             @click="removeFirstWithdrawalRule(index)"
                             type="error"
                             circle
@@ -636,9 +717,9 @@
                         </div>
                       </div>
                     </div>
-                    
+
                     <div class="rules-footer">
-                      <n-button 
+                      <n-button
                         @click="addFirstWithdrawalRule"
                         ghost
                         size="small"
@@ -650,29 +731,29 @@
                       </n-button>
                     </div>
                   </div>
-          </n-form-item>
+                </n-form-item>
               </div>
             </n-form>
           </div>
         </n-tab-pane>
       </n-tabs>
-        </div>
+    </div>
   </n-modal>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue';
-import { 
-  NModal, 
+import {
+  NModal,
   NTabs,
   NTabPane,
-  NForm, 
-  NFormItem, 
-  NButton, 
-  NRadioGroup, 
-  NRadio, 
-  NInputNumber, 
-  NSpace, 
+  NForm,
+  NFormItem,
+  NButton,
+  NRadioGroup,
+  NRadio,
+  NInputNumber,
+  NSpace,
   NText,
   NCheckbox,
   NSelect,
@@ -681,9 +762,9 @@ import {
   NTag,
   NIcon,
   useMessage,
-  type FormInst
+  type FormInst,
 } from 'naive-ui';
-import { 
+import {
   CloseOutline,
   SaveOutline,
   InformationCircleOutline,
@@ -694,7 +775,7 @@ import {
   SwapHorizontalOutline,
   BusinessOutline,
   WalletOutline,
-  LockClosedOutline
+  LockClosedOutline,
 } from '@vicons/ionicons5';
 // Note: Using native HTML5 drag and drop instead of external library
 import { withdrawalSettingsApi } from '#/api/finance/withdrawalSettings';
@@ -715,13 +796,13 @@ interface WithdrawalSettings {
   maxAmount: number;
   minAmount: number;
   processingTime: string;
-  
+
   // Interface Settings
   frontendTaskDisplayEnabled: boolean;
   cpfValidationMode: 'disabled' | 'format_only' | 'third_party';
   memberConcurrentWithdrawals: number;
   withdrawalTabOrder: WithdrawalTab[];
-  
+
   // Business Rules
   paymentValidityHours: number;
   feeRoundingMode: 'down' | 'up';
@@ -748,12 +829,12 @@ interface Props {
 
 interface Emits {
   'update:visible': [visible: boolean];
-  'success': [];
+  success: [];
 }
 
 const props = withDefaults(defineProps<Props>(), {
   visible: false,
-  editData: null
+  editData: null,
 });
 
 const emit = defineEmits<Emits>();
@@ -768,12 +849,20 @@ const activeTab = ref('interface');
 
 // Digital currencies configuration
 const digitalCurrencies = [
-  { label: 'USDT-TRC20', value: 'USDT_TRC20', description: 'Tether USD on TRON network' },
-  { label: 'USDT-ERC20', value: 'USDT_ERC20', description: 'Tether USD on Ethereum network' },
+  {
+    label: 'USDT-TRC20',
+    value: 'USDT_TRC20',
+    description: 'Tether USD on TRON network',
+  },
+  {
+    label: 'USDT-ERC20',
+    value: 'USDT_ERC20',
+    description: 'Tether USD on Ethereum network',
+  },
   { label: 'USDC', value: 'USDC', description: 'USD Coin' },
   { label: 'TRX', value: 'TRX', description: 'TRON native token' },
   { label: 'BTC', value: 'BTC', description: 'Bitcoin' },
-  { label: 'ETH', value: 'ETH', description: 'Ethereum' }
+  { label: 'ETH', value: 'ETH', description: 'Ethereum' },
 ];
 
 const memberLevelOptions = [
@@ -782,7 +871,7 @@ const memberLevelOptions = [
   { label: 'VIP2', value: 'vip2' },
   { label: 'VIP3', value: 'vip3' },
   { label: 'VIP4', value: 'vip4' },
-  { label: 'VIP5', value: 'vip5' }
+  { label: 'VIP5', value: 'vip5' },
 ];
 
 // Default withdrawal tab order (SOP)
@@ -793,7 +882,7 @@ const defaultWithdrawalTabs: WithdrawalTab[] = [
     description: '无需钱包地址的快速提现方式',
     enabled: true,
     order: 1,
-    type: 'no_wallet'
+    type: 'no_wallet',
   },
   {
     id: 'normal',
@@ -801,7 +890,7 @@ const defaultWithdrawalTabs: WithdrawalTab[] = [
     description: '传统银行转账提现方式',
     enabled: true,
     order: 2,
-    type: 'normal'
+    type: 'normal',
   },
   {
     id: 'digital',
@@ -809,7 +898,7 @@ const defaultWithdrawalTabs: WithdrawalTab[] = [
     description: '提现为USDT等数字货币',
     enabled: true,
     order: 3,
-    type: 'digital'
+    type: 'digital',
   },
   {
     id: 'third_party',
@@ -817,8 +906,8 @@ const defaultWithdrawalTabs: WithdrawalTab[] = [
     description: '第三方支付钱包提现',
     enabled: true,
     order: 4,
-    type: 'third_party'
-  }
+    type: 'third_party',
+  },
 ];
 
 // Default form data
@@ -829,13 +918,13 @@ const defaultFormData: WithdrawalSettings = {
   maxAmount: 50000,
   minAmount: 100,
   processingTime: '1-3个工作日',
-  
+
   // Interface Settings
   frontendTaskDisplayEnabled: false,
   cpfValidationMode: 'format_only',
   memberConcurrentWithdrawals: 1,
   withdrawalTabOrder: [...defaultWithdrawalTabs],
-  
+
   // Business Rules
   paymentValidityHours: 24,
   feeRoundingMode: 'down',
@@ -853,15 +942,15 @@ const defaultFormData: WithdrawalSettings = {
     USDC: false,
     TRX: false,
     BTC: false,
-    ETH: false
+    ETH: false,
   },
   firstWithdrawalRules: [
     {
       memberLevel: 'default',
       minRecharge: 'R$ 0.00',
-      maxWithdrawal: 'R$ 0.00'
-    }
-  ]
+      maxWithdrawal: 'R$ 0.00',
+    },
+  ],
 };
 
 const formData = reactive<WithdrawalSettings>({ ...defaultFormData });
@@ -891,23 +980,27 @@ const onDragOver = (event: DragEvent) => {
 
 const onDrop = (event: DragEvent, dropIndex: number) => {
   event.preventDefault();
-  
-  if (draggedIndex !== -1 && draggedIndex !== dropIndex && formData.withdrawalTabOrder) {
+
+  if (
+    draggedIndex !== -1 &&
+    draggedIndex !== dropIndex &&
+    formData.withdrawalTabOrder
+  ) {
     const draggedItem = formData.withdrawalTabOrder[draggedIndex];
-    
+
     if (draggedItem) {
       // Remove the dragged item
       formData.withdrawalTabOrder.splice(draggedIndex, 1);
-      
+
       // Insert at new position
       const insertIndex = draggedIndex < dropIndex ? dropIndex - 1 : dropIndex;
       formData.withdrawalTabOrder.splice(insertIndex, 0, draggedItem);
-      
+
       // Update order numbers
       formData.withdrawalTabOrder.forEach((tab, index) => {
         tab.order = index + 1;
       });
-      
+
       message.success('提现页签排序已更新');
     }
   }
@@ -928,7 +1021,7 @@ const addFirstWithdrawalRule = () => {
   formData.firstWithdrawalRules.push({
     memberLevel: '',
     minRecharge: 'R$ 0.00',
-    maxWithdrawal: 'R$ 0.00'
+    maxWithdrawal: 'R$ 0.00',
   });
   message.success('已添加新的首次提现规则');
 };
@@ -948,19 +1041,19 @@ const handleCancel = () => {
 const handleSave = async () => {
   try {
     saving.value = true;
-    
+
     // Validate all forms with better error handling
     const forms = [
-      { name: 'interface', ref: interfaceFormRef.value }, 
-      { name: 'security', ref: securityFormRef.value }, 
-      { name: 'workflow', ref: workflowFormRef.value }, 
-      { name: 'business', ref: businessFormRef.value }, 
-      { name: 'digital', ref: digitalFormRef.value }, 
-      { name: 'restrictions', ref: restrictionsFormRef.value }
+      { name: 'interface', ref: interfaceFormRef.value },
+      { name: 'security', ref: securityFormRef.value },
+      { name: 'workflow', ref: workflowFormRef.value },
+      { name: 'business', ref: businessFormRef.value },
+      { name: 'digital', ref: digitalFormRef.value },
+      { name: 'restrictions', ref: restrictionsFormRef.value },
     ];
-    
+
     console.log('🔍 Starting form validation...');
-    
+
     // Validate each form individually to identify which one fails
     for (const form of forms) {
       if (form.ref?.validate) {
@@ -968,23 +1061,28 @@ const handleSave = async () => {
           await form.ref.validate();
           console.log(`✅ ${form.name} form validation passed`);
         } catch (validationError) {
-          console.error(`❌ ${form.name} form validation failed:`, validationError);
+          console.error(
+            `❌ ${form.name} form validation failed:`,
+            validationError,
+          );
           message.error(`${form.name} 表单验证失败，请检查输入`);
           return; // Stop here, don't proceed with API call
         }
       } else {
-        console.log(`⚠️ ${form.name} form ref not available, skipping validation`);
+        console.log(
+          `⚠️ ${form.name} form ref not available, skipping validation`,
+        );
       }
     }
-    
+
     console.log('✅ All form validations passed, proceeding with API call...');
-    
+
     // Prepare data with required fields - exclude backend-only fields
-    const { 
-      id, 
-      createdAt, 
-      updatedAt, 
-      createdBy, 
+    const {
+      id,
+      createdAt,
+      updatedAt,
+      createdBy,
       updatedBy,
       withdrawalQueueSortBy,
       queueSortOrder,
@@ -1003,18 +1101,18 @@ const handleSave = async () => {
       pixAllowedBindingTypes,
       pixAccountQuantityLimit,
       pixBindingEnabled,
-      ...cleanFormData 
+      ...cleanFormData
     } = formData;
-    
+
     const saveData = cleanFormData;
-    
+
     console.log('📤 Sending data to API:', saveData);
-    
+
     // Save to database
     const response = await withdrawalSettingsApi.saveSettings(saveData as any);
-    
+
     console.log('📥 API response received:', response);
-    
+
     if (response.success) {
       console.log('✅ Settings saved successfully, closing modal...');
       message.success('提现设置保存成功');
@@ -1027,24 +1125,27 @@ const handleSave = async () => {
     }
   } catch (error: any) {
     console.error('Save settings error:', error);
-    
+
     // Check if this is actually a successful response being thrown as an error
     if (error && typeof error === 'object' && error.success === true) {
-      console.log('🔧 Detected successful response in error - treating as success');
-      console.log('✅ Settings saved successfully (from error handler), closing modal...');
+      console.log(
+        '🔧 Detected successful response in error - treating as success',
+      );
+      console.log(
+        '✅ Settings saved successfully (from error handler), closing modal...',
+      );
       message.success('提现设置保存成功');
       emit('success');
       emit('update:visible', false);
       console.log('✅ Modal close event emitted (from error handler)');
       return;
     }
-    
+
     message.error('保存设置失败');
   } finally {
     saving.value = false;
   }
 };
-
 
 // Load existing settings
 const loadSettings = async () => {
@@ -1059,26 +1160,37 @@ const loadSettings = async () => {
 };
 
 // Watch for edit data changes
-watch(() => props.editData, (newData) => {
-  if (newData) {
-    Object.assign(formData, newData);
-  }
-}, { immediate: true });
+watch(
+  () => props.editData,
+  (newData) => {
+    if (newData) {
+      Object.assign(formData, newData);
+    }
+  },
+  { immediate: true },
+);
 
 // Watch for modal visibility to load settings
-watch(() => props.visible, (visible) => {
-  if (visible) {
-    activeTab.value = 'interface'; // Reset to first tab when opening
-    if (!props.editData) {
-      loadSettings();
+watch(
+  () => props.visible,
+  (visible) => {
+    if (visible) {
+      activeTab.value = 'interface'; // Reset to first tab when opening
+      if (!props.editData) {
+        loadSettings();
+      }
     }
-  }
-});
+  },
+);
 
 // Update fee example based on rounding mode
-watch(() => formData.feeRoundingMode, (mode) => {
-  formData.feeExample = mode === 'down' ? '10.01向下取整后等于10' : '10.01向上取整后等于11';
-});
+watch(
+  () => formData.feeRoundingMode,
+  (mode) => {
+    formData.feeExample =
+      mode === 'down' ? '10.01向下取整后等于10' : '10.01向上取整后等于11';
+  },
+);
 </script>
 
 <style scoped>
@@ -1321,27 +1433,27 @@ watch(() => formData.feeRoundingMode, (mode) => {
   .withdrawal-settings-container {
     max-height: calc(90vh - 100px);
   }
-  
+
   .settings-header .flex {
     flex-direction: column;
     gap: 12px;
-  align-items: flex-start;
-}
+    align-items: flex-start;
+  }
 
   .form-section {
     padding: 12px;
     margin-bottom: 16px;
   }
-  
+
   .tab-item-content {
     padding: 10px;
     gap: 8px;
   }
-  
+
   .tab-info {
     gap: 8px;
   }
-  
+
   .tab-order-number {
     width: 20px;
     height: 20px;
@@ -1489,23 +1601,23 @@ watch(() => formData.feeRoundingMode, (mode) => {
   .digital-currency-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .rules-header,
   .rule-item {
     grid-template-columns: 1fr;
     gap: 8px;
   }
-  
+
   .header-item {
     text-align: center;
     padding: 8px 0;
     border-bottom: 1px solid #e5e7eb;
   }
-  
+
   .rule-field {
     justify-content: center;
   }
-  
+
   .rule-actions {
     justify-content: center;
     margin-top: 8px;
@@ -1545,12 +1657,12 @@ watch(() => formData.feeRoundingMode, (mode) => {
 }
 
 /* Highlight important sections */
-.n-form-item:has([label*="黑名单"]) :deep(.n-form-item-label) {
+.n-form-item:has([label*='黑名单']) :deep(.n-form-item-label) {
   color: #d03050;
   font-weight: 600;
 }
 
-.n-form-item:has([label*="数字货币"]) :deep(.n-form-item-label) {
+.n-form-item:has([label*='数字货币']) :deep(.n-form-item-label) {
   color: #f0a020;
   font-weight: 600;
 }

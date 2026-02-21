@@ -2,39 +2,64 @@
   <Page title="有奖反馈管理" description="管理用户提交的反馈和建议">
     <div class="feedback-management">
       <!-- Tab Navigation -->
-      <n-tabs v-model:value="activeTab" type="line" class="mb-4" @update:value="handleTabChange">
+      <n-tabs
+        v-model:value="activeTab"
+        type="line"
+        class="mb-4"
+        @update:value="handleTabChange"
+      >
         <n-tab-pane name="pending" tab="待处理">
           <template #tab>
             <span class="flex items-center gap-2">
               待处理
-              <n-badge :value="tabCounts.pending" :max="99" type="warning" v-if="tabCounts.pending > 0" />
+              <n-badge
+                :value="tabCounts.pending"
+                :max="99"
+                type="warning"
+                v-if="tabCounts.pending > 0"
+              />
             </span>
           </template>
         </n-tab-pane>
-        
+
         <n-tab-pane name="approved" tab="已采纳">
           <template #tab>
             <span class="flex items-center gap-2">
               已采纳
-              <n-badge :value="tabCounts.approved" :max="99" type="success" v-if="tabCounts.approved > 0" />
+              <n-badge
+                :value="tabCounts.approved"
+                :max="99"
+                type="success"
+                v-if="tabCounts.approved > 0"
+              />
             </span>
           </template>
         </n-tab-pane>
-        
+
         <n-tab-pane name="rejected" tab="已忽略">
           <template #tab>
             <span class="flex items-center gap-2">
               已忽略
-              <n-badge :value="tabCounts.rejected" :max="99" type="error" v-if="tabCounts.rejected > 0" />
+              <n-badge
+                :value="tabCounts.rejected"
+                :max="99"
+                type="error"
+                v-if="tabCounts.rejected > 0"
+              />
             </span>
           </template>
         </n-tab-pane>
-        
+
         <n-tab-pane name="all" tab="全部反馈">
           <template #tab>
             <span class="flex items-center gap-2">
               全部反馈
-              <n-badge :value="tabCounts.all" :max="999" type="info" v-if="tabCounts.all > 0" />
+              <n-badge
+                :value="tabCounts.all"
+                :max="999"
+                type="info"
+                v-if="tabCounts.all > 0"
+              />
             </span>
           </template>
         </n-tab-pane>
@@ -51,7 +76,7 @@
             clearable
             :options="statusOptions"
           />
-          
+
           <!-- Search -->
           <n-input
             v-model:value="filterForm.search"
@@ -124,7 +149,9 @@
               {{ currentFeedback.id }}
             </n-descriptions-item>
             <n-descriptions-item label="用户账号">
-              {{ currentFeedback.user?.account || currentFeedback.user?.userID }}
+              {{
+                currentFeedback.user?.account || currentFeedback.user?.userID
+              }}
             </n-descriptions-item>
             <n-descriptions-item label="反馈类型">
               {{ currentFeedback.feedbackType }}
@@ -138,7 +165,9 @@
               </n-tag>
             </n-descriptions-item>
             <n-descriptions-item label="奖励金额" v-if="currentFeedback.reward">
-              {{ currentFeedback.reward }} ({{ currentFeedback.rewardGiven ? '已发放' : '未发放' }})
+              {{ currentFeedback.reward }} ({{
+                currentFeedback.rewardGiven ? '已发放' : '未发放'
+              }})
             </n-descriptions-item>
           </n-descriptions>
 
@@ -148,7 +177,11 @@
           </n-card>
 
           <!-- Attachments -->
-          <n-card title="附件" class="mb-4" v-if="currentFeedback.images?.length > 0">
+          <n-card
+            title="附件"
+            class="mb-4"
+            v-if="currentFeedback.images?.length > 0"
+          >
             <n-space>
               <n-image
                 v-for="(img, idx) in currentFeedback.images"
@@ -164,7 +197,10 @@
           <!-- Admin Reply -->
           <n-card title="管理员回复" v-if="currentFeedback.adminReply">
             <p class="whitespace-pre-wrap">{{ currentFeedback.adminReply }}</p>
-            <div class="mt-2 text-sm text-gray-500" v-if="currentFeedback.repliedAt">
+            <div
+              class="mt-2 text-sm text-gray-500"
+              v-if="currentFeedback.repliedAt"
+            >
               回复时间: {{ formatDateTime(currentFeedback.repliedAt) }}
             </div>
           </n-card>
@@ -194,7 +230,11 @@
             />
           </n-form-item>
 
-          <n-form-item label="奖励金额" path="reward" v-if="replyForm.status === 'APPROVED'">
+          <n-form-item
+            label="奖励金额"
+            path="reward"
+            v-if="replyForm.status === 'APPROVED'"
+          >
             <n-input-number
               v-model:value="replyForm.reward"
               placeholder="输入奖励金额"
@@ -221,7 +261,11 @@
         <template #footer>
           <div class="flex justify-end gap-2">
             <n-button @click="showReplyModal = false">取消</n-button>
-            <n-button type="primary" :loading="modalLoading" @click="handleSubmitReply">
+            <n-button
+              type="primary"
+              :loading="modalLoading"
+              @click="handleSubmitReply"
+            >
               提交
             </n-button>
           </div>
@@ -264,12 +308,26 @@ import {
   type FormInst,
   type FormRules,
 } from 'naive-ui';
-import { SearchOutline, RefreshOutline, EyeOutline, CheckmarkCircleOutline, CloseCircleOutline } from '@vicons/ionicons5';
+import {
+  SearchOutline,
+  RefreshOutline,
+  EyeOutline,
+  CheckmarkCircleOutline,
+  CloseCircleOutline,
+} from '@vicons/ionicons5';
 import { Page } from '@vben/common-ui';
-import { feedbackApi, getStatusLabel, getStatusType, type Feedback, type FeedbackStatus } from '#/api/operations/feedback';
+import {
+  feedbackApi,
+  getStatusLabel,
+  getStatusType,
+  type Feedback,
+  type FeedbackStatus,
+} from '#/api/operations/feedback';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 import { defineAsyncComponent } from 'vue';
-const UserDetailModal = defineAsyncComponent(() => import('#/components/user/UserDetailModal.vue'));
+const UserDetailModal = defineAsyncComponent(
+  () => import('#/components/user/UserDetailModal.vue'),
+);
 import { formatDateTime } from '#/utils/format';
 
 // Message
@@ -366,7 +424,11 @@ const columns: DataTableColumns<Feedback> = [
     key: 'feedbackType',
     width: 120,
     render: (row) => {
-      return h(NTag, { type: 'info', size: 'small' }, { default: () => row.feedbackType });
+      return h(
+        NTag,
+        { type: 'info', size: 'small' },
+        { default: () => row.feedbackType },
+      );
     },
   },
   {
@@ -392,7 +454,7 @@ const columns: DataTableColumns<Feedback> = [
           class: 'text-blue-500 hover:underline cursor-pointer',
           onClick: () => handleViewUser(row.userId),
         },
-        row.user?.account || row.user?.userID || '-'
+        row.user?.account || row.user?.userID || '-',
       );
     },
   },
@@ -416,7 +478,10 @@ const columns: DataTableColumns<Feedback> = [
     width: 100,
     render: (row) => {
       // Categorize based on content or type
-      return row.feedbackType.includes('问题') || row.feedbackType.includes('建议') ? '提现问题' : '其他问题';
+      return row.feedbackType.includes('问题') ||
+        row.feedbackType.includes('建议')
+        ? '提现问题'
+        : '其他问题';
     },
   },
   {
@@ -436,7 +501,7 @@ const columns: DataTableColumns<Feedback> = [
           class: 'text-blue-500 hover:underline cursor-pointer',
           onClick: () => handleViewDetail(row),
         },
-        `${fileName} (${count})`
+        `${fileName} (${count})`,
       );
     },
   },
@@ -448,7 +513,7 @@ const columns: DataTableColumns<Feedback> = [
       return h(
         NTag,
         { type: getStatusType(row.status) },
-        { default: () => getStatusLabel(row.status) }
+        { default: () => getStatusLabel(row.status) },
       );
     },
   },
@@ -468,16 +533,17 @@ const columns: DataTableColumns<Feedback> = [
               class: 'text-blue-500 hover:underline cursor-pointer text-sm',
               onClick: () => handleViewDetail(row),
             },
-            '详情'
+            '详情',
           ),
           row.status === 'PENDING' || row.status === 'IN_REVIEW'
             ? h(
                 'a',
                 {
-                  class: 'text-green-500 hover:underline cursor-pointer text-sm',
+                  class:
+                    'text-green-500 hover:underline cursor-pointer text-sm',
                   onClick: () => handleApprove(row),
                 },
-                '采纳'
+                '采纳',
               )
             : null,
           h(
@@ -486,9 +552,9 @@ const columns: DataTableColumns<Feedback> = [
               class: 'text-blue-500 hover:underline cursor-pointer text-sm',
               onClick: () => handleViewDetail(row),
             },
-            '查看'
+            '查看',
           ),
-        ].filter(Boolean)
+        ].filter(Boolean),
       );
     },
   },
@@ -646,7 +712,10 @@ async function handleSubmitReply() {
       params.reward = replyForm.reward;
     }
 
-    const response = await feedbackApi.updateStatus(currentFeedback.value.id, params);
+    const response = await feedbackApi.updateStatus(
+      currentFeedback.value.id,
+      params,
+    );
 
     if (response.success) {
       message.success('处理成功');
@@ -696,4 +765,3 @@ onMounted(() => {
   padding: 8px 12px;
 }
 </style>
-

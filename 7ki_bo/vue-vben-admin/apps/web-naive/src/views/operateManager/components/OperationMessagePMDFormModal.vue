@@ -25,7 +25,7 @@
                 :options="languageOptions"
               />
             </n-form-item>
-            
+
             <n-form-item label="币种" path="currency">
               <n-select
                 v-model:value="formData.currency"
@@ -33,7 +33,7 @@
                 :options="currencyOptions"
               />
             </n-form-item>
-            
+
             <n-form-item label="收件人类型" path="receiverType">
               <n-select
                 v-model:value="formData.receiverType"
@@ -41,7 +41,7 @@
                 :options="receiverTypeOptions"
               />
             </n-form-item>
-            
+
             <n-form-item label="展示状态" path="displayStatus">
               <n-select
                 v-model:value="formData.displayStatus"
@@ -49,7 +49,7 @@
                 :options="displayStatusOptions"
               />
             </n-form-item>
-            
+
             <n-form-item label="排序" path="sortOrder">
               <n-input-number
                 v-model:value="formData.sortOrder"
@@ -58,7 +58,7 @@
                 :max="9999"
               />
             </n-form-item>
-            
+
             <n-form-item label="停留时间(秒)" path="displayDuration">
               <n-input-number
                 v-model:value="formData.displayDuration"
@@ -68,7 +68,7 @@
               />
             </n-form-item>
           </div>
-          
+
           <n-form-item label="通知内容" path="content">
             <n-input
               v-model:value="formData.content"
@@ -98,7 +98,7 @@
                 style="width: 100%"
               />
             </n-form-item>
-            
+
             <n-form-item label="结束时间" path="endTime">
               <n-date-picker
                 v-model:value="formData.endTime"
@@ -108,10 +108,10 @@
               />
             </n-form-item>
           </div>
-          
+
           <!-- 时间预设选项 -->
           <div class="mb-4">
-            <label class="text-sm font-medium mb-2 block">快速设置</label>
+            <label class="mb-2 block text-sm font-medium">快速设置</label>
             <n-space>
               <n-button size="small" @click="setTimeRange(1)">1小时</n-button>
               <n-button size="small" @click="setTimeRange(6)">6小时</n-button>
@@ -120,7 +120,7 @@
               <n-button size="small" @click="setTimeRange(720)">30天</n-button>
             </n-space>
           </div>
-          
+
           <n-alert type="info" :show-icon="false">
             <template #header>
               <span class="font-medium">时间说明</span>
@@ -150,21 +150,21 @@
                 :options="scrollSpeedOptions"
               />
             </n-form-item>
-            
+
             <n-form-item label="文字颜色">
               <n-color-picker
                 v-model:value="formData.textColor"
                 :show-alpha="false"
               />
             </n-form-item>
-            
+
             <n-form-item label="背景颜色">
               <n-color-picker
                 v-model:value="formData.backgroundColor"
                 :show-alpha="false"
               />
             </n-form-item>
-            
+
             <n-form-item label="显示位置">
               <n-select
                 v-model:value="formData.position"
@@ -173,16 +173,16 @@
               />
             </n-form-item>
           </div>
-          
+
           <n-form-item label="预览效果">
-            <div 
+            <div
               class="preview-container"
               :style="{
                 backgroundColor: formData.backgroundColor,
                 color: formData.textColor,
                 padding: '10px',
                 borderRadius: '4px',
-                border: '1px solid #e0e0e6'
+                border: '1px solid #e0e0e6',
               }"
             >
               <div class="marquee-text">
@@ -205,14 +205,16 @@
             <n-checkbox-group v-model:value="formData.userConditions">
               <n-space vertical>
                 <n-checkbox value="new_user">新用户（注册7天内）</n-checkbox>
-                <n-checkbox value="active_user">活跃用户（7天内有登录）</n-checkbox>
+                <n-checkbox value="active_user"
+                  >活跃用户（7天内有登录）</n-checkbox
+                >
                 <n-checkbox value="vip_user">VIP用户</n-checkbox>
                 <n-checkbox value="deposit_user">充值用户</n-checkbox>
                 <n-checkbox value="no_deposit_user">未充值用户</n-checkbox>
               </n-space>
             </n-checkbox-group>
           </n-form-item>
-          
+
           <n-form-item label="显示优先级">
             <n-select
               v-model:value="formData.priority"
@@ -220,7 +222,7 @@
               :options="priorityOptions"
             />
           </n-form-item>
-          
+
           <n-form-item label="点击行为">
             <n-select
               v-model:value="formData.clickAction"
@@ -228,14 +230,17 @@
               :options="clickActionOptions"
             />
           </n-form-item>
-          
-          <n-form-item v-if="formData.clickAction === 'redirect'" label="跳转链接">
+
+          <n-form-item
+            v-if="formData.clickAction === 'redirect'"
+            label="跳转链接"
+          >
             <n-input
               v-model:value="formData.redirectUrl"
               placeholder="输入跳转链接"
             />
           </n-form-item>
-          
+
           <n-form-item label="状态">
             <n-switch
               v-model:value="formData.enabled"
@@ -246,7 +251,7 @@
               <template #unchecked>停用</template>
             </n-switch>
           </n-form-item>
-          
+
           <n-form-item label="后台备注">
             <n-input
               v-model:value="formData.remark"
@@ -273,12 +278,31 @@
 <script setup lang="ts">
 import { ref, computed, watch, nextTick } from 'vue';
 import {
-  NModal, NTabs, NTabPane, NForm, NFormItem, NInput, NInputNumber,
-  NSelect, NDatePicker, NColorPicker, NCheckboxGroup, NCheckbox,
-  NSwitch, NButton, NSpace, NAlert, useMessage,
-  type FormInst, type FormRules
+  NModal,
+  NTabs,
+  NTabPane,
+  NForm,
+  NFormItem,
+  NInput,
+  NInputNumber,
+  NSelect,
+  NDatePicker,
+  NColorPicker,
+  NCheckboxGroup,
+  NCheckbox,
+  NSwitch,
+  NButton,
+  NSpace,
+  NAlert,
+  useMessage,
+  type FormInst,
+  type FormRules,
 } from 'naive-ui';
-import { createPMD, updatePMD, type PMDMessage } from '#/api/operationMessagePMD';
+import {
+  createPMD,
+  updatePMD,
+  type PMDMessage,
+} from '#/api/operationMessagePMD';
 
 // Props
 interface Props {
@@ -294,7 +318,7 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   show: false,
-  editingItem: null
+  editingItem: null,
 });
 
 const emit = defineEmits<Emits>();
@@ -302,7 +326,7 @@ const emit = defineEmits<Emits>();
 // 响应式数据
 const modalShow = computed({
   get: () => props.show,
-  set: (val) => emit('update:show', val)
+  set: (val) => emit('update:show', val),
 });
 
 const activeTab = ref('basic');
@@ -335,7 +359,7 @@ const formData = ref({
   clickAction: 'none',
   redirectUrl: '',
   enabled: true,
-  remark: ''
+  remark: '',
 });
 
 // 计算属性
@@ -347,7 +371,7 @@ const languageOptions = [
   { label: '英文', value: 'en-US' },
   { label: '葡语', value: 'pt-BR' },
   { label: '西班牙语', value: 'es-ES' },
-  { label: '日语', value: 'ja-JP' }
+  { label: '日语', value: 'ja-JP' },
 ];
 
 const currencyOptions = [
@@ -355,69 +379,70 @@ const currencyOptions = [
   { label: 'CNY', value: 'CNY' },
   { label: 'USD', value: 'USD' },
   { label: 'EUR', value: 'EUR' },
-  { label: 'JPY', value: 'JPY' }
+  { label: 'JPY', value: 'JPY' },
 ];
 
 const receiverTypeOptions = [
   { label: '全部用户', value: 'all' },
   { label: '会员层级', value: 'vip' },
   { label: '新用户', value: 'new' },
-  { label: '活跃用户', value: 'active' }
+  { label: '活跃用户', value: 'active' },
 ];
 
 const displayStatusOptions = [
   { label: '登录前', value: 'before_login' },
   { label: '登录后', value: 'after_login' },
-  { label: '登录前后', value: 'both' }
+  { label: '登录前后', value: 'both' },
 ];
 
 const scrollSpeedOptions = [
   { label: '慢速', value: 'slow' },
   { label: '中速', value: 'medium' },
-  { label: '快速', value: 'fast' }
+  { label: '快速', value: 'fast' },
 ];
 
 const positionOptions = [
   { label: '顶部', value: 'top' },
   { label: '底部', value: 'bottom' },
-  { label: '中部', value: 'center' }
+  { label: '中部', value: 'center' },
 ];
 
 const priorityOptions = [
   { label: '低', value: 'low' },
   { label: '普通', value: 'normal' },
   { label: '高', value: 'high' },
-  { label: '紧急', value: 'urgent' }
+  { label: '紧急', value: 'urgent' },
 ];
 
 const clickActionOptions = [
   { label: '无操作', value: 'none' },
   { label: '页面跳转', value: 'redirect' },
-  { label: '弹出详情', value: 'popup' }
+  { label: '弹出详情', value: 'popup' },
 ];
 
 // 表单验证规则
 const basicRules: FormRules = {
-  language: [
-    { required: true, message: '请选择语言', trigger: 'change' }
-  ],
-  currency: [
-    { required: true, message: '请选择币种', trigger: 'change' }
-  ],
+  language: [{ required: true, message: '请选择语言', trigger: 'change' }],
+  currency: [{ required: true, message: '请选择币种', trigger: 'change' }],
   receiverType: [
-    { required: true, message: '请选择收件人类型', trigger: 'change' }
+    { required: true, message: '请选择收件人类型', trigger: 'change' },
   ],
   displayStatus: [
-    { required: true, message: '请选择展示状态', trigger: 'change' }
+    { required: true, message: '请选择展示状态', trigger: 'change' },
   ],
   content: [
     { required: true, message: '请输入通知内容', trigger: 'input' },
-    { min: 1, max: 500, message: '内容长度应在1-500字符之间', trigger: 'input' }
+    {
+      min: 1,
+      max: 500,
+      message: '内容长度应在1-500字符之间',
+      trigger: 'input',
+    },
   ],
   sortOrder: [
-    { 
-      required: true, 
-      message: '请输入排序数值', 
+    {
+      required: true,
+      message: '请输入排序数值',
       trigger: 'change',
       validator: (rule, value) => {
         if (value === null || value === undefined || value === '') {
@@ -427,13 +452,13 @@ const basicRules: FormRules = {
           return new Error('排序数值应在0-9999之间');
         }
         return true;
-      }
-    }
+      },
+    },
   ],
   displayDuration: [
-    { 
-      required: true, 
-      message: '请输入停留时间', 
+    {
+      required: true,
+      message: '请输入停留时间',
       trigger: 'change',
       validator: (rule, value) => {
         if (value === null || value === undefined || value === '') {
@@ -443,9 +468,9 @@ const basicRules: FormRules = {
           return new Error('停留时间应在1-3600秒之间');
         }
         return true;
-      }
-    }
-  ]
+      },
+    },
+  ],
 };
 
 const timeRules: FormRules = {
@@ -459,25 +484,25 @@ const timeRules: FormRules = {
         if (value === null || value === undefined || value === '') {
           return new Error('请选择开始时间');
         }
-        
+
         // Check if it's a valid number
         if (isNaN(value) || typeof value !== 'number') {
           return new Error('请选择有效的开始时间');
         }
-        
+
         // Check if it's a reasonable timestamp (within 1 year from now)
         const now = Date.now();
-        const oneYearFromNow = now + (365 * 24 * 60 * 60 * 1000);
-        const oneYearAgo = now - (365 * 24 * 60 * 60 * 1000);
-        
+        const oneYearFromNow = now + 365 * 24 * 60 * 60 * 1000;
+        const oneYearAgo = now - 365 * 24 * 60 * 60 * 1000;
+
         if (value < oneYearAgo || value > oneYearFromNow) {
           return new Error('开始时间应在合理范围内');
         }
-        
+
         return true;
-      }
-    }
-  ]
+      },
+    },
+  ],
 };
 
 // 方法
@@ -507,7 +532,7 @@ const resetForm = () => {
     clickAction: 'none',
     redirectUrl: '',
     enabled: true,
-    remark: ''
+    remark: '',
   };
   activeTab.value = 'basic';
 };
@@ -523,7 +548,7 @@ const handleModalClose = () => {
 const handleSubmit = async () => {
   try {
     console.log('Submitting form data:', formData.value);
-    
+
     // 验证基本表单
     if (basicFormRef.value) {
       try {
@@ -552,8 +577,10 @@ const handleSubmit = async () => {
       ...formData.value,
       status: formData.value.enabled ? 'enabled' : 'disabled',
       // 转换时间戳
-      startTime: formData.value.startTime ? new Date(formData.value.startTime) : null,
-      endTime: formData.value.endTime ? new Date(formData.value.endTime) : null
+      startTime: formData.value.startTime
+        ? new Date(formData.value.startTime)
+        : null,
+      endTime: formData.value.endTime ? new Date(formData.value.endTime) : null,
     };
 
     console.log('Submitting to API:', submitData);
@@ -573,11 +600,14 @@ const handleSubmit = async () => {
     modalShow.value = false;
   } catch (error) {
     console.error('Error submitting form:', error);
-    
+
     // Since the data is actually being created, we'll treat this as a success
     // but log the error for debugging
-    console.log('Data was created successfully, but response parsing failed:', error);
-    
+    console.log(
+      'Data was created successfully, but response parsing failed:',
+      error,
+    );
+
     message.success('创建成功');
     emit('success');
     modalShow.value = false;
@@ -601,7 +631,9 @@ watch(
           sortOrder: newItem.sortOrder || 1,
           displayDuration: newItem.displayDuration || 5,
           content: newItem.content,
-          startTime: newItem.startTime ? new Date(newItem.startTime).getTime() : null,
+          startTime: newItem.startTime
+            ? new Date(newItem.startTime).getTime()
+            : null,
           endTime: newItem.endTime ? new Date(newItem.endTime).getTime() : null,
           scrollSpeed: newItem.scrollSpeed || 'medium',
           textColor: newItem.textColor || '#ffffff',
@@ -612,7 +644,7 @@ watch(
           clickAction: newItem.clickAction || 'none',
           redirectUrl: newItem.redirectUrl || '',
           enabled: newItem.status === 'enabled',
-          remark: newItem.remark || ''
+          remark: newItem.remark || '',
         };
       });
     } else {
@@ -622,7 +654,7 @@ watch(
       });
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 // 监听模态框显示状态
@@ -635,7 +667,7 @@ watch(
         resetForm();
       });
     }
-  }
+  },
 );
 </script>
 
@@ -693,4 +725,4 @@ watch(
     transform: translateX(-100%);
   }
 }
-</style> 
+</style>

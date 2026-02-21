@@ -12,7 +12,7 @@
           <p>当前CDN: {{ domain.cdnProvider }}</p>
         </div>
       </n-alert>
-      
+
       <n-form
         ref="formRef"
         :model="formData"
@@ -27,7 +27,7 @@
             placeholder="请选择新的CDN提供商"
           />
         </n-form-item>
-        
+
         <n-form-item label="切换原因" path="reason">
           <n-input
             v-model:value="formData.reason"
@@ -38,7 +38,7 @@
         </n-form-item>
       </n-form>
     </n-space>
-    
+
     <template #action>
       <n-space>
         <n-button @click="showModal = false">取消</n-button>
@@ -73,7 +73,7 @@ const emit = defineEmits<{
 const message = useMessage();
 const showModal = computed({
   get: () => props.show,
-  set: (val) => emit('update:show', val)
+  set: (val) => emit('update:show', val),
 });
 
 const formRef = ref();
@@ -81,43 +81,43 @@ const submitting = ref(false);
 
 const formData = ref({
   newCdnProvider: null,
-  reason: ''
+  reason: '',
 });
 
 const cdnProviderOptions = [
   { label: 'Cloudflare', value: 'cloudflare' },
   { label: 'AWS CloudFront', value: 'aws' },
   { label: '阿里云', value: 'aliyun' },
-  { label: '腾讯云', value: 'tencent' }
+  { label: '腾讯云', value: 'tencent' },
 ];
 
 const rules = {
   newCdnProvider: {
     required: true,
     message: '请选择新的CDN提供商',
-    trigger: 'change'
+    trigger: 'change',
   },
   reason: {
     required: true,
     message: '请输入切换原因',
-    trigger: 'blur'
-  }
+    trigger: 'blur',
+  },
 };
 
 const handleSubmit = async () => {
   try {
     await formRef.value?.validate();
     submitting.value = true;
-    
+
     // TODO: Implement API call
     message.success('CDN切换成功');
     emit('success');
     showModal.value = false;
-    
+
     // Reset form
     formData.value = {
       newCdnProvider: null,
-      reason: ''
+      reason: '',
     };
   } catch (error) {
     console.error('Form validation failed:', error);
@@ -130,4 +130,3 @@ const handleSubmit = async () => {
 <style scoped lang="scss">
 // Add any custom styles here
 </style>
-

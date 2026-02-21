@@ -1,4 +1,4 @@
-import { ref, onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 
 export function useServiceWorker() {
   const isSupported = ref('serviceWorker' in navigator);
@@ -29,7 +29,6 @@ export function useServiceWorker() {
           });
         }
       });
-
     } catch (error) {
       console.error('Service Worker registration failed:', error);
     }
@@ -49,6 +48,6 @@ export function useServiceWorker() {
   return {
     isSupported,
     isRegistered,
-    clearCache
+    clearCache,
   };
-} 
+}

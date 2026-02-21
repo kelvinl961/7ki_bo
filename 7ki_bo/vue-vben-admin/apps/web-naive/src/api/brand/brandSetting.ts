@@ -49,12 +49,15 @@ export interface CreateBrandSettingRequest {
   remark?: string;
 }
 
-export interface UpdateBrandSettingRequest extends Partial<CreateBrandSettingRequest> {}
+export interface UpdateBrandSettingRequest
+  extends Partial<CreateBrandSettingRequest> {}
 
 /**
  * Get brand settings list
  */
-export async function getBrandSettingsApi(params: BrandSettingListParams = {}): Promise<BrandSettingListResponse> {
+export async function getBrandSettingsApi(
+  params: BrandSettingListParams = {},
+): Promise<BrandSettingListResponse> {
   return requestClient.get<BrandSettingListResponse>('/brand-settings', {
     params,
   });
@@ -70,14 +73,19 @@ export async function getBrandSettingApi(id: number): Promise<BrandSetting> {
 /**
  * Create brand setting
  */
-export async function createBrandSettingApi(data: CreateBrandSettingRequest): Promise<BrandSetting> {
+export async function createBrandSettingApi(
+  data: CreateBrandSettingRequest,
+): Promise<BrandSetting> {
   return requestClient.post<BrandSetting>('/brand-settings', data);
 }
 
 /**
  * Update brand setting
  */
-export async function updateBrandSettingApi(id: number, data: UpdateBrandSettingRequest): Promise<BrandSetting> {
+export async function updateBrandSettingApi(
+  id: number,
+  data: UpdateBrandSettingRequest,
+): Promise<BrandSetting> {
   return requestClient.put<BrandSetting>(`/brand-settings/${id}`, data);
 }
 
@@ -94,10 +102,10 @@ export async function deleteBrandSettingApi(id: number): Promise<void> {
 export async function uploadImageApi(file: File): Promise<{ url: string }> {
   const formData = new FormData();
   formData.append('file', file);
-  
+
   return requestClient.post<{ url: string }>('/upload/image', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
   });
-} 
+}

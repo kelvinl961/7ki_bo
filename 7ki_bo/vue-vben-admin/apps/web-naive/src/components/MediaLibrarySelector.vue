@@ -3,9 +3,9 @@
     <!-- Selected File Display -->
     <div v-if="modelValue" class="selected-file">
       <div class="file-preview">
-        <img 
-          v-if="showImagePreview" 
-          :src="getImageUrlByEnvironment(modelValue)" 
+        <img
+          v-if="showImagePreview"
+          :src="getImageUrlByEnvironment(modelValue)"
           :alt="selectedFileName"
           class="preview-image"
           @error="previewError = true"
@@ -16,7 +16,9 @@
         <div class="file-name">{{ selectedFileName }}</div>
         <div class="file-actions">
           <n-button size="tiny" @click="openSelector">更换</n-button>
-          <n-button size="tiny" type="error" @click="clearSelection">清除</n-button>
+          <n-button size="tiny" type="error" @click="clearSelection"
+            >清除</n-button
+          >
         </div>
       </div>
     </div>
@@ -25,21 +27,23 @@
     <div v-else class="upload-area" @click="openSelector">
       <div class="upload-content">
         <div class="upload-icon">📁</div>
-        <div class="upload-text">{{ placeholder || '从媒体库选择或上传文件' }}</div>
+        <div class="upload-text">
+          {{ placeholder || '从媒体库选择或上传文件' }}
+        </div>
       </div>
     </div>
 
     <!-- Media Library Modal -->
-    <n-modal 
-      v-model:show="showModal" 
-      preset="card" 
-      title="选择媒体文件" 
-      style="width: 800px; max-height: 80vh;"
+    <n-modal
+      v-model:show="showModal"
+      preset="card"
+      title="选择媒体文件"
+      style="width: 800px; max-height: 80vh"
     >
       <div class="media-selector-content">
         <!-- Search and Filters -->
         <div class="filters-section mb-4">
-          <div class="flex gap-4 items-end">
+          <div class="flex items-end gap-4">
             <div class="flex flex-col">
               <label class="mb-2 text-sm font-medium">搜索</label>
               <n-input
@@ -74,24 +78,29 @@
             <n-button @click="resetFilters">重置</n-button>
           </div>
           <!-- Help text for category filtering -->
-          <div v-if="props.category && !filters.search" class="text-xs text-gray-500 mt-2">
-            💡 显示所有{{ getCategoryDisplayName(props.category) }}文件，其他分类的文件也会显示（标记为"推荐"的为最佳匹配）
+          <div
+            v-if="props.category && !filters.search"
+            class="mt-2 text-xs text-gray-500"
+          >
+            💡 显示所有{{
+              getCategoryDisplayName(props.category)
+            }}文件，其他分类的文件也会显示（标记为"推荐"的为最佳匹配）
           </div>
         </div>
 
         <!-- Media Grid -->
         <div v-if="!loading && mediaFiles.length > 0" class="media-grid">
-          <div 
-            v-for="file in mediaFiles" 
+          <div
+            v-for="file in mediaFiles"
             :key="file.id"
             class="media-item"
-            :class="{ 'selected': selectedFileId === file.id }"
+            :class="{ selected: selectedFileId === file.id }"
             @click="selectFile(file)"
           >
             <div class="file-preview">
-              <img 
-                v-if="file.type === 'image'" 
-                :src="getImageUrlByEnvironment(file.url)" 
+              <img
+                v-if="file.type === 'image'"
+                :src="getImageUrlByEnvironment(file.url)"
                 :alt="file.alt || file.filename"
                 class="preview-image"
                 loading="lazy"
@@ -101,12 +110,23 @@
               </div>
             </div>
             <div class="file-info">
-              <h3 class="file-name" :title="file.filename">{{ file.filename }}</h3>
+              <h3 class="file-name" :title="file.filename">
+                {{ file.filename }}
+              </h3>
               <div class="file-meta">
                 <span class="file-size">{{ formatFileSize(file.size) }}</span>
-                <span class="file-category" :class="{ 'category-match': file.category === props.category }">
+                <span
+                  class="file-category"
+                  :class="{
+                    'category-match': file.category === props.category,
+                  }"
+                >
                   {{ getCategoryDisplayName(file.category) }}
-                  <span v-if="file.category === props.category" class="category-badge">推荐</span>
+                  <span
+                    v-if="file.category === props.category"
+                    class="category-badge"
+                    >推荐</span
+                  >
                 </span>
               </div>
             </div>
@@ -114,7 +134,10 @@
         </div>
 
         <!-- Empty State -->
-        <div v-else-if="!loading && mediaFiles.length === 0" class="empty-state">
+        <div
+          v-else-if="!loading && mediaFiles.length === 0"
+          class="empty-state"
+        >
           <div class="empty-icon">📁</div>
           <h3>暂无文件</h3>
           <p>没有找到符合条件的文件</p>
@@ -127,8 +150,8 @@
         </div>
 
         <!-- Pagination -->
-        <div class="flex justify-center mt-4" v-if="pagination.totalPages > 1">
-          <n-pagination 
+        <div class="mt-4 flex justify-center" v-if="pagination.totalPages > 1">
+          <n-pagination
             v-model:page="pagination.page"
             :page-count="pagination.totalPages"
             :page-size="pagination.pageSize"
@@ -143,19 +166,15 @@
 
       <!-- Modal Actions -->
       <template #action>
-        <div class="flex justify-between items-center">
+        <div class="flex items-center justify-between">
           <div class="flex gap-2">
-            <n-button @click="showUploadModal = true">
-              上传新文件
-            </n-button>
-            <n-button @click="openMediaLibrary">
-              前往媒体库
-            </n-button>
+            <n-button @click="showUploadModal = true"> 上传新文件 </n-button>
+            <n-button @click="openMediaLibrary"> 前往媒体库 </n-button>
           </div>
           <div class="flex gap-2">
             <n-button @click="showModal = false">取消</n-button>
-            <n-button 
-              type="primary" 
+            <n-button
+              type="primary"
               @click="confirmSelection"
               :disabled="!selectedFileId"
             >
@@ -167,8 +186,16 @@
     </n-modal>
 
     <!-- Upload Modal -->
-    <n-modal v-model:show="showUploadModal" preset="card" title="上传文件" style="width: 600px">
-      <MediaUploadForm @success="handleUploadSuccess" @cancel="showUploadModal = false" />
+    <n-modal
+      v-model:show="showUploadModal"
+      preset="card"
+      title="上传文件"
+      style="width: 600px"
+    >
+      <MediaUploadForm
+        @success="handleUploadSuccess"
+        @cancel="showUploadModal = false"
+      />
     </n-modal>
   </div>
 </template>
@@ -243,10 +270,10 @@ const pagination = reactive({
 
 // Options
 const categoryOptions = computed(() => [
-  ...MEDIA_CATEGORIES.map(cat => ({
+  ...MEDIA_CATEGORIES.map((cat) => ({
     label: getCategoryDisplayName(cat),
     value: cat,
-  }))
+  })),
 ]);
 
 const typeOptions = [
@@ -277,15 +304,16 @@ const showImagePreview = computed(() => {
 const loadMediaFiles = async () => {
   try {
     loading.value = true;
-    
+
     // If no search is active and a category is specified, show all files of the accepted type
     // This helps users see their newly uploaded files even if they're not in the exact category
-    const shouldShowAllFiles = !filters.search && props.category && filters.category === props.category;
-    
+    const shouldShowAllFiles =
+      !filters.search && props.category && filters.category === props.category;
+
     const response = await getMediaFiles({
       page: pagination.page,
       pageSize: pagination.pageSize,
-      category: shouldShowAllFiles ? undefined : (filters.category || undefined),
+      category: shouldShowAllFiles ? undefined : filters.category || undefined,
       type: filters.type || undefined,
       search: filters.search || undefined,
       sortBy: filters.sortBy as any,
@@ -293,11 +321,11 @@ const loadMediaFiles = async () => {
     });
 
     console.log('📁 MediaLibrarySelector response:', response);
-    
+
     // Handle different response formats
     let responseData: MediaFile[] = [];
     let responsePagination: any = {};
-    
+
     if (response.success && response.data && Array.isArray(response.data)) {
       // Format: {success: true, data: [...], pagination: {...}}
       responseData = response.data;
@@ -314,15 +342,15 @@ const loadMediaFiles = async () => {
       console.warn('⚠️ Unexpected response format:', response);
       return;
     }
-    
+
     // Filter by accept types if specified
     let filteredData = responseData;
     if (props.acceptTypes && props.acceptTypes.length > 0) {
-      filteredData = responseData.filter(file => 
-        props.acceptTypes!.includes(file.type)
+      filteredData = responseData.filter((file) =>
+        props.acceptTypes!.includes(file.type),
       );
     }
-    
+
     // If we're showing all files but want to prioritize the specified category
     if (shouldShowAllFiles) {
       // Sort so that files in the specified category appear first
@@ -334,12 +362,12 @@ const loadMediaFiles = async () => {
         return 0;
       });
     }
-    
+
     mediaFiles.value = filteredData;
     if (responsePagination) {
       Object.assign(pagination, responsePagination);
     }
-    
+
     console.log(`✅ Loaded ${filteredData.length} media files`);
   } catch (error) {
     console.error('Load media files error:', error);
@@ -411,10 +439,29 @@ const handleUploadSuccess = (file: MediaFile) => {
 
 const isImageFile = (url: string): boolean => {
   const lower = url.toLowerCase();
-  const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.avif'];
-  const nonImageExtensions = ['.pdf', '.zip', '.rar', '.doc', '.docx', '.xls', '.xlsx', '.mp4', '.mov', '.avi'];
-  if (imageExtensions.some(ext => lower.includes(ext))) return true;
-  if (nonImageExtensions.some(ext => lower.endsWith(ext))) return false;
+  const imageExtensions = [
+    '.jpg',
+    '.jpeg',
+    '.png',
+    '.gif',
+    '.webp',
+    '.svg',
+    '.avif',
+  ];
+  const nonImageExtensions = [
+    '.pdf',
+    '.zip',
+    '.rar',
+    '.doc',
+    '.docx',
+    '.xls',
+    '.xlsx',
+    '.mp4',
+    '.mov',
+    '.avi',
+  ];
+  if (imageExtensions.some((ext) => lower.includes(ext))) return true;
+  if (nonImageExtensions.some((ext) => lower.endsWith(ext))) return false;
   // Heuristic: treat unknown extension or no extension as image for preview purposes
   return true;
 };
@@ -448,7 +495,7 @@ const findFileByUrl = async (url: string) => {
     });
 
     if (response.success) {
-      const matchingFile = response.data.find(file => file.url === url);
+      const matchingFile = response.data.find((file) => file.url === url);
       if (matchingFile) {
         selectedFileId.value = matchingFile.id;
         selectedFile.value = matchingFile;
@@ -461,17 +508,24 @@ const findFileByUrl = async (url: string) => {
 };
 
 // Watch for props changes
-watch(() => props.category, (newCategory) => {
-  filters.category = newCategory;
-});
+watch(
+  () => props.category,
+  (newCategory) => {
+    filters.category = newCategory;
+  },
+);
 
 // Watch for modelValue changes to handle editing case
-watch(() => props.modelValue, async (newValue) => {
-  if (newValue && !selectedFile.value) {
-    // When editing, we have a URL but need to find the corresponding file
-    await findFileByUrl(newValue);
-  }
-}, { immediate: true });
+watch(
+  () => props.modelValue,
+  async (newValue) => {
+    if (newValue && !selectedFile.value) {
+      // When editing, we have a URL but need to find the corresponding file
+      await findFileByUrl(newValue);
+    }
+  },
+  { immediate: true },
+);
 
 // Lifecycle
 onMounted(() => {
@@ -620,7 +674,8 @@ onMounted(() => {
   color: #666;
 }
 
-.empty-state, .loading-state {
+.empty-state,
+.loading-state {
   text-align: center;
   padding: 40px 20px;
   color: #666;
@@ -660,4 +715,4 @@ onMounted(() => {
   border-radius: 4px;
   margin-left: 4px;
 }
-</style> 
+</style>

@@ -12,17 +12,17 @@ export interface PMDMessage {
   endTime: Date | null;
   displayDuration: number;
   content: string;
-  status: 'enabled' | 'disabled';
+  status: 'disabled' | 'enabled';
   remark: string;
   updatedAt: Date;
   createdAt: Date;
-  
+
   // 显示设置
   scrollSpeed?: string;
   textColor?: string;
   backgroundColor?: string;
   position?: string;
-  
+
   // 高级设置
   userConditions?: string[];
   priority?: string;
@@ -41,15 +41,15 @@ export interface PMDMessageInput {
   endTime: Date | null;
   displayDuration: number;
   content: string;
-  status: 'enabled' | 'disabled';
+  status: 'disabled' | 'enabled';
   remark: string;
-  
+
   // 显示设置
   scrollSpeed?: string;
   textColor?: string;
   backgroundColor?: string;
   position?: string;
-  
+
   // 高级设置
   userConditions?: string[];
   priority?: string;
@@ -93,8 +93,8 @@ export interface PMDStats {
   todayCreated: number;
   monthlyCreated: number;
   statusDistribution: {
-    enabled: number;
     disabled: number;
+    enabled: number;
   };
   languageDistribution: {
     [key: string]: number;
@@ -109,17 +109,19 @@ export interface PMDPreview {
   id: number;
   content: string;
   displaySettings: {
-    scrollSpeed: string;
-    textColor: string;
     backgroundColor: string;
     position: string;
+    scrollSpeed: string;
+    textColor: string;
   };
 }
 
 /**
  * 获取 PMD 消息列表
  */
-export async function getPMDList(params: PMDListParams = {}): Promise<PMDListResponse> {
+export async function getPMDList(
+  params: PMDListParams = {},
+): Promise<PMDListResponse> {
   const response = await requestClient.get<PMDListResponse>('/pmd-messages', {
     params: {
       page: params.page || 1,
@@ -130,11 +132,15 @@ export async function getPMDList(params: PMDListParams = {}): Promise<PMDListRes
       status: params.status,
       displayStatus: params.displayStatus,
       keyword: params.keyword,
-      startTime: params.timeRange?.[0] ? new Date(params.timeRange[0]).toISOString() : undefined,
-      endTime: params.timeRange?.[1] ? new Date(params.timeRange[1]).toISOString() : undefined,
+      startTime: params.timeRange?.[0]
+        ? new Date(params.timeRange[0]).toISOString()
+        : undefined,
+      endTime: params.timeRange?.[1]
+        ? new Date(params.timeRange[1]).toISOString()
+        : undefined,
       sortBy: params.sortBy,
-      sortOrder: params.sortOrder
-    }
+      sortOrder: params.sortOrder,
+    },
   });
   return response;
 }
@@ -158,8 +164,14 @@ export async function createPMD(data: PMDMessageInput): Promise<PMDMessage> {
 /**
  * 更新 PMD 消息
  */
-export async function updatePMD(id: number, data: Partial<PMDMessageInput>): Promise<PMDMessage> {
-  const response = await requestClient.put<PMDMessage>(`/pmd-messages/${id}`, data);
+export async function updatePMD(
+  id: number,
+  data: Partial<PMDMessageInput>,
+): Promise<PMDMessage> {
+  const response = await requestClient.put<PMDMessage>(
+    `/pmd-messages/${id}`,
+    data,
+  );
   return response;
 }
 
@@ -175,27 +187,36 @@ export async function deletePMD(id: number): Promise<void> {
  */
 export async function batchDeletePMD(params: PMDBatchParams): Promise<void> {
   await requestClient.delete('/pmd-messages/batch', {
-    data: params
+    data: params,
   });
 }
 
 /**
  * 切换 PMD 消息状态
  */
-export async function togglePMDStatus(id: number, enabled: boolean): Promise<PMDMessage> {
-  const response = await requestClient.put<PMDMessage>(`/pmd-messages/${id}/status`, {
-    status: enabled ? 'enabled' : 'disabled'
-  });
+export async function togglePMDStatus(
+  id: number,
+  enabled: boolean,
+): Promise<PMDMessage> {
+  const response = await requestClient.put<PMDMessage>(
+    `/pmd-messages/${id}/status`,
+    {
+      status: enabled ? 'enabled' : 'disabled',
+    },
+  );
   return response;
 }
 
 /**
  * 批量切换 PMD 消息状态
  */
-export async function batchTogglePMDStatus(params: PMDBatchParams, enabled: boolean): Promise<void> {
+export async function batchTogglePMDStatus(
+  params: PMDBatchParams,
+  enabled: boolean,
+): Promise<void> {
   await requestClient.put('/pmd-messages/batch/status', {
     ...params,
-    status: enabled ? 'enabled' : 'disabled'
+    status: enabled ? 'enabled' : 'disabled',
   });
 }
 
@@ -203,15 +224,22 @@ export async function batchTogglePMDStatus(params: PMDBatchParams, enabled: bool
  * 复制 PMD 消息
  */
 export async function copyPMD(id: number): Promise<PMDMessage> {
-  const response = await requestClient.post<PMDMessage>(`/pmd-messages/${id}/copy`);
+  const response = await requestClient.post<PMDMessage>(
+    `/pmd-messages/${id}/copy`,
+  );
   return response;
 }
 
 /**
  * 批量复制 PMD 消息
  */
-export async function batchCopyPMD(params: PMDBatchParams): Promise<PMDMessage[]> {
-  const response = await requestClient.post<PMDMessage[]>('/pmd-messages/batch/copy', params);
+export async function batchCopyPMD(
+  params: PMDBatchParams,
+): Promise<PMDMessage[]> {
+  const response = await requestClient.post<PMDMessage[]>(
+    '/pmd-messages/batch/copy',
+    params,
+  );
   return response;
 }
 
@@ -227,7 +255,9 @@ export async function getPMDStats(): Promise<PMDStats> {
  * 预览 PMD 消息
  */
 export async function previewPMD(id: number): Promise<PMDPreview> {
-  const response = await requestClient.get<PMDPreview>(`/pmd-messages/${id}/preview`);
+  const response = await requestClient.get<PMDPreview>(
+    `/pmd-messages/${id}/preview`,
+  );
   return response;
 }
 
@@ -237,7 +267,7 @@ export async function previewPMD(id: number): Promise<PMDPreview> {
 export async function exportPMD(params: PMDListParams = {}): Promise<Blob> {
   const response = await requestClient.get('/pmd-messages/export', {
     params,
-    responseType: 'blob'
+    responseType: 'blob',
   });
   return response;
 }
@@ -246,17 +276,17 @@ export async function exportPMD(params: PMDListParams = {}): Promise<Blob> {
  * 导入 PMD 消息
  */
 export async function importPMD(file: File): Promise<{
-  success: number;
-  failed: number;
   errors: string[];
+  failed: number;
+  success: number;
 }> {
   const formData = new FormData();
   formData.append('file', file);
-  
+
   const response = await requestClient.post('/pmd-messages/import', formData, {
     headers: {
-      'Content-Type': 'multipart/form-data'
-    }
+      'Content-Type': 'multipart/form-data',
+    },
   });
   return response;
 }
@@ -265,25 +295,39 @@ export async function importPMD(file: File): Promise<{
  * 获取 PMD 消息模板
  */
 export async function getPMDTemplates(): Promise<PMDMessage[]> {
-  const response = await requestClient.get<PMDMessage[]>('/pmd-messages/templates');
+  const response = await requestClient.get<PMDMessage[]>(
+    '/pmd-messages/templates',
+  );
   return response;
 }
 
 /**
  * 保存为模板
  */
-export async function savePMDAsTemplate(id: number, name: string): Promise<PMDMessage> {
-  const response = await requestClient.post<PMDMessage>(`/pmd-messages/${id}/template`, {
-    name
-  });
+export async function savePMDAsTemplate(
+  id: number,
+  name: string,
+): Promise<PMDMessage> {
+  const response = await requestClient.post<PMDMessage>(
+    `/pmd-messages/${id}/template`,
+    {
+      name,
+    },
+  );
   return response;
 }
 
 /**
  * 从模板创建 PMD 消息
  */
-export async function createPMDFromTemplate(templateId: number, data: Partial<PMDMessageInput>): Promise<PMDMessage> {
-  const response = await requestClient.post<PMDMessage>(`/pmd-messages/templates/${templateId}/create`, data);
+export async function createPMDFromTemplate(
+  templateId: number,
+  data: Partial<PMDMessageInput>,
+): Promise<PMDMessage> {
+  const response = await requestClient.post<PMDMessage>(
+    `/pmd-messages/templates/${templateId}/create`,
+    data,
+  );
   return response;
 }
 
@@ -297,20 +341,23 @@ export async function testPMDDisplay(id: number): Promise<void> {
 /**
  * 获取 PMD 消息显示日志
  */
-export async function getPMDDisplayLogs(id: number, params: {
-  page?: number;
-  pageSize?: number;
-  startTime?: Date;
-  endTime?: Date;
-} = {}): Promise<{
+export async function getPMDDisplayLogs(
+  id: number,
+  params: {
+    endTime?: Date;
+    page?: number;
+    pageSize?: number;
+    startTime?: Date;
+  } = {},
+): Promise<{
   data: {
-    id: number;
-    userId: number;
+    clicked: boolean;
     displayTime: Date;
     duration: number;
-    clicked: boolean;
-    userAgent: string;
+    id: number;
     ip: string;
+    userAgent: string;
+    userId: number;
   }[];
   total: number;
 }> {
@@ -319,8 +366,8 @@ export async function getPMDDisplayLogs(id: number, params: {
       page: params.page || 1,
       pageSize: params.pageSize || 10,
       startTime: params.startTime?.toISOString(),
-      endTime: params.endTime?.toISOString()
-    }
+      endTime: params.endTime?.toISOString(),
+    },
   });
   return response;
 }
@@ -328,27 +375,30 @@ export async function getPMDDisplayLogs(id: number, params: {
 /**
  * 获取 PMD 消息分析报告
  */
-export async function getPMDAnalytics(id: number, params: {
-  startTime?: Date;
-  endTime?: Date;
-} = {}): Promise<{
-  totalViews: number;
-  totalClicks: number;
-  clickRate: number;
+export async function getPMDAnalytics(
+  id: number,
+  params: {
+    endTime?: Date;
+    startTime?: Date;
+  } = {},
+): Promise<{
   avgDisplayTime: number;
-  viewsByHour: { hour: number; views: number }[];
-  clicksByHour: { hour: number; clicks: number }[];
+  clickRate: number;
+  clicksByHour: { clicks: number; hour: number }[];
+  totalClicks: number;
+  totalViews: number;
   userDistribution: {
     newUsers: number;
     returningUsers: number;
     vipUsers: number;
   };
+  viewsByHour: { hour: number; views: number }[];
 }> {
   const response = await requestClient.get(`/pmd-messages/${id}/analytics`, {
     params: {
       startTime: params.startTime?.toISOString(),
-      endTime: params.endTime?.toISOString()
-    }
+      endTime: params.endTime?.toISOString(),
+    },
   });
   return response;
 }
@@ -356,8 +406,10 @@ export async function getPMDAnalytics(id: number, params: {
 /**
  * 更新 PMD 消息排序
  */
-export async function updatePMDSort(items: { id: number; sortOrder: number }[]): Promise<void> {
+export async function updatePMDSort(
+  items: { id: number; sortOrder: number }[],
+): Promise<void> {
   await requestClient.put('/pmd-messages/sort', {
-    items
+    items,
   });
-} 
+}

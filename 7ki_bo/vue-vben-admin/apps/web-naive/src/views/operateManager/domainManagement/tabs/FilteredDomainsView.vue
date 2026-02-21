@@ -7,7 +7,9 @@
 <script setup lang="ts">
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 import { defineAsyncComponent } from 'vue';
-const AllDomainsView = defineAsyncComponent(() => import('./AllDomainsView.vue'));
+const AllDomainsView = defineAsyncComponent(
+  () => import('./AllDomainsView.vue'),
+);
 
 interface Props {
   title?: string;
@@ -19,7 +21,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  title: '域名列表'
+  title: '域名列表',
 });
 </script>
 

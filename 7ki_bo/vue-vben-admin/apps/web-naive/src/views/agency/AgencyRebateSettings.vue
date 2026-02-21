@@ -32,7 +32,10 @@
                       </template>
                       搜索
                     </n-button>
-                    <n-button @click="handleResetSearch" style="margin-left: 8px">
+                    <n-button
+                      @click="handleResetSearch"
+                      style="margin-left: 8px"
+                    >
                       重置
                     </n-button>
                   </n-form-item>
@@ -44,10 +47,22 @@
             <div class="mb-4">
               <n-card size="small">
                 <div class="grid grid-cols-4 gap-4">
-                  <n-statistic label="总配置数" :value="statistics.totalConfigs" />
-                  <n-statistic label="游戏分类" :value="statistics.totalGameCategories" />
-                  <n-statistic label="平均返水率" :value="`${statistics.averageRebateRate}%`" />
-                  <n-statistic label="最后更新" :value="formatDate(statistics.lastUpdated)" />
+                  <n-statistic
+                    label="总配置数"
+                    :value="statistics.totalConfigs"
+                  />
+                  <n-statistic
+                    label="游戏分类"
+                    :value="statistics.totalGameCategories"
+                  />
+                  <n-statistic
+                    label="平均返水率"
+                    :value="`${statistics.averageRebateRate}%`"
+                  />
+                  <n-statistic
+                    label="最后更新"
+                    :value="formatDate(statistics.lastUpdated)"
+                  />
                 </div>
               </n-card>
             </div>
@@ -72,46 +87,46 @@
             >
               <template #actionBar="{ selectedCount, selectedRows }">
                 <n-card :bordered="false" class="rounded-16px shadow-sm">
-                  <div class="flex justify-between items-center">
+                  <div class="flex items-center justify-between">
                     <div class="flex items-center gap-4">
                       <!-- 主要操作按钮 -->
                       <div class="flex gap-2">
                         <n-button type="primary" @click="handleCreate">
                           新增返水规则
                         </n-button>
-                        <n-button 
-                          type="success" 
+                        <n-button
+                          type="success"
                           @click="handleDownloadTemplate"
                         >
                           下载模板
                         </n-button>
-                        <n-button 
-                          type="info" 
-                          @click="handleImportExcel"
-                        >
+                        <n-button type="info" @click="handleImportExcel">
                           Excel导入
                         </n-button>
                       </div>
-                      
+
                       <!-- 选择信息 -->
                       <div class="text-sm text-gray-600">
-                        已选择 {{ selectedCount }} 条数据，共 {{ paginationReactive.total }} 条
+                        已选择 {{ selectedCount }} 条数据，共
+                        {{ paginationReactive.total }} 条
                       </div>
                     </div>
-                    
+
                     <div class="flex gap-2">
                       <!-- 批量操作 -->
-                      <n-button 
-                        v-if="selectedCount > 0" 
-                        type="warning" 
+                      <n-button
+                        v-if="selectedCount > 0"
+                        type="warning"
                         size="small"
                         @click="handleBatchModify(selectedRows)"
                       >
                         批量修改 ({{ selectedCount }})
                       </n-button>
-                      
+
                       <!-- 选择控制 -->
-                      <n-button size="small" @click="clearSelection">清空选择</n-button>
+                      <n-button size="small" @click="clearSelection"
+                        >清空选择</n-button
+                      >
                       <n-button size="small" @click="selectAll">全选</n-button>
                     </div>
                   </div>
@@ -151,7 +166,10 @@
                       </template>
                       搜索
                     </n-button>
-                    <n-button @click="handleResetSearch" style="margin-left: 8px">
+                    <n-button
+                      @click="handleResetSearch"
+                      style="margin-left: 8px"
+                    >
                       重置
                     </n-button>
                   </n-form-item>
@@ -163,10 +181,22 @@
             <div class="mb-4">
               <n-card size="small">
                 <div class="grid grid-cols-4 gap-4">
-                  <n-statistic label="总配置数" :value="statistics.totalConfigs" />
-                  <n-statistic label="游戏分类" :value="statistics.totalGameCategories" />
-                  <n-statistic label="平均返水率" :value="`${statistics.averageRebateRate}%`" />
-                  <n-statistic label="最后更新" :value="formatDate(statistics.lastUpdated)" />
+                  <n-statistic
+                    label="总配置数"
+                    :value="statistics.totalConfigs"
+                  />
+                  <n-statistic
+                    label="游戏分类"
+                    :value="statistics.totalGameCategories"
+                  />
+                  <n-statistic
+                    label="平均返水率"
+                    :value="`${statistics.averageRebateRate}%`"
+                  />
+                  <n-statistic
+                    label="最后更新"
+                    :value="formatDate(statistics.lastUpdated)"
+                  />
                 </div>
               </n-card>
             </div>
@@ -191,46 +221,46 @@
             >
               <template #actionBar="{ selectedCount, selectedRows }">
                 <n-card :bordered="false" class="rounded-16px shadow-sm">
-                  <div class="flex justify-between items-center">
+                  <div class="flex items-center justify-between">
                     <div class="flex items-center gap-4">
                       <!-- 主要操作按钮 -->
                       <div class="flex gap-2">
                         <n-button type="primary" @click="handleCreate">
                           新增返水规则
                         </n-button>
-                        <n-button 
-                          type="success" 
+                        <n-button
+                          type="success"
                           @click="handleDownloadTemplate"
                         >
                           下载模板
                         </n-button>
-                        <n-button 
-                          type="info" 
-                          @click="handleImportExcel"
-                        >
+                        <n-button type="info" @click="handleImportExcel">
                           Excel导入
                         </n-button>
                       </div>
-                      
+
                       <!-- 选择信息 -->
                       <div class="text-sm text-gray-600">
-                        已选择 {{ selectedCount }} 条数据，共 {{ paginationReactive.total }} 条
+                        已选择 {{ selectedCount }} 条数据，共
+                        {{ paginationReactive.total }} 条
                       </div>
                     </div>
-                    
+
                     <div class="flex gap-2">
                       <!-- 批量操作 -->
-                      <n-button 
-                        v-if="selectedCount > 0" 
-                        type="warning" 
+                      <n-button
+                        v-if="selectedCount > 0"
+                        type="warning"
                         size="small"
                         @click="handleBatchModify(selectedRows)"
                       >
                         批量修改 ({{ selectedCount }})
                       </n-button>
-                      
+
                       <!-- 选择控制 -->
-                      <n-button size="small" @click="clearSelection">清空选择</n-button>
+                      <n-button size="small" @click="clearSelection"
+                        >清空选择</n-button
+                      >
                       <n-button size="small" @click="selectAll">全选</n-button>
                     </div>
                   </div>
@@ -410,7 +440,7 @@
           <p>请先下载模板文件，按照模板格式填写数据后再上传。</p>
           <p>支持的文件格式：.xlsx, .xls</p>
         </n-alert>
-        
+
         <n-upload
           ref="uploadRef"
           v-model:file-list="importFileList"
@@ -426,7 +456,9 @@
                 <CloudUploadOutline />
               </n-icon>
             </div>
-            <n-text style="font-size: 16px">点击或者拖动文件到该区域来上传</n-text>
+            <n-text style="font-size: 16px"
+              >点击或者拖动文件到该区域来上传</n-text
+            >
             <n-p depth="3" style="margin: 8px 0 0 0">
               请选择Excel文件进行批量导入
             </n-p>
@@ -436,7 +468,11 @@
       <template #action>
         <n-space>
           <n-button @click="showImportModal = false">取消</n-button>
-          <n-button type="primary" @click="handleImportSave" :loading="importing">
+          <n-button
+            type="primary"
+            @click="handleImportSave"
+            :loading="importing"
+          >
             开始导入
           </n-button>
         </n-space>
@@ -446,9 +482,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, h, watch, defineAsyncComponent } from 'vue';
+import {
+  ref,
+  reactive,
+  computed,
+  onMounted,
+  h,
+  watch,
+  defineAsyncComponent,
+} from 'vue';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
-const SmartDataGrid = defineAsyncComponent(() => import('../../components/smart/SmartDataGrid/index.vue'));
+const SmartDataGrid = defineAsyncComponent(
+  () => import('../../components/smart/SmartDataGrid/index.vue'),
+);
 import { Page } from '@vben/common-ui';
 import {
   NCard,
@@ -480,14 +526,11 @@ import {
   type FormInst,
   type FormRules,
   type UploadFileInfo,
-  type UploadInst
+  type UploadInst,
 } from 'naive-ui';
 
 // Icons
-import {
-  CloudUploadOutline,
-  SearchOutline
-} from '@vicons/ionicons5';
+import { CloudUploadOutline, SearchOutline } from '@vicons/ionicons5';
 
 // API
 import {
@@ -501,7 +544,7 @@ import {
   getRebateStatistics,
   getGameCategories,
   type RebateConfig,
-  type RebateSettingsQuery
+  type RebateSettingsQuery,
 } from '#/api/agency/rebate-settings';
 
 // Types
@@ -560,7 +603,7 @@ const tableRef = ref();
 // 搜索表单
 const searchForm = reactive<SearchForm>({
   gameCategory: '',
-  isActive: null
+  isActive: null,
 });
 
 // 编辑表单数据
@@ -571,7 +614,7 @@ const formData = reactive<FormData>({
   validBetThreshold: 1,
   rebateAmountPer10k: 1,
   remarks: '',
-  isActive: true
+  isActive: true,
 });
 
 // 批量修改表单数据
@@ -579,7 +622,7 @@ const batchFormData = reactive<BatchFormData>({
   validUserThreshold: null,
   validBetThreshold: null,
   rebateAmountPer10k: null,
-  isActive: null
+  isActive: null,
 });
 
 // 统计数据
@@ -587,7 +630,7 @@ const statistics = reactive<Statistics>({
   totalConfigs: 0,
   totalGameCategories: 0,
   averageRebateRate: 0,
-  lastUpdated: ''
+  lastUpdated: '',
 });
 
 // 分页配置 (simplified for SmartDataGrid)
@@ -600,51 +643,66 @@ const paginationReactive = reactive({
 // 选项配置
 const statusOptions = [
   { label: '启用', value: true },
-  { label: '禁用', value: false }
+  { label: '禁用', value: false },
 ] as const;
 
 // 表单验证规则
 const formRules: FormRules = {
   gameCategory: [
-    { required: true, message: '请选择游戏分类', trigger: 'change' }
+    { required: true, message: '请选择游戏分类', trigger: 'change' },
   ],
   // sortOrder is auto-generated, no validation needed
   validUserThreshold: [
-    { 
-      type: 'number', 
-      min: 0, 
-      message: '有效人数门槛不能小于0', 
-      trigger: 'blur'
-    }
+    {
+      type: 'number',
+      min: 0,
+      message: '有效人数门槛不能小于0',
+      trigger: 'blur',
+    },
   ],
   validBetThreshold: [
-    { 
-      type: 'number', 
-      min: 0, 
-      message: '有效投注门槛不能小于0', 
-      trigger: 'blur'
-    }
+    {
+      type: 'number',
+      min: 0,
+      message: '有效投注门槛不能小于0',
+      trigger: 'blur',
+    },
   ],
   rebateAmountPer10k: [
-    { 
-      type: 'number', 
-      min: 0, 
-      message: '每万投注返金额不能小于0', 
-      trigger: 'blur'
-    }
-  ]
+    {
+      type: 'number',
+      min: 0,
+      message: '每万投注返金额不能小于0',
+      trigger: 'blur',
+    },
+  ],
 };
 
 const batchFormRules: FormRules = {
   validUserThreshold: [
-    { type: 'number', min: 0, message: '有效人数门槛不能小于0', trigger: 'blur' }
+    {
+      type: 'number',
+      min: 0,
+      message: '有效人数门槛不能小于0',
+      trigger: 'blur',
+    },
   ],
   validBetThreshold: [
-    { type: 'number', min: 0, message: '有效投注门槛不能小于0', trigger: 'blur' }
+    {
+      type: 'number',
+      min: 0,
+      message: '有效投注门槛不能小于0',
+      trigger: 'blur',
+    },
   ],
   rebateAmountPer10k: [
-    { type: 'number', min: 0, message: '每万投注返金额不能小于0', trigger: 'blur' }
-  ]
+    {
+      type: 'number',
+      min: 0,
+      message: '每万投注返金额不能小于0',
+      trigger: 'blur',
+    },
+  ],
 };
 
 // 计算返佣比例
@@ -663,29 +721,31 @@ const currentRecord = ref<RebateConfig | null>(null);
 const columns: DataTableColumns<RebateConfig> = [
   {
     type: 'selection',
-    width: 50
+    width: 50,
   },
   {
     title: '序号',
     key: 'sortOrder',
     width: 80,
-    sorter: true
+    sorter: true,
   },
   {
     title: '游戏分类',
     key: 'gameCategory',
     width: 120,
     ellipsis: {
-      tooltip: true
-    }
+      tooltip: true,
+    },
   },
   {
     title: '有效人数门槛',
     key: 'validUserThreshold',
     width: 120,
     render: (row) => {
-      return row.validUserThreshold === 0 ? '不限制' : `${row.validUserThreshold}人`;
-    }
+      return row.validUserThreshold === 0
+        ? '不限制'
+        : `${row.validUserThreshold}人`;
+    },
   },
   {
     title: '有效投注门槛',
@@ -693,7 +753,7 @@ const columns: DataTableColumns<RebateConfig> = [
     width: 120,
     render: (row) => {
       return `${row.validBetThreshold}万`;
-    }
+    },
   },
   {
     title: '每万投注返金额',
@@ -702,7 +762,7 @@ const columns: DataTableColumns<RebateConfig> = [
     render: (row) => {
       const percentage = (row.rebateAmountPer10k / 10000) * 100;
       return `${row.rebateAmountPer10k} (${percentage.toFixed(4)}%)`;
-    }
+    },
   },
   {
     title: '状态',
@@ -712,17 +772,17 @@ const columns: DataTableColumns<RebateConfig> = [
       return h(
         NTag,
         { type: row.isActive ? 'success' : 'error' },
-        { default: () => row.isActive ? '启用' : '禁用' }
+        { default: () => (row.isActive ? '启用' : '禁用') },
       );
-    }
+    },
   },
   {
     title: '备注',
     key: 'remarks',
     width: 150,
     ellipsis: {
-      tooltip: true
-    }
+      tooltip: true,
+    },
   },
   {
     title: '更新时间',
@@ -730,7 +790,7 @@ const columns: DataTableColumns<RebateConfig> = [
     width: 180,
     render: (row) => {
       return formatDate(row.updatedAt);
-    }
+    },
   },
   {
     title: '操作',
@@ -738,54 +798,61 @@ const columns: DataTableColumns<RebateConfig> = [
     width: 120,
     fixed: 'right',
     render: (row) => {
-      return h(NSpace, { size: 'small' }, {
-        default: () => [
-          h(
-            NTooltip,
-            { trigger: 'hover' },
-            {
-              trigger: () => h(
-                NButton,
-                {
-                  size: 'small',
-                  type: 'primary',
-                  quaternary: true,
-                  onClick: () => handleEdit(row)
-                },
-                { default: () => '编辑' }
-              ),
-              default: () => '编辑'
-            }
-          ),
-          h(
-            NPopconfirm,
-            {
-              onPositiveClick: () => handleDelete(row.id!)
-            },
-            {
-              trigger: () => h(
-                NTooltip,
-                { trigger: 'hover' },
-                {
-                  trigger: () => h(
+      return h(
+        NSpace,
+        { size: 'small' },
+        {
+          default: () => [
+            h(
+              NTooltip,
+              { trigger: 'hover' },
+              {
+                trigger: () =>
+                  h(
                     NButton,
                     {
                       size: 'small',
-                      type: 'error',
-                      quaternary: true
+                      type: 'primary',
+                      quaternary: true,
+                      onClick: () => handleEdit(row),
                     },
-                    { default: () => '删除' }
+                    { default: () => '编辑' },
                   ),
-                  default: () => '删除'
-                }
-              ),
-              default: () => '确认删除此返水规则吗？'
-            }
-          )
-        ]
-      });
-    }
-  }
+                default: () => '编辑',
+              },
+            ),
+            h(
+              NPopconfirm,
+              {
+                onPositiveClick: () => handleDelete(row.id!),
+              },
+              {
+                trigger: () =>
+                  h(
+                    NTooltip,
+                    { trigger: 'hover' },
+                    {
+                      trigger: () =>
+                        h(
+                          NButton,
+                          {
+                            size: 'small',
+                            type: 'error',
+                            quaternary: true,
+                          },
+                          { default: () => '删除' },
+                        ),
+                      default: () => '删除',
+                    },
+                  ),
+                default: () => '确认删除此返水规则吗？',
+              },
+            ),
+          ],
+        },
+      );
+    },
+  },
 ];
 
 // 格式化日期
@@ -801,7 +868,7 @@ const loadData = async () => {
     const params: RebateSettingsQuery = {
       type: activeTab.value,
       page: paginationReactive.page,
-      pageSize: paginationReactive.pageSize
+      pageSize: paginationReactive.pageSize,
     };
 
     if (searchForm.gameCategory) {
@@ -811,7 +878,7 @@ const loadData = async () => {
     console.log('Loading rebate settings with params:', params);
     const response = await getRebateSettings(params);
     console.log('Rebate settings response:', response);
-    
+
     if (response && response.data) {
       console.log('First record in response:', response.data[0]);
       tableData.value = response.data || [];
@@ -830,8 +897,8 @@ const loadData = async () => {
           type: activeTab.value,
           isActive: true,
           createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
+          updatedAt: new Date().toISOString(),
+        },
       ];
       paginationReactive.total = 1;
     }
@@ -851,8 +918,8 @@ const loadData = async () => {
         type: activeTab.value,
         isActive: true,
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
+        updatedAt: new Date().toISOString(),
+      },
     ];
     paginationReactive.total = 1;
   } finally {
@@ -876,7 +943,7 @@ const loadStatistics = async () => {
       totalConfigs: 1,
       totalGameCategories: 7,
       averageRebateRate: 0.5,
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     });
   }
 };
@@ -891,21 +958,24 @@ const loadGameCategories = async () => {
     { value: 'lottery', label: '彩票游戏', description: 'Lottery games' },
     { value: 'sports', label: '体育投注', description: 'Sports betting' },
     { value: 'fishing', label: '捕鱼游戏', description: 'Fishing games' },
-    { value: 'esports', label: '电竞游戏', description: 'Esports betting' }
+    { value: 'esports', label: '电竞游戏', description: 'Esports betting' },
   ];
-  
+
   // 设置默认选项
   gameCategoryOptions.value = defaultCategories;
   console.log('Default game categories set:', gameCategoryOptions.value);
-  
+
   try {
     console.log('Loading game categories from API...');
     const categories = await getGameCategories();
     console.log('Game categories API response:', categories);
-    
+
     if (categories && categories.length > 0) {
       gameCategoryOptions.value = categories;
-      console.log('Updated game categories from API:', gameCategoryOptions.value);
+      console.log(
+        'Updated game categories from API:',
+        gameCategoryOptions.value,
+      );
     } else {
       console.log('API returned empty categories, keeping defaults');
     }
@@ -925,9 +995,9 @@ const handleCreate = () => {
 const handleEdit = (record: RebateConfig) => {
   editMode.value = 'edit';
   currentRecord.value = record;
-  
+
   console.log('Editing record:', record);
-  
+
   // Convert Decimal values to numbers for form inputs
   const formValues = {
     gameCategory: record.gameCategory,
@@ -936,11 +1006,11 @@ const handleEdit = (record: RebateConfig) => {
     validBetThreshold: Number(record.validBetThreshold),
     rebateAmountPer10k: Number(record.rebateAmountPer10k),
     remarks: record.remarks || '',
-    isActive: record.isActive !== undefined ? record.isActive : true
+    isActive: record.isActive !== undefined ? record.isActive : true,
   };
-  
+
   console.log('Form values to set:', formValues);
-  
+
   Object.assign(formData, formValues);
   console.log('Form data after assignment:', formData);
   showEditModal.value = true;
@@ -958,13 +1028,15 @@ const handleDelete = async (id: string) => {
 };
 
 const handleBatchModify = (selectedRows?: RebateConfig[]) => {
-  const rowsToModify = selectedRows || tableData.value.filter(item => selectedRowKeys.value.includes(item.id!));
-  
+  const rowsToModify =
+    selectedRows ||
+    tableData.value.filter((item) => selectedRowKeys.value.includes(item.id!));
+
   if (rowsToModify.length === 0) {
     message.warning('请先选择要修改的记录');
     return;
   }
-  
+
   console.log('Batch modifying rows:', rowsToModify);
   resetBatchFormData();
   showBatchModal.value = true;
@@ -1035,22 +1107,22 @@ const clearSelection = () => {
 };
 
 const selectAll = () => {
-  selectedRowKeys.value = tableData.value.map(rebate => rebate.id!);
+  selectedRowKeys.value = tableData.value.map((rebate) => rebate.id!);
   message.success('已全选');
 };
 
 const handleSave = async () => {
   if (!formRef.value) return;
-  
+
   try {
     console.log('Form data before validation:', formData);
     console.log('Form ref:', formRef.value);
-    
+
     await formRef.value.validate();
     console.log('Validation passed');
-    
+
     saving.value = true;
-    
+
     const data = {
       gameCategory: formData.gameCategory,
       validUserThreshold: formData.validUserThreshold,
@@ -1058,11 +1130,11 @@ const handleSave = async () => {
       rebateAmountPer10k: formData.rebateAmountPer10k,
       remarks: formData.remarks,
       isActive: formData.isActive,
-      type: activeTab.value
+      type: activeTab.value,
     };
-    
+
     console.log('Data to save:', data);
-    
+
     if (editMode.value === 'create') {
       await createRebateSetting(data);
       message.success('创建成功');
@@ -1070,12 +1142,12 @@ const handleSave = async () => {
       // Include sortOrder for updates
       const updateData = {
         ...data,
-        sortOrder: formData.sortOrder
+        sortOrder: formData.sortOrder,
       };
       await updateRebateSetting(currentRecord.value!.id!, updateData);
       message.success('更新成功');
     }
-    
+
     showEditModal.value = false;
     loadData();
     loadStatistics();
@@ -1090,11 +1162,11 @@ const handleSave = async () => {
 
 const handleBatchSave = async () => {
   if (!batchFormRef.value) return;
-  
+
   try {
     await batchFormRef.value.validate();
     saving.value = true;
-    
+
     // 过滤掉null值
     const updates = Object.entries(batchFormData)
       .filter(([_, value]) => value !== null)
@@ -1102,17 +1174,17 @@ const handleBatchSave = async () => {
         acc[key] = value;
         return acc;
       }, {} as any);
-    
+
     if (Object.keys(updates).length === 0) {
       message.warning('请至少选择一个要修改的字段');
       return;
     }
-    
+
     await batchUpdateRebateSettings({
       ids: selectedRowKeys.value as string[],
-      updates
+      updates,
     });
-    
+
     message.success('批量更新成功');
     showBatchModal.value = false;
     selectedRowKeys.value = [];
@@ -1128,26 +1200,28 @@ const handleBatchSave = async () => {
 
 const handleBeforeUpload = (options: { file: UploadFileInfo }) => {
   const { file } = options;
-  
+
   if (!file.file) {
     message.error('无效的文件');
     return false;
   }
-  
-  const isExcel = file.file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-                  file.file.type === 'application/vnd.ms-excel';
-  
+
+  const isExcel =
+    file.file.type ===
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+    file.file.type === 'application/vnd.ms-excel';
+
   if (!isExcel) {
     message.error('只支持Excel文件格式');
     return false;
   }
-  
+
   const isLt10M = file.file.size / 1024 / 1024 < 10;
   if (!isLt10M) {
     message.error('文件大小不能超过10MB');
     return false;
   }
-  
+
   return true;
 };
 
@@ -1160,21 +1234,21 @@ const handleImportSave = async () => {
     message.warning('请先选择要导入的文件');
     return;
   }
-  
+
   const file = importFileList.value[0];
   if (!file.file) {
     message.error('无效的文件');
     return;
   }
-  
+
   try {
     importing.value = true;
-    
+
     const result = await batchImportRebateSettings({
       file: file.file,
-      type: activeTab.value
+      type: activeTab.value,
     });
-    
+
     if (result.success > 0) {
       message.success(`导入成功: ${result.success}条记录`);
       if (result.failed > 0) {
@@ -1207,7 +1281,7 @@ const resetFormData = () => {
     validBetThreshold: 1,
     rebateAmountPer10k: 1,
     remarks: '',
-    isActive: true
+    isActive: true,
   });
   console.log('Form data reset:', formData);
 };
@@ -1217,7 +1291,7 @@ const resetBatchFormData = () => {
     validUserThreshold: null,
     validBetThreshold: null,
     rebateAmountPer10k: null,
-    isActive: null
+    isActive: null,
   });
 };
 
@@ -1230,9 +1304,13 @@ watch(activeTab, () => {
 });
 
 // 监听表单数据变化
-watch(formData, (newData) => {
-  console.log('Form data changed:', newData);
-}, { deep: true });
+watch(
+  formData,
+  (newData) => {
+    console.log('Form data changed:', newData);
+  },
+  { deep: true },
+);
 
 // 初始化
 onMounted(async () => {
@@ -1268,4 +1346,4 @@ onMounted(async () => {
 :deep(.n-upload-dragger) {
   padding: 40px 20px;
 }
-</style> 
+</style>

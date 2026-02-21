@@ -1,275 +1,257 @@
 <template>
-  <Page
-    description=""
-    title=""
-  >
+  <Page description="" title="">
     <!-- 顶部操作按钮 -->
-    <div class="mb-4 flex justify-between items-center">
-     <!-- <n-breadcrumb>
+    <div class="mb-4 flex items-center justify-between">
+      <!-- <n-breadcrumb>
         <n-breadcrumb-item>用户管理</n-breadcrumb-item>
         <n-breadcrumb-item>所有会员</n-breadcrumb-item>
       </n-breadcrumb>-->
-      
-      
     </div>
-    <div class="flex flex-col h-[calc(100vh-180px)]">
+    <div class="flex h-[calc(100vh-180px)] flex-col">
+      <!-- 筛选器区域 -->
+      <n-card class="mb-4">
+        <!-- First Row: Time filters and date range -->
+        <div class="mb-4 flex flex-wrap items-end justify-between">
+          <div class="flex flex-wrap items-end gap-4">
+            <!-- 时间类型选择 -->
+            <div class="flex flex-col">
+              <n-select
+                v-model:value="filterForm.timeType"
+                placeholder="选择时间类型"
+                style="width: 140px"
+                :options="timeTypeOptions"
+              />
+            </div>
 
-    <!-- 筛选器区域 -->
-    <n-card class="mb-4">
-      <!-- First Row: Time filters and date range -->
-      <div class="flex flex-wrap justify-between items-end mb-4">
-        <div class="flex flex-wrap gap-4 items-end">
+            <!-- 时间段快捷选择 -->
+            <div class="flex flex-col">
+              <label class="mb-2 text-sm font-medium">&nbsp;</label>
+              <QuickDateSelect
+                v-model="filterForm.dateQuickSelect"
+                @update:modelValue="handleQuickDateSelect"
+              />
+            </div>
 
-        <!-- 时间类型选择 -->
-        <div class="flex flex-col">
-          <n-select
-            v-model:value="filterForm.timeType"
-            placeholder="选择时间类型"
-            style="width: 140px"
-            :options="timeTypeOptions"
-          />
-        </div>
-
-        <!-- 时间段快捷选择 -->
-        <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">&nbsp;</label>
-          <QuickDateSelect
-            v-model="filterForm.dateQuickSelect"
-            @update:modelValue="handleQuickDateSelect"
-          />
-        </div>
-
-        <!-- 日期范围选择器 -->
-        <div class="flex flex-col">
-          <TimezoneDatePicker
-            v-model="filterForm.dateRange"
-            @update:modelValue="handleDateRangeChange"
-          />
-        </div>
-        </div>
-        <div class="flex gap-2">
-        <n-button type="primary" @click="handleAddMember">
-          <template #icon>
-            <span>+</span>
-          </template>
-          新增会员
-        </n-button>
-        <n-button @click="handleImport">
-          <template #icon>
-            <span>↓</span>
-          </template>
-          导入
-        </n-button>
-        <n-button @click="handleExport">
-          <template #icon>
-            <span>↑</span>
-          </template>
-          导出报表
-        </n-button>
-      </div>
-      </div>
-
-      <!-- Second Row: Search filters -->
-      <div class="flex flex-wrap gap-4 items-end">
-        <!-- 搜索条件 (综合搜索字段选择器) -->
-        <div class="flex flex-col">
-          <n-select
-            v-model:value="filterForm.searchCondition"
-            placeholder="请选择搜索条件"
-            clearable
-            style="width: 200px"
-            :options="searchConditionOptions"
-            @update:value="handleSearchConditionChange"
-          />
-        </div>
-        
-        <!-- 搜索条件值 (动态显示) -->
-        <div v-if="filterForm.searchCondition" class="flex flex-col">
-          <n-select
-            v-model:value="filterForm.searchConditionValue"
-            :placeholder="`请选择${getSearchConditionLabel()}`"
-            clearable
-            filterable
-            style="width: 200px"
-            :options="searchConditionValueOptions"
-            :loading="loadingConditionOptions"
-          />
-        </div>
-
-        <!-- 搜索字段 (精准会员账号等) -->
-        <div class="flex flex-col">
-          <n-select
-            v-model:value="filterForm.searchField"
-            placeholder="精准会员账号"
-            clearable
-            filterable
-            style="width: 200px"
-            :options="allSearchFieldOptions"
-            @update:value="handleSearchFieldChange"
-          />
-        </div>
-
-        <!-- 搜索值 -->
-        <div class="flex flex-col">
-          <n-input
-            v-model:value="filterForm.searchValue"
-            :placeholder="`请输入${getCurrentSearchFieldLabel()}`"
-            clearable
-            style="width: 240px"
-            @keyup.enter="handleFilter"
-          />
-        </div>
-
-        <!-- 账号类型 -->
-        <div class="flex flex-col">
-          <n-select
-            v-model:value="filterForm.accountType"
-            placeholder="请选择账号类型"
-            clearable
-            style="width: 180px"
-            :options="accountTypeOptions"
-          />
-        </div>
-
-        <!-- 操作按钮 -->
-        <div class="flex flex-col">
+            <!-- 日期范围选择器 -->
+            <div class="flex flex-col">
+              <TimezoneDatePicker
+                v-model="filterForm.dateRange"
+                @update:modelValue="handleDateRangeChange"
+              />
+            </div>
+          </div>
           <div class="flex gap-2">
-            <n-button type="primary" @click="handleFilter">
-              搜索
+            <n-button type="primary" @click="handleAddMember">
+              <template #icon>
+                <span>+</span>
+              </template>
+              新增会员
             </n-button>
-            <n-button type="info" @click="showAdvancedSearch = true">
-              高级搜索
+            <n-button @click="handleImport">
+              <template #icon>
+                <span>↓</span>
+              </template>
+              导入
             </n-button>
-            <n-button @click="resetFilter">
-              重置
+            <n-button @click="handleExport">
+              <template #icon>
+                <span>↑</span>
+              </template>
+              导出报表
             </n-button>
           </div>
         </div>
+
+        <!-- Second Row: Search filters -->
+        <div class="flex flex-wrap items-end gap-4">
+          <!-- 搜索条件 (综合搜索字段选择器) -->
+          <div class="flex flex-col">
+            <n-select
+              v-model:value="filterForm.searchCondition"
+              placeholder="请选择搜索条件"
+              clearable
+              style="width: 200px"
+              :options="searchConditionOptions"
+              @update:value="handleSearchConditionChange"
+            />
+          </div>
+
+          <!-- 搜索条件值 (动态显示) -->
+          <div v-if="filterForm.searchCondition" class="flex flex-col">
+            <n-select
+              v-model:value="filterForm.searchConditionValue"
+              :placeholder="`请选择${getSearchConditionLabel()}`"
+              clearable
+              filterable
+              style="width: 200px"
+              :options="searchConditionValueOptions"
+              :loading="loadingConditionOptions"
+            />
+          </div>
+
+          <!-- 搜索字段 (精准会员账号等) -->
+          <div class="flex flex-col">
+            <n-select
+              v-model:value="filterForm.searchField"
+              placeholder="精准会员账号"
+              clearable
+              filterable
+              style="width: 200px"
+              :options="allSearchFieldOptions"
+              @update:value="handleSearchFieldChange"
+            />
+          </div>
+
+          <!-- 搜索值 -->
+          <div class="flex flex-col">
+            <n-input
+              v-model:value="filterForm.searchValue"
+              :placeholder="`请输入${getCurrentSearchFieldLabel()}`"
+              clearable
+              style="width: 240px"
+              @keyup.enter="handleFilter"
+            />
+          </div>
+
+          <!-- 账号类型 -->
+          <div class="flex flex-col">
+            <n-select
+              v-model:value="filterForm.accountType"
+              placeholder="请选择账号类型"
+              clearable
+              style="width: 180px"
+              :options="accountTypeOptions"
+            />
+          </div>
+
+          <!-- 操作按钮 -->
+          <div class="flex flex-col">
+            <div class="flex gap-2">
+              <n-button type="primary" @click="handleFilter"> 搜索 </n-button>
+              <n-button type="info" @click="showAdvancedSearch = true">
+                高级搜索
+              </n-button>
+              <n-button @click="resetFilter"> 重置 </n-button>
+            </div>
+          </div>
+        </div>
+      </n-card>
+      <div class="min-h-0 flex-1">
+        <SmartDataGrid
+          :data="tableData"
+          :columns="columns"
+          :loading="loading"
+          :pagination="paginationReactive"
+          selectable
+          :selected-keys="checkedRowKeys"
+          :row-key="(row: UserItem) => row.id"
+          @update:selected-keys="checkedRowKeys = $event"
+          @update:page="handlePageChange"
+          @update:page-size="handlePageSizeChange"
+          @refresh="handleRefresh"
+          @row-click="handleRowClick"
+        >
+          <template #actionBar> </template>
+        </SmartDataGrid>
+
+        <!-- 用户详情弹窗 -->
+        <UserDetailModal
+          v-model:visible="showDetailModal"
+          :user-id="currentUserId"
+          @refresh="loadTableData"
+          @filter-by-name="handleFilterByName"
+          @commission-click="handleCommissionClick"
+        />
+
+        <!-- 高级搜索弹窗 -->
+        <n-modal
+          v-model:show="showAdvancedSearch"
+          preset="card"
+          title="高级搜索"
+          style="width: 700px"
+          :bordered="false"
+          :segmented="{ content: 'soft', footer: 'soft' }"
+        >
+          <div class="flex flex-col gap-4">
+            <div class="grid grid-cols-2 gap-4">
+              <!-- 最小余额 -->
+              <div class="flex flex-col">
+                <label class="mb-2 text-sm font-medium">最小余额</label>
+                <n-input
+                  v-model:value="advancedFilters.minBalance"
+                  placeholder="输入最小余额"
+                />
+              </div>
+              <!-- 最大余额 -->
+              <div class="flex flex-col">
+                <label class="mb-2 text-sm font-medium">最大余额</label>
+                <n-input
+                  v-model:value="advancedFilters.maxBalance"
+                  placeholder="输入最大余额"
+                />
+              </div>
+              <!-- 最小存款 -->
+              <div class="flex flex-col">
+                <label class="mb-2 text-sm font-medium">最小存款金额</label>
+                <n-input
+                  v-model:value="advancedFilters.minDeposit"
+                  placeholder="输入最小存款"
+                />
+              </div>
+              <!-- 最大存款 -->
+              <div class="flex flex-col">
+                <label class="mb-2 text-sm font-medium">最大存款金额</label>
+                <n-input
+                  v-model:value="advancedFilters.maxDeposit"
+                  placeholder="输入最大存款"
+                />
+              </div>
+              <!-- 最小提现 -->
+              <div class="flex flex-col">
+                <label class="mb-2 text-sm font-medium">最小提现金额</label>
+                <n-input
+                  v-model:value="advancedFilters.minWithdraw"
+                  placeholder="输入最小提现"
+                />
+              </div>
+              <!-- 最大提现 -->
+              <div class="flex flex-col">
+                <label class="mb-2 text-sm font-medium">最大提现金额</label>
+                <n-input
+                  v-model:value="advancedFilters.maxWithdraw"
+                  placeholder="输入最大提现"
+                />
+              </div>
+              <!-- 最小登录次数 -->
+              <div class="flex flex-col">
+                <label class="mb-2 text-sm font-medium">最小登录次数</label>
+                <n-input
+                  v-model:value="advancedFilters.minLoginCount"
+                  placeholder="输入最小登录次数"
+                />
+              </div>
+              <!-- 最大登录次数 -->
+              <div class="flex flex-col">
+                <label class="mb-2 text-sm font-medium">最大登录次数</label>
+                <n-input
+                  v-model:value="advancedFilters.maxLoginCount"
+                  placeholder="输入最大登录次数"
+                />
+              </div>
+            </div>
+          </div>
+          <template #footer>
+            <div class="flex justify-end gap-2">
+              <n-button @click="showAdvancedSearch = false"> 取消 </n-button>
+              <n-button @click="resetAdvancedFilters"> 重置 </n-button>
+              <n-button type="primary" @click="applyAdvancedFilters">
+                应用高级搜索
+              </n-button>
+            </div>
+          </template>
+        </n-modal>
       </div>
-    </n-card>
-    <div class="flex-1 min-h-0">
-
-    <SmartDataGrid
-      :data="tableData"
-      :columns="columns"
-      :loading="loading"
-      :pagination="paginationReactive"
-      selectable
-      :selected-keys="checkedRowKeys"
-      :row-key="(row: UserItem) => row.id"
-      @update:selected-keys="checkedRowKeys = $event"
-      @update:page="handlePageChange"
-      @update:page-size="handlePageSizeChange"
-      @refresh="handleRefresh"
-      @row-click="handleRowClick"
-    >
-      <template #actionBar>
-        
-      </template>
-    </SmartDataGrid>
-
-    <!-- 用户详情弹窗 -->
-    <UserDetailModal
-      v-model:visible="showDetailModal"
-      :user-id="currentUserId"
-      @refresh="loadTableData"
-      @filter-by-name="handleFilterByName"
-      @commission-click="handleCommissionClick"
-    />
-
-    <!-- 高级搜索弹窗 -->
-    <n-modal
-      v-model:show="showAdvancedSearch"
-      preset="card"
-      title="高级搜索"
-      style="width: 700px"
-      :bordered="false"
-      :segmented="{ content: 'soft', footer: 'soft' }"
-    >
-      <div class="flex flex-col gap-4">
-        <div class="grid grid-cols-2 gap-4">
-          <!-- 最小余额 -->
-          <div class="flex flex-col">
-            <label class="mb-2 text-sm font-medium">最小余额</label>
-            <n-input
-              v-model:value="advancedFilters.minBalance"
-              placeholder="输入最小余额"
-            />
-          </div>
-          <!-- 最大余额 -->
-          <div class="flex flex-col">
-            <label class="mb-2 text-sm font-medium">最大余额</label>
-            <n-input
-              v-model:value="advancedFilters.maxBalance"
-              placeholder="输入最大余额"
-            />
-          </div>
-          <!-- 最小存款 -->
-          <div class="flex flex-col">
-            <label class="mb-2 text-sm font-medium">最小存款金额</label>
-            <n-input
-              v-model:value="advancedFilters.minDeposit"
-              placeholder="输入最小存款"
-            />
-          </div>
-          <!-- 最大存款 -->
-          <div class="flex flex-col">
-            <label class="mb-2 text-sm font-medium">最大存款金额</label>
-            <n-input
-              v-model:value="advancedFilters.maxDeposit"
-              placeholder="输入最大存款"
-            />
-          </div>
-          <!-- 最小提现 -->
-          <div class="flex flex-col">
-            <label class="mb-2 text-sm font-medium">最小提现金额</label>
-            <n-input
-              v-model:value="advancedFilters.minWithdraw"
-              placeholder="输入最小提现"
-            />
-          </div>
-          <!-- 最大提现 -->
-          <div class="flex flex-col">
-            <label class="mb-2 text-sm font-medium">最大提现金额</label>
-            <n-input
-              v-model:value="advancedFilters.maxWithdraw"
-              placeholder="输入最大提现"
-            />
-          </div>
-          <!-- 最小登录次数 -->
-          <div class="flex flex-col">
-            <label class="mb-2 text-sm font-medium">最小登录次数</label>
-            <n-input
-              v-model:value="advancedFilters.minLoginCount"
-              placeholder="输入最小登录次数"
-            />
-          </div>
-          <!-- 最大登录次数 -->
-          <div class="flex flex-col">
-            <label class="mb-2 text-sm font-medium">最大登录次数</label>
-            <n-input
-              v-model:value="advancedFilters.maxLoginCount"
-              placeholder="输入最大登录次数"
-            />
-          </div>
-        </div>
-      </div>
-      <template #footer>
-        <div class="flex justify-end gap-2">
-          <n-button @click="showAdvancedSearch = false">
-            取消
-          </n-button>
-          <n-button @click="resetAdvancedFilters">
-            重置
-          </n-button>
-          <n-button type="primary" @click="applyAdvancedFilters">
-            应用高级搜索
-          </n-button>
-        </div>
-      </template>
-    </n-modal>
-  </div>
-</div>
+    </div>
   </Page>
 </template>
 
@@ -277,34 +259,42 @@
 import { ref, reactive, onMounted, h } from 'vue';
 import { useRoute } from 'vue-router';
 import { Page } from '@vben/common-ui';
-import { 
-  NCard, 
-  NButton, 
-  NSelect, 
+import {
+  NCard,
+  NButton,
+  NSelect,
   NInput,
   NTag,
   NModal,
   useMessage,
-  type DataTableColumns
+  type DataTableColumns,
 } from 'naive-ui';
-import { 
-  getUserListApi, 
-  type UserItem, 
-  type UserListParams 
+import {
+  getUserListApi,
+  type UserItem,
+  type UserListParams,
 } from '#/api/core/user-management';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 import { defineAsyncComponent } from 'vue';
-const UserDetailModal = defineAsyncComponent(() => import('#/components/user/UserDetailModal.vue'));
-const SmartDataGrid = defineAsyncComponent(() => import('../../../components/smart/SmartDataGrid/index.vue'));
-const TimezoneDatePicker = defineAsyncComponent(() => import('#/components/common/TimezoneDatePicker.vue'));
-const QuickDateSelect = defineAsyncComponent(() => import('#/components/common/QuickDateSelect.vue'));
+const UserDetailModal = defineAsyncComponent(
+  () => import('#/components/user/UserDetailModal.vue'),
+);
+const SmartDataGrid = defineAsyncComponent(
+  () => import('../../../components/smart/SmartDataGrid/index.vue'),
+);
+const TimezoneDatePicker = defineAsyncComponent(
+  () => import('#/components/common/TimezoneDatePicker.vue'),
+);
+const QuickDateSelect = defineAsyncComponent(
+  () => import('#/components/common/QuickDateSelect.vue'),
+);
 
 // Import timezone utilities
 import {
   formatDateTimeInTimezone,
   getNowInTimezone,
   convertTimezoneToUTC,
-  getDisplayTimezone
+  getDisplayTimezone,
 } from '#/utils/timezoneUtils';
 
 const message = useMessage();
@@ -324,20 +314,20 @@ const filterForm = reactive({
   timeType: 'registrationTime' as string,
   dateQuickSelect: null as 'day' | 'week' | 'month' | null,
   dateRange: null as [number, number] | null,
-  
+
   // Search filters
   searchCondition: null as string | null, // Main search category
   searchConditionValue: null as string | null, // Value for search condition
   searchField: null as string | null, // Specific search field type
   searchValue: '', // Search value input
   searchMode: 'exact' as 'exact' | 'fuzzy', // Exact or fuzzy search mode
-  
+
   // Status and type filters
   accountType: null as string | null,
   accountStatus: null as string | null,
   memberLevel: null as string | null,
   vipLevel: null as string | null,
-  
+
   // Legacy
   isBanned: null as boolean | null,
   isVerified: null as boolean | null,
@@ -348,7 +338,7 @@ const filterForm = reactive({
 const paginationReactive = reactive({
   page: 1,
   pageSize: 20,
-  total: 0
+  total: 0,
 });
 
 // 高级搜索过滤条件
@@ -378,11 +368,19 @@ const allSearchFieldOptions = [
   { label: '会员ID', value: 'userID', mode: 'exact' },
   { label: '精准姓名', value: 'exact_name', mode: 'exact' },
   { label: '模糊姓名', value: 'fuzzy_name', mode: 'fuzzy' },
-  
+
   // Withdrawal Account
-  { label: '精准提现账号地址', value: 'exact_withdrawal_account', mode: 'exact' },
-  { label: '模糊提现账号地址', value: 'fuzzy_withdrawal_account', mode: 'fuzzy' },
-  
+  {
+    label: '精准提现账号地址',
+    value: 'exact_withdrawal_account',
+    mode: 'exact',
+  },
+  {
+    label: '模糊提现账号地址',
+    value: 'fuzzy_withdrawal_account',
+    mode: 'fuzzy',
+  },
+
   // Contact Information
   { label: '手机号', value: 'phone', mode: 'exact' },
   { label: 'Email', value: 'email', mode: 'exact' },
@@ -395,7 +393,7 @@ const allSearchFieldOptions = [
   { label: 'Wechat', value: 'wechat', mode: 'exact' },
   { label: 'Threads', value: 'threads', mode: 'exact' },
   { label: 'Instagram', value: 'instagram', mode: 'exact' },
-  
+
   // Referral & Agency
   { label: '邀请人ID', value: 'inviter_id', mode: 'exact' },
   { label: '邀请人', value: 'inviter_account', mode: 'exact' },
@@ -403,19 +401,19 @@ const allSearchFieldOptions = [
   { label: '上级代理', value: 'upper_agent_account', mode: 'exact' },
   { label: '顶层代理ID', value: 'top_agent_id', mode: 'exact' },
   { label: '顶层代理账号', value: 'top_agent_account', mode: 'exact' },
-  
+
   // Club & Payment
   { label: '俱乐部ID', value: 'club_id', mode: 'exact' },
   { label: 'PIX类型', value: 'pix_type', mode: 'exact' },
   { label: 'PIX地址', value: 'pix_address', mode: 'exact' },
   { label: '身份ID', value: 'cpf', mode: 'exact' },
-  
+
   // Registration Information
   { label: '注册IP', value: 'registration_ip', mode: 'exact' },
   { label: '注册域名', value: 'registration_domain', mode: 'exact' },
   { label: '注册来源', value: 'registration_source', mode: 'exact' },
   { label: '注册设备号', value: 'registration_device', mode: 'exact' },
-  
+
   // Last Login Information
   { label: '最后登录IP', value: 'last_login_ip', mode: 'exact' },
   { label: '最后登录域名', value: 'last_login_domain', mode: 'exact' },
@@ -465,14 +463,18 @@ const columns: DataTableColumns<UserItem> = [
     key: 'userID',
     width: 120,
     render(row) {
-      return h('span', { 
-        style: 'color: #2080f0; cursor: pointer;',
-        onClick: (e: Event) => {
-          e.stopPropagation();
-          handleViewDetail(row);
-        }
-      }, row.userID || String(row.id));
-    }
+      return h(
+        'span',
+        {
+          style: 'color: #2080f0; cursor: pointer;',
+          onClick: (e: Event) => {
+            e.stopPropagation();
+            handleViewDetail(row);
+          },
+        },
+        row.userID || String(row.id),
+      );
+    },
   },
   {
     title: '账号',
@@ -480,21 +482,25 @@ const columns: DataTableColumns<UserItem> = [
     width: 120,
     ellipsis: { tooltip: true },
     render(row) {
-      return h('span', { 
-        style: 'color: #2080f0; cursor: pointer;',
-        class: 'hover:underline',
-        onClick: (e: Event) => {
-          e.stopPropagation();
-          handleViewDetail(row);
-        }
-      }, row.memberAccount || '-');
-    }
+      return h(
+        'span',
+        {
+          style: 'color: #2080f0; cursor: pointer;',
+          class: 'hover:underline',
+          onClick: (e: Event) => {
+            e.stopPropagation();
+            handleViewDetail(row);
+          },
+        },
+        row.memberAccount || '-',
+      );
+    },
   },
   {
     title: '真实姓名',
     key: 'realName',
     width: 100,
-    ellipsis: { tooltip: true }
+    ellipsis: { tooltip: true },
   },
   {
     title: '注册日期',
@@ -502,34 +508,45 @@ const columns: DataTableColumns<UserItem> = [
     width: 160,
     render(row) {
       return row.registrationTime ? formatDateTime(row.registrationTime) : '-';
-    }
+    },
   },
   {
     title: 'VIP等级',
     key: 'vipLevel',
     width: 100,
     render(row) {
-      return h(NTag, { type: 'warning' }, { default: () => row.vipLevel || 'VIP0' });
-    }
+      return h(
+        NTag,
+        { type: 'warning' },
+        { default: () => row.vipLevel || 'VIP0' },
+      );
+    },
   },
   {
     title: '会员层级',
     key: 'memberLevel',
     width: 100,
     render(row) {
-      const levelColorMap: Record<string, 'default' | 'error' | 'warning' | 'primary' | 'success' | 'info'> = {
-        '铜牌会员': 'warning',
-        '银牌会员': 'info',
-        '金牌会员': 'success',
-        '白金会员': 'primary',
-        '钻石会员': 'error'
+      const levelColorMap: Record<
+        string,
+        'default' | 'error' | 'warning' | 'primary' | 'success' | 'info'
+      > = {
+        铜牌会员: 'warning',
+        银牌会员: 'info',
+        金牌会员: 'success',
+        白金会员: 'primary',
+        钻石会员: 'error',
       };
-      return h(NTag, { 
-        type: levelColorMap[row.memberLevel] || 'default' 
-      }, { 
-        default: () => row.memberLevel || '默认层级'
-      });
-    }
+      return h(
+        NTag,
+        {
+          type: levelColorMap[row.memberLevel] || 'default',
+        },
+        {
+          default: () => row.memberLevel || '默认层级',
+        },
+      );
+    },
   },
   {
     title: '顶层代理(ID)',
@@ -541,24 +558,32 @@ const columns: DataTableColumns<UserItem> = [
         return '-';
       }
       return h('div', { class: 'flex flex-col gap-1' }, [
-        h('span', { 
-          style: 'color: #2080f0; cursor: pointer;',
-          class: 'hover:underline',
-          onClick: (e: Event) => {
-            e.stopPropagation();
-            message.info(`顶层代理: ${row.topAgentAccount}`);
-          }
-        }, row.topAgentAccount),
-        h('span', { 
-          style: 'color: #2080f0; cursor: pointer; font-size: 12px;',
-          class: 'hover:underline',
-          onClick: (e: Event) => {
-            e.stopPropagation();
-            message.info(`ID: ${row.topAgentUserID}`);
-          }
-        }, `(${row.topAgentUserID})`)
+        h(
+          'span',
+          {
+            style: 'color: #2080f0; cursor: pointer;',
+            class: 'hover:underline',
+            onClick: (e: Event) => {
+              e.stopPropagation();
+              message.info(`顶层代理: ${row.topAgentAccount}`);
+            },
+          },
+          row.topAgentAccount,
+        ),
+        h(
+          'span',
+          {
+            style: 'color: #2080f0; cursor: pointer; font-size: 12px;',
+            class: 'hover:underline',
+            onClick: (e: Event) => {
+              e.stopPropagation();
+              message.info(`ID: ${row.topAgentUserID}`);
+            },
+          },
+          `(${row.topAgentUserID})`,
+        ),
       ]);
-    }
+    },
   },
   {
     title: '上级代理(ID)',
@@ -570,24 +595,32 @@ const columns: DataTableColumns<UserItem> = [
         return '-';
       }
       return h('div', { class: 'flex flex-col gap-1' }, [
-        h('span', { 
-          style: 'color: #2080f0; cursor: pointer;',
-          class: 'hover:underline',
-          onClick: (e: Event) => {
-            e.stopPropagation();
-            message.info(`上级代理: ${row.upperAgentAccount}`);
-          }
-        }, row.upperAgentAccount),
-        h('span', { 
-          style: 'color: #2080f0; cursor: pointer; font-size: 12px;',
-          class: 'hover:underline',
-          onClick: (e: Event) => {
-            e.stopPropagation();
-            message.info(`ID: ${row.upperAgentUserID}`);
-          }
-        }, `(${row.upperAgentUserID})`)
+        h(
+          'span',
+          {
+            style: 'color: #2080f0; cursor: pointer;',
+            class: 'hover:underline',
+            onClick: (e: Event) => {
+              e.stopPropagation();
+              message.info(`上级代理: ${row.upperAgentAccount}`);
+            },
+          },
+          row.upperAgentAccount,
+        ),
+        h(
+          'span',
+          {
+            style: 'color: #2080f0; cursor: pointer; font-size: 12px;',
+            class: 'hover:underline',
+            onClick: (e: Event) => {
+              e.stopPropagation();
+              message.info(`ID: ${row.upperAgentUserID}`);
+            },
+          },
+          `(${row.upperAgentUserID})`,
+        ),
       ]);
-    }
+    },
   },
   {
     title: '账户余额',
@@ -595,7 +628,7 @@ const columns: DataTableColumns<UserItem> = [
     width: 120,
     render(row) {
       return `BRL ${row.balance?.toFixed(2) || '0.00'}`;
-    }
+    },
   },
   {
     title: '状态',
@@ -603,45 +636,62 @@ const columns: DataTableColumns<UserItem> = [
     width: 120,
     render(row) {
       // 🎯 FIX: Display actual status text instead of toggle
-      const statusMap: Record<string, { text: string; type: 'success' | 'error' | 'warning' | 'info' | 'default' }> = {
-        'NORMAL': { text: '正常', type: 'success' },
-        'MANUAL_FREEZE': { text: '手动冻结', type: 'error' },
-        'PROHIBIT_BONUS': { text: '禁止领取优惠', type: 'warning' },
-        'PROHIBIT_WITHDRAWAL': { text: '禁止提现', type: 'error' },
-        'PROHIBIT_GAME_ENTRY': { text: '禁止进入游戏', type: 'warning' },
-        'BLACKLIST': { text: '黑名单', type: 'error' },
-        'MARGINAL': { text: '边退', type: 'warning' }
+      const statusMap: Record<
+        string,
+        {
+          text: string;
+          type: 'success' | 'error' | 'warning' | 'info' | 'default';
+        }
+      > = {
+        NORMAL: { text: '正常', type: 'success' },
+        MANUAL_FREEZE: { text: '手动冻结', type: 'error' },
+        PROHIBIT_BONUS: { text: '禁止领取优惠', type: 'warning' },
+        PROHIBIT_WITHDRAWAL: { text: '禁止提现', type: 'error' },
+        PROHIBIT_GAME_ENTRY: { text: '禁止进入游戏', type: 'warning' },
+        BLACKLIST: { text: '黑名单', type: 'error' },
+        MARGINAL: { text: '边退', type: 'warning' },
       };
-      
+
       const status = row.accountStatus || 'NORMAL';
       const statusInfo = statusMap[status] || { text: status, type: 'default' };
-      
-      return h(NTag, { type: statusInfo.type, size: 'small' }, { 
-        default: () => statusInfo.text 
-      });
-    }
+
+      return h(
+        NTag,
+        { type: statusInfo.type, size: 'small' },
+        {
+          default: () => statusInfo.text,
+        },
+      );
+    },
   },
-  
+
   {
     title: '操作',
     key: 'actions',
     width: 200,
     render(row) {
       return h('div', { class: 'flex gap-1' }, [
-        h(NButton, {
-          size: 'small',
-          type: 'primary',
-          onClick: () => handleViewDetail(row)
-        }, { default: () => '详情' }),
-        h(NButton, {
-          size: 'small',
-          type: 'info',
-          onClick: () => handleManageUser(row)
-        }, { default: () => '管理' })
-        
+        h(
+          NButton,
+          {
+            size: 'small',
+            type: 'primary',
+            onClick: () => handleViewDetail(row),
+          },
+          { default: () => '详情' },
+        ),
+        h(
+          NButton,
+          {
+            size: 'small',
+            type: 'info',
+            onClick: () => handleManageUser(row),
+          },
+          { default: () => '管理' },
+        ),
       ]);
-    }
-  }
+    },
+  },
 ];
 
 // 事件处理函数 - 使用环境变量中的时区
@@ -649,11 +699,11 @@ const handleQuickDateSelect = (value: 'day' | 'week' | 'month' | null) => {
   if (!value) return; // Handle null case
   // Get current time components in display timezone (from env)
   const tzNow = getNowInTimezone();
-  
+
   let startYear: number, startMonth: number, startDay: number;
   let endYear: number, endMonth: number, endDay: number;
-  
-  switch(value) {
+
+  switch (value) {
     case 'day':
       // Today in display timezone: 00:00:00 to 23:59:59
       startYear = endYear = tzNow.year;
@@ -685,29 +735,53 @@ const handleQuickDateSelect = (value: 'day' | 'week' | 'month' | null) => {
     default:
       return;
   }
-  
+
   // ✅ SIMPLIFIED: Convert São Paulo time to UTC and store directly
   // The date picker will display in browser timezone, but we'll use UTC timestamps for backend
   const tz = getDisplayTimezone();
-  
+
   // Convert São Paulo time components to UTC
-  const startDateUTC = convertTimezoneToUTC(startYear, startMonth, startDay, 0, 0, 0, tz);
-  const endDateUTC = convertTimezoneToUTC(endYear, endMonth, endDay, 23, 59, 59, tz);
-  
+  const startDateUTC = convertTimezoneToUTC(
+    startYear,
+    startMonth,
+    startDay,
+    0,
+    0,
+    0,
+    tz,
+  );
+  const endDateUTC = convertTimezoneToUTC(
+    endYear,
+    endMonth,
+    endDay,
+    23,
+    59,
+    59,
+    tz,
+  );
+
   // Validate and store UTC timestamps directly
   if (isNaN(startDateUTC.getTime()) || isNaN(endDateUTC.getTime())) {
     console.error('❌ Failed to convert timezone dates to UTC');
     // Fallback: approximate UTC (not ideal)
     filterForm.dateRange = [
-      new Date(Date.UTC(startYear, startMonth - 1, startDay, 3, 0, 0)).getTime(), // São Paulo is UTC-3
-      new Date(Date.UTC(endYear, endMonth - 1, endDay, 2, 59, 59)).getTime()
+      new Date(
+        Date.UTC(startYear, startMonth - 1, startDay, 3, 0, 0),
+      ).getTime(), // São Paulo is UTC-3
+      new Date(Date.UTC(endYear, endMonth - 1, endDay, 2, 59, 59)).getTime(),
     ];
   } else {
     // Store UTC timestamps - these represent São Paulo time
     filterForm.dateRange = [startDateUTC.getTime(), endDateUTC.getTime()];
     console.log('📅 Quick date select:', {
-      saoPaulo: { start: `${startYear}-${startMonth}-${startDay} 00:00:00`, end: `${endYear}-${endMonth}-${endDay} 23:59:59` },
-      utcTimestamps: { start: startDateUTC.toISOString(), end: endDateUTC.toISOString() }
+      saoPaulo: {
+        start: `${startYear}-${startMonth}-${startDay} 00:00:00`,
+        end: `${endYear}-${endMonth}-${endDay} 23:59:59`,
+      },
+      utcTimestamps: {
+        start: startDateUTC.toISOString(),
+        end: endDateUTC.toISOString(),
+      },
     });
   }
 };
@@ -715,7 +789,7 @@ const handleQuickDateSelect = (value: 'day' | 'week' | 'month' | null) => {
 const handleDateRangeChange = (value: [number, number] | null) => {
   // Clear quick select when manually changing date range
   filterForm.dateQuickSelect = null;
-  
+
   // ✅ FIX: When user manually selects dates, the date picker creates Date objects
   // in browser local timezone. We need to interpret what the user selected as
   // display timezone time, then convert to UTC.
@@ -726,7 +800,9 @@ const handleDateRangeChange = (value: [number, number] | null) => {
 const handleSearchFieldChange = (value: string | null) => {
   if (value) {
     // Set search mode based on selected field
-    const selectedOption = allSearchFieldOptions.find(opt => opt.value === value);
+    const selectedOption = allSearchFieldOptions.find(
+      (opt) => opt.value === value,
+    );
     if (selectedOption) {
       filterForm.searchMode = selectedOption.mode as 'exact' | 'fuzzy';
     }
@@ -737,34 +813,41 @@ const handleSearchFieldChange = (value: string | null) => {
 
 // Handle search condition change - load options dynamically
 const loadingConditionOptions = ref(false);
-const searchConditionValueOptions = ref<Array<{ label: string; value: string }>>([]);
+const searchConditionValueOptions = ref<
+  Array<{ label: string; value: string }>
+>([]);
 
 const handleSearchConditionChange = async (value: string | null) => {
   filterForm.searchConditionValue = null; // Clear previous value
   searchConditionValueOptions.value = [];
-  
+
   if (!value) return;
-  
+
   loadingConditionOptions.value = true;
   try {
     switch (value) {
       case 'memberLevel':
         // Load member tiers
-        const { getActiveMemberTiersApi } = await import('#/api/core/memberTier');
+        const { getActiveMemberTiersApi } = await import(
+          '#/api/core/memberTier'
+        );
         const tiers = await getActiveMemberTiersApi();
-        searchConditionValueOptions.value = tiers.map(tier => ({
+        searchConditionValueOptions.value = tiers.map((tier) => ({
           label: tier.tierName,
-          value: tier.id.toString()
+          value: tier.id.toString(),
         }));
         break;
       case 'vipLevel':
         // Load VIP levels
         const { getVIPLevels } = await import('#/api/vip');
-        const vipResponse = await getVIPLevels({ pageSize: 100, isActive: true });
+        const vipResponse = await getVIPLevels({
+          pageSize: 100,
+          isActive: true,
+        });
         const vipLevels = vipResponse.list || [];
-        searchConditionValueOptions.value = vipLevels.map(level => ({
+        searchConditionValueOptions.value = vipLevels.map((level) => ({
           label: level.name,
-          value: level.id.toString()
+          value: level.id.toString(),
         }));
         break;
       case 'accountStatus':
@@ -773,7 +856,7 @@ const handleSearchConditionChange = async (value: string | null) => {
           { label: '冻结', value: 'FROZEN' },
           { label: '锁定', value: 'LOCKED' },
           { label: '暂停', value: 'SUSPENDED' },
-          { label: '临时', value: 'TEMPORARY' }
+          { label: '临时', value: 'TEMPORARY' },
         ];
         break;
       case 'onlineStatus':
@@ -784,7 +867,7 @@ const handleSearchConditionChange = async (value: string | null) => {
         searchConditionValueOptions.value = [
           { label: '普通用户', value: 'normal' },
           { label: 'VIP用户', value: 'vip' },
-          { label: '代理用户', value: 'agent' }
+          { label: '代理用户', value: 'agent' },
         ];
         break;
       case 'loginHistory':
@@ -792,7 +875,7 @@ const handleSearchConditionChange = async (value: string | null) => {
           { label: '今天登录', value: 'today' },
           { label: '7天内登录', value: 'week' },
           { label: '30天内登录', value: 'month' },
-          { label: '从未登录', value: 'never' }
+          { label: '从未登录', value: 'never' },
         ];
         break;
     }
@@ -805,7 +888,9 @@ const handleSearchConditionChange = async (value: string | null) => {
 };
 
 const getSearchConditionLabel = () => {
-  const condition = searchConditionOptions.find(opt => opt.value === filterForm.searchCondition);
+  const condition = searchConditionOptions.find(
+    (opt) => opt.value === filterForm.searchCondition,
+  );
   return condition ? condition.label : '值';
 };
 
@@ -814,10 +899,10 @@ const handleOnlineStatusClick = (statusValue: string) => {
   // Auto-select onlineStatus in search condition
   filterForm.searchCondition = 'onlineStatus';
   filterForm.searchConditionValue = statusValue;
-  
+
   // Load the options for onlineStatus
   handleSearchConditionChange('onlineStatus');
-  
+
   // Trigger filter immediately
   paginationReactive.page = 1;
   loadTableData();
@@ -825,7 +910,9 @@ const handleOnlineStatusClick = (statusValue: string) => {
 
 const getCurrentSearchFieldLabel = () => {
   if (!filterForm.searchField) return '搜索值';
-  const option = allSearchFieldOptions.find(opt => opt.value === filterForm.searchField);
+  const option = allSearchFieldOptions.find(
+    (opt) => opt.value === filterForm.searchField,
+  );
   return option ? option.label : '搜索值';
 };
 
@@ -907,7 +994,7 @@ const clearSelection = () => {
 };
 
 const selectAll = () => {
-  checkedRowKeys.value = tableData.value.map(user => user.id);
+  checkedRowKeys.value = tableData.value.map((user) => user.id);
   message.info('已全选');
 };
 
@@ -925,7 +1012,7 @@ const handleBulkDelete = async (selectedRows: UserItem[]) => {
     message.warning('请选择要删除的用户');
     return;
   }
-  
+
   message.warning(`批量删除 ${selectedRows.length} 个用户功能开发中...`);
   console.log('Bulk delete users:', selectedRows);
   // TODO: 实现批量删除功能
@@ -968,7 +1055,7 @@ const applyAdvancedFilters = () => {
 const loadTableData = async () => {
   loading.value = true;
   const startTime = Date.now();
-  
+
   try {
     const params: UserListParams = {
       page: paginationReactive.page,
@@ -979,13 +1066,16 @@ const loadTableData = async () => {
     if (filterForm.dateRange && filterForm.dateRange.length === 2) {
       const [startTimestamp, endTimestamp] = filterForm.dateRange;
       const tz = getDisplayTimezone();
-      
+
       const startDate = new Date(startTimestamp);
       const endDate = new Date(endTimestamp);
-      
+
       // Validate dates
       if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-        console.error('❌ Invalid date timestamps in dateRange:', { startTimestamp, endTimestamp });
+        console.error('❌ Invalid date timestamps in dateRange:', {
+          startTimestamp,
+          endTimestamp,
+        });
       } else {
         // Get what these timestamps represent in São Paulo timezone
         // This tells us what the user actually selected (interpreted as São Paulo time)
@@ -997,9 +1087,9 @@ const loadTableData = async () => {
           hour: '2-digit',
           minute: '2-digit',
           second: '2-digit',
-          hour12: false
+          hour12: false,
         }).format(startDate);
-        
+
         const endTzStr = new Intl.DateTimeFormat('en-US', {
           timeZone: tz,
           year: 'numeric',
@@ -1008,32 +1098,51 @@ const loadTableData = async () => {
           hour: '2-digit',
           minute: '2-digit',
           second: '2-digit',
-          hour12: false
+          hour12: false,
         }).format(endDate);
-        
+
         // Parse: "12/08/2025, 00:00:00"
         const [startDatePart, startTimePart] = startTzStr.split(', ');
         const [endDatePart, endTimePart] = endTzStr.split(', ');
-        
+
         if (startDatePart && startTimePart && endDatePart && endTimePart) {
           const [startM, startD, startY] = startDatePart.split('/');
           const [startH, startMin, startSec] = startTimePart.split(':');
           const [endM, endD, endY] = endDatePart.split('/');
           const [endH, endMin, endSec] = endTimePart.split(':');
-          
-          if (startM && startD && startY && startH && startMin && endM && endD && endY && endH && endMin) {
+
+          if (
+            startM &&
+            startD &&
+            startY &&
+            startH &&
+            startMin &&
+            endM &&
+            endD &&
+            endY &&
+            endH &&
+            endMin
+          ) {
             // Convert São Paulo time components to UTC
             const startUTC = convertTimezoneToUTC(
-              parseInt(startY), parseInt(startM), parseInt(startD),
-              parseInt(startH), parseInt(startMin), parseInt(startSec || '0'),
-              tz
+              parseInt(startY),
+              parseInt(startM),
+              parseInt(startD),
+              parseInt(startH),
+              parseInt(startMin),
+              parseInt(startSec || '0'),
+              tz,
             );
             const endUTC = convertTimezoneToUTC(
-              parseInt(endY), parseInt(endM), parseInt(endD),
-              parseInt(endH), parseInt(endMin), parseInt(endSec || '59'),
-              tz
+              parseInt(endY),
+              parseInt(endM),
+              parseInt(endD),
+              parseInt(endH),
+              parseInt(endMin),
+              parseInt(endSec || '59'),
+              tz,
             );
-            
+
             // Validate and send to backend
             if (isNaN(startUTC.getTime()) || isNaN(endUTC.getTime())) {
               console.error('❌ Invalid UTC dates after conversion');
@@ -1042,7 +1151,7 @@ const loadTableData = async () => {
             } else {
               params.startDate = startUTC.toISOString();
               params.endDate = endUTC.toISOString();
-              
+
               // Verify the conversion is correct
               const verifyStartSP = new Intl.DateTimeFormat('en-US', {
                 timeZone: tz,
@@ -1052,9 +1161,9 @@ const loadTableData = async () => {
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit',
-                hour12: false
+                hour12: false,
               }).format(startUTC);
-              
+
               const verifyEndSP = new Intl.DateTimeFormat('en-US', {
                 timeZone: tz,
                 year: 'numeric',
@@ -1063,14 +1172,17 @@ const loadTableData = async () => {
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit',
-                hour12: false
+                hour12: false,
               }).format(endUTC);
-              
+
               console.log('✅ Date filter applied:', {
                 timezone: tz,
                 userSelected: { start: startTzStr, end: endTzStr },
-                sentToBackend: { start: startUTC.toISOString(), end: endUTC.toISOString() },
-                verification: { start: verifyStartSP, end: verifyEndSP }
+                sentToBackend: {
+                  start: startUTC.toISOString(),
+                  end: endUTC.toISOString(),
+                },
+                verification: { start: verifyStartSP, end: verifyEndSP },
               });
             }
           } else {
@@ -1099,7 +1211,7 @@ const loadTableData = async () => {
     if (filterForm.searchField && filterForm.searchValue) {
       params.searchField = filterForm.searchField;
       params.searchValue = filterForm.searchValue;
-      
+
       // Set search mode: exact_account = exact, fuzzy_account = fuzzy
       if (filterForm.searchField === 'exact_account') {
         params.searchMode = 'exact';
@@ -1150,10 +1262,10 @@ const loadTableData = async () => {
     }
 
     const data = await getUserListApi(params);
-    
+
     const loadTime = Date.now() - startTime;
     console.log(`⚡ Data loaded in ${loadTime}ms`);
-    
+
     // The API should return { list: UserItem[], pagination: {...} }
     if (data && data.list) {
       tableData.value = data.list;
@@ -1175,20 +1287,23 @@ const loadTableData = async () => {
 onMounted(() => {
   // 🔧 Check for query parameters from navigation (e.g., from agent list page)
   const query = route.query;
-  
+
   // Pre-fill search field and value if provided
   if (query.searchField && query.searchValue) {
     filterForm.searchField = query.searchField as string;
     filterForm.searchValue = query.searchValue as string;
-    console.log('📋 Pre-filled search filter from query:', { 
-      searchField: filterForm.searchField, 
-      searchValue: filterForm.searchValue 
+    console.log('📋 Pre-filled search filter from query:', {
+      searchField: filterForm.searchField,
+      searchValue: filterForm.searchValue,
     });
-    
+
     // ✅ FIX: When coming from agent list (via 直属数 click), don't set date filter
     // Show all downlines without date restriction
     // Only set date filter if explicitly provided in query AND not from agent list
-    if (query.dateQuickSelect === 'day' && !query.searchField?.includes('upper_agent')) {
+    if (
+      query.dateQuickSelect === 'day' &&
+      !query.searchField?.includes('upper_agent')
+    ) {
       filterForm.dateQuickSelect = 'day';
       handleQuickDateSelect('day');
     }
@@ -1199,12 +1314,14 @@ onMounted(() => {
       handleQuickDateSelect('day');
     }
   }
-  
+
   // ✅ NEW: Handle special filter types (same_password, same_withdrawal_pin, etc.)
   if (query.filterType) {
     const filterType = query.filterType as string;
-    const matchCount = query.matchCount ? parseInt(query.matchCount as string) : 0;
-    
+    const matchCount = query.matchCount
+      ? parseInt(query.matchCount as string)
+      : 0;
+
     // Set the appropriate search field based on filterType
     switch (filterType) {
       case 'same_password':
@@ -1220,18 +1337,18 @@ onMounted(() => {
         filterForm.searchField = 'registration_ip';
         break;
     }
-    
+
     // Set search value if provided
     if (query.searchValue) {
       filterForm.searchValue = query.searchValue as string;
     }
-    
+
     // Show match count in a message if provided
     if (matchCount > 0) {
       message.info(`找到 ${matchCount} 个符合条件的会员`);
     }
   }
-  
+
   // Auto-trigger search if query params were provided
   if (query.searchField && query.searchValue) {
     // Small delay to ensure filters are set first
@@ -1247,4 +1364,4 @@ onMounted(() => {
     loadTableData();
   }
 });
-</script> 
+</script>

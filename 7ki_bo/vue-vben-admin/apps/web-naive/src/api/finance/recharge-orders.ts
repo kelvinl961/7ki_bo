@@ -10,20 +10,27 @@ export interface RechargeOrder {
   rechargeAmount: number;
   currency: string;
   // Transaction-specific fields (need new columns):
-  channelCurrency?: string;        // Channel currency for this transaction
-  channelAmount?: number;          // Amount in channel currency for this transaction
-  exchangeRate?: number;           // Exchange rate used for this transaction
-  conversionRatio?: number;        // Conversion ratio used for this transaction
+  channelCurrency?: string; // Channel currency for this transaction
+  channelAmount?: number; // Amount in channel currency for this transaction
+  exchangeRate?: number; // Exchange rate used for this transaction
+  conversionRatio?: number; // Conversion ratio used for this transaction
 
-  channelFeeRate?: number;         // Channel fee rate at time of transaction (audit trail)
-  errorDetails?: string;           // Transaction-specific error details
-  errorCode?: string;              // Transaction-specific error code
+  channelFeeRate?: number; // Channel fee rate at time of transaction (audit trail)
+  errorDetails?: string; // Transaction-specific error details
+  errorCode?: string; // Transaction-specific error code
   thirdPartyPayment: string;
   channelName: string;
   channelCode: string;
   merchantId: string;
   orderType: 'NORMAL' | 'PRESET' | 'SUPPLEMENT';
-  status: 'PENDING' | 'PROCESSING' | 'SUCCESS' | 'FAILED' | 'CANCELLED' | 'TIMEOUT' | 'REFUNDED';
+  status:
+    | 'CANCELLED'
+    | 'FAILED'
+    | 'PENDING'
+    | 'PROCESSING'
+    | 'REFUNDED'
+    | 'SUCCESS'
+    | 'TIMEOUT';
   submitTime: string;
   paymentTime?: string;
   completeTime?: string;
@@ -41,33 +48,33 @@ export interface RechargeOrder {
   updatedAt: string;
   // Relations (retrieved via JOINs):
   user?: {
-    id: number;
-    userID?: string;                // Add userID field
     account: string;
-    name: string;
     balance: number;
+    currency?: string; // Member currency from User table
     email: string;
-    currency?: string;              // Member currency from User table
+    id: number;
+    memberTier?: {
+      id: number;
+      tierCode: string;
+      tierName: string;
+      // Member tier info can include conversion ratios, currency preferences, etc.
+    };
+    name: string;
+    userID?: string; // Add userID field
     vipLevel?: {
       id: number;
       name: string;
     };
-    memberTier?: {
-      id: number;
-      tierName: string;
-      tierCode: string;
-      // Member tier info can include conversion ratios, currency preferences, etc.
-    };
   };
   channel?: {
-    id: string;
+    bonusConfig?: any; // Advanced bonus configuration (JSON from JOIN)
+    bonusRate: number; // Basic bonus percentage (from JOIN)
     channelCode: string;
+    channelFeeRate: number; // Channel-specific fee rate
     channelName: string;
-    currency: string;               // Channel's native currency
-    feeRate: number;               // Platform fee rate
-    channelFeeRate: number;        // Channel-specific fee rate 
-    bonusRate: number;             // Basic bonus percentage (from JOIN)
-    bonusConfig?: any;             // Advanced bonus configuration (JSON from JOIN)
+    currency: string; // Channel's native currency
+    feeRate: number; // Platform fee rate
+    id: string;
     // Other channel info...
   };
 }
@@ -80,7 +87,7 @@ export interface RechargeOrderListParams {
   orderType?: string;
   thirdPartyPayment?: string;
   channelName?: string;
-  channel?: string;                // Add channel filter
+  channel?: string; // Add channel filter
   currency?: string;
   vipLevel?: string;
   startDate?: string;
@@ -92,17 +99,17 @@ export interface RechargeOrderListResponse {
   data: {
     orders: RechargeOrder[];
     pagination: {
-      total: number;
-      page: number;
       limit: number;
+      page: number;
+      total: number;
       totalPages: number;
     };
     statistics: {
-      totalOrders: number;
-      totalRechargeAmount: number;
       totalActualAmount: number;
       totalBonusAmount: number;
       totalFees: number;
+      totalOrders: number;
+      totalRechargeAmount: number;
     };
   };
 }
@@ -126,7 +133,14 @@ export interface CreateRechargeOrderData {
 }
 
 export interface UpdateRechargeOrderData {
-  status?: 'PENDING' | 'PROCESSING' | 'SUCCESS' | 'FAILED' | 'CANCELLED' | 'TIMEOUT' | 'REFUNDED';
+  status?:
+    | 'CANCELLED'
+    | 'FAILED'
+    | 'PENDING'
+    | 'PROCESSING'
+    | 'REFUNDED'
+    | 'SUCCESS'
+    | 'TIMEOUT';
   actualAmount?: number;
   balanceAfter?: number;
   paymentTime?: string;
@@ -140,59 +154,77 @@ export interface UpdateRechargeOrderData {
 
 // 获取充值订单列表 (Combined: RechargeOrder + Deposit records)
 export function getRechargeOrderList(params: RechargeOrderListParams = {}) {
-  return requestClient.get<RechargeOrderListResponse>('/wallet/finance/online-recharge/orders', {
-    params,
-  });
+  return requestClient.get<RechargeOrderListResponse>(
+    '/wallet/finance/online-recharge/orders',
+    {
+      params,
+    },
+  );
 }
 
 // 获取单个充值订单
 export function getRechargeOrder(id: string) {
-  return requestClient.get<{ success: boolean; data: RechargeOrder }>(`/recharge-orders/${id}`);
+  return requestClient.get<{ data: RechargeOrder; success: boolean }>(
+    `/recharge-orders/${id}`,
+  );
 }
 
 // 创建充值订单
 export function createRechargeOrder(data: CreateRechargeOrderData) {
-  return requestClient.post<{ success: boolean; data: RechargeOrder; message: string }>('/recharge-orders', data);
+  return requestClient.post<{
+    data: RechargeOrder;
+    message: string;
+    success: boolean;
+  }>('/recharge-orders', data);
 }
 
 // 更新充值订单
 export function updateRechargeOrder(id: string, data: UpdateRechargeOrderData) {
-  return requestClient.put<{ success: boolean; data: RechargeOrder; message: string }>(`/recharge-orders/${id}`, data);
+  return requestClient.put<{
+    data: RechargeOrder;
+    message: string;
+    success: boolean;
+  }>(`/recharge-orders/${id}`, data);
 }
 
 // 删除充值订单
 export function deleteRechargeOrder(id: string) {
-  return requestClient.delete<{ success: boolean; message: string }>(`/recharge-orders/${id}`);
+  return requestClient.delete<{ message: string; success: boolean }>(
+    `/recharge-orders/${id}`,
+  );
 }
 
 // 获取充值统计数据
-export function getRechargeStatistics(params?: { startDate?: string; endDate?: string }) {
+export function getRechargeStatistics(params?: {
+  endDate?: string;
+  startDate?: string;
+}) {
   return requestClient.get<{
-    success: boolean;
     data: {
-      statusStats: Array<{
-        status: string;
-        _count: number;
-        _sum: {
-          rechargeAmount: number;
-          actualAmount: number;
-        };
+      dailyStats: Array<{
+        actualAmount: number;
+        date: string;
+        totalAmount: number;
+        totalOrders: number;
       }>;
       platformStats: Array<{
-        thirdPartyPayment: string;
         _count: number;
         _sum: {
-          rechargeAmount: number;
           actualAmount: number;
+          rechargeAmount: number;
         };
+        thirdPartyPayment: string;
       }>;
-      dailyStats: Array<{
-        date: string;
-        totalOrders: number;
-        totalAmount: number;
-        actualAmount: number;
+      statusStats: Array<{
+        _count: number;
+        _sum: {
+          actualAmount: number;
+          rechargeAmount: number;
+        };
+        status: string;
       }>;
     };
+    success: boolean;
   }>('/recharge-orders/statistics', {
     params,
   });
@@ -200,7 +232,11 @@ export function getRechargeStatistics(params?: { startDate?: string; endDate?: s
 
 // 导出充值订单数据
 export function exportRechargeOrders(params: RechargeOrderListParams = {}) {
-  return requestClient.get<{ success: boolean; data: RechargeOrder[]; message: string }>('/recharge-orders/export', {
+  return requestClient.get<{
+    data: RechargeOrder[];
+    message: string;
+    success: boolean;
+  }>('/recharge-orders/export', {
     params,
   });
-} 
+}

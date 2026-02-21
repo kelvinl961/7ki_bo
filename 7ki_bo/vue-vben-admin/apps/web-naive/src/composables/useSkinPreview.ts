@@ -1,4 +1,5 @@
 import { computed, ref, watch } from 'vue';
+
 import { getColorPaletteById } from '../utils/colorUtils';
 
 export interface SkinPreviewConfig {
@@ -22,42 +23,42 @@ export const PREVIEW_DEVICES: Record<string, PreviewDevice> = {
     name: '移动端',
     width: 310,
     height: 550,
-    scale: 1
+    scale: 1,
   },
   desktop: {
     name: '桌面版',
     width: 350,
     height: 500,
-    scale: 1
+    scale: 1,
   },
   h5: {
     name: 'H5',
     width: 350,
     height: 600,
-    scale: 1
+    scale: 1,
   },
   ios: {
     name: 'iOS',
     width: 350,
     height: 600,
-    scale: 1
+    scale: 1,
   },
   android: {
     name: 'Android',
     width: 350,
     height: 600,
-    scale: 1
-  }
+    scale: 1,
+  },
 };
 
 // Template mapping for URL generation
 const TEMPLATE_MAPPING: Record<string, string> = {
-  'rolex': '2-1',
-  'tomford': '2-2',
-  'burberry': '2-3',
-  'cartier': '2-4',
-  'omega': '2-5',
-  'tag-heuer': '2-6'
+  rolex: '2-1',
+  tomford: '2-2',
+  burberry: '2-3',
+  cartier: '2-4',
+  omega: '2-5',
+  'tag-heuer': '2-6',
 };
 
 // Language mapping for URL generation
@@ -69,13 +70,13 @@ const LANGUAGE_MAPPING: Record<string, string> = {
   'ko-KR': 'ko',
   'ja-JP': 'ja',
   'th-TH': 'th',
-  'vi-VN': 'vi'
+  'vi-VN': 'vi',
 };
 
 // Color mapping for URL generation
 const COLOR_MAPPING: Record<string, string> = {
-  '有底色': 'dark',
-  '无底色': 'light'
+  有底色: 'dark',
+  无底色: 'light',
 };
 
 // Skin color mapping for URL generation (maps skin color IDs to URL parameters)
@@ -126,7 +127,7 @@ const SKIN_COLOR_MAPPING: Record<string, string> = {
   '1697165753468780546': 'bottega-veneta-green',
   '1822080907778543618': 'rolex-green',
   '1822084756339769345': 'guerlain-purple',
-  '1924287844941955073': 'gucci-black'
+  '1924287844941955073': 'gucci-black',
 };
 
 // Skin color ID to RGB mapping for background overlay
@@ -177,7 +178,7 @@ const SKIN_COLOR_RGB_MAPPING: Record<string, string> = {
   '1697165753468780546': 'rgb(34, 139, 34)', // bottega-veneta-green
   '1822080907778543618': 'rgb(22, 22, 22)', // rolex-green - using custom primary color #161616
   '1822084756339769345': 'rgb(128, 0, 128)', // guerlain-purple
-  '1924287844941955073': 'rgb(0, 0, 0)' // gucci-black
+  '1924287844941955073': 'rgb(0, 0, 0)', // gucci-black
 };
 
 // Export function to get RGB color for skin color ID - now uses dynamic color palette
@@ -186,11 +187,11 @@ export function getSkinColorRGB(skinColorId: string): string {
     const palette = getColorPaletteById(skinColorId);
     // Convert hex to rgb
     const hex = palette.primary.replace('#', '');
-    const r = parseInt(hex.substr(0, 2), 16);
-    const g = parseInt(hex.substr(2, 2), 16);
-    const b = parseInt(hex.substr(4, 2), 16);
+    const r = Number.parseInt(hex.slice(0, 2), 16);
+    const g = Number.parseInt(hex.slice(2, 4), 16);
+    const b = Number.parseInt(hex.slice(4, 6), 16);
     return `rgb(${r}, ${g}, ${b})`;
-  } catch (error) {
+  } catch {
     // Fallback to default if skin color ID not found
     return 'rgb(22, 22, 22)';
   }
@@ -200,21 +201,24 @@ export function getSkinColorRGB(skinColorId: string): string {
 export function rgbToHex(rgb: string): string {
   const rgbMatch = rgb.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
   if (!rgbMatch || rgbMatch.length < 4) return '#054146'; // Default hex value
-  
-  const r = parseInt(rgbMatch[1]!);
-  const g = parseInt(rgbMatch[2]!);
-  const b = parseInt(rgbMatch[3]!);
-  
+
+  const r = Number.parseInt(rgbMatch[1]!);
+  const g = Number.parseInt(rgbMatch[2]!);
+  const b = Number.parseInt(rgbMatch[3]!);
+
   const toHex = (n: number) => {
     const hex = n.toString(16);
-    return hex.length === 1 ? '0' + hex : hex;
+    return hex.length === 1 ? `0${hex}` : hex;
   };
-  
-  return '#' + toHex(r) + toHex(g) + toHex(b);
+
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
 // Get both RGB and hex values for a skin color ID
-export function getSkinColorValues(skinColorId: string): { rgb: string; hex: string } {
+export function getSkinColorValues(skinColorId: string): {
+  hex: string;
+  rgb: string;
+} {
   const rgb = getSkinColorRGB(skinColorId);
   const hex = rgbToHex(rgb);
   return { rgb, hex };
@@ -223,22 +227,24 @@ export function getSkinColorValues(skinColorId: string): { rgb: string; hex: str
 export function useSkinPreview(config: SkinPreviewConfig) {
   const activePreviewDevice = ref<string>('mobile');
   const isLoading = ref(false);
-  const previewError = ref<string | null>(null);
+  const previewError = ref<null | string>(null);
 
   // Generate real preview image URL based on current configuration
   const previewImageUrl = computed(() => {
     const templateCode = TEMPLATE_MAPPING[config.template] || '2-1';
     const langCode = LANGUAGE_MAPPING[config.language] || 'zh';
     const colorCode = COLOR_MAPPING[config.gameColor] || 'dark';
-    const skinColorCode = SKIN_COLOR_MAPPING[config.skinColor] || 'bvlgari-blue-black';
-    
+    const skinColorCode =
+      SKIN_COLOR_MAPPING[config.skinColor] || 'bvlgari-blue-black';
+
     // Generate timestamp for cache busting
     const now = new Date();
-    const timestamp = now.getFullYear() + '-' + 
-                     String(now.getMonth() + 1).padStart(2, '0') + '-' + 
-                     String(now.getDate()).padStart(2, '0') + '-' + 
-                     String(now.getHours()).padStart(2, '0');
-    
+    const timestamp = `${now.getFullYear()}-${String(
+      now.getMonth() + 1,
+    ).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}-${String(
+      now.getHours(),
+    ).padStart(2, '0')}`;
+
     // Build URL with template, language, and color parameters
     // The skin color now influences the template selection
     const templateWithColor = `${templateCode}_${langCode}_${skinColorCode}_${colorCode}`;
@@ -246,45 +252,70 @@ export function useSkinPreview(config: SkinPreviewConfig) {
     const params = new URLSearchParams({
       brand: config.brandIcon,
       device: activePreviewDevice.value,
-      t: timestamp
+      t: timestamp,
     });
-    
-    console.log('Generated preview URL:', `${baseUrl}.png?${params.toString()}`);
+
+    console.log(
+      'Generated preview URL:',
+      `${baseUrl}.png?${params.toString()}`,
+    );
     return `${baseUrl}.png?${params.toString()}`;
   });
 
   // Fallback to mock images if real URL fails
   const mockPreviewImages: Record<string, string> = {
-    'rolex-有底色-mobile': 'https://sweykpro.pubs3static.com/siteadmin/template/2-28_zh.png?2025-07-14-12',
-    'rolex-无底色-mobile': 'https://sweykpro.pubs3static.com/siteadmin/template/2-72_zh.png?2025-07-14-12',
-    'tomford-有底色-mobile': 'https://images.unsplash.com/photo-1592450191688-73c2556511b8?w=250&h=400&fit=crop',
-    'tomford-无底色-mobile': 'https://images.unsplash.com/photo-1551721434-8b94ddff0e6d?w=250&h=400&fit=crop',
-    'burberry-有底色-mobile': 'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=250&h=400&fit=crop',
-    'burberry-无底色-mobile': 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=250&h=400&fit=crop',
-    'cartier-有底色-mobile': 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=250&h=400&fit=crop',
-    'cartier-无底色-mobile': 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=250&h=400&fit=crop',
-    'omega-有底色-mobile': 'https://images.unsplash.com/photo-1524805444973-af331f73afbc?w=250&h=400&fit=crop',
-    'omega-无底色-mobile': 'https://images.unsplash.com/photo-1524805444973-af331f73afbc?w=250&h=400&fit=crop',
-    'tag-heuer-有底色-mobile': 'https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=250&h=400&fit=crop',
-    'tag-heuer-无底色-mobile': 'https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=250&h=400&fit=crop',
-    };
+    'rolex-有底色-mobile':
+      'https://sweykpro.pubs3static.com/siteadmin/template/2-28_zh.png?2025-07-14-12',
+    'rolex-无底色-mobile':
+      'https://sweykpro.pubs3static.com/siteadmin/template/2-72_zh.png?2025-07-14-12',
+    'tomford-有底色-mobile':
+      'https://images.unsplash.com/photo-1592450191688-73c2556511b8?w=250&h=400&fit=crop',
+    'tomford-无底色-mobile':
+      'https://images.unsplash.com/photo-1551721434-8b94ddff0e6d?w=250&h=400&fit=crop',
+    'burberry-有底色-mobile':
+      'https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=250&h=400&fit=crop',
+    'burberry-无底色-mobile':
+      'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=250&h=400&fit=crop',
+    'cartier-有底色-mobile':
+      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=250&h=400&fit=crop',
+    'cartier-无底色-mobile':
+      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=250&h=400&fit=crop',
+    'omega-有底色-mobile':
+      'https://images.unsplash.com/photo-1524805444973-af331f73afbc?w=250&h=400&fit=crop',
+    'omega-无底色-mobile':
+      'https://images.unsplash.com/photo-1524805444973-af331f73afbc?w=250&h=400&fit=crop',
+    'tag-heuer-有底色-mobile':
+      'https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=250&h=400&fit=crop',
+    'tag-heuer-无底色-mobile':
+      'https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=250&h=400&fit=crop',
+  };
 
   // Get mock preview image URL as fallback
   const mockPreviewUrl = computed(() => {
     // Create a key that includes skin color for better variety
-    const skinColorCode = SKIN_COLOR_MAPPING[config.skinColor] || 'bvlgari-blue-black';
+    const skinColorCode =
+      SKIN_COLOR_MAPPING[config.skinColor] || 'bvlgari-blue-black';
     const key = `${config.brandIcon}-${config.gameColor}-${activePreviewDevice.value}`;
-    const baseUrl = mockPreviewImages[key] || mockPreviewImages['rolex-有底色-mobile'];
-    
+    const baseUrl =
+      mockPreviewImages[key] || mockPreviewImages['rolex-有底色-mobile'];
+
     // Add skin color as a query parameter to create variety in mock images
-    const colorParam = skinColorCode.includes('blue') ? 'blue' : 
-                      skinColorCode.includes('green') ? 'green' :
-                      skinColorCode.includes('red') ? 'red' :
-                      skinColorCode.includes('yellow') ? 'yellow' :
-                      skinColorCode.includes('purple') ? 'purple' :
-                      skinColorCode.includes('orange') ? 'orange' :
-                      skinColorCode.includes('brown') ? 'brown' : 'default';
-    
+    const colorParam = skinColorCode.includes('blue')
+      ? 'blue'
+      : skinColorCode.includes('green')
+        ? 'green'
+        : skinColorCode.includes('red')
+          ? 'red'
+          : skinColorCode.includes('yellow')
+            ? 'yellow'
+            : skinColorCode.includes('purple')
+              ? 'purple'
+              : skinColorCode.includes('orange')
+                ? 'orange'
+                : skinColorCode.includes('brown')
+                  ? 'brown'
+                  : 'default';
+
     return `${baseUrl}&color=${colorParam}`;
   });
 
@@ -296,7 +327,10 @@ export function useSkinPreview(config: SkinPreviewConfig) {
 
   // Preview container styles
   const previewContainerStyle = computed(() => {
-    const deviceKey = activePreviewDevice.value in PREVIEW_DEVICES ? activePreviewDevice.value : 'mobile';
+    const deviceKey =
+      activePreviewDevice.value in PREVIEW_DEVICES
+        ? activePreviewDevice.value
+        : 'mobile';
     const device = PREVIEW_DEVICES[deviceKey]!;
     return {
       width: `${device.width}px`,
@@ -304,13 +338,20 @@ export function useSkinPreview(config: SkinPreviewConfig) {
       border: '1px solid #e0e0e0',
       borderRadius: '8px',
       overflow: 'hidden',
-      backgroundColor: '#f5f5f5'
+      backgroundColor: '#f5f5f5',
     };
   });
 
   // Watch for config changes and update preview
   watch(
-    () => [config.template, config.brandIcon, config.gameColor, config.skinColor, config.language, activePreviewDevice.value],
+    () => [
+      config.template,
+      config.brandIcon,
+      config.gameColor,
+      config.skinColor,
+      config.language,
+      activePreviewDevice.value,
+    ],
     () => {
       console.log('Preview config changed:', {
         template: config.template,
@@ -318,17 +359,17 @@ export function useSkinPreview(config: SkinPreviewConfig) {
         gameColor: config.gameColor,
         skinColor: config.skinColor,
         language: config.language,
-        device: activePreviewDevice.value
+        device: activePreviewDevice.value,
       });
       isLoading.value = true;
       previewError.value = null;
-      
+
       // Simulate loading time for better UX
       setTimeout(() => {
         isLoading.value = false;
       }, 500);
     },
-    { deep: true, immediate: true }
+    { deep: true, immediate: true },
   );
 
   // Set active preview device
@@ -342,8 +383,9 @@ export function useSkinPreview(config: SkinPreviewConfig) {
   const handleImageError = (event: Event) => {
     const img = event.target as HTMLImageElement;
     const key = `${config.brandIcon}-${config.gameColor}-${activePreviewDevice.value}`;
-    const fallbackUrl = mockPreviewImages[key] || mockPreviewImages['rolex-有底色-mobile'] || '';
-    
+    const fallbackUrl =
+      mockPreviewImages[key] || mockPreviewImages['rolex-有底色-mobile'] || '';
+
     if (img && img.src !== fallbackUrl && fallbackUrl) {
       img.src = fallbackUrl;
     } else {
@@ -368,17 +410,17 @@ export function useSkinPreview(config: SkinPreviewConfig) {
     activePreviewDevice,
     isLoading,
     previewError,
-    
+
     // Computed
     previewImageUrl,
     mockPreviewUrl,
     currentDevice,
     previewContainerStyle,
-    
+
     // Methods
     setPreviewDevice,
     handleImageError,
     handleImageLoad,
-    startLoading
+    startLoading,
   };
-} 
+}

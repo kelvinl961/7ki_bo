@@ -9,27 +9,27 @@ export interface RechargeCategoryConfig {
   name: string;
   icon?: string;
   displayOrder: number;
-  
+
   // Channel configuration
   supportedCurrencies: string[];
   isActive: boolean;
   frontendEnabled: boolean;
-  
+
   // Merge channel configuration
   enableChannelMerging: boolean;
   mergedChannels?: ThirdPartyChannelInfo[];
-  
+
   // Blacklist configuration
   enableBlacklist: boolean;
   blacklistUsers?: number[];
-  
+
   // Badge configuration
   customBadge?: string;
   showBonusBadge: boolean;
-  
+
   // Recommended amounts configuration
   recommendedAmounts?: RecommendedAmount[];
-  
+
   // Created/Updated info
   createdAt: string;
   updatedAt: string;
@@ -49,7 +49,7 @@ export interface ThirdPartyChannelInfo {
   isActive: boolean;
   memberLevels: string[];
   terminals: string[];
-  
+
   // Statistics
   successRate?: number;
   avgProcessTime?: number;
@@ -58,7 +58,7 @@ export interface ThirdPartyChannelInfo {
 
 export interface RecommendedAmount {
   amount: number;
-  bonusType: 'PERCENTAGE' | 'FIXED';
+  bonusType: 'FIXED' | 'PERCENTAGE';
   bonusValue: number;
   description?: string;
 }
@@ -70,19 +70,19 @@ export interface RechargeSettings {
     enabled: boolean;
     maxApplicationsPerMinute: number;
   };
-  
+
   // Badge display
   showBonusBadge: boolean;
-  
+
   // Concurrent recharge limits
   maxConcurrentRecharges: number; // 0 = unlimited
-  
+
   // Payer wallet address requirement
   requirePayerWalletAddress: boolean;
-  
+
   // Behavior verification
   enableBehaviorVerification: boolean;
-  
+
   // Timeout callback handling
   acceptCallbackAfterTimeout: boolean;
   orderValidityTime: number; // in minutes
@@ -120,7 +120,8 @@ export interface CreateRechargeCategoryParams {
   showBonusBadge?: boolean;
 }
 
-export interface UpdateRechargeCategoryParams extends Partial<CreateRechargeCategoryParams> {
+export interface UpdateRechargeCategoryParams
+  extends Partial<CreateRechargeCategoryParams> {
   id: number;
 }
 
@@ -149,10 +150,15 @@ export interface GetChannelsResponse {
 /**
  * Get recharge categories with configuration
  */
-export function getRechargeCategoriesConfig(params?: GetRechargeCategoriesParams) {
-  return requestClient.get<GetRechargeCategoriesResponse>('/recharge/categories/config', {
-    params,
-  });
+export function getRechargeCategoriesConfig(
+  params?: GetRechargeCategoriesParams,
+) {
+  return requestClient.get<GetRechargeCategoriesResponse>(
+    '/recharge/categories/config',
+    {
+      params,
+    },
+  );
 }
 
 /**
@@ -204,10 +210,16 @@ export function getDisabledChannels(params?: GetChannelsParams) {
 /**
  * Merge recommended amounts for category
  */
-export function mergeRecommendedAmounts(categoryId: number, amounts: RecommendedAmount[]) {
-  return requestClient.post(`/recharge/categories/${categoryId}/merge-amounts`, {
-    recommendedAmounts: amounts,
-  });
+export function mergeRecommendedAmounts(
+  categoryId: number,
+  amounts: RecommendedAmount[],
+) {
+  return requestClient.post(
+    `/recharge/categories/${categoryId}/merge-amounts`,
+    {
+      recommendedAmounts: amounts,
+    },
+  );
 }
 
 /**
@@ -228,9 +240,9 @@ export function updateRechargeSettings(data: Partial<RechargeSettings>) {
  * Get third-party statistics
  */
 export function getThirdPartyStatistics(params?: {
+  channelCode?: string;
   dateRange?: [string, string];
   platformName?: string;
-  channelCode?: string;
 }) {
   return requestClient.get('/recharge/statistics', {
     params,

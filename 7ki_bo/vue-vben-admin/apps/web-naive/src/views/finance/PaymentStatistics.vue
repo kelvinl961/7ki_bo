@@ -3,26 +3,21 @@
     <!-- Header -->
     <div class="header-section">
       <n-card :bordered="false" class="rounded-16px shadow-sm">
-        <div class="flex justify-between items-center mb-4">
+        <div class="mb-4 flex items-center justify-between">
           <div>
             <h2 class="text-xl font-semibold text-gray-800">代付统计</h2>
-            <p class="text-sm text-gray-600 mt-1">查看对应三方代付出款的成功总数、成功率</p>
+            <p class="mt-1 text-sm text-gray-600">
+              查看对应三方代付出款的成功总数、成功率
+            </p>
           </div>
           <div class="flex gap-3">
-            <n-button 
-              type="primary" 
-              @click="fetchData"
-              :loading="loading"
-            >
+            <n-button type="primary" @click="fetchData" :loading="loading">
               <template #icon>
                 <n-icon><ReloadOutline /></n-icon>
               </template>
               刷新
             </n-button>
-            <n-button 
-              type="info" 
-              @click="exportReport"
-            >
+            <n-button type="info" @click="exportReport">
               <template #icon>
                 <n-icon><DownloadOutline /></n-icon>
               </template>
@@ -32,7 +27,9 @@
         </div>
 
         <!-- Search Filters -->
-        <div class="filter-section grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4 mb-4">
+        <div
+          class="filter-section mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6"
+        >
           <!-- Date Range -->
           <div class="filter-item">
             <n-form-item label="统计时间">
@@ -100,8 +97,15 @@
           </div>
 
           <div class="filter-item flex items-end">
-            <n-button type="primary" @click="fetchData" size="small" class="mr-2">
-              <template #icon><n-icon><SearchOutline /></n-icon></template>
+            <n-button
+              type="primary"
+              @click="fetchData"
+              size="small"
+              class="mr-2"
+            >
+              <template #icon
+                ><n-icon><SearchOutline /></n-icon
+              ></template>
               搜索
             </n-button>
             <n-button @click="resetFilters" size="small">重置</n-button>
@@ -113,37 +117,45 @@
     <!-- Statistics Overview -->
     <div class="statistics-overview mt-4">
       <n-card :bordered="false" class="rounded-16px shadow-sm">
-        <h3 class="text-lg font-semibold mb-4">统计概览</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <h3 class="mb-4 text-lg font-semibold">统计概览</h3>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           <div class="stat-card">
             <n-card size="small">
               <div class="text-center">
-                <div class="text-3xl font-bold text-blue-600">{{ statistics.totalOrders }}</div>
-                <div class="text-sm text-gray-600 mt-1">总订单数</div>
+                <div class="text-3xl font-bold text-blue-600">
+                  {{ statistics.totalOrders }}
+                </div>
+                <div class="mt-1 text-sm text-gray-600">总订单数</div>
               </div>
             </n-card>
           </div>
           <div class="stat-card">
             <n-card size="small">
               <div class="text-center">
-                <div class="text-3xl font-bold text-green-600">{{ statistics.successOrders }}</div>
-                <div class="text-sm text-gray-600 mt-1">成功订单数</div>
+                <div class="text-3xl font-bold text-green-600">
+                  {{ statistics.successOrders }}
+                </div>
+                <div class="mt-1 text-sm text-gray-600">成功订单数</div>
               </div>
             </n-card>
           </div>
           <div class="stat-card">
             <n-card size="small">
               <div class="text-center">
-                <div class="text-3xl font-bold text-orange-600">{{ statistics.successRate }}%</div>
-                <div class="text-sm text-gray-600 mt-1">成功率</div>
+                <div class="text-3xl font-bold text-orange-600">
+                  {{ statistics.successRate }}%
+                </div>
+                <div class="mt-1 text-sm text-gray-600">成功率</div>
               </div>
             </n-card>
           </div>
           <div class="stat-card">
             <n-card size="small">
               <div class="text-center">
-                <div class="text-3xl font-bold text-purple-600">{{ statistics.totalAmount }}</div>
-                <div class="text-sm text-gray-600 mt-1">总金额</div>
+                <div class="text-3xl font-bold text-purple-600">
+                  {{ statistics.totalAmount }}
+                </div>
+                <div class="mt-1 text-sm text-gray-600">总金额</div>
               </div>
             </n-card>
           </div>
@@ -167,31 +179,24 @@
     >
       <template #actionBar>
         <n-card :bordered="false" class="rounded-16px shadow-sm">
-          <div class="flex justify-between items-center">
+          <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <!-- 主要操作按钮 -->
               <div class="flex gap-2">
-                <n-button 
-                  type="primary" 
-                  @click="fetchData"
-                  :loading="loading"
-                >
+                <n-button type="primary" @click="fetchData" :loading="loading">
                   <template #icon>
                     <n-icon><ReloadOutline /></n-icon>
                   </template>
                   刷新
                 </n-button>
-                <n-button 
-                  type="info" 
-                  @click="exportReport"
-                >
+                <n-button type="info" @click="exportReport">
                   <template #icon>
                     <n-icon><DownloadOutline /></n-icon>
                   </template>
                   导出报表
                 </n-button>
               </div>
-              
+
               <!-- 标题和统计信息 -->
               <div class="flex items-center gap-4">
                 <h3 class="text-lg font-semibold">详细统计</h3>
@@ -214,27 +219,32 @@
 import { ref, reactive, onMounted, h } from 'vue';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 import { defineAsyncComponent } from 'vue';
-const SmartDataGrid = defineAsyncComponent(() => import('../../components/smart/SmartDataGrid/index.vue'));
-import { 
-  NButton, 
-  NCard, 
-  NDataTable, 
-  NInput, 
-  NSelect, 
+const SmartDataGrid = defineAsyncComponent(
+  () => import('../../components/smart/SmartDataGrid/index.vue'),
+);
+import {
+  NButton,
+  NCard,
+  NDataTable,
+  NInput,
+  NSelect,
   NFormItem,
   NDatePicker,
   NTag,
   NIcon,
   NProgress,
   useMessage,
-  type DataTableColumns
+  type DataTableColumns,
 } from 'naive-ui';
-import { 
-  ReloadOutline, 
-  SearchOutline, 
-  DownloadOutline
+import {
+  ReloadOutline,
+  SearchOutline,
+  DownloadOutline,
 } from '@vicons/ionicons5';
-import { getPaymentStatistics, exportPaymentStatistics } from '#/api/finance/paymentStatistics';
+import {
+  getPaymentStatistics,
+  exportPaymentStatistics,
+} from '#/api/finance/paymentStatistics';
 
 interface PaymentStatistic {
   id: string;
@@ -269,7 +279,7 @@ const filters = reactive({
   provider: null,
   currency: null,
   memberAccount: '',
-  withdrawalTimes: null
+  withdrawalTimes: null,
 });
 
 // Statistics
@@ -277,7 +287,7 @@ const statistics = reactive({
   totalOrders: 0,
   successOrders: 0,
   successRate: 0,
-  totalAmount: '0.00'
+  totalAmount: '0.00',
 });
 
 // Pagination - SmartDataGrid compatible
@@ -310,19 +320,19 @@ const providerOptions = [
   { label: '银行转账', value: 'bank_transfer' },
   { label: '人工代付', value: 'manual' },
   { label: '第三方代付', value: 'third_party' },
-  { label: '未知渠道', value: 'unknown' }
+  { label: '未知渠道', value: 'unknown' },
 ];
 
 const currencyOptions = [
   { label: 'BRL', value: 'BRL' },
   { label: 'USD', value: 'USD' },
-  { label: 'EUR', value: 'EUR' }
+  { label: 'EUR', value: 'EUR' },
 ];
 
 const withdrawalCountOptions = [
   { label: '全部会员', value: 'all' },
   { label: '首次提现', value: 'first' },
-  { label: '多次提现', value: 'multiple' }
+  { label: '多次提现', value: 'multiple' },
 ];
 
 // Table columns
@@ -331,84 +341,113 @@ const columns: DataTableColumns<PaymentStatistic> = [
     title: '日期',
     key: 'date',
     width: 120,
-    render: (row) => h('div', { class: 'text-center' }, row.date)
+    render: (row) => h('div', { class: 'text-center' }, row.date),
   },
   {
     title: '三方代付',
     key: 'providerName',
     width: 150,
-    render: (row) => h('div', { class: 'text-center font-medium' }, row.providerName)
+    render: (row) =>
+      h('div', { class: 'text-center font-medium' }, row.providerName),
   },
   {
     title: '币种',
     key: 'currency',
     width: 80,
-    render: (row) => h('div', { class: 'text-center' }, row.currency)
+    render: (row) => h('div', { class: 'text-center' }, row.currency),
   },
   {
     title: '总订单数',
     key: 'totalOrders',
     width: 100,
-    render: (row) => h('div', { class: 'text-center font-bold' }, row.totalOrders.toLocaleString())
+    render: (row) =>
+      h(
+        'div',
+        { class: 'text-center font-bold' },
+        row.totalOrders.toLocaleString(),
+      ),
   },
   {
     title: '成功订单数',
     key: 'successOrders',
     width: 120,
-    render: (row) => h('div', { class: 'text-center text-green-600 font-bold' }, row.successOrders.toLocaleString())
+    render: (row) =>
+      h(
+        'div',
+        { class: 'text-center text-green-600 font-bold' },
+        row.successOrders.toLocaleString(),
+      ),
   },
   {
     title: '失败订单数',
     key: 'failedOrders',
     width: 120,
-    render: (row) => h('div', { class: 'text-center text-red-600 font-bold' }, row.failedOrders.toLocaleString())
+    render: (row) =>
+      h(
+        'div',
+        { class: 'text-center text-red-600 font-bold' },
+        row.failedOrders.toLocaleString(),
+      ),
   },
   {
     title: '成功率',
     key: 'successRate',
     width: 120,
-    render: (row) => h('div', { class: 'text-center' }, [
-      h(NProgress, {
-        type: 'line',
-        percentage: row.successRate,
-        color: row.successRate >= 80 ? '#18a058' : row.successRate >= 60 ? '#f0a020' : '#d03050',
-        size: 'small'
-      }),
-      h('div', { class: 'text-sm mt-1 font-medium' }, `${row.successRate}%`)
-    ])
+    render: (row) =>
+      h('div', { class: 'text-center' }, [
+        h(NProgress, {
+          type: 'line',
+          percentage: row.successRate,
+          color:
+            row.successRate >= 80
+              ? '#18a058'
+              : row.successRate >= 60
+                ? '#f0a020'
+                : '#d03050',
+          size: 'small',
+        }),
+        h('div', { class: 'text-sm mt-1 font-medium' }, `${row.successRate}%`),
+      ]),
   },
   {
     title: '总金额',
     key: 'totalAmount',
     width: 120,
-    render: (row) => h('div', { class: 'text-center font-mono' }, 
-      `${row.currency} ${row.totalAmount.toLocaleString()}`
-    )
+    render: (row) =>
+      h(
+        'div',
+        { class: 'text-center font-mono' },
+        `${row.currency} ${row.totalAmount.toLocaleString()}`,
+      ),
   },
   {
     title: '成功金额',
     key: 'successAmount',
     width: 120,
-    render: (row) => h('div', { class: 'text-center font-mono text-green-600' }, 
-      `${row.currency} ${row.successAmount.toLocaleString()}`
-    )
+    render: (row) =>
+      h(
+        'div',
+        { class: 'text-center font-mono text-green-600' },
+        `${row.currency} ${row.successAmount.toLocaleString()}`,
+      ),
   },
   {
     title: '平均处理时间',
     key: 'avgProcessingTime',
     width: 120,
-    render: (row) => h('div', { class: 'text-center' }, row.avgProcessingTime)
+    render: (row) => h('div', { class: 'text-center' }, row.avgProcessingTime),
   },
   {
     title: '会员提现统计',
     key: 'memberStats',
     width: 150,
-    render: (row) => h('div', { class: 'text-center text-sm' }, [
-      h('div', `未提现: ${row.memberStats.never}`),
-      h('div', `首次: ${row.memberStats.firstTime}`),
-      h('div', `多次: ${row.memberStats.multiple}`)
-    ])
-  }
+    render: (row) =>
+      h('div', { class: 'text-center text-sm' }, [
+        h('div', `未提现: ${row.memberStats.never}`),
+        h('div', `首次: ${row.memberStats.firstTime}`),
+        h('div', `多次: ${row.memberStats.multiple}`),
+      ]),
+  },
 ];
 
 // Methods
@@ -416,21 +455,23 @@ const fetchData = async () => {
   loading.value = true;
   try {
     console.log('🔄 Fetching payment statistics...');
-    
+
     // Build API parameters
     const params: any = {
       page: paginationReactive.page,
-      limit: paginationReactive.pageSize
+      limit: paginationReactive.pageSize,
     };
 
     // Add filters
     if (filters.dateRange && filters.dateRange.length === 2) {
-      params.startDate = new Date(filters.dateRange[0]).toISOString().split('T')[0];
+      params.startDate = new Date(filters.dateRange[0])
+        .toISOString()
+        .split('T')[0];
       const endDate = new Date(filters.dateRange[1]);
       endDate.setHours(23, 59, 59, 999);
       params.endDate = endDate.toISOString().split('T')[0];
     }
-    
+
     if (filters.provider) params.provider = filters.provider;
     if (filters.currency) params.currency = filters.currency;
     if (filters.memberAccount) params.memberAccount = filters.memberAccount;
@@ -458,7 +499,7 @@ const fetchData = async () => {
       console.log('✅ Payment statistics loaded:', {
         records: tableData.value.length,
         total: paginationReactive.total,
-        summary: statistics
+        summary: statistics,
       });
     } else {
       console.warn('⚠️ Invalid response format:', response);
@@ -468,12 +509,11 @@ const fetchData = async () => {
       statistics.successOrders = 0;
       statistics.successRate = 0;
       statistics.totalAmount = '0.00';
-      
+
       if (response && !response.success) {
         message.warning(response.message || '获取数据失败');
       }
     }
-    
   } catch (error) {
     console.error('Fetch data error:', error);
     message.error('获取数据失败');
@@ -494,17 +534,19 @@ const resetFilters = () => {
 const exportReport = async () => {
   try {
     console.log('📤 Exporting payment statistics...');
-    
+
     // Build export parameters from current filters
     const params: any = {};
-    
+
     if (filters.dateRange && filters.dateRange.length === 2) {
-      params.startDate = new Date(filters.dateRange[0]).toISOString().split('T')[0];
+      params.startDate = new Date(filters.dateRange[0])
+        .toISOString()
+        .split('T')[0];
       const endDate = new Date(filters.dateRange[1]);
       endDate.setHours(23, 59, 59, 999);
       params.endDate = endDate.toISOString().split('T')[0];
     }
-    
+
     if (filters.provider) params.provider = filters.provider;
     if (filters.currency) params.currency = filters.currency;
     if (filters.memberAccount) params.memberAccount = filters.memberAccount;
@@ -513,7 +555,7 @@ const exportReport = async () => {
     }
 
     const response = await exportPaymentStatistics(params);
-    
+
     if (response) {
       // Create download link for the blob
       const url = window.URL.createObjectURL(new Blob([response]));
@@ -524,7 +566,7 @@ const exportReport = async () => {
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      
+
       message.success('导出成功');
     } else {
       message.warning('导出数据为空');

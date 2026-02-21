@@ -19,7 +19,7 @@
           require-mark-placement="right-hanging"
         >
           <!-- 奖励开关总控制 -->
-          <div class="mb-6 p-4 border border-gray-200 rounded-lg bg-gray-50">
+          <div class="mb-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
             <n-form-item label="发放开关" path="rewardEnabled">
               <n-switch
                 v-model:value="formModel.rewardEnabled"
@@ -27,15 +27,19 @@
                 :unchecked-value="false"
               />
               <n-text depth="3" class="ml-2">
-                {{ formModel.rewardEnabled ? '已启用VIP奖励发放' : '已关闭VIP奖励发放' }}
+                {{
+                  formModel.rewardEnabled
+                    ? '已启用VIP奖励发放'
+                    : '已关闭VIP奖励发放'
+                }}
               </n-text>
             </n-form-item>
           </div>
 
           <!-- 每日奖励设置 -->
-          <div class="mb-6 p-4 border border-gray-200 rounded-lg">
-            <h3 class="text-lg font-medium mb-4 text-gray-700">每日奖励设置</h3>
-            
+          <div class="mb-6 rounded-lg border border-gray-200 p-4">
+            <h3 class="mb-4 text-lg font-medium text-gray-700">每日奖励设置</h3>
+
             <n-form-item label="领取时间" path="dailySettings.claimTime">
               <n-radio-group v-model:value="formModel.dailySettings.claimTime">
                 <n-space>
@@ -43,13 +47,18 @@
                   <n-radio value="same-day" class="text-blue-600">当日</n-radio>
                 </n-space>
               </n-radio-group>
-              <n-text depth="3" class="ml-4 text-blue-500 cursor-pointer hover:underline">
+              <n-text
+                depth="3"
+                class="ml-4 cursor-pointer text-blue-500 hover:underline"
+              >
                 (实时领取(需审核))
               </n-text>
             </n-form-item>
 
             <n-form-item label="领取方式" path="dailySettings.repeatableClaim">
-              <n-radio-group v-model:value="formModel.dailySettings.repeatableClaim">
+              <n-radio-group
+                v-model:value="formModel.dailySettings.repeatableClaim"
+              >
                 <n-space vertical>
                   <n-radio value="repeatable">可重复领取(含补领部分)</n-radio>
                   <n-radio value="highest-only">只能领取最高一档</n-radio>
@@ -57,7 +66,10 @@
               </n-radio-group>
             </n-form-item>
 
-            <n-form-item label="*奖励领取延迟天数" path="dailySettings.delayDays">
+            <n-form-item
+              label="*奖励领取延迟天数"
+              path="dailySettings.delayDays"
+            >
               <n-input-number
                 v-model:value="formModel.dailySettings.delayDays"
                 :min="0"
@@ -70,9 +82,9 @@
           </div>
 
           <!-- 每周奖励设置 -->
-          <div class="mb-6 p-4 border border-gray-200 rounded-lg">
-            <h3 class="text-lg font-medium mb-4 text-gray-700">每周奖励设置</h3>
-            
+          <div class="mb-6 rounded-lg border border-gray-200 p-4">
+            <h3 class="mb-4 text-lg font-medium text-gray-700">每周奖励设置</h3>
+
             <n-form-item label="领取时间" path="weeklySettings.claimTime">
               <n-radio-group v-model:value="formModel.weeklySettings.claimTime">
                 <n-space>
@@ -80,13 +92,18 @@
                   <n-radio value="same-day" class="text-blue-600">当日</n-radio>
                 </n-space>
               </n-radio-group>
-              <n-text depth="3" class="ml-4 text-blue-500 cursor-pointer hover:underline">
+              <n-text
+                depth="3"
+                class="ml-4 cursor-pointer text-blue-500 hover:underline"
+              >
                 (实时领取(需审核))
               </n-text>
             </n-form-item>
 
             <n-form-item label="领取方式" path="weeklySettings.repeatableClaim">
-              <n-radio-group v-model:value="formModel.weeklySettings.repeatableClaim">
+              <n-radio-group
+                v-model:value="formModel.weeklySettings.repeatableClaim"
+              >
                 <n-space vertical>
                   <n-radio value="repeatable">可重复领取(含补领部分)</n-radio>
                   <n-radio value="highest-only">只能领取最高一档</n-radio>
@@ -94,7 +111,10 @@
               </n-radio-group>
             </n-form-item>
 
-            <n-form-item label="*奖励领取延迟天数" path="weeklySettings.delayDays">
+            <n-form-item
+              label="*奖励领取延迟天数"
+              path="weeklySettings.delayDays"
+            >
               <n-input-number
                 v-model:value="formModel.weeklySettings.delayDays"
                 :min="0"
@@ -107,23 +127,33 @@
           </div>
 
           <!-- 每月奖励设置 -->
-          <div class="mb-6 p-4 border border-gray-200 rounded-lg">
-            <h3 class="text-lg font-medium mb-4 text-gray-700">每月奖励设置</h3>
-            
+          <div class="mb-6 rounded-lg border border-gray-200 p-4">
+            <h3 class="mb-4 text-lg font-medium text-gray-700">每月奖励设置</h3>
+
             <n-form-item label="领取时间" path="monthlySettings.claimTime">
-              <n-radio-group v-model:value="formModel.monthlySettings.claimTime">
+              <n-radio-group
+                v-model:value="formModel.monthlySettings.claimTime"
+              >
                 <n-space>
                   <n-radio value="next-day" class="text-blue-600">次日</n-radio>
                   <n-radio value="same-day" class="text-blue-600">当日</n-radio>
                 </n-space>
               </n-radio-group>
-              <n-text depth="3" class="ml-4 text-blue-500 cursor-pointer hover:underline">
+              <n-text
+                depth="3"
+                class="ml-4 cursor-pointer text-blue-500 hover:underline"
+              >
                 (实时领取(需审核))
               </n-text>
             </n-form-item>
 
-            <n-form-item label="领取方式" path="monthlySettings.repeatableClaim">
-              <n-radio-group v-model:value="formModel.monthlySettings.repeatableClaim">
+            <n-form-item
+              label="领取方式"
+              path="monthlySettings.repeatableClaim"
+            >
+              <n-radio-group
+                v-model:value="formModel.monthlySettings.repeatableClaim"
+              >
                 <n-space vertical>
                   <n-radio value="repeatable">可重复领取(含补领部分)</n-radio>
                   <n-radio value="highest-only">只能领取最高一档</n-radio>
@@ -131,7 +161,10 @@
               </n-radio-group>
             </n-form-item>
 
-            <n-form-item label="*奖励领取延迟天数" path="monthlySettings.delayDays">
+            <n-form-item
+              label="*奖励领取延迟天数"
+              path="monthlySettings.delayDays"
+            >
               <n-input-number
                 v-model:value="formModel.monthlySettings.delayDays"
                 :min="0"
@@ -144,23 +177,35 @@
           </div>
 
           <!-- 生日金奖励设置 -->
-          <div class="mb-6 p-4 border border-gray-200 rounded-lg">
-            <h3 class="text-lg font-medium mb-4 text-gray-700">生日金奖励设置</h3>
-            
+          <div class="mb-6 rounded-lg border border-gray-200 p-4">
+            <h3 class="mb-4 text-lg font-medium text-gray-700">
+              生日金奖励设置
+            </h3>
+
             <n-form-item label="领取时间" path="birthdaySettings.claimTime">
-              <n-radio-group v-model:value="formModel.birthdaySettings.claimTime">
+              <n-radio-group
+                v-model:value="formModel.birthdaySettings.claimTime"
+              >
                 <n-space>
                   <n-radio value="next-day" class="text-blue-600">次日</n-radio>
                   <n-radio value="same-day" class="text-blue-600">当日</n-radio>
                 </n-space>
               </n-radio-group>
-              <n-text depth="3" class="ml-4 text-blue-500 cursor-pointer hover:underline">
+              <n-text
+                depth="3"
+                class="ml-4 cursor-pointer text-blue-500 hover:underline"
+              >
                 (实时领取(需审核))
               </n-text>
             </n-form-item>
 
-            <n-form-item label="领取方式" path="birthdaySettings.repeatableClaim">
-              <n-radio-group v-model:value="formModel.birthdaySettings.repeatableClaim">
+            <n-form-item
+              label="领取方式"
+              path="birthdaySettings.repeatableClaim"
+            >
+              <n-radio-group
+                v-model:value="formModel.birthdaySettings.repeatableClaim"
+              >
                 <n-space vertical>
                   <n-radio value="repeatable">可重复领取(含补领部分)</n-radio>
                   <n-radio value="highest-only">只能领取最高一档</n-radio>
@@ -168,7 +213,10 @@
               </n-radio-group>
             </n-form-item>
 
-            <n-form-item label="*奖励领取延迟天数" path="birthdaySettings.delayDays">
+            <n-form-item
+              label="*奖励领取延迟天数"
+              path="birthdaySettings.delayDays"
+            >
               <n-input-number
                 v-model:value="formModel.birthdaySettings.delayDays"
                 :min="0"
@@ -181,32 +229,47 @@
           </div>
 
           <!-- 玩法奖励设定 -->
-          <div class="mb-6 p-4 border border-gray-200 rounded-lg">
-            <h3 class="text-lg font-medium mb-4 text-gray-700">玩法奖励设定</h3>
-            
+          <div class="mb-6 rounded-lg border border-gray-200 p-4">
+            <h3 class="mb-4 text-lg font-medium text-gray-700">玩法奖励设定</h3>
+
             <n-form-item label="派发方式" path="distributionMethod">
               <n-radio-group v-model:value="formModel.distributionMethod">
                 <n-space vertical>
-                  <n-radio value="daily-birthday-common">仅限每日/生日/公共设置</n-radio>
+                  <n-radio value="daily-birthday-common"
+                    >仅限每日/生日/公共设置</n-radio
+                  >
                   <n-radio value="period-only">仅限周期奖励</n-radio>
                 </n-space>
               </n-radio-group>
             </n-form-item>
 
-            <n-form-item label="晋级奖金" path="promotionBonusSettings.claimTime">
-              <n-radio-group v-model:value="formModel.promotionBonusSettings.claimTime">
+            <n-form-item
+              label="晋级奖金"
+              path="promotionBonusSettings.claimTime"
+            >
+              <n-radio-group
+                v-model:value="formModel.promotionBonusSettings.claimTime"
+              >
                 <n-space>
                   <n-radio value="next-day" class="text-blue-600">次日</n-radio>
                   <n-radio value="same-day" class="text-blue-600">当日</n-radio>
                 </n-space>
               </n-radio-group>
-              <n-text depth="3" class="ml-4 text-blue-500 cursor-pointer hover:underline">
+              <n-text
+                depth="3"
+                class="ml-4 cursor-pointer text-blue-500 hover:underline"
+              >
                 (实时领取(需审核))
               </n-text>
             </n-form-item>
 
-            <n-form-item label="晋级奖金领取方式" path="promotionBonusSettings.repeatableClaim">
-              <n-radio-group v-model:value="formModel.promotionBonusSettings.repeatableClaim">
+            <n-form-item
+              label="晋级奖金领取方式"
+              path="promotionBonusSettings.repeatableClaim"
+            >
+              <n-radio-group
+                v-model:value="formModel.promotionBonusSettings.repeatableClaim"
+              >
                 <n-space vertical>
                   <n-radio value="repeatable">可重复领取(含补领部分)</n-radio>
                   <n-radio value="highest-only">只能领取最高一档</n-radio>
@@ -216,14 +279,19 @@
           </div>
 
           <!-- 其他设置 -->
-          <div class="mb-6 p-4 border border-gray-200 rounded-lg">
-            <h3 class="text-lg font-medium mb-4 text-gray-700">其他设置</h3>
-            
+          <div class="mb-6 rounded-lg border border-gray-200 p-4">
+            <h3 class="mb-4 text-lg font-medium text-gray-700">其他设置</h3>
+
             <n-form-item label="禁止参与等级(最多多选)" path="excludedLevels">
               <n-checkbox-group v-model:value="formModel.excludedLevels">
                 <n-grid :cols="5" :x-gap="8" :y-gap="8">
-                  <n-grid-item v-for="level in memberLevelOptions" :key="level.value">
-                    <n-checkbox :value="level.value" class="text-sm">{{ level.label }}</n-checkbox>
+                  <n-grid-item
+                    v-for="level in memberLevelOptions"
+                    :key="level.value"
+                  >
+                    <n-checkbox :value="level.value" class="text-sm">{{
+                      level.label
+                    }}</n-checkbox>
                   </n-grid-item>
                 </n-grid>
               </n-checkbox-group>
@@ -250,15 +318,20 @@
               </n-radio-group>
             </n-form-item>
 
-            <n-form-item 
+            <n-form-item
               v-if="formModel.platformControl !== 'unlimited'"
               label="选择平台"
               path="selectedPlatforms"
             >
               <n-checkbox-group v-model:value="formModel.selectedPlatforms">
                 <n-grid :cols="3" :x-gap="16" :y-gap="8">
-                  <n-grid-item v-for="platform in platformOptions" :key="platform.value">
-                    <n-checkbox :value="platform.value">{{ platform.label }}</n-checkbox>
+                  <n-grid-item
+                    v-for="platform in platformOptions"
+                    :key="platform.value"
+                  >
+                    <n-checkbox :value="platform.value">{{
+                      platform.label
+                    }}</n-checkbox>
                   </n-grid-item>
                 </n-grid>
               </n-checkbox-group>
@@ -277,7 +350,11 @@
               <n-input
                 v-model:value="formModel.rulesContent"
                 type="textarea"
-                :placeholder="formModel.rulesType === 'system' ? '使用系统默认规则说明' : '请输入自定义规则内容'"
+                :placeholder="
+                  formModel.rulesType === 'system'
+                    ? '使用系统默认规则说明'
+                    : '请输入自定义规则内容'
+                "
                 :disabled="formModel.rulesType === 'system'"
                 :autosize="{ minRows: 6, maxRows: 10 }"
                 class="bg-gray-50"
@@ -286,9 +363,9 @@
           </div>
 
           <!-- 展示设置 -->
-          <div class="mb-6 p-4 border border-gray-200 rounded-lg">
-            <h3 class="text-lg font-medium mb-4 text-gray-700">展示设置</h3>
-            
+          <div class="mb-6 rounded-lg border border-gray-200 p-4">
+            <h3 class="mb-4 text-lg font-medium text-gray-700">展示设置</h3>
+
             <n-form-item label="VIP展示方式" path="displayMethod">
               <n-radio-group v-model:value="formModel.displayMethod">
                 <n-space>
@@ -313,18 +390,23 @@
             <n-form-item label="徽章图" path="badgeVariant">
               <n-radio-group v-model:value="formModel.badgeVariant">
                 <n-grid :cols="4" :x-gap="16" :y-gap="16">
-                  <n-grid-item v-for="badge in badgeVariantOptions" :key="badge.value">
+                  <n-grid-item
+                    v-for="badge in badgeVariantOptions"
+                    :key="badge.value"
+                  >
                     <n-radio :value="badge.value">
                       <div class="flex flex-col items-center gap-2">
-                        <div 
+                        <div
                           :class="[
-                            'w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg',
-                            badge.colorClass
+                            'flex h-16 w-16 items-center justify-center rounded-full text-lg font-bold text-white shadow-lg',
+                            badge.colorClass,
                           ]"
                         >
                           {{ badge.stars }}
                         </div>
-                        <n-text class="text-xs text-center">{{ badge.label }}</n-text>
+                        <n-text class="text-center text-xs">{{
+                          badge.label
+                        }}</n-text>
                       </div>
                     </n-radio>
                   </n-grid-item>
@@ -339,7 +421,12 @@
     <template #footer>
       <div class="flex justify-end gap-3">
         <n-button @click="handleCancel" size="medium">取消</n-button>
-        <n-button type="primary" @click="handleSubmit" :loading="submitting" size="medium">
+        <n-button
+          type="primary"
+          @click="handleSubmit"
+          :loading="submitting"
+          size="medium"
+        >
           保存设置
         </n-button>
       </div>
@@ -402,50 +489,50 @@ const showModal = computed({
 // 表单数据模型
 const formModel = reactive({
   rewardEnabled: true,
-  
+
   // 每日奖励设置
   dailySettings: {
     claimTime: 'next-day',
     repeatableClaim: 'repeatable',
     delayDays: 0,
   },
-  
+
   // 每周奖励设置
   weeklySettings: {
     claimTime: 'next-day',
     repeatableClaim: 'repeatable',
     delayDays: 0,
   },
-  
+
   // 每月奖励设置
   monthlySettings: {
     claimTime: 'next-day',
     repeatableClaim: 'repeatable',
     delayDays: 0,
   },
-  
+
   // 生日金奖励设置
   birthdaySettings: {
     claimTime: 'same-day',
     repeatableClaim: 'highest-only',
     delayDays: 0,
   },
-  
+
   // 玩法奖励设定
   distributionMethod: 'daily-birthday-common',
   promotionBonusSettings: {
     claimTime: 'next-day',
     repeatableClaim: 'highest-only',
   },
-  
+
   // 其他设置
   excludedLevels: [],
-  settlementMultiplier: 1.00,
+  settlementMultiplier: 1.0,
   platformControl: 'unlimited',
   selectedPlatforms: [],
   rulesType: 'system',
   rulesContent: '',
-  
+
   // 展示设置
   displayMethod: 'list',
   iconStyle: 'style1',
@@ -455,45 +542,101 @@ const formModel = reactive({
 // 表单验证规则
 const formRules: FormRules = {
   'dailySettings.delayDays': [
-    { required: true, type: 'number', message: '请输入每日奖励延迟天数', trigger: 'blur' },
-    { type: 'number', min: 0, max: 30, message: '延迟天数应在0-30天之间', trigger: 'blur' }
+    {
+      required: true,
+      type: 'number',
+      message: '请输入每日奖励延迟天数',
+      trigger: 'blur',
+    },
+    {
+      type: 'number',
+      min: 0,
+      max: 30,
+      message: '延迟天数应在0-30天之间',
+      trigger: 'blur',
+    },
   ],
   'weeklySettings.delayDays': [
-    { required: true, type: 'number', message: '请输入每周奖励延迟天数', trigger: 'blur' },
-    { type: 'number', min: 0, max: 30, message: '延迟天数应在0-30天之间', trigger: 'blur' }
+    {
+      required: true,
+      type: 'number',
+      message: '请输入每周奖励延迟天数',
+      trigger: 'blur',
+    },
+    {
+      type: 'number',
+      min: 0,
+      max: 30,
+      message: '延迟天数应在0-30天之间',
+      trigger: 'blur',
+    },
   ],
   'monthlySettings.delayDays': [
-    { required: true, type: 'number', message: '请输入每月奖励延迟天数', trigger: 'blur' },
-    { type: 'number', min: 0, max: 30, message: '延迟天数应在0-30天之间', trigger: 'blur' }
+    {
+      required: true,
+      type: 'number',
+      message: '请输入每月奖励延迟天数',
+      trigger: 'blur',
+    },
+    {
+      type: 'number',
+      min: 0,
+      max: 30,
+      message: '延迟天数应在0-30天之间',
+      trigger: 'blur',
+    },
   ],
   'birthdaySettings.delayDays': [
-    { required: true, type: 'number', message: '请输入生日奖励延迟天数', trigger: 'blur' },
-    { type: 'number', min: 0, max: 30, message: '延迟天数应在0-30天之间', trigger: 'blur' }
+    {
+      required: true,
+      type: 'number',
+      message: '请输入生日奖励延迟天数',
+      trigger: 'blur',
+    },
+    {
+      type: 'number',
+      min: 0,
+      max: 30,
+      message: '延迟天数应在0-30天之间',
+      trigger: 'blur',
+    },
   ],
   settlementMultiplier: [
-    { required: true, type: 'number', message: '请输入结算倍率', trigger: 'blur' },
-    { type: 'number', min: 0.01, max: 100, message: '结算倍率应在0.01-100之间', trigger: 'blur' }
+    {
+      required: true,
+      type: 'number',
+      message: '请输入结算倍率',
+      trigger: 'blur',
+    },
+    {
+      type: 'number',
+      min: 0.01,
+      max: 100,
+      message: '结算倍率应在0.01-100之间',
+      trigger: 'blur',
+    },
   ],
   rulesContent: [
     {
       validator: (rule, value) => {
-        if (formModel.rulesType === 'custom' && (!value || value.trim() === '')) {
+        if (
+          formModel.rulesType === 'custom' &&
+          (!value || value.trim() === '')
+        ) {
           return new Error('自定义规则内容不能为空');
         }
         return true;
       },
-      trigger: 'blur'
-    }
+      trigger: 'blur',
+    },
   ],
   displayMethod: [
-    { required: true, message: '请选择VIP展示方式', trigger: 'change' }
+    { required: true, message: '请选择VIP展示方式', trigger: 'change' },
   ],
-  iconStyle: [
-    { required: true, message: '请选择图标样式', trigger: 'change' }
-  ],
+  iconStyle: [{ required: true, message: '请选择图标样式', trigger: 'change' }],
   badgeVariant: [
-    { required: true, message: '请选择徽章图', trigger: 'change' }
-  ]
+    { required: true, message: '请选择徽章图', trigger: 'change' },
+  ],
 };
 
 // 选项配置
@@ -521,7 +664,7 @@ const platformOptions = [
   { label: 'Pragmatic Play', value: 'pragmatic' },
   { label: 'NetEnt', value: 'netent' },
   { label: 'Microgaming', value: 'microgaming' },
-  { label: 'Play\'n GO', value: 'playngo' },
+  { label: "Play'n GO", value: 'playngo' },
   { label: 'Red Tiger', value: 'redtiger' },
   { label: 'Big Time Gaming', value: 'bigtimegaming' },
   { label: 'Blueprint Gaming', value: 'blueprint' },
@@ -532,18 +675,78 @@ const platformOptions = [
 ];
 
 const badgeVariantOptions = [
-  { label: '红钻石', value: 'red-diamond', stars: '♦', colorClass: 'bg-gradient-to-br from-red-500 to-red-600' },
-  { label: '蓝宝石', value: 'blue-sapphire', stars: '♦', colorClass: 'bg-gradient-to-br from-blue-500 to-blue-600' },
-  { label: '绿翡翠', value: 'green-emerald', stars: '♦', colorClass: 'bg-gradient-to-br from-green-500 to-green-600' },
-  { label: '紫水晶', value: 'purple-amethyst', stars: '♦', colorClass: 'bg-gradient-to-br from-purple-500 to-purple-600' },
-  { label: '黄金徽章', value: 'gold-crown', stars: '♕', colorClass: 'bg-gradient-to-br from-yellow-400 to-yellow-500' },
-  { label: '银铂徽章', value: 'silver-crown', stars: '♔', colorClass: 'bg-gradient-to-br from-gray-400 to-gray-500' },
-  { label: '铜质徽章', value: 'bronze-crown', stars: '♚', colorClass: 'bg-gradient-to-br from-orange-600 to-orange-700' },
-  { label: '钻石王冠', value: 'diamond-crown', stars: '♛', colorClass: 'bg-gradient-to-br from-cyan-400 to-cyan-500' },
-  { label: '玫瑰金', value: 'rose-gold', stars: '♕', colorClass: 'bg-gradient-to-br from-pink-400 to-pink-500' },
-  { label: '白金徽章', value: 'platinum', stars: '♔', colorClass: 'bg-gradient-to-br from-slate-300 to-slate-400' },
-  { label: '珊瑚粉', value: 'coral-pink', stars: '♦', colorClass: 'bg-gradient-to-br from-coral-400 to-coral-500' },
-  { label: '翠绿宝石', value: 'jade-green', stars: '♛', colorClass: 'bg-gradient-to-br from-emerald-400 to-emerald-500' },
+  {
+    label: '红钻石',
+    value: 'red-diamond',
+    stars: '♦',
+    colorClass: 'bg-gradient-to-br from-red-500 to-red-600',
+  },
+  {
+    label: '蓝宝石',
+    value: 'blue-sapphire',
+    stars: '♦',
+    colorClass: 'bg-gradient-to-br from-blue-500 to-blue-600',
+  },
+  {
+    label: '绿翡翠',
+    value: 'green-emerald',
+    stars: '♦',
+    colorClass: 'bg-gradient-to-br from-green-500 to-green-600',
+  },
+  {
+    label: '紫水晶',
+    value: 'purple-amethyst',
+    stars: '♦',
+    colorClass: 'bg-gradient-to-br from-purple-500 to-purple-600',
+  },
+  {
+    label: '黄金徽章',
+    value: 'gold-crown',
+    stars: '♕',
+    colorClass: 'bg-gradient-to-br from-yellow-400 to-yellow-500',
+  },
+  {
+    label: '银铂徽章',
+    value: 'silver-crown',
+    stars: '♔',
+    colorClass: 'bg-gradient-to-br from-gray-400 to-gray-500',
+  },
+  {
+    label: '铜质徽章',
+    value: 'bronze-crown',
+    stars: '♚',
+    colorClass: 'bg-gradient-to-br from-orange-600 to-orange-700',
+  },
+  {
+    label: '钻石王冠',
+    value: 'diamond-crown',
+    stars: '♛',
+    colorClass: 'bg-gradient-to-br from-cyan-400 to-cyan-500',
+  },
+  {
+    label: '玫瑰金',
+    value: 'rose-gold',
+    stars: '♕',
+    colorClass: 'bg-gradient-to-br from-pink-400 to-pink-500',
+  },
+  {
+    label: '白金徽章',
+    value: 'platinum',
+    stars: '♔',
+    colorClass: 'bg-gradient-to-br from-slate-300 to-slate-400',
+  },
+  {
+    label: '珊瑚粉',
+    value: 'coral-pink',
+    stars: '♦',
+    colorClass: 'bg-gradient-to-br from-coral-400 to-coral-500',
+  },
+  {
+    label: '翠绿宝石',
+    value: 'jade-green',
+    stars: '♛',
+    colorClass: 'bg-gradient-to-br from-emerald-400 to-emerald-500',
+  },
 ];
 
 // 系统默认规则说明
@@ -574,73 +777,83 @@ const systemRulesContent = `VIP奖励系统规则说明：
    - 本规则最终解释权归平台所有，如有变更恕不另行通知`;
 
 // 监听规则类型变化，自动填充内容
-watch(() => formModel.rulesType, (newType) => {
-  if (newType === 'system') {
-    formModel.rulesContent = systemRulesContent;
-  } else if (newType === 'custom' && formModel.rulesContent === systemRulesContent) {
-    formModel.rulesContent = '';
-  }
-});
+watch(
+  () => formModel.rulesType,
+  (newType) => {
+    if (newType === 'system') {
+      formModel.rulesContent = systemRulesContent;
+    } else if (
+      newType === 'custom' &&
+      formModel.rulesContent === systemRulesContent
+    ) {
+      formModel.rulesContent = '';
+    }
+  },
+);
 
 // 监听平台控制变化，清空选择的平台
-watch(() => formModel.platformControl, (newControl) => {
-  if (newControl === 'unlimited') {
-    formModel.selectedPlatforms = [];
-  }
-});
+watch(
+  () => formModel.platformControl,
+  (newControl) => {
+    if (newControl === 'unlimited') {
+      formModel.selectedPlatforms = [];
+    }
+  },
+);
 
 // 加载当前设置
 const loadCurrentSettings = async () => {
   try {
     const settings = await getVIPGlobalSettings();
-    
+
     // 将后端数据映射到前端表单模型
     Object.assign(formModel, {
       rewardEnabled: settings.rewardEnabled || settings.isEnabled || true,
-      
+
       // 每日奖励设置
       dailySettings: {
         claimTime: settings.dailyClaimTime || 'next-day',
         repeatableClaim: settings.dailyRepeatableClaim || 'repeatable',
         delayDays: settings.dailyDelayDays || 0,
       },
-      
+
       // 每周奖励设置
       weeklySettings: {
         claimTime: settings.weeklyClaimTime || 'next-day',
         repeatableClaim: settings.weeklyRepeatableClaim || 'repeatable',
         delayDays: settings.weeklyDelayDays || 0,
       },
-      
+
       // 每月奖励设置
       monthlySettings: {
         claimTime: settings.monthlyClaimTime || 'next-day',
         repeatableClaim: settings.monthlyRepeatableClaim || 'repeatable',
         delayDays: settings.monthlyDelayDays || 0,
       },
-      
+
       // 生日金奖励设置
       birthdaySettings: {
         claimTime: settings.birthdayClaimTime || 'same-day',
         repeatableClaim: settings.birthdayRepeatableClaim || 'highest-only',
         delayDays: settings.birthdayDelayDays || 0,
       },
-      
+
       // 玩法奖励设定
-      distributionMethod: settings.distributionMethod || 'daily-birthday-common',
+      distributionMethod:
+        settings.distributionMethod || 'daily-birthday-common',
       promotionBonusSettings: {
         claimTime: settings.promotionClaimTime || 'next-day',
         repeatableClaim: settings.promotionRepeatableClaim || 'highest-only',
       },
-      
+
       // 其他设置
       excludedLevels: settings.excludedLevels || [],
-      settlementMultiplier: settings.settlementMultiplier || 1.00,
+      settlementMultiplier: settings.settlementMultiplier || 1.0,
       platformControl: settings.platformControl || 'unlimited',
       selectedPlatforms: settings.selectedPlatforms || [],
       rulesType: settings.rulesType || 'system',
       rulesContent: settings.rulesContent || systemRulesContent,
-      
+
       // 展示设置
       displayMethod: settings.displayMethod || 'list',
       iconStyle: settings.iconStyle || 'style1',
@@ -669,32 +882,33 @@ const handleSubmit = async () => {
       // 基础设置
       rewardEnabled: formModel.rewardEnabled,
       isEnabled: formModel.rewardEnabled,
-      
+
       // ===== 每日奖励设置 =====
       dailyClaimTime: formModel.dailySettings.claimTime,
       dailyRepeatableClaim: formModel.dailySettings.repeatableClaim,
       dailyDelayDays: formModel.dailySettings.delayDays,
-      
+
       // ===== 每周奖励设置 =====
       weeklyClaimTime: formModel.weeklySettings.claimTime,
       weeklyRepeatableClaim: formModel.weeklySettings.repeatableClaim,
       weeklyDelayDays: formModel.weeklySettings.delayDays,
-      
+
       // ===== 每月奖励设置 =====
       monthlyClaimTime: formModel.monthlySettings.claimTime,
       monthlyRepeatableClaim: formModel.monthlySettings.repeatableClaim,
       monthlyDelayDays: formModel.monthlySettings.delayDays,
-      
+
       // ===== 生日金奖励设置 =====
       birthdayClaimTime: formModel.birthdaySettings.claimTime,
       birthdayRepeatableClaim: formModel.birthdaySettings.repeatableClaim,
       birthdayDelayDays: formModel.birthdaySettings.delayDays,
-      
+
       // ===== 玩法奖励设定 =====
       distributionMethod: formModel.distributionMethod,
       promotionClaimTime: formModel.promotionBonusSettings.claimTime,
-      promotionRepeatableClaim: formModel.promotionBonusSettings.repeatableClaim,
-      
+      promotionRepeatableClaim:
+        formModel.promotionBonusSettings.repeatableClaim,
+
       // ===== 其他设置 =====
       excludedLevels: formModel.excludedLevels,
       settlementMultiplier: formModel.settlementMultiplier,
@@ -702,21 +916,27 @@ const handleSubmit = async () => {
       selectedPlatforms: formModel.selectedPlatforms,
       rulesType: formModel.rulesType,
       rulesContent: formModel.rulesContent,
-      
+
       // ===== 展示设置 =====
       displayMethod: formModel.displayMethod,
       iconStyle: formModel.iconStyle,
       badgeVariant: formModel.badgeVariant,
-      
+
       // ===== 向后兼容字段 =====
       distributionMethodType: 'DIRECT_CASH', // 默认值
       defaultIconSet: formModel.iconStyle,
-      ruleType: formModel.rulesType === 'custom' ? 'CUSTOM_RULES' : 'SYSTEM_TEMPLATE',
-      customRules: formModel.rulesType === 'custom' ? formModel.rulesContent : undefined,
-      systemTemplate: formModel.rulesType === 'system' ? formModel.rulesContent : undefined,
-      platformFilter: formModel.platformControl !== 'unlimited' ? formModel.selectedPlatforms : [],
+      ruleType:
+        formModel.rulesType === 'custom' ? 'CUSTOM_RULES' : 'SYSTEM_TEMPLATE',
+      customRules:
+        formModel.rulesType === 'custom' ? formModel.rulesContent : undefined,
+      systemTemplate:
+        formModel.rulesType === 'system' ? formModel.rulesContent : undefined,
+      platformFilter:
+        formModel.platformControl !== 'unlimited'
+          ? formModel.selectedPlatforms
+          : [],
       rewardMultiplier: 1.0, // 默认值
-      
+
       // 系统字段
       updatedAt: new Date().toISOString(),
     };
@@ -734,11 +954,14 @@ const handleSubmit = async () => {
 };
 
 // 监听弹窗显示状态，加载数据
-watch(() => props.show, (show) => {
-  if (show) {
-    loadCurrentSettings();
-  }
-});
+watch(
+  () => props.show,
+  (show) => {
+    if (show) {
+      loadCurrentSettings();
+    }
+  },
+);
 
 // 初始化系统规则内容
 onMounted(() => {
@@ -770,8 +993,16 @@ onMounted(() => {
 }
 
 /* TailwindCSS样式补充 */
-.bg-coral-400 { background-color: #ff7875; }
-.bg-coral-500 { background-color: #ff6b6b; }
-.to-coral-500 { --tw-gradient-to: #ff6b6b; }
-.from-coral-400 { --tw-gradient-from: #ff7875; }
-</style> 
+.bg-coral-400 {
+  background-color: #ff7875;
+}
+.bg-coral-500 {
+  background-color: #ff6b6b;
+}
+.to-coral-500 {
+  --tw-gradient-to: #ff6b6b;
+}
+.from-coral-400 {
+  --tw-gradient-from: #ff7875;
+}
+</style>

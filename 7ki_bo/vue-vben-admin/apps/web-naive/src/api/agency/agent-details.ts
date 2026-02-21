@@ -143,7 +143,9 @@ export interface AgentAssociation {
 }
 
 // API Functions
-export async function getAgentContactInfoApi(agentId: number): Promise<AgentContactInfo> {
+export async function getAgentContactInfoApi(
+  agentId: number,
+): Promise<AgentContactInfo> {
   try {
     const response = await requestClient.get(`/agents/${agentId}/contact`);
     return response.data || response;
@@ -153,7 +155,9 @@ export async function getAgentContactInfoApi(agentId: number): Promise<AgentCont
   }
 }
 
-export async function getAgentProfileInfoApi(agentId: number): Promise<AgentProfileInfo> {
+export async function getAgentProfileInfoApi(
+  agentId: number,
+): Promise<AgentProfileInfo> {
   try {
     const response = await requestClient.get(`/agents/${agentId}/profile`);
     return response.data || response;
@@ -163,10 +167,13 @@ export async function getAgentProfileInfoApi(agentId: number): Promise<AgentProf
   }
 }
 
-export async function getAgentWithdrawalAccountsApi(agentId: number, params?: {
-  page?: number;
-  pageSize?: number;
-}): Promise<{
+export async function getAgentWithdrawalAccountsApi(
+  agentId: number,
+  params?: {
+    page?: number;
+    pageSize?: number;
+  },
+): Promise<{
   list: AgentWithdrawalAccount[];
   pagination: {
     current: number;
@@ -175,7 +182,10 @@ export async function getAgentWithdrawalAccountsApi(agentId: number, params?: {
   };
 }> {
   try {
-    const response = await requestClient.get(`/agents/${agentId}/withdrawal-accounts`, { params });
+    const response = await requestClient.get(
+      `/agents/${agentId}/withdrawal-accounts`,
+      { params },
+    );
     return response.data || response;
   } catch (error) {
     console.error('Failed to fetch agent withdrawal accounts:', error);
@@ -183,14 +193,17 @@ export async function getAgentWithdrawalAccountsApi(agentId: number, params?: {
   }
 }
 
-export async function getAgentTransactionsApi(agentId: number, params?: {
-  page?: number;
-  pageSize?: number;
-  type?: string;
-  status?: string;
-  startDate?: string;
-  endDate?: string;
-}): Promise<{
+export async function getAgentTransactionsApi(
+  agentId: number,
+  params?: {
+    endDate?: string;
+    page?: number;
+    pageSize?: number;
+    startDate?: string;
+    status?: string;
+    type?: string;
+  },
+): Promise<{
   list: AgentTransactionRecord[];
   pagination: {
     current: number;
@@ -199,7 +212,10 @@ export async function getAgentTransactionsApi(agentId: number, params?: {
   };
 }> {
   try {
-    const response = await requestClient.get(`/agents/${agentId}/transactions`, { params });
+    const response = await requestClient.get(
+      `/agents/${agentId}/transactions`,
+      { params },
+    );
     return response.data || response;
   } catch (error) {
     console.error('Failed to fetch agent transactions:', error);
@@ -207,14 +223,17 @@ export async function getAgentTransactionsApi(agentId: number, params?: {
   }
 }
 
-export async function getAgentBetStatisticsApi(agentId: number, params?: {
-  page?: number;
-  pageSize?: number;
-  gameType?: string;
-  status?: string;
-  startDate?: string;
-  endDate?: string;
-}): Promise<{
+export async function getAgentBetStatisticsApi(
+  agentId: number,
+  params?: {
+    endDate?: string;
+    gameType?: string;
+    page?: number;
+    pageSize?: number;
+    startDate?: string;
+    status?: string;
+  },
+): Promise<{
   list: AgentBetRecord[];
   pagination: {
     current: number;
@@ -223,7 +242,10 @@ export async function getAgentBetStatisticsApi(agentId: number, params?: {
   };
 }> {
   try {
-    const response = await requestClient.get(`/agents/${agentId}/bet-statistics`, { params });
+    const response = await requestClient.get(
+      `/agents/${agentId}/bet-statistics`,
+      { params },
+    );
     return response.data || response;
   } catch (error) {
     console.error('Failed to fetch agent bet statistics:', error);
@@ -231,14 +253,17 @@ export async function getAgentBetStatisticsApi(agentId: number, params?: {
   }
 }
 
-export async function getAgentAuditTrailApi(agentId: number, params?: {
-  page?: number;
-  pageSize?: number;
-  actionType?: string;
-  status?: string;
-  startDate?: string;
-  endDate?: string;
-}): Promise<{
+export async function getAgentAuditTrailApi(
+  agentId: number,
+  params?: {
+    actionType?: string;
+    endDate?: string;
+    page?: number;
+    pageSize?: number;
+    startDate?: string;
+    status?: string;
+  },
+): Promise<{
   list: AgentAuditRecord[];
   pagination: {
     current: number;
@@ -247,7 +272,9 @@ export async function getAgentAuditTrailApi(agentId: number, params?: {
   };
 }> {
   try {
-    const response = await requestClient.get(`/agents/${agentId}/audit-trail`, { params });
+    const response = await requestClient.get(`/agents/${agentId}/audit-trail`, {
+      params,
+    });
     return response.data || response;
   } catch (error) {
     console.error('Failed to fetch agent audit trail:', error);
@@ -255,10 +282,13 @@ export async function getAgentAuditTrailApi(agentId: number, params?: {
   }
 }
 
-export async function getAgentLoginDevicesApi(agentId: number, params?: {
-  page?: number;
-  pageSize?: number;
-}): Promise<{
+export async function getAgentLoginDevicesApi(
+  agentId: number,
+  params?: {
+    page?: number;
+    pageSize?: number;
+  },
+): Promise<{
   list: AgentLoginDevice[];
   pagination: {
     current: number;
@@ -267,7 +297,10 @@ export async function getAgentLoginDevicesApi(agentId: number, params?: {
   };
 }> {
   try {
-    const response = await requestClient.get(`/agents/${agentId}/login-devices`, { params });
+    const response = await requestClient.get(
+      `/agents/${agentId}/login-devices`,
+      { params },
+    );
     return response.data || response;
   } catch (error) {
     console.error('Failed to fetch agent login devices:', error);
@@ -275,10 +308,13 @@ export async function getAgentLoginDevicesApi(agentId: number, params?: {
   }
 }
 
-export async function getAgentMessagesApi(agentId: number, params?: {
-  page?: number;
-  pageSize?: number;
-}): Promise<{
+export async function getAgentMessagesApi(
+  agentId: number,
+  params?: {
+    page?: number;
+    pageSize?: number;
+  },
+): Promise<{
   list: AgentMessage[];
   pagination: {
     current: number;
@@ -287,7 +323,9 @@ export async function getAgentMessagesApi(agentId: number, params?: {
   };
 }> {
   try {
-    const response = await requestClient.get(`/agents/${agentId}/messages`, { params });
+    const response = await requestClient.get(`/agents/${agentId}/messages`, {
+      params,
+    });
     return response.data || response;
   } catch (error) {
     console.error('Failed to fetch agent messages:', error);
@@ -295,10 +333,13 @@ export async function getAgentMessagesApi(agentId: number, params?: {
   }
 }
 
-export async function getAgentAssociationsApi(agentId: number, params?: {
-  page?: number;
-  pageSize?: number;
-}): Promise<{
+export async function getAgentAssociationsApi(
+  agentId: number,
+  params?: {
+    page?: number;
+    pageSize?: number;
+  },
+): Promise<{
   list: AgentAssociation[];
   pagination: {
     current: number;
@@ -307,7 +348,10 @@ export async function getAgentAssociationsApi(agentId: number, params?: {
   };
 }> {
   try {
-    const response = await requestClient.get(`/agents/${agentId}/associations`, { params });
+    const response = await requestClient.get(
+      `/agents/${agentId}/associations`,
+      { params },
+    );
     return response.data || response;
   } catch (error) {
     console.error('Failed to fetch agent associations:', error);
@@ -316,18 +360,24 @@ export async function getAgentAssociationsApi(agentId: number, params?: {
 }
 
 // CRUD Operations for Withdrawal Accounts
-export async function createWithdrawalAccountApi(agentId: number, data: {
-  type: string;
-  name: string;
-  number: string;
-  bank?: string;
-  alipayAccount?: string;
-  wechatAccount?: string;
-  status: string;
-  remark?: string;
-}): Promise<AgentWithdrawalAccount> {
+export async function createWithdrawalAccountApi(
+  agentId: number,
+  data: {
+    alipayAccount?: string;
+    bank?: string;
+    name: string;
+    number: string;
+    remark?: string;
+    status: string;
+    type: string;
+    wechatAccount?: string;
+  },
+): Promise<AgentWithdrawalAccount> {
   try {
-    const response = await requestClient.post(`/agents/${agentId}/withdrawal-accounts`, data);
+    const response = await requestClient.post(
+      `/agents/${agentId}/withdrawal-accounts`,
+      data,
+    );
     return response.data || response;
   } catch (error) {
     console.error('Failed to create withdrawal account:', error);
@@ -335,18 +385,25 @@ export async function createWithdrawalAccountApi(agentId: number, data: {
   }
 }
 
-export async function updateWithdrawalAccountApi(agentId: number, accountId: number, data: {
-  type?: string;
-  name?: string;
-  number?: string;
-  bank?: string;
-  alipayAccount?: string;
-  wechatAccount?: string;
-  status?: string;
-  remark?: string;
-}): Promise<AgentWithdrawalAccount> {
+export async function updateWithdrawalAccountApi(
+  agentId: number,
+  accountId: number,
+  data: {
+    alipayAccount?: string;
+    bank?: string;
+    name?: string;
+    number?: string;
+    remark?: string;
+    status?: string;
+    type?: string;
+    wechatAccount?: string;
+  },
+): Promise<AgentWithdrawalAccount> {
   try {
-    const response = await requestClient.put(`/agents/${agentId}/withdrawal-accounts/${accountId}`, data);
+    const response = await requestClient.put(
+      `/agents/${agentId}/withdrawal-accounts/${accountId}`,
+      data,
+    );
     return response.data || response;
   } catch (error) {
     console.error('Failed to update withdrawal account:', error);
@@ -354,9 +411,14 @@ export async function updateWithdrawalAccountApi(agentId: number, accountId: num
   }
 }
 
-export async function deleteWithdrawalAccountApi(agentId: number, accountId: number): Promise<void> {
+export async function deleteWithdrawalAccountApi(
+  agentId: number,
+  accountId: number,
+): Promise<void> {
   try {
-    await requestClient.delete(`/agents/${agentId}/withdrawal-accounts/${accountId}`);
+    await requestClient.delete(
+      `/agents/${agentId}/withdrawal-accounts/${accountId}`,
+    );
   } catch (error) {
     console.error('Failed to delete withdrawal account:', error);
     throw new Error('Failed to delete withdrawal account');
@@ -364,17 +426,23 @@ export async function deleteWithdrawalAccountApi(agentId: number, accountId: num
 }
 
 // CRUD Operations for Login Devices
-export async function createLoginDeviceApi(agentId: number, data: {
-  name: string;
-  type: string;
-  os: string;
-  browser: string;
-  ipAddress: string;
-  status: string;
-  remark?: string;
-}): Promise<AgentLoginDevice> {
+export async function createLoginDeviceApi(
+  agentId: number,
+  data: {
+    browser: string;
+    ipAddress: string;
+    name: string;
+    os: string;
+    remark?: string;
+    status: string;
+    type: string;
+  },
+): Promise<AgentLoginDevice> {
   try {
-    const response = await requestClient.post(`/agents/${agentId}/login-devices`, data);
+    const response = await requestClient.post(
+      `/agents/${agentId}/login-devices`,
+      data,
+    );
     return response.data || response;
   } catch (error) {
     console.error('Failed to create login device:', error);
@@ -382,17 +450,24 @@ export async function createLoginDeviceApi(agentId: number, data: {
   }
 }
 
-export async function updateLoginDeviceApi(agentId: number, deviceId: number, data: {
-  name?: string;
-  type?: string;
-  os?: string;
-  browser?: string;
-  ipAddress?: string;
-  status?: string;
-  remark?: string;
-}): Promise<AgentLoginDevice> {
+export async function updateLoginDeviceApi(
+  agentId: number,
+  deviceId: number,
+  data: {
+    browser?: string;
+    ipAddress?: string;
+    name?: string;
+    os?: string;
+    remark?: string;
+    status?: string;
+    type?: string;
+  },
+): Promise<AgentLoginDevice> {
   try {
-    const response = await requestClient.put(`/agents/${agentId}/login-devices/${deviceId}`, data);
+    const response = await requestClient.put(
+      `/agents/${agentId}/login-devices/${deviceId}`,
+      data,
+    );
     return response.data || response;
   } catch (error) {
     console.error('Failed to update login device:', error);
@@ -400,7 +475,10 @@ export async function updateLoginDeviceApi(agentId: number, deviceId: number, da
   }
 }
 
-export async function deleteLoginDeviceApi(agentId: number, deviceId: number): Promise<void> {
+export async function deleteLoginDeviceApi(
+  agentId: number,
+  deviceId: number,
+): Promise<void> {
   try {
     await requestClient.delete(`/agents/${agentId}/login-devices/${deviceId}`);
   } catch (error) {
@@ -410,16 +488,22 @@ export async function deleteLoginDeviceApi(agentId: number, deviceId: number): P
 }
 
 // CRUD Operations for Associations
-export async function createAssociationApi(agentId: number, data: {
-  type: string;
-  account: string;
-  platform: string;
-  reason: string;
-  status: string;
-  remark?: string;
-}): Promise<AgentAssociation> {
+export async function createAssociationApi(
+  agentId: number,
+  data: {
+    account: string;
+    platform: string;
+    reason: string;
+    remark?: string;
+    status: string;
+    type: string;
+  },
+): Promise<AgentAssociation> {
   try {
-    const response = await requestClient.post(`/agents/${agentId}/associations`, data);
+    const response = await requestClient.post(
+      `/agents/${agentId}/associations`,
+      data,
+    );
     return response.data || response;
   } catch (error) {
     console.error('Failed to create association:', error);
@@ -427,16 +511,23 @@ export async function createAssociationApi(agentId: number, data: {
   }
 }
 
-export async function updateAssociationApi(agentId: number, associationId: number, data: {
-  type?: string;
-  account?: string;
-  platform?: string;
-  reason?: string;
-  status?: string;
-  remark?: string;
-}): Promise<AgentAssociation> {
+export async function updateAssociationApi(
+  agentId: number,
+  associationId: number,
+  data: {
+    account?: string;
+    platform?: string;
+    reason?: string;
+    remark?: string;
+    status?: string;
+    type?: string;
+  },
+): Promise<AgentAssociation> {
   try {
-    const response = await requestClient.put(`/agents/${agentId}/associations/${associationId}`, data);
+    const response = await requestClient.put(
+      `/agents/${agentId}/associations/${associationId}`,
+      data,
+    );
     return response.data || response;
   } catch (error) {
     console.error('Failed to update association:', error);
@@ -444,9 +535,14 @@ export async function updateAssociationApi(agentId: number, associationId: numbe
   }
 }
 
-export async function deleteAssociationApi(agentId: number, associationId: number): Promise<void> {
+export async function deleteAssociationApi(
+  agentId: number,
+  associationId: number,
+): Promise<void> {
   try {
-    await requestClient.delete(`/agents/${agentId}/associations/${associationId}`);
+    await requestClient.delete(
+      `/agents/${agentId}/associations/${associationId}`,
+    );
   } catch (error) {
     console.error('Failed to delete association:', error);
     throw new Error('Failed to delete association');
@@ -454,15 +550,21 @@ export async function deleteAssociationApi(agentId: number, associationId: numbe
 }
 
 // Message Operations
-export async function createMessageApi(agentId: number, data: {
-  type: string;
-  title: string;
-  content: string;
-  priority: string;
-  remark?: string;
-}): Promise<AgentMessage> {
+export async function createMessageApi(
+  agentId: number,
+  data: {
+    content: string;
+    priority: string;
+    remark?: string;
+    title: string;
+    type: string;
+  },
+): Promise<AgentMessage> {
   try {
-    const response = await requestClient.post(`/agents/${agentId}/messages`, data);
+    const response = await requestClient.post(
+      `/agents/${agentId}/messages`,
+      data,
+    );
     return response.data || response;
   } catch (error) {
     console.error('Failed to create message:', error);
@@ -470,9 +572,16 @@ export async function createMessageApi(agentId: number, data: {
   }
 }
 
-export async function updateMessageStatusApi(agentId: number, messageId: number, status: string): Promise<AgentMessage> {
+export async function updateMessageStatusApi(
+  agentId: number,
+  messageId: number,
+  status: string,
+): Promise<AgentMessage> {
   try {
-    const response = await requestClient.patch(`/agents/${agentId}/messages/${messageId}/status`, { status });
+    const response = await requestClient.patch(
+      `/agents/${agentId}/messages/${messageId}/status`,
+      { status },
+    );
     return response.data || response;
   } catch (error) {
     console.error('Failed to update message status:', error);
@@ -480,7 +589,10 @@ export async function updateMessageStatusApi(agentId: number, messageId: number,
   }
 }
 
-export async function deleteMessageApi(agentId: number, messageId: number): Promise<void> {
+export async function deleteMessageApi(
+  agentId: number,
+  messageId: number,
+): Promise<void> {
   try {
     await requestClient.delete(`/agents/${agentId}/messages/${messageId}`);
   } catch (error) {

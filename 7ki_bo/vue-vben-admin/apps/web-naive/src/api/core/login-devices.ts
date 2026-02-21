@@ -37,15 +37,16 @@ export interface LoginLogsResponse {
 }
 
 export async function getLoginDevices(userId: number, page = 1, pageSize = 20) {
-  return requestClient.get<LoginDevicesResponse>(`/users/${userId}/login-devices`, {
-    params: { page, pageSize }
-  });
+  return requestClient.get<LoginDevicesResponse>(
+    `/users/${userId}/login-devices`,
+    {
+      params: { page, pageSize },
+    },
+  );
 }
 
 export async function getLoginLogs(userId: number, page = 1, pageSize = 20) {
   return requestClient.get<LoginLogsResponse>(`/users/${userId}/login-logs`, {
-    params: { page, pageSize }
+    params: { page, pageSize },
   });
 }
-
-

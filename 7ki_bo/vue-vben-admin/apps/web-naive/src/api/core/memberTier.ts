@@ -12,14 +12,14 @@ export interface MemberTier {
   description?: string;
   keyTags: string[];
   sortOrder: number;
-  
+
   // Upgrade criteria
   minDepositAmount?: number;
   minBetAmount?: number;
   minValidBetAmount?: number;
   minCommissionAmount?: number;
   evaluationPeriodDays?: number;
-  
+
   // Benefits
   depositBonusRate: number;
   rebateRate: number;
@@ -30,20 +30,20 @@ export interface MemberTier {
   monthlyBonus: number;
   prioritySupport: boolean;
   exclusivePromotions: boolean;
-  
+
   // Status
   isActive: boolean;
   isDefault: boolean;
   backgroundColor: string;
   textColor: string;
   iconUrl?: string;
-  
+
   // Statistics
   currentMemberCount: number;
   totalUpgradeCount: number;
   lastCalculationAmount: number;
   lastCalculatedAt?: string;
-  
+
   // Timestamps
   createdAt: string;
   updatedAt: string;
@@ -76,14 +76,14 @@ export interface CreateMemberTierParams {
   description?: string;
   keyTags?: string[];
   sortOrder?: number;
-  
+
   // Upgrade criteria
   minDepositAmount?: number;
   minBetAmount?: number;
   minValidBetAmount?: number;
   minCommissionAmount?: number;
   evaluationPeriodDays?: number;
-  
+
   // Benefits
   depositBonusRate?: number;
   rebateRate?: number;
@@ -94,7 +94,7 @@ export interface CreateMemberTierParams {
   monthlyBonus?: number;
   prioritySupport?: boolean;
   exclusivePromotions?: boolean;
-  
+
   // Status
   isActive?: boolean;
   isDefault?: boolean;
@@ -103,7 +103,8 @@ export interface CreateMemberTierParams {
   iconUrl?: string;
 }
 
-export interface UpdateMemberTierParams extends Partial<CreateMemberTierParams> {}
+export interface UpdateMemberTierParams
+  extends Partial<CreateMemberTierParams> {}
 
 export interface TierMember {
   id: number;
@@ -144,24 +145,24 @@ export interface TierStatistics {
 
 export interface TierCalculationResult {
   userId: number;
-  currentTierId: number | null;
-  recommendedTierId: number | null;
+  currentTierId: null | number;
+  recommendedTierId: null | number;
   shouldUpgrade: boolean;
   shouldDowngrade: boolean;
   reason: string;
   calculationData: {
-    totalDeposits: number;
-    totalBets: number;
-    totalValidBets: number;
-    totalCommission: number;
     evaluationPeriod: number;
+    totalBets: number;
+    totalCommission: number;
+    totalDeposits: number;
+    totalValidBets: number;
   };
 }
 
 export interface TierUpgradeLog {
   userId: number;
-  fromTierId: number | null;
-  toTierId: number | null;
+  fromTierId: null | number;
+  toTierId: null | number;
   upgradeType: 'AUTO' | 'MANUAL';
   reason: string;
   calculationData: any;
@@ -183,24 +184,31 @@ export interface BatchUpdateResult {
 /**
  * Get all member tiers with filtering and pagination
  */
-export async function getMemberTiersApi(params: MemberTierListParams = {}): Promise<MemberTierListResponse> {
+export async function getMemberTiersApi(
+  params: MemberTierListParams = {},
+): Promise<MemberTierListResponse> {
   try {
     console.log('Making API call to /member-tiers with params:', params);
     const response = await requestClient.get('/member-tiers', { params });
     console.log('Raw API response:', response);
     console.log('Response type:', typeof response);
     console.log('Response keys:', Object.keys(response || {}));
-    
+
     // The backend returns {code: 0, data: {list: [...], pagination: {...}}}
     // The request interceptor should return response.data when code === 0
     // So response should be {list: [...], pagination: {...}}
     let result = response;
-    
+
     // If response is still wrapped in a data property, extract it
-    if (response && response.data && response.data.list && response.data.pagination) {
+    if (
+      response &&
+      response.data &&
+      response.data.list &&
+      response.data.pagination
+    ) {
       result = response.data;
     }
-    
+
     console.log('Processed result:', result);
     return result;
   } catch (error) {
@@ -220,7 +228,9 @@ export async function getMemberTierByIdApi(id: number): Promise<MemberTier> {
 /**
  * Create new member tier
  */
-export async function createMemberTierApi(params: CreateMemberTierParams): Promise<MemberTier> {
+export async function createMemberTierApi(
+  params: CreateMemberTierParams,
+): Promise<MemberTier> {
   const response = await requestClient.post('/member-tiers', params);
   return response.data || response;
 }
@@ -228,7 +238,10 @@ export async function createMemberTierApi(params: CreateMemberTierParams): Promi
 /**
  * Update member tier
  */
-export async function updateMemberTierApi(id: number, params: UpdateMemberTierParams): Promise<MemberTier> {
+export async function updateMemberTierApi(
+  id: number,
+  params: UpdateMemberTierParams,
+): Promise<MemberTier> {
   const response = await requestClient.put(`/member-tiers/${id}`, params);
   return response.data || response;
 }
@@ -243,24 +256,39 @@ export async function deleteMemberTierApi(id: number): Promise<void> {
 /**
  * Get users in a specific tier
  */
-export async function getTierMembersApi(id: number, params: TierMembersParams = {}): Promise<TierMembersResponse> {
+export async function getTierMembersApi(
+  id: number,
+  params: TierMembersParams = {},
+): Promise<TierMembersResponse> {
   try {
-    console.log('🔍 Making API call to /member-tiers/:id/members with params:', params);
-    const response = await requestClient.get(`/member-tiers/${id}/members`, { params });
+    console.log(
+      '🔍 Making API call to /member-tiers/:id/members with params:',
+      params,
+    );
+    const response = await requestClient.get(`/member-tiers/${id}/members`, {
+      params,
+    });
     console.log('📦 Raw API response:', response);
     console.log('📦 Response type:', typeof response);
     console.log('📦 Response keys:', response ? Object.keys(response) : 'null');
-    
+
     // Handle different response structures
     let result: TierMembersResponse;
-    
+
     // Case 1: Response is already unwrapped {list: [...], pagination: {...}}
     if (response && response.list && response.pagination) {
-      console.log('✅ Response already unwrapped (has list and pagination at root)');
+      console.log(
+        '✅ Response already unwrapped (has list and pagination at root)',
+      );
       result = response;
     }
     // Case 2: Response has data wrapper {data: {list: [...], pagination: {...}}}
-    else if (response && response.data && response.data.list && response.data.pagination) {
+    else if (
+      response &&
+      response.data &&
+      response.data.list &&
+      response.data.pagination
+    ) {
       console.log('✅ Response has data wrapper, extracting...');
       result = response.data;
     }
@@ -269,7 +297,7 @@ export async function getTierMembersApi(id: number, params: TierMembersParams = 
       console.error('❌ Unexpected response format:', response);
       throw new Error('Invalid response format from getTierMembersApi');
     }
-    
+
     console.log('✅ Final result:', result);
     console.log('✅ Total members:', result.pagination?.total);
     return result;
@@ -282,8 +310,12 @@ export async function getTierMembersApi(id: number, params: TierMembersParams = 
 /**
  * Update tier statistics (recalculate member counts)
  */
-export async function updateTierStatisticsApi(id: number): Promise<TierStatistics> {
-  const response = await requestClient.post(`/member-tiers/${id}/update-statistics`);
+export async function updateTierStatisticsApi(
+  id: number,
+): Promise<TierStatistics> {
+  const response = await requestClient.post(
+    `/member-tiers/${id}/update-statistics`,
+  );
   return response.data || response;
 }
 
@@ -291,7 +323,9 @@ export async function updateTierStatisticsApi(id: number): Promise<TierStatistic
  * Batch update tier statistics for all tiers
  */
 export async function updateAllTierStatisticsApi(): Promise<TierStatistics[]> {
-  const response = await requestClient.post('/member-tiers/update-all-statistics');
+  const response = await requestClient.post(
+    '/member-tiers/update-all-statistics',
+  );
   return response.data || response;
 }
 
@@ -302,8 +336,12 @@ export async function updateAllTierStatisticsApi(): Promise<TierStatistics[]> {
 /**
  * Calculate tier for a specific user
  */
-export async function calculateUserTierApi(userId: number): Promise<TierCalculationResult> {
-  const response = await requestClient.get(`/member-tiers/calculate-user/${userId}`);
+export async function calculateUserTierApi(
+  userId: number,
+): Promise<TierCalculationResult> {
+  const response = await requestClient.get(
+    `/member-tiers/calculate-user/${userId}`,
+  );
   return response.data || response;
 }
 
@@ -315,16 +353,20 @@ export async function autoUpdateUserTierApi(userId: number): Promise<{
   updated: boolean;
   upgradeLog?: TierUpgradeLog;
 }> {
-  const response = await requestClient.post(`/member-tiers/auto-update-user/${userId}`);
+  const response = await requestClient.post(
+    `/member-tiers/auto-update-user/${userId}`,
+  );
   return response.data || response;
 }
 
 /**
  * Batch update all users' tiers
  */
-export async function batchUpdateAllUserTiersApi(): Promise<{
-  message: string;
-} & BatchUpdateResult> {
+export async function batchUpdateAllUserTiersApi(): Promise<
+  BatchUpdateResult & {
+    message: string;
+  }
+> {
   const response = await requestClient.post('/member-tiers/batch-update-all');
   return response.data || response;
 }
@@ -332,8 +374,12 @@ export async function batchUpdateAllUserTiersApi(): Promise<{
 /**
  * Get tier upgrade history for a user
  */
-export async function getUserTierHistoryApi(userId: number): Promise<TierUpgradeLog[]> {
-  const response = await requestClient.get(`/member-tiers/user-history/${userId}`);
+export async function getUserTierHistoryApi(
+  userId: number,
+): Promise<TierUpgradeLog[]> {
+  const response = await requestClient.get(
+    `/member-tiers/user-history/${userId}`,
+  );
   return response.data || response;
 }
 
@@ -341,19 +387,22 @@ export async function getUserTierHistoryApi(userId: number): Promise<TierUpgrade
  * Manual tier assignment by admin
  */
 export async function manualAssignUserTierApi(
-  userId: number, 
-  tierId: number | null, 
+  userId: number,
+  tierId: null | number,
   reason: string,
-  lockTier: boolean = true
+  lockTier: boolean = true,
 ): Promise<{
   message: string;
   upgradeLog: TierUpgradeLog;
 }> {
-  const response = await requestClient.post(`/member-tiers/manual-assign/${userId}`, {
-    tierId,
-    reason,
-    lockTier
-  });
+  const response = await requestClient.post(
+    `/member-tiers/manual-assign/${userId}`,
+    {
+      tierId,
+      reason,
+      lockTier,
+    },
+  );
   return response.data || response;
 }
 
@@ -362,20 +411,20 @@ export async function manualAssignUserTierApi(
  */
 export async function getActiveMemberTiersApi(): Promise<MemberTier[]> {
   try {
-    const response = await requestClient.get('/member-tiers', { 
-      params: { 
+    const response = await requestClient.get('/member-tiers', {
+      params: {
         isActive: true,
         pageSize: 100,
         sortBy: 'sortOrder',
-        sortOrder: 'asc'
-      } 
+        sortOrder: 'asc',
+      },
     });
-    
+
     console.log('🔍 Raw API response for member tiers:', response);
-    
+
     // Extract list from response - handle different response structures
     let tiersList: MemberTier[] = [];
-    
+
     if (response && response.list) {
       tiersList = response.list;
     } else if (response && response.data && response.data.list) {
@@ -386,11 +435,11 @@ export async function getActiveMemberTiersApi(): Promise<MemberTier[]> {
       console.error('❌ Unexpected response structure:', response);
       tiersList = [];
     }
-    
+
     console.log('✅ Extracted member tiers:', tiersList);
     return tiersList;
   } catch (error) {
     console.error('❌ Error fetching member tiers:', error);
     return [];
   }
-} 
+}

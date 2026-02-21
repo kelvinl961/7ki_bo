@@ -50,7 +50,9 @@ export interface UpdateBackofficeAccountParams {
 /**
  * Get backoffice accounts list
  */
-export async function getBackofficeAccountsApi(params: BackofficeAccountListParams) {
+export async function getBackofficeAccountsApi(
+  params: BackofficeAccountListParams,
+) {
   return requestClient.get<BackofficeAccountListResponse>('/user-accounts', {
     params,
   });
@@ -66,14 +68,19 @@ export async function getBackofficeAccountByIdApi(id: number) {
 /**
  * Create new backoffice account
  */
-export async function createBackofficeAccountApi(params: CreateBackofficeAccountParams) {
+export async function createBackofficeAccountApi(
+  params: CreateBackofficeAccountParams,
+) {
   return requestClient.post<BackofficeAccount>('/user-accounts', params);
 }
 
 /**
  * Update backoffice account
  */
-export async function updateBackofficeAccountApi(id: number, params: UpdateBackofficeAccountParams) {
+export async function updateBackofficeAccountApi(
+  id: number,
+  params: UpdateBackofficeAccountParams,
+) {
   return requestClient.put<BackofficeAccount>(`/user-accounts/${id}`, params);
 }
 
@@ -88,5 +95,7 @@ export async function deleteBackofficeAccountApi(id: number) {
  * Toggle account status (suspended/active)
  */
 export async function toggleAccountStatusApi(id: number, isSuspended: boolean) {
-  return requestClient.put<BackofficeAccount>(`/user-accounts/${id}`, { isSuspended });
-} 
+  return requestClient.put<BackofficeAccount>(`/user-accounts/${id}`, {
+    isSuspended,
+  });
+}

@@ -35,15 +35,23 @@ const thirdPartyWithdrawalApi = {
   /**
    * Get third-party withdrawal providers list (代付商户列表)
    */
-  getProviders: async (params?: any): Promise<ApiResponse<{ records: ThirdPartyWithdrawalProvider[]; total: number }>> => {
-    const response = await requestClient.get('/withdrawal-providers', { params });
+  getProviders: async (
+    params?: any,
+  ): Promise<
+    ApiResponse<{ records: ThirdPartyWithdrawalProvider[]; total: number }>
+  > => {
+    const response = await requestClient.get('/withdrawal-providers', {
+      params,
+    });
     return response;
   },
 
   /**
    * Create new third-party withdrawal provider (新增代付商户)
    */
-  createProvider: async (data: ThirdPartyWithdrawalProvider): Promise<ApiResponse<ThirdPartyWithdrawalProvider>> => {
+  createProvider: async (
+    data: ThirdPartyWithdrawalProvider,
+  ): Promise<ApiResponse<ThirdPartyWithdrawalProvider>> => {
     const response = await requestClient.post('/withdrawal-providers', data);
     return response;
   },
@@ -51,8 +59,14 @@ const thirdPartyWithdrawalApi = {
   /**
    * Update third-party withdrawal provider (修改代付商户)
    */
-  updateProvider: async (id: string, data: ThirdPartyWithdrawalProvider): Promise<ApiResponse<ThirdPartyWithdrawalProvider>> => {
-    const response = await requestClient.put(`/withdrawal-providers/${id}`, data);
+  updateProvider: async (
+    id: string,
+    data: ThirdPartyWithdrawalProvider,
+  ): Promise<ApiResponse<ThirdPartyWithdrawalProvider>> => {
+    const response = await requestClient.put(
+      `/withdrawal-providers/${id}`,
+      data,
+    );
     return response;
   },
 
@@ -68,7 +82,9 @@ const thirdPartyWithdrawalApi = {
    * Toggle provider status (切换启用状态)
    */
   toggleStatus: async (id: string): Promise<ApiResponse> => {
-    const response = await requestClient.put(`/withdrawal-providers/${id}/toggle-status`);
+    const response = await requestClient.put(
+      `/withdrawal-providers/${id}/toggle-status`,
+    );
     return response;
   },
 
@@ -76,31 +92,43 @@ const thirdPartyWithdrawalApi = {
    * Test provider connection (测试连接)
    */
   testConnection: async (id: string): Promise<ApiResponse> => {
-    const response = await requestClient.post(`/withdrawal-providers/${id}/test-connection`);
+    const response = await requestClient.post(
+      `/withdrawal-providers/${id}/test-connection`,
+    );
     return response;
   },
 
   /**
    * Query account balance from Flex Payment API (查询三方商户余额)
    */
-  queryAccountBalance: async (merchantNo?: string): Promise<ApiResponse<{
-    balance: number;
-    unsettledBalance: number;
-    frozenAmount: number;
-    currency: string;
-  }>> => {
+  queryAccountBalance: async (
+    merchantNo?: string,
+  ): Promise<
+    ApiResponse<{
+      balance: number;
+      currency: string;
+      frozenAmount: number;
+      unsettledBalance: number;
+    }>
+  > => {
     const params = merchantNo ? { merchantNo } : {};
-    const response = await requestClient.get('/flex-payment/balance', { params });
+    const response = await requestClient.get('/flex-payment/balance', {
+      params,
+    });
     return response;
   },
 
   /**
    * Get withdrawal categories for dropdown (获取提现大类选项)
    */
-  getWithdrawalCategories: async (): Promise<ApiResponse<Array<{ label: string; value: string }>>> => {
-    const response = await requestClient.get('/withdrawal-providers/categories');
+  getWithdrawalCategories: async (): Promise<
+    ApiResponse<Array<{ label: string; value: string }>>
+  > => {
+    const response = await requestClient.get(
+      '/withdrawal-providers/categories',
+    );
     return response;
-  }
+  },
 };
 
 export { thirdPartyWithdrawalApi };

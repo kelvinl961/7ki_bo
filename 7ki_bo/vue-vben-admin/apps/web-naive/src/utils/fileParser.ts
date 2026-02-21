@@ -4,17 +4,15 @@ import type { ImportGameData, ImportValidationError } from '#/api/game/subgame';
 export function parseCSV(text: string): string[][] {
   const lines = text.split('\n');
   const result: string[][] = [];
-  
+
   for (const line of lines) {
     if (line.trim()) {
       // Simple CSV parsing - handle quoted fields
       const fields = [];
       let current = '';
       let inQuotes = false;
-      
-      for (let i = 0; i < line.length; i++) {
-        const char = line[i];
-        
+
+      for (const char of line) {
         if (char === '"') {
           inQuotes = !inQuotes;
         } else if (char === ',' && !inQuotes) {
@@ -24,12 +22,12 @@ export function parseCSV(text: string): string[][] {
           current += char;
         }
       }
-      
+
       fields.push(current.trim());
       result.push(fields);
     }
   }
-  
+
   return result;
 }
 
@@ -44,13 +42,13 @@ export async function parseExcel(file: File): Promise<string[][]> {
 // Parse file based on extension
 export async function parseFile(file: File): Promise<string[][]> {
   console.log('parseFile called with:', file.name, file.type, file.size);
-  
+
   const extension = file.name.split('.').pop()?.toLowerCase();
   console.log('File extension:', extension);
-  
+
   if (extension === 'csv') {
     const text = await file.text();
-    console.log('CSV text content (first 200 chars):', text.substring(0, 200));
+    console.log('CSV text content (first 200 chars):', text.slice(0, 200));
     const result = parseCSV(text);
     console.log('CSV parse result:', result);
     return result;
@@ -60,7 +58,7 @@ export async function parseFile(file: File): Promise<string[][]> {
     console.log('Excel file detected, trying to read as text...');
     try {
       const text = await file.text();
-      console.log('Excel text content (first 200 chars):', text.substring(0, 200));
+      console.log('Excel text content (first 200 chars):', text.slice(0, 200));
       const result = parseCSV(text);
       console.log('Excel parse result:', result);
       return result;
@@ -75,12 +73,12 @@ export async function parseFile(file: File): Promise<string[][]> {
 
 // Validate and convert parsed data to ImportGameData
 export function validateGameData(data: string[][]): {
-  games: ImportGameData[];
   errors: ImportValidationError[];
+  games: ImportGameData[];
 } {
   const games: ImportGameData[] = [];
   const errors: ImportValidationError[] = [];
-  
+
   if (data.length === 0) {
     errors.push({
       row: 1,
@@ -90,11 +88,18 @@ export function validateGameData(data: string[][]): {
     });
     return { games, errors };
   }
-  
+
   // Expected columns based on the screenshot
-  const expectedColumns = ['NO.', 'Game Name (中文)', 'Game Name (英文)', '游戏类型', 'GameID', 'Icon'];
+  const expectedColumns = [
+    'NO.',
+    'Game Name (中文)',
+    'Game Name (英文)',
+    '游戏类型',
+    'GameID',
+    'Icon',
+  ];
   const headers = data[0];
-  
+
   if (!headers) {
     errors.push({
       row: 1,
@@ -104,9 +109,14 @@ export function validateGameData(data: string[][]): {
     });
     return { games, errors };
   }
-  
+
   // Validate headers
-  const requiredFields = ['Game Name (中文)', 'Game Name (英文)', '游戏类型', 'GameID'];
+  const requiredFields = [
+    'Game Name (中文)',
+    'Game Name (英文)',
+    '游戏类型',
+    'GameID',
+  ];
   for (const field of requiredFields) {
     if (!headers.includes(field)) {
       errors.push({
@@ -117,11 +127,11 @@ export function validateGameData(data: string[][]): {
       });
     }
   }
-  
+
   if (errors.length > 0) {
     return { games, errors };
   }
-  
+
   // Find column indices
   const columnIndices = {
     no: headers.indexOf('NO.'),
@@ -131,25 +141,31 @@ export function validateGameData(data: string[][]): {
     gameId: headers.indexOf('GameID'),
     iconUrl: headers.indexOf('Icon'),
   };
-  
+
   // Process data rows
   for (let i = 1; i < data.length; i++) {
     const row = data[i];
     const rowNumber = i + 1;
-    
-    if (!row || row.length === 0 || row.every(cell => !cell?.trim())) {
+
+    if (!row || row.every((cell) => !cell?.trim())) {
       continue; // Skip empty rows
     }
-    
+
     const gameData: ImportGameData = {
-      no: columnIndices.no >= 0 ? parseInt(row[columnIndices.no] || '0') || i : i,
+      no:
+        columnIndices.no >= 0
+          ? Number.parseInt(row[columnIndices.no] || '0') || i
+          : i,
       gameNameCn: row[columnIndices.gameNameCn]?.trim() || '',
       gameNameEn: row[columnIndices.gameNameEn]?.trim() || '',
       gameType: row[columnIndices.gameType]?.trim() || '',
       gameId: row[columnIndices.gameId]?.trim() || '',
-      iconUrl: columnIndices.iconUrl >= 0 ? row[columnIndices.iconUrl]?.trim() || '' : '',
+      iconUrl:
+        columnIndices.iconUrl >= 0
+          ? row[columnIndices.iconUrl]?.trim() || ''
+          : '',
     };
-    
+
     // Validate required fields
     if (!gameData.gameNameCn) {
       errors.push({
@@ -159,7 +175,7 @@ export function validateGameData(data: string[][]): {
         value: gameData.gameNameCn,
       });
     }
-    
+
     if (!gameData.gameNameEn) {
       errors.push({
         row: rowNumber,
@@ -168,7 +184,7 @@ export function validateGameData(data: string[][]): {
         value: gameData.gameNameEn,
       });
     }
-    
+
     if (!gameData.gameType) {
       errors.push({
         row: rowNumber,
@@ -177,7 +193,7 @@ export function validateGameData(data: string[][]): {
         value: gameData.gameType,
       });
     }
-    
+
     if (!gameData.gameId) {
       errors.push({
         row: rowNumber,
@@ -186,9 +202,9 @@ export function validateGameData(data: string[][]): {
         value: gameData.gameId,
       });
     }
-    
+
     // Validate GameID format (simple validation)
-    if (gameData.gameId && !/^[a-zA-Z0-9_-]+$/.test(gameData.gameId)) {
+    if (gameData.gameId && !/^[\w-]+$/.test(gameData.gameId)) {
       errors.push({
         row: rowNumber,
         field: '游戏ID',
@@ -196,32 +212,64 @@ export function validateGameData(data: string[][]): {
         value: gameData.gameId,
       });
     }
-    
+
     games.push(gameData);
   }
-  
+
   return { games, errors };
 }
 
 // Generate import template data
 export function generateTemplateData(): string[][] {
   return [
-    ['NO.', 'Game Name (中文)', 'Game Name (英文)', '游戏类型', 'GameID', 'Icon'],
-    ['1', '红飞机', 'Aviator', '电子游戏', 'spribe_01', 'https://example.com/icon1.png'],
-    ['2', '黑杰克', 'Blackjack', '电子游戏', 'evolution_bj', 'https://example.com/icon2.png'],
-    ['3', '轮盘', 'Roulette', '电子游戏', 'evolution_roulette', 'https://example.com/icon3.png'],
+    [
+      'NO.',
+      'Game Name (中文)',
+      'Game Name (英文)',
+      '游戏类型',
+      'GameID',
+      'Icon',
+    ],
+    [
+      '1',
+      '红飞机',
+      'Aviator',
+      '电子游戏',
+      'spribe_01',
+      'https://example.com/icon1.png',
+    ],
+    [
+      '2',
+      '黑杰克',
+      'Blackjack',
+      '电子游戏',
+      'evolution_bj',
+      'https://example.com/icon2.png',
+    ],
+    [
+      '3',
+      '轮盘',
+      'Roulette',
+      '电子游戏',
+      'evolution_roulette',
+      'https://example.com/icon3.png',
+    ],
   ];
 }
 
 // Convert template data to CSV
 export function templateToCSV(data: string[][]): string {
-  return data.map(row => 
-    row.map(cell => 
-      cell.includes(',') || cell.includes('"') || cell.includes('\n') 
-        ? `"${cell.replace(/"/g, '""')}"` 
-        : cell
-    ).join(',')
-  ).join('\n');
+  return data
+    .map((row) =>
+      row
+        .map((cell) =>
+          cell.includes(',') || cell.includes('"') || cell.includes('\n')
+            ? `"${cell.replaceAll('"', '""')}"`
+            : cell,
+        )
+        .join(','),
+    )
+    .join('\n');
 }
 
 // Download template file
@@ -233,8 +281,8 @@ export function downloadTemplate(): void {
   const link = document.createElement('a');
   link.href = url;
   link.download = '游戏导入模板.csv';
-  document.body.appendChild(link);
+  document.body.append(link);
   link.click();
-  document.body.removeChild(link);
+  link.remove();
   URL.revokeObjectURL(url);
-} 
+}

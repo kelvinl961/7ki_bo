@@ -1,37 +1,38 @@
 /**
  * useAutoRefresh Composable
- * 
+ *
  * Extracted from RechargeOrderList.vue auto-refresh logic
  * Provides reusable auto-refresh functionality with countdown timer
  */
 
-import { ref, onUnmounted, watch } from 'vue';
+import { onUnmounted, ref, watch } from 'vue';
+
 import { useMessage } from 'naive-ui';
 
 export interface UseAutoRefreshOptions {
   /** Default refresh interval in seconds */
   defaultInterval?: number;
-  
+
   /** Available refresh intervals */
   intervals?: number[];
-  
+
   /** Show success/info messages */
   showMessages?: boolean;
-  
+
   /** Pause on user interaction */
   pauseOnInteraction?: boolean;
-  
+
   /** Custom labels for messages */
   labels?: {
-    enabled?: string;
     disabled?: string;
+    enabled?: string;
     intervalChanged?: string;
   };
 }
 
 export function useAutoRefresh(
-  refreshCallback: () => void | Promise<void>,
-  options: UseAutoRefreshOptions = {}
+  refreshCallback: () => Promise<void> | void,
+  options: UseAutoRefreshOptions = {},
 ) {
   const {
     defaultInterval = 30,
@@ -40,37 +41,36 @@ export function useAutoRefresh(
     pauseOnInteraction = true,
     labels = {
       enabled: '已启用自动更新',
-      disabled: '已关闭自动更新', 
-      intervalChanged: '刷新间隔已更改'
-    }
+      disabled: '已关闭自动更新',
+      intervalChanged: '刷新间隔已更改',
+    },
   } = options;
 
   const message = useMessage();
-  
+
   // Reactive state
   const isEnabled = ref(false);
   const currentInterval = ref(defaultInterval);
   const countdown = ref(0);
   const isRefreshing = ref(false);
-  
+
   // Timers
   let refreshTimer: NodeJS.Timeout | null = null;
   let countdownTimer: NodeJS.Timeout | null = null;
   let interactionTimer: NodeJS.Timeout | null = null;
-  
+
   // Available interval options for UI
-  const intervalOptions = intervals.map(value => ({
+  const intervalOptions = intervals.map((value) => ({
     label: value < 60 ? `${value}秒` : `${value / 60}分钟`,
-    value
+    value,
   }));
-  
 
   /**
    * Execute the refresh callback
    */
   const executeRefresh = async () => {
     if (isRefreshing.value) return;
-    
+
     try {
       isRefreshing.value = true;
       await refreshCallback();
@@ -90,9 +90,9 @@ export function useAutoRefresh(
       clearInterval(countdownTimer);
       countdownTimer = null;
     }
-    
+
     countdown.value = currentInterval.value;
-    
+
     countdownTimer = setInterval(() => {
       countdown.value--;
       if (countdown.value <= 0) {
@@ -127,12 +127,14 @@ export function useAutoRefresh(
    */
   const start = () => {
     if (isEnabled.value) return; // Already running
-    
+
     isEnabled.value = true;
     startCountdown();
-    
+
     if (showMessages) {
-      message.success(`${labels.enabled}，每${currentInterval.value}秒刷新一次`);
+      message.success(
+        `${labels.enabled}，每${currentInterval.value}秒刷新一次`,
+      );
     }
   };
 
@@ -141,10 +143,10 @@ export function useAutoRefresh(
    */
   const stop = () => {
     if (!isEnabled.value) return; // Already stopped
-    
+
     isEnabled.value = false;
     stopAllTimers();
-    
+
     if (showMessages) {
       message.success(labels.disabled);
     }
@@ -154,8 +156,8 @@ export function useAutoRefresh(
    * Toggle auto-refresh
    */
   const toggle = (enabled?: boolean) => {
-    const newState = enabled !== undefined ? enabled : !isEnabled.value;
-    
+    const newState = enabled === undefined ? !isEnabled.value : enabled;
+
     if (newState) {
       start();
     } else {
@@ -169,7 +171,7 @@ export function useAutoRefresh(
   const setRefreshInterval = (newInterval: number) => {
     const oldInterval = currentInterval.value;
     currentInterval.value = newInterval;
-    
+
     if (isEnabled.value) {
       // Clear any pause timers first
       if (interactionTimer) {
@@ -177,11 +179,11 @@ export function useAutoRefresh(
         interactionTimer = null;
       }
       pausedByInteraction.value = false;
-      
+
       // Restart timers with new interval
       stopAllTimers();
       startCountdown();
-      
+
       if (showMessages) {
         message.success(`${labels.intervalChanged}为${newInterval}秒`);
       }
@@ -193,7 +195,7 @@ export function useAutoRefresh(
    */
   const triggerRefresh = async () => {
     await executeRefresh();
-    
+
     // Reset countdown if auto-refresh is enabled
     if (isEnabled.value) {
       countdown.value = currentInterval.value;
@@ -214,18 +216,19 @@ export function useAutoRefresh(
   const pausedByInteraction = ref(false);
 
   const handleUserInteraction = () => {
-    if (!pauseOnInteraction || !isEnabled.value || pausedByInteraction.value) return;
-    
+    if (!pauseOnInteraction || !isEnabled.value || pausedByInteraction.value)
+      return;
+
     // Only pause if we're not already paused and not currently refreshing
     if (!isRefreshing.value) {
       pausedByInteraction.value = true;
       stopAllTimers();
-      
+
       // Clear existing timer
       if (interactionTimer) {
         clearTimeout(interactionTimer);
       }
-      
+
       // Resume after 3 seconds of inactivity (reduced from 5)
       interactionTimer = setTimeout(() => {
         if (pausedByInteraction.value && isEnabled.value) {
@@ -253,12 +256,14 @@ export function useAutoRefresh(
 
   // Setup interaction listeners if enabled
   if (pauseOnInteraction && typeof window !== 'undefined') {
-    ['mousedown', 'keydown', 'scroll', 'touchstart'].forEach(event => {
-      document.addEventListener(event, handleUserInteraction, { passive: true });
+    ['mousedown', 'keydown', 'scroll', 'touchstart'].forEach((event) => {
+      document.addEventListener(event, handleUserInteraction, {
+        passive: true,
+      });
     });
-    
+
     onUnmounted(() => {
-      ['mousedown', 'keydown', 'scroll', 'touchstart'].forEach(event => {
+      ['mousedown', 'keydown', 'scroll', 'touchstart'].forEach((event) => {
         document.removeEventListener(event, handleUserInteraction);
       });
     });
@@ -272,7 +277,7 @@ export function useAutoRefresh(
     isRefreshing,
     pausedByInteraction,
     intervalOptions,
-    
+
     // Methods
     start,
     stop,
@@ -280,8 +285,8 @@ export function useAutoRefresh(
     setInterval: setRefreshInterval,
     triggerRefresh,
     restart,
-    
+
     // Utilities
-    executeRefresh
+    executeRefresh,
   };
 }

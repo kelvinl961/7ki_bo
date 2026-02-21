@@ -1,4 +1,5 @@
 import type { RouteRecordRaw } from 'vue-router';
+
 // ✅ PERFORMANCE: Eager load frequently used Order List page
 import RechargeOrderList from '#/views/finance/RechargeOrderList.vue';
 
@@ -49,4 +50,4 @@ const routes: RouteRecordRaw[] = [
   },
 ];
 
-export default routes; 
+export default routes;

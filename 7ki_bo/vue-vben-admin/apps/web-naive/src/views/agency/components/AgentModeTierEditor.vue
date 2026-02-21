@@ -1,46 +1,53 @@
 <template>
   <div>
-    <n-alert type="info" style="margin-bottom: 16px;">
+    <n-alert type="info" style="margin-bottom: 16px">
       配置该代理模式的阶梯返佣规则，每个层级可以设置不同的门槛和比例。
     </n-alert>
 
     <!-- 操作按钮 -->
-    <div style="margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+    <div
+      style="
+        margin-bottom: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      "
+    >
       <h3>返佣层级配置</h3>
       <n-button type="primary" @click="handleAddTier">新增层级</n-button>
     </div>
 
     <!-- 层级列表 -->
     <n-space vertical :size="16">
-      <n-card 
-        v-for="(tier, index) in tiers" 
+      <n-card
+        v-for="(tier, index) in tiers"
         :key="index"
         :title="`第${tier.levelNo}级`"
         size="small"
       >
         <template #header-extra>
-          <n-button 
-            size="small" 
-            type="error" 
-            text 
+          <n-button
+            size="small"
+            type="error"
+            text
             @click="handleRemoveTier(index)"
           >
             删除
           </n-button>
         </template>
 
-        <n-form 
-          :model="tier" 
-          label-placement="left" 
+        <n-form
+          :model="tier"
+          label-placement="left"
           label-width="120px"
           size="small"
         >
           <n-grid :cols="3" :x-gap="16">
             <n-gi>
               <n-form-item label="层级序号">
-                <n-input-number 
-                  v-model:value="tier.levelNo" 
-                  :min="1" 
+                <n-input-number
+                  v-model:value="tier.levelNo"
+                  :min="1"
                   :max="10"
                   placeholder="层级序号"
                 />
@@ -48,8 +55,8 @@
             </n-gi>
             <n-gi>
               <n-form-item label="指标类型">
-                <n-select 
-                  v-model:value="tier.metricType" 
+                <n-select
+                  v-model:value="tier.metricType"
                   :options="metricTypeOptions"
                   placeholder="选择指标类型"
                 />
@@ -60,8 +67,8 @@
           <n-grid :cols="2" :x-gap="16">
             <n-gi>
               <n-form-item label="门槛下限">
-                <n-input-number 
-                  v-model:value="tier.rangeMin" 
+                <n-input-number
+                  v-model:value="tier.rangeMin"
                   :min="0"
                   :precision="2"
                   placeholder="最小值"
@@ -70,8 +77,8 @@
             </n-gi>
             <n-gi>
               <n-form-item label="门槛上限">
-                <n-input-number 
-                  v-model:value="tier.rangeMax" 
+                <n-input-number
+                  v-model:value="tier.rangeMax"
                   :min="0"
                   :precision="2"
                   placeholder="最大值（不填表示无上限）"
@@ -83,8 +90,8 @@
           <n-grid :cols="3" :x-gap="16">
             <n-gi>
               <n-form-item label="返佣比例(%)">
-                <n-input-number 
-                  v-model:value="tier.ratePercent" 
+                <n-input-number
+                  v-model:value="tier.ratePercent"
                   :min="0"
                   :max="100"
                   :precision="4"
@@ -94,8 +101,8 @@
             </n-gi>
             <n-gi>
               <n-form-item label="单级封顶">
-                <n-input-number 
-                  v-model:value="tier.capAmount" 
+                <n-input-number
+                  v-model:value="tier.capAmount"
                   :min="0"
                   :precision="2"
                   placeholder="单级最大返佣金额"
@@ -104,8 +111,8 @@
             </n-gi>
             <n-gi>
               <n-form-item label="超出部分额外比例(%)">
-                <n-input-number 
-                  v-model:value="tier.extraRate" 
+                <n-input-number
+                  v-model:value="tier.extraRate"
                   :min="0"
                   :max="100"
                   :precision="4"
@@ -116,8 +123,8 @@
           </n-grid>
 
           <n-form-item label="复杂规则配置">
-            <n-input 
-              v-model:value="tier.ruleJsonText" 
+            <n-input
+              v-model:value="tier.ruleJsonText"
               type="textarea"
               :rows="3"
               placeholder="JSON格式的复杂规则配置（可选）"
@@ -128,14 +135,14 @@
     </n-space>
 
     <!-- 空状态 -->
-    <n-empty 
+    <n-empty
       v-if="tiers.length === 0"
       description="暂无层级配置，点击上方按钮新增"
-      style="margin: 40px 0;"
+      style="margin: 40px 0"
     />
 
     <!-- 预览区域 -->
-    <n-card v-if="tiers.length > 0" title="配置预览" style="margin-top: 24px;">
+    <n-card v-if="tiers.length > 0" title="配置预览" style="margin-top: 24px">
       <n-table :single-line="false" size="small">
         <thead>
           <tr>
@@ -151,9 +158,7 @@
           <tr v-for="tier in sortedTiers" :key="tier.levelNo">
             <td>第{{ tier.levelNo }}级</td>
             <td>{{ getMetricTypeLabel(tier.metricType) }}</td>
-            <td>
-              {{ tier.rangeMin || 0 }} - {{ tier.rangeMax || '∞' }}
-            </td>
+            <td>{{ tier.rangeMin || 0 }} - {{ tier.rangeMax || '∞' }}</td>
             <td>{{ tier.ratePercent || 0 }}%</td>
             <td>{{ tier.capAmount || '无限制' }}</td>
             <td>{{ tier.extraRate || 0 }}%</td>
@@ -163,7 +168,14 @@
     </n-card>
 
     <!-- 操作按钮 -->
-    <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 24px;">
+    <div
+      style="
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 24px;
+      "
+    >
       <n-button @click="$emit('close')">取消</n-button>
       <n-button type="primary" @click="handleSave" :loading="saveLoading">
         保存配置
@@ -212,7 +224,7 @@ const sortedTiers = computed(() => {
 
 // 方法
 const getMetricTypeLabel = (type: string) => {
-  const option = metricTypeOptions.find(opt => opt.value === type);
+  const option = metricTypeOptions.find((opt) => opt.value === type);
   return option?.label || type;
 };
 
@@ -221,9 +233,11 @@ const loadTiers = async () => {
   try {
     const response = await agentModeApi.getAgentModeTiers(props.modeId);
     if (response.success) {
-      tiers.value = response.data.map(tier => ({
+      tiers.value = response.data.map((tier) => ({
         ...tier,
-        ruleJsonText: tier.ruleJson ? JSON.stringify(tier.ruleJson, null, 2) : '',
+        ruleJsonText: tier.ruleJson
+          ? JSON.stringify(tier.ruleJson, null, 2)
+          : '',
       }));
     }
   } catch (error) {
@@ -235,10 +249,11 @@ const loadTiers = async () => {
 };
 
 const handleAddTier = () => {
-  const nextLevelNo = tiers.value.length > 0 
-    ? Math.max(...tiers.value.map(t => t.levelNo)) + 1 
-    : 1;
-    
+  const nextLevelNo =
+    tiers.value.length > 0
+      ? Math.max(...tiers.value.map((t) => t.levelNo)) + 1
+      : 1;
+
   tiers.value.push({
     levelNo: nextLevelNo,
     metricType: 'VALID_BET',
@@ -257,7 +272,7 @@ const handleRemoveTier = (index: number) => {
 
 const validateTiers = (): boolean => {
   // 验证层级序号唯一性
-  const levelNos = tiers.value.map(t => t.levelNo);
+  const levelNos = tiers.value.map((t) => t.levelNo);
   const uniqueLevelNos = new Set(levelNos);
   if (levelNos.length !== uniqueLevelNos.size) {
     message.error('层级序号不能重复');
@@ -282,7 +297,11 @@ const validateTiers = (): boolean => {
       message.error('门槛上限不能小于下限');
       return false;
     }
-    if (tier.ratePercent === undefined || tier.ratePercent < 0 || tier.ratePercent > 100) {
+    if (
+      tier.ratePercent === undefined ||
+      tier.ratePercent < 0 ||
+      tier.ratePercent > 100
+    ) {
       message.error('返佣比例必须在0-100之间');
       return false;
     }
@@ -299,7 +318,7 @@ const handleSave = async () => {
   saveLoading.value = true;
   try {
     // 处理 JSON 规则
-    const processedTiers: AgentModeTier[] = tiers.value.map(tier => {
+    const processedTiers: AgentModeTier[] = tiers.value.map((tier) => {
       const result: AgentModeTier = {
         levelNo: tier.levelNo,
         metricType: tier.metricType,

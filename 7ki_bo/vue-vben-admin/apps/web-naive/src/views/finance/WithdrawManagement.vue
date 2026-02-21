@@ -6,46 +6,72 @@
         <template #tab>
           <span class="flex items-center gap-2">
             风控审核
-            <n-badge :value="riskReviewCount" :max="99" type="error" v-if="riskReviewCount > 0" />
+            <n-badge
+              :value="riskReviewCount"
+              :max="99"
+              type="error"
+              v-if="riskReviewCount > 0"
+            />
           </span>
         </template>
         <RiskControlReview @refresh-tabs="handleRefreshTabs" />
       </n-tab-pane>
-      
+
       <n-tab-pane name="my-risk" tab="由我风控">
         <template #tab>
           <span class="flex items-center gap-2">
             由我风控
-            <n-badge :value="myRiskCount" :max="99" type="error" v-if="myRiskCount > 0" />
+            <n-badge
+              :value="myRiskCount"
+              :max="99"
+              type="error"
+              v-if="myRiskCount > 0"
+            />
           </span>
         </template>
-        <RiskControlReview :is-my-risk="true" @refresh-tabs="handleRefreshTabs" />
+        <RiskControlReview
+          :is-my-risk="true"
+          @refresh-tabs="handleRefreshTabs"
+        />
       </n-tab-pane>
-      
+
       <n-tab-pane name="finance-withdrawal" tab="财务出款">
         <template #tab>
           <span class="flex items-center gap-2">
             财务出款
-            <n-badge :value="financeCount" :max="99" type="error" v-if="financeCount > 0" />
+            <n-badge
+              :value="financeCount"
+              :max="99"
+              type="error"
+              v-if="financeCount > 0"
+            />
           </span>
         </template>
         <FinanceWithdrawal @refresh-tabs="handleRefreshTabs" />
       </n-tab-pane>
-      
+
       <n-tab-pane name="my-withdrawal" tab="由我出款">
         <template #tab>
           <span class="flex items-center gap-2">
             由我出款
-            <n-badge :value="myWithdrawalCount" :max="99" type="error" v-if="myWithdrawalCount > 0" />
+            <n-badge
+              :value="myWithdrawalCount"
+              :max="99"
+              type="error"
+              v-if="myWithdrawalCount > 0"
+            />
           </span>
         </template>
-        <FinanceWithdrawal :is-my-withdrawal="true" @refresh-tabs="handleRefreshTabs" />
+        <FinanceWithdrawal
+          :is-my-withdrawal="true"
+          @refresh-tabs="handleRefreshTabs"
+        />
       </n-tab-pane>
-      
+
       <n-tab-pane name="re-payment" tab="重新代付">
         <RePayment />
       </n-tab-pane>
-      
+
       <n-tab-pane name="auto-withdrawal" tab="免审出款">
         <template #tab>
           <span class="flex items-center gap-2">
@@ -55,7 +81,7 @@
         </template>
         <AutoWithdrawal />
       </n-tab-pane>
-      
+
       <n-tab-pane name="all-withdrawals" tab="全部提现">
         <!-- Filter Section -->
         <n-card class="mb-4">
@@ -67,7 +93,9 @@
             class="mb-4"
           >
             <!-- First row - Date and Status filters -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-4">
+            <div
+              class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            >
               <n-form-item label="日期范围" class="col-span-1 md:col-span-2">
                 <n-space vertical size="small" class="w-full">
                   <n-date-picker
@@ -78,12 +106,16 @@
                     :shortcuts="dateShortcuts"
                     class="w-full"
                   />
-                  <n-text v-if="dateRangeLabel" depth="3" style="font-size: 12px">
+                  <n-text
+                    v-if="dateRangeLabel"
+                    depth="3"
+                    style="font-size: 12px"
+                  >
                     📅 {{ dateRangeLabel }}
                   </n-text>
                 </n-space>
               </n-form-item>
-              
+
               <n-form-item label="提现状态">
                 <n-select
                   v-model:value="filterForm.status"
@@ -93,7 +125,7 @@
                   class="w-full"
                 />
               </n-form-item>
-              
+
               <n-form-item label="提现方式">
                 <n-select
                   v-model:value="filterForm.withdrawMethod"
@@ -104,9 +136,11 @@
                 />
               </n-form-item>
             </div>
-            
+
             <!-- Second row - Member and Agent filters -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-4">
+            <div
+              class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            >
               <n-form-item label="会员层级">
                 <n-select
                   v-model:value="filterForm.vipLevel"
@@ -116,7 +150,7 @@
                   class="w-full"
                 />
               </n-form-item>
-              
+
               <n-form-item label="代理模式">
                 <n-select
                   v-model:value="filterForm.agentMode"
@@ -126,7 +160,7 @@
                   class="w-full"
                 />
               </n-form-item>
-              
+
               <n-form-item label="三方代付">
                 <n-select
                   v-model:value="filterForm.thirdPartyPayment"
@@ -136,7 +170,7 @@
                   class="w-full"
                 />
               </n-form-item>
-              
+
               <n-form-item label="服务筛选">
                 <n-select
                   v-model:value="filterForm.serviceFilter"
@@ -147,10 +181,10 @@
                 />
               </n-form-item>
             </div>
-            
+
             <!-- Third row - Search and Actions -->
             <div class="flex flex-wrap items-end gap-4">
-              <n-form-item label="搜索" class="flex-1 min-w-[300px]">
+              <n-form-item label="搜索" class="min-w-[300px] flex-1">
                 <n-input
                   v-model:value="searchInput"
                   placeholder="订单号/会员ID/会员账号"
@@ -159,7 +193,7 @@
                   @keyup.enter="handleSearch"
                 />
               </n-form-item>
-              
+
               <n-form-item class="flex-shrink-0">
                 <n-space>
                   <n-button type="primary" @click="handleSearch">搜索</n-button>
@@ -169,14 +203,11 @@
               </n-form-item>
             </div>
           </n-form>
-          
+
           <!-- Action Buttons -->
-          <div class="flex justify-between items-center">
+          <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <n-button
-                type="primary"
-                @click="handleCreateWithdrawal"
-              >
+              <n-button type="primary" @click="handleCreateWithdrawal">
                 新建提现
               </n-button>
               <n-button
@@ -203,12 +234,15 @@
                 @interval-change="handleRefreshIntervalChange"
               />
             </div>
-            
+
             <!-- Summary -->
             <div class="flex items-center gap-4">
               <n-text depth="3">总计: {{ summary.totalCount }} 条</n-text>
               <n-text depth="3">
-                总提现金额: <strong class="text-red-600">{{ formatCurrency(summary.totalAmount) }}</strong>
+                总提现金额:
+                <strong class="text-red-600">{{
+                  formatCurrency(summary.totalAmount)
+                }}</strong>
               </n-text>
             </div>
           </div>
@@ -234,12 +268,12 @@
         >
           <template #actionBar="{ selectedCount, selectedRows }">
             <n-card :bordered="false" class="rounded-16px shadow-sm">
-              <div class="flex justify-between items-center">
+              <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4">
                   <!-- 主要操作按钮 -->
                   <div class="flex gap-2">
-                    <n-button 
-                      type="primary" 
+                    <n-button
+                      type="primary"
                       @click="fetchAllWithdrawalsData"
                       :loading="loading"
                     >
@@ -248,26 +282,20 @@
                       </template>
                       刷新
                     </n-button>
-                    <n-button 
-                      type="success" 
-                      @click="showCreateWithdrawalModal"
-                    >
+                    <n-button type="success" @click="showCreateWithdrawalModal">
                       <template #icon>
                         <n-icon><AddOutline /></n-icon>
                       </template>
                       新建提现订单
                     </n-button>
-                    <n-button 
-                      type="info" 
-                      @click="handleExportAllWithdrawals"
-                    >
+                    <n-button type="info" @click="handleExportAllWithdrawals">
                       <template #icon>
                         <n-icon><DownloadOutline /></n-icon>
                       </template>
                       导出数据
                     </n-button>
                   </div>
-                  
+
                   <!-- 全选当前页 + 批量操作 dropdown (match screenshot) -->
                   <n-checkbox
                     :checked="isAllCurrentPageSelected"
@@ -280,25 +308,43 @@
                     :options="batchOperationDropdownOptions"
                     :disabled="selectedCount === 0"
                     trigger="click"
-                    @select="(key: string) => onBatchOperationSelect(key, selectedRows)"
+                    @select="
+                      (key: string) => onBatchOperationSelect(key, selectedRows)
+                    "
                   >
-                    <n-button type="primary" size="small" :disabled="selectedCount === 0">
-                      {{ selectedCount > 0 ? `批量操作 (${selectedCount})` : '批量操作' }}
+                    <n-button
+                      type="primary"
+                      size="small"
+                      :disabled="selectedCount === 0"
+                    >
+                      {{
+                        selectedCount > 0
+                          ? `批量操作 (${selectedCount})`
+                          : '批量操作'
+                      }}
                       <template #icon>
                         <n-icon class="ml-1"><ChevronUpOutline /></n-icon>
                       </template>
                     </n-button>
                   </n-dropdown>
-                  <span class="text-sm text-gray-600">已选择 {{ selectedCount }} 条数据</span>
-                  <span class="text-sm text-gray-600">共 {{ paginationReactive.total }} 条</span>
+                  <span class="text-sm text-gray-600"
+                    >已选择 {{ selectedCount }} 条数据</span
+                  >
+                  <span class="text-sm text-gray-600"
+                    >共 {{ paginationReactive.total }} 条</span
+                  >
                   <n-tag type="info" size="small">全部提现</n-tag>
                 </div>
-                
+
                 <div class="flex items-center gap-4">
                   <!-- 选择控制 -->
                   <div class="flex gap-2">
-                    <n-button size="small" @click="clearAllWithdrawalsSelection">清空选择</n-button>
-                    <n-button size="small" @click="selectAllWithdrawals">全选</n-button>
+                    <n-button size="small" @click="clearAllWithdrawalsSelection"
+                      >清空选择</n-button
+                    >
+                    <n-button size="small" @click="selectAllWithdrawals"
+                      >全选</n-button
+                    >
                   </div>
                 </div>
               </div>
@@ -306,15 +352,15 @@
           </template>
         </SmartDataGrid>
       </n-tab-pane>
-      
+
       <n-tab-pane name="withdrawal-settings" tab="提现设置">
         <WithdrawalSettings />
       </n-tab-pane>
-      
+
       <n-tab-pane name="third-party-payment" tab="三方代付">
         <ThirdPartyPayment />
       </n-tab-pane>
-      
+
       <n-tab-pane name="payment-statistics" tab="代付统计">
         <PaymentStatistics />
       </n-tab-pane>
@@ -332,10 +378,12 @@
         <!-- Member Search Section - Only show when no member selected or editing -->
         <div v-if="!selectedMember || isEditing" class="member-search-section">
           <div class="mb-2">
-            <h3 class="text-lg font-medium text-gray-800 mb-2">步骤 1: 搜索会员</h3>
-            <p class="text-sm text-gray-600 mb-4">请输入会员账号进行搜索</p>
+            <h3 class="mb-2 text-lg font-medium text-gray-800">
+              步骤 1: 搜索会员
+            </h3>
+            <p class="mb-4 text-sm text-gray-600">请输入会员账号进行搜索</p>
           </div>
-          <div class="flex gap-2 mb-4">
+          <div class="mb-4 flex gap-2">
             <n-select
               v-model:value="searchType"
               :options="[{ label: '会员账号', value: 'account' }]"
@@ -352,8 +400,8 @@
               @keyup.enter="() => handleMemberSearch(memberSearchQuery)"
               clearable
             />
-            <n-button 
-              type="primary" 
+            <n-button
+              type="primary"
               @click="() => handleMemberSearch(memberSearchQuery)"
               :loading="memberLoading"
               :disabled="isEditing || !memberSearchQuery.trim()"
@@ -361,35 +409,50 @@
               搜索
             </n-button>
           </div>
-          <p class="text-xs text-gray-500">提示: 输入完成后按 Enter 键或点击搜索按钮</p>
+          <p class="text-xs text-gray-500">
+            提示: 输入完成后按 Enter 键或点击搜索按钮
+          </p>
         </div>
 
         <!-- Member Info Display - Show when member is selected -->
         <div v-if="selectedMember" class="member-info-section mb-6">
           <div class="mb-2">
-            <h3 class="text-lg font-medium text-gray-800 mb-2">✅ 步骤 1: 会员信息确认</h3>
+            <h3 class="mb-2 text-lg font-medium text-gray-800">
+              ✅ 步骤 1: 会员信息确认
+            </h3>
           </div>
-          <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
-            <div class="flex justify-between items-center mb-2">
+          <div class="rounded-lg border border-blue-200 bg-blue-50 p-4">
+            <div class="mb-2 flex items-center justify-between">
               <div class="flex items-center gap-4">
-                <span class="text-sm text-gray-600">会员ID: <strong>{{ selectedMember.value }}</strong></span>
-                <span class="text-sm text-gray-600">会员账号: <strong>{{ selectedMember.account }}</strong></span>
-                <span class="text-sm text-gray-600">币种: <strong>{{ selectedMember.currency || 'BRL' }}</strong></span>
+                <span class="text-sm text-gray-600"
+                  >会员ID: <strong>{{ selectedMember.value }}</strong></span
+                >
+                <span class="text-sm text-gray-600"
+                  >会员账号: <strong>{{ selectedMember.account }}</strong></span
+                >
+                <span class="text-sm text-gray-600"
+                  >币种:
+                  <strong>{{ selectedMember.currency || 'BRL' }}</strong></span
+                >
               </div>
-              <n-button 
-                v-if="!isEditing" 
-                size="small" 
+              <n-button
+                v-if="!isEditing"
+                size="small"
                 @click="handleMemberClear"
                 type="tertiary"
               >
                 重新选择
               </n-button>
             </div>
-            <div class="flex justify-between items-center">
+            <div class="flex items-center justify-between">
               <span class="text-gray-600">账户余额:</span>
               <div class="flex items-center gap-2">
-                <span class="text-xl font-medium text-green-600">{{ formatBalance(selectedMember.balance) }}</span>
-                <span class="text-gray-500">{{ selectedMember.currency || 'BRL' }}</span>
+                <span class="text-xl font-medium text-green-600">{{
+                  formatBalance(selectedMember.balance)
+                }}</span>
+                <span class="text-gray-500">{{
+                  selectedMember.currency || 'BRL'
+                }}</span>
               </div>
             </div>
           </div>
@@ -398,93 +461,101 @@
         <!-- Form Section - Only show when member is selected -->
         <div v-if="selectedMember" class="withdrawal-form-section">
           <div class="mb-4">
-            <h3 class="text-lg font-medium text-gray-800 mb-2">步骤 2: 填写提现信息</h3>
+            <h3 class="mb-2 text-lg font-medium text-gray-800">
+              步骤 2: 填写提现信息
+            </h3>
             <p class="text-sm text-gray-600">请填写提现相关信息</p>
           </div>
-          <n-form ref="withdrawalFormRef" :model="withdrawalForm" :rules="withdrawalRules">
-          <!-- Withdrawal Method -->
-          <div class="form-row mb-4">
-            <label class="form-label required">提现方式</label>
-            <n-select
-              v-model:value="withdrawalForm.withdrawMethod"
-              :options="withdrawMethodOptions"
-              placeholder="请选择提现方式"
-              style="width: 100%"
-            />
-          </div>
-
-          <!-- Withdrawal Account -->
-          <div class="form-row mb-4">
-            <label class="form-label required">提现账号</label>
-            <n-select
-              v-model:value="withdrawalForm.withdrawAccount"
-              :options="withdrawAccountOptions"
-              placeholder="请选择提现账号"
-              style="width: 100%"
-            />
-          </div>
-
-          <!-- Withdrawal Amount -->
-          <div class="form-row mb-4">
-            <label class="form-label required">提现金额</label>
-            <n-input-group>
-              <n-input-group-label style="background: #f5f5f5;">R$</n-input-group-label>
-              <n-input-number
-                v-model:value="withdrawalForm.amount"
-                placeholder="请输入要提现金额"
-                :min="0"
-                :precision="2"
-                style="flex: 1"
-                :show-button="false"
+          <n-form
+            ref="withdrawalFormRef"
+            :model="withdrawalForm"
+            :rules="withdrawalRules"
+          >
+            <!-- Withdrawal Method -->
+            <div class="form-row mb-4">
+              <label class="form-label required">提现方式</label>
+              <n-select
+                v-model:value="withdrawalForm.withdrawMethod"
+                :options="withdrawMethodOptions"
+                placeholder="请选择提现方式"
+                style="width: 100%"
               />
-            </n-input-group>
-          </div>
+            </div>
 
-          <!-- Frontend Notes -->
-          <div class="form-row mb-4">
-            <label class="form-label">前台备注</label>
-            <n-input
-              v-model:value="withdrawalForm.frontendNote"
-              type="textarea"
-              placeholder="请输入显示在客户端的备注"
-              :autosize="{ minRows: 2, maxRows: 4 }"
-              maxlength="1000"
-              show-count
-            />
-          </div>
+            <!-- Withdrawal Account -->
+            <div class="form-row mb-4">
+              <label class="form-label required">提现账号</label>
+              <n-select
+                v-model:value="withdrawalForm.withdrawAccount"
+                :options="withdrawAccountOptions"
+                placeholder="请选择提现账号"
+                style="width: 100%"
+              />
+            </div>
 
-          <!-- Backend Notes -->
-          <div class="form-row mb-4">
-            <label class="form-label">后台备注</label>
-            <n-input
-              v-model:value="withdrawalForm.backendNote"
-              type="textarea"
-              placeholder="请输入显示在管理后台的备注"
-              :autosize="{ minRows: 2, maxRows: 4 }"
-              maxlength="1000"
-              show-count
-            />
-          </div>
+            <!-- Withdrawal Amount -->
+            <div class="form-row mb-4">
+              <label class="form-label required">提现金额</label>
+              <n-input-group>
+                <n-input-group-label style="background: #f5f5f5"
+                  >R$</n-input-group-label
+                >
+                <n-input-number
+                  v-model:value="withdrawalForm.amount"
+                  placeholder="请输入要提现金额"
+                  :min="0"
+                  :precision="2"
+                  style="flex: 1"
+                  :show-button="false"
+                />
+              </n-input-group>
+            </div>
 
-          <!-- Verification Password -->
-          <div class="form-row mb-6">
-            <label class="form-label required">验证密码</label>
-            <n-input
-              v-model:value="withdrawalForm.verificationPassword"
-              type="password"
-              placeholder="请输入您的登录密码"
-              show-password-on="click"
-            />
-          </div>
+            <!-- Frontend Notes -->
+            <div class="form-row mb-4">
+              <label class="form-label">前台备注</label>
+              <n-input
+                v-model:value="withdrawalForm.frontendNote"
+                type="textarea"
+                placeholder="请输入显示在客户端的备注"
+                :autosize="{ minRows: 2, maxRows: 4 }"
+                maxlength="1000"
+                show-count
+              />
+            </div>
+
+            <!-- Backend Notes -->
+            <div class="form-row mb-4">
+              <label class="form-label">后台备注</label>
+              <n-input
+                v-model:value="withdrawalForm.backendNote"
+                type="textarea"
+                placeholder="请输入显示在管理后台的备注"
+                :autosize="{ minRows: 2, maxRows: 4 }"
+                maxlength="1000"
+                show-count
+              />
+            </div>
+
+            <!-- Verification Password -->
+            <div class="form-row mb-6">
+              <label class="form-label required">验证密码</label>
+              <n-input
+                v-model:value="withdrawalForm.verificationPassword"
+                type="password"
+                placeholder="请输入您的登录密码"
+                show-password-on="click"
+              />
+            </div>
           </n-form>
 
           <!-- Action Buttons -->
-          <div class="action-buttons flex justify-center gap-4 mt-6">
+          <div class="action-buttons mt-6 flex justify-center gap-4">
             <n-button @click="handleCancelWithdrawal" style="width: 100px">
               取消
             </n-button>
-            <n-button 
-              type="primary" 
+            <n-button
+              type="primary"
               @click="handleSubmitWithdrawal"
               :loading="modalLoading"
               style="width: 100px"
@@ -495,7 +566,10 @@
         </div>
 
         <!-- Cancel button - always available when no member selected -->
-        <div v-if="!selectedMember" class="action-buttons flex justify-center mt-6">
+        <div
+          v-if="!selectedMember"
+          class="action-buttons mt-6 flex justify-center"
+        >
           <n-button @click="handleCancelWithdrawal" style="width: 100px">
             取消
           </n-button>
@@ -550,10 +624,14 @@
             placeholder="请选择操作类型"
           />
         </n-form-item>
-        <n-form-item v-if="batchForm.action === 'update-status'" label="新状态" path="status">
+        <n-form-item
+          v-if="batchForm.action === 'update-status'"
+          label="新状态"
+          path="status"
+        >
           <n-select
             v-model:value="batchForm.status"
-            :options="statusOptions.filter(opt => opt.value !== '')"
+            :options="statusOptions.filter((opt) => opt.value !== '')"
             placeholder="请选择新状态"
           />
         </n-form-item>
@@ -596,12 +674,16 @@
       <div v-if="detailModalData" class="space-y-6">
         <!-- Member Personal Information -->
         <n-card title="会员个人信息" :bordered="false" class="shadow-sm">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div class="info-item">
               <span class="info-label">订单号</span>
               <div class="info-value-with-copy">
                 <span class="info-value">{{ detailModalData.orderId }}</span>
-                <n-button text @click="copyToClipboard(detailModalData.orderId, '订单号')" class="copy-btn">
+                <n-button
+                  text
+                  @click="copyToClipboard(detailModalData.orderId, '订单号')"
+                  class="copy-btn"
+                >
                   <template #icon>
                     <n-icon><CopyOutline /></n-icon>
                   </template>
@@ -611,8 +693,16 @@
             <div class="info-item">
               <span class="info-label">会员账号</span>
               <div class="info-value-with-copy">
-                <span class="info-value">{{ detailModalData.accountName }}</span>
-                <n-button text @click="copyToClipboard(detailModalData.accountName, '会员账号')" class="copy-btn">
+                <span class="info-value">{{
+                  detailModalData.accountName
+                }}</span>
+                <n-button
+                  text
+                  @click="
+                    copyToClipboard(detailModalData.accountName, '会员账号')
+                  "
+                  class="copy-btn"
+                >
                   <template #icon>
                     <n-icon><CopyOutline /></n-icon>
                   </template>
@@ -629,33 +719,52 @@
             </div>
             <div class="info-item">
               <span class="info-label">会员层级</span>
-              <span class="info-value">{{ detailModalData.memberTierName || '默认层级' }}</span>
+              <span class="info-value">{{
+                detailModalData.memberTierName || '默认层级'
+              }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">VIP等级</span>
               <span class="info-value">
-                <n-tag type="info" size="small">{{ detailModalData.vipLevel || 'VIP0' }}</n-tag>
+                <n-tag type="info" size="small">{{
+                  detailModalData.vipLevel || 'VIP0'
+                }}</n-tag>
               </span>
             </div>
             <div class="info-item">
               <span class="info-label">三方商户订单号</span>
-              <span class="info-value font-mono text-xs">{{ detailModalData.thirdPartyOrderNo || '-' }}</span>
+              <span class="info-value font-mono text-xs">{{
+                detailModalData.thirdPartyOrderNo || '-'
+              }}</span>
             </div>
           </div>
         </n-card>
 
         <!-- Withdrawal Account Information -->
         <n-card title="提现账户信息" :bordered="false" class="shadow-sm">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div class="info-item">
               <span class="info-label">提现方式</span>
-              <span class="info-value">{{ detailModalData.withdrawChannelInfo?.type || 'PIX' }}</span>
+              <span class="info-value">{{
+                detailModalData.withdrawChannelInfo?.type || 'PIX'
+              }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">真实姓名</span>
               <div class="info-value-with-copy">
-                <span class="info-value">{{ detailModalData.withdrawChannelInfo?.name || '-' }}</span>
-                <n-button text @click="copyToClipboard(detailModalData.withdrawChannelInfo?.name, '真实姓名')" class="copy-btn">
+                <span class="info-value">{{
+                  detailModalData.withdrawChannelInfo?.name || '-'
+                }}</span>
+                <n-button
+                  text
+                  @click="
+                    copyToClipboard(
+                      detailModalData.withdrawChannelInfo?.name,
+                      '真实姓名',
+                    )
+                  "
+                  class="copy-btn"
+                >
                   <template #icon>
                     <n-icon><CopyOutline /></n-icon>
                   </template>
@@ -665,8 +774,19 @@
             <div class="info-item">
               <span class="info-label">账号/地址</span>
               <div class="info-value-with-copy">
-                <span class="info-value">{{ detailModalData.withdrawChannelInfo?.account || '-' }}</span>
-                <n-button text @click="copyToClipboard(detailModalData.withdrawChannelInfo?.account, '账号/地址')" class="copy-btn">
+                <span class="info-value">{{
+                  detailModalData.withdrawChannelInfo?.account || '-'
+                }}</span>
+                <n-button
+                  text
+                  @click="
+                    copyToClipboard(
+                      detailModalData.withdrawChannelInfo?.account,
+                      '账号/地址',
+                    )
+                  "
+                  class="copy-btn"
+                >
                   <template #icon>
                     <n-icon><CopyOutline /></n-icon>
                   </template>
@@ -675,13 +795,26 @@
             </div>
             <div class="info-item">
               <span class="info-label">类型</span>
-              <span class="info-value">{{ detailModalData.withdrawChannelInfo?.cpf ? 'CPF' : 'CPF' }}</span>
+              <span class="info-value">{{
+                detailModalData.withdrawChannelInfo?.cpf ? 'CPF' : 'CPF'
+              }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">CPF</span>
               <div class="info-value-with-copy">
-                <span class="info-value">{{ detailModalData.withdrawChannelInfo?.cpf || '-' }}</span>
-                <n-button text @click="copyToClipboard(detailModalData.withdrawChannelInfo?.cpf, 'CPF')" class="copy-btn">
+                <span class="info-value">{{
+                  detailModalData.withdrawChannelInfo?.cpf || '-'
+                }}</span>
+                <n-button
+                  text
+                  @click="
+                    copyToClipboard(
+                      detailModalData.withdrawChannelInfo?.cpf,
+                      'CPF',
+                    )
+                  "
+                  class="copy-btn"
+                >
                   <template #icon>
                     <n-icon><CopyOutline /></n-icon>
                   </template>
@@ -693,12 +826,28 @@
 
         <!-- Withdrawal Amount Information -->
         <n-card title="提现金额信息" :bordered="false" class="shadow-sm">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div class="info-item">
               <span class="info-label">提现金额</span>
               <div class="info-value-with-copy">
-                <span class="info-value text-red-600 font-semibold">{{ formatCurrency(detailModalData.withdrawAmount || detailModalData.amount) }}</span>
-                <n-button text @click="copyToClipboard(String(detailModalData.withdrawAmount || detailModalData.amount), '提现金额')" class="copy-btn">
+                <span class="info-value font-semibold text-red-600">{{
+                  formatCurrency(
+                    detailModalData.withdrawAmount || detailModalData.amount,
+                  )
+                }}</span>
+                <n-button
+                  text
+                  @click="
+                    copyToClipboard(
+                      String(
+                        detailModalData.withdrawAmount ||
+                          detailModalData.amount,
+                      ),
+                      '提现金额',
+                    )
+                  "
+                  class="copy-btn"
+                >
                   <template #icon>
                     <n-icon><CopyOutline /></n-icon>
                   </template>
@@ -708,8 +857,16 @@
             <div class="info-item">
               <span class="info-label">手续费</span>
               <div class="info-value-with-copy">
-                <span class="info-value">{{ formatCurrency(detailModalData.fee || 0) }}</span>
-                <n-button text @click="copyToClipboard(String(detailModalData.fee || 0), '手续费')" class="copy-btn">
+                <span class="info-value">{{
+                  formatCurrency(detailModalData.fee || 0)
+                }}</span>
+                <n-button
+                  text
+                  @click="
+                    copyToClipboard(String(detailModalData.fee || 0), '手续费')
+                  "
+                  class="copy-btn"
+                >
                   <template #icon>
                     <n-icon><CopyOutline /></n-icon>
                   </template>
@@ -719,8 +876,27 @@
             <div class="info-item">
               <span class="info-label">预计到账</span>
               <div class="info-value-with-copy">
-                <span class="info-value text-green-600 font-semibold">{{ formatCurrency(detailModalData.estimatedReceived || detailModalData.estimatedAmount || 0) }}</span>
-                <n-button text @click="copyToClipboard(String(detailModalData.estimatedReceived || detailModalData.estimatedAmount || 0), '预计到账')" class="copy-btn">
+                <span class="info-value font-semibold text-green-600">{{
+                  formatCurrency(
+                    detailModalData.estimatedReceived ||
+                      detailModalData.estimatedAmount ||
+                      0,
+                  )
+                }}</span>
+                <n-button
+                  text
+                  @click="
+                    copyToClipboard(
+                      String(
+                        detailModalData.estimatedReceived ||
+                          detailModalData.estimatedAmount ||
+                          0,
+                      ),
+                      '预计到账',
+                    )
+                  "
+                  class="copy-btn"
+                >
                   <template #icon>
                     <n-icon><CopyOutline /></n-icon>
                   </template>
@@ -730,8 +906,19 @@
             <div class="info-item">
               <span class="info-label">实际到账</span>
               <div class="info-value-with-copy">
-                <span class="info-value">{{ formatCurrency(detailModalData.estimatedReceived || 0) }}</span>
-                <n-button text @click="copyToClipboard(String(detailModalData.estimatedReceived || 0), '实际到账')" class="copy-btn">
+                <span class="info-value">{{
+                  formatCurrency(detailModalData.estimatedReceived || 0)
+                }}</span>
+                <n-button
+                  text
+                  @click="
+                    copyToClipboard(
+                      String(detailModalData.estimatedReceived || 0),
+                      '实际到账',
+                    )
+                  "
+                  class="copy-btn"
+                >
                   <template #icon>
                     <n-icon><CopyOutline /></n-icon>
                   </template>
@@ -740,53 +927,95 @@
             </div>
             <div class="info-item">
               <span class="info-label">到账币种汇率</span>
-              <span class="info-value">{{ detailModalData.currency }} ({{ detailModalData.exchangeRate || '0.05' }})</span>
+              <span class="info-value"
+                >{{ detailModalData.currency }} ({{
+                  detailModalData.exchangeRate || '0.05'
+                }})</span
+              >
             </div>
           </div>
         </n-card>
 
         <!-- Other Information -->
         <n-card title="其他信息" :bordered="false" class="shadow-sm">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div class="info-item">
               <span class="info-label">操作人</span>
-              <span class="info-value">{{ detailModalData.reviewer || '-' }}</span>
+              <span class="info-value">{{
+                detailModalData.reviewer || '-'
+              }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">操作时间</span>
-              <span class="info-value">{{ formatDateTime(detailModalData.updatedAt || detailModalData.createdAt) }}</span>
+              <span class="info-value">{{
+                formatDateTime(
+                  detailModalData.updatedAt || detailModalData.createdAt,
+                )
+              }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">申请时间</span>
-              <span class="info-value">{{ formatDateTime(detailModalData.appliedAt || detailModalData.createdAt) }}</span>
+              <span class="info-value">{{
+                formatDateTime(
+                  detailModalData.appliedAt || detailModalData.createdAt,
+                )
+              }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">充 / 提次数</span>
-              <span class="info-value">充{{ detailModalData.rechargeWithdrawCount?.rechargeCount || 0}}次 / 提{{ detailModalData.rechargeWithdrawCount?.withdrawCount || 0}}次</span>
+              <span class="info-value"
+                >充{{
+                  detailModalData.rechargeWithdrawCount?.rechargeCount || 0
+                }}次 / 提{{
+                  detailModalData.rechargeWithdrawCount?.withdrawCount || 0
+                }}次</span
+              >
             </div>
             <div class="info-item col-span-2">
               <span class="info-label">累计充 / 提差额</span>
-              <span class="info-value" :class="(detailModalData.totalDeposit || 0) - (detailModalData.totalWithdraw || 0) >= 0 ? 'text-green-600' : 'text-red-600'">
-                {{ formatCurrency((detailModalData.totalDeposit || 0) - (detailModalData.totalWithdraw || 0)) }}
+              <span
+                class="info-value"
+                :class="
+                  (detailModalData.totalDeposit || 0) -
+                    (detailModalData.totalWithdraw || 0) >=
+                  0
+                    ? 'text-green-600'
+                    : 'text-red-600'
+                "
+              >
+                {{
+                  formatCurrency(
+                    (detailModalData.totalDeposit || 0) -
+                      (detailModalData.totalWithdraw || 0),
+                  )
+                }}
               </span>
             </div>
             <div class="info-item">
               <span class="info-label">重复IP人数</span>
-              <span class="info-value text-orange-600">{{ detailModalData.rechargeWithdrawCount?.duplicateIP || 0 }}人</span>
+              <span class="info-value text-orange-600"
+                >{{
+                  detailModalData.rechargeWithdrawCount?.duplicateIP || 0
+                }}人</span
+              >
             </div>
           </div>
         </n-card>
 
         <!-- Three-party Payment -->
         <n-card title="三方代付" :bordered="false" class="shadow-sm">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div class="info-item">
               <span class="info-label">三方代付</span>
-              <span class="info-value">{{ detailModalData.paymentGateway || 'Pay4z' }}</span>
+              <span class="info-value">{{
+                detailModalData.paymentGateway || 'Pay4z'
+              }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">代付次数</span>
-              <span class="info-value">{{ detailModalData.withdrawCount || 1 }}</span>
+              <span class="info-value">{{
+                detailModalData.withdrawCount || 1
+              }}</span>
             </div>
           </div>
         </n-card>
@@ -800,7 +1029,12 @@
     />
 
     <!-- Column Configuration Modal -->
-    <n-modal v-model:show="showColumnConfig" preset="card" style="width: 600px" title="自定义列">
+    <n-modal
+      v-model:show="showColumnConfig"
+      preset="card"
+      style="width: 600px"
+      title="自定义列"
+    >
       <n-card>
         <template #header>
           <div class="flex items-center justify-between">
@@ -808,12 +1042,12 @@
             <n-button text @click="resetColumnConfig">重置</n-button>
           </div>
         </template>
-        
+
         <div class="space-y-2">
           <div
             v-for="(col, index) in columnConfigList"
             :key="col.key"
-            class="flex items-center justify-between p-2 border rounded hover:bg-gray-50"
+            class="flex items-center justify-between rounded border p-2 hover:bg-gray-50"
           >
             <div class="flex items-center gap-3">
               <n-checkbox
@@ -823,7 +1057,9 @@
               <span class="text-sm">{{ col.title }}</span>
             </div>
             <div class="flex items-center gap-2">
-              <span v-if="col.required" class="text-xs text-gray-400">必需</span>
+              <span v-if="col.required" class="text-xs text-gray-400"
+                >必需</span
+              >
             </div>
           </div>
         </div>
@@ -849,37 +1085,68 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch, h, defineAsyncComponent } from 'vue';
+import {
+  ref,
+  computed,
+  onMounted,
+  onUnmounted,
+  watch,
+  h,
+  defineAsyncComponent,
+} from 'vue';
 import { useAuthStore } from '#/store';
 import { requestClient } from '#/api/request';
-import { useTrimmedSearch, getDateRangeLabel } from '#/composables/useFormHelpers';
+import {
+  useTrimmedSearch,
+  getDateRangeLabel,
+} from '#/composables/useFormHelpers';
 // ✅ PERFORMANCE FIX: Lazy load child components to avoid blocking page load
 // These components are only needed when their tabs/modals are opened
-const SmartAutoRefresh = defineAsyncComponent(() => import('../../components/smart/SmartAutoRefresh/index.vue'));
-const SmartDataGrid = defineAsyncComponent(() => import('../../components/smart/SmartDataGrid/index.vue'));
-const RiskControlReview = defineAsyncComponent(() => import('./RiskControlReview.vue'));
-const FinanceWithdrawal = defineAsyncComponent(() => import('./FinanceWithdrawal.vue'));
+const SmartAutoRefresh = defineAsyncComponent(
+  () => import('../../components/smart/SmartAutoRefresh/index.vue'),
+);
+const SmartDataGrid = defineAsyncComponent(
+  () => import('../../components/smart/SmartDataGrid/index.vue'),
+);
+const RiskControlReview = defineAsyncComponent(
+  () => import('./RiskControlReview.vue'),
+);
+const FinanceWithdrawal = defineAsyncComponent(
+  () => import('./FinanceWithdrawal.vue'),
+);
 const RePayment = defineAsyncComponent(() => import('./RePayment.vue'));
-const AutoWithdrawal = defineAsyncComponent(() => import('./AutoWithdrawal.vue'));
-const WithdrawalSettings = defineAsyncComponent(() => import('./WithdrawalSettings.vue'));
-const WithdrawalSettingsModal = defineAsyncComponent(() => import('../../components/WithdrawalSettingsModal.vue'));
-const ThirdPartyPayment = defineAsyncComponent(() => import('./ThirdPartyPayment.vue'));
-const PaymentStatistics = defineAsyncComponent(() => import('./PaymentStatistics.vue'));
-const UserDetailModal = defineAsyncComponent(() => import('#/components/user/UserDetailModal.vue'));
-import { 
-  NCard, 
-  NForm, 
-  NFormItem, 
-  NDatePicker, 
-  NSelect, 
-  NInput, 
+const AutoWithdrawal = defineAsyncComponent(
+  () => import('./AutoWithdrawal.vue'),
+);
+const WithdrawalSettings = defineAsyncComponent(
+  () => import('./WithdrawalSettings.vue'),
+);
+const WithdrawalSettingsModal = defineAsyncComponent(
+  () => import('../../components/WithdrawalSettingsModal.vue'),
+);
+const ThirdPartyPayment = defineAsyncComponent(
+  () => import('./ThirdPartyPayment.vue'),
+);
+const PaymentStatistics = defineAsyncComponent(
+  () => import('./PaymentStatistics.vue'),
+);
+const UserDetailModal = defineAsyncComponent(
+  () => import('#/components/user/UserDetailModal.vue'),
+);
+import {
+  NCard,
+  NForm,
+  NFormItem,
+  NDatePicker,
+  NSelect,
+  NInput,
   NInputGroup,
   NInputGroupLabel,
   NInputNumber,
-  NButton, 
-  NSpace, 
+  NButton,
+  NSpace,
   NDataTable,
-  NText, 
+  NText,
   NTag,
   NIcon,
   NCheckbox,
@@ -891,9 +1158,16 @@ import {
   useDialog,
   type DataTableColumns,
   type FormInst,
-  type FormRules
+  type FormRules,
 } from 'naive-ui';
-import { Settings, ReloadOutline, AddOutline, DownloadOutline, CopyOutline, ChevronUpOutline } from '@vicons/ionicons5';
+import {
+  Settings,
+  ReloadOutline,
+  AddOutline,
+  DownloadOutline,
+  CopyOutline,
+  ChevronUpOutline,
+} from '@vicons/ionicons5';
 import { withdrawalApi } from '#/api/finance/withdrawal';
 import { financeWithdrawalApi } from '#/api/finance/financeWithdrawal';
 import { rePaymentApi } from '#/api/finance/rePayment';
@@ -905,7 +1179,7 @@ import { formatCurrency, formatDateTime } from '#/utils/format';
 interface WithdrawOrder {
   orderId: string;
   memberId: string;
-  userID?: string;  // 9-digit display ID (e.g., "154301535")
+  userID?: string; // 9-digit display ID (e.g., "154301535")
   accountName: string;
   vipLevel: string;
   memberTag: string;
@@ -1031,32 +1305,37 @@ const filterForm = ref<FilterForm>({
   vipLevel: null,
   agentMode: null,
   serviceFilter: null,
-  search: ''
+  search: '',
 });
 
 // 📅 FIX: Auto-adjust end date to 23:59:59
-watch(() => filterForm.value.dateRange, (newRange) => {
-  if (newRange && newRange.length === 2) {
-    const [start, end] = newRange;
-    
-    // Set start to 00:00:00
-    const startDate = new Date(start);
-    startDate.setHours(0, 0, 0, 0);
-    
-    // Set end to 23:59:59
-    const endDate = new Date(end);
-    endDate.setHours(23, 59, 59, 999);
-    
-    // Update if times changed
-    if (startDate.getTime() !== start || endDate.getTime() !== end) {
-      filterForm.value.dateRange = [startDate.getTime(), endDate.getTime()];
+watch(
+  () => filterForm.value.dateRange,
+  (newRange) => {
+    if (newRange && newRange.length === 2) {
+      const [start, end] = newRange;
+
+      // Set start to 00:00:00
+      const startDate = new Date(start);
+      startDate.setHours(0, 0, 0, 0);
+
+      // Set end to 23:59:59
+      const endDate = new Date(end);
+      endDate.setHours(23, 59, 59, 999);
+
+      // Update if times changed
+      if (startDate.getTime() !== start || endDate.getTime() !== end) {
+        filterForm.value.dateRange = [startDate.getTime(), endDate.getTime()];
+      }
     }
-  }
-});
+  },
+);
 
 // 📅 Date range display label
 const dateRangeLabel = computed(() => {
-  return filterForm.value.dateRange ? getDateRangeLabel(filterForm.value.dateRange) : '';
+  return filterForm.value.dateRange
+    ? getDateRangeLabel(filterForm.value.dateRange)
+    : '';
 });
 
 // Helper function to get default date range (weekly)
@@ -1074,19 +1353,19 @@ const withdrawalForm = ref<WithdrawalForm>({
   withdrawAccount: '',
   frontendNote: '',
   backendNote: '',
-  verificationPassword: ''
+  verificationPassword: '',
 });
 
 const noteForm = ref<NoteForm>({
   type: '',
   content: '',
-  orderId: ''
+  orderId: '',
 });
 
 const batchForm = ref<BatchForm>({
   action: '',
   status: '',
-  reason: ''
+  reason: '',
 });
 
 // Pagination - SmartDataGrid compatible
@@ -1096,72 +1375,93 @@ const paginationReactive = ref({
   total: 0,
   showSizePicker: true,
   pageSizes: [10, 20, 50, 100],
-  showQuickJumper: true
+  showQuickJumper: true,
 });
 
 // Auto-refresh functionality (simplified with SmartAutoRefresh)
 const autoRefreshEnabled = ref(false);
-
 
 // Column configuration
 const columnConfigList = ref([
   { key: 'orderId', title: '订单号', visible: true, required: true },
   { key: 'memberId', title: '会员ID', visible: true, required: false },
   { key: 'memberAccount', title: '会员账号', visible: true, required: false },
-  { key: 'firstDepositStatus', title: '首充状态', visible: true, required: false },
+  {
+    key: 'firstDepositStatus',
+    title: '首充状态',
+    visible: true,
+    required: false,
+  },
   { key: 'memberInfo', title: '会员信息', visible: true, required: false },
   { key: 'memberName', title: '会员姓名', visible: false, required: false },
   { key: 'vipLevel', title: 'VIP等级', visible: true, required: false },
   { key: 'appliedAt', title: '申请时间', visible: true, required: false },
   { key: 'withdrawAmount', title: '提现金额', visible: true, required: false },
-  { key: 'estimatedAmount', title: '预计到账金额', visible: true, required: false },
+  {
+    key: 'estimatedAmount',
+    title: '预计到账金额',
+    visible: true,
+    required: false,
+  },
   { key: 'counts', title: '充/提次数', visible: true, required: false },
   { key: 'withdrawChannel', title: '提现方式', visible: true, required: false },
   { key: 'status', title: '订单状态', visible: true, required: false },
   { key: 'notes', title: '备注', visible: false, required: false },
-  { key: 'actions', title: '操作', visible: true, required: true }
+  { key: 'actions', title: '操作', visible: true, required: true },
 ]);
 
 // Summary
 const summary = ref<Summary>({
   totalCount: 0,
-  totalAmount: 0
+  totalAmount: 0,
 });
 
 // Options
 const dateShortcuts = {
-  '今天': () => {
+  今天: () => {
     const now = new Date();
     const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
     return [start.getTime(), end.getTime()];
   },
-  '昨天': () => {
+  昨天: () => {
     const now = new Date();
-    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+    const start = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() - 1,
+    );
     const end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     return [start.getTime(), end.getTime()];
   },
-  '本周': () => {
+  本周: () => {
     const now = new Date();
     const dayOfWeek = now.getDay();
-    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - dayOfWeek);
-    const end = new Date(now.getFullYear(), now.getMonth(), now.getDate() - dayOfWeek + 7);
+    const start = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() - dayOfWeek,
+    );
+    const end = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() - dayOfWeek + 7,
+    );
     return [start.getTime(), end.getTime()];
   },
-  '本月': () => {
+  本月: () => {
     const now = new Date();
     const start = new Date(now.getFullYear(), now.getMonth(), 1);
     const end = new Date(now.getFullYear(), now.getMonth() + 1, 1);
     return [start.getTime(), end.getTime()];
-  }
+  },
 };
 
 const thirdPartyOptions = [
   { label: '全部', value: '' },
   { label: 'PIX', value: 'pix' },
   { label: '银行转账', value: 'bank' },
-  { label: '数字钱包', value: 'wallet' }
+  { label: '数字钱包', value: 'wallet' },
 ];
 
 const statusOptions = [
@@ -1170,29 +1470,26 @@ const statusOptions = [
   { label: '待出款', value: 'pending' },
   { label: '已出款', value: 'completed' },
   { label: '已拒绝', value: 'rejected' },
-  { label: '已取消', value: 'cancelled' }
+  { label: '已取消', value: 'cancelled' },
 ];
 
 const withdrawMethodOptions = [
   { label: '全部', value: '' },
   { label: 'PIX', value: 'pix' },
   { label: '银行转账', value: 'bank' },
-  { label: '数字钱包', value: 'wallet' }
+  { label: '数字钱包', value: 'wallet' },
 ];
 
 const withdrawAccountOptions = [
   { label: '请选择提现账号', value: '' },
   { label: '主账户', value: 'main_account' },
-  { label: '备用账户', value: 'backup_account' }
+  { label: '备用账户', value: 'backup_account' },
 ];
 
 // VIP options - will be replaced with member tier options dynamically
 const vipLevelOptions = computed(() => {
   if (memberTierOptions.value.length > 0) {
-    return [
-      { label: '全部', value: '' },
-      ...memberTierOptions.value
-    ];
+    return [{ label: '全部', value: '' }, ...memberTierOptions.value];
   }
   // Fallback to default VIP options if tiers not loaded
   return [
@@ -1202,27 +1499,27 @@ const vipLevelOptions = computed(() => {
     { label: 'VIP2', value: 'vip2' },
     { label: 'VIP3', value: 'vip3' },
     { label: 'VIP4', value: 'vip4' },
-    { label: 'VIP5', value: 'vip5' }
+    { label: 'VIP5', value: 'vip5' },
   ];
 });
 
 const agentModeOptions = [
   { label: '全部', value: '' },
   { label: '推广模式', value: 'referral' },
-  { label: '手动分配', value: 'manual' }
+  { label: '手动分配', value: 'manual' },
 ];
 
 const serviceFilterOptions = [
   { label: '全部', value: '' },
   { label: '正常服务', value: 'normal' },
   { label: '风险控制', value: 'risk' },
-  { label: '客服处理', value: 'service' }
+  { label: '客服处理', value: 'service' },
 ];
 
 const noteTypeOptions = [
   { label: '后台备注', value: 'backend' },
   { label: '前台备注', value: 'frontend' },
-  { label: '三方代付备注', value: 'agency' }
+  { label: '三方代付备注', value: 'agency' },
 ];
 
 const batchActionOptions = [
@@ -1232,7 +1529,7 @@ const batchActionOptions = [
   { label: '批量拒绝', value: 'reject' },
   { label: '批量强制取消', value: 'cancel' },
   { label: '批量更新状态', value: 'update-status' },
-  { label: '批量导出', value: 'export' }
+  { label: '批量导出', value: 'export' },
 ];
 
 // 批量操作下拉选项（与截图一致 11 项）
@@ -1247,34 +1544,34 @@ const batchOperationDropdownOptions = [
   { label: '批量刷新回调', key: 'batch-refresh-callback' },
   { label: '批量审核出款', key: 'batch-approve' },
   { label: '批量重新代付', key: 'batch-repay' },
-  { label: '批量已人工出款', key: 'batch-manual-withdrawal' }
+  { label: '批量已人工出款', key: 'batch-manual-withdrawal' },
 ];
 
 // Validation rules
 const withdrawalRules: FormRules = {
-  memberId: { 
-    required: true, 
+  memberId: {
+    required: true,
     message: '请选择会员',
-    trigger: ['blur', 'change']
+    trigger: ['blur', 'change'],
   },
-  amount: { 
-    required: true, 
+  amount: {
+    required: true,
     type: 'number',
     message: '请输入提现金额',
-    trigger: ['blur', 'change']
+    trigger: ['blur', 'change'],
   },
   withdrawMethod: { required: true, message: '请选择提现方式' },
-  paymentInfo: { required: true, message: '请输入收款信息' }
+  paymentInfo: { required: true, message: '请输入收款信息' },
 };
 
 const noteRules: FormRules = {
   type: { required: true, message: '请选择备注类型' },
-  content: { required: true, message: '请输入备注内容' }
+  content: { required: true, message: '请输入备注内容' },
 };
 
 const batchRules: FormRules = {
   action: { required: true, message: '请选择操作类型' },
-  reason: { required: true, message: '请输入操作说明' }
+  reason: { required: true, message: '请输入操作说明' },
 };
 
 // Table columns - matching exact user requirements
@@ -1282,7 +1579,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
   {
     type: 'selection',
     width: 50,
-    fixed: 'left'
+    fixed: 'left',
   },
   // 1. 订单号
   {
@@ -1290,121 +1587,198 @@ const columns: DataTableColumns<WithdrawOrder> = [
     key: 'orderId',
     width: 140,
     fixed: 'left',
-    render: (row) => h('div', { class: 'space-y-1' }, [
-      h(NButton, {
-        text: true,
-        type: 'primary',
-        size: 'small',
-        class: 'font-mono font-medium',
-        onClick: () => showDetail(row)
-      }, { default: () => row.orderId }),
-      row.thirdPartyOrderNo && h('div', { class: 'text-xs text-gray-500 font-mono' }, row.thirdPartyOrderNo)
-    ])
+    render: (row) =>
+      h('div', { class: 'space-y-1' }, [
+        h(
+          NButton,
+          {
+            text: true,
+            type: 'primary',
+            size: 'small',
+            class: 'font-mono font-medium',
+            onClick: () => showDetail(row),
+          },
+          { default: () => row.orderId },
+        ),
+        row.thirdPartyOrderNo &&
+          h(
+            'div',
+            { class: 'text-xs text-gray-500 font-mono' },
+            row.thirdPartyOrderNo,
+          ),
+      ]),
   },
   // 2. 会员ID (VIP等级)
   {
     title: '会员ID (VIP等级)',
     key: 'memberId',
     width: 130,
-    render: (row) => h('div', { class: 'text-center space-y-1' }, [
-      h(NButton, {
-        text: true,
-        type: 'primary',
-        size: 'small',
-        class: 'font-mono font-medium',
-        onClick: () => showMemberDetail(row)
-      }, { default: () => row.displayMemberId || row.userID || row.memberId }), // Display 9-digit ID, but onClick passes internal ID
-      h(NTag, { size: 'small', type: 'info' }, { default: () => row.vipLevel || 'VIP0' })
-    ])
+    render: (row) =>
+      h('div', { class: 'text-center space-y-1' }, [
+        h(
+          NButton,
+          {
+            text: true,
+            type: 'primary',
+            size: 'small',
+            class: 'font-mono font-medium',
+            onClick: () => showMemberDetail(row),
+          },
+          { default: () => row.displayMemberId || row.userID || row.memberId },
+        ), // Display 9-digit ID, but onClick passes internal ID
+        h(
+          NTag,
+          { size: 'small', type: 'info' },
+          { default: () => row.vipLevel || 'VIP0' },
+        ),
+      ]),
   },
   // 3. 会员账号 (会员层级)
   {
     title: '会员账号 (会员层级)',
     key: 'memberAccount',
     width: 140,
-    render: (row) => h('div', { class: 'space-y-1' }, [
-      h(NButton, {
-        text: true,
-        type: 'primary',
-        size: 'small',
-        class: 'font-medium',
-        onClick: () => showMemberDetail(row)
-      }, { default: () => row.accountName }),
-      h('div', { class: 'text-xs text-gray-500' }, row.memberTierName || '默认层级')
-    ])
+    render: (row) =>
+      h('div', { class: 'space-y-1' }, [
+        h(
+          NButton,
+          {
+            text: true,
+            type: 'primary',
+            size: 'small',
+            class: 'font-medium',
+            onClick: () => showMemberDetail(row),
+          },
+          { default: () => row.accountName },
+        ),
+        h(
+          'div',
+          { class: 'text-xs text-gray-500' },
+          row.memberTierName || '默认层级',
+        ),
+      ]),
   },
   // 4. 申请时间 (操作时间) (完成时长)
   {
     title: '申请时间 (操作时间) (完成时长)',
     key: 'appliedAt',
     width: 180,
-    render: (row) => h('div', { class: 'text-center space-y-1' }, [
-      h('div', { class: 'text-xs' }, formatDateTime(row.appliedAt)),
-      h('div', { class: 'text-xs text-gray-500' }, formatDateTime(row.updatedAt || row.completedTime)),
-      h('div', { 
-        class: 'text-xs font-medium',
-        style: { color: row.processedTime !== '-' ? '#10b981' : '#9ca3af' }
-      }, row.processedTime || '-')
-    ])
+    render: (row) =>
+      h('div', { class: 'text-center space-y-1' }, [
+        h('div', { class: 'text-xs' }, formatDateTime(row.appliedAt)),
+        h(
+          'div',
+          { class: 'text-xs text-gray-500' },
+          formatDateTime(row.updatedAt || row.completedTime),
+        ),
+        h(
+          'div',
+          {
+            class: 'text-xs font-medium',
+            style: { color: row.processedTime !== '-' ? '#10b981' : '#9ca3af' },
+          },
+          row.processedTime || '-',
+        ),
+      ]),
   },
   // 5. 会员币种 (比例)
   {
     title: '会员币种 (比例)',
     key: 'memberCurrency',
     width: 120,
-    render: (row) => h('div', { class: 'text-center space-y-1' }, [
-      h('div', { class: 'font-medium' }, row.currency || 'BRL'),
-      h('div', { class: 'text-xs text-gray-500' }, `(${row.exchangeRate || '0.05'})`)
-    ])
+    render: (row) =>
+      h('div', { class: 'text-center space-y-1' }, [
+        h('div', { class: 'font-medium' }, row.currency || 'BRL'),
+        h(
+          'div',
+          { class: 'text-xs text-gray-500' },
+          `(${row.exchangeRate || '0.05'})`,
+        ),
+      ]),
   },
   // 6. 提现金额 (当前余额)
   {
     title: '提现金额 (当前余额)',
     key: 'withdrawAmount',
     width: 140,
-    render: (row) => h('div', { class: 'text-center space-y-1' }, [
-      h('div', { class: 'font-semibold text-red-600' }, formatCurrency(row.withdrawAmount)),
-      h('div', { class: 'text-xs text-gray-500' }, formatCurrency(row.currentBalance || 0))
-    ])
+    render: (row) =>
+      h('div', { class: 'text-center space-y-1' }, [
+        h(
+          'div',
+          { class: 'font-semibold text-red-600' },
+          formatCurrency(row.withdrawAmount),
+        ),
+        h(
+          'div',
+          { class: 'text-xs text-gray-500' },
+          formatCurrency(row.currentBalance || 0),
+        ),
+      ]),
   },
   // 7. 到账币种汇率
   {
     title: '到账币种汇率',
     key: 'arrivalCurrency',
     width: 120,
-    render: (row) => h('div', { class: 'text-center space-y-1' }, [
-      h('div', { class: 'font-medium' }, row.currency || 'BRL'),
-      h('div', { class: 'text-xs text-gray-500' }, `汇率: ${row.exchangeRate || '0.05'}`)
-    ])
+    render: (row) =>
+      h('div', { class: 'text-center space-y-1' }, [
+        h('div', { class: 'font-medium' }, row.currency || 'BRL'),
+        h(
+          'div',
+          { class: 'text-xs text-gray-500' },
+          `汇率: ${row.exchangeRate || '0.05'}`,
+        ),
+      ]),
   },
   // 8. 预计到帐 (手续费) (实际到账)
   {
     title: '预计到帐 (手续费) (实际到账)',
     key: 'estimatedAmount',
     width: 160,
-    render: (row) => h('div', { class: 'text-center space-y-1' }, [
-      h('div', { class: 'text-xs font-semibold text-green-600' }, formatCurrency(row.estimatedAmount || row.estimatedReceived || 0)),
-      h('div', { class: 'text-xs text-gray-500' }, `手续费: ${formatCurrency(row.fee || 0)}`),
-      h('div', { class: 'text-xs' }, `实际: ${formatCurrency(row.estimatedReceived || row.estimatedAmount || 0)}`),
-      h('div', { class: 'flex gap-1 justify-center mt-2' }, [
-        h(NButton, {
-          size: 'tiny',
-          type: 'info',
-          onClick: () => {
-            // Navigate to 投注任务(稽核) with user context
-            window.location.href = `/finance/wagering-audit?userId=${row.memberId}`;
-          }
-        }, { default: () => '稽核' }),
-        h(NButton, {
-          size: 'tiny',
-          type: 'primary',
-          onClick: () => {
-            // Navigate to 游戏 -> 投注记录 with user context
-            window.location.href = `/game-management/bet-records?userId=${row.memberId}`;
-          }
-        }, { default: () => '投注' })
-      ])
-    ])
+    render: (row) =>
+      h('div', { class: 'text-center space-y-1' }, [
+        h(
+          'div',
+          { class: 'text-xs font-semibold text-green-600' },
+          formatCurrency(row.estimatedAmount || row.estimatedReceived || 0),
+        ),
+        h(
+          'div',
+          { class: 'text-xs text-gray-500' },
+          `手续费: ${formatCurrency(row.fee || 0)}`,
+        ),
+        h(
+          'div',
+          { class: 'text-xs' },
+          `实际: ${formatCurrency(row.estimatedReceived || row.estimatedAmount || 0)}`,
+        ),
+        h('div', { class: 'flex gap-1 justify-center mt-2' }, [
+          h(
+            NButton,
+            {
+              size: 'tiny',
+              type: 'info',
+              onClick: () => {
+                // Navigate to 投注任务(稽核) with user context
+                window.location.href = `/finance/wagering-audit?userId=${row.memberId}`;
+              },
+            },
+            { default: () => '稽核' },
+          ),
+          h(
+            NButton,
+            {
+              size: 'tiny',
+              type: 'primary',
+              onClick: () => {
+                // Navigate to 游戏 -> 投注记录 with user context
+                window.location.href = `/game-management/bet-records?userId=${row.memberId}`;
+              },
+            },
+            { default: () => '投注' },
+          ),
+        ]),
+      ]),
   },
   // 9. 充 / 提次数 (累计充 / 提差额) (重复IP人数)
   {
@@ -1418,15 +1792,27 @@ const columns: DataTableColumns<WithdrawOrder> = [
       const totalWithdraw = row.totalWithdraw || 0;
       const difference = totalDeposit - totalWithdraw;
       const duplicateIP = row.rechargeWithdrawCount?.duplicateIP || 0;
-      
+
       return h('div', { class: 'text-center space-y-1' }, [
-        h('div', { class: 'text-xs' }, `充${rechargeCount} / 提${withdrawCount}次`),
-        h('div', { 
-          class: `text-xs font-medium ${difference >= 0 ? 'text-green-600' : 'text-red-600'}` 
-        }, `差额: ${formatCurrency(difference)}`),
-        h('div', { class: 'text-xs text-orange-600' }, `重复IP: ${duplicateIP}人`)
+        h(
+          'div',
+          { class: 'text-xs' },
+          `充${rechargeCount} / 提${withdrawCount}次`,
+        ),
+        h(
+          'div',
+          {
+            class: `text-xs font-medium ${difference >= 0 ? 'text-green-600' : 'text-red-600'}`,
+          },
+          `差额: ${formatCurrency(difference)}`,
+        ),
+        h(
+          'div',
+          { class: 'text-xs text-orange-600' },
+          `重复IP: ${duplicateIP}人`,
+        ),
       ]);
-    }
+    },
   },
   // 10. 收款方式 (收款人信息)
   {
@@ -1436,7 +1822,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
     render: (row) => {
       const info = row.withdrawChannelInfo || {};
       const pixType = info.type || row.paymentMethod || 'PIX';
-      
+
       // Helper function to map accountType to display format
       const getAccountTypeDisplay = (accountType: string): string => {
         if (!accountType) return '';
@@ -1446,20 +1832,20 @@ const columns: DataTableColumns<WithdrawOrder> = [
         }
         // Handle direct formats
         const typeMap: Record<string, string> = {
-          'CPF': 'CPF',
-          'PHONE': 'PHONE',
-          'EMAIL': 'EMAIL',
-          'RANDOM_KEY': 'RANDOM_KEY',
-          'CNPJ': 'CNPJ',
-          'EVP': 'EVP',
-          'BANK': 'BANK'
+          CPF: 'CPF',
+          PHONE: 'PHONE',
+          EMAIL: 'EMAIL',
+          RANDOM_KEY: 'RANDOM_KEY',
+          CNPJ: 'CNPJ',
+          EVP: 'EVP',
+          BANK: 'BANK',
         };
         return typeMap[accountType] || accountType;
       };
-      
+
       const accountType = info.accountType || info.type || '';
       const displayType = getAccountTypeDisplay(accountType);
-      
+
       // Build copy all text - include type and CPF
       const copyAllText = [
         info.name ? `真实姓名：${info.name}` : '',
@@ -1467,82 +1853,117 @@ const columns: DataTableColumns<WithdrawOrder> = [
         displayType ? `类型：${displayType}` : '',
         info.cpf ? `CPF：${info.cpf}` : '',
         info.phone ? `电话：${info.phone}` : '',
-        info.email ? `邮箱：${info.email}` : ''
-      ].filter(Boolean).join('\n');
-      
+        info.email ? `邮箱：${info.email}` : '',
+      ]
+        .filter(Boolean)
+        .join('\n');
+
       const copyAll = () => {
         if (copyAllText) {
           navigator.clipboard.writeText(copyAllText);
           message.success('已复制全部信息');
         }
       };
-      
+
       const copyField = (value: string, label: string) => {
         navigator.clipboard.writeText(value);
         message.success(`已复制${label}`);
       };
-      
+
       return h('div', { class: 'bg-gray-50 p-2 rounded space-y-1' }, [
         // Header with payment method and copy all button
         h('div', { class: 'flex items-center justify-between mb-2' }, [
           h('div', { class: 'font-semibold text-sm' }, pixType),
-          copyAllText && h(NButton, {
-            text: true,
-            type: 'primary',
-            size: 'tiny',
-            onClick: copyAll
-          }, { default: () => '复制全部' })
+          copyAllText &&
+            h(
+              NButton,
+              {
+                text: true,
+                type: 'primary',
+                size: 'tiny',
+                onClick: copyAll,
+              },
+              { default: () => '复制全部' },
+            ),
         ]),
         // Name
-        info.name && h('div', { class: 'flex items-center justify-between text-xs' }, [
-          h('span', { class: 'text-gray-600' }, '真实姓名：'),
-          h('div', { class: 'flex items-center gap-1' }, [
-            h('span', { class: 'font-medium' }, info.name),
-            h(NButton, {
-              text: true,
-              size: 'tiny',
-              onClick: () => copyField(info.name, '真实姓名')
-            }, { default: () => h(NIcon, { size: 14, component: CopyOutline }) })
-          ])
-        ]),
+        info.name &&
+          h('div', { class: 'flex items-center justify-between text-xs' }, [
+            h('span', { class: 'text-gray-600' }, '真实姓名：'),
+            h('div', { class: 'flex items-center gap-1' }, [
+              h('span', { class: 'font-medium' }, info.name),
+              h(
+                NButton,
+                {
+                  text: true,
+                  size: 'tiny',
+                  onClick: () => copyField(info.name, '真实姓名'),
+                },
+                {
+                  default: () => h(NIcon, { size: 14, component: CopyOutline }),
+                },
+              ),
+            ]),
+          ]),
         // Account/Address
-        info.account && h('div', { class: 'flex items-center justify-between text-xs' }, [
-          h('span', { class: 'text-gray-600' }, '账号/地址：'),
-          h('div', { class: 'flex items-center gap-1' }, [
-            h('span', { class: 'font-medium' }, info.account),
-            h(NButton, {
-              text: true,
-              size: 'tiny',
-              onClick: () => copyField(info.account, '账号/地址')
-            }, { default: () => h(NIcon, { size: 14, component: CopyOutline }) })
-          ])
-        ]),
+        info.account &&
+          h('div', { class: 'flex items-center justify-between text-xs' }, [
+            h('span', { class: 'text-gray-600' }, '账号/地址：'),
+            h('div', { class: 'flex items-center gap-1' }, [
+              h('span', { class: 'font-medium' }, info.account),
+              h(
+                NButton,
+                {
+                  text: true,
+                  size: 'tiny',
+                  onClick: () => copyField(info.account, '账号/地址'),
+                },
+                {
+                  default: () => h(NIcon, { size: 14, component: CopyOutline }),
+                },
+              ),
+            ]),
+          ]),
         // Type (账户类型) - Always show if available
-        displayType && h('div', { class: 'flex items-center justify-between text-xs' }, [
-          h('span', { class: 'text-gray-600' }, '类型：'),
-          h('div', { class: 'flex items-center gap-1' }, [
-            h('span', { class: 'font-medium' }, displayType),
-            h(NButton, {
-              text: true,
-              size: 'tiny',
-              onClick: () => copyField(displayType, '类型')
-            }, { default: () => h(NIcon, { size: 14, component: CopyOutline }) })
-          ])
-        ]),
+        displayType &&
+          h('div', { class: 'flex items-center justify-between text-xs' }, [
+            h('span', { class: 'text-gray-600' }, '类型：'),
+            h('div', { class: 'flex items-center gap-1' }, [
+              h('span', { class: 'font-medium' }, displayType),
+              h(
+                NButton,
+                {
+                  text: true,
+                  size: 'tiny',
+                  onClick: () => copyField(displayType, '类型'),
+                },
+                {
+                  default: () => h(NIcon, { size: 14, component: CopyOutline }),
+                },
+              ),
+            ]),
+          ]),
         // CPF - Always show if available (regardless of type)
-        info.cpf && h('div', { class: 'flex items-center justify-between text-xs' }, [
-          h('span', { class: 'text-gray-600' }, 'CPF：'),
-          h('div', { class: 'flex items-center gap-1' }, [
-            h('span', { class: 'font-medium' }, info.cpf),
-            h(NButton, {
-              text: true,
-              size: 'tiny',
-              onClick: () => copyField(info.cpf, 'CPF')
-            }, { default: () => h(NIcon, { size: 14, component: CopyOutline }) })
-          ])
-        ])
+        info.cpf &&
+          h('div', { class: 'flex items-center justify-between text-xs' }, [
+            h('span', { class: 'text-gray-600' }, 'CPF：'),
+            h('div', { class: 'flex items-center gap-1' }, [
+              h('span', { class: 'font-medium' }, info.cpf),
+              h(
+                NButton,
+                {
+                  text: true,
+                  size: 'tiny',
+                  onClick: () => copyField(info.cpf, 'CPF'),
+                },
+                {
+                  default: () => h(NIcon, { size: 14, component: CopyOutline }),
+                },
+              ),
+            ]),
+          ]),
       ]);
-    }
+    },
   },
   // 11. 订单状态 (操作人)
   {
@@ -1551,21 +1972,24 @@ const columns: DataTableColumns<WithdrawOrder> = [
     width: 140,
     render: (row) => {
       const statusMap = {
-        'unlocked': { type: 'default', text: '未锁定' },
-        'pending': { type: 'warning', text: '待出款' },
-        'reviewing': { type: 'info', text: '审核中' },
-        'completed': { type: 'success', text: '已付款' },
-        'approved': { type: 'success', text: '已付款' },
-        'success': { type: 'success', text: '已付款' },
-        'processing': { type: 'info', text: '处理中' },
-        'rejected': { type: 'error', text: '已拒绝' },
-        'failed': { type: 'error', text: '失败' },
-        'cancelled': { type: 'default', text: '已取消' },
-        'canceled': { type: 'default', text: '已取消' },
-        'risk_review': { type: 'warning', text: '风控审核' }
+        unlocked: { type: 'default', text: '未锁定' },
+        pending: { type: 'warning', text: '待出款' },
+        reviewing: { type: 'info', text: '审核中' },
+        completed: { type: 'success', text: '已付款' },
+        approved: { type: 'success', text: '已付款' },
+        success: { type: 'success', text: '已付款' },
+        processing: { type: 'info', text: '处理中' },
+        rejected: { type: 'error', text: '已拒绝' },
+        failed: { type: 'error', text: '失败' },
+        cancelled: { type: 'default', text: '已取消' },
+        canceled: { type: 'default', text: '已取消' },
+        risk_review: { type: 'warning', text: '风控审核' },
       };
-      const status = statusMap[row.status as keyof typeof statusMap] || { type: 'default', text: row.status };
-      
+      const status = statusMap[row.status as keyof typeof statusMap] || {
+        type: 'default',
+        text: row.status,
+      };
+
       // 🎯 NEW: Operator name display logic
       let operatorDisplay = '';
       if (row.reviewer) {
@@ -1578,12 +2002,17 @@ const columns: DataTableColumns<WithdrawOrder> = [
         // If not locked, show "未锁定"
         operatorDisplay = '未锁定';
       }
-      
+
       return h('div', { class: 'text-center space-y-1' }, [
-        h(NTag, { type: status.type as any, size: 'small' }, { default: () => status.text }),
-        operatorDisplay && h('div', { class: 'text-xs text-gray-500' }, operatorDisplay)
+        h(
+          NTag,
+          { type: status.type as any, size: 'small' },
+          { default: () => status.text },
+        ),
+        operatorDisplay &&
+          h('div', { class: 'text-xs text-gray-500' }, operatorDisplay),
       ]);
-    }
+    },
   },
   // 12. 前台备注
   {
@@ -1595,9 +2024,9 @@ const columns: DataTableColumns<WithdrawOrder> = [
       return h('div', { class: 'text-xs' }, [
         frontendNote
           ? h('div', { class: 'text-gray-700' }, frontendNote)
-          : h('span', { class: 'text-gray-400 text-center' }, '-')
+          : h('span', { class: 'text-gray-400 text-center' }, '-'),
       ]);
-    }
+    },
   },
   // 13. 后台备注
   {
@@ -1605,24 +2034,30 @@ const columns: DataTableColumns<WithdrawOrder> = [
     key: 'backendNotes',
     width: 200,
     render: (row) => {
-      const backendNote = row.backendNotes || row.backendNote || row.description || '';
-      const hasError = row.status === 'failed' || row.status === 'rejected' || 
-                       (backendNote && (
-                         backendNote.toLowerCase().includes('error') ||
-                         backendNote.toLowerCase().includes('failed') ||
-                         backendNote.toLowerCase().includes('错误') ||
-                         backendNote.toLowerCase().includes('失败')
-                       ));
-      
+      const backendNote =
+        row.backendNotes || row.backendNote || row.description || '';
+      const hasError =
+        row.status === 'failed' ||
+        row.status === 'rejected' ||
+        (backendNote &&
+          (backendNote.toLowerCase().includes('error') ||
+            backendNote.toLowerCase().includes('failed') ||
+            backendNote.toLowerCase().includes('错误') ||
+            backendNote.toLowerCase().includes('失败')));
+
       return h('div', { class: 'text-xs' }, [
         backendNote
           ? h('div', { class: hasError ? 'space-y-1' : '' }, [
               hasError && h('div', { class: 'text-red-500' }, '错误信息：'),
-              h('div', { class: hasError ? 'text-red-600' : 'text-gray-700' }, backendNote)
+              h(
+                'div',
+                { class: hasError ? 'text-red-600' : 'text-gray-700' },
+                backendNote,
+              ),
             ])
-          : h('span', { class: 'text-gray-400 text-center' }, '-')
+          : h('span', { class: 'text-gray-400 text-center' }, '-'),
       ]);
-    }
+    },
   },
   // 14. 三方备注
   {
@@ -1630,24 +2065,29 @@ const columns: DataTableColumns<WithdrawOrder> = [
     key: 'thirdPartyNotes',
     width: 200,
     render: (row) => {
-      const thirdPartyNote = row.thirdPartyNotes || row.thirdPartyError || row.gatewayError || '';
-      const hasError = thirdPartyNote && (
-        thirdPartyNote.toLowerCase().includes('error') ||
-        thirdPartyNote.toLowerCase().includes('failed') ||
-        thirdPartyNote.toLowerCase().includes('拒绝') ||
-        thirdPartyNote.toLowerCase().includes('错误') ||
-        thirdPartyNote.toLowerCase().includes('失败')
-      );
-      
+      const thirdPartyNote =
+        row.thirdPartyNotes || row.thirdPartyError || row.gatewayError || '';
+      const hasError =
+        thirdPartyNote &&
+        (thirdPartyNote.toLowerCase().includes('error') ||
+          thirdPartyNote.toLowerCase().includes('failed') ||
+          thirdPartyNote.toLowerCase().includes('拒绝') ||
+          thirdPartyNote.toLowerCase().includes('错误') ||
+          thirdPartyNote.toLowerCase().includes('失败'));
+
       return h('div', { class: 'text-xs' }, [
         thirdPartyNote
           ? h('div', { class: 'space-y-1' }, [
               h('div', { class: 'text-orange-500 text-xs' }, '三方响应：'),
-              h('div', { class: hasError ? 'text-red-600' : 'text-gray-700' }, thirdPartyNote)
+              h(
+                'div',
+                { class: hasError ? 'text-red-600' : 'text-gray-700' },
+                thirdPartyNote,
+              ),
             ])
-          : h('span', { class: 'text-gray-400 text-center' }, '-')
+          : h('span', { class: 'text-gray-400 text-center' }, '-'),
       ]);
-    }
+    },
   },
   // 15. 三方代付 (代付次数)
   {
@@ -1657,19 +2097,26 @@ const columns: DataTableColumns<WithdrawOrder> = [
     render: (row) => {
       const gateway = row.paymentGateway || row.thirdPartyProvider || 'Pay4z';
       let displayName = gateway;
-      
+
       // 🎯 NEW: Chinese translations for gateway names
       if (gateway.toLowerCase() === 'manual') {
         displayName = '人工出款';
-      } else if (gateway.toLowerCase() === 'auto_system' || gateway === 'auto_system') {
+      } else if (
+        gateway.toLowerCase() === 'auto_system' ||
+        gateway === 'auto_system'
+      ) {
         displayName = '免审出款';
       }
-      
+
       return h('div', { class: 'text-center space-y-1' }, [
         h('div', { class: 'font-medium text-xs' }, displayName),
-        h('div', { class: 'text-xs text-gray-500' }, `代付次数: ${row.withdrawCount || 1}`)
+        h(
+          'div',
+          { class: 'text-xs text-gray-500' },
+          `代付次数: ${row.withdrawCount || 1}`,
+        ),
       ]);
-    }
+    },
   },
   // 15. 操作
   {
@@ -1679,7 +2126,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
     fixed: 'right',
     render: (row) => {
       const actions = [];
-      
+
       // Only show 备注 button if the withdrawal is locked
       if (row.isLocked) {
         actions.push(
@@ -1688,16 +2135,16 @@ const columns: DataTableColumns<WithdrawOrder> = [
             {
               size: 'small',
               type: 'info',
-              onClick: () => handleEditNote(row)
+              onClick: () => handleEditNote(row),
             },
-            { default: () => '备注' }
-          )
+            { default: () => '备注' },
+          ),
         );
       }
-      
+
       return h('div', { class: 'flex flex-wrap gap-1' }, actions);
-    }
-  }
+    },
+  },
 ];
 
 // SmartDataGrid event handlers for All Withdrawals tab
@@ -1721,40 +2168,51 @@ const clearAllWithdrawalsSelection = () => {
 };
 
 const selectAllWithdrawals = () => {
-  checkedRowKeys.value = tableData.value.map(row => row.orderId);
+  checkedRowKeys.value = tableData.value.map((row) => row.orderId);
 };
 
 // 全选当前页：当前页所有 orderId
-const currentPageOrderIds = computed(() => tableData.value.map(row => row.orderId));
+const currentPageOrderIds = computed(() =>
+  tableData.value.map((row) => row.orderId),
+);
 
 const isAllCurrentPageSelected = computed(() => {
   const ids = currentPageOrderIds.value;
   if (ids.length === 0) return false;
-  return ids.every(id => checkedRowKeys.value.includes(id));
+  return ids.every((id) => checkedRowKeys.value.includes(id));
 });
 
 const isCurrentPageIndeterminate = computed(() => {
   const ids = currentPageOrderIds.value;
   if (ids.length === 0) return false;
-  const selected = ids.filter(id => checkedRowKeys.value.includes(id));
+  const selected = ids.filter((id) => checkedRowKeys.value.includes(id));
   return selected.length > 0 && selected.length < ids.length;
 });
 
 const toggleSelectAllCurrentPage = (checked: boolean) => {
   if (checked) {
-    checkedRowKeys.value = [...new Set([...checkedRowKeys.value, ...currentPageOrderIds.value])];
+    checkedRowKeys.value = [
+      ...new Set([...checkedRowKeys.value, ...currentPageOrderIds.value]),
+    ];
   } else {
     const pageSet = new Set(currentPageOrderIds.value);
-    checkedRowKeys.value = checkedRowKeys.value.filter(id => !pageSet.has(id));
+    checkedRowKeys.value = checkedRowKeys.value.filter(
+      (id) => !pageSet.has(id),
+    );
   }
 };
 
 // 批量操作需要填写原因的 action
-const batchReasonModal = ref<{ show: boolean; actionKey: string; orderIds: string[]; reason: string }>({
+const batchReasonModal = ref<{
+  show: boolean;
+  actionKey: string;
+  orderIds: string[];
+  reason: string;
+}>({
   show: false,
   actionKey: '',
   orderIds: [],
-  reason: ''
+  reason: '',
 });
 
 function openBatchReasonModal(actionKey: string, orderIds: string[]) {
@@ -1763,7 +2221,12 @@ function openBatchReasonModal(actionKey: string, orderIds: string[]) {
 
 async function submitBatchReasonModal() {
   const { actionKey, orderIds, reason } = batchReasonModal.value;
-  if (!reason.trim() && ['batch-force-cancel', 'batch-force-reject', 'batch-remark'].includes(actionKey)) {
+  if (
+    !reason.trim() &&
+    ['batch-force-cancel', 'batch-force-reject', 'batch-remark'].includes(
+      actionKey,
+    )
+  ) {
     message.warning('请输入操作说明');
     return;
   }
@@ -1771,55 +2234,133 @@ async function submitBatchReasonModal() {
   await runBatchAction(actionKey, orderIds, reason.trim());
 }
 
-async function runBatchAction(actionKey: string, orderIds: string[], reason: string = '') {
+async function runBatchAction(
+  actionKey: string,
+  orderIds: string[],
+  reason: string = '',
+) {
   const len = orderIds.length;
   try {
     loading.value = true;
     if (actionKey === 'batch-lock') {
       const res = await withdrawalApi.batchLock(orderIds, reason || '批量锁定');
-      if (res?.success !== false) { message.success(`批量锁定成功 (${len} 条)`); await fetchData(); checkedRowKeys.value = []; } else { message.error(res?.message || '批量锁定失败'); }
+      if (res?.success !== false) {
+        message.success(`批量锁定成功 (${len} 条)`);
+        await fetchData();
+        checkedRowKeys.value = [];
+      } else {
+        message.error(res?.message || '批量锁定失败');
+      }
     } else if (actionKey === 'batch-unlock') {
-      const res = await withdrawalApi.batchUnlock(orderIds, reason || '批量解锁');
-      if (res?.success !== false) { message.success(`批量解锁成功 (${len} 条)`); await fetchData(); checkedRowKeys.value = []; } else { message.error(res?.message || '批量解锁失败'); }
+      const res = await withdrawalApi.batchUnlock(
+        orderIds,
+        reason || '批量解锁',
+      );
+      if (res?.success !== false) {
+        message.success(`批量解锁成功 (${len} 条)`);
+        await fetchData();
+        checkedRowKeys.value = [];
+      } else {
+        message.error(res?.message || '批量解锁失败');
+      }
     } else if (actionKey === 'batch-approve') {
-      const res = await withdrawalApi.batchApprove(orderIds, reason || '批量审核出款');
-      if (res?.success !== false) { message.success(`批量审核出款成功 (${len} 条)`); await fetchData(); checkedRowKeys.value = []; } else { message.error(res?.message || '批量审核出款失败'); }
+      const res = await withdrawalApi.batchApprove(
+        orderIds,
+        reason || '批量审核出款',
+      );
+      if (res?.success !== false) {
+        message.success(`批量审核出款成功 (${len} 条)`);
+        await fetchData();
+        checkedRowKeys.value = [];
+      } else {
+        message.error(res?.message || '批量审核出款失败');
+      }
     } else if (actionKey === 'batch-force-cancel') {
       let ok = 0;
       for (const id of orderIds) {
         try {
-          const res = await financeWithdrawalApi.forceCancel(id, { frontendReason: reason, backendReason: reason });
+          const res = await financeWithdrawalApi.forceCancel(id, {
+            frontendReason: reason,
+            backendReason: reason,
+          });
           if (res?.success !== false) ok++;
-        } catch (_) { /* skip */ }
+        } catch (_) {
+          /* skip */
+        }
       }
-      message[ok === len ? 'success' : 'warning'](ok === len ? `批量强制取消成功 (${len} 条)` : `部分成功 ${ok}/${len} 条`);
-      await fetchData(); checkedRowKeys.value = [];
+      message[ok === len ? 'success' : 'warning'](
+        ok === len
+          ? `批量强制取消成功 (${len} 条)`
+          : `部分成功 ${ok}/${len} 条`,
+      );
+      await fetchData();
+      checkedRowKeys.value = [];
     } else if (actionKey === 'batch-force-reject') {
       let ok = 0;
       for (const id of orderIds) {
         try {
-          const res = await financeWithdrawalApi.forceReject(id, { windControlProcess: 'no', frontendReason: reason, backendReason: reason });
+          const res = await financeWithdrawalApi.forceReject(id, {
+            windControlProcess: 'no',
+            frontendReason: reason,
+            backendReason: reason,
+          });
           if (res?.success !== false) ok++;
-        } catch (_) { /* skip */ }
+        } catch (_) {
+          /* skip */
+        }
       }
-      message[ok === len ? 'success' : 'warning'](ok === len ? `批量强制拒绝成功 (${len} 条)` : `部分成功 ${ok}/${len} 条`);
-      await fetchData(); checkedRowKeys.value = [];
+      message[ok === len ? 'success' : 'warning'](
+        ok === len
+          ? `批量强制拒绝成功 (${len} 条)`
+          : `部分成功 ${ok}/${len} 条`,
+      );
+      await fetchData();
+      checkedRowKeys.value = [];
     } else if (actionKey === 'batch-remark') {
       let ok = 0;
       for (const id of orderIds) {
         try {
-          const res = await withdrawalApi.updateNote(id, { backendNotes: reason });
+          const res = await withdrawalApi.updateNote(id, {
+            backendNotes: reason,
+          });
           if (res?.success !== false || (res as any)?.trxId) ok++;
-        } catch (_) { /* skip */ }
+        } catch (_) {
+          /* skip */
+        }
       }
-      message[ok === len ? 'success' : 'warning'](ok === len ? `批量备注成功 (${len} 条)` : `部分成功 ${ok}/${len} 条`);
-      await fetchData(); checkedRowKeys.value = [];
+      message[ok === len ? 'success' : 'warning'](
+        ok === len ? `批量备注成功 (${len} 条)` : `部分成功 ${ok}/${len} 条`,
+      );
+      await fetchData();
+      checkedRowKeys.value = [];
     } else if (actionKey === 'batch-force-success') {
-      const res = await withdrawalApi.batchOperation({ orderIds, action: 'update-status', status: 'success', reason: reason || '批量强制成功' });
-      if (res?.success !== false) { message.success(`批量强制成功 (${len} 条)`); await fetchData(); checkedRowKeys.value = []; } else { message.error((res as any)?.message || '操作失败'); }
+      const res = await withdrawalApi.batchOperation({
+        orderIds,
+        action: 'update-status',
+        status: 'success',
+        reason: reason || '批量强制成功',
+      });
+      if (res?.success !== false) {
+        message.success(`批量强制成功 (${len} 条)`);
+        await fetchData();
+        checkedRowKeys.value = [];
+      } else {
+        message.error((res as any)?.message || '操作失败');
+      }
     } else if (actionKey === 'batch-force-fail') {
-      const res = await withdrawalApi.batchOperation({ orderIds, action: 'update-status', status: 'failed', reason: reason || '批量强制失败' });
-      if (res?.success !== false) { message.success(`批量强制失败 (${len} 条)`); await fetchData(); checkedRowKeys.value = []; } else { message.error((res as any)?.message || '操作失败'); }
+      const res = await withdrawalApi.batchOperation({
+        orderIds,
+        action: 'update-status',
+        status: 'failed',
+        reason: reason || '批量强制失败',
+      });
+      if (res?.success !== false) {
+        message.success(`批量强制失败 (${len} 条)`);
+        await fetchData();
+        checkedRowKeys.value = [];
+      } else {
+        message.error((res as any)?.message || '操作失败');
+      }
     } else if (actionKey === 'batch-refresh-callback') {
       message.info('批量刷新回调功能请在三方代付或重新代付中使用');
     } else if (actionKey === 'batch-repay') {
@@ -1830,13 +2371,28 @@ async function runBatchAction(actionKey: string, orderIds: string[], reason: str
         try {
           const res = await financeWithdrawalApi.manualWithdrawal(id);
           if (res?.success !== false) ok++;
-        } catch (_) { /* skip */ }
+        } catch (_) {
+          /* skip */
+        }
       }
-      message[ok === len ? 'success' : 'warning'](ok === len ? `批量已人工出款 (${len} 条)` : `部分成功 ${ok}/${len} 条`);
-      await fetchData(); checkedRowKeys.value = [];
+      message[ok === len ? 'success' : 'warning'](
+        ok === len ? `批量已人工出款 (${len} 条)` : `部分成功 ${ok}/${len} 条`,
+      );
+      await fetchData();
+      checkedRowKeys.value = [];
     } else if (actionKey === 'cancel') {
-      const res = await withdrawalApi.batchOperation({ orderIds, action: 'cancel', reason: reason || '批量强制取消' });
-      if (res?.success !== false) { message.success(`批量取消成功 (${len} 条)`); await fetchData(); checkedRowKeys.value = []; } else { message.error((res as any)?.message || '操作失败'); }
+      const res = await withdrawalApi.batchOperation({
+        orderIds,
+        action: 'cancel',
+        reason: reason || '批量强制取消',
+      });
+      if (res?.success !== false) {
+        message.success(`批量取消成功 (${len} 条)`);
+        await fetchData();
+        checkedRowKeys.value = [];
+      } else {
+        message.error((res as any)?.message || '操作失败');
+      }
     }
   } catch (e: any) {
     message.error(e?.message || '批量操作失败');
@@ -1846,12 +2402,14 @@ async function runBatchAction(actionKey: string, orderIds: string[], reason: str
 }
 
 function onBatchOperationSelect(key: string, selectedRows: WithdrawOrder[]) {
-  const orderIds = selectedRows.map(r => r.orderId).filter(Boolean);
+  const orderIds = selectedRows.map((r) => r.orderId).filter(Boolean);
   if (orderIds.length === 0) {
     message.warning('请先选择要操作的记录');
     return;
   }
-  if (['batch-force-cancel', 'batch-force-reject', 'batch-remark'].includes(key)) {
+  if (
+    ['batch-force-cancel', 'batch-force-reject', 'batch-remark'].includes(key)
+  ) {
     openBatchReasonModal(key, orderIds);
     return;
   }
@@ -1870,10 +2428,18 @@ const fetchAllWithdrawalsData = async () => {
 
 // Methods
 const fetchData = async () => {
-  console.log('🔄 [All Withdrawals] fetchData called, activeTab:', activeTab.value);
-  console.log('🔄 [All Withdrawals] Current page:', paginationReactive.value.page, 'pageSize:', paginationReactive.value.pageSize);
+  console.log(
+    '🔄 [All Withdrawals] fetchData called, activeTab:',
+    activeTab.value,
+  );
+  console.log(
+    '🔄 [All Withdrawals] Current page:',
+    paginationReactive.value.page,
+    'pageSize:',
+    paginationReactive.value.pageSize,
+  );
   if (activeTab.value !== 'all-withdrawals') return;
-  
+
   console.log('🔄 [All Withdrawals] Starting data fetch...');
   loading.value = true;
   try {
@@ -1882,39 +2448,52 @@ const fetchData = async () => {
       pageSize: paginationReactive.value.pageSize,
       ...filterForm.value,
       search: searchQuery.value, // 🔍 FIX: Use auto-trimmed search
-      startDate: filterForm.value.dateRange?.[0] ? new Date(filterForm.value.dateRange[0]).toISOString() : undefined,
-      endDate: filterForm.value.dateRange?.[1] ? (() => {
-        const endDate = new Date(filterForm.value.dateRange[1]);
-        endDate.setHours(23, 59, 59, 999);
-        return endDate.toISOString();
-      })() : undefined
+      startDate: filterForm.value.dateRange?.[0]
+        ? new Date(filterForm.value.dateRange[0]).toISOString()
+        : undefined,
+      endDate: filterForm.value.dateRange?.[1]
+        ? (() => {
+            const endDate = new Date(filterForm.value.dateRange[1]);
+            endDate.setHours(23, 59, 59, 999);
+            return endDate.toISOString();
+          })()
+        : undefined,
     };
 
     console.log('🔄 [All Withdrawals] API params:', params);
 
     const rawResponse: any = await withdrawalApi.getList(params);
-    
+
     console.log('📥 API Response:', rawResponse);
-    console.log('📥 Response keys:', rawResponse ? Object.keys(rawResponse) : 'null');
-    
+    console.log(
+      '📥 Response keys:',
+      rawResponse ? Object.keys(rawResponse) : 'null',
+    );
+
     // Backend returns: { success: true, data: [...], pagination: {...}, total: 33 }
     // Or: { withdrawals: [...], pagination: {...}, canWithdraw: true, ... }
     // Response interceptor may return different structures
     let records, total, summaryData;
-    
+
     // Check if response has withdrawals key (new structure)
     if (rawResponse.withdrawals && Array.isArray(rawResponse.withdrawals)) {
       // Structure: { withdrawals: [...], pagination: {...}, canWithdraw: true, totalWageringRequired: ..., ... }
       records = rawResponse.withdrawals;
       total = rawResponse.pagination?.total || records.length;
       summaryData = { totalCount: total, totalAmount: 0 };
-      console.log('✅ Response with withdrawals array:', { recordsCount: records.length, total });
+      console.log('✅ Response with withdrawals array:', {
+        recordsCount: records.length,
+        total,
+      });
     } else if (rawResponse.data && rawResponse.total !== undefined) {
       // Structure: { data: [...], pagination: {...}, total: 33 }
       records = Array.isArray(rawResponse.data) ? rawResponse.data : [];
       total = rawResponse.total;
       summaryData = { totalCount: total, totalAmount: 0 };
-      console.log('✅ Response with pagination:', { recordsCount: records.length, total });
+      console.log('✅ Response with pagination:', {
+        recordsCount: records.length,
+        total,
+      });
     } else if (Array.isArray(rawResponse)) {
       // Direct array (pagination info lost)
       records = rawResponse;
@@ -1926,20 +2505,20 @@ const fetchData = async () => {
       message.error('数据格式错误');
       return;
     }
-    
+
     console.log('✅ Setting tableData to:', records);
     console.log('✅ Records count:', records?.length);
     console.log('✅ First record structure:', records?.[0]);
-    
+
     // Map API field names to frontend expected field names
     const mappedRecords = records.map((record: any) => {
       console.log('📊 [FRONTEND] Record data:', {
         userID: record.userID,
         memberId: record.memberId,
         memberName: record.memberName,
-        rechargeWithdrawCount: record.rechargeWithdrawCount
+        rechargeWithdrawCount: record.rechargeWithdrawCount,
       });
-      
+
       return {
         ...record,
         orderId: record.trxId || record.orderId || record.id,
@@ -1948,8 +2527,12 @@ const fetchData = async () => {
         displayMemberId: record.userID || record.memberId, // For UI display only
         accountName: record.memberName || record.accountName,
         appliedAt: record.createdAt || record.appliedAt,
-        withdrawAmount: record.rewardAmount || record.withdrawAmount || record.amount,
-        estimatedReceived: record.estimatedReceived || ((record.rewardAmount || record.amount || 0) - (record.fee || record.fees || 0)),
+        withdrawAmount:
+          record.rewardAmount || record.withdrawAmount || record.amount,
+        estimatedReceived:
+          record.estimatedReceived ||
+          (record.rewardAmount || record.amount || 0) -
+            (record.fee || record.fees || 0),
         fee: record.fee || record.fees || 0,
         withdrawMethod: record.paymentMethod || record.withdrawMethod,
         withdrawAccount: record.memberBankAccount || record.withdrawAccount,
@@ -1961,7 +2544,11 @@ const fetchData = async () => {
         backendNotes: record.backendNotes || '',
         backendNote: record.backendNote || '',
         description: record.description || '',
-        thirdPartyNotes: record.thirdPartyNotes || record.thirdPartyError || record.gatewayError || '',
+        thirdPartyNotes:
+          record.thirdPartyNotes ||
+          record.thirdPartyError ||
+          record.gatewayError ||
+          '',
         // Lock status
         isLocked: record.isLocked || false,
         lockedBy: record.lockedBy || null,
@@ -1970,30 +2557,30 @@ const fetchData = async () => {
         rechargeWithdrawCount: record.rechargeWithdrawCount || {
           rechargeCount: 0,
           withdrawCount: 0,
-          duplicateIP: 0
+          duplicateIP: 0,
         },
         withdrawChannelInfo: record.withdrawChannelInfo || {
           method: record.paymentMethod || 'PIX',
           name: record.paymentGateway || 'manual',
           type: record.memberBank || 'PIX',
-          cpf: record.memberBankAccount || ''
+          cpf: record.memberBankAccount || '',
         },
         balanceInfo: record.balanceInfo || {
           before: record.balanceBefore || 0,
           after: record.balanceAfter || 0,
-          change: (record.balanceBefore || 0) - (record.balanceAfter || 0)
-        }
+          change: (record.balanceBefore || 0) - (record.balanceAfter || 0),
+        },
       };
     });
-    
+
     tableData.value = mappedRecords;
     paginationReactive.value.total = total;
     summary.value = summaryData;
-    
+
     console.log('✅ TableData after assignment:', tableData.value);
     console.log('✅ TableData length:', tableData.value.length);
     console.log('✅ Pagination total:', paginationReactive.value.total);
-    
+
     // Check table reactivity
     setTimeout(() => {
       console.log('🔍 TableData after timeout:', tableData.value);
@@ -2017,7 +2604,7 @@ const handleCreateWithdrawal = () => {
     withdrawAccount: '',
     frontendNote: '',
     backendNote: '',
-    verificationPassword: ''
+    verificationPassword: '',
   };
   // Reset member search
   memberOptions.value = [];
@@ -2025,40 +2612,47 @@ const handleCreateWithdrawal = () => {
   showWithdrawalModal.value = true;
 };
 
-
 const handleSaveWithdrawal = async () => {
   if (!withdrawalFormRef.value) return;
-  
+
   try {
     await withdrawalFormRef.value.validate();
     modalLoading.value = true;
-    
+
     const data = {
       ...withdrawalForm.value,
-      orderId: currentEditingOrder.value?.orderId
+      orderId: currentEditingOrder.value?.orderId,
     };
-    
+
     console.log('💾 Saving withdrawal with data:', data);
     console.log('💾 Selected member:', selectedMember.value);
-    console.log('💾 Form memberId value:', withdrawalForm.value.memberId, '(type:', typeof withdrawalForm.value.memberId, ')');
-    
-    const response = isEditing.value 
+    console.log(
+      '💾 Form memberId value:',
+      withdrawalForm.value.memberId,
+      '(type:',
+      typeof withdrawalForm.value.memberId,
+      ')',
+    );
+
+    const response = isEditing.value
       ? await withdrawalApi.update(data.orderId!, data)
       : await withdrawalApi.create(data);
-    
+
     if (response.success) {
       // Show detailed success message with withdrawal info
       if (isEditing.value) {
         message.success('提现订单更新成功');
       } else {
         const orderInfo = response.data;
-        message.success(`提现订单创建成功！订单号: ${orderInfo.orderId}，金额: ${orderInfo.withdrawAmount} ${orderInfo.currency}`);
+        message.success(
+          `提现订单创建成功！订单号: ${orderInfo.orderId}，金额: ${orderInfo.withdrawAmount} ${orderInfo.currency}`,
+        );
       }
-      
+
       // Close modal and clear member selection
       showWithdrawalModal.value = false;
       handleMemberClear();
-      
+
       // Refresh the data table - don't let refresh errors affect success message
       try {
         await fetchData();
@@ -2066,7 +2660,7 @@ const handleSaveWithdrawal = async () => {
         console.warn('⚠️ Failed to refresh data after save:', refreshError);
         // Don't show error - the save was successful
       }
-      
+
       console.log('✅ Withdrawal operation completed successfully');
     } else {
       // Check if this is a wagering requirement error
@@ -2074,17 +2668,25 @@ const handleSaveWithdrawal = async () => {
         // Show wagering requirements modal instead of generic error
         showWageringModal(response.data);
       } else {
-        message.error(response.message || (isEditing.value ? '更新失败' : '创建失败'));
+        message.error(
+          response.message || (isEditing.value ? '更新失败' : '创建失败'),
+        );
       }
     }
   } catch (error: any) {
     console.error('Save withdrawal error:', error);
-    
+
     // Check if the error response contains wagering requirements
-    if (error?.response?.data?.code === 'wagering_required' && error?.response?.data?.data) {
+    if (
+      error?.response?.data?.code === 'wagering_required' &&
+      error?.response?.data?.data
+    ) {
       showWageringModal(error.response.data.data);
     } else {
-      message.error(error?.response?.data?.message || (isEditing.value ? '更新失败' : '创建失败'));
+      message.error(
+        error?.response?.data?.message ||
+          (isEditing.value ? '更新失败' : '创建失败'),
+      );
     }
   } finally {
     modalLoading.value = false;
@@ -2110,12 +2712,14 @@ const handleToggleLock = async (row: WithdrawOrder) => {
   try {
     const action = row.isLocked ? 'unlock' : 'lock';
     const response = await withdrawalApi.toggleLock(row.orderId, action);
-    
+
     if (response.success) {
       message.success(action === 'lock' ? '锁定成功' : '解锁成功');
       fetchData(); // Refresh data to show updated lock status
     } else {
-      message.error(response.message || `${action === 'lock' ? '锁定' : '解锁'}失败`);
+      message.error(
+        response.message || `${action === 'lock' ? '锁定' : '解锁'}失败`,
+      );
     }
   } catch (error) {
     message.error('操作失败');
@@ -2143,7 +2747,7 @@ const handleResetFilters = () => {
     vipLevel: null,
     agentMode: null,
     serviceFilter: null,
-    search: ''
+    search: '',
   };
   paginationReactive.value.page = 1;
   fetchData();
@@ -2162,11 +2766,11 @@ const handlePageSizeChange = (pageSize: number) => {
 
 const handleEditNote = (row: WithdrawOrder) => {
   currentEditingOrder.value = row;
-  
+
   // Determine note type and content based on existing notes
   let noteType = 'backend';
   let noteContent = '';
-  
+
   if (row.frontendNotes || row.frontendNote) {
     noteType = 'frontend';
     noteContent = row.frontendNotes || row.frontendNote || '';
@@ -2174,115 +2778,137 @@ const handleEditNote = (row: WithdrawOrder) => {
     noteType = 'backend';
     noteContent = row.backendNotes || row.backendNote || '';
   }
-  
+
   noteForm.value = {
     type: noteType,
     content: noteContent,
-    orderId: row.orderId
+    orderId: row.orderId,
   };
   showNoteModal.value = true;
 };
 
 // Watch for note type changes and update content accordingly
-watch(() => noteForm.value.type, (newType) => {
-  if (!currentEditingOrder.value || !showNoteModal.value) return;
-  
-  const row = currentEditingOrder.value;
-  
-  // Update content based on selected type
-  if (newType === 'frontend') {
-    noteForm.value.content = row.frontendNotes || row.frontendNote || '';
-  } else if (newType === 'backend') {
-    noteForm.value.content = row.backendNotes || row.backendNote || '';
-  } else if (newType === 'system' || newType === 'agency') {
-    noteForm.value.content = row.systemNotes || '';
-  }
-});
+watch(
+  () => noteForm.value.type,
+  (newType) => {
+    if (!currentEditingOrder.value || !showNoteModal.value) return;
+
+    const row = currentEditingOrder.value;
+
+    // Update content based on selected type
+    if (newType === 'frontend') {
+      noteForm.value.content = row.frontendNotes || row.frontendNote || '';
+    } else if (newType === 'backend') {
+      noteForm.value.content = row.backendNotes || row.backendNote || '';
+    } else if (newType === 'system' || newType === 'agency') {
+      noteForm.value.content = row.systemNotes || '';
+    }
+  },
+);
 
 const handleSaveNote = async () => {
   if (!noteFormRef.value) return;
-  
+
   try {
     await noteFormRef.value.validate();
-    
+
     // Map note type to correct field names
     const noteData: any = {};
     if (noteForm.value.type === 'frontend') {
       noteData.frontendNotes = noteForm.value.content;
     } else if (noteForm.value.type === 'backend') {
       noteData.backendNotes = noteForm.value.content;
-    } else if (noteForm.value.type === 'system' || noteForm.value.type === 'agency') {
+    } else if (
+      noteForm.value.type === 'system' ||
+      noteForm.value.type === 'agency'
+    ) {
       noteData.systemNotes = noteForm.value.content;
     }
-    
-    console.log('💾 Saving notes:', { orderId: noteForm.value.orderId, noteData });
-    
-    const response = await withdrawalApi.updateNote(noteForm.value.orderId, noteData);
-    
+
+    console.log('💾 Saving notes:', {
+      orderId: noteForm.value.orderId,
+      noteData,
+    });
+
+    const response = await withdrawalApi.updateNote(
+      noteForm.value.orderId,
+      noteData,
+    );
+
     console.log('✅ API Response:', response);
-    
+
     // Response interceptor returns the data directly, so if we have a trxId, it's successful
     const isSuccess = response && (response.trxId || response.success === true);
-    
+
     if (isSuccess) {
       console.log('✅ Update successful, updating table data...');
-      
+
       // Update local table data immediately with the returned data
       if (currentEditingOrder.value) {
         console.log('🔍 Looking for order:', currentEditingOrder.value.orderId);
         console.log('🔍 Table data length:', tableData.value.length);
-        console.log('🔍 Table orderIds:', tableData.value.map(r => r.orderId).slice(0, 5));
-        
-        const rowIndex = tableData.value.findIndex(r => r.orderId === currentEditingOrder.value!.orderId);
+        console.log(
+          '🔍 Table orderIds:',
+          tableData.value.map((r) => r.orderId).slice(0, 5),
+        );
+
+        const rowIndex = tableData.value.findIndex(
+          (r) => r.orderId === currentEditingOrder.value!.orderId,
+        );
         console.log('📍 Found row at index:', rowIndex);
-        
+
         if (rowIndex !== -1) {
           // Response interceptor returns data directly, so response IS the data
           const responseData = response;
-          
+
           console.log('💾 Updating row with data:', {
             noteData,
             responseData: {
               frontendNotes: responseData.frontendNotes,
               backendNotes: responseData.backendNotes,
-              systemNotes: responseData.systemNotes
-            }
+              systemNotes: responseData.systemNotes,
+            },
           });
-          
+
           // Create a new object to ensure reactivity
           const updatedRow = { ...tableData.value[rowIndex] };
-          
+
           if (noteData.frontendNotes !== undefined) {
-            updatedRow.frontendNotes = responseData.frontendNotes || noteData.frontendNotes;
-            updatedRow.frontendNote = responseData.frontendNotes || noteData.frontendNotes;
+            updatedRow.frontendNotes =
+              responseData.frontendNotes || noteData.frontendNotes;
+            updatedRow.frontendNote =
+              responseData.frontendNotes || noteData.frontendNotes;
           }
           if (noteData.backendNotes !== undefined) {
-            updatedRow.backendNotes = responseData.backendNotes || noteData.backendNotes;
-            updatedRow.backendNote = responseData.backendNotes || noteData.backendNotes;
+            updatedRow.backendNotes =
+              responseData.backendNotes || noteData.backendNotes;
+            updatedRow.backendNote =
+              responseData.backendNotes || noteData.backendNotes;
           }
           if (noteData.systemNotes !== undefined) {
-            updatedRow.systemNotes = responseData.systemNotes || noteData.systemNotes;
+            updatedRow.systemNotes =
+              responseData.systemNotes || noteData.systemNotes;
           }
-          
+
           // Replace the entire row object to ensure Vue detects the change
           tableData.value[rowIndex] = updatedRow;
-          
-          console.log('✅ Updated row:', { 
-            frontendNotes: updatedRow.frontendNotes, 
+
+          console.log('✅ Updated row:', {
+            frontendNotes: updatedRow.frontendNotes,
             backendNotes: updatedRow.backendNotes,
-            systemNotes: updatedRow.systemNotes
+            systemNotes: updatedRow.systemNotes,
           });
         } else {
           console.error('❌ Row not found in table data!');
         }
       }
-      
+
       message.success('备注保存成功');
       showNoteModal.value = false;
-      
+
       // Force table to re-render by creating a new array reference
       tableData.value = [...tableData.value];
-      
+
       // Refresh data from server
       console.log('🔄 Refreshing data from server...');
       await fetchData();
@@ -2296,7 +2922,7 @@ const handleSaveNote = async () => {
     console.error('Error details:', {
       message: error.message,
       response: error.response,
-      data: error.response?.data
+      data: error.response?.data,
     });
     message.error(error.response?.data?.message || error.message || '保存失败');
   }
@@ -2307,27 +2933,27 @@ const handleBatchOperation = () => {
     message.warning('请先选择要操作的记录');
     return;
   }
-  
+
   batchForm.value = {
     action: '',
     status: '',
-    reason: ''
+    reason: '',
   };
   showBatchModal.value = true;
 };
 
 const handleConfirmBatch = async () => {
   if (!batchFormRef.value) return;
-  
+
   try {
     await batchFormRef.value.validate();
     const response = await withdrawalApi.batchOperation({
       orderIds: checkedRowKeys.value,
       action: batchForm.value.action,
       status: batchForm.value.status,
-      reason: batchForm.value.reason
+      reason: batchForm.value.reason,
     });
-    
+
     if (response.success) {
       message.success('批量操作成功');
       showBatchModal.value = false;
@@ -2344,16 +2970,20 @@ const handleExport = async () => {
   try {
     const params = {
       ...filterForm.value,
-      startDate: filterForm.value.dateRange?.[0] ? new Date(filterForm.value.dateRange[0]).toISOString() : undefined,
-      endDate: filterForm.value.dateRange?.[1] ? (() => {
-        const endDate = new Date(filterForm.value.dateRange[1]);
-        endDate.setHours(23, 59, 59, 999);
-        return endDate.toISOString();
-      })() : undefined
+      startDate: filterForm.value.dateRange?.[0]
+        ? new Date(filterForm.value.dateRange[0]).toISOString()
+        : undefined,
+      endDate: filterForm.value.dateRange?.[1]
+        ? (() => {
+            const endDate = new Date(filterForm.value.dateRange[1]);
+            endDate.setHours(23, 59, 59, 999);
+            return endDate.toISOString();
+          })()
+        : undefined,
     };
-    
+
     const response = await withdrawalApi.exportData(params);
-    
+
     if (response.success) {
       // Create download link
       const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -2372,15 +3002,24 @@ const handleExport = async () => {
 
 // Auto-refresh methods (simplified with SmartAutoRefresh)
 const handleRefreshIntervalChange = (newInterval: number) => {
-  console.log('WithdrawManagement: Refresh interval changed to', newInterval, 'seconds');
+  console.log(
+    'WithdrawManagement: Refresh interval changed to',
+    newInterval,
+    'seconds',
+  );
   // SmartAutoRefresh component handles all timer logic
 };
 
 // Column configuration methods
 const saveColumnConfig = () => {
   // Here you could save to localStorage or backend API
-  const visibleColumns = columnConfigList.value.filter(col => col.visible).map(col => col.key);
-  localStorage.setItem('withdrawalColumnsConfig', JSON.stringify(visibleColumns));
+  const visibleColumns = columnConfigList.value
+    .filter((col) => col.visible)
+    .map((col) => col.key);
+  localStorage.setItem(
+    'withdrawalColumnsConfig',
+    JSON.stringify(visibleColumns),
+  );
   showColumnConfig.value = false;
   console.log('✅ Column configuration saved:', visibleColumns);
   // You could also trigger a table refresh here if needed
@@ -2388,9 +3027,15 @@ const saveColumnConfig = () => {
 
 const resetColumnConfig = () => {
   // Reset to default visibility
-  columnConfigList.value.forEach(col => {
-    if (col.key === 'orderId' || col.key === 'memberAccount' || col.key === 'appliedAt' || 
-        col.key === 'withdrawAmount' || col.key === 'status' || col.key === 'actions') {
+  columnConfigList.value.forEach((col) => {
+    if (
+      col.key === 'orderId' ||
+      col.key === 'memberAccount' ||
+      col.key === 'appliedAt' ||
+      col.key === 'withdrawAmount' ||
+      col.key === 'status' ||
+      col.key === 'actions'
+    ) {
       col.visible = true;
     } else {
       col.visible = false;
@@ -2407,11 +3052,11 @@ const handleWithdrawalSettingsSuccess = () => {
 
 // Filter columns based on visibility
 const visibleColumns = computed(() => {
-  return columns.filter(col => {
+  return columns.filter((col) => {
     if (col.type === 'selection' || !col.key) {
       return true; // Always show selection and columns without keys
     }
-    const config = columnConfigList.value.find(c => c.key === col.key);
+    const config = columnConfigList.value.find((c) => c.key === col.key);
     return config ? config.visible : true;
   });
 });
@@ -2419,20 +3064,23 @@ const visibleColumns = computed(() => {
 // Member search methods
 const handleMemberSearch = async (query: string) => {
   console.log('🔍 Search query:', query, 'Length:', query?.length);
-  
+
   if (!query || query.trim().length < 1) {
     console.log('❌ Query too short, clearing options');
     memberOptions.value = [];
     return;
   }
-  
+
   try {
     memberLoading.value = true;
-    console.log('🚀 Calling searchUsersApi with:', { q: query.trim(), limit: 10 });
-    
+    console.log('🚀 Calling searchUsersApi with:', {
+      q: query.trim(),
+      limit: 10,
+    });
+
     const response = await searchUsersApi({ q: query.trim(), limit: 10 });
     console.log('✅ Search response:', response);
-    
+
     // Check if response is an array (direct user data) or has success/data structure
     let userData = [];
     if (Array.isArray(response)) {
@@ -2442,26 +3090,28 @@ const handleMemberSearch = async (query: string) => {
     } else if (response.data && Array.isArray(response.data)) {
       userData = response.data;
     }
-    
+
     if (userData.length > 0) {
       // Found users - update options for autocomplete
-      memberOptions.value = userData.map(user => ({
+      memberOptions.value = userData.map((user) => ({
         label: user.label,
         value: user.value,
         disabled: false,
         // Store the full user data for selection
-        ...user
+        ...user,
       }));
-      
+
       // For manual search (button click), auto-select the first user
       if (userData.length === 1) {
         selectedMember.value = userData[0];
         withdrawalForm.value.memberId = userData[0].value;
-        message.success(`找到会员: ${userData[0].account} (${userData[0].name})`);
+        message.success(
+          `找到会员: ${userData[0].account} (${userData[0].name})`,
+        );
       } else {
         message.success(`找到 ${userData.length} 个会员，请选择一个`);
       }
-      
+
       console.log('✅ Member options set:', memberOptions.value);
     } else {
       console.log('❌ No users found for query:', query);
@@ -2483,7 +3133,7 @@ const handleMemberSearch = async (query: string) => {
 
 const handleMemberSelect = (value: string, option: any) => {
   console.log('✅ Member selected:', value, option);
-  
+
   if (option) {
     // Store the selected member data (option now contains all user data)
     selectedMember.value = {
@@ -2493,18 +3143,18 @@ const handleMemberSelect = (value: string, option: any) => {
       email: option.email,
       cpf: option.cpf,
       balance: option.balance,
-      vipLevel: option.vipLevel
+      vipLevel: option.vipLevel,
     };
-    
+
     // Set the form value to the user ID (numeric)
     withdrawalForm.value.memberId = option.value;
-    
+
     console.log('✅ Selected member stored:', selectedMember.value);
     console.log('✅ Form memberId set to:', withdrawalForm.value.memberId);
   } else {
     console.error('❌ No option provided to handleMemberSelect');
   }
-  
+
   // Clear the search timeout when user selects
   if (searchTimeout) {
     clearTimeout(searchTimeout);
@@ -2516,7 +3166,7 @@ const handleMemberClear = () => {
   selectedMember.value = null;
   memberOptions.value = [];
   withdrawalForm.value.memberId = ''; // Clear the form memberId as well
-  
+
   // Clear the search timeout when user clears
   if (searchTimeout) {
     clearTimeout(searchTimeout);
@@ -2525,20 +3175,27 @@ const handleMemberClear = () => {
 
 const handleMemberInput = (value: string) => {
   console.log('🔍 Member input changed:', value);
-  
+
   // Clear existing timeout
   if (searchTimeout) {
     clearTimeout(searchTimeout);
   }
-  
+
   // Check if this value matches any option label (user selected from dropdown)
-  const matchedOption = memberOptions.value.find(option => option.label === value);
-  
+  const matchedOption = memberOptions.value.find(
+    (option) => option.label === value,
+  );
+
   if (matchedOption) {
     // User selected an option - set the form value to the numeric ID
-    console.log('✅ Found matching option for label:', value, '-> ID:', matchedOption.value);
+    console.log(
+      '✅ Found matching option for label:',
+      value,
+      '-> ID:',
+      matchedOption.value,
+    );
     withdrawalForm.value.memberId = matchedOption.value;
-    
+
     // Update selected member data
     selectedMember.value = {
       value: matchedOption.value,
@@ -2547,12 +3204,12 @@ const handleMemberInput = (value: string) => {
       email: matchedOption.email,
       cpf: matchedOption.cpf,
       balance: matchedOption.balance,
-      vipLevel: matchedOption.vipLevel
+      vipLevel: matchedOption.vipLevel,
     };
-    
+
     return; // Don't trigger search
   }
-  
+
   // Check if user typed a numeric value directly
   if (/^\d+$/.test(value)) {
     console.log('🔢 User typed numeric value directly:', value);
@@ -2563,18 +3220,21 @@ const handleMemberInput = (value: string) => {
   } else {
     // Clear selection when user types a new value
     if (selectedMember.value && selectedMember.value.value !== value) {
-      console.log('🧹 Clearing selection because value changed:', selectedMember.value.value, '!==', value);
+      console.log(
+        '🧹 Clearing selection because value changed:',
+        selectedMember.value.value,
+        '!==',
+        value,
+      );
       selectedMember.value = null;
     }
   }
-  
+
   // Debounce the search
   searchTimeout = setTimeout(() => {
     handleMemberSearch(value);
   }, 200); // 200ms delay for better responsiveness
 };
-
-
 
 // Initialize column configuration from localStorage
 const initializeColumnConfig = () => {
@@ -2582,7 +3242,7 @@ const initializeColumnConfig = () => {
     const savedConfig = localStorage.getItem('withdrawalColumnsConfig');
     if (savedConfig) {
       const visibleColumnKeys = JSON.parse(savedConfig);
-      columnConfigList.value.forEach(col => {
+      columnConfigList.value.forEach((col) => {
         col.visible = visibleColumnKeys.includes(col.key);
       });
       console.log('✅ Column configuration loaded from localStorage');
@@ -2596,35 +3256,37 @@ const initializeColumnConfig = () => {
 const fetchTabCounts = async () => {
   try {
     console.log('📊 Fetching tab counts from PROPER API...');
-    
+
     // 🎯 FIX: Use the REAL tab counts API that includes "由我" counts
     const response = await requestClient.get('/finance-withdrawal/tab-counts');
     console.log('📦 Tab counts response:', response);
-    
+
     if (response && response.data) {
       const counts = response.data;
-      
+
       // ✅ Use REAL counts from backend
       riskReviewCount.value = counts.riskReviewCount || 0;
       financeCount.value = counts.financeCount || 0;
       autoApprovalCount.value = counts.autoApprovalCount || 0;
       myRiskCount.value = counts.myRiskCount || 0; // ✅ REAL count, not simulated!
       myWithdrawalCount.value = counts.myWithdrawalCount || 0; // ✅ REAL count, not simulated!
-      
+
       console.log('✅ Badge counts updated (REAL DATA):', {
         riskReview: riskReviewCount.value,
         finance: financeCount.value,
         auto: autoApprovalCount.value,
         myRisk: myRiskCount.value,
-        myWithdrawal: myWithdrawalCount.value
+        myWithdrawal: myWithdrawalCount.value,
       });
-      
     } else {
       console.warn('⚠️ No data in notification response, using fallback');
       await fetchTabCountsFallback();
     }
   } catch (error) {
-    console.error('❌ Failed to fetch tab counts from notification API:', error);
+    console.error(
+      '❌ Failed to fetch tab counts from notification API:',
+      error,
+    );
     // Fallback to existing withdrawal API
     await fetchTabCountsFallback();
   }
@@ -2635,7 +3297,7 @@ let sseConnection: EventSource | null = null;
 let notificationAudio: HTMLAudioElement | null = null;
 const previousCounts = ref({
   riskReview: 0,
-  finance: 0
+  finance: 0,
 });
 
 // Initialize notification audio
@@ -2643,14 +3305,15 @@ const initAudioContext = () => {
   try {
     // 🎯 Use local audio file from backend/public/sounds/
     // Backend serves static files at /public route (see backend/src/index.ts)
-    const apiUrl = import.meta.env.VITE_GLOB_API_URL || 'http://localhost:5888/api';
+    const apiUrl =
+      import.meta.env.VITE_GLOB_API_URL || 'http://localhost:5888/api';
     const baseUrl = apiUrl.replace('/api', ''); // Remove /api to get base URL
     const audioUrl = `${baseUrl}/public/sounds/withdrawal-notification.mp3`;
-    
+
     notificationAudio = new Audio(audioUrl);
     notificationAudio.volume = 0.7; // 70% volume
     notificationAudio.preload = 'auto'; // Preload the audio
-    
+
     console.log('🔊 Withdrawal notification audio initialized:', audioUrl);
   } catch (error) {
     console.error('Failed to initialize notification audio:', error);
@@ -2667,10 +3330,10 @@ const playNotificationSound = async () => {
 
     // Reset audio to start if it's already playing
     notificationAudio.currentTime = 0;
-    
+
     // Play the audio
     await notificationAudio.play();
-    
+
     console.log('🔔 Withdrawal notification sound played');
   } catch (error) {
     console.error('Error playing notification sound:', error);
@@ -2682,60 +3345,72 @@ const connectToWithdrawalSSE = () => {
   try {
     const authStore = useAuthStore();
     const token = authStore.accessToken;
-    
+
     if (!token) {
       console.warn('No auth token available for SSE connection');
       return;
     }
 
-    const apiUrl = import.meta.env.VITE_GLOB_API_URL || 'http://localhost:5888/api';
+    const apiUrl =
+      import.meta.env.VITE_GLOB_API_URL || 'http://localhost:5888/api';
     const sseUrl = `${apiUrl}/wallet/withdrawal-events/admin-stream?token=${token}`;
-    
+
     console.log('📡 Connecting to withdrawal SSE:', sseUrl);
-    
+
     sseConnection = new EventSource(sseUrl);
-    
+
     sseConnection.onopen = () => {
       console.log('✅ Withdrawal SSE connected');
     };
-    
+
     sseConnection.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
         console.log('📨 Withdrawal SSE message:', data);
-        
+
         if (data.type === 'withdrawal_count_update' && data.counts) {
           // Update counts
           const oldRiskCount = riskReviewCount.value;
           const oldFinanceCount = financeCount.value;
-          
+
           riskReviewCount.value = data.counts.riskControlCount || 0;
           financeCount.value = data.counts.financeWithdrawalCount || 0;
-          
+
           // Play sound if count increased
           const riskIncreased = riskReviewCount.value > oldRiskCount;
           const financeIncreased = financeCount.value > oldFinanceCount;
-          
+
           if (riskIncreased || financeIncreased) {
             playNotificationSound();
             console.log('🔔 New withdrawal notification!', {
               riskControl: `${oldRiskCount} -> ${riskReviewCount.value}`,
-              finance: `${oldFinanceCount} -> ${financeCount.value}`
+              finance: `${oldFinanceCount} -> ${financeCount.value}`,
             });
           }
-          
+
           console.log('✅ Withdrawal counts updated via SSE:', {
             riskControl: riskReviewCount.value,
-            finance: financeCount.value
+            finance: financeCount.value,
           });
         }
-        
+
         // Handle individual withdrawal status updates (remove from table if completed)
-        if (data.type === 'withdrawal_count_update' && data.withdrawalId && data.newStatus) {
-          const completedStatuses = ['success', 'failed', 'rejected', 'canceled'];
+        if (
+          data.type === 'withdrawal_count_update' &&
+          data.withdrawalId &&
+          data.newStatus
+        ) {
+          const completedStatuses = [
+            'success',
+            'failed',
+            'rejected',
+            'canceled',
+          ];
           if (completedStatuses.includes(data.newStatus)) {
             // Trigger refresh of active tab to remove completed withdrawal
-            console.log(`🔄 Withdrawal ${data.withdrawalId} completed (${data.newStatus}), refreshing active tab...`);
+            console.log(
+              `🔄 Withdrawal ${data.withdrawalId} completed (${data.newStatus}), refreshing active tab...`,
+            );
             // The child components will handle their own refresh when they receive the 'refresh-tabs' event
           }
         }
@@ -2743,18 +3418,17 @@ const connectToWithdrawalSSE = () => {
         console.error('Error processing SSE message:', error);
       }
     };
-    
+
     sseConnection.onerror = (error) => {
       console.error('❌ Withdrawal SSE error:', error);
       sseConnection?.close();
-      
+
       // Reconnect after 5 seconds
       setTimeout(() => {
         console.log('🔄 Reconnecting to withdrawal SSE...');
         connectToWithdrawalSSE();
       }, 5000);
     };
-    
   } catch (error) {
     console.error('Failed to connect to withdrawal SSE:', error);
   }
@@ -2774,38 +3448,59 @@ const disconnectFromWithdrawalSSE = () => {
 const fetchTabCountsFallback = async () => {
   try {
     console.log('📊 Fetching tab counts (fallback method)...');
-    
+
     // Call sequentially instead of parallel to avoid overwhelming database connection
-    
+
     // 1. 风控审核 (Risk Control Review) - status: 'reviewing'
-    const riskResponse = await withdrawalApi.getList({ status: 'reviewing', pageSize: 1 });
-    riskReviewCount.value = riskResponse.total || riskResponse.pagination?.total || riskResponse.data?.total || 0;
+    const riskResponse = await withdrawalApi.getList({
+      status: 'reviewing',
+      pageSize: 1,
+    });
+    riskReviewCount.value =
+      riskResponse.total ||
+      riskResponse.pagination?.total ||
+      riskResponse.data?.total ||
+      0;
     console.log(`✅ 风控审核 count: ${riskReviewCount.value}`, riskResponse);
-    
+
     // Small delay to prevent connection pool exhaustion
-    await new Promise(resolve => setTimeout(resolve, 50));
-    
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
     // 2. 财务出款 (Finance Withdrawal) - status: 'pending'
-    const financeResponse = await withdrawalApi.getList({ status: 'pending', pageSize: 1 });
-    financeCount.value = financeResponse.total || financeResponse.pagination?.total || financeResponse.data?.total || 0;
+    const financeResponse = await withdrawalApi.getList({
+      status: 'pending',
+      pageSize: 1,
+    });
+    financeCount.value =
+      financeResponse.total ||
+      financeResponse.pagination?.total ||
+      financeResponse.data?.total ||
+      0;
     console.log(`✅ 财务出款 count: ${financeCount.value}`, financeResponse);
-    
-    await new Promise(resolve => setTimeout(resolve, 50));
-    
+
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
     // 3. 免审出款 (Auto Approval) - status: 'processing'
-    const autoResponse = await withdrawalApi.getList({ status: 'processing', pageSize: 1 });
-    autoApprovalCount.value = autoResponse.total || autoResponse.pagination?.total || autoResponse.data?.total || 0;
+    const autoResponse = await withdrawalApi.getList({
+      status: 'processing',
+      pageSize: 1,
+    });
+    autoApprovalCount.value =
+      autoResponse.total ||
+      autoResponse.pagination?.total ||
+      autoResponse.data?.total ||
+      0;
     console.log(`✅ 免审出款 count: ${autoApprovalCount.value}`, autoResponse);
-    
+
     // For "由我" tabs, we'll start with the same counts as the main tabs
     // These can be refined later when user assignment logic is implemented
     myRiskCount.value = Math.floor(riskReviewCount.value / 2); // Simulated assigned count
     myWithdrawalCount.value = Math.floor(financeCount.value / 2); // Simulated assigned count
-    
+
     console.log('📊 All tab counts fetched:', {
       risk: riskReviewCount.value,
       finance: financeCount.value,
-      auto: autoApprovalCount.value
+      auto: autoApprovalCount.value,
     });
   } catch (error) {
     console.error('❌ Failed to fetch tab counts:', error);
@@ -2823,7 +3518,7 @@ const handleRefreshTabs = () => {
   console.log('🔄 Refreshing all tabs after lock/unlock operation');
   // Refresh tab counts to update badges
   fetchTabCounts();
-  
+
   // If we're on the all-withdrawals tab, also refresh the main data
   if (activeTab.value === 'all-withdrawals') {
     fetchData();
@@ -2844,9 +3539,9 @@ const showMemberDetail = (row: WithdrawOrder) => {
     'row.userID': row.userID,
     'typeof row.memberId': typeof row.memberId,
     'Number(row.memberId)': Number(row.memberId),
-    'will pass to modal': Number(row.memberId)
+    'will pass to modal': Number(row.memberId),
   });
-  
+
   // Use the internal database ID (memberId), not the 9-digit userID
   currentMemberUserId.value = Number(row.memberId);
   showMemberDetailModal.value = true;
@@ -2858,31 +3553,34 @@ const copyToClipboard = (text: string, label: string = '内容') => {
     message.warning('无内容可复制');
     return;
   }
-  navigator.clipboard.writeText(text).then(() => {
-    message.success(`已复制${label}`);
-  }).catch(() => {
-    message.error('复制失败');
-  });
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      message.success(`已复制${label}`);
+    })
+    .catch(() => {
+      message.error('复制失败');
+    });
 };
 
 // Load member tiers for the filter dropdown
 const loadMemberTiers = async () => {
   try {
     console.log('🔍 Loading member tiers for filter dropdown...');
-    const response = await getMemberTiersApi({ 
-      isActive: true, 
+    const response = await getMemberTiersApi({
+      isActive: true,
       pageSize: 100,
       sortBy: 'sortOrder',
-      sortOrder: 'asc'
+      sortOrder: 'asc',
     });
-    
+
     console.log(' Member tiers response:', response);
-    
+
     if (response && response.list && response.list.length > 0) {
       memberTierOptions.value = response.list.map((tier: any) => ({
         label: tier.tierName,
         value: tier.tierCode,
-        tier: tier
+        tier: tier,
       }));
       console.log('✅ Loaded member tier options:', memberTierOptions.value);
     } else {
@@ -2899,23 +3597,23 @@ const loadMemberTiers = async () => {
 onMounted(async () => {
   console.log('🚀 Component mounted, loading data...');
   initializeColumnConfig();
-  
+
   // Initialize audio context for notifications
   initAudioContext();
-  
+
   // Load member tiers for the filter dropdown
   loadMemberTiers();
-  
+
   // 🔧 FIX: Load data sequentially to prevent database connection race
   // Load main data first
   await fetchData();
-  
+
   // 🔔 Connect to real-time SSE for withdrawal count updates
   connectToWithdrawalSSE();
-  
+
   // Small delay before loading tab counts
-  await new Promise(resolve => setTimeout(resolve, 100));
-  
+  await new Promise((resolve) => setTimeout(resolve, 100));
+
   // Then load tab counts (which makes additional queries)
   fetchTabCounts();
 });
@@ -2923,7 +3621,9 @@ onMounted(async () => {
 // Watch for tab changes to stop auto-refresh when leaving 'all-withdrawals' tab
 watch(activeTab, (newTab, oldTab) => {
   if (oldTab === 'all-withdrawals' && newTab !== 'all-withdrawals') {
-    console.log('📦 Switching away from all-withdrawals tab, stopping auto-refresh');
+    console.log(
+      '📦 Switching away from all-withdrawals tab, stopping auto-refresh',
+    );
     // SmartAutoRefresh component handles its own cleanup automatically
     autoRefreshEnabled.value = false;
   }
@@ -2938,10 +3638,10 @@ onUnmounted(() => {
   if (searchTimeout) {
     clearTimeout(searchTimeout);
   }
-  
+
   // Disconnect from SSE
   disconnectFromWithdrawalSSE();
-  
+
   // SmartAutoRefresh handles its own cleanup
   console.log('🧹 Component unmounted');
 });
@@ -3010,7 +3710,7 @@ onUnmounted(() => {
   .md\:grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  
+
   .md\:col-span-2 {
     grid-column: span 2 / span 2;
   }
@@ -3214,4 +3914,4 @@ onUnmounted(() => {
 .info-item:hover .copy-btn {
   opacity: 0.8;
 }
-</style> 
+</style>

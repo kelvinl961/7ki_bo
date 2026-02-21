@@ -1,12 +1,14 @@
 <template>
   <div class="contact-tab">
     <n-card title="联系方式信息" class="mb-4">
-      <div class="text-center text-gray-500 py-8">
+      <div class="py-8 text-center text-gray-500">
         <n-icon size="48" class="mb-4">
           <LockClosedOutline />
         </n-icon>
-        <div class="text-lg font-medium mb-2">需要安全码解密</div>
-        <div class="text-sm">请联系管理员获取安全码以查看完整的联系方式信息</div>
+        <div class="mb-2 text-lg font-medium">需要安全码解密</div>
+        <div class="text-sm">
+          请联系管理员获取安全码以查看完整的联系方式信息
+        </div>
       </div>
     </n-card>
 
@@ -23,14 +25,20 @@
           {{ agentDetail?.referralCode || '--' }}
         </n-descriptions-item>
         <n-descriptions-item label="币种">
-          <n-tag type="info" size="small">{{ agentDetail?.currency || '--' }}</n-tag>
+          <n-tag type="info" size="small">{{
+            agentDetail?.currency || '--'
+          }}</n-tag>
         </n-descriptions-item>
       </n-descriptions>
     </n-card>
 
     <!-- Security Code Input -->
     <n-card title="安全码验证" class="mb-4">
-      <n-form :model="securityForm" :rules="securityRules" ref="securityFormRef">
+      <n-form
+        :model="securityForm"
+        :rules="securityRules"
+        ref="securityFormRef"
+      >
         <n-form-item label="安全码" path="securityCode">
           <n-input
             v-model:value="securityForm.securityCode"
@@ -44,9 +52,7 @@
           <n-button type="primary" @click="handleDecrypt" :loading="decrypting">
             解密查看
           </n-button>
-          <n-button @click="handleReset" class="ml-2">
-            重置
-          </n-button>
+          <n-button @click="handleReset" class="ml-2"> 重置 </n-button>
         </n-form-item>
       </n-form>
     </n-card>
@@ -85,22 +91,22 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue';
-import { 
-  NCard, 
-  NDescriptions, 
-  NDescriptionsItem, 
-  NForm, 
-  NFormItem, 
-  NInput, 
-  NButton, 
-  NTag, 
+import {
+  NCard,
+  NDescriptions,
+  NDescriptionsItem,
+  NForm,
+  NFormItem,
+  NInput,
+  NButton,
+  NTag,
   NIcon,
-  useMessage 
+  useMessage,
 } from 'naive-ui';
 import { LockClosedOutline } from '@vicons/ionicons5';
-import { 
-  getAgentContactInfoApi, 
-  type AgentContactInfo 
+import {
+  getAgentContactInfoApi,
+  type AgentContactInfo,
 } from '#/api/agency/agent-details';
 
 interface Props {
@@ -123,7 +129,7 @@ interface DecryptedInfo {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  agentId: 0
+  agentId: 0,
 });
 
 const message = useMessage();
@@ -133,7 +139,7 @@ const loading = ref(false);
 const agentDetail = ref<AgentContactInfo | null>(null);
 const securityFormRef = ref();
 const securityForm = reactive<SecurityForm>({
-  securityCode: ''
+  securityCode: '',
 });
 
 const decrypting = ref(false);
@@ -148,7 +154,7 @@ const decryptedInfo = ref<DecryptedInfo>({
   address: '',
   emergencyContact: '',
   emergencyPhone: '',
-  notes: ''
+  notes: '',
 });
 
 // Validation rules
@@ -156,19 +162,19 @@ const securityRules = {
   securityCode: {
     required: true,
     message: '请输入安全码',
-    trigger: 'blur'
-  }
+    trigger: 'blur',
+  },
 };
 
 // Methods
 const loadAgentContactInfo = async () => {
   if (!props.agentId) return;
-  
+
   loading.value = true;
   try {
     const data = await getAgentContactInfoApi(props.agentId);
     agentDetail.value = data;
-    
+
     // Map API data to decrypted info
     decryptedInfo.value = {
       realName: data.realName || '',
@@ -178,7 +184,7 @@ const loadAgentContactInfo = async () => {
       address: data.address || '',
       emergencyContact: data.emergencyContact || '',
       emergencyPhone: data.emergencyPhone || '',
-      notes: data.notes || ''
+      notes: data.notes || '',
     };
   } catch (error) {
     console.error('Failed to load agent contact info:', error);
@@ -192,10 +198,10 @@ const handleDecrypt = async () => {
   try {
     await securityFormRef.value?.validate();
     decrypting.value = true;
-    
+
     // Simulate API call for security verification
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     if (securityForm.securityCode === 'admin123') {
       isDecrypted.value = true;
       message.success('解密成功，联系方式信息已显示');

@@ -1,8 +1,8 @@
 <template>
   <Page title="域名管理" description="CDN域名配置与管理">
-    <n-tabs 
-      v-model:value="activeTab" 
-      type="line" 
+    <n-tabs
+      v-model:value="activeTab"
+      type="line"
       animated
       @update:value="handleTabChange"
     >
@@ -43,7 +43,7 @@
 
       <!-- Tab 8: 中转网址 -->
       <n-tab-pane name="transfer-url" tab="中转网址">
-        <FilteredDomainsView 
+        <FilteredDomainsView
           title="中转网址"
           :filter="{ useType: 'TRANSFER_PAGE' }"
         />
@@ -88,20 +88,48 @@ import { useRoute, useRouter } from 'vue-router';
 import { Page } from '@vben/common-ui';
 import { NTabs, NTabPane } from 'naive-ui';
 // ✅ PERFORMANCE FIX: Lazy load tab components - they only load when their tab is opened (13 tabs!)
-const AllDomainsView = defineAsyncComponent(() => import('./tabs/AllDomainsView.vue'));
-const WebHallView = defineAsyncComponent(() => import('./tabs/WebHallView.vue'));
-const BackendApiView = defineAsyncComponent(() => import('./tabs/BackendApiView.vue'));
-const AppUpdateView = defineAsyncComponent(() => import('./tabs/AppUpdateView.vue'));
-const OssAccelerationView = defineAsyncComponent(() => import('./tabs/OssAccelerationView.vue'));
-const DownloadSiteView = defineAsyncComponent(() => import('./tabs/DownloadSiteView.vue'));
-const FilteredDomainsView = defineAsyncComponent(() => import('./tabs/FilteredDomainsView.vue'));
-const TransferTemplateView = defineAsyncComponent(() => import('./tabs/TransferTemplateView.vue'));
-const WhitelistDomainsView = defineAsyncComponent(() => import('./tabs/WhitelistDomainsView.vue'));
-const HealthCheckView = defineAsyncComponent(() => import('./tabs/HealthCheckView.vue'));
-const CustomDNSView = defineAsyncComponent(() => import('./tabs/CustomDNSView.vue'));
-const TrafficStatsView = defineAsyncComponent(() => import('./tabs/TrafficStatsView.vue'));
-const BatchCacheView = defineAsyncComponent(() => import('./tabs/BatchCacheView.vue'));
-const CertificateView = defineAsyncComponent(() => import('./tabs/CertificateView.vue'));
+const AllDomainsView = defineAsyncComponent(
+  () => import('./tabs/AllDomainsView.vue'),
+);
+const WebHallView = defineAsyncComponent(
+  () => import('./tabs/WebHallView.vue'),
+);
+const BackendApiView = defineAsyncComponent(
+  () => import('./tabs/BackendApiView.vue'),
+);
+const AppUpdateView = defineAsyncComponent(
+  () => import('./tabs/AppUpdateView.vue'),
+);
+const OssAccelerationView = defineAsyncComponent(
+  () => import('./tabs/OssAccelerationView.vue'),
+);
+const DownloadSiteView = defineAsyncComponent(
+  () => import('./tabs/DownloadSiteView.vue'),
+);
+const FilteredDomainsView = defineAsyncComponent(
+  () => import('./tabs/FilteredDomainsView.vue'),
+);
+const TransferTemplateView = defineAsyncComponent(
+  () => import('./tabs/TransferTemplateView.vue'),
+);
+const WhitelistDomainsView = defineAsyncComponent(
+  () => import('./tabs/WhitelistDomainsView.vue'),
+);
+const HealthCheckView = defineAsyncComponent(
+  () => import('./tabs/HealthCheckView.vue'),
+);
+const CustomDNSView = defineAsyncComponent(
+  () => import('./tabs/CustomDNSView.vue'),
+);
+const TrafficStatsView = defineAsyncComponent(
+  () => import('./tabs/TrafficStatsView.vue'),
+);
+const BatchCacheView = defineAsyncComponent(
+  () => import('./tabs/BatchCacheView.vue'),
+);
+const CertificateView = defineAsyncComponent(
+  () => import('./tabs/CertificateView.vue'),
+);
 
 const route = useRoute();
 const router = useRouter();

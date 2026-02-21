@@ -2,7 +2,7 @@
   <div class="messages-tab">
     <!-- Message Summary -->
     <n-card title="消息概览" class="mb-4">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
         <div class="stat-card">
           <div class="stat-value">{{ totalMessages }}</div>
           <div class="stat-label">总消息数</div>
@@ -34,9 +34,7 @@
         <n-button type="warning" @click="handleExportMessages">
           导出消息
         </n-button>
-        <n-button @click="handleRefresh">
-          刷新
-        </n-button>
+        <n-button @click="handleRefresh"> 刷新 </n-button>
       </div>
     </n-card>
 
@@ -53,7 +51,12 @@
     </n-card>
 
     <!-- Compose Message Modal -->
-    <n-modal v-model:show="showComposeModal" preset="card" title="发送消息" style="width: 600px">
+    <n-modal
+      v-model:show="showComposeModal"
+      preset="card"
+      title="发送消息"
+      style="width: 600px"
+    >
       <n-form
         ref="formRef"
         :model="messageForm"
@@ -62,13 +65,19 @@
         label-width="120px"
       >
         <n-form-item label="消息类型" path="type">
-          <n-select v-model:value="messageForm.type" :options="messageTypeOptions" />
+          <n-select
+            v-model:value="messageForm.type"
+            :options="messageTypeOptions"
+          />
         </n-form-item>
-        
+
         <n-form-item label="标题" path="title">
-          <n-input v-model:value="messageForm.title" placeholder="请输入消息标题" />
+          <n-input
+            v-model:value="messageForm.title"
+            placeholder="请输入消息标题"
+          />
         </n-form-item>
-        
+
         <n-form-item label="内容" path="content">
           <n-input
             v-model:value="messageForm.content"
@@ -77,11 +86,14 @@
             :rows="6"
           />
         </n-form-item>
-        
+
         <n-form-item label="优先级" path="priority">
-          <n-select v-model:value="messageForm.priority" :options="priorityOptions" />
+          <n-select
+            v-model:value="messageForm.priority"
+            :options="priorityOptions"
+          />
         </n-form-item>
-        
+
         <n-form-item label="备注" path="remark">
           <n-input
             v-model:value="messageForm.remark"
@@ -91,11 +103,15 @@
           />
         </n-form-item>
       </n-form>
-      
+
       <template #action>
         <div class="flex gap-2">
           <n-button @click="showComposeModal = false">取消</n-button>
-          <n-button type="primary" @click="handleSubmitMessage" :loading="submitting">
+          <n-button
+            type="primary"
+            @click="handleSubmitMessage"
+            :loading="submitting"
+          >
             发送
           </n-button>
         </div>
@@ -106,18 +122,18 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, h, onMounted } from 'vue';
-import { 
-  NCard, 
-  NButton, 
-  NDataTable, 
-  NModal, 
-  NForm, 
-  NFormItem, 
-  NInput, 
-  NSelect, 
-  NTag, 
+import {
+  NCard,
+  NButton,
+  NDataTable,
+  NModal,
+  NForm,
+  NFormItem,
+  NInput,
+  NSelect,
+  NTag,
   useMessage,
-  type DataTableColumns 
+  type DataTableColumns,
 } from 'naive-ui';
 import type { AgentRecord } from '#/api/agency/agent';
 
@@ -148,7 +164,7 @@ interface MessageForm {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  agentId: 0
+  agentId: 0,
 });
 
 const message = useMessage();
@@ -171,7 +187,7 @@ const mockMessages: Message[] = [
     sender: 'system',
     recipient: 'testagent',
     sendTime: '2024-12-01T10:00:00Z',
-    remark: '重要系统通知'
+    remark: '重要系统通知',
   },
   {
     id: 2,
@@ -184,7 +200,7 @@ const mockMessages: Message[] = [
     recipient: 'testagent',
     sendTime: '2024-12-01T11:00:00Z',
     readTime: '2024-12-01T11:30:00Z',
-    remark: '佣金相关'
+    remark: '佣金相关',
   },
   {
     id: 3,
@@ -196,8 +212,8 @@ const mockMessages: Message[] = [
     sender: 'admin',
     recipient: 'testagent',
     sendTime: '2024-12-01T12:00:00Z',
-    remark: '活动推广'
-  }
+    remark: '活动推广',
+  },
 ];
 
 const messageForm = reactive<MessageForm>({
@@ -205,7 +221,7 @@ const messageForm = reactive<MessageForm>({
   title: '',
   content: '',
   priority: 'normal',
-  remark: ''
+  remark: '',
 });
 
 // Options
@@ -214,14 +230,14 @@ const messageTypeOptions = [
   { label: '佣金通知', value: 'commission' },
   { label: '活动通知', value: 'activity' },
   { label: '安全提醒', value: 'security' },
-  { label: '其他消息', value: 'other' }
+  { label: '其他消息', value: 'other' },
 ];
 
 const priorityOptions = [
   { label: '低', value: 'low' },
   { label: '普通', value: 'normal' },
   { label: '高', value: 'high' },
-  { label: '紧急', value: 'urgent' }
+  { label: '紧急', value: 'urgent' },
 ];
 
 // Pagination
@@ -246,18 +262,18 @@ const pagination = reactive({
 // Computed
 const totalMessages = computed(() => messages.value.length);
 
-const unreadMessages = computed(() => 
-  messages.value.filter(msg => msg.status === 'unread').length
+const unreadMessages = computed(
+  () => messages.value.filter((msg) => msg.status === 'unread').length,
 );
 
-const systemMessages = computed(() => 
-  messages.value.filter(msg => msg.type === 'system').length
+const systemMessages = computed(
+  () => messages.value.filter((msg) => msg.type === 'system').length,
 );
 
 const todayMessages = computed(() => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  return messages.value.filter(msg => new Date(msg.sendTime) >= today).length;
+  return messages.value.filter((msg) => new Date(msg.sendTime) >= today).length;
 });
 
 // Table columns
@@ -266,7 +282,7 @@ const columns: DataTableColumns<Message> = [
     title: 'ID',
     key: 'id',
     width: 80,
-    align: 'center'
+    align: 'center',
   },
   {
     title: '类型',
@@ -274,25 +290,33 @@ const columns: DataTableColumns<Message> = [
     width: 100,
     render: (row) => {
       const typeMap = {
-        'system': { label: '系统消息', type: 'info', icon: '⚙️' },
-        'commission': { label: '佣金通知', type: 'success', icon: '💰' },
-        'activity': { label: '活动通知', type: 'warning', icon: '🎁' },
-        'security': { label: '安全提醒', type: 'error', icon: '🔒' },
-        'other': { label: '其他消息', type: 'default', icon: '📝' }
+        system: { label: '系统消息', type: 'info', icon: '⚙️' },
+        commission: { label: '佣金通知', type: 'success', icon: '💰' },
+        activity: { label: '活动通知', type: 'warning', icon: '🎁' },
+        security: { label: '安全提醒', type: 'error', icon: '🔒' },
+        other: { label: '其他消息', type: 'default', icon: '📝' },
       };
-      const typeInfo = typeMap[row.type as keyof typeof typeMap] || { label: row.type, type: 'default', icon: '❓' };
+      const typeInfo = typeMap[row.type as keyof typeof typeMap] || {
+        label: row.type,
+        type: 'default',
+        icon: '❓',
+      };
       return h('div', { class: 'flex items-center gap-2' }, [
         h('span', { class: 'text-lg' }, typeInfo.icon),
-        h(NTag, { type: typeInfo.type, size: 'small' }, { default: () => typeInfo.label })
+        h(
+          NTag,
+          { type: typeInfo.type, size: 'small' },
+          { default: () => typeInfo.label },
+        ),
       ]);
-    }
+    },
   },
   {
     title: '标题',
     key: 'title',
     width: 200,
     ellipsis: true,
-    tooltip: true
+    tooltip: true,
   },
   {
     title: '优先级',
@@ -300,14 +324,20 @@ const columns: DataTableColumns<Message> = [
     width: 100,
     render: (row) => {
       const priorityMap = {
-        'low': { label: '低', type: 'default' },
-        'normal': { label: '普通', type: 'info' },
-        'high': { label: '高', type: 'warning' },
-        'urgent': { label: '紧急', type: 'error' }
+        low: { label: '低', type: 'default' },
+        normal: { label: '普通', type: 'info' },
+        high: { label: '高', type: 'warning' },
+        urgent: { label: '紧急', type: 'error' },
       };
-      const priority = priorityMap[row.priority as keyof typeof priorityMap] || { label: row.priority, type: 'default' };
-      return h(NTag, { type: priority.type, size: 'small' }, { default: () => priority.label });
-    }
+      const priority = priorityMap[
+        row.priority as keyof typeof priorityMap
+      ] || { label: row.priority, type: 'default' };
+      return h(
+        NTag,
+        { type: priority.type, size: 'small' },
+        { default: () => priority.label },
+      );
+    },
   },
   {
     title: '状态',
@@ -315,20 +345,28 @@ const columns: DataTableColumns<Message> = [
     width: 100,
     render: (row) => {
       const statusMap = {
-        'unread': { label: '未读', type: 'warning', icon: '📬' },
-        'read': { label: '已读', type: 'success', icon: '📭' }
+        unread: { label: '未读', type: 'warning', icon: '📬' },
+        read: { label: '已读', type: 'success', icon: '📭' },
       };
-      const status = statusMap[row.status as keyof typeof statusMap] || { label: row.status, type: 'default', icon: '❓' };
+      const status = statusMap[row.status as keyof typeof statusMap] || {
+        label: row.status,
+        type: 'default',
+        icon: '❓',
+      };
       return h('div', { class: 'flex items-center gap-2' }, [
         h('span', { class: 'text-sm' }, status.icon),
-        h(NTag, { type: status.type, size: 'small' }, { default: () => status.label })
+        h(
+          NTag,
+          { type: status.type, size: 'small' },
+          { default: () => status.label },
+        ),
       ]);
-    }
+    },
   },
   {
     title: '发送者',
     key: 'sender',
-    width: 120
+    width: 120,
   },
   {
     title: '发送时间',
@@ -337,15 +375,21 @@ const columns: DataTableColumns<Message> = [
     render: (row) => {
       return h('div', { class: 'text-sm' }, [
         h('div', { class: 'font-medium' }, formatDateTime(row.sendTime)),
-        row.readTime ? h('div', { class: 'text-xs text-gray-500' }, `已读: ${formatDateTime(row.readTime)}`) : null
+        row.readTime
+          ? h(
+              'div',
+              { class: 'text-xs text-gray-500' },
+              `已读: ${formatDateTime(row.readTime)}`,
+            )
+          : null,
       ]);
-    }
+    },
   },
   {
     title: '备注',
     key: 'remark',
     ellipsis: true,
-    tooltip: true
+    tooltip: true,
   },
   {
     title: '操作',
@@ -354,24 +398,38 @@ const columns: DataTableColumns<Message> = [
     fixed: 'right',
     render: (row) => {
       return h('div', { class: 'flex gap-1' }, [
-        h(NButton, {
-          size: 'tiny',
-          type: 'info',
-          onClick: () => handleViewMessage(row)
-        }, { default: () => '查看' }),
-        h(NButton, {
-          size: 'tiny',
-          type: row.status === 'unread' ? 'success' : 'warning',
-          onClick: () => handleToggleReadStatus(row)
-        }, { default: () => row.status === 'unread' ? '标记已读' : '标记未读' }),
-        h(NButton, {
-          size: 'tiny',
-          type: 'error',
-          onClick: () => handleDeleteMessage(row.id)
-        }, { default: () => '删除' })
+        h(
+          NButton,
+          {
+            size: 'tiny',
+            type: 'info',
+            onClick: () => handleViewMessage(row),
+          },
+          { default: () => '查看' },
+        ),
+        h(
+          NButton,
+          {
+            size: 'tiny',
+            type: row.status === 'unread' ? 'success' : 'warning',
+            onClick: () => handleToggleReadStatus(row),
+          },
+          {
+            default: () => (row.status === 'unread' ? '标记已读' : '标记未读'),
+          },
+        ),
+        h(
+          NButton,
+          {
+            size: 'tiny',
+            type: 'error',
+            onClick: () => handleDeleteMessage(row.id),
+          },
+          { default: () => '删除' },
+        ),
       ]);
-    }
-  }
+    },
+  },
 ];
 
 // Form validation rules
@@ -379,18 +437,18 @@ const rules = {
   type: {
     required: true,
     message: '请选择消息类型',
-    trigger: 'blur'
+    trigger: 'blur',
   },
   title: {
     required: true,
     message: '请输入消息标题',
-    trigger: 'blur'
+    trigger: 'blur',
   },
   content: {
     required: true,
     message: '请输入消息内容',
-    trigger: 'blur'
-  }
+    trigger: 'blur',
+  },
 };
 
 // Methods
@@ -398,7 +456,7 @@ const loadMessages = async () => {
   loading.value = true;
   try {
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
     messages.value = [...mockMessages];
     pagination.itemCount = messages.value.length;
   } catch (error) {
@@ -415,31 +473,31 @@ const handleComposeMessage = () => {
 const handleSubmitMessage = async () => {
   try {
     submitting.value = true;
-    
+
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     const newMessage: Message = {
       id: Date.now(),
       ...messageForm,
       status: 'unread',
       recipient: 'testagent',
-      sendTime: new Date().toISOString()
+      sendTime: new Date().toISOString(),
     };
-    
+
     messages.value.unshift(newMessage);
     message.success('消息发送成功');
     showComposeModal.value = false;
-    
+
     // Reset form
     Object.assign(messageForm, {
       type: 'system',
       title: '',
       content: '',
       priority: 'normal',
-      remark: ''
+      remark: '',
     });
-    
+
     loadMessages();
   } catch (error) {
     message.error('发送失败');
@@ -463,11 +521,13 @@ const handleToggleReadStatus = (msg: Message) => {
   } else {
     msg.readTime = undefined;
   }
-  message.success(`消息已${msg.status === 'read' ? '标记为已读' : '标记为未读'}`);
+  message.success(
+    `消息已${msg.status === 'read' ? '标记为已读' : '标记为未读'}`,
+  );
 };
 
 const handleDeleteMessage = (id: number) => {
-  const index = messages.value.findIndex(msg => msg.id === id);
+  const index = messages.value.findIndex((msg) => msg.id === id);
   if (index !== -1) {
     messages.value.splice(index, 1);
     message.success('消息删除成功');
@@ -476,7 +536,7 @@ const handleDeleteMessage = (id: number) => {
 };
 
 const handleMarkAllRead = () => {
-  messages.value.forEach(msg => {
+  messages.value.forEach((msg) => {
     if (msg.status === 'unread') {
       msg.status = 'read';
       msg.readTime = new Date().toISOString();

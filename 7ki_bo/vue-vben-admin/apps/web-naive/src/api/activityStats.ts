@@ -18,8 +18,8 @@ export interface ActivityStatistics {
   claimedAmount: number;
   activityAmount: number;
   status: string;
-  startsAt: string | null;
-  endsAt: string | null;
+  startsAt: null | string;
+  endsAt: null | string;
 }
 
 export interface ActivityOverview {
@@ -29,28 +29,28 @@ export interface ActivityOverview {
   totalRewardsClaimed: number;
   totalRewardsDistributed: number;
   averageParticipationRate: number;
-  topPerformingActivity: {
+  topPerformingActivity: null | {
     id: string;
     name: string;
     participants: number;
     rewardsClaimed: number;
-  } | null;
+  };
 }
 
 export interface ActivityStatsResponse {
   statistics: ActivityStatistics[];
   pagination: {
-    page: number;
     limit: number;
+    page: number;
     total: number;
     totalPages: number;
   };
   summary: {
     totalActivities: number;
-    totalClaimedUsers: number;
+    totalActivityAmount: number;
     totalClaimCount: number;
     totalClaimedAmount: number;
-    totalActivityAmount: number;
+    totalClaimedUsers: number;
   };
 }
 
@@ -85,11 +85,11 @@ export interface ActivityTrends {
   startDate: string;
   endDate: string;
   trends: Array<{
-    date: string;
     activitiesCreated: number;
+    date: string;
+    totalAmountClaimed: number;
     totalParticipations: number;
     totalRewardsClaimed: number;
-    totalAmountClaimed: number;
   }>;
 }
 
@@ -100,7 +100,7 @@ export async function getActivityStatistics(params: ActivityStatsParams) {
   try {
     const response = await requestClient.get('/activity-stats', { params });
     console.log('📊 Activity Stats Response:', response);
-    
+
     if (response.success) {
       return response.data as ActivityStatsResponse;
     } else {
@@ -116,14 +116,16 @@ export async function getActivityStatistics(params: ActivityStatsParams) {
  * Get activity overview/summary
  */
 export async function getActivityOverview(params: {
-  startDate?: string;
-  endDate?: string;
   currency?: string;
+  endDate?: string;
+  startDate?: string;
 }) {
   try {
-    const response = await requestClient.get('/activity-stats/overview', { params });
+    const response = await requestClient.get('/activity-stats/overview', {
+      params,
+    });
     console.log('📈 Activity Overview Response:', response);
-    
+
     if (response.success) {
       return response.data as ActivityOverview;
     } else {
@@ -139,11 +141,13 @@ export async function getActivityOverview(params: {
  * Get activity statistics by type
  */
 export async function getActivityStatsByType(params: {
-  startDate?: string;
-  endDate?: string;
   currency?: string;
+  endDate?: string;
+  startDate?: string;
 }) {
-  const response = await requestClient.get('/api/activity-stats/by-type', { params });
+  const response = await requestClient.get('/api/activity-stats/by-type', {
+    params,
+  });
   return response.data as ActivityStatsByType[];
 }
 
@@ -153,7 +157,9 @@ export async function getActivityStatsByType(params: {
 export async function getActivityRealTimeMetrics(params: {
   currency?: string;
 }) {
-  const response = await requestClient.get('/api/activity-stats/realtime', { params });
+  const response = await requestClient.get('/api/activity-stats/realtime', {
+    params,
+  });
   return response.data as ActivityRealTimeMetrics;
 }
 
@@ -161,11 +167,13 @@ export async function getActivityRealTimeMetrics(params: {
  * Get activity performance trends
  */
 export async function getActivityTrends(params: {
-  period: string;
   activityType?: string;
   currency?: string;
+  period: string;
 }) {
-  const response = await requestClient.get('/api/activity-stats/trends', { params });
+  const response = await requestClient.get('/api/activity-stats/trends', {
+    params,
+  });
   return response.data as ActivityTrends;
 }
 
@@ -175,11 +183,13 @@ export async function getActivityTrends(params: {
 export async function getActivityDetailStats(
   activityId: string,
   params: {
-    startDate?: string;
     endDate?: string;
-  }
+    startDate?: string;
+  },
 ) {
-  const response = await requestClient.get(`/activity-stats/${activityId}`, { params });
+  const response = await requestClient.get(`/activity-stats/${activityId}`, {
+    params,
+  });
   return response.data as ActivityStatistics;
 }
 
@@ -190,14 +200,14 @@ export function exportActivityStats(params: ActivityStatsParams) {
   // Create download URL with parameters
   const queryString = new URLSearchParams(params as any).toString();
   const url = `/activity-stats/export?${queryString}`;
-  
+
   // Trigger download
   const link = document.createElement('a');
   link.href = url;
   link.download = `activity_stats_${new Date().toISOString().split('T')[0]}.csv`;
-  document.body.appendChild(link);
+  document.body.append(link);
   link.click();
-  document.body.removeChild(link);
-  
+  link.remove();
+
   return Promise.resolve();
 }

@@ -46,13 +46,13 @@ export interface WithdrawalRecord {
 export interface GetWithdrawalsResponse {
   success: boolean;
   data: {
-    withdrawals: WithdrawalRecord[];
     pagination: {
       current: number;
       pageSize: number;
       total: number;
       totalPages: number;
     };
+    withdrawals: WithdrawalRecord[];
   };
   message?: string;
 }
@@ -85,8 +85,8 @@ export interface BulkOperationResponse {
   data: {
     results: Array<{
       id: string;
-      success: boolean;
       message: string;
+      success: boolean;
     }>;
   };
 }
@@ -103,7 +103,7 @@ export interface ForceCancelRequest {
 }
 
 export interface ForceRejectRequest {
-  windControlProcess: 'no' | 'add_audit' | 'deduct_balance';
+  windControlProcess: 'add_audit' | 'deduct_balance' | 'no';
   auditTask?: {
     multiplier: number;
     platforms: { [key: string]: boolean };
@@ -118,8 +118,13 @@ export const financeWithdrawalApi = {
   /**
    * Get withdrawals for finance processing
    */
-  async getWithdrawalsForProcessing(filters: FinanceWithdrawalFilters): Promise<GetWithdrawalsResponse> {
-    const response = await requestClient.get('/wallet/finance-withdrawal/withdrawals', { params: filters });
+  async getWithdrawalsForProcessing(
+    filters: FinanceWithdrawalFilters,
+  ): Promise<GetWithdrawalsResponse> {
+    const response = await requestClient.get(
+      '/wallet/finance-withdrawal/withdrawals',
+      { params: filters },
+    );
     // Response interceptor returns the whole response object for success: true format
     return response;
   },
@@ -127,8 +132,14 @@ export const financeWithdrawalApi = {
   /**
    * Lock or unlock withdrawal order
    */
-  async lockWithdrawal(withdrawalId: string, action: 'lock' | 'unlock'): Promise<OperationResponse> {
-    const response = await requestClient.post(`/wallet/finance-withdrawal/withdrawals/${withdrawalId}/lock`, { action });
+  async lockWithdrawal(
+    withdrawalId: string,
+    action: 'lock' | 'unlock',
+  ): Promise<OperationResponse> {
+    const response = await requestClient.post(
+      `/wallet/finance-withdrawal/withdrawals/${withdrawalId}/lock`,
+      { action },
+    );
     // Response interceptor returns the whole response object for success: true format
     return response;
   },
@@ -136,8 +147,14 @@ export const financeWithdrawalApi = {
   /**
    * Process withdrawal (confirm or reject)
    */
-  async processWithdrawal(withdrawalId: string, data: ProcessRequest): Promise<OperationResponse> {
-    const response = await requestClient.post(`/wallet/finance-withdrawal/withdrawals/${withdrawalId}/process`, data);
+  async processWithdrawal(
+    withdrawalId: string,
+    data: ProcessRequest,
+  ): Promise<OperationResponse> {
+    const response = await requestClient.post(
+      `/wallet/finance-withdrawal/withdrawals/${withdrawalId}/process`,
+      data,
+    );
     // Response interceptor returns the whole response object for success: true format
     return response;
   },
@@ -145,8 +162,14 @@ export const financeWithdrawalApi = {
   /**
    * Assign withdrawal to processor
    */
-  async assignWithdrawal(withdrawalId: string, data: AssignRequest): Promise<OperationResponse> {
-    const response = await requestClient.post(`/wallet/finance-withdrawal/withdrawals/${withdrawalId}/assign`, data);
+  async assignWithdrawal(
+    withdrawalId: string,
+    data: AssignRequest,
+  ): Promise<OperationResponse> {
+    const response = await requestClient.post(
+      `/wallet/finance-withdrawal/withdrawals/${withdrawalId}/assign`,
+      data,
+    );
     // Response interceptor returns the whole response object for success: true format
     return response;
   },
@@ -155,7 +178,10 @@ export const financeWithdrawalApi = {
    * Bulk process withdrawals
    */
   async bulkProcess(data: BulkProcessRequest): Promise<BulkOperationResponse> {
-    const response = await requestClient.post('/wallet/finance-withdrawal/withdrawals/bulk-process', data);
+    const response = await requestClient.post(
+      '/wallet/finance-withdrawal/withdrawals/bulk-process',
+      data,
+    );
     // Response interceptor returns the whole response object for success: true format
     return response;
   },
@@ -164,7 +190,10 @@ export const financeWithdrawalApi = {
    * Bulk assign withdrawals
    */
   async bulkAssign(data: BulkAssignRequest): Promise<BulkOperationResponse> {
-    const response = await requestClient.post('/wallet/finance-withdrawal/withdrawals/bulk-assign', data);
+    const response = await requestClient.post(
+      '/wallet/finance-withdrawal/withdrawals/bulk-assign',
+      data,
+    );
     // Response interceptor returns the whole response object for success: true format
     return response;
   },
@@ -172,8 +201,14 @@ export const financeWithdrawalApi = {
   /**
    * Get finance withdrawal statistics
    */
-  async getFinanceWithdrawalStats(params?: { startDate?: string; endDate?: string }): Promise<any> {
-    const response = await requestClient.get('/wallet/finance-withdrawal/statistics', { params });
+  async getFinanceWithdrawalStats(params?: {
+    endDate?: string;
+    startDate?: string;
+  }): Promise<any> {
+    const response = await requestClient.get(
+      '/wallet/finance-withdrawal/statistics',
+      { params },
+    );
     // Response interceptor returns the whole response object for success: true format
     return response;
   },
@@ -181,11 +216,16 @@ export const financeWithdrawalApi = {
   /**
    * Export finance withdrawal data
    */
-  async exportFinanceWithdrawalData(filters: FinanceWithdrawalFilters): Promise<Blob> {
-    const response = await requestClient.get('/wallet/finance-withdrawal/export', { 
-      params: filters,
-      responseType: 'blob' 
-    });
+  async exportFinanceWithdrawalData(
+    filters: FinanceWithdrawalFilters,
+  ): Promise<Blob> {
+    const response = await requestClient.get(
+      '/wallet/finance-withdrawal/export',
+      {
+        params: filters,
+        responseType: 'blob',
+      },
+    );
     // For blob responses, return response.data directly
     return response.data;
   },
@@ -193,16 +233,28 @@ export const financeWithdrawalApi = {
   /**
    * Force cancel withdrawal
    */
-  async forceCancel(withdrawalId: string, data: ForceCancelRequest): Promise<OperationResponse> {
-    const response = await requestClient.post(`/wallet/finance-withdrawal/withdrawals/${withdrawalId}/force-cancel`, data);
+  async forceCancel(
+    withdrawalId: string,
+    data: ForceCancelRequest,
+  ): Promise<OperationResponse> {
+    const response = await requestClient.post(
+      `/wallet/finance-withdrawal/withdrawals/${withdrawalId}/force-cancel`,
+      data,
+    );
     return response;
   },
 
   /**
    * Force reject withdrawal with optional audit task
    */
-  async forceReject(withdrawalId: string, data: ForceRejectRequest): Promise<OperationResponse> {
-    const response = await requestClient.post(`/wallet/finance-withdrawal/withdrawals/${withdrawalId}/force-reject`, data);
+  async forceReject(
+    withdrawalId: string,
+    data: ForceRejectRequest,
+  ): Promise<OperationResponse> {
+    const response = await requestClient.post(
+      `/wallet/finance-withdrawal/withdrawals/${withdrawalId}/force-reject`,
+      data,
+    );
     return response;
   },
 
@@ -210,7 +262,9 @@ export const financeWithdrawalApi = {
    * Approve withdrawal for processing
    */
   async approveWithdrawal(withdrawalId: string): Promise<OperationResponse> {
-    const response = await requestClient.post(`/wallet/finance-withdrawal/withdrawals/${withdrawalId}/approve`);
+    const response = await requestClient.post(
+      `/wallet/finance-withdrawal/withdrawals/${withdrawalId}/approve`,
+    );
     return response;
   },
 
@@ -218,7 +272,9 @@ export const financeWithdrawalApi = {
    * Manual withdrawal (mark as completed without third-party payment)
    */
   async manualWithdrawal(withdrawalId: string): Promise<OperationResponse> {
-    const response = await requestClient.post(`/wallet/finance-withdrawal/withdrawals/${withdrawalId}/manual-withdrawal`);
+    const response = await requestClient.post(
+      `/wallet/finance-withdrawal/withdrawals/${withdrawalId}/manual-withdrawal`,
+    );
     return response;
   },
 
@@ -226,29 +282,37 @@ export const financeWithdrawalApi = {
    * Get tab counts for notification badges
    */
   async getTabCounts(): Promise<{
-    success: boolean;
     data: {
-      riskReviewCount: number;
-      myRiskCount: number;
-      financeCount: number;
-      myWithdrawalCount: number;
       autoApprovalCount: number;
+      financeCount: number;
+      myRiskCount: number;
+      myWithdrawalCount: number;
+      riskReviewCount: number;
     };
     message?: string;
+    success: boolean;
   }> {
-    const response = await requestClient.get('/wallet/finance-withdrawal/tab-counts');
+    const response = await requestClient.get(
+      '/wallet/finance-withdrawal/tab-counts',
+    );
     return response;
   },
 
   /**
    * Update withdrawal notes
    */
-  async updateNote(withdrawalId: string, data: { 
-    frontendNotes?: string; 
-    backendNotes?: string;
-    systemNotes?: string;
-  }): Promise<OperationResponse> {
-    const response = await requestClient.put(`/wallet/withdrawals/${withdrawalId}/note`, data);
+  async updateNote(
+    withdrawalId: string,
+    data: {
+      backendNotes?: string;
+      frontendNotes?: string;
+      systemNotes?: string;
+    },
+  ): Promise<OperationResponse> {
+    const response = await requestClient.put(
+      `/wallet/withdrawals/${withdrawalId}/note`,
+      data,
+    );
     return response;
-  }
+  },
 };

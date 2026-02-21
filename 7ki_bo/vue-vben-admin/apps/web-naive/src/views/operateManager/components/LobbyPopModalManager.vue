@@ -1,7 +1,7 @@
 <template>
   <div class="popup-modal-management">
     <!-- 统计卡片 -->
-    <div class="grid grid-cols-5 gap-4 mb-4">
+    <div class="mb-4 grid grid-cols-5 gap-4">
       <n-card>
         <n-statistic label="总数" :value="stats.total" />
       </n-card>
@@ -21,7 +21,7 @@
 
     <!-- 筛选器区域 -->
     <n-card class="mb-4">
-      <div class="flex flex-wrap gap-4 items-end">
+      <div class="flex flex-wrap items-end gap-4">
         <!-- 标题搜索 -->
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium">标题</label>
@@ -137,12 +137,8 @@
 
         <!-- 搜索按钮 -->
         <div class="flex gap-2">
-          <n-button type="primary" @click="handleFilter">
-            搜索
-          </n-button>
-          <n-button @click="resetFilter">
-            重置
-          </n-button>
+          <n-button type="primary" @click="handleFilter"> 搜索 </n-button>
+          <n-button @click="resetFilter"> 重置 </n-button>
         </div>
       </div>
     </n-card>
@@ -164,7 +160,7 @@
     >
       <template #actionBar="{ selectedCount, selectedRows }">
         <n-card :bordered="false" class="rounded-16px shadow-sm">
-          <div class="flex justify-between items-center">
+          <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <!-- 主要操作按钮 -->
               <div class="flex gap-2">
@@ -172,40 +168,41 @@
                   新增弹窗
                 </n-button>
               </div>
-              
+
               <!-- 选择信息 -->
               <div class="text-sm text-gray-600">
-                已选择 {{ selectedCount }} 条数据，共 {{ paginationReactive.total }} 条
+                已选择 {{ selectedCount }} 条数据，共
+                {{ paginationReactive.total }} 条
               </div>
             </div>
-            
+
             <div class="flex gap-2">
               <!-- 批量操作 -->
-              <n-button 
-                v-if="selectedCount > 0" 
-                type="success" 
+              <n-button
+                v-if="selectedCount > 0"
+                type="success"
                 size="small"
                 @click="handleBatchToggleStatus('active', selectedRows)"
               >
                 批量启用 ({{ selectedCount }})
               </n-button>
-              <n-button 
-                v-if="selectedCount > 0" 
-                type="warning" 
+              <n-button
+                v-if="selectedCount > 0"
+                type="warning"
                 size="small"
                 @click="handleBatchToggleStatus('inactive', selectedRows)"
               >
                 批量停用 ({{ selectedCount }})
               </n-button>
-              <n-button 
-                v-if="selectedCount > 0" 
-                type="error" 
+              <n-button
+                v-if="selectedCount > 0"
+                type="error"
                 size="small"
                 @click="handleBatchDelete(selectedRows)"
               >
                 批量删除 ({{ selectedCount }})
               </n-button>
-              
+
               <!-- 选择控制 -->
               <n-button size="small" @click="clearSelection">清空选择</n-button>
               <n-button size="small" @click="selectAll">全选</n-button>
@@ -230,36 +227,46 @@
       style="width: 800px"
     >
       <div v-if="detailData" class="detail-content">
-        <div class="grid grid-cols-2 gap-4 mb-4">
+        <div class="mb-4 grid grid-cols-2 gap-4">
           <div>
             <label class="text-sm font-medium text-gray-600">ID</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">{{ detailData.id }}</div>
+            <div class="mt-1 rounded bg-gray-50 p-2">{{ detailData.id }}</div>
           </div>
           <div>
             <label class="text-sm font-medium text-gray-600">排序</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">{{ detailData.sortOrder }}</div>
+            <div class="mt-1 rounded bg-gray-50 p-2">
+              {{ detailData.sortOrder }}
+            </div>
           </div>
           <div>
             <label class="text-sm font-medium text-gray-600">语言</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">{{ detailData.language }}</div>
+            <div class="mt-1 rounded bg-gray-50 p-2">
+              {{ detailData.language }}
+            </div>
           </div>
           <div>
             <label class="text-sm font-medium text-gray-600">币种</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">{{ detailData.currency }}</div>
+            <div class="mt-1 rounded bg-gray-50 p-2">
+              {{ detailData.currency }}
+            </div>
           </div>
           <div>
             <label class="text-sm font-medium text-gray-600">受众</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">{{ detailData.targetAudience }}</div>
+            <div class="mt-1 rounded bg-gray-50 p-2">
+              {{ detailData.targetAudience }}
+            </div>
           </div>
           <div>
             <label class="text-sm font-medium text-gray-600">跳转类型</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">{{ getJumpTypeText(detailData.jumpType) }}</div>
+            <div class="mt-1 rounded bg-gray-50 p-2">
+              {{ getJumpTypeText(detailData.jumpType) }}
+            </div>
           </div>
         </div>
 
         <div class="mb-4">
           <label class="text-sm font-medium text-gray-600">标题</label>
-          <div class="mt-1 p-3 bg-gray-50 rounded">{{ detailData.title }}</div>
+          <div class="mt-1 rounded bg-gray-50 p-3">{{ detailData.title }}</div>
         </div>
 
         <div class="mb-4">
@@ -277,40 +284,54 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 mb-4">
+        <div class="mb-4 grid grid-cols-2 gap-4">
           <div>
             <label class="text-sm font-medium text-gray-600">开始时间</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">{{ formatDate(detailData.startTime) }}</div>
+            <div class="mt-1 rounded bg-gray-50 p-2">
+              {{ formatDate(detailData.startTime) }}
+            </div>
           </div>
           <div>
             <label class="text-sm font-medium text-gray-600">结束时间</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">{{ formatDate(detailData.endTime) }}</div>
+            <div class="mt-1 rounded bg-gray-50 p-2">
+              {{ formatDate(detailData.endTime) }}
+            </div>
           </div>
         </div>
 
         <div class="mb-4">
           <label class="text-sm font-medium text-gray-600">展示入口</label>
-          <div class="mt-1 p-2 bg-gray-50 rounded">
+          <div class="mt-1 rounded bg-gray-50 p-2">
             <n-space>
-              <n-tag v-for="point in detailData.entryPoints" :key="point" size="small">
+              <n-tag
+                v-for="point in detailData.entryPoints"
+                :key="point"
+                size="small"
+              >
                 {{ getEntryPointText(point) }}
               </n-tag>
             </n-space>
           </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-4 mb-4">
+        <div class="mb-4 grid grid-cols-3 gap-4">
           <div>
-            <label class="text-sm font-medium text-gray-600">最大显示次数</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">{{ detailData.maxDisplayTimes }}次</div>
+            <label class="text-sm font-medium text-gray-600"
+              >最大显示次数</label
+            >
+            <div class="mt-1 rounded bg-gray-50 p-2">
+              {{ detailData.maxDisplayTimes }}次
+            </div>
           </div>
           <div>
             <label class="text-sm font-medium text-gray-600">显示间隔</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">{{ detailData.displayInterval }}小时</div>
+            <div class="mt-1 rounded bg-gray-50 p-2">
+              {{ detailData.displayInterval }}小时
+            </div>
           </div>
           <div>
             <label class="text-sm font-medium text-gray-600">状态</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">
+            <div class="mt-1 rounded bg-gray-50 p-2">
               <n-tag :type="getStatusType(detailData.status)" size="small">
                 {{ getStatusText(detailData.status) }}
               </n-tag>
@@ -318,34 +339,42 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-4 mb-4">
+        <div class="mb-4 grid grid-cols-3 gap-4">
           <div>
             <label class="text-sm font-medium text-gray-600">总浏览量</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">{{ detailData.totalViews }}</div>
+            <div class="mt-1 rounded bg-gray-50 p-2">
+              {{ detailData.totalViews }}
+            </div>
           </div>
           <div>
             <label class="text-sm font-medium text-gray-600">总点击量</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">{{ detailData.totalClicks }}</div>
+            <div class="mt-1 rounded bg-gray-50 p-2">
+              {{ detailData.totalClicks }}
+            </div>
           </div>
           <div>
             <label class="text-sm font-medium text-gray-600">点击率</label>
-            <div class="mt-1 p-2 bg-gray-50 rounded">{{ (detailData.clickRate * 100).toFixed(2) }}%</div>
+            <div class="mt-1 rounded bg-gray-50 p-2">
+              {{ (detailData.clickRate * 100).toFixed(2) }}%
+            </div>
           </div>
         </div>
 
         <div v-if="detailData.targetUrl" class="mb-4">
           <label class="text-sm font-medium text-gray-600">跳转目标</label>
-          <div class="mt-1 p-3 bg-gray-50 rounded">{{ detailData.targetUrl }}</div>
+          <div class="mt-1 rounded bg-gray-50 p-3">
+            {{ detailData.targetUrl }}
+          </div>
         </div>
 
         <div v-if="detailData.remark" class="mb-4">
           <label class="text-sm font-medium text-gray-600">后台备注</label>
-          <div class="mt-1 p-3 bg-gray-50 rounded">{{ detailData.remark }}</div>
+          <div class="mt-1 rounded bg-gray-50 p-3">{{ detailData.remark }}</div>
         </div>
       </div>
-      
+
       <template #action>
-        <div class="flex gap-2 justify-end">
+        <div class="flex justify-end gap-2">
           <n-button @click="showDetailModal = false">关闭</n-button>
         </div>
       </template>
@@ -367,9 +396,9 @@
           @error="handleImageError"
         />
       </div>
-      
+
       <template #action>
-        <div class="flex gap-2 justify-end">
+        <div class="flex justify-end gap-2">
           <n-button @click="showImagePreview = false">关闭</n-button>
         </div>
       </template>
@@ -378,9 +407,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, h, defineAsyncComponent } from 'vue';
+import {
+  ref,
+  reactive,
+  computed,
+  onMounted,
+  h,
+  defineAsyncComponent,
+} from 'vue';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
-const SmartDataGrid = defineAsyncComponent(() => import('../../../components/smart/SmartDataGrid/index.vue'));
+const SmartDataGrid = defineAsyncComponent(
+  () => import('../../../components/smart/SmartDataGrid/index.vue'),
+);
 import type { DataTableColumns, DataTableRowKey } from 'naive-ui';
 import {
   NButton,
@@ -394,10 +432,12 @@ import {
   NImage,
   NSpace,
   NStatistic,
-  type SelectOption
+  type SelectOption,
 } from 'naive-ui';
 import { notification } from '#/adapter/naive';
-const LobbyPopModalFormModal = defineAsyncComponent(() => import('./LobbyPopModalFormModal.vue'));
+const LobbyPopModalFormModal = defineAsyncComponent(
+  () => import('./LobbyPopModalFormModal.vue'),
+);
 import {
   getPopModalList,
   deletePopModal,
@@ -412,7 +452,7 @@ import {
   getEntryPointText,
   type LobbyPopModal,
   type LobbyPopModalFilters,
-  type LobbyPopModalStats
+  type LobbyPopModalStats,
 } from '#/api/lobbyPopModal';
 
 // Reactive data
@@ -438,7 +478,7 @@ const stats = ref<LobbyPopModalStats>({
   active: 0,
   expired: 0,
   draft: 0,
-  inactive: 0
+  inactive: 0,
 });
 
 // Filters
@@ -494,7 +534,7 @@ const jumpTypeOptions: SelectOption[] = [
   { label: '公积金', value: 'public_fund' },
   { label: '游戏', value: 'game' },
   { label: '盲盒抽奖', value: 'blind_box_lottery' },
-  { label: '俱乐部申请（合作联营）', value: 'club_application' }
+  { label: '俱乐部申请（合作联营）', value: 'club_application' },
 ];
 
 const entryPointOptions: SelectOption[] = [
@@ -542,10 +582,10 @@ const columns: DataTableColumns<LobbyPopModal> = [
     render(row) {
       const langMap: Record<string, string> = {
         'zh-CN': '中文',
-        'en': '英文',
-        'pt': '葡语',
-        'es': '西班牙语',
-        'ja': '日语',
+        en: '英文',
+        pt: '葡语',
+        es: '西班牙语',
+        ja: '日语',
       };
       return langMap[row.language] || row.language;
     },
@@ -573,7 +613,7 @@ const columns: DataTableColumns<LobbyPopModal> = [
         onClick: () => openImagePreview(row.imageUrl),
         class: 'cursor-pointer',
         fallbackSrc: placeholderImageUrl,
-        onError: (event: Event) => handleImageError(event)
+        onError: (event: Event) => handleImageError(event),
       });
     },
   },
@@ -590,15 +630,33 @@ const columns: DataTableColumns<LobbyPopModal> = [
     key: 'entryPoints',
     width: 150,
     render(row) {
-      return h(NSpace, { size: 'small' }, {
-        default: () => row.entryPoints.slice(0, 2).map(point => 
-          h(NTag, { size: 'small' }, { default: () => getEntryPointText(point) })
-        ).concat(
-          row.entryPoints.length > 2 ? 
-            [h(NTag, { size: 'small' }, { default: () => `+${row.entryPoints.length - 2}` })] : 
-            []
-        )
-      });
+      return h(
+        NSpace,
+        { size: 'small' },
+        {
+          default: () =>
+            row.entryPoints
+              .slice(0, 2)
+              .map((point) =>
+                h(
+                  NTag,
+                  { size: 'small' },
+                  { default: () => getEntryPointText(point) },
+                ),
+              )
+              .concat(
+                row.entryPoints.length > 2
+                  ? [
+                      h(
+                        NTag,
+                        { size: 'small' },
+                        { default: () => `+${row.entryPoints.length - 2}` },
+                      ),
+                    ]
+                  : [],
+              ),
+        },
+      );
     },
   },
   {
@@ -630,10 +688,14 @@ const columns: DataTableColumns<LobbyPopModal> = [
     key: 'status',
     width: 100,
     render(row) {
-      return h(NTag, {
-        type: getStatusType(row.status),
-        size: 'small'
-      }, { default: () => getStatusText(row.status) });
+      return h(
+        NTag,
+        {
+          type: getStatusType(row.status),
+          size: 'small',
+        },
+        { default: () => getStatusText(row.status) },
+      );
     },
   },
   {
@@ -643,37 +705,62 @@ const columns: DataTableColumns<LobbyPopModal> = [
     fixed: 'right',
     render(row) {
       return h('div', { class: 'flex gap-1' }, [
-        h(NButton, {
-          size: 'small',
-          type: row.status === 'active' ? 'warning' : 'success',
-          onClick: () => handleToggleStatus(row)
-        }, { default: () => row.status === 'active' ? '停止' : '发布' }),
-        
-        h(NButton, {
-          size: 'small',
-          onClick: () => handleCopy(row)
-        }, { default: () => '复制创建' }),
-        
-        h(NButton, {
-          size: 'small',
-          onClick: () => handleViewDetail(row)
-        }, { default: () => '详情' }),
-        
-        h(NButton, {
-          size: 'small',
-          type: 'primary',
-          onClick: () => handleEdit(row)
-        }, { default: () => '编辑' }),
-        
-        h(NPopconfirm, {
-          onPositiveClick: () => handleDelete(row)
-        }, {
-          default: () => '确定删除这个弹窗吗？',
-          trigger: () => h(NButton, {
+        h(
+          NButton,
+          {
             size: 'small',
-            type: 'error'
-          }, { default: () => '删除' })
-        }),
+            type: row.status === 'active' ? 'warning' : 'success',
+            onClick: () => handleToggleStatus(row),
+          },
+          { default: () => (row.status === 'active' ? '停止' : '发布') },
+        ),
+
+        h(
+          NButton,
+          {
+            size: 'small',
+            onClick: () => handleCopy(row),
+          },
+          { default: () => '复制创建' },
+        ),
+
+        h(
+          NButton,
+          {
+            size: 'small',
+            onClick: () => handleViewDetail(row),
+          },
+          { default: () => '详情' },
+        ),
+
+        h(
+          NButton,
+          {
+            size: 'small',
+            type: 'primary',
+            onClick: () => handleEdit(row),
+          },
+          { default: () => '编辑' },
+        ),
+
+        h(
+          NPopconfirm,
+          {
+            onPositiveClick: () => handleDelete(row),
+          },
+          {
+            default: () => '确定删除这个弹窗吗？',
+            trigger: () =>
+              h(
+                NButton,
+                {
+                  size: 'small',
+                  type: 'error',
+                },
+                { default: () => '删除' },
+              ),
+          },
+        ),
       ]);
     },
   },
@@ -707,7 +794,7 @@ const loadData = async () => {
     console.error('Error loading popup modals:', error);
     notification.error({
       content: '加载弹窗数据失败',
-      duration: 3000
+      duration: 3000,
     });
   } finally {
     loading.value = false;
@@ -778,7 +865,7 @@ const handleCopy = async (row: LobbyPopModal) => {
     await duplicatePopModal(row.id);
     notification.success({
       content: '复制成功',
-      duration: 3000
+      duration: 3000,
     });
     loadData();
     loadStats();
@@ -786,7 +873,7 @@ const handleCopy = async (row: LobbyPopModal) => {
     console.error('Error copying popup modal:', error);
     notification.error({
       content: '复制失败',
-      duration: 3000
+      duration: 3000,
     });
   }
 };
@@ -799,10 +886,10 @@ const handleViewDetail = (row: LobbyPopModal) => {
 const handleDelete = async (row: LobbyPopModal) => {
   try {
     await deletePopModal(row.id);
-    
+
     notification.success({
       content: '删除成功',
-      duration: 3000
+      duration: 3000,
     });
     loadData();
     loadStats();
@@ -810,7 +897,7 @@ const handleDelete = async (row: LobbyPopModal) => {
     console.error('Error deleting popup modal:', error);
     notification.error({
       content: '删除失败',
-      duration: 3000
+      duration: 3000,
     });
   }
 };
@@ -819,10 +906,10 @@ const handleToggleStatus = async (row: LobbyPopModal) => {
   try {
     const newStatus = row.status === 'active' ? 'inactive' : 'active';
     await togglePopModalStatus(row.id, newStatus);
-    
+
     notification.success({
       content: `${newStatus === 'active' ? '启用' : '停用'}成功`,
-      duration: 3000
+      duration: 3000,
     });
     loadData();
     loadStats();
@@ -830,7 +917,7 @@ const handleToggleStatus = async (row: LobbyPopModal) => {
     console.error('Error toggling popup modal status:', error);
     notification.error({
       content: '状态切换失败',
-      duration: 3000
+      duration: 3000,
     });
   }
 };
@@ -839,23 +926,26 @@ const handleSelectionChange = (keys: DataTableRowKey[]) => {
   selectedRowKeys.value = keys;
 };
 
-const handleBatchToggleStatus = async (status: 'active' | 'inactive', selectedRows?: LobbyPopModal[]) => {
-  const modalsToUpdate = selectedRows || tableData.value.filter(modal => 
-    selectedRowKeys.value.includes(modal.id)
-  );
-  
+const handleBatchToggleStatus = async (
+  status: 'active' | 'inactive',
+  selectedRows?: LobbyPopModal[],
+) => {
+  const modalsToUpdate =
+    selectedRows ||
+    tableData.value.filter((modal) => selectedRowKeys.value.includes(modal.id));
+
   if (modalsToUpdate.length === 0) {
     console.log('No modals selected for batch status toggle');
     return;
   }
-  
+
   try {
-    const ids = modalsToUpdate.map(modal => Number(modal.id));
+    const ids = modalsToUpdate.map((modal) => Number(modal.id));
     await batchToggleStatus({ ids, status });
-    
+
     notification.success({
       content: `批量${status === 'active' ? '启用' : '停用'}成功`,
-      duration: 3000
+      duration: 3000,
     });
     selectedRowKeys.value = [];
     loadData();
@@ -864,28 +954,28 @@ const handleBatchToggleStatus = async (status: 'active' | 'inactive', selectedRo
     console.error('Error batch toggling status:', error);
     notification.error({
       content: '批量操作失败',
-      duration: 3000
+      duration: 3000,
     });
   }
 };
 
 const handleBatchDelete = async (selectedRows?: LobbyPopModal[]) => {
-  const modalsToDelete = selectedRows || tableData.value.filter(modal => 
-    selectedRowKeys.value.includes(modal.id)
-  );
-  
+  const modalsToDelete =
+    selectedRows ||
+    tableData.value.filter((modal) => selectedRowKeys.value.includes(modal.id));
+
   if (modalsToDelete.length === 0) {
     console.log('No modals selected for batch delete');
     return;
   }
-  
+
   try {
-    const ids = modalsToDelete.map(modal => Number(modal.id));
+    const ids = modalsToDelete.map((modal) => Number(modal.id));
     await batchDeletePopModals({ ids });
-    
+
     notification.success({
       content: `成功删除 ${modalsToDelete.length} 个弹窗`,
-      duration: 3000
+      duration: 3000,
     });
     selectedRowKeys.value = [];
     loadData();
@@ -894,7 +984,7 @@ const handleBatchDelete = async (selectedRows?: LobbyPopModal[]) => {
     console.error('Error batch deleting popup modals:', error);
     notification.error({
       content: '批量删除失败',
-      duration: 3000
+      duration: 3000,
     });
   }
 };
@@ -929,14 +1019,14 @@ const clearSelection = () => {
 };
 
 const selectAll = () => {
-  selectedRowKeys.value = tableData.value.map(modal => modal.id);
+  selectedRowKeys.value = tableData.value.map((modal) => modal.id);
   console.log('All selected');
 };
 
-  const openImagePreview = (imageUrl: string) => {
-    previewImageUrl.value = imageUrl;
-    showImagePreview.value = true;
-  };
+const openImagePreview = (imageUrl: string) => {
+  previewImageUrl.value = imageUrl;
+  showImagePreview.value = true;
+};
 
 const handleImageError = (event: Event) => {
   console.error('Image loading error:', event);
@@ -961,7 +1051,8 @@ const formatDate = (date: string | Date | null) => {
 };
 
 // 创建一个简单的占位符图片数据URL
-const placeholderImageUrl = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5YWFhYSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPuW8ueepuuWbvueJhzwvdGV4dD48L3N2Zz4=';
+const placeholderImageUrl =
+  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5YWFhYSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPuW8ueepuuWbvueJhzwvdGV4dD48L3N2Zz4=';
 
 // Initialize
 onMounted(() => {
@@ -1074,4 +1165,4 @@ onMounted(() => {
 .cursor-pointer {
   cursor: pointer;
 }
-</style> 
+</style>

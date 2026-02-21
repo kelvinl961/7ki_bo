@@ -25,7 +25,7 @@
                 :options="languageOptions"
               />
             </n-form-item>
-            
+
             <n-form-item label="币种" path="currency">
               <n-select
                 v-model:value="formData.currency"
@@ -33,7 +33,7 @@
                 :options="currencyOptions"
               />
             </n-form-item>
-            
+
             <n-form-item label="排序（可选）" path="sortOrder">
               <n-input-number
                 v-model:value="formData.sortOrder"
@@ -42,7 +42,7 @@
                 :max="9999"
               />
             </n-form-item>
-            
+
             <n-form-item label="停留时间(秒)（可选）" path="displayDuration">
               <n-input-number
                 v-model:value="formData.displayDuration"
@@ -52,7 +52,7 @@
               />
             </n-form-item>
           </div>
-          
+
           <n-form-item label="Banner名称" path="bannerName">
             <n-input
               v-model:value="formData.bannerName"
@@ -60,7 +60,7 @@
               clearable
             />
           </n-form-item>
-          
+
           <n-form-item label="Banner图片" path="bannerImageUrl">
             <MediaLibrarySelector
               v-model="formData.bannerImageUrl"
@@ -69,12 +69,12 @@
               placeholder="从媒体库选择或上传Banner图片"
               @file-selected="handleBannerImageSelected"
             />
-            
+
             <!-- 预览区域 -->
             <div v-if="formData.bannerImageUrl" class="mt-2">
               <div class="banner-preview">
-                <img 
-                  :src="getImageUrlByEnvironment(formData.bannerImageUrl)" 
+                <img
+                  :src="getImageUrlByEnvironment(formData.bannerImageUrl)"
                   alt="Banner预览"
                   class="banner-preview-image"
                 />
@@ -83,7 +83,7 @@
           </n-form-item>
         </n-form>
       </n-tab-pane>
-      
+
       <!-- 时间设置 -->
       <n-tab-pane name="time" tab="时间设置">
         <n-form
@@ -104,12 +104,14 @@
                 :value-format="'timestamp'"
                 :default-value="null"
                 :show-icon="true"
-                :disabled-date="(timestamp) => timestamp < Date.now() - 24 * 60 * 60 * 1000"
+                :disabled-date="
+                  (timestamp) => timestamp < Date.now() - 24 * 60 * 60 * 1000
+                "
                 @update:value="handleStartTimeChange"
                 @error="(error) => console.error('Date picker error:', error)"
               />
             </n-form-item>
-            
+
             <n-form-item label="结束时间（可选）" path="endTime">
               <n-date-picker
                 v-model:value="formData.endTime"
@@ -120,16 +122,18 @@
                 :value-format="'timestamp'"
                 :default-value="null"
                 :show-icon="true"
-                :disabled-date="(timestamp) => timestamp < Date.now() - 24 * 60 * 60 * 1000"
+                :disabled-date="
+                  (timestamp) => timestamp < Date.now() - 24 * 60 * 60 * 1000
+                "
                 @update:value="handleEndTimeChange"
                 @error="(error) => console.error('Date picker error:', error)"
               />
             </n-form-item>
           </div>
-          
+
           <!-- 时间预设选项 -->
           <div class="mb-4">
-            <label class="text-sm font-medium mb-2 block">快速设置</label>
+            <label class="mb-2 block text-sm font-medium">快速设置</label>
             <n-space>
               <n-button size="small" @click="setTimeRange(1)">1小时</n-button>
               <n-button size="small" @click="setTimeRange(6)">6小时</n-button>
@@ -138,7 +142,7 @@
               <n-button size="small" @click="setTimeRange(720)">30天</n-button>
             </n-space>
           </div>
-          
+
           <n-alert type="info" :show-icon="false">
             <template #header>
               <span class="font-medium">时间说明</span>
@@ -170,11 +174,11 @@
                 @update:value="handleJumpModeChange"
               />
             </n-form-item>
-            
+
             <!-- Dynamic activity dropdown when 活动 is selected -->
-            <n-form-item 
-              v-if="formData.jumpMode === 'activity'" 
-              label="选择活动" 
+            <n-form-item
+              v-if="formData.jumpMode === 'activity'"
+              label="选择活动"
               path="selectedActivityId"
             >
               <n-select
@@ -186,11 +190,11 @@
                 clearable
               />
             </n-form-item>
-            
+
             <!-- Dynamic task dropdown when 任务 is selected -->
-            <n-form-item 
-              v-if="formData.jumpMode === 'task'" 
-              label="选择任务" 
+            <n-form-item
+              v-if="formData.jumpMode === 'task'"
+              label="选择任务"
               path="selectedTaskId"
             >
               <n-select
@@ -202,11 +206,11 @@
                 clearable
               />
             </n-form-item>
-            
+
             <!-- Dynamic game platform dropdown when 游戏 is selected -->
-            <n-form-item 
-              v-if="formData.jumpMode === 'game'" 
-              label="选择游戏平台" 
+            <n-form-item
+              v-if="formData.jumpMode === 'game'"
+              label="选择游戏平台"
               path="selectedGamePlatformId"
             >
               <n-select
@@ -218,7 +222,7 @@
                 clearable
               />
             </n-form-item>
-            
+
             <!-- Regular target URL for other jump modes - HIDDEN FOR NOW -->
             <!-- <n-form-item 
               v-if="formData.jumpMode !== 'none' && formData.jumpMode !== 'activity' && formData.jumpMode !== 'task' && formData.jumpMode !== 'game'" 
@@ -232,7 +236,7 @@
               />
             </n-form-item> -->
           </div>
-          
+
           <n-alert type="info" :show-icon="false">
             <template #header>
               <span class="font-medium">跳转说明</span>
@@ -264,7 +268,7 @@
               :options="statusOptions"
             />
           </n-form-item>
-          
+
           <n-form-item label="后台备注">
             <n-input
               v-model:value="formData.remark"
@@ -311,21 +315,26 @@ import {
   NUploadDragger,
   NImage,
   useMessage,
-  type SelectOption
+  type SelectOption,
 } from 'naive-ui';
 import { notification } from '#/adapter/naive';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking modal load
 import { defineAsyncComponent } from 'vue';
-const MediaLibrarySelector = defineAsyncComponent(() => import('#/components/MediaLibrarySelector.vue'));
+const MediaLibrarySelector = defineAsyncComponent(
+  () => import('#/components/MediaLibrarySelector.vue'),
+);
 import { getImageUrlByEnvironment } from '../../../utils/imageUtils';
 import {
   createBanner,
   updateBanner,
-  type LobbyBanner
+  type LobbyBanner,
 } from '#/api/lobbyBanner';
 import { getActivityList, type Activity } from '#/api/activity';
 import { getTaskCenterList, type TaskCenter } from '#/api/taskCenter';
-import { getGamePlatformListApi, type GamePlatformItem } from '#/api/game/platform';
+import {
+  getGamePlatformListApi,
+  type GamePlatformItem,
+} from '#/api/game/platform';
 
 // Props
 interface Props {
@@ -341,7 +350,7 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   show: false,
-  editingItem: null
+  editingItem: null,
 });
 
 const emit = defineEmits<Emits>();
@@ -349,7 +358,7 @@ const emit = defineEmits<Emits>();
 // 响应式数据
 const modalShow = computed({
   get: () => props.show,
-  set: (val) => emit('update:show', val)
+  set: (val) => emit('update:show', val),
 });
 
 const activeTab = ref('basic');
@@ -396,7 +405,7 @@ const formData = ref<{
   remark: '',
   selectedActivityId: undefined,
   selectedTaskId: undefined,
-  selectedGamePlatformId: undefined
+  selectedGamePlatformId: undefined,
 });
 
 // Activity-related reactive data
@@ -420,17 +429,17 @@ const handleJumpModeChange = (value: string) => {
     formData.value.selectedGamePlatformId = undefined;
     formData.value.targetUrl = '';
   }
-  
+
   // Load activities when 活动 is selected
   if (value === 'activity') {
     loadActivities();
   }
-  
+
   // Load tasks when 任务 is selected
   if (value === 'task') {
     loadTasks();
   }
-  
+
   // Load game platforms when 游戏 is selected
   if (value === 'game') {
     loadGamePlatforms();
@@ -472,18 +481,18 @@ const loadActivities = async () => {
   try {
     loadingActivities.value = true;
     console.log('🔄 Loading activities for banner form...');
-    
-    const response = await getActivityList({ 
-      page: 1, 
-      pageSize: 100
+
+    const response = await getActivityList({
+      page: 1,
+      pageSize: 100,
       // Removed status filter to show all activities
     });
-    
+
     console.log('✅ Activities response:', response);
-    
+
     if (response.list && response.list.length > 0) {
       console.log(' Raw activities:', response.list);
-      
+
       // Extract title from config or use fallback
       activityOptions.value = response.list.map((activity: Activity) => {
         console.log(`🔍 Processing activity:`, activity);
@@ -493,16 +502,17 @@ const loadActivities = async () => {
         console.log(`   Config:`, activity.config);
         console.log(`   Config title: ${activity.config?.title}`);
         console.log(`   Direct title: ${activity.title}`);
-        
-        const title = activity.config?.title || activity.title || `Activity ${activity.id}`;
+
+        const title =
+          activity.config?.title || activity.title || `Activity ${activity.id}`;
         console.log(` Final title for ${activity.id}: ${title}`);
-        
+
         return {
           label: title,
-          value: activity.id
+          value: activity.id,
         };
       });
-      
+
       console.log('✅ Final activity options:', activityOptions.value);
     } else {
       console.log('⚠️ No activities found in response');
@@ -522,16 +532,16 @@ const loadActivities = async () => {
 const loadTasks = async () => {
   try {
     loadingTasks.value = true;
-    const response = await getTaskCenterList({ 
-      page: 1, 
-      limit: 100, 
-      isActive: true 
+    const response = await getTaskCenterList({
+      page: 1,
+      limit: 100,
+      isActive: true,
     });
-    
+
     if (response.data && response.data.length > 0) {
       taskOptions.value = response.data.map((task: TaskCenter) => ({
         label: task.title || `Task ${task.id}`,
-        value: task.id
+        value: task.id,
       }));
     }
   } catch (error) {
@@ -546,16 +556,18 @@ const loadTasks = async () => {
 const loadGamePlatforms = async () => {
   try {
     loadingGamePlatforms.value = true;
-    const response = await getGamePlatformListApi({ 
-      page: 1, 
-      pageSize: 1000 // Get all platforms to show game counts
+    const response = await getGamePlatformListApi({
+      page: 1,
+      pageSize: 1000, // Get all platforms to show game counts
     });
-    
+
     if (response.list && response.list.length > 0) {
-      gamePlatformOptions.value = response.list.map((platform: GamePlatformItem) => ({
-        label: `${platform.platformName} (${platform.subGameCount} 游戏)`,
-        value: platform.id
-      }));
+      gamePlatformOptions.value = response.list.map(
+        (platform: GamePlatformItem) => ({
+          label: `${platform.platformName} (${platform.subGameCount} 游戏)`,
+          value: platform.id,
+        }),
+      );
     }
   } catch (error) {
     console.error('Failed to load game platforms:', error);
@@ -568,7 +580,10 @@ const loadGamePlatforms = async () => {
 // Ensure form data is always properly initialized
 const ensureValidFormData = () => {
   // Validate startTime
-  if (formData.value.startTime !== null && formData.value.startTime !== undefined) {
+  if (
+    formData.value.startTime !== null &&
+    formData.value.startTime !== undefined
+  ) {
     const startTime = Number(formData.value.startTime);
     if (isNaN(startTime)) {
       console.warn('Invalid startTime value:', formData.value.startTime);
@@ -577,7 +592,7 @@ const ensureValidFormData = () => {
       formData.value.startTime = startTime;
     }
   }
-  
+
   // Validate endTime
   if (formData.value.endTime !== null && formData.value.endTime !== undefined) {
     const endTime = Number(formData.value.endTime);
@@ -596,7 +611,7 @@ onMounted(() => {
   resetForm();
   ensureValidFormData();
   console.log('Form initialized with startTime:', formData.value.startTime);
-  
+
   // Add a small delay to ensure the date picker is properly initialized
   setTimeout(() => {
     ensureValidFormData(); // Double-check after a delay
@@ -643,30 +658,43 @@ const jumpModeOptions: SelectOption[] = [
   { label: '公积金', value: 'public_fund' },
   { label: '游戏', value: 'game' },
   { label: '盲盒抽奖', value: 'blind_box_lottery' },
-  { label: '俱乐部申请（合作联营）', value: 'club_application' }
+  { label: '俱乐部申请（合作联营）', value: 'club_application' },
 ];
 
 // 表单验证规则
 const basicRules: FormRules = {
   bannerName: [
     { required: true, message: '请输入Banner名称', trigger: 'blur' },
-    { min: 1, max: 100, message: 'Banner名称长度在1到100个字符', trigger: 'blur' }
+    {
+      min: 1,
+      max: 100,
+      message: 'Banner名称长度在1到100个字符',
+      trigger: 'blur',
+    },
   ],
   bannerImageUrl: [
-    { required: true, message: '请上传Banner图片', trigger: 'blur' }
+    { required: true, message: '请上传Banner图片', trigger: 'blur' },
   ],
-  language: [
-    { required: true, message: '请选择语言', trigger: 'change' }
-  ],
-  currency: [
-    { required: true, message: '请选择币种', trigger: 'change' }
-  ],
+  language: [{ required: true, message: '请选择语言', trigger: 'change' }],
+  currency: [{ required: true, message: '请选择币种', trigger: 'change' }],
   sortOrder: [
-    { type: 'number', min: 0, max: 9999, message: '排序数值在0到9999之间', trigger: 'blur' }
+    {
+      type: 'number',
+      min: 0,
+      max: 9999,
+      message: '排序数值在0到9999之间',
+      trigger: 'blur',
+    },
   ],
   displayDuration: [
-    { type: 'number', min: 1, max: 300, message: '停留时间在1到300秒之间', trigger: 'blur' }
-  ]
+    {
+      type: 'number',
+      min: 1,
+      max: 300,
+      message: '停留时间在1到300秒之间',
+      trigger: 'blur',
+    },
+  ],
 };
 
 const timeRules: FormRules = {
@@ -680,49 +708,48 @@ const timeRules: FormRules = {
         if (value === null || value === undefined || value === '') {
           return new Error('请选择开始时间');
         }
-        
+
         // Check if it's a valid number
         if (isNaN(value) || typeof value !== 'number') {
           return new Error('请选择有效的开始时间');
         }
-        
+
         // Check if it's a reasonable timestamp (within 1 year from now)
         const now = Date.now();
-        const oneYearFromNow = now + (365 * 24 * 60 * 60 * 1000);
-        const oneYearAgo = now - (365 * 24 * 60 * 60 * 1000);
-        
+        const oneYearFromNow = now + 365 * 24 * 60 * 60 * 1000;
+        const oneYearAgo = now - 365 * 24 * 60 * 60 * 1000;
+
         if (value < oneYearAgo || value > oneYearFromNow) {
           return new Error('开始时间应在合理范围内');
         }
-        
+
         return true;
-      }
-    }
-  ]
+      },
+    },
+  ],
 };
 
 const jumpRules: FormRules = {
-  jumpMode: [
-    { required: true, message: '请选择跳转方式', trigger: 'change' }
-  ],
+  jumpMode: [{ required: true, message: '请选择跳转方式', trigger: 'change' }],
   targetUrl: [
-    { 
+    {
       validator: (rule, value) => {
         // Target URL is required only if jump mode is not 'none'
-        if (formData.value.jumpMode !== 'none' && (!value || value.trim() === '')) {
+        if (
+          formData.value.jumpMode !== 'none' &&
+          (!value || value.trim() === '')
+        ) {
           return new Error('请输入跳转目标');
         }
         return true;
       },
-      trigger: 'blur'
-    }
-  ]
+      trigger: 'blur',
+    },
+  ],
 };
 
 const advancedRules: FormRules = {
-  status: [
-    { required: true, message: '请选择状态', trigger: 'change' }
-  ]
+  status: [{ required: true, message: '请选择状态', trigger: 'change' }],
 };
 
 // 方法
@@ -742,7 +769,7 @@ const resetForm = () => {
     remark: '',
     selectedActivityId: undefined,
     selectedTaskId: undefined,
-    selectedGamePlatformId: undefined
+    selectedGamePlatformId: undefined,
   };
   fileList.value = [];
   activeTab.value = 'basic';
@@ -750,101 +777,125 @@ const resetForm = () => {
 };
 
 // 监听编辑项变化
-watch(() => props.editingItem, (newItem) => {
-  if (newItem) {
-    // 安全地处理日期值
-    const formatDateForPicker = (dateStr: string | null | undefined) => {
-      if (!dateStr) return null;
-      try {
-        const date = new Date(dateStr);
-        const timestamp = date.getTime();
-        // Check if the date is valid and reasonable
-        if (isNaN(timestamp)) {
-          console.warn('Invalid date value:', dateStr);
+watch(
+  () => props.editingItem,
+  (newItem) => {
+    if (newItem) {
+      // 安全地处理日期值
+      const formatDateForPicker = (dateStr: string | null | undefined) => {
+        if (!dateStr) return null;
+        try {
+          const date = new Date(dateStr);
+          const timestamp = date.getTime();
+          // Check if the date is valid and reasonable
+          if (isNaN(timestamp)) {
+            console.warn('Invalid date value:', dateStr);
+            return null;
+          }
+          // Additional check for reasonable date range
+          const now = Date.now();
+          const oneYearAgo = now - 365 * 24 * 60 * 60 * 1000;
+          const oneYearFromNow = now + 365 * 24 * 60 * 60 * 1000;
+          if (timestamp < oneYearAgo || timestamp > oneYearFromNow) {
+            console.warn('Date out of reasonable range:', dateStr);
+            return null;
+          }
+          return timestamp;
+        } catch (error) {
+          console.error('Error parsing date:', error, dateStr);
           return null;
         }
-        // Additional check for reasonable date range
-        const now = Date.now();
-        const oneYearAgo = now - (365 * 24 * 60 * 60 * 1000);
-        const oneYearFromNow = now + (365 * 24 * 60 * 60 * 1000);
-        if (timestamp < oneYearAgo || timestamp > oneYearFromNow) {
-          console.warn('Date out of reasonable range:', dateStr);
-          return null;
-        }
-        return timestamp;
-      } catch (error) {
-        console.error('Error parsing date:', error, dateStr);
-        return null;
-      }
-    };
+      };
 
-    formData.value = {
-      sortOrder: newItem.sortOrder,
-      bannerName: newItem.bannerName,
-      currency: newItem.currency,
-      language: newItem.language,
-      targetUrl: newItem.targetUrl || '', // Always ensure empty string if undefined
-      bannerImageUrl: newItem.bannerImageUrl,
-      displayDuration: newItem.displayDuration,
-      startTime: formatDateForPicker(newItem.startTime),
-      endTime: formatDateForPicker(newItem.endTime),
-      jumpMode: newItem.jumpMode,
-      status: newItem.status,
-      remark: newItem.remark || '',
-      selectedActivityId: undefined // Will be set based on targetUrl if it's an activity
-    };
-    
-    // If jumpMode is 'activity' and targetUrl contains activity ID, set selectedActivityId
-    if (newItem.jumpMode === 'activity' && newItem.targetUrl && typeof newItem.targetUrl === 'string') {
-      const activityMatch = newItem.targetUrl.match(/activity:(\d+)/);
-      if (activityMatch) {
-        formData.value.selectedActivityId = parseInt(activityMatch[1]);
-        // Load activities to populate the dropdown
-        loadActivities();
+      formData.value = {
+        sortOrder: newItem.sortOrder,
+        bannerName: newItem.bannerName,
+        currency: newItem.currency,
+        language: newItem.language,
+        targetUrl: newItem.targetUrl || '', // Always ensure empty string if undefined
+        bannerImageUrl: newItem.bannerImageUrl,
+        displayDuration: newItem.displayDuration,
+        startTime: formatDateForPicker(newItem.startTime),
+        endTime: formatDateForPicker(newItem.endTime),
+        jumpMode: newItem.jumpMode,
+        status: newItem.status,
+        remark: newItem.remark || '',
+        selectedActivityId: undefined, // Will be set based on targetUrl if it's an activity
+      };
+
+      // If jumpMode is 'activity' and targetUrl contains activity ID, set selectedActivityId
+      if (
+        newItem.jumpMode === 'activity' &&
+        newItem.targetUrl &&
+        typeof newItem.targetUrl === 'string'
+      ) {
+        const activityMatch = newItem.targetUrl.match(/activity:(\d+)/);
+        if (activityMatch) {
+          formData.value.selectedActivityId = parseInt(activityMatch[1]);
+          // Load activities to populate the dropdown
+          loadActivities();
+        }
       }
-    }
-    
-    // If jumpMode is 'task' and targetUrl contains task ID, set selectedTaskId
-    if (newItem.jumpMode === 'task' && newItem.targetUrl && typeof newItem.targetUrl === 'string') {
-      const taskMatch = newItem.targetUrl.match(/task:(\d+)/);
-      if (taskMatch) {
-        formData.value.selectedTaskId = parseInt(taskMatch[1]);
-        // Load tasks to populate the dropdown
-        loadTasks();
+
+      // If jumpMode is 'task' and targetUrl contains task ID, set selectedTaskId
+      if (
+        newItem.jumpMode === 'task' &&
+        newItem.targetUrl &&
+        typeof newItem.targetUrl === 'string'
+      ) {
+        const taskMatch = newItem.targetUrl.match(/task:(\d+)/);
+        if (taskMatch) {
+          formData.value.selectedTaskId = parseInt(taskMatch[1]);
+          // Load tasks to populate the dropdown
+          loadTasks();
+        }
       }
-    }
-    
-    // If jumpMode is 'game' and targetUrl contains game platform ID, set selectedGamePlatformId
-    if (newItem.jumpMode === 'game' && newItem.targetUrl && typeof newItem.targetUrl === 'string') {
-      const gamePlatformMatch = newItem.targetUrl.match(/game-platform:(\d+)/);
-      if (gamePlatformMatch) {
-        formData.value.selectedGamePlatformId = parseInt(gamePlatformMatch[1]);
-        // Load game platforms to populate the dropdown
-        loadGamePlatforms();
+
+      // If jumpMode is 'game' and targetUrl contains game platform ID, set selectedGamePlatformId
+      if (
+        newItem.jumpMode === 'game' &&
+        newItem.targetUrl &&
+        typeof newItem.targetUrl === 'string'
+      ) {
+        const gamePlatformMatch =
+          newItem.targetUrl.match(/game-platform:(\d+)/);
+        if (gamePlatformMatch) {
+          formData.value.selectedGamePlatformId = parseInt(
+            gamePlatformMatch[1],
+          );
+          // Load game platforms to populate the dropdown
+          loadGamePlatforms();
+        }
       }
+      ensureValidFormData();
+      console.log('Form data set for editing:', formData.value);
+      // Reset file list when editing (since we're using existing image URL)
+      fileList.value = [];
+    } else {
+      resetForm();
     }
-    ensureValidFormData();
-    console.log('Form data set for editing:', formData.value);
-    // Reset file list when editing (since we're using existing image URL)
-    fileList.value = [];
-  } else {
-    resetForm();
-  }
-}, { immediate: true });
+  },
+  { immediate: true },
+);
 
 const setTimeRange = (hours: number) => {
   const now = new Date();
   const endTime = new Date(now.getTime() + hours * 60 * 60 * 1000);
-  
+
   formData.value.startTime = now.getTime();
   formData.value.endTime = endTime.getTime();
 };
 
 const validateAllForms = async (): Promise<boolean> => {
-  const forms = [basicFormRef.value, timeFormRef.value, jumpFormRef.value, advancedFormRef.value];
-  
+  const forms = [
+    basicFormRef.value,
+    timeFormRef.value,
+    jumpFormRef.value,
+    advancedFormRef.value,
+  ];
+
   try {
-    await Promise.all(forms.map(form => form?.validate()));
+    await Promise.all(forms.map((form) => form?.validate()));
     return true;
   } catch (error) {
     console.error('Form validation error:', error);
@@ -876,7 +927,11 @@ const handleSubmit = async () => {
         }
         return date.toISOString();
       } catch (error) {
-        console.error('Error converting timestamp to ISO string:', error, timestamp);
+        console.error(
+          'Error converting timestamp to ISO string:',
+          error,
+          timestamp,
+        );
         // Return current time as fallback
         return new Date().toISOString();
       }
@@ -899,19 +954,39 @@ const handleSubmit = async () => {
       startTime: safeDateToString(formData.value.startTime),
       endTime: getEndTimeValue(),
       // Convert string IDs to numbers if they exist
-      selectedActivityId: formData.value.selectedActivityId ? Number(formData.value.selectedActivityId) : undefined,
-      selectedTaskId: formData.value.selectedTaskId ? Number(formData.value.selectedTaskId) : undefined,
-      selectedGamePlatformId: formData.value.selectedGamePlatformId ? Number(formData.value.selectedGamePlatformId) : undefined
+      selectedActivityId: formData.value.selectedActivityId
+        ? Number(formData.value.selectedActivityId)
+        : undefined,
+      selectedTaskId: formData.value.selectedTaskId
+        ? Number(formData.value.selectedTaskId)
+        : undefined,
+      selectedGamePlatformId: formData.value.selectedGamePlatformId
+        ? Number(formData.value.selectedGamePlatformId)
+        : undefined,
     };
-    
 
     console.log('Submitting form data:', submitData);
     console.log('Jump mode:', submitData.jumpMode);
     console.log('Target URL:', submitData.targetUrl);
     console.log('Status:', submitData.status);
-    console.log('Selected Activity ID:', submitData.selectedActivityId, 'Type:', typeof submitData.selectedActivityId);
-    console.log('Selected Task ID:', submitData.selectedTaskId, 'Type:', typeof submitData.selectedTaskId);
-    console.log('Selected Game Platform ID:', submitData.selectedGamePlatformId, 'Type:', typeof submitData.selectedGamePlatformId);
+    console.log(
+      'Selected Activity ID:',
+      submitData.selectedActivityId,
+      'Type:',
+      typeof submitData.selectedActivityId,
+    );
+    console.log(
+      'Selected Task ID:',
+      submitData.selectedTaskId,
+      'Type:',
+      typeof submitData.selectedTaskId,
+    );
+    console.log(
+      'Selected Game Platform ID:',
+      submitData.selectedGamePlatformId,
+      'Type:',
+      typeof submitData.selectedGamePlatformId,
+    );
 
     // 验证时间逻辑 - only if both times are provided
     if (submitData.startTime && submitData.endTime) {
@@ -930,7 +1005,7 @@ const handleSubmit = async () => {
       await createBanner(submitData);
       message.success('Banner创建成功');
     }
-    
+
     emit('success');
   } catch (error) {
     console.error('Submit error:', error);
@@ -999,7 +1074,8 @@ const handleEndTimeChange = (value: number | null) => {
 };
 
 // 创建一个简单的占位符图片数据URL
-const placeholderImageUrl = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5YWFhYSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkJhbm5lciBJbWFnZTwvdGV4dD48L3N2Zz4=';
+const placeholderImageUrl =
+  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5YWFhYSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkJhbm5lciBJbWFnZTwvdGV4dD48L3N2Zz4=';
 
 const handleModalClose = () => {
   resetForm();
@@ -1162,4 +1238,4 @@ const handleModalClose = () => {
   border-radius: 4px;
   border: 1px dashed #d9d9d9;
 }
-</style> 
+</style>

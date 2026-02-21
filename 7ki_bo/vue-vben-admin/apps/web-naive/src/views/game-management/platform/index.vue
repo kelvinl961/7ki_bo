@@ -1,8 +1,5 @@
 <template>
-  <Page
-    description=""
-    title=""
-  >
+  <Page description="" title="">
     <!-- 面包屑导航 -->
     <!--<div class="mb-4">
       <n-breadcrumb>
@@ -13,7 +10,7 @@
 
     <!-- 筛选器区域 -->
     <n-card class="mb-4">
-      <div class="flex flex-wrap gap-4 items-end">
+      <div class="flex flex-wrap items-end gap-4">
         <!-- 游戏类型筛选 -->
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium">游戏类型</label>
@@ -64,12 +61,8 @@
               clearable
               @keyup.enter="handleFilter"
             />
-            <n-button type="primary" @click="handleFilter">
-              搜索
-            </n-button>
-            <n-button @click="resetFilter">
-              重置
-            </n-button>
+            <n-button type="primary" @click="handleFilter"> 搜索 </n-button>
+            <n-button @click="resetFilter"> 重置 </n-button>
           </div>
         </div>
       </div>
@@ -92,7 +85,7 @@
     >
       <template #actionBar="{ selectedCount, selectedRows }">
         <n-card :bordered="false" class="rounded-16px shadow-sm">
-          <div class="flex justify-between items-center">
+          <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <!-- 主要操作按钮 -->
               <div class="flex gap-2">
@@ -103,16 +96,17 @@
                   游戏公共配置
                 </n-button>
               </div>
-              
+
               <!-- 选择信息 -->
               <div class="text-sm text-gray-600">
-                已选择 {{ selectedCount }} 条数据，共 {{ paginationReactive.total }} 条
+                已选择 {{ selectedCount }} 条数据，共
+                {{ paginationReactive.total }} 条
               </div>
             </div>
-            
+
             <div class="flex gap-2">
               <!-- 批量操作 -->
-             <!-- <n-button 
+              <!-- <n-button 
                 v-if="selectedCount > 0" 
                 type="error" 
                 size="small"
@@ -152,14 +146,14 @@
             :disabled="!!editingPlatform"
           />
         </n-form-item>
-        
+
         <n-form-item label="平台名称" path="platformName">
           <n-input
             v-model:value="formData.platformName"
             placeholder="请输入平台名称"
           />
         </n-form-item>
-        
+
         <n-form-item label="游戏类型" path="gameType">
           <n-select
             v-model:value="formData.gameType"
@@ -167,7 +161,7 @@
             :options="gameTypeOptions"
           />
         </n-form-item>
-        
+
         <n-form-item label="币种" path="currency">
           <n-select
             v-model:value="formData.currency"
@@ -223,28 +217,28 @@
             :rows="3"
           />
         </n-form-item>
-        
+
         <div class="grid grid-cols-2 gap-4">
           <n-form-item label="热门一">
             <n-switch v-model:value="formData.isHot" />
           </n-form-item>
-          
+
           <n-form-item label="热门二">
             <n-switch v-model:value="formData.isFeatured" />
           </n-form-item>
-          
+
           <n-form-item label="平台开关">
             <n-switch v-model:value="formData.isEnabled" />
           </n-form-item>
-          
+
           <n-form-item label="展示给主播">
             <n-switch v-model:value="formData.showToStreamer" />
           </n-form-item>
         </div>
       </n-form>
-      
+
       <template #action>
-        <div class="flex gap-2 justify-end">
+        <div class="flex justify-end gap-2">
           <n-button @click="showModal = false">取消</n-button>
           <n-button type="primary" @click="handleSubmit" :loading="submitting">
             {{ editingPlatform ? '更新' : '创建' }}
@@ -259,9 +253,18 @@
 </template>
 
 <script lang="ts" setup>
-import { h, onMounted, reactive, ref, defineEmits, defineAsyncComponent } from 'vue';
+import {
+  h,
+  onMounted,
+  reactive,
+  ref,
+  defineEmits,
+  defineAsyncComponent,
+} from 'vue';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
-const SmartDataGrid = defineAsyncComponent(() => import('../../../components/smart/SmartDataGrid/index.vue'));
+const SmartDataGrid = defineAsyncComponent(
+  () => import('../../../components/smart/SmartDataGrid/index.vue'),
+);
 import type { DataTableColumns, FormInst, FormRules } from 'naive-ui';
 import { useTrimmedSearch } from '#/composables/useFormHelpers';
 import {
@@ -283,7 +286,7 @@ import {
 } from 'naive-ui';
 import { Page } from '@vben/common-ui';
 import { notification } from '#/adapter/naive';
-import { 
+import {
   getGamePlatformListApi,
   createGamePlatformApi,
   updateGamePlatformApi,
@@ -291,10 +294,14 @@ import {
   toggleGamePlatformApi,
   setGamePlatformTopApi,
   bulkDeleteGamePlatformsApi,
-  type GamePlatformItem 
+  type GamePlatformItem,
 } from '#/api/game/platform';
-const MediaLibrarySelector = defineAsyncComponent(() => import('#/components/MediaLibrarySelector.vue'));
-const GamePublicConfigModal = defineAsyncComponent(() => import('./GamePublicConfigModal.vue'));
+const MediaLibrarySelector = defineAsyncComponent(
+  () => import('#/components/MediaLibrarySelector.vue'),
+);
+const GamePublicConfigModal = defineAsyncComponent(
+  () => import('./GamePublicConfigModal.vue'),
+);
 
 // 响应式数据
 const message = useMessage();
@@ -395,89 +402,97 @@ const formatDate = (date: string | Date | null) => {
 // 表格列配置
 const columns: DataTableColumns<GamePlatformItem> = [
   { type: 'selection' },
-  { 
-    title: '排序', 
-    key: 'sortOrder', 
+  {
+    title: '排序',
+    key: 'sortOrder',
     width: 80,
     render(row) {
       return h('div', { class: 'flex items-center gap-1' }, [
         h('span', row.sortOrder),
-        h(NButton, { 
-          size: 'tiny', 
-          quaternary: true,
-          type: 'primary',
-          onClick: () => handleSetTop(row) 
-        }, { default: () => '置顶' }),
+        h(
+          NButton,
+          {
+            size: 'tiny',
+            quaternary: true,
+            type: 'primary',
+            onClick: () => handleSetTop(row),
+          },
+          { default: () => '置顶' },
+        ),
       ]);
     },
   },
   { title: '平台ID', key: 'platformId', width: 120 },
   { title: '平台名称', key: 'platformName', width: 180 },
-  { 
-    title: 'Logo', 
-    key: 'logoUrl', 
+  {
+    title: 'Logo',
+    key: 'logoUrl',
     width: 80,
     render(row) {
       if (row.logoUrl) {
         return h('div', { class: 'image-container' }, [
-          h(NImage, { 
+          h(NImage, {
             src: row.logoUrl,
             alt: '平台Logo',
             width: 40,
             height: 40,
             objectFit: 'cover',
             class: 'table-logo',
-            fallbackSrc: '/placeholder-logo.png'
-          })
+            fallbackSrc: '/placeholder-logo.png',
+          }),
         ]);
       }
       return h('span', { class: 'text-gray-400' }, '无Logo');
     },
   },
-  { 
-    title: '游戏类型', 
-    key: 'gameType', 
+  {
+    title: '游戏类型',
+    key: 'gameType',
     width: 100,
     render(row) {
       // Convert English game type to Chinese for display
       const getChineseGameType = (englishType: string) => {
         const typeMap: Record<string, string> = {
-          'LIVE': '真人',
-          'SLOT': '电子',
-          'SPORTS': '体育',
-          'LOTTERY': '彩票',
-          'CHESS_CARDS': '棋牌',
-          'ESPORTS': '电竞',
-          'HUNTING': '捕鱼',
-          'ARCADE': '街机',
-          'SIMULATION': '模拟',
-          'COCKFIGHT': '斗鸡'
+          LIVE: '真人',
+          SLOT: '电子',
+          SPORTS: '体育',
+          LOTTERY: '彩票',
+          CHESS_CARDS: '棋牌',
+          ESPORTS: '电竞',
+          HUNTING: '捕鱼',
+          ARCADE: '街机',
+          SIMULATION: '模拟',
+          COCKFIGHT: '斗鸡',
         };
         return typeMap[englishType] || englishType;
       };
-      
-      return h(NTag, { type: 'info', size: 'small' }, { 
-        default: () => getChineseGameType(row.gameType) 
-      });
+
+      return h(
+        NTag,
+        { type: 'info', size: 'small' },
+        {
+          default: () => getChineseGameType(row.gameType),
+        },
+      );
     },
   },
   { title: '币种', key: 'currency', width: 80 },
-  { 
-    title: '平台图片', 
-    key: 'imageUrl', 
+  {
+    title: '平台图片',
+    key: 'imageUrl',
     width: 100,
     render(row) {
       if (row.imageUrl) {
         return h('div', { class: 'image-container' }, [
-          h(NImage, { 
+          h(NImage, {
             src: row.imageUrl,
             alt: '平台图片',
             width: 60,
             height: 40,
             objectFit: 'cover',
             class: 'table-image',
-            fallbackSrc: '/placeholder-image.png'
-          })
+            fallbackSrc: '/placeholder-image.png',
+          }),
         ]);
       }
       return h('span', { class: 'text-gray-400' }, '无图片');
@@ -488,9 +503,9 @@ const columns: DataTableColumns<GamePlatformItem> = [
     key: 'isHot',
     width: 100,
     render(row) {
-      return h(NSwitch, { 
+      return h(NSwitch, {
         value: row.isHot,
-        onUpdateValue: (value) => handleToggle(row, 'isHot', value)
+        onUpdateValue: (value) => handleToggle(row, 'isHot', value),
       });
     },
   },
@@ -499,9 +514,9 @@ const columns: DataTableColumns<GamePlatformItem> = [
     key: 'isFeatured',
     width: 100,
     render(row) {
-      return h(NSwitch, { 
+      return h(NSwitch, {
         value: row.isFeatured,
-        onUpdateValue: (value) => handleToggle(row, 'isFeatured', value)
+        onUpdateValue: (value) => handleToggle(row, 'isFeatured', value),
       });
     },
   },
@@ -510,9 +525,9 @@ const columns: DataTableColumns<GamePlatformItem> = [
     key: 'isEnabled',
     width: 100,
     render(row) {
-      return h(NSwitch, { 
+      return h(NSwitch, {
         value: row.isEnabled,
-        onUpdateValue: (value) => handleToggle(row, 'isEnabled', value)
+        onUpdateValue: (value) => handleToggle(row, 'isEnabled', value),
       });
     },
   },
@@ -521,23 +536,27 @@ const columns: DataTableColumns<GamePlatformItem> = [
     key: 'showToStreamer',
     width: 120,
     render(row) {
-      return h(NSwitch, { 
+      return h(NSwitch, {
         value: row.showToStreamer,
-        onUpdateValue: (value) => handleToggle(row, 'showToStreamer', value)
+        onUpdateValue: (value) => handleToggle(row, 'showToStreamer', value),
       });
     },
   },
-  { 
-    title: '子游戏数量', 
-    key: 'subGameCount', 
+  {
+    title: '子游戏数量',
+    key: 'subGameCount',
     width: 100,
     render(row) {
-      return h('span', { class: 'text-blue-600 font-medium' }, row.subGameCount);
+      return h(
+        'span',
+        { class: 'text-blue-600 font-medium' },
+        row.subGameCount,
+      );
     },
   },
-  { 
-    title: '最低准入', 
-    key: 'minEntryAmount', 
+  {
+    title: '最低准入',
+    key: 'minEntryAmount',
     width: 100,
     render(row) {
       let amount = 0;
@@ -545,7 +564,11 @@ const columns: DataTableColumns<GamePlatformItem> = [
         amount = parseFloat(row.minEntryAmount);
       } else if (typeof row.minEntryAmount === 'number') {
         amount = row.minEntryAmount;
-      } else if (row.minEntryAmount && typeof row.minEntryAmount === 'object' && row.minEntryAmount.d) {
+      } else if (
+        row.minEntryAmount &&
+        typeof row.minEntryAmount === 'object' &&
+        row.minEntryAmount.d
+      ) {
         // Handle Prisma Decimal object: {s: 1, e: -1, d: [2000000]}
         const decimal = row.minEntryAmount;
         amount = decimal.d[0] * Math.pow(10, decimal.e);
@@ -568,19 +591,26 @@ const columns: DataTableColumns<GamePlatformItem> = [
     width: 200,
     render(row) {
       return h('div', { class: 'flex gap-2' }, [
-        h(NButton, { 
-          size: 'small', 
-          quaternary: true, 
-          type: 'primary', 
-          onClick: () => handleEdit(row) 
-        }, { default: () => '编辑' }),
-        h(NButton, { 
-          size: 'small', 
-          quaternary: true, 
-          type: 'info', 
-          onClick: () => handleManageGames(row) 
-        }, { default: () => '管理' }),
-       
+        h(
+          NButton,
+          {
+            size: 'small',
+            quaternary: true,
+            type: 'primary',
+            onClick: () => handleEdit(row),
+          },
+          { default: () => '编辑' },
+        ),
+        h(
+          NButton,
+          {
+            size: 'small',
+            quaternary: true,
+            type: 'info',
+            onClick: () => handleManageGames(row),
+          },
+          { default: () => '管理' },
+        ),
       ]);
     },
   },
@@ -629,35 +659,41 @@ const handleEdit = (record: GamePlatformItem) => {
   // Convert Chinese game type back to English for form editing
   const getEnglishGameType = (chineseType: string) => {
     const typeMap: Record<string, string> = {
-      '真人': 'LIVE',
-      '电子': 'SLOT',
-      '体育': 'SPORTS',
-      '彩票': 'LOTTERY',
-      '棋牌': 'CHESS_CARDS',
-      '电竞': 'ESPORTS',
-      '捕鱼': 'HUNTING',
-      '街机': 'ARCADE',
-      '模拟': 'SIMULATION',
-      '斗鸡': 'COCKFIGHT'
+      真人: 'LIVE',
+      电子: 'SLOT',
+      体育: 'SPORTS',
+      彩票: 'LOTTERY',
+      棋牌: 'CHESS_CARDS',
+      电竞: 'ESPORTS',
+      捕鱼: 'HUNTING',
+      街机: 'ARCADE',
+      模拟: 'SIMULATION',
+      斗鸡: 'COCKFIGHT',
     };
     return typeMap[chineseType] || chineseType;
   };
-  
+
   formData.gameType = getEnglishGameType(record.gameType);
   formData.currency = record.currency;
   formData.isHot = record.isHot;
   formData.isFeatured = record.isFeatured;
   formData.isEnabled = record.isEnabled;
   formData.showToStreamer = record.showToStreamer;
-  formData.minEntryAmount = typeof record.minEntryAmount === 'string' ? parseFloat(record.minEntryAmount) : record.minEntryAmount;
-  formData.sortOrder = typeof record.sortOrder === 'string' ? parseInt(record.sortOrder) : record.sortOrder;
-          formData.imageUrl = record.imageUrl || '';
-        formData.logoUrl = record.logoUrl || '';
-        formData.remark = record.remark || '';
-  
+  formData.minEntryAmount =
+    typeof record.minEntryAmount === 'string'
+      ? parseFloat(record.minEntryAmount)
+      : record.minEntryAmount;
+  formData.sortOrder =
+    typeof record.sortOrder === 'string'
+      ? parseInt(record.sortOrder)
+      : record.sortOrder;
+  formData.imageUrl = record.imageUrl || '';
+  formData.logoUrl = record.logoUrl || '';
+  formData.remark = record.remark || '';
+
   // Reset image upload state for editing
   imagePreview.value = '';
-  
+
   showModal.value = true;
 };
 
@@ -687,7 +723,7 @@ const handleBulkDelete = async (selectedRows: GamePlatformItem[]) => {
   }
 
   try {
-    const platformIds = selectedRows.map(platform => Number(platform.id));
+    const platformIds = selectedRows.map((platform) => Number(platform.id));
     await bulkDeleteGamePlatformsApi(platformIds);
     message.success(`已成功删除 ${selectedRows.length} 个平台`);
     checkedRowKeys.value = [];
@@ -699,11 +735,15 @@ const handleBulkDelete = async (selectedRows: GamePlatformItem[]) => {
 };
 
 // 切换状态
-const handleToggle = async (record: GamePlatformItem, field: string, value: boolean) => {
+const handleToggle = async (
+  record: GamePlatformItem,
+  field: string,
+  value: boolean,
+) => {
   try {
     await toggleGamePlatformApi(record.id, { field: field as any, value });
     // 更新本地数据
-    const index = tableData.value.findIndex(item => item.id === record.id);
+    const index = tableData.value.findIndex((item) => item.id === record.id);
     if (index !== -1) {
       (tableData.value[index] as any)[field] = value;
     }
@@ -761,11 +801,11 @@ const handleManageGames = (record: GamePlatformItem) => {
 // 提交表单
 const handleSubmit = async () => {
   if (!formRef.value) return;
-  
+
   try {
     await formRef.value.validate();
     submitting.value = true;
-    
+
     const data = {
       platformId: formData.platformId,
       platformName: formData.platformName,
@@ -777,15 +817,18 @@ const handleSubmit = async () => {
       showToStreamer: formData.showToStreamer,
       minEntryAmount: formData.minEntryAmount,
       sortOrder: formData.sortOrder,
-      logoUrl: formData.logoUrl || "",
-      imageUrl: formData.imageUrl || "",
+      logoUrl: formData.logoUrl || '',
+      imageUrl: formData.imageUrl || '',
       remark: formData.remark || undefined,
     };
-    
+
     let platformResult: any;
-    
+
     if (editingPlatform.value) {
-      platformResult = await updateGamePlatformApi(editingPlatform.value.id, data);
+      platformResult = await updateGamePlatformApi(
+        editingPlatform.value.id,
+        data,
+      );
       notification.success({
         content: '更新成功',
         duration: 3000,
@@ -797,9 +840,9 @@ const handleSubmit = async () => {
         duration: 3000,
       });
     }
-    
+
     // Images are now handled through MediaLibrarySelector, no separate upload needed
-    
+
     showModal.value = false;
     loadPlatformList();
   } catch (error) {
@@ -825,13 +868,13 @@ const resetForm = () => {
   formData.showToStreamer = false;
   formData.minEntryAmount = 0;
   formData.sortOrder = 0;
-          formData.imageUrl = '';
-        formData.logoUrl = '';
-        formData.remark = '';
-  
+  formData.imageUrl = '';
+  formData.logoUrl = '';
+  formData.remark = '';
+
   // Reset image preview state
   imagePreview.value = '';
-  
+
   if (formRef.value) {
     formRef.value.restoreValidation();
   }
@@ -862,7 +905,7 @@ const clearSelection = () => {
 };
 
 const selectAll = () => {
-  checkedRowKeys.value = tableData.value.map(platform => Number(platform.id));
+  checkedRowKeys.value = tableData.value.map((platform) => Number(platform.id));
   message.info('已全选');
 };
 
@@ -878,7 +921,7 @@ const loadPlatformList = async () => {
       isEnabled: filterForm.isEnabled,
       search: searchQuery.value, // 🔍 FIX: Use auto-trimmed search
     };
-    
+
     const response = await getGamePlatformListApi(params);
     tableData.value = response.list || [];
     paginationReactive.total = response.pagination?.total || 0;
@@ -993,4 +1036,4 @@ const emit = defineEmits(['manage-subgames']);
   border-radius: 0;
   border: none;
 }
-</style> 
+</style>

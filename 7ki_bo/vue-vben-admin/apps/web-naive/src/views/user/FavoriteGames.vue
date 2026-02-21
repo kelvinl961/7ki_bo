@@ -45,13 +45,12 @@
 
       <!-- Games Grid -->
       <n-grid :cols="24" :x-gap="16" :y-gap="16">
-        <n-grid-item
-          v-for="game in filteredGames"
-          :key="game.id"
-          :span="6"
-        >
+        <n-grid-item v-for="game in filteredGames" :key="game.id" :span="6">
           <n-card
-            :class="{ 'favorite-game-card': true, 'selected': selectedGames.includes(game.gameId) }"
+            :class="{
+              'favorite-game-card': true,
+              selected: selectedGames.includes(game.gameId),
+            }"
             hoverable
             @click="toggleSelection(game.gameId)"
           >
@@ -68,7 +67,9 @@
                 <div class="game-overlay">
                   <n-checkbox
                     :checked="selectedGames.includes(game.gameId)"
-                    @update:checked="(checked) => handleSelectionChange(game.gameId, checked)"
+                    @update:checked="
+                      (checked) => handleSelectionChange(game.gameId, checked)
+                    "
                   />
                 </div>
               </div>
@@ -114,9 +115,7 @@
         description="暂无收藏游戏"
       >
         <template #extra>
-          <n-button type="primary" @click="handleRefresh">
-            刷新
-          </n-button>
+          <n-button type="primary" @click="handleRefresh"> 刷新 </n-button>
         </template>
       </n-empty>
 
@@ -143,7 +142,7 @@ const {
   isOnline,
   loadFavorites,
   removeFromFavorites,
-  bulkRemoveFromFavorites
+  bulkRemoveFromFavorites,
 } = useFavoriteGames();
 
 // State
@@ -155,10 +154,13 @@ const filteredGames = computed(() => {
   if (!searchKeyword.value) {
     return favoriteGames.value;
   }
-  
-  return favoriteGames.value.filter(game =>
-    game.gameName.toLowerCase().includes(searchKeyword.value.toLowerCase()) ||
-    game.platformName.toLowerCase().includes(searchKeyword.value.toLowerCase())
+
+  return favoriteGames.value.filter(
+    (game) =>
+      game.gameName.toLowerCase().includes(searchKeyword.value.toLowerCase()) ||
+      game.platformName
+        .toLowerCase()
+        .includes(searchKeyword.value.toLowerCase()),
   );
 });
 
@@ -178,9 +180,9 @@ const handleRemoveFavorite = async (gameId: number) => {
       const success = await removeFromFavorites(gameId);
       if (success) {
         // Remove from selection if it was selected
-        selectedGames.value = selectedGames.value.filter(id => id !== gameId);
+        selectedGames.value = selectedGames.value.filter((id) => id !== gameId);
       }
-    }
+    },
   });
 };
 
@@ -197,7 +199,7 @@ const handleBulkRemove = async () => {
       if (success) {
         selectedGames.value = [];
       }
-    }
+    },
   });
 };
 
@@ -216,7 +218,7 @@ const handleSelectionChange = (gameId: number, checked: boolean) => {
       selectedGames.value.push(gameId);
     }
   } else {
-    selectedGames.value = selectedGames.value.filter(id => id !== gameId);
+    selectedGames.value = selectedGames.value.filter((id) => id !== gameId);
   }
 };
 
@@ -226,7 +228,7 @@ const formatDate = (dateString: string) => {
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   });
 };
 
@@ -283,4 +285,4 @@ onMounted(() => {
 .mb-4 {
   margin-bottom: 16px;
 }
-</style> 
+</style>

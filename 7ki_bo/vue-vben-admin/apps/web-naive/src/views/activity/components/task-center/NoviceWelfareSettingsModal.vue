@@ -1,9 +1,9 @@
 <template>
-  <n-modal 
-    v-model:show="showModal" 
-    preset="dialog" 
-    title="修改新人福利" 
-    style="width: 600px;"
+  <n-modal
+    v-model:show="showModal"
+    preset="dialog"
+    title="修改新人福利"
+    style="width: 600px"
     class="settings-modal"
   >
     <template #header>
@@ -28,10 +28,7 @@
 
         <!-- 是否开启 -->
         <n-form-item label="是否开启">
-          <n-switch 
-            v-model:value="formData.isEnabled"
-            size="medium"
-          >
+          <n-switch v-model:value="formData.isEnabled" size="medium">
             <template #checked>开</template>
             <template #unchecked>关</template>
           </n-switch>
@@ -39,10 +36,7 @@
 
         <!-- 提示气泡 -->
         <n-form-item label="提示气泡">
-          <n-switch 
-            v-model:value="formData.showTooltip"
-            size="medium"
-          >
+          <n-switch v-model:value="formData.showTooltip" size="medium">
             <template #checked>开</template>
             <template #unchecked>关</template>
           </n-switch>
@@ -114,10 +108,10 @@ import {
   useMessage,
   type FormInst,
 } from 'naive-ui';
-import { 
+import {
   updateTaskCenter,
   getTaskCenterList,
-  type TaskCenter 
+  type TaskCenter,
 } from '#/api/taskCenter';
 
 interface Props {
@@ -148,7 +142,7 @@ const formData = reactive({
   isEnabled: true,
   showTooltip: false,
   rewardType: 'CASH' as 'CASH' | 'BONUS',
-  rewardAmount: 10.00,
+  rewardAmount: 10.0,
   activityLevel: 0,
 });
 
@@ -162,11 +156,11 @@ const handleSubmit = async () => {
     message.error('任务数据不存在');
     return;
   }
-  
+
   submitting.value = true;
   try {
     console.log('🎯 Submitting individual task settings:', formData);
-    
+
     // Call API to update task settings
     const updateData = {
       isActive: formData.isEnabled,
@@ -179,9 +173,9 @@ const handleSubmit = async () => {
       taskType: props.taskData.taskType,
       rewardCurrency: props.taskData.rewardCurrency || 'BRL',
     };
-    
+
     await updateTaskCenter(props.taskData.id, updateData);
-    
+
     message.success('任务设置保存成功');
     showModal.value = false;
     emit('submit');
@@ -196,17 +190,22 @@ const handleSubmit = async () => {
 // Load current task settings when modal opens
 watch(showModal, async (newValue) => {
   if (newValue && props.taskData) {
-    console.log('📝 Loading individual task settings for:', props.taskData.title, 'ID:', props.taskData.id);
-    
+    console.log(
+      '📝 Loading individual task settings for:',
+      props.taskData.title,
+      'ID:',
+      props.taskData.id,
+    );
+
     try {
       // Fetch fresh data from API to ensure we have the latest values
       const { data: tasks } = await getTaskCenterList({
         category: 'NOVICE_WELFARE',
       });
-      
+
       // Find the current task in the fresh data
       const freshTask = tasks.find((t: any) => t.id === props.taskData!.id);
-      
+
       if (freshTask) {
         console.log('✅ Loaded fresh task data from API:', freshTask);
         // Load fresh task data into form
@@ -214,7 +213,7 @@ watch(showModal, async (newValue) => {
           isEnabled: freshTask.isActive ?? true,
           showTooltip: false, // This field might not exist in task data yet
           rewardType: freshTask.rewardType || 'CASH',
-          rewardAmount: freshTask.rewardAmount || 10.00,
+          rewardAmount: freshTask.rewardAmount || 10.0,
           activityLevel: freshTask.activityLevel || 0,
         });
       } else {
@@ -224,7 +223,7 @@ watch(showModal, async (newValue) => {
           isEnabled: props.taskData.isActive ?? true,
           showTooltip: false,
           rewardType: props.taskData.rewardType || 'CASH',
-          rewardAmount: props.taskData.rewardAmount || 10.00,
+          rewardAmount: props.taskData.rewardAmount || 10.0,
           activityLevel: props.taskData.activityLevel || 0,
         });
       }
@@ -235,7 +234,7 @@ watch(showModal, async (newValue) => {
         isEnabled: props.taskData.isActive ?? true,
         showTooltip: false,
         rewardType: props.taskData.rewardType || 'CASH',
-        rewardAmount: props.taskData.rewardAmount || 10.00,
+        rewardAmount: props.taskData.rewardAmount || 10.0,
         activityLevel: props.taskData.activityLevel || 0,
       });
     }

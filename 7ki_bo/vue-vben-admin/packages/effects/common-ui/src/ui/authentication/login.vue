@@ -143,7 +143,5 @@ defineExpose({
     >
       {{ submitButtonText || $t('common.login') }}
     </VbenButton>
-
-   
   </div>
 </template>

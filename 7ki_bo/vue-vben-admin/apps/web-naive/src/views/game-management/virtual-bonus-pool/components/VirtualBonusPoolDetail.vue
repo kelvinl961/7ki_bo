@@ -4,67 +4,77 @@
       <n-descriptions-item label="ID">
         <n-tag type="info">{{ data?.id || '-' }}</n-tag>
       </n-descriptions-item>
-      
+
       <n-descriptions-item label="币种">
         <n-tag type="success">{{ data?.currency || '-' }}</n-tag>
       </n-descriptions-item>
-      
+
       <n-descriptions-item label="展示形式">
-        <n-tag type="warning">{{ getDisplayTypeLabel(data?.displayType) }}</n-tag>
+        <n-tag type="warning">{{
+          getDisplayTypeLabel(data?.displayType)
+        }}</n-tag>
       </n-descriptions-item>
-      
+
       <n-descriptions-item label="展示位置">
         {{ data?.displayPosition || '-' }}
       </n-descriptions-item>
-      
+
       <n-descriptions-item label="点击跳转位置" :span="2">
         <n-ellipsis style="max-width: 100%">
-          <a :href="data?.clickTarget" target="_blank" rel="noopener noreferrer">
+          <a
+            :href="data?.clickTarget"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             {{ data?.clickTarget || '-' }}
           </a>
         </n-ellipsis>
       </n-descriptions-item>
-      
+
       <n-descriptions-item label="最大展示金额">
         <span class="amount-text">
           {{ formatAmount(data?.maxAmount) }}
         </span>
       </n-descriptions-item>
-      
+
       <n-descriptions-item label="最小展示金额">
         <span class="amount-text">
           {{ formatAmount(data?.minAmount) }}
         </span>
       </n-descriptions-item>
-      
+
       <n-descriptions-item label="小数点位数">
         <n-tag size="small">{{ data?.decimalPlaces || 0 }} 位</n-tag>
       </n-descriptions-item>
-      
+
       <n-descriptions-item label="金额数字样式">
-        <n-tag type="primary">{{ getNumberStyleLabel(data?.numberStyle) }}</n-tag>
+        <n-tag type="primary">{{
+          getNumberStyleLabel(data?.numberStyle)
+        }}</n-tag>
       </n-descriptions-item>
-      
+
       <n-descriptions-item label="背景风格">
-        <n-tag type="primary">{{ getBackgroundStyleLabel(data?.backgroundStyle) }}</n-tag>
+        <n-tag type="primary">{{
+          getBackgroundStyleLabel(data?.backgroundStyle)
+        }}</n-tag>
       </n-descriptions-item>
-      
+
       <n-descriptions-item label="状态">
         <n-tag :type="data?.status ? 'success' : 'error'">
           {{ data?.status ? '启用' : '禁用' }}
         </n-tag>
       </n-descriptions-item>
-      
+
       <n-descriptions-item label="备注" :span="2">
         <div class="remark-content">
           {{ data?.remark || '无备注' }}
         </div>
       </n-descriptions-item>
-      
+
       <n-descriptions-item label="操作人">
         <n-tag type="info">{{ data?.operator || '-' }}</n-tag>
       </n-descriptions-item>
-      
+
       <n-descriptions-item label="操作时间">
         {{ formatDateTime(data?.operationTime) }}
       </n-descriptions-item>
@@ -74,11 +84,11 @@
     <div class="preview-section mt-6">
       <n-card title="样式预览" size="small">
         <div class="preview-container">
-          <div 
+          <div
             class="bonus-pool-preview"
             :class="[
               `bg-${data?.backgroundStyle || 'style1'}`,
-              `number-${data?.numberStyle || 'style1'}`
+              `number-${data?.numberStyle || 'style1'}`,
             ]"
           >
             <div class="pool-header">
@@ -86,11 +96,15 @@
               <span class="pool-position">{{ data?.displayPosition }}</span>
             </div>
             <div class="pool-amount">
-              <span class="currency">{{ getCurrencySymbol(data?.currency) }}</span>
+              <span class="currency">{{
+                getCurrencySymbol(data?.currency)
+              }}</span>
               <span class="amount">{{ getPreviewAmount() }}</span>
             </div>
             <div class="pool-footer">
-              <span class="pool-type">{{ getDisplayTypeLabel(data?.displayType) }}</span>
+              <span class="pool-type">{{
+                getDisplayTypeLabel(data?.displayType)
+              }}</span>
             </div>
           </div>
         </div>
@@ -140,17 +154,17 @@ const backgroundStyleOptions = [
 
 // Helper functions
 const getDisplayTypeLabel = (value?: string) => {
-  const option = displayTypeOptions.find(opt => opt.value === value);
+  const option = displayTypeOptions.find((opt) => opt.value === value);
   return option?.label || value || '-';
 };
 
 const getNumberStyleLabel = (value?: string) => {
-  const option = numberStyleOptions.find(opt => opt.value === value);
+  const option = numberStyleOptions.find((opt) => opt.value === value);
   return option?.label || value || '-';
 };
 
 const getBackgroundStyleLabel = (value?: string) => {
-  const option = backgroundStyleOptions.find(opt => opt.value === value);
+  const option = backgroundStyleOptions.find((opt) => opt.value === value);
   return option?.label || value || '-';
 };
 
@@ -177,9 +191,14 @@ const getCurrencySymbol = (currency?: string) => {
 
 const getPreviewAmount = () => {
   if (!props.data) return '0.00';
-  
-  const { displayType, minAmount = 0, maxAmount = 0, decimalPlaces = 2 } = props.data;
-  
+
+  const {
+    displayType,
+    minAmount = 0,
+    maxAmount = 0,
+    decimalPlaces = 2,
+  } = props.data;
+
   let amount = 0;
   switch (displayType) {
     case 'fixed':
@@ -189,15 +208,18 @@ const getPreviewAmount = () => {
       amount = Math.random() * (maxAmount - minAmount) + minAmount;
       break;
     case 'realtime':
-      amount = minAmount + (Math.sin(Date.now() / 1000) + 1) * (maxAmount - minAmount) / 2;
+      amount =
+        minAmount +
+        ((Math.sin(Date.now() / 1000) + 1) * (maxAmount - minAmount)) / 2;
       break;
     case 'increment':
-      amount = minAmount + (Date.now() % 10000) / 10000 * (maxAmount - minAmount);
+      amount =
+        minAmount + ((Date.now() % 10000) / 10000) * (maxAmount - minAmount);
       break;
     default:
       amount = maxAmount;
   }
-  
+
   return amount.toFixed(decimalPlaces);
 };
 </script>
@@ -324,7 +346,11 @@ const getPreviewAmount = () => {
   content: '';
   position: absolute;
   inset: -4px;
-  background: linear-gradient(45deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+  background: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0.1)
+  );
   border-radius: 8px;
   z-index: -1;
 }
@@ -341,4 +367,4 @@ const getPreviewAmount = () => {
   border-radius: 20px;
   font-weight: 500;
 }
-</style> 
+</style>

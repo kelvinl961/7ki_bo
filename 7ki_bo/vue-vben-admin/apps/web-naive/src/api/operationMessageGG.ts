@@ -13,19 +13,19 @@ export interface GGMessage {
   startTime: Date | null;
   endTime: Date | null;
   videoPushEnabled: boolean;
-  status: 'enabled' | 'disabled';
+  status: 'disabled' | 'enabled';
   remark: string;
   updatedAt: Date;
   createdAt: Date;
-  
+
   // 显示设置
   displaySettings?: {
     backgroundColor?: string;
-    textColor?: string;
     fontSize?: number;
     position?: string;
+    textColor?: string;
   };
-  
+
   // 高级设置
   priority?: string;
   clickAction?: string;
@@ -44,17 +44,17 @@ export interface GGMessageInput {
   startTime: Date | null;
   endTime: Date | null;
   videoPushEnabled: boolean;
-  status: 'enabled' | 'disabled';
+  status: 'disabled' | 'enabled';
   remark: string;
-  
+
   // 显示设置
   displaySettings?: {
     backgroundColor?: string;
-    textColor?: string;
     fontSize?: number;
     position?: string;
+    textColor?: string;
   };
-  
+
   // 高级设置
   priority?: string;
   clickAction?: string;
@@ -98,8 +98,8 @@ export interface GGStats {
   todayCreated: number;
   monthlyCreated: number;
   statusDistribution: {
-    enabled: number;
     disabled: number;
+    enabled: number;
   };
   languageDistribution: {
     [key: string]: number;
@@ -116,33 +116,42 @@ export interface GGPreview {
   content: string;
   displaySettings: {
     backgroundColor: string;
-    textColor: string;
     fontSize: number;
     position: string;
+    textColor: string;
   };
 }
 
 /**
  * 获取 GG 消息列表
  */
-export async function getGGList(params: GGListParams = {}): Promise<GGListResponse> {
-  const response = await requestClient.get<GGListResponse>('/system-announcements', {
-    params: {
-      page: params.page || 1,
-      pageSize: params.pageSize || 10,
-      language: params.language,
-      currency: params.currency,
-      receiverType: params.receiverType,
-      status: params.status,
-      popupEntry: params.popupEntry,
-      videoPushEnabled: params.videoPushEnabled,
-      keyword: params.keyword,
-      startTime: params.timeRange?.[0] ? new Date(params.timeRange[0]).toISOString() : undefined,
-      endTime: params.timeRange?.[1] ? new Date(params.timeRange[1]).toISOString() : undefined,
-      sortBy: params.sortBy,
-      sortOrder: params.sortOrder
-    }
-  });
+export async function getGGList(
+  params: GGListParams = {},
+): Promise<GGListResponse> {
+  const response = await requestClient.get<GGListResponse>(
+    '/system-announcements',
+    {
+      params: {
+        page: params.page || 1,
+        pageSize: params.pageSize || 10,
+        language: params.language,
+        currency: params.currency,
+        receiverType: params.receiverType,
+        status: params.status,
+        popupEntry: params.popupEntry,
+        videoPushEnabled: params.videoPushEnabled,
+        keyword: params.keyword,
+        startTime: params.timeRange?.[0]
+          ? new Date(params.timeRange[0]).toISOString()
+          : undefined,
+        endTime: params.timeRange?.[1]
+          ? new Date(params.timeRange[1]).toISOString()
+          : undefined,
+        sortBy: params.sortBy,
+        sortOrder: params.sortOrder,
+      },
+    },
+  );
   return response;
 }
 
@@ -150,7 +159,9 @@ export async function getGGList(params: GGListParams = {}): Promise<GGListRespon
  * 获取单个 GG 消息详情
  */
 export async function getGGById(id: number): Promise<GGMessage> {
-  const response = await requestClient.get<GGMessage>(`/system-announcements/${id}`);
+  const response = await requestClient.get<GGMessage>(
+    `/system-announcements/${id}`,
+  );
   return response;
 }
 
@@ -158,15 +169,24 @@ export async function getGGById(id: number): Promise<GGMessage> {
  * 创建 GG 消息
  */
 export async function createGG(data: GGMessageInput): Promise<GGMessage> {
-  const response = await requestClient.post<GGMessage>('/system-announcements', data);
+  const response = await requestClient.post<GGMessage>(
+    '/system-announcements',
+    data,
+  );
   return response;
 }
 
 /**
  * 更新 GG 消息
  */
-export async function updateGG(id: number, data: Partial<GGMessageInput>): Promise<GGMessage> {
-  const response = await requestClient.put<GGMessage>(`/system-announcements/${id}`, data);
+export async function updateGG(
+  id: number,
+  data: Partial<GGMessageInput>,
+): Promise<GGMessage> {
+  const response = await requestClient.put<GGMessage>(
+    `/system-announcements/${id}`,
+    data,
+  );
   return response;
 }
 
@@ -182,27 +202,36 @@ export async function deleteGG(id: number): Promise<void> {
  */
 export async function batchDeleteGG(params: GGBatchParams): Promise<void> {
   await requestClient.delete('/system-announcements/batch/delete', {
-    data: params
+    data: params,
   });
 }
 
 /**
  * 切换 GG 消息状态
  */
-export async function toggleGGStatus(id: number, enabled: boolean): Promise<GGMessage> {
-  const response = await requestClient.put<GGMessage>(`/system-announcements/${id}/status`, {
-    status: enabled ? 'enabled' : 'disabled'
-  });
+export async function toggleGGStatus(
+  id: number,
+  enabled: boolean,
+): Promise<GGMessage> {
+  const response = await requestClient.put<GGMessage>(
+    `/system-announcements/${id}/status`,
+    {
+      status: enabled ? 'enabled' : 'disabled',
+    },
+  );
   return response;
 }
 
 /**
  * 批量切换 GG 消息状态
  */
-export async function batchToggleGGStatus(params: GGBatchParams, enabled: boolean): Promise<void> {
+export async function batchToggleGGStatus(
+  params: GGBatchParams,
+  enabled: boolean,
+): Promise<void> {
   await requestClient.put('/system-announcements/batch/status', {
     ...params,
-    status: enabled ? 'enabled' : 'disabled'
+    status: enabled ? 'enabled' : 'disabled',
   });
 }
 
@@ -210,7 +239,9 @@ export async function batchToggleGGStatus(params: GGBatchParams, enabled: boolea
  * 复制 GG 消息
  */
 export async function copyGG(id: number): Promise<GGMessage> {
-  const response = await requestClient.post<GGMessage>(`/system-announcements/${id}/copy`);
+  const response = await requestClient.post<GGMessage>(
+    `/system-announcements/${id}/copy`,
+  );
   return response;
 }
 
@@ -218,7 +249,10 @@ export async function copyGG(id: number): Promise<GGMessage> {
  * 批量复制 GG 消息
  */
 export async function batchCopyGG(params: GGBatchParams): Promise<GGMessage[]> {
-  const response = await requestClient.post<GGMessage[]>('/system-announcements/batch/copy', params);
+  const response = await requestClient.post<GGMessage[]>(
+    '/system-announcements/batch/copy',
+    params,
+  );
   return response;
 }
 
@@ -226,7 +260,9 @@ export async function batchCopyGG(params: GGBatchParams): Promise<GGMessage[]> {
  * 获取 GG 消息统计数据
  */
 export async function getGGStats(): Promise<GGStats> {
-  const response = await requestClient.get<GGStats>('/system-announcements/stats/overview');
+  const response = await requestClient.get<GGStats>(
+    '/system-announcements/stats/overview',
+  );
   return response;
 }
 
@@ -234,7 +270,9 @@ export async function getGGStats(): Promise<GGStats> {
  * 预览 GG 消息
  */
 export async function previewGG(id: number): Promise<GGPreview> {
-  const response = await requestClient.get<GGPreview>(`/system-announcements/${id}/preview`);
+  const response = await requestClient.get<GGPreview>(
+    `/system-announcements/${id}/preview`,
+  );
   return response;
 }
 
@@ -244,7 +282,7 @@ export async function previewGG(id: number): Promise<GGPreview> {
 export async function exportGG(params: GGListParams = {}): Promise<Blob> {
   const response = await requestClient.get('/gg-messages/export', {
     params,
-    responseType: 'blob'
+    responseType: 'blob',
   });
   return response;
 }
@@ -253,17 +291,17 @@ export async function exportGG(params: GGListParams = {}): Promise<Blob> {
  * 导入 GG 消息
  */
 export async function importGG(file: File): Promise<{
-  success: number;
-  failed: number;
   errors: string[];
+  failed: number;
+  success: number;
 }> {
   const formData = new FormData();
   formData.append('file', file);
-  
+
   const response = await requestClient.post('/gg-messages/import', formData, {
     headers: {
-      'Content-Type': 'multipart/form-data'
-    }
+      'Content-Type': 'multipart/form-data',
+    },
   });
   return response;
 }
@@ -272,25 +310,39 @@ export async function importGG(file: File): Promise<{
  * 获取 GG 消息模板
  */
 export async function getGGTemplates(): Promise<GGMessage[]> {
-  const response = await requestClient.get<GGMessage[]>('/gg-messages/templates');
+  const response = await requestClient.get<GGMessage[]>(
+    '/gg-messages/templates',
+  );
   return response;
 }
 
 /**
  * 保存为模板
  */
-export async function saveGGAsTemplate(id: number, name: string): Promise<GGMessage> {
-  const response = await requestClient.post<GGMessage>(`/gg-messages/${id}/template`, {
-    name
-  });
+export async function saveGGAsTemplate(
+  id: number,
+  name: string,
+): Promise<GGMessage> {
+  const response = await requestClient.post<GGMessage>(
+    `/gg-messages/${id}/template`,
+    {
+      name,
+    },
+  );
   return response;
 }
 
 /**
  * 从模板创建 GG 消息
  */
-export async function createGGFromTemplate(templateId: number, data: Partial<GGMessageInput>): Promise<GGMessage> {
-  const response = await requestClient.post<GGMessage>(`/gg-messages/templates/${templateId}/create`, data);
+export async function createGGFromTemplate(
+  templateId: number,
+  data: Partial<GGMessageInput>,
+): Promise<GGMessage> {
+  const response = await requestClient.post<GGMessage>(
+    `/gg-messages/templates/${templateId}/create`,
+    data,
+  );
   return response;
 }
 
@@ -304,20 +356,23 @@ export async function testGGDisplay(id: number): Promise<void> {
 /**
  * 获取 GG 消息显示日志
  */
-export async function getGGDisplayLogs(id: number, params: {
-  page?: number;
-  pageSize?: number;
-  startTime?: Date;
-  endTime?: Date;
-} = {}): Promise<{
+export async function getGGDisplayLogs(
+  id: number,
+  params: {
+    endTime?: Date;
+    page?: number;
+    pageSize?: number;
+    startTime?: Date;
+  } = {},
+): Promise<{
   data: {
-    id: number;
-    userId: number;
+    clicked: boolean;
     displayTime: Date;
     duration: number;
-    clicked: boolean;
-    userAgent: string;
+    id: number;
     ip: string;
+    userAgent: string;
+    userId: number;
   }[];
   total: number;
 }> {
@@ -326,8 +381,8 @@ export async function getGGDisplayLogs(id: number, params: {
       page: params.page || 1,
       pageSize: params.pageSize || 10,
       startTime: params.startTime?.toISOString(),
-      endTime: params.endTime?.toISOString()
-    }
+      endTime: params.endTime?.toISOString(),
+    },
   });
   return response;
 }
@@ -335,27 +390,30 @@ export async function getGGDisplayLogs(id: number, params: {
 /**
  * 获取 GG 消息分析报告
  */
-export async function getGGAnalytics(id: number, params: {
-  startTime?: Date;
-  endTime?: Date;
-} = {}): Promise<{
-  totalViews: number;
-  totalClicks: number;
-  clickRate: number;
+export async function getGGAnalytics(
+  id: number,
+  params: {
+    endTime?: Date;
+    startTime?: Date;
+  } = {},
+): Promise<{
   avgDisplayTime: number;
-  viewsByHour: { hour: number; views: number }[];
-  clicksByHour: { hour: number; clicks: number }[];
+  clickRate: number;
+  clicksByHour: { clicks: number; hour: number }[];
+  totalClicks: number;
+  totalViews: number;
   userDistribution: {
     newUsers: number;
     returningUsers: number;
     vipUsers: number;
   };
+  viewsByHour: { hour: number; views: number }[];
 }> {
   const response = await requestClient.get(`/gg-messages/${id}/analytics`, {
     params: {
       startTime: params.startTime?.toISOString(),
-      endTime: params.endTime?.toISOString()
-    }
+      endTime: params.endTime?.toISOString(),
+    },
   });
   return response;
 }
@@ -363,6 +421,8 @@ export async function getGGAnalytics(id: number, params: {
 /**
  * 更新 GG 消息排序
  */
-export async function updateGGSort(items: { id: number; sortOrder: number }[]): Promise<void> {
+export async function updateGGSort(
+  items: { id: number; sortOrder: number }[],
+): Promise<void> {
   await requestClient.put('/system-announcements/batch/sort', { items });
-} 
+}

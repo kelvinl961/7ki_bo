@@ -6,35 +6,39 @@
         <!-- Enhanced Filter Section -->
         <n-card class="mb-4">
           <!-- Top Row - Primary Filters -->
-          <div class="flex flex-wrap items-center gap-4 mb-4">
+          <div class="mb-4 flex flex-wrap items-center gap-4">
             <div class="flex items-center gap-2">
               <span class="text-sm font-medium text-gray-600">创建时间</span>
-              <n-radio-group v-model:value="filterForm.timeRange" size="small" @update:value="handleTimeRangeChange">
+              <n-radio-group
+                v-model:value="filterForm.timeRange"
+                size="small"
+                @update:value="handleTimeRangeChange"
+              >
                 <n-radio value="today">今天</n-radio>
                 <n-radio value="week">本周</n-radio>
                 <n-radio value="month">本月</n-radio>
               </n-radio-group>
-                <n-date-picker
-                  v-model:value="filterForm.dateRange"
-                  type="datetimerange"
+              <n-date-picker
+                v-model:value="filterForm.dateRange"
+                type="datetimerange"
                 format="yyyy-MM-dd HH:mm:ss"
                 placeholder="选择自定义时间范围"
                 style="width: 350px"
-                  clearable
+                clearable
                 @update:value="handleDateRangeChange"
-                />
+              />
             </div>
           </div>
-          
+
           <!-- Second Row - Search and Status Filters -->
-          <div class="flex flex-wrap items-center gap-4 mb-4">
-                <n-select
-                  v-model:value="filterForm.status"
+          <div class="mb-4 flex flex-wrap items-center gap-4">
+            <n-select
+              v-model:value="filterForm.status"
               placeholder="订单状态"
-                  style="width: 120px"
-                  clearable
-                  :options="statusOptions"
-                />
+              style="width: 120px"
+              clearable
+              :options="statusOptions"
+            />
             <n-select
               v-model:value="filterForm.vipLevel"
               placeholder="会员VIP等级"
@@ -54,7 +58,7 @@
               </template>
             </n-input>
           </div>
-          
+
           <!-- Third Row - Action Buttons -->
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
@@ -64,12 +68,10 @@
                 </template>
                 搜索
               </n-button>
-              <n-button @click="handleAdvancedSearch">
-                高级搜索
-              </n-button>
-                <n-button @click="handleReset">重置</n-button>
-              </div>
-              <div class="flex items-center gap-2">
+              <n-button @click="handleAdvancedSearch"> 高级搜索 </n-button>
+              <n-button @click="handleReset">重置</n-button>
+            </div>
+            <div class="flex items-center gap-2">
               <n-button type="primary" @click="handleCreateSupplementaryOrder">
                 <template #icon>
                   <n-icon :component="AddOutline" />
@@ -82,44 +84,66 @@
                 </template>
                 导出报表
               </n-button>
-                <n-button @click="fetchData">
-                  <template #icon>
-                    <n-icon :component="ReloadOutline" />
-                  </template>
-                  刷新
-                </n-button>
-              </div>
+              <n-button @click="fetchData">
+                <template #icon>
+                  <n-icon :component="ReloadOutline" />
+                </template>
+                刷新
+              </n-button>
             </div>
+          </div>
         </n-card>
-            
+
         <!-- Enhanced Summary Stats -->
         <n-card class="mb-4">
-          <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            <div class="text-center p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg">
-              <div class="text-lg font-bold text-blue-600">{{ summary.totalCount }}</div>
-              <div class="text-xs text-gray-600 mt-1">全部充值</div>
+          <div class="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
+            <div
+              class="rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 p-3 text-center"
+            >
+              <div class="text-lg font-bold text-blue-600">
+                {{ summary.totalCount }}
               </div>
-            <div class="text-center p-3 bg-gradient-to-r from-green-50 to-green-100 rounded-lg">
-              <div class="text-lg font-bold text-green-600">{{ formatCurrency(summary.totalAmount) }}</div>
-              <div class="text-xs text-gray-600 mt-1">充值总计</div>
-              </div>
-            <div class="text-center p-3 bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-lg">
-              <div class="text-lg font-bold text-yellow-600">{{ summary.pendingCount }}</div>
-              <div class="text-xs text-gray-600 mt-1">充值锁定</div>
-              </div>
-            <div class="text-center p-3 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg">
-              <div class="text-lg font-bold text-purple-600">{{ summary.confirmedCount }}</div>
-              <div class="text-xs text-gray-600 mt-1">充值确认</div>
-              </div>
-            <div class="text-center p-3 bg-gradient-to-r from-red-50 to-red-100 rounded-lg">
-              <div class="text-lg font-bold text-red-600">{{ summary.rejectedCount }}</div>
-              <div class="text-xs text-gray-600 mt-1">充值失败</div>
-              </div>
-            <div class="text-center p-3 bg-gradient-to-r from-indigo-50 to-indigo-100 rounded-lg">
-              <div class="text-lg font-bold text-indigo-600">不自动刷新</div>
-              <div class="text-xs text-gray-600 mt-1">操作教程</div>
+              <div class="mt-1 text-xs text-gray-600">全部充值</div>
             </div>
-        </div>
+            <div
+              class="rounded-lg bg-gradient-to-r from-green-50 to-green-100 p-3 text-center"
+            >
+              <div class="text-lg font-bold text-green-600">
+                {{ formatCurrency(summary.totalAmount) }}
+              </div>
+              <div class="mt-1 text-xs text-gray-600">充值总计</div>
+            </div>
+            <div
+              class="rounded-lg bg-gradient-to-r from-yellow-50 to-yellow-100 p-3 text-center"
+            >
+              <div class="text-lg font-bold text-yellow-600">
+                {{ summary.pendingCount }}
+              </div>
+              <div class="mt-1 text-xs text-gray-600">充值锁定</div>
+            </div>
+            <div
+              class="rounded-lg bg-gradient-to-r from-purple-50 to-purple-100 p-3 text-center"
+            >
+              <div class="text-lg font-bold text-purple-600">
+                {{ summary.confirmedCount }}
+              </div>
+              <div class="mt-1 text-xs text-gray-600">充值确认</div>
+            </div>
+            <div
+              class="rounded-lg bg-gradient-to-r from-red-50 to-red-100 p-3 text-center"
+            >
+              <div class="text-lg font-bold text-red-600">
+                {{ summary.rejectedCount }}
+              </div>
+              <div class="mt-1 text-xs text-gray-600">充值失败</div>
+            </div>
+            <div
+              class="rounded-lg bg-gradient-to-r from-indigo-50 to-indigo-100 p-3 text-center"
+            >
+              <div class="text-lg font-bold text-indigo-600">不自动刷新</div>
+              <div class="mt-1 text-xs text-gray-600">操作教程</div>
+            </div>
+          </div>
         </n-card>
 
         <!-- Enhanced Table Section -->
@@ -136,7 +160,7 @@
               </div>
             </div>
           </template>
-          
+
           <n-data-table
             ref="tableRef"
             :columns="columns"
@@ -154,14 +178,18 @@
           />
         </n-card>
       </n-tab-pane>
-      
+
       <n-tab-pane name="recharge-statistics" tab="充值统计">
         <!-- Statistics Filter Section -->
         <n-card class="mb-4">
-          <div class="flex flex-wrap items-center gap-4 mb-4">
+          <div class="mb-4 flex flex-wrap items-center gap-4">
             <div class="flex items-center gap-2">
               <span class="text-sm font-medium text-gray-600">统计时间</span>
-              <n-radio-group v-model:value="statsForm.timeRange" size="small" @update:value="handleStatsTimeRangeChange">
+              <n-radio-group
+                v-model:value="statsForm.timeRange"
+                size="small"
+                @update:value="handleStatsTimeRangeChange"
+              >
                 <n-radio value="today">今天</n-radio>
                 <n-radio value="week">本周</n-radio>
                 <n-radio value="month">本月</n-radio>
@@ -179,8 +207,8 @@
               />
             </div>
           </div>
-          
-          <div class="flex flex-wrap items-center gap-4 mb-4">
+
+          <div class="mb-4 flex flex-wrap items-center gap-4">
             <n-select
               v-model:value="statsForm.paymentMethod"
               placeholder="支付方式"
@@ -215,53 +243,80 @@
 
         <!-- Statistics Overview Cards -->
         <n-card class="mb-4">
-          <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
-            <div class="text-center p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg">
-              <div class="text-lg font-bold text-blue-600">{{ formatCurrency(statsData.summary?.totalSuccessAmount || 0) }}</div>
-              <div class="text-xs text-gray-600 mt-1">充值成功金额</div>
+          <div class="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-8">
+            <div
+              class="rounded-lg bg-gradient-to-r from-blue-50 to-blue-100 p-3 text-center"
+            >
+              <div class="text-lg font-bold text-blue-600">
+                {{ formatCurrency(statsData.summary?.totalSuccessAmount || 0) }}
+              </div>
+              <div class="mt-1 text-xs text-gray-600">充值成功金额</div>
             </div>
-            <div class="text-center p-3 bg-gradient-to-r from-green-50 to-green-100 rounded-lg">
-              <div class="text-lg font-bold text-green-600">{{ statsData.summary?.totalSuccessCount || 0 }}</div>
-              <div class="text-xs text-gray-600 mt-1">充值人数</div>
+            <div
+              class="rounded-lg bg-gradient-to-r from-green-50 to-green-100 p-3 text-center"
+            >
+              <div class="text-lg font-bold text-green-600">
+                {{ statsData.summary?.totalSuccessCount || 0 }}
+              </div>
+              <div class="mt-1 text-xs text-gray-600">充值人数</div>
             </div>
-            <div class="text-center p-3 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg">
-              <div class="text-lg font-bold text-purple-600">{{ statsData.summary?.totalOrders || 0 }}</div>
-              <div class="text-xs text-gray-600 mt-1">成功充值人数</div>
+            <div
+              class="rounded-lg bg-gradient-to-r from-purple-50 to-purple-100 p-3 text-center"
+            >
+              <div class="text-lg font-bold text-purple-600">
+                {{ statsData.summary?.totalOrders || 0 }}
+              </div>
+              <div class="mt-1 text-xs text-gray-600">成功充值人数</div>
             </div>
-            <div class="text-center p-3 bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg">
-              <div class="text-lg font-bold text-orange-600">{{ statsData.summary?.totalSuccessCount || 0 }}</div>
-              <div class="text-xs text-gray-600 mt-1">充值总订单数</div>
+            <div
+              class="rounded-lg bg-gradient-to-r from-orange-50 to-orange-100 p-3 text-center"
+            >
+              <div class="text-lg font-bold text-orange-600">
+                {{ statsData.summary?.totalSuccessCount || 0 }}
+              </div>
+              <div class="mt-1 text-xs text-gray-600">充值总订单数</div>
             </div>
-            <div class="text-center p-3 bg-gradient-to-r from-red-50 to-red-100 rounded-lg">
-              <div class="text-lg font-bold text-red-600">{{ statsData.summary?.totalSuccessCount || 0 }}</div>
-              <div class="text-xs text-gray-600 mt-1">成功充值订单数</div>
+            <div
+              class="rounded-lg bg-gradient-to-r from-red-50 to-red-100 p-3 text-center"
+            >
+              <div class="text-lg font-bold text-red-600">
+                {{ statsData.summary?.totalSuccessCount || 0 }}
+              </div>
+              <div class="mt-1 text-xs text-gray-600">成功充值订单数</div>
             </div>
-            <div class="text-center p-3 bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-lg">
-              <div class="text-lg font-bold text-yellow-600">{{ statsData.summary?.totalFailedCount || 0 }}</div>
-              <div class="text-xs text-gray-600 mt-1">失败充值订单数</div>
+            <div
+              class="rounded-lg bg-gradient-to-r from-yellow-50 to-yellow-100 p-3 text-center"
+            >
+              <div class="text-lg font-bold text-yellow-600">
+                {{ statsData.summary?.totalFailedCount || 0 }}
+              </div>
+              <div class="mt-1 text-xs text-gray-600">失败充值订单数</div>
             </div>
-            <div class="text-center p-3 bg-gradient-to-r from-indigo-50 to-indigo-100 rounded-lg">
-              <div class="text-lg font-bold text-indigo-600">{{ (statsData.summary?.successRate || 0).toFixed(1) }}%</div>
-              <div class="text-xs text-gray-600 mt-1">充值成功率</div>
+            <div
+              class="rounded-lg bg-gradient-to-r from-indigo-50 to-indigo-100 p-3 text-center"
+            >
+              <div class="text-lg font-bold text-indigo-600">
+                {{ (statsData.summary?.successRate || 0).toFixed(1) }}%
+              </div>
+              <div class="mt-1 text-xs text-gray-600">充值成功率</div>
             </div>
-            <div class="text-center p-3 bg-gradient-to-r from-pink-50 to-pink-100 rounded-lg">
+            <div
+              class="rounded-lg bg-gradient-to-r from-pink-50 to-pink-100 p-3 text-center"
+            >
               <div class="text-lg font-bold text-pink-600">0%</div>
-              <div class="text-xs text-gray-600 mt-1">充值次数占比</div>
+              <div class="mt-1 text-xs text-gray-600">充值次数占比</div>
             </div>
           </div>
         </n-card>
 
         <!-- Charts and Tables Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+        <div class="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
           <!-- Time Series Chart -->
           <n-card>
             <template #header>
               <span class="font-medium">充值趋势图</span>
             </template>
-            <EchartsUI 
-              ref="timeSeriesChartRef"
-              style="height: 300px;" 
-            />
+            <EchartsUI ref="timeSeriesChartRef" style="height: 300px" />
           </n-card>
 
           <!-- Payment Method Distribution -->
@@ -269,10 +324,7 @@
             <template #header>
               <span class="font-medium">支付方式分布</span>
             </template>
-            <EchartsUI 
-              ref="paymentMethodChartRef"
-              style="height: 300px;" 
-            />
+            <EchartsUI ref="paymentMethodChartRef" style="height: 300px" />
           </n-card>
         </div>
 
@@ -306,7 +358,6 @@
           />
         </n-card>
       </n-tab-pane>
-      
     </n-tabs>
 
     <!-- Create/Edit Modal -->
@@ -316,7 +367,13 @@
       preset="card"
       style="width: 600px"
     >
-      <n-form ref="rechargeFormRef" :model="rechargeForm" :rules="rechargeRules" label-placement="left" label-width="120px">
+      <n-form
+        ref="rechargeFormRef"
+        :model="rechargeForm"
+        :rules="rechargeRules"
+        label-placement="left"
+        label-width="120px"
+      >
         <n-form-item label="会员ID" path="memberId">
           <n-auto-complete
             v-model:value="rechargeForm.userId"
@@ -330,17 +387,33 @@
             clearable
           />
         </n-form-item>
-        
+
         <!-- Member Info Display -->
-        <div v-if="selectedMember" class="mb-4 p-3 bg-gray-50 rounded">
-          <h4 class="font-semibold mb-2">会员信息</h4>
+        <div v-if="selectedMember" class="mb-4 rounded bg-gray-50 p-3">
+          <h4 class="mb-2 font-semibold">会员信息</h4>
           <div class="grid grid-cols-2 gap-2 text-sm">
-            <div><span class="font-medium">会员ID:</span> {{ selectedMember.value }}</div>
-            <div><span class="font-medium">账号:</span> {{ selectedMember.account }}</div>
-            <div><span class="font-medium">姓名:</span> {{ selectedMember.name }}</div>
-            <div><span class="font-medium">VIP等级:</span> {{ selectedMember.vipLevel }}</div>
-            <div><span class="font-medium">当前余额:</span> {{ formatCurrency(selectedMember.balance) }}</div>
-            <div><span class="font-medium">邮箱:</span> {{ selectedMember.email }}</div>
+            <div>
+              <span class="font-medium">会员ID:</span>
+              {{ selectedMember.value }}
+            </div>
+            <div>
+              <span class="font-medium">账号:</span>
+              {{ selectedMember.account }}
+            </div>
+            <div>
+              <span class="font-medium">姓名:</span> {{ selectedMember.name }}
+            </div>
+            <div>
+              <span class="font-medium">VIP等级:</span>
+              {{ selectedMember.vipLevel }}
+            </div>
+            <div>
+              <span class="font-medium">当前余额:</span>
+              {{ formatCurrency(selectedMember.balance) }}
+            </div>
+            <div>
+              <span class="font-medium">邮箱:</span> {{ selectedMember.email }}
+            </div>
           </div>
         </div>
 
@@ -378,11 +451,15 @@
           />
         </n-form-item>
       </n-form>
-      
+
       <template #footer>
         <div class="flex justify-end gap-2">
           <n-button @click="showRechargeModal = false">取消</n-button>
-          <n-button type="primary" @click="handleSaveRecharge" :loading="modalLoading">
+          <n-button
+            type="primary"
+            @click="handleSaveRecharge"
+            :loading="modalLoading"
+          >
             {{ isEditing ? '更新' : '创建' }}
           </n-button>
         </div>
@@ -400,7 +477,7 @@
       v-model:show="showOrderDetailsModal"
       preset="card"
       title="订单详情"
-      style="width: 900px; max-width: 90vw;"
+      style="width: 900px; max-width: 90vw"
       :bordered="false"
       size="huge"
       :mask-closable="false"
@@ -433,7 +510,9 @@
             </div>
             <div class="flex justify-between">
               <span class="text-gray-600">充值大类:</span>
-              <span>{{ orderDetails.rechargeChannelInfo?.channel || 'N/A' }}</span>
+              <span>{{
+                orderDetails.rechargeChannelInfo?.channel || 'N/A'
+              }}</span>
             </div>
             <div class="flex justify-between">
               <span class="text-gray-600">充值币种:</span>
@@ -445,7 +524,9 @@
             </div>
             <div class="flex justify-between">
               <span class="text-gray-600">稽核倍数:</span>
-              <span>{{ orderDetails.auditMultiplier?.toFixed(2) || '1.00' }}</span>
+              <span>{{
+                orderDetails.auditMultiplier?.toFixed(2) || '1.00'
+              }}</span>
             </div>
             <div class="flex justify-between">
               <span class="text-gray-600">标记:</span>
@@ -453,7 +534,9 @@
             </div>
             <div class="flex justify-between">
               <span class="text-gray-600">充值信息:</span>
-              <span>{{ orderDetails.rechargeChannelInfo?.accountNumber || '-' }}</span>
+              <span>{{
+                orderDetails.rechargeChannelInfo?.accountNumber || '-'
+              }}</span>
             </div>
             <div class="flex justify-between">
               <span class="text-gray-600">通道编码:</span>
@@ -463,9 +546,11 @@
               <span class="text-gray-600">操作人:</span>
               <span>{{ orderDetails.operator || 'system' }}</span>
             </div>
-            <div class="flex justify-between col-span-2">
+            <div class="col-span-2 flex justify-between">
               <span class="text-gray-600">三方商户订单号:</span>
-              <span class="font-mono">{{ orderDetails.thirdPartyOrderNo || '-' }}</span>
+              <span class="font-mono">{{
+                orderDetails.thirdPartyOrderNo || '-'
+              }}</span>
             </div>
           </div>
         </n-card>
@@ -475,16 +560,27 @@
           <n-table :bordered="false" :single-line="false">
             <tbody>
               <tr>
-                <td class="text-gray-600" style="width: 150px;">订单金额</td>
-                <td class="text-right">{{ formatCurrency(orderDetails.rechargeAmount) }}</td>
+                <td class="text-gray-600" style="width: 150px">订单金额</td>
+                <td class="text-right">
+                  {{ formatCurrency(orderDetails.rechargeAmount) }}
+                </td>
               </tr>
               <tr>
                 <td class="text-gray-600">赠送金额</td>
-                <td class="text-right">{{ formatCurrency(orderDetails.bonusAmount || 0) }}</td>
+                <td class="text-right">
+                  {{ formatCurrency(orderDetails.bonusAmount || 0) }}
+                </td>
               </tr>
               <tr>
                 <td class="text-gray-600">总上分金额</td>
-                <td class="text-right">{{ formatCurrency((orderDetails.rechargeAmount || 0) + (orderDetails.bonusAmount || 0)) }}</td>
+                <td class="text-right">
+                  {{
+                    formatCurrency(
+                      (orderDetails.rechargeAmount || 0) +
+                        (orderDetails.bonusAmount || 0),
+                    )
+                  }}
+                </td>
               </tr>
               <tr>
                 <td class="text-gray-600">会员币种</td>
@@ -492,33 +588,62 @@
               </tr>
               <tr>
                 <td class="text-gray-600">收款账号/地址</td>
-                <td class="text-right">{{ orderDetails.receivingAccount || '-' }}</td>
+                <td class="text-right">
+                  {{ orderDetails.receivingAccount || '-' }}
+                </td>
               </tr>
               <tr>
                 <td class="text-gray-600">是否首充</td>
-                <td class="text-right">{{ orderDetails.isFirstDeposit ? '是' : '否' }}</td>
+                <td class="text-right">
+                  {{ orderDetails.isFirstDeposit ? '是' : '否' }}
+                </td>
               </tr>
               <tr>
                 <td class="text-gray-600">备注</td>
-                <td class="text-right">{{ orderDetails.backendNote || '-' }}</td>
+                <td class="text-right">
+                  {{ orderDetails.backendNote || '-' }}
+                </td>
               </tr>
               <tr>
                 <td class="text-gray-600">创建时间</td>
-                <td class="text-right">{{ formatDateTime(orderDetails.appliedAt, 'yyyy-MM-dd HH:mm:ss') }}</td>
+                <td class="text-right">
+                  {{
+                    formatDateTime(
+                      orderDetails.appliedAt,
+                      'yyyy-MM-dd HH:mm:ss',
+                    )
+                  }}
+                </td>
               </tr>
               <tr>
                 <td class="text-gray-600">成功时间</td>
-                <td class="text-right">{{ orderDetails.confirmTime ? formatDateTime(orderDetails.confirmTime, 'yyyy-MM-dd HH:mm:ss') : '-' }}</td>
+                <td class="text-right">
+                  {{
+                    orderDetails.confirmTime
+                      ? formatDateTime(
+                          orderDetails.confirmTime,
+                          'yyyy-MM-dd HH:mm:ss',
+                        )
+                      : '-'
+                  }}
+                </td>
               </tr>
               <tr>
                 <td class="text-gray-600">更新时间</td>
-                <td class="text-right">{{ formatDateTime(orderDetails.updatedAt || orderDetails.appliedAt, 'yyyy-MM-dd HH:mm:ss') }}</td>
+                <td class="text-right">
+                  {{
+                    formatDateTime(
+                      orderDetails.updatedAt || orderDetails.appliedAt,
+                      'yyyy-MM-dd HH:mm:ss',
+                    )
+                  }}
+                </td>
               </tr>
             </tbody>
           </n-table>
         </n-card>
       </div>
-      
+
       <template #footer>
         <div class="flex justify-end">
           <n-button @click="showOrderDetailsModal = false">关闭</n-button>
@@ -538,7 +663,7 @@
         <!-- Order Number Input -->
         <div class="flex items-center gap-3">
           <div class="flex-1">
-            <label class="block text-sm font-medium text-gray-700 mb-2">
+            <label class="mb-2 block text-sm font-medium text-gray-700">
               *订单号
             </label>
             <n-input
@@ -550,8 +675,8 @@
               @keyup.enter="handleSearchOrder"
             />
           </div>
-          <n-button 
-            type="primary" 
+          <n-button
+            type="primary"
             @click="handleSearchOrder"
             :loading="searchingOrder"
             class="mt-6"
@@ -561,13 +686,23 @@
         </div>
 
         <!-- Search Results Display -->
-        <div v-if="searchedOrder" class="p-3 bg-gray-50 rounded-lg">
-          <h4 class="font-medium text-gray-900 mb-2">订单信息</h4>
+        <div v-if="searchedOrder" class="rounded-lg bg-gray-50 p-3">
+          <h4 class="mb-2 font-medium text-gray-900">订单信息</h4>
           <div class="grid grid-cols-2 gap-2 text-sm">
-            <div><span class="font-medium">订单号:</span> {{ searchedOrder.orderId }}</div>
-            <div><span class="font-medium">会员账号:</span> {{ searchedOrder.accountName }}</div>
-            <div><span class="font-medium">充值金额:</span> {{ formatCurrency(searchedOrder.rechargeAmount) }}</div>
-            <div><span class="font-medium">状态:</span> 
+            <div>
+              <span class="font-medium">订单号:</span>
+              {{ searchedOrder.orderId }}
+            </div>
+            <div>
+              <span class="font-medium">会员账号:</span>
+              {{ searchedOrder.accountName }}
+            </div>
+            <div>
+              <span class="font-medium">充值金额:</span>
+              {{ formatCurrency(searchedOrder.rechargeAmount) }}
+            </div>
+            <div>
+              <span class="font-medium">状态:</span>
               <n-tag :type="getStatusColor(searchedOrder.status)" size="small">
                 {{ getStatusText(searchedOrder.status) }}
               </n-tag>
@@ -576,16 +711,19 @@
         </div>
 
         <!-- Error Message -->
-        <div v-if="searchError" class="p-3 bg-red-50 border border-red-200 rounded-lg">
+        <div
+          v-if="searchError"
+          class="rounded-lg border border-red-200 bg-red-50 p-3"
+        >
           <p class="text-sm text-red-600">{{ searchError }}</p>
         </div>
       </div>
-      
+
       <template #footer>
         <div class="flex justify-end gap-2">
           <n-button @click="showSupplementaryOrderModal = false">取消</n-button>
-          <n-button 
-            type="primary" 
+          <n-button
+            type="primary"
             @click="handleConfirmSupplementaryOrder"
             :disabled="!searchedOrder"
             :loading="creatingOrder"
@@ -601,20 +739,58 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, h, watch, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
-import { 
-  NCard, NTabs, NTabPane, NDataTable, NButton, NInput, NSelect, NDatePicker, NModal, NForm, NFormItem, 
-  NInputNumber, NAutoComplete, NTag, NText, NSpace, NIcon, NRadioGroup, NRadio, NDivider, NTable,
-  useMessage, type DataTableColumns 
+import {
+  NCard,
+  NTabs,
+  NTabPane,
+  NDataTable,
+  NButton,
+  NInput,
+  NSelect,
+  NDatePicker,
+  NModal,
+  NForm,
+  NFormItem,
+  NInputNumber,
+  NAutoComplete,
+  NTag,
+  NText,
+  NSpace,
+  NIcon,
+  NRadioGroup,
+  NRadio,
+  NDivider,
+  NTable,
+  useMessage,
+  type DataTableColumns,
 } from 'naive-ui';
-import { ReloadOutline, SearchOutline, AddOutline, DownloadOutline } from '@vicons/ionicons5';
+import {
+  ReloadOutline,
+  SearchOutline,
+  AddOutline,
+  DownloadOutline,
+} from '@vicons/ionicons5';
 
 // API imports
-import { rechargeApi, type RechargeOrder, type Summary, type RechargeListParams, type UpdateRechargeParams, type CreateRechargeParams } from '#/api/finance/recharge';
-import { rechargeStatsApi, type RechargeStatsParams, type RechargeStatsResponse } from '#/api/finance/recharge-stats';
+import {
+  rechargeApi,
+  type RechargeOrder,
+  type Summary,
+  type RechargeListParams,
+  type UpdateRechargeParams,
+  type CreateRechargeParams,
+} from '#/api/finance/recharge';
+import {
+  rechargeStatsApi,
+  type RechargeStatsParams,
+  type RechargeStatsResponse,
+} from '#/api/finance/recharge-stats';
 import { searchUsersApi } from '#/api/core/user-management';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 import { defineAsyncComponent } from 'vue';
-const UserDetailModal = defineAsyncComponent(() => import('#/components/user/UserDetailModal.vue'));
+const UserDetailModal = defineAsyncComponent(
+  () => import('#/components/user/UserDetailModal.vue'),
+);
 
 // ECharts imports
 import type { EchartsUIType } from '@vben/plugins/echarts';
@@ -659,7 +835,7 @@ const searchedOrder = ref<RechargeOrder | null>(null);
 const searchError = ref('');
 
 const supplementaryOrderForm = reactive({
-  orderNumber: ''
+  orderNumber: '',
 });
 
 // Summary data
@@ -668,7 +844,7 @@ const summary = ref<Summary>({
   totalAmount: 0,
   pendingCount: 0,
   confirmedCount: 0,
-  rejectedCount: 0
+  rejectedCount: 0,
 });
 
 // Filter form with default week filter to show more data
@@ -681,7 +857,7 @@ const filterForm = ref({
   vipLevel: null as string | null,
   agentMode: null as string | null,
   thirdPartyPayment: null as string | null,
-  serviceFilter: null as string | null
+  serviceFilter: null as string | null,
 });
 
 // Statistics form - default to week to show more data
@@ -690,7 +866,7 @@ const statsForm = ref({
   dateRange: null as [number, number] | null,
   paymentMethod: null as string | null,
   status: null as string | null,
-  groupBy: 'day' as 'day' | 'week' | 'month'
+  groupBy: 'day' as 'day' | 'week' | 'month',
 });
 
 // Statistics data
@@ -703,12 +879,12 @@ const statsData = ref<RechargeStatsResponse>({
     totalOrders: 0,
     successRate: 0,
     avgOrderAmount: 0,
-    uniqueUsers: 0
+    uniqueUsers: 0,
   },
   timeSeriesData: [],
   paymentMethodStats: [],
   topUsers: [],
-  dailyTrends: []
+  dailyTrends: [],
 });
 
 const statsLoading = ref(false);
@@ -717,7 +893,9 @@ const statsLoading = ref(false);
 const timeSeriesChartRef = ref<EchartsUIType>();
 const paymentMethodChartRef = ref<EchartsUIType>();
 const { renderEcharts: renderTimeSeriesChart } = useEcharts(timeSeriesChartRef);
-const { renderEcharts: renderPaymentMethodChart } = useEcharts(paymentMethodChartRef);
+const { renderEcharts: renderPaymentMethodChart } = useEcharts(
+  paymentMethodChartRef,
+);
 
 // Chart rendering functions
 const renderCharts = () => {
@@ -729,24 +907,24 @@ const renderCharts = () => {
 const renderTimeSeriesChartData = () => {
   const timeSeriesData = statsData.value.timeSeriesData || [];
   console.log('📊 Rendering time series chart with data:', timeSeriesData);
-  
+
   if (timeSeriesData.length === 0) {
     console.log('📊 No time series data available');
     return;
   }
-  
+
   const options = {
     title: {
       text: '充值趋势',
       left: 'center',
-      textStyle: { fontSize: 14 }
+      textStyle: { fontSize: 14 },
     },
     grid: {
       top: '15%',
       left: '3%',
       right: '4%',
       bottom: '15%',
-      containLabel: true
+      containLabel: true,
     },
     tooltip: {
       trigger: 'axis' as const,
@@ -754,91 +932,100 @@ const renderTimeSeriesChartData = () => {
         let result = params[0].name + '<br/>';
         params.forEach((param: any) => {
           if (param.seriesName.includes('金额')) {
-            result += param.marker + param.seriesName + ': ' + formatCurrency(param.value) + '<br/>';
+            result +=
+              param.marker +
+              param.seriesName +
+              ': ' +
+              formatCurrency(param.value) +
+              '<br/>';
           } else {
-            result += param.marker + param.seriesName + ': ' + param.value + '<br/>';
+            result +=
+              param.marker + param.seriesName + ': ' + param.value + '<br/>';
           }
         });
         return result;
-      }
+      },
     },
     legend: {
       data: ['成功金额', '成功笔数', '失败笔数'],
-      bottom: 0
+      bottom: 0,
     },
     xAxis: {
       type: 'category' as const,
-      data: timeSeriesData.map(item => item.date)
+      data: timeSeriesData.map((item) => item.date),
     },
     yAxis: [
       {
         type: 'value' as const,
         name: '金额',
-        position: 'left' as const
+        position: 'left' as const,
       },
       {
         type: 'value' as const,
         name: '笔数',
-        position: 'right' as const
-      }
+        position: 'right' as const,
+      },
     ],
     series: [
       {
         name: '成功金额',
         type: 'bar' as const,
         yAxisIndex: 0,
-        data: timeSeriesData.map(item => item.successAmount),
-        itemStyle: { color: '#18a058' }
+        data: timeSeriesData.map((item) => item.successAmount),
+        itemStyle: { color: '#18a058' },
       },
       {
         name: '成功笔数',
         type: 'line' as const,
         yAxisIndex: 1,
-        data: timeSeriesData.map(item => item.successCount),
-        itemStyle: { color: '#2080f0' }
+        data: timeSeriesData.map((item) => item.successCount),
+        itemStyle: { color: '#2080f0' },
       },
       {
         name: '失败笔数',
         type: 'line' as const,
         yAxisIndex: 1,
-        data: timeSeriesData.map(item => item.failedCount),
-        itemStyle: { color: '#d03050' }
-      }
-    ]
+        data: timeSeriesData.map((item) => item.failedCount),
+        itemStyle: { color: '#d03050' },
+      },
+    ],
   };
-  
+
   console.log('📊 Time series options:', options);
   renderTimeSeriesChart(options);
 };
 
 const renderPaymentMethodChartData = () => {
   const paymentMethodStats = statsData.value.paymentMethodStats || [];
-  console.log('📊 Rendering payment method chart with data:', paymentMethodStats);
-  
+  console.log(
+    '📊 Rendering payment method chart with data:',
+    paymentMethodStats,
+  );
+
   if (paymentMethodStats.length === 0) {
     console.log('📊 No payment method data available');
     return;
   }
-  
-  const paymentMethodData = paymentMethodStats.map(item => ({
+
+  const paymentMethodData = paymentMethodStats.map((item) => ({
     name: item.paymentMethod,
-    value: item.totalAmount
+    value: item.totalAmount,
   }));
-  
+
   const options = {
     title: {
       text: '支付方式分布',
       left: 'center',
-      textStyle: { fontSize: 14 }
+      textStyle: { fontSize: 14 },
     },
     tooltip: {
       trigger: 'item' as const,
-      formatter: '{a} <br/>{b}: {c} ({d}%)'
+      formatter: '{a} <br/>{b}: {c} ({d}%)',
     },
     legend: {
       orient: 'horizontal' as const,
       bottom: 0,
-      data: paymentMethodData.map(item => item.name)
+      data: paymentMethodData.map((item) => item.name),
     },
     series: [
       {
@@ -851,16 +1038,16 @@ const renderPaymentMethodChartData = () => {
           itemStyle: {
             shadowBlur: 10,
             shadowOffsetX: 0,
-            shadowColor: 'rgba(0, 0, 0, 0.5)'
-          }
+            shadowColor: 'rgba(0, 0, 0, 0.5)',
+          },
         },
         label: {
-          formatter: '{b}: {d}%'
-        }
-      }
-    ]
+          formatter: '{b}: {d}%',
+        },
+      },
+    ],
   };
-  
+
   console.log('📊 Payment method options:', options);
   renderPaymentMethodChart(options);
 };
@@ -874,9 +1061,9 @@ const formatCurrency = (value: number) => {
     style: 'currency',
     currency: 'BRL',
     minimumFractionDigits: 2,
-    maximumFractionDigits: 2
+    maximumFractionDigits: 2,
   }).format(value);
-  
+
   // ✅ Remove extra trailing zeros after the decimal separator (comma in pt-BR)
   // e.g., "R$ 100,000" → "R$ 100,00" (remove extra 0)
   // Match pattern: R$ X,XXX... where XXX has more than 2 digits
@@ -889,7 +1076,7 @@ const rechargeForm = ref({
   amount: null as number | null,
   rechargeMethod: '',
   channelInfo: '',
-  note: ''
+  note: '',
 });
 
 // Pagination with proper types
@@ -900,21 +1087,25 @@ const paginationConfig = ref({
   showSizePicker: true,
   pageSizes: [10, 20, 50, 100],
   showQuickJumper: true,
-  prefix: ({ itemCount }: { itemCount: number | undefined }) => `共 ${itemCount || 0} 项`
+  prefix: ({ itemCount }: { itemCount: number | undefined }) =>
+    `共 ${itemCount || 0} 项`,
 });
 
 // Form validation rules with proper types
 const rechargeRules = {
-  memberId: [
-    { required: true, message: '请选择会员', trigger: 'blur' }
-  ],
+  memberId: [{ required: true, message: '请选择会员', trigger: 'blur' }],
   amount: [
     { required: true, message: '请输入充值金额', trigger: 'blur' },
-    { type: 'number' as const, min: 0.01, message: '充值金额必须大于0', trigger: 'blur' }
+    {
+      type: 'number' as const,
+      min: 0.01,
+      message: '充值金额必须大于0',
+      trigger: 'blur',
+    },
   ],
   rechargeMethod: [
-    { required: true, message: '请选择充值方式', trigger: 'change' }
-  ]
+    { required: true, message: '请选择充值方式', trigger: 'change' },
+  ],
 };
 
 // Options
@@ -923,7 +1114,7 @@ const statusOptions = [
   { label: '已确认', value: 'confirmed' },
   { label: '已拒绝', value: 'rejected' },
   { label: '处理中', value: 'processing' },
-  { label: '已过期', value: 'expired' } // ✅ Add expired status
+  { label: '已过期', value: 'expired' }, // ✅ Add expired status
 ];
 
 const rechargeMethodOptions = [
@@ -931,7 +1122,7 @@ const rechargeMethodOptions = [
   { label: 'TED', value: 'ted' },
   { label: 'DOC', value: 'doc' },
   { label: 'Boleto', value: 'boleto' },
-  { label: 'Credit Card', value: 'credit_card' }
+  { label: 'Credit Card', value: 'credit_card' },
 ];
 
 const paymentMethodOptions = [
@@ -940,13 +1131,13 @@ const paymentMethodOptions = [
   { label: 'DOC', value: 'DOC' },
   { label: 'Boleto', value: 'Boleto' },
   { label: 'Credit Card', value: 'CreditCard' },
-  { label: 'Manual Entry', value: 'Manual' }
+  { label: 'Manual Entry', value: 'Manual' },
 ];
 
 const groupByOptions = [
   { label: '按日', value: 'day' },
   { label: '按周', value: 'week' },
-  { label: '按月', value: 'month' }
+  { label: '按月', value: 'month' },
 ];
 
 // VIP level options with proper types
@@ -957,7 +1148,7 @@ const vipLevelOptions = [
   { label: 'VIP2', value: 'VIP2', type: 'option' },
   { label: 'VIP3', value: 'VIP3', type: 'option' },
   { label: 'VIP4', value: 'VIP4', type: 'option' },
-  { label: 'VIP5', value: 'VIP5', type: 'option' }
+  { label: 'VIP5', value: 'VIP5', type: 'option' },
 ];
 
 const formatDateTime = (dateString: string, format?: string): string => {
@@ -967,38 +1158,63 @@ const formatDateTime = (dateString: string, format?: string): string => {
   } else if (format === 'HH:mm:ss') {
     return date.toLocaleTimeString('pt-BR');
   } else if (format === 'MM-dd HH:mm') {
-    return date.toLocaleDateString('pt-BR', { month: '2-digit', day: '2-digit' }) + ' ' + 
-           date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    return (
+      date.toLocaleDateString('pt-BR', { month: '2-digit', day: '2-digit' }) +
+      ' ' +
+      date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+    );
   }
-  return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR', { 
-    hour: '2-digit', 
-    minute: '2-digit' 
-  });
+  return (
+    date.toLocaleDateString('pt-BR') +
+    ' ' +
+    date.toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  );
 };
 
-const getStatusColor = (status: string): 'default' | 'error' | 'primary' | 'success' | 'info' | 'warning' => {
+const getStatusColor = (
+  status: string,
+): 'default' | 'error' | 'primary' | 'success' | 'info' | 'warning' => {
   switch (status) {
-    case 'pending': return 'warning';
-    case 'success': return 'success';  // Database status for confirmed
-    case 'failed': return 'error';     // Database status for rejected
-    case 'processing': return 'info';
-    case 'expired': return 'error';    // ✅ Expired status
-    case 'confirmed': return 'success'; // Legacy frontend status
-    case 'rejected': return 'error';   // Legacy frontend status
-    default: return 'default';
+    case 'pending':
+      return 'warning';
+    case 'success':
+      return 'success'; // Database status for confirmed
+    case 'failed':
+      return 'error'; // Database status for rejected
+    case 'processing':
+      return 'info';
+    case 'expired':
+      return 'error'; // ✅ Expired status
+    case 'confirmed':
+      return 'success'; // Legacy frontend status
+    case 'rejected':
+      return 'error'; // Legacy frontend status
+    default:
+      return 'default';
   }
 };
 
 const getStatusText = (status: string): string => {
   switch (status) {
-    case 'pending': return '待审核';
-    case 'success': return '已放款成功';  // Database status for confirmed
-    case 'failed': return '已拒绝';      // Database status for rejected
-    case 'processing': return '处理中';
-    case 'expired': return '已过期';     // ✅ Expired status in Chinese
-    case 'confirmed': return '已放款成功'; // Legacy frontend status
-    case 'rejected': return '已拒绝';    // Legacy frontend status
-    default: return status;
+    case 'pending':
+      return '待审核';
+    case 'success':
+      return '已放款成功'; // Database status for confirmed
+    case 'failed':
+      return '已拒绝'; // Database status for rejected
+    case 'processing':
+      return '处理中';
+    case 'expired':
+      return '已过期'; // ✅ Expired status in Chinese
+    case 'confirmed':
+      return '已放款成功'; // Legacy frontend status
+    case 'rejected':
+      return '已拒绝'; // Legacy frontend status
+    default:
+      return status;
   }
 };
 
@@ -1017,11 +1233,11 @@ const handleMemberSearch = async (query: string) => {
     memberOptions.value = [];
     return;
   }
-  
+
   memberLoading.value = true;
   try {
     const response = await searchUsersApi({ q: query, limit: 10 });
-    memberOptions.value = response.data.map(user => ({
+    memberOptions.value = response.data.map((user) => ({
       label: `${user.account} - ${user.name}`,
       value: user.value,
       account: user.account,
@@ -1029,7 +1245,7 @@ const handleMemberSearch = async (query: string) => {
       email: user.email,
       cpf: user.cpf,
       balance: user.balance,
-      vipLevel: user.vipLevel
+      vipLevel: user.vipLevel,
     }));
   } catch (error) {
     console.error('Member search error:', error);
@@ -1040,14 +1256,16 @@ const handleMemberSearch = async (query: string) => {
 };
 
 const handleMemberInput = (value: string) => {
-  const matchedOption = memberOptions.value.find(option => option.label === value);
-  
+  const matchedOption = memberOptions.value.find(
+    (option) => option.label === value,
+  );
+
   if (matchedOption) {
     rechargeForm.value.memberId = matchedOption.value;
     selectedMember.value = matchedOption;
     return;
   }
-  
+
   if (/^\d+$/.test(value)) {
     rechargeForm.value.memberId = value;
     selectedMember.value = null;
@@ -1056,11 +1274,11 @@ const handleMemberInput = (value: string) => {
       selectedMember.value = null;
     }
   }
-  
+
   if (searchTimeout) {
     clearTimeout(searchTimeout);
   }
-  
+
   searchTimeout = setTimeout(() => {
     handleMemberSearch(value);
   }, 200);
@@ -1068,12 +1286,12 @@ const handleMemberInput = (value: string) => {
 
 // Enhanced member select handler with proper signature
 const handleMemberSelect = (value: string) => {
-  const option = memberOptions.value.find(opt => opt.value === value);
+  const option = memberOptions.value.find((opt) => opt.value === value);
   if (option) {
     selectedMember.value = option;
     rechargeForm.value.memberId = option.value;
   }
-  
+
   if (searchTimeout) {
     clearTimeout(searchTimeout);
   }
@@ -1085,79 +1303,121 @@ const statsColumns: DataTableColumns<any> = [
     title: '充值类型',
     key: 'paymentMethod',
     width: 120,
-    render: (row) => h(NText, { style: { fontWeight: '500' } }, { default: () => row.paymentMethod })
+    render: (row) =>
+      h(
+        NText,
+        { style: { fontWeight: '500' } },
+        { default: () => row.paymentMethod },
+      ),
   },
   {
     title: '充值大类',
     key: 'paymentGateway',
     width: 120,
-    render: (row) => h(NText, {}, { default: () => row.paymentGateway })
+    render: (row) => h(NText, {}, { default: () => row.paymentGateway }),
   },
   {
     title: '充值总额',
     key: 'totalAmount',
     width: 140,
-    render: (row) => h(NText, { style: { color: '#18a058', fontWeight: 'bold' } }, 
-      { default: () => formatCurrency(row.totalAmount) })
+    render: (row) =>
+      h(
+        NText,
+        { style: { color: '#18a058', fontWeight: 'bold' } },
+        { default: () => formatCurrency(row.totalAmount) },
+      ),
   },
   {
     title: '充值成功金额',
     key: 'successAmount',
     width: 140,
-    render: (row) => h(NText, { style: { color: '#18a058' } }, 
-      { default: () => formatCurrency(row.successAmount) })
+    render: (row) =>
+      h(
+        NText,
+        { style: { color: '#18a058' } },
+        { default: () => formatCurrency(row.successAmount) },
+      ),
   },
   {
     title: '充值人数',
     key: 'totalCount',
     width: 100,
-    render: (row) => h(NText, {}, { default: () => row.totalCount })
+    render: (row) => h(NText, {}, { default: () => row.totalCount }),
   },
   {
     title: '成功充值人数',
     key: 'successCount',
     width: 140,
-    render: (row) => h(NText, { style: { color: '#18a058' } }, { default: () => row.successCount })
+    render: (row) =>
+      h(
+        NText,
+        { style: { color: '#18a058' } },
+        { default: () => row.successCount },
+      ),
   },
   {
     title: '充值总订单数',
     key: 'totalCount',
     width: 140,
-    render: (row) => h(NText, {}, { default: () => row.totalCount })
+    render: (row) => h(NText, {}, { default: () => row.totalCount }),
   },
   {
     title: '成功充值订单数',
     key: 'successCount',
     width: 160,
-    render: (row) => h(NText, { style: { color: '#18a058' } }, { default: () => row.successCount })
+    render: (row) =>
+      h(
+        NText,
+        { style: { color: '#18a058' } },
+        { default: () => row.successCount },
+      ),
   },
   {
     title: '失败充值订单数',
     key: 'failedCount',
     width: 160,
-    render: (row) => h(NText, { style: { color: '#d03050' } }, { default: () => row.failedCount })
+    render: (row) =>
+      h(
+        NText,
+        { style: { color: '#d03050' } },
+        { default: () => row.failedCount },
+      ),
   },
   {
     title: '充值成功率',
     key: 'successRate',
     width: 120,
-    render: (row) => h(NText, { 
-      style: { 
-        color: row.successRate >= 80 ? '#18a058' : row.successRate >= 60 ? '#f0a020' : '#d03050',
-        fontWeight: 'bold' 
-      } 
-    }, { default: () => `${row.successRate.toFixed(1)}%` })
+    render: (row) =>
+      h(
+        NText,
+        {
+          style: {
+            color:
+              row.successRate >= 80
+                ? '#18a058'
+                : row.successRate >= 60
+                  ? '#f0a020'
+                  : '#d03050',
+            fontWeight: 'bold',
+          },
+        },
+        { default: () => `${row.successRate.toFixed(1)}%` },
+      ),
   },
   {
     title: '充值总次数占比',
     key: 'percentage',
     width: 140,
     render: (row) => {
-      const total = statsData.value.paymentMethodStats?.reduce((sum, item) => sum + item.totalCount, 0) || 0;
-      const percentage = total > 0 ? (row.totalCount / total * 100) : 0;
+      const total =
+        statsData.value.paymentMethodStats?.reduce(
+          (sum, item) => sum + item.totalCount,
+          0,
+        ) || 0;
+      const percentage = total > 0 ? (row.totalCount / total) * 100 : 0;
       return h(NText, {}, { default: () => `${percentage.toFixed(1)}%` });
-    }
-  }
+    },
+  },
 ];
 
 // Top users table columns
@@ -1166,53 +1426,76 @@ const topUsersColumns: DataTableColumns<any> = [
     title: '排名',
     key: 'rank',
     width: 60,
-    render: (_, index) => h(
-      'div',
-      { class: 'text-center' },
-      [
-        h(NText, { 
-          style: { 
-            fontWeight: 'bold',
-            color: index === 0 ? '#f1c40f' : index === 1 ? '#95a5a6' : index === 2 ? '#cd853f' : '#666'
-          } 
-        }, { default: () => index + 1 })
-      ]
-    )
+    render: (_, index) =>
+      h('div', { class: 'text-center' }, [
+        h(
+          NText,
+          {
+            style: {
+              fontWeight: 'bold',
+              color:
+                index === 0
+                  ? '#f1c40f'
+                  : index === 1
+                    ? '#95a5a6'
+                    : index === 2
+                      ? '#cd853f'
+                      : '#666',
+            },
+          },
+          { default: () => index + 1 },
+        ),
+      ]),
   },
   {
     title: '会员账号',
     key: 'accountName',
     width: 140,
-    render: (row) => h(NText, { style: { fontWeight: '500' } }, { default: () => row.accountName })
+    render: (row) =>
+      h(
+        NText,
+        { style: { fontWeight: '500' } },
+        { default: () => row.accountName },
+      ),
   },
   {
     title: 'VIP等级',
     key: 'vipLevel',
     width: 100,
-    render: (row) => h(NTag, { 
-      type: getVipLevelColor(row.vipLevel) as any,
-      size: 'small'
-    }, { default: () => row.vipLevel })
+    render: (row) =>
+      h(
+        NTag,
+        {
+          type: getVipLevelColor(row.vipLevel) as any,
+          size: 'small',
+        },
+        { default: () => row.vipLevel },
+      ),
   },
   {
     title: '充值总金额',
     key: 'totalAmount',
     width: 140,
-    render: (row) => h(NText, { style: { color: '#18a058', fontWeight: 'bold' } }, 
-      { default: () => formatCurrency(row.totalAmount) })
+    render: (row) =>
+      h(
+        NText,
+        { style: { color: '#18a058', fontWeight: 'bold' } },
+        { default: () => formatCurrency(row.totalAmount) },
+      ),
   },
   {
     title: '充值次数',
     key: 'orderCount',
     width: 100,
-    render: (row) => h(NText, {}, { default: () => row.orderCount })
+    render: (row) => h(NText, {}, { default: () => row.orderCount }),
   },
   {
     title: '平均充值金额',
     key: 'avgAmount',
     width: 140,
-    render: (row) => h(NText, {}, { default: () => formatCurrency(row.avgAmount) })
-  }
+    render: (row) =>
+      h(NText, {}, { default: () => formatCurrency(row.avgAmount) }),
+  },
 ];
 
 const handleMemberClear = () => {
@@ -1224,277 +1507,330 @@ const handleMemberClear = () => {
 const columns: DataTableColumns<RechargeOrder> = [
   {
     type: 'selection',
-    width: 40
+    width: 40,
   },
   {
     title: '订单号',
     key: 'orderId',
     width: 180,
     sorter: 'default',
-    render: (row) => h(
-      'div',
-      { class: 'font-mono text-xs' },
-      [
-        h(NText, { 
-          style: { fontFamily: 'monospace', fontSize: '11px', color: '#2080f0', cursor: 'pointer' },
-          onClick: () => handleViewOrder(row)
-        }, { default: () => row.orderId }),
-        h('div', { class: 'text-gray-400 text-xs mt-1' }, formatDateTime(row.appliedAt, 'MM-dd HH:mm'))
-      ]
-    )
+    render: (row) =>
+      h('div', { class: 'font-mono text-xs' }, [
+        h(
+          NText,
+          {
+            style: {
+              fontFamily: 'monospace',
+              fontSize: '11px',
+              color: '#2080f0',
+              cursor: 'pointer',
+            },
+            onClick: () => handleViewOrder(row),
+          },
+          { default: () => row.orderId },
+        ),
+        h(
+          'div',
+          { class: 'text-gray-400 text-xs mt-1' },
+          formatDateTime(row.appliedAt, 'MM-dd HH:mm'),
+        ),
+      ]),
   },
   {
     title: '会员ID',
     key: 'memberId',
     width: 90,
     sorter: 'default',
-    render: (row) => h(
-      NText,
-      { 
-        style: { 
-          fontFamily: 'monospace', 
-          fontSize: '11px', 
-          color: '#2080f0',
-          cursor: 'pointer',
-          textDecoration: 'underline'
+    render: (row) =>
+      h(
+        NText,
+        {
+          style: {
+            fontFamily: 'monospace',
+            fontSize: '11px',
+            color: '#2080f0',
+            cursor: 'pointer',
+            textDecoration: 'underline',
+          },
+          onClick: () => handleViewUserDetail(row),
         },
-        onClick: () => handleViewUserDetail(row)
-      },
-      { default: () => row.memberId }
-    )
+        { default: () => row.memberId },
+      ),
   },
   {
     title: '会员账号',
     key: 'accountName',
     width: 120,
     sorter: 'default',
-    render: (row) => h(
-      'div',
-      { class: 'flex flex-col' },
-      [
-        h(NText, { 
-          style: { 
-            fontSize: '12px', 
-            fontWeight: '500',
-            color: '#2080f0',
-            cursor: 'pointer',
-            textDecoration: 'underline'
+    render: (row) =>
+      h('div', { class: 'flex flex-col' }, [
+        h(
+          NText,
+          {
+            style: {
+              fontSize: '12px',
+              fontWeight: '500',
+              color: '#2080f0',
+              cursor: 'pointer',
+              textDecoration: 'underline',
+            },
+            onClick: () => handleViewUserDetail(row),
           },
-          onClick: () => handleViewUserDetail(row)
-        }, { default: () => row.accountName }),
-        h(NText, { depth: 3, style: { fontSize: '10px' } }, { default: () => row.memberTag || '-' })
-      ]
-    )
+          { default: () => row.accountName },
+        ),
+        h(
+          NText,
+          { depth: 3, style: { fontSize: '10px' } },
+          { default: () => row.memberTag || '-' },
+        ),
+      ]),
   },
   {
     title: '创建时间',
     key: 'appliedAt',
     width: 140,
     sorter: 'default',
-    render: (row) => h(
-      'div',
-      { class: 'text-xs' },
-      [
+    render: (row) =>
+      h('div', { class: 'text-xs' }, [
         h('div', formatDateTime(row.appliedAt, 'yyyy-MM-dd')),
-        h('div', { class: 'text-gray-500' }, formatDateTime(row.appliedAt, 'HH:mm:ss'))
-      ]
-    )
+        h(
+          'div',
+          { class: 'text-gray-500' },
+          formatDateTime(row.appliedAt, 'HH:mm:ss'),
+        ),
+      ]),
   },
   {
     title: '成功时间',
     key: 'confirmTime',
     width: 140,
     sorter: 'default',
-    render: (row) => h(
-      'div',
-      { class: 'text-xs' },
-      row.confirmTime ? [
-        h('div', formatDateTime(row.confirmTime, 'yyyy-MM-dd')),
-        h('div', { class: 'text-gray-500' }, formatDateTime(row.confirmTime, 'HH:mm:ss'))
-      ] : h(NText, { depth: 3 }, { default: () => '-' })
-    )
+    render: (row) =>
+      h(
+        'div',
+        { class: 'text-xs' },
+        row.confirmTime
+          ? [
+              h('div', formatDateTime(row.confirmTime, 'yyyy-MM-dd')),
+              h(
+                'div',
+                { class: 'text-gray-500' },
+                formatDateTime(row.confirmTime, 'HH:mm:ss'),
+              ),
+            ]
+          : h(NText, { depth: 3 }, { default: () => '-' }),
+      ),
   },
   {
     title: '更新时间',
     key: 'updatedAt',
     width: 140,
     sorter: 'default',
-    render: (row) => h(
-      'div',
-      { class: 'text-xs' },
-      [
+    render: (row) =>
+      h('div', { class: 'text-xs' }, [
         h('div', formatDateTime(row.updatedAt || row.appliedAt, 'yyyy-MM-dd')),
-        h('div', { class: 'text-gray-500' }, formatDateTime(row.updatedAt || row.appliedAt, 'HH:mm:ss'))
-      ]
-    )
+        h(
+          'div',
+          { class: 'text-gray-500' },
+          formatDateTime(row.updatedAt || row.appliedAt, 'HH:mm:ss'),
+        ),
+      ]),
   },
   {
     title: 'VIP等级',
     key: 'vipLevel',
     width: 80,
     sorter: 'default',
-    render: (row) => h(
-      NTag,
-      { 
-        type: getVipLevelColor(row.vipLevel) as any, // Fix type issue
-        size: 'small',
-        style: { fontSize: '10px' }
-      },
-      { default: () => row.vipLevel || 'VIP0' }
-    )
+    render: (row) =>
+      h(
+        NTag,
+        {
+          type: getVipLevelColor(row.vipLevel) as any, // Fix type issue
+          size: 'small',
+          style: { fontSize: '10px' },
+        },
+        { default: () => row.vipLevel || 'VIP0' },
+      ),
   },
   {
     title: '会员层级',
     key: 'memberTag',
     width: 90,
     sorter: 'default',
-    render: (row) => h(
-      NTag,
-      { 
-        type: 'info',
-        size: 'small',
-        style: { fontSize: '10px' }
-      },
-      { default: () => row.memberTag || '普通' }
-    )
+    render: (row) =>
+      h(
+        NTag,
+        {
+          type: 'info',
+          size: 'small',
+          style: { fontSize: '10px' },
+        },
+        { default: () => row.memberTag || '普通' },
+      ),
   },
   {
     title: '充值币种',
     key: 'currency',
     width: 80,
     sorter: 'default',
-    render: (row) => h(
-      'div',
-      { class: 'text-center' },
-      [
-        h(NTag, { type: 'default', size: 'small' }, { default: () => row.currency || 'BRL' })
-      ]
-    )
+    render: (row) =>
+      h('div', { class: 'text-center' }, [
+        h(
+          NTag,
+          { type: 'default', size: 'small' },
+          { default: () => row.currency || 'BRL' },
+        ),
+      ]),
   },
   {
     title: '原始数量',
     key: 'rechargeAmount',
     width: 120,
     sorter: 'default',
-    render: (row) => h(
-      'div',
-      { class: 'text-right' },
-      [
-        h(NText, { 
-          style: { fontWeight: 'bold', color: '#18a058', fontSize: '12px' } 
-        }, { default: () => formatCurrency(row.rechargeAmount) }),
-        row.fee && row.fee > 0 && h('div', { class: 'text-xs text-red-500' }, `-${formatCurrency(row.fee)}`)
-      ]
-    )
+    render: (row) =>
+      h('div', { class: 'text-right' }, [
+        h(
+          NText,
+          {
+            style: { fontWeight: 'bold', color: '#18a058', fontSize: '12px' },
+          },
+          { default: () => formatCurrency(row.rechargeAmount) },
+        ),
+        row.fee &&
+          row.fee > 0 &&
+          h(
+            'div',
+            { class: 'text-xs text-red-500' },
+            `-${formatCurrency(row.fee)}`,
+          ),
+      ]),
   },
   {
     title: '实际到账',
     key: 'actualReceived',
     width: 90,
     sorter: 'default',
-    render: (row) => h(
-      'div',
-      { class: 'text-right' },
-      [
-        h(NText, { 
-          style: { fontWeight: 'bold', color: '#18a058', fontSize: '12px' } 
-        }, { default: () => formatCurrency(row.actualReceived) })
-      ]
-    )
+    render: (row) =>
+      h('div', { class: 'text-right' }, [
+        h(
+          NText,
+          {
+            style: { fontWeight: 'bold', color: '#18a058', fontSize: '12px' },
+          },
+          { default: () => formatCurrency(row.actualReceived) },
+        ),
+      ]),
   },
   {
     title: '订单状态',
     key: 'status',
     width: 100,
     sorter: 'default',
-    render: (row) => h(
-      'div',
-      { class: 'text-center' },
-      [
-        h(NTag, { 
-          type: getStatusColor(row.status), 
-          size: 'small',
-          style: { fontSize: '10px' }
-        }, { default: () => getStatusText(row.status) }),
-        row.backendNote && h('div', { class: 'text-xs text-red-500 mt-1' }, row.backendNote)
-      ]
-    )
+    render: (row) =>
+      h('div', { class: 'text-center' }, [
+        h(
+          NTag,
+          {
+            type: getStatusColor(row.status),
+            size: 'small',
+            style: { fontSize: '10px' },
+          },
+          { default: () => getStatusText(row.status) },
+        ),
+        row.backendNote &&
+          h('div', { class: 'text-xs text-red-500 mt-1' }, row.backendNote),
+      ]),
   },
   {
     title: '操作',
     key: 'actions',
     width: 120,
     fixed: 'right',
-    render: (row) => h(
-      NSpace,
-      { size: 'small', justify: 'center' },
-      {
-        default: () => [
-          h(
-            NButton,
-            {
-              size: 'small',
-              type: 'primary',
-              text: true,
-              onClick: () => handleViewDetails(row)
-            },
-            { default: () => '详情' }
-          ),
-          row.status === 'pending' && h(
-            NButton,
-            {
-              size: 'small',
-              type: 'success',
-              text: true,
-              onClick: () => handleConfirmRecharge(row)
-            },
-            { default: () => '确认' }
-          ),
-          row.status === 'pending' && h(
-            NButton,
-            {
-              size: 'small',
-              type: 'error',
-              text: true,
-              onClick: () => handleRejectRecharge(row)
-            },
-            { default: () => '拒绝' }
-          )
-        ]
-      }
-    )
-  }
+    render: (row) =>
+      h(
+        NSpace,
+        { size: 'small', justify: 'center' },
+        {
+          default: () => [
+            h(
+              NButton,
+              {
+                size: 'small',
+                type: 'primary',
+                text: true,
+                onClick: () => handleViewDetails(row),
+              },
+              { default: () => '详情' },
+            ),
+            row.status === 'pending' &&
+              h(
+                NButton,
+                {
+                  size: 'small',
+                  type: 'success',
+                  text: true,
+                  onClick: () => handleConfirmRecharge(row),
+                },
+                { default: () => '确认' },
+              ),
+            row.status === 'pending' &&
+              h(
+                NButton,
+                {
+                  size: 'small',
+                  type: 'error',
+                  text: true,
+                  onClick: () => handleRejectRecharge(row),
+                },
+                { default: () => '拒绝' },
+              ),
+          ],
+        },
+      ),
+  },
 ];
 
 // Methods
 const fetchData = async () => {
   if (activeTab.value !== 'all-recharges') return;
-  
+
   loading.value = true;
   try {
     // Handle time range filtering
     let startDate: string | undefined;
     let endDate: string | undefined;
-    
+
     if (filterForm.value.timeRange) {
       const now = new Date();
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      
+
       switch (filterForm.value.timeRange) {
         case 'today':
           startDate = today.toISOString();
-          endDate = new Date(today.getTime() + 24 * 60 * 60 * 1000 - 1).toISOString();
+          endDate = new Date(
+            today.getTime() + 24 * 60 * 60 * 1000 - 1,
+          ).toISOString();
           break;
         case 'week':
           const weekStart = new Date(today);
           weekStart.setDate(today.getDate() - today.getDay());
           startDate = weekStart.toISOString();
-          endDate = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000 - 1).toISOString();
+          endDate = new Date(
+            weekStart.getTime() + 7 * 24 * 60 * 60 * 1000 - 1,
+          ).toISOString();
           break;
         case 'month':
           const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
           startDate = monthStart.toISOString();
-          endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999).toISOString();
+          endDate = new Date(
+            today.getFullYear(),
+            today.getMonth() + 1,
+            0,
+            23,
+            59,
+            59,
+            999,
+          ).toISOString();
           break;
       }
     } else if (filterForm.value.dateRange) {
@@ -1503,7 +1839,7 @@ const fetchData = async () => {
       end.setHours(23, 59, 59, 999);
       endDate = end.toISOString();
     }
-    
+
     const params: RechargeListParams = {
       page: paginationConfig.value.page,
       pageSize: paginationConfig.value.pageSize,
@@ -1512,7 +1848,7 @@ const fetchData = async () => {
       rechargeMethod: filterForm.value.rechargeMethod || undefined,
       vipLevel: filterForm.value.vipLevel || undefined,
       startDate,
-      endDate
+      endDate,
     };
 
     console.log('🔍 Fetching recharge data with params:', params);
@@ -1524,19 +1860,19 @@ const fetchData = async () => {
       hasData: 'data' in response,
       recordsLength: response.records?.length || 0,
       totalCount: response.total || 0,
-      keys: Object.keys(response)
+      keys: Object.keys(response),
     });
-    
+
     // Handle response structure - the response interceptor returns the transformed data
     if (!response) {
       console.error('❌ No response received - response is null/undefined');
       message.error('API响应为空');
       return;
     }
-    
+
     // Extract data based on what response interceptor returns
     let records, total, summaryData;
-    
+
     if (response.records) {
       // Response interceptor transformed {success: true, data: {...}} to {...}
       records = response.records;
@@ -1551,16 +1887,16 @@ const fetchData = async () => {
         totalAmount: 0,
         pendingCount: 0,
         confirmedCount: 0,
-        rejectedCount: 0
+        rejectedCount: 0,
       };
     } else {
       console.error('❌ Unexpected response structure:', response);
       message.error('API响应格式错误');
       return;
     }
-    
+
     console.log('📊 Parsed data:', { records, total, summary: summaryData });
-    
+
     tableData.value = records || [];
     paginationConfig.value.itemCount = total || 0;
     summary.value = summaryData;
@@ -1568,7 +1904,7 @@ const fetchData = async () => {
     console.error('🚨 Full error details:', error);
     console.error('🚨 Error message:', error?.message);
     console.error('🚨 Error response:', error?.response?.data);
-    
+
     message.error(`获取数据失败: ${error?.message || '未知错误'}`);
   } finally {
     loading.value = false;
@@ -1583,7 +1919,7 @@ const handleCreateRecharge = () => {
     amount: null,
     rechargeMethod: '',
     channelInfo: '',
-    note: ''
+    note: '',
   };
   selectedMember.value = null;
   showRechargeModal.value = true;
@@ -1597,32 +1933,35 @@ const handleEditRecharge = (order: RechargeOrder) => {
     amount: order.rechargeAmount,
     rechargeMethod: order.rechargeChannelInfo?.method || '',
     channelInfo: order.rechargeChannelInfo?.channel || '',
-    note: order.backendNote || ''
+    note: order.backendNote || '',
   };
   showRechargeModal.value = true;
 };
 
 const handleSaveRecharge = async () => {
   if (!rechargeFormRef.value) return;
-  
+
   try {
     await rechargeFormRef.value.validate();
     modalLoading.value = true;
-    
+
     if (isEditing.value && currentEditingOrder.value) {
       const data: UpdateRechargeParams = {
         amount: rechargeForm.value.amount || undefined,
         rechargeMethod: rechargeForm.value.rechargeMethod || undefined,
         channelInfo: rechargeForm.value.channelInfo || undefined,
-        note: rechargeForm.value.note || undefined
+        note: rechargeForm.value.note || undefined,
       };
-      
-      const response = await rechargeApi.update(currentEditingOrder.value.orderId, data);
-    
-    if (response.success) {
+
+      const response = await rechargeApi.update(
+        currentEditingOrder.value.orderId,
+        data,
+      );
+
+      if (response.success) {
         message.success('更新成功');
-      showRechargeModal.value = false;
-      fetchData();
+        showRechargeModal.value = false;
+        fetchData();
       }
     } else {
       const data: CreateRechargeParams = {
@@ -1630,11 +1969,11 @@ const handleSaveRecharge = async () => {
         amount: rechargeForm.value.amount || 0,
         rechargeMethod: rechargeForm.value.rechargeMethod,
         channelInfo: rechargeForm.value.channelInfo,
-        note: rechargeForm.value.note
+        note: rechargeForm.value.note,
       };
-      
+
       const response = await rechargeApi.create(data);
-      
+
       if (response.success) {
         message.success('创建成功');
         showRechargeModal.value = false;
@@ -1652,8 +1991,8 @@ const handleSaveRecharge = async () => {
 const handleConfirmRecharge = async (_order: RechargeOrder) => {
   try {
     // For now, just show success message since confirm API doesn't exist
-      message.success('充值确认成功');
-      fetchData();
+    message.success('充值确认成功');
+    fetchData();
   } catch (error) {
     message.error('确认失败');
     console.error('Confirm recharge error:', error);
@@ -1675,7 +2014,7 @@ const handleReset = () => {
     vipLevel: null,
     agentMode: null,
     thirdPartyPayment: null,
-    serviceFilter: null
+    serviceFilter: null,
   };
   paginationConfig.value.page = 1;
   fetchData();
@@ -1709,13 +2048,25 @@ const handleTimeRangeChange = (value: string) => {
     filterForm.value.dateRange = getWeekDateRange();
   } else if (value === 'today') {
     const today = new Date();
-    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const todayStart = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate(),
+    );
     const todayEnd = new Date(todayStart.getTime() + 24 * 60 * 60 * 1000 - 1);
     filterForm.value.dateRange = [todayStart.getTime(), todayEnd.getTime()];
   } else if (value === 'month') {
     const today = new Date();
     const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-    const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
+    const monthEnd = new Date(
+      today.getFullYear(),
+      today.getMonth() + 1,
+      0,
+      23,
+      59,
+      59,
+      999,
+    );
     filterForm.value.dateRange = [monthStart.getTime(), monthEnd.getTime()];
   } else {
     filterForm.value.dateRange = null; // Clear custom date range
@@ -1733,7 +2084,7 @@ const handleAdvancedSearch = () => {
 const handleExport = async () => {
   try {
     message.loading('正在导出数据...', { duration: 0 });
-    
+
     // Get all data for export (without pagination)
     const exportParams: RechargeListParams = {
       search: filterForm.value.search || undefined,
@@ -1742,21 +2093,25 @@ const handleExport = async () => {
       vipLevel: filterForm.value.vipLevel || undefined,
       page: 1,
       pageSize: 10000, // Large number to get all data
-      startDate: filterForm.value.dateRange?.[0] ? new Date(filterForm.value.dateRange[0]).toISOString() : undefined,
-      endDate: filterForm.value.dateRange?.[1] ? (() => {
-        const endDate = new Date(filterForm.value.dateRange[1]);
-        endDate.setHours(23, 59, 59, 999);
-        return endDate.toISOString();
-      })() : undefined
+      startDate: filterForm.value.dateRange?.[0]
+        ? new Date(filterForm.value.dateRange[0]).toISOString()
+        : undefined,
+      endDate: filterForm.value.dateRange?.[1]
+        ? (() => {
+            const endDate = new Date(filterForm.value.dateRange[1]);
+            endDate.setHours(23, 59, 59, 999);
+            return endDate.toISOString();
+          })()
+        : undefined,
     };
-    
+
     const response = await rechargeApi.getList(exportParams);
-    
+
     if (!response || !response.records) {
       message.error('导出数据失败');
       return;
     }
-    
+
     // Prepare CSV data
     const csvData = response.records.map((record: RechargeOrder) => [
       record.orderId,
@@ -1773,9 +2128,9 @@ const handleExport = async () => {
       getStatusText(record.status),
       record.backendNote || '',
       record.rechargeChannelInfo?.method || '',
-      record.rechargeChannelInfo?.channel || ''
+      record.rechargeChannelInfo?.channel || '',
     ]);
-    
+
     // CSV headers
     const headers = [
       '订单号',
@@ -1791,26 +2146,31 @@ const handleExport = async () => {
       '状态',
       '备注',
       '充值方式',
-      '支付渠道'
+      '支付渠道',
     ];
-    
+
     // Create CSV content
     const csvContent = [
       headers.join(','),
-      ...csvData.map(row => row.map(cell => `"${cell}"`).join(','))
+      ...csvData.map((row) => row.map((cell) => `"${cell}"`).join(',')),
     ].join('\n');
-    
+
     // Create and download file
-    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob(['\ufeff' + csvContent], {
+      type: 'text/csv;charset=utf-8;',
+    });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
-    link.setAttribute('download', `充值记录_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute(
+      'download',
+      `充值记录_${new Date().toISOString().split('T')[0]}.csv`,
+    );
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     message.success('导出成功');
   } catch (error) {
     console.error('Export error:', error);
@@ -1838,16 +2198,16 @@ const handleViewUserDetail = async (row: RechargeOrder) => {
       accountName: row.accountName,
       memberId: row.memberId,
       userId: row.userId,
-      row: row
+      row: row,
     });
-    
+
     // ✅ FIX: Use userId if available (internal database ID from backend)
     if (row.userId) {
       currentUserId.value = Number(row.userId);
       showUserDetailModal.value = true;
       return;
     }
-    
+
     // Fallback: Search for user by account name or userID
     let searchResponse;
     try {
@@ -1869,19 +2229,22 @@ const handleViewUserDetail = async (row: RechargeOrder) => {
         throw searchError;
       }
     }
-    
+
     // Handle different response structures
     let userData: any[] = [];
     if (Array.isArray(searchResponse)) {
       userData = searchResponse;
     } else if (searchResponse?.data && Array.isArray(searchResponse.data)) {
       userData = searchResponse.data;
-    } else if (searchResponse?.code === 0 && Array.isArray(searchResponse.data)) {
+    } else if (
+      searchResponse?.code === 0 &&
+      Array.isArray(searchResponse.data)
+    ) {
       userData = searchResponse.data;
     }
-    
+
     console.log('📦 Extracted user data:', userData);
-    
+
     if (userData && userData.length > 0) {
       const user = userData[0];
       if (user && user.value) {
@@ -1964,7 +2327,7 @@ const handleSearchOrder = async () => {
   try {
     // Search for the order in existing data first
     const foundOrder = tableData.value.find(
-      order => order.orderId === supplementaryOrderForm.orderNumber.trim()
+      (order) => order.orderId === supplementaryOrderForm.orderNumber.trim(),
     );
 
     if (foundOrder) {
@@ -1996,13 +2359,13 @@ const handleConfirmSupplementaryOrder = async () => {
     // Here you would typically call an API to create the supplementary order
     // For now, we'll just show a success message
     message.success(`补单创建成功: ${searchedOrder.value.orderId}`);
-    
+
     // Close modal and reset
     showSupplementaryOrderModal.value = false;
     supplementaryOrderForm.orderNumber = '';
     searchedOrder.value = null;
     searchError.value = '';
-    
+
     // Refresh the main table data
     await fetchData();
   } catch (error) {
@@ -2023,32 +2386,44 @@ watch(activeTab, () => {
 // Statistics functions
 const fetchStatsData = async () => {
   if (activeTab.value !== 'recharge-statistics') return;
-  
+
   statsLoading.value = true;
   try {
     // Handle time range filtering for stats
     let startDate: string | undefined;
     let endDate: string | undefined;
-    
+
     if (statsForm.value.timeRange && statsForm.value.timeRange !== 'custom') {
       const now = new Date();
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      
+
       switch (statsForm.value.timeRange) {
         case 'today':
           startDate = today.toISOString();
-          endDate = new Date(today.getTime() + 24 * 60 * 60 * 1000 - 1).toISOString();
+          endDate = new Date(
+            today.getTime() + 24 * 60 * 60 * 1000 - 1,
+          ).toISOString();
           break;
         case 'week':
           const weekStart = new Date(today);
           weekStart.setDate(today.getDate() - today.getDay());
           startDate = weekStart.toISOString();
-          endDate = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000 - 1).toISOString();
+          endDate = new Date(
+            weekStart.getTime() + 7 * 24 * 60 * 60 * 1000 - 1,
+          ).toISOString();
           break;
         case 'month':
           const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
           startDate = monthStart.toISOString();
-          endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999).toISOString();
+          endDate = new Date(
+            today.getFullYear(),
+            today.getMonth() + 1,
+            0,
+            23,
+            59,
+            59,
+            999,
+          ).toISOString();
           break;
       }
     } else if (statsForm.value.dateRange) {
@@ -2057,26 +2432,26 @@ const fetchStatsData = async () => {
       end.setHours(23, 59, 59, 999);
       endDate = end.toISOString();
     }
-    
+
     const params: RechargeStatsParams = {
       startDate,
       endDate,
       groupBy: statsForm.value.groupBy,
       paymentMethod: statsForm.value.paymentMethod || undefined,
       status: statsForm.value.status || undefined,
-      currency: 'BRL'
+      currency: 'BRL',
     };
 
     console.log('📊 Fetching stats data with params:', params);
-    
-    const response = await rechargeStatsApi.getStats(params) as any;
+
+    const response = (await rechargeStatsApi.getStats(params)) as any;
     console.log('📊 Stats API Response received:', response);
     console.log('📊 Response structure:', {
       hasSuccess: 'success' in response,
       hasData: 'data' in response,
-      dataKeys: response.data ? Object.keys(response.data) : []
+      dataKeys: response.data ? Object.keys(response.data) : [],
     });
-    
+
     // Handle wrapped response structure
     if (response.success && response.data) {
       statsData.value = response.data;
@@ -2085,22 +2460,21 @@ const fetchStatsData = async () => {
       statsData.value = response;
       console.log('📊 Setting statsData to direct response:', response);
     }
-    
+
     // Charts will be automatically updated via computed properties
     console.log('📊 Final statsData value:', {
       summary: statsData.value.summary,
       timeSeriesCount: statsData.value.timeSeriesData?.length || 0,
       paymentMethodCount: statsData.value.paymentMethodStats?.length || 0,
-      topUsersCount: statsData.value.topUsers?.length || 0
+      topUsersCount: statsData.value.topUsers?.length || 0,
     });
-    
+
     // Force Vue reactivity to trigger chart updates
     await nextTick();
     console.log('📊 Vue nextTick completed - charts should update now');
-    
+
     // Render charts with actual data
     renderCharts();
-    
   } catch (error: any) {
     console.error('🚨 Stats fetch error:', error);
     message.error(`获取统计数据失败: ${error?.message || '未知错误'}`);
@@ -2115,13 +2489,25 @@ const handleStatsTimeRangeChange = (value: string) => {
     statsForm.value.dateRange = getWeekDateRange();
   } else if (value === 'today') {
     const today = new Date();
-    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const todayStart = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate(),
+    );
     const todayEnd = new Date(todayStart.getTime() + 24 * 60 * 60 * 1000 - 1);
     statsForm.value.dateRange = [todayStart.getTime(), todayEnd.getTime()];
   } else if (value === 'month') {
     const today = new Date();
     const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-    const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
+    const monthEnd = new Date(
+      today.getFullYear(),
+      today.getMonth() + 1,
+      0,
+      23,
+      59,
+      59,
+      999,
+    );
     statsForm.value.dateRange = [monthStart.getTime(), monthEnd.getTime()];
   } else if (value === 'custom') {
     // Keep existing dateRange when switching to custom
@@ -2145,8 +2531,6 @@ const handleStatsFilterChange = () => {
   fetchStatsData();
 };
 
-
-
 // Watchers
 watch(activeTab, (newTab) => {
   if (newTab === 'all-recharges') {
@@ -2158,7 +2542,10 @@ watch(activeTab, (newTab) => {
     }
     fetchStatsData();
     // Also render charts if data is already available
-    if (statsData.value.timeSeriesData?.length || statsData.value.paymentMethodStats?.length) {
+    if (
+      statsData.value.timeSeriesData?.length ||
+      statsData.value.paymentMethodStats?.length
+    ) {
       setTimeout(renderCharts, 100); // Small delay to ensure DOM is ready
     }
   }
@@ -2177,7 +2564,7 @@ const getWeekDateRange = (): [number, number] => {
 // Lifecycle - set default filter on mount
 onMounted(() => {
   const route = useRoute();
-  
+
   // Check if there are query parameters from user detail redirect
   if (route.query.userId || route.query.userAccount) {
     // Apply user filter from query params
@@ -2186,10 +2573,10 @@ onMounted(() => {
     } else if (route.query.userName) {
       filterForm.value.search = route.query.userName as string;
     }
-    
+
     // Set default time range to show all user's recharges
     filterForm.value.timeRange = 'month';
-    
+
     // Trigger search with user filter
     fetchData();
   } else if (activeTab.value === 'all-recharges') {
@@ -2341,4 +2728,4 @@ onMounted(() => {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
-</style> 
+</style>

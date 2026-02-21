@@ -20,8 +20,8 @@
         <div class="form-section">
           <h3 class="section-title">基本信息</h3>
           <div class="form-grid">
-                         <div class="form-item">
-               <label>VIP等级 *</label>
+            <div class="form-item">
+              <label>VIP等级 *</label>
               <n-input-number
                 v-model:value="formData.level"
                 :min="0"
@@ -30,9 +30,9 @@
                 class="form-input"
                 :disabled="true"
               />
-               <small class="text-gray-500 mt-1">自动递增，不可编辑</small>
-             </div>
-            
+              <small class="mt-1 text-gray-500">自动递增，不可编辑</small>
+            </div>
+
             <div class="form-item">
               <label>等级名称 *</label>
               <n-input
@@ -41,100 +41,100 @@
                 class="form-input"
               />
             </div>
-            
-                                                              <div class="form-item vip-icon-settings-item">
-                          <label>VIP图标设置 *</label>
-                          <div class="vip-icon-settings">
-                            <div class="icon-settings-layout">
-                              <!-- Left side: VIP颜色 and 等级样式 -->
-                              <div class="icon-selection-left">
-                                <!-- VIP颜色选择 -->
-                                <div class="icon-section">
-                                  <h4 class="icon-section-title">VIP颜色</h4>
-                                  <div class="icon-options">
-                                    <div 
-                                      v-for="color in vipColors" 
-                                      :key="color.id"
-                                      class="icon-option"
-                                      :class="{ active: formData.color === color.image }"
-                                      @click="selectColor(color.id)"
-                                    >
-                                      <img 
-                                        :src="color.image" 
-                                        :alt="color.name" 
-                                        class="color-icon"
-                                        @error="handleImageError"
-                                      />
-                                    </div>
-                                  </div>
-                                </div>
-                                
-                                <!-- 等级样式选择 -->
-                                <div class="icon-section">
-                                  <h4 class="icon-section-title">等级样式</h4>
-                                  <div class="icon-options">
-                                    <div 
-                                      class="icon-option clear-option"
-                                      :class="{ active: formData.vipStyle === '' }"
-                                      @click="selectStyle('')"
-                                      title="清除样式选择"
-                                    >
-                                      <div class="clear-icon">✕</div>
-                                    </div>
-                                    <div 
-                                      v-for="style in vipStyles" 
-                                      :key="style.id"
-                                      class="icon-option"
-                                      :class="{ active: formData.vipStyle === style.id }"
-                                      @click="selectStyle(style.id)"
-                                    >
-                                      <img 
-                                      :src="style.image" 
-                                      :alt="style.name" 
-                                      class="style-icon"
-                                      @error="handleImageError"
-                                    />
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                              
-                              <!-- Right side: 图标预览 -->
-                              <div class="icon-preview">
-                                <h4 class="icon-section-title">图标预览</h4>
-                                <div class="preview-container">
-                                  <div class="preview-background">
-                                    <img 
-                                      v-if="getSelectedColor()" 
-                                      :src="getSelectedColor()?.image" 
-                                      :alt="getSelectedColor()?.name" 
-                                      class="preview-color"
-                                      @error="handlePreviewImageError"
-                                    />
-                                    <img 
-                                      v-if="getSelectedStyle()" 
-                                      :src="getSelectedStyle()?.image" 
-                                      :alt="getSelectedStyle()?.name" 
-                                      class="preview-style"
-                                      @error="handlePreviewImageError"
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
+
+            <div class="form-item vip-icon-settings-item">
+              <label>VIP图标设置 *</label>
+              <div class="vip-icon-settings">
+                <div class="icon-settings-layout">
+                  <!-- Left side: VIP颜色 and 等级样式 -->
+                  <div class="icon-selection-left">
+                    <!-- VIP颜色选择 -->
+                    <div class="icon-section">
+                      <h4 class="icon-section-title">VIP颜色</h4>
+                      <div class="icon-options">
+                        <div
+                          v-for="color in vipColors"
+                          :key="color.id"
+                          class="icon-option"
+                          :class="{ active: formData.color === color.image }"
+                          @click="selectColor(color.id)"
+                        >
+                          <img
+                            :src="color.image"
+                            :alt="color.name"
+                            class="color-icon"
+                            @error="handleImageError"
+                          />
                         </div>
-             
-             <div class="form-item">
-               <label>币种 *</label>
-               <n-select
-                 v-model:value="formData.currency"
-                 :options="currencyOptions"
-                 placeholder="请选择币种"
-                 class="form-input"
-               />
-             </div>
-            
+                      </div>
+                    </div>
+
+                    <!-- 等级样式选择 -->
+                    <div class="icon-section">
+                      <h4 class="icon-section-title">等级样式</h4>
+                      <div class="icon-options">
+                        <div
+                          class="icon-option clear-option"
+                          :class="{ active: formData.vipStyle === '' }"
+                          @click="selectStyle('')"
+                          title="清除样式选择"
+                        >
+                          <div class="clear-icon">✕</div>
+                        </div>
+                        <div
+                          v-for="style in vipStyles"
+                          :key="style.id"
+                          class="icon-option"
+                          :class="{ active: formData.vipStyle === style.id }"
+                          @click="selectStyle(style.id)"
+                        >
+                          <img
+                            :src="style.image"
+                            :alt="style.name"
+                            class="style-icon"
+                            @error="handleImageError"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Right side: 图标预览 -->
+                  <div class="icon-preview">
+                    <h4 class="icon-section-title">图标预览</h4>
+                    <div class="preview-container">
+                      <div class="preview-background">
+                        <img
+                          v-if="getSelectedColor()"
+                          :src="getSelectedColor()?.image"
+                          :alt="getSelectedColor()?.name"
+                          class="preview-color"
+                          @error="handlePreviewImageError"
+                        />
+                        <img
+                          v-if="getSelectedStyle()"
+                          :src="getSelectedStyle()?.image"
+                          :alt="getSelectedStyle()?.name"
+                          class="preview-style"
+                          @error="handlePreviewImageError"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-item">
+              <label>币种 *</label>
+              <n-select
+                v-model:value="formData.currency"
+                :options="currencyOptions"
+                placeholder="请选择币种"
+                class="form-input"
+              />
+            </div>
+
             <div class="form-item">
               <label>显示顺序</label>
               <n-input-number
@@ -144,11 +144,14 @@
                 class="form-input"
               />
             </div>
-            
+
             <div class="form-item">
               <label>状态</label>
               <n-switch v-model:value="formData.isActive" />
-              <span class="status-text" :class="formData.isActive ? 'active' : 'inactive'">
+              <span
+                class="status-text"
+                :class="formData.isActive ? 'active' : 'inactive'"
+              >
                 {{ formData.isActive ? '启用' : '禁用' }}
               </span>
             </div>
@@ -169,7 +172,7 @@
                 class="form-input"
               />
             </div>
-            
+
             <div class="form-item">
               <label>晋级需再打码</label>
               <n-input-number
@@ -214,7 +217,7 @@
                 class="form-input"
               />
             </div>
-            
+
             <div class="form-item">
               <label>当月打码</label>
               <n-input-number
@@ -225,7 +228,7 @@
                 class="form-input"
               />
             </div>
-            
+
             <div class="form-item">
               <label>月俸禄 (%)</label>
               <n-input-number
@@ -237,7 +240,7 @@
                 class="form-input"
               />
             </div>
-            
+
             <div class="form-item">
               <label>月累计封顶</label>
               <n-input-number
@@ -265,7 +268,7 @@
                 class="form-input"
               />
             </div>
-            
+
             <div class="form-item">
               <label>当周打码</label>
               <n-input-number
@@ -276,7 +279,7 @@
                 class="form-input"
               />
             </div>
-            
+
             <div class="form-item">
               <label>周俸禄</label>
               <n-input-number
@@ -287,7 +290,7 @@
                 class="form-input"
               />
             </div>
-            
+
             <div class="form-item">
               <label>周累计封顶</label>
               <n-input-number
@@ -315,7 +318,7 @@
                 class="form-input"
               />
             </div>
-            
+
             <div class="form-item">
               <label>当日打码</label>
               <n-input-number
@@ -326,7 +329,7 @@
                 class="form-input"
               />
             </div>
-            
+
             <div class="form-item">
               <label>日俸禄</label>
               <n-input-number
@@ -337,7 +340,7 @@
                 class="form-input"
               />
             </div>
-            
+
             <div class="form-item">
               <label>日累计封顶</label>
               <n-input-number
@@ -437,24 +440,27 @@ const showModal = computed({
 const isEditing = computed(() => !!props.editingItem);
 
 // 表单数据
-const formData = reactive<CreateVIPLevelData & {
-  id?: number; // Add id field for editing
-  monthlyDepositRequirement: number;
-  monthlyBetRequirement: number;
-  monthlyLimit: number;
-  weeklyDepositRequirement: number;
-  weeklyBetRequirement: number;
-  weeklyLimit: number;
-  dailyDepositRequirement: number;
-  dailyBetRequirement: number;
-  dailyLimit: number;
-  birthdayBonus: number;
-  vipStyle: string;
-}>({
+const formData = reactive<
+  CreateVIPLevelData & {
+    id?: number; // Add id field for editing
+    monthlyDepositRequirement: number;
+    monthlyBetRequirement: number;
+    monthlyLimit: number;
+    weeklyDepositRequirement: number;
+    weeklyBetRequirement: number;
+    weeklyLimit: number;
+    dailyDepositRequirement: number;
+    dailyBetRequirement: number;
+    dailyLimit: number;
+    birthdayBonus: number;
+    vipStyle: string;
+  }
+>({
   id: undefined, // Will be set when editing
   level: 0,
   name: '',
-  color: 'https://media.cheshi8899.com/media/media-1756084723456-975551315-style_1_vip_color7.avif', // Default to green color
+  color:
+    'https://media.cheshi8899.com/media/media-1756084723456-975551315-style_1_vip_color7.avif', // Default to green color
   icon: '', // VIP style icon URL
   vipStyle: '',
   currency: 'BRL',
@@ -483,68 +489,174 @@ const currencyOptions = CURRENCY_OPTIONS;
 
 // VIP颜色选项 - 使用实际上传的图片
 const vipColors = [
-  { id: 'color1', name: '金色', image: 'https://media.cheshi8899.com/media/media-1756084724117-248517786-style_1_vip_color2.avif' },
-  { id: 'color2', name: '银色', image: 'https://media.cheshi8899.com/media/media-1756084723983-980058730-style_1_vip_color3.avif' },
-  { id: 'color3', name: '铜色', image: 'https://media.cheshi8899.com/media/media-1756084723850-421767660-style_1_vip_color4.avif' },
-  { id: 'color4', name: '红色', image: 'https://media.cheshi8899.com/media/media-1756084723734-656919956-style_1_vip_color5.avif' },
-  { id: 'color5', name: '蓝色', image: 'https://media.cheshi8899.com/media/media-1756084723591-416052528-style_1_vip_color6.avif' },
-  { id: 'color6', name: '绿色', image: 'https://media.cheshi8899.com/media/media-1756084723456-975551315-style_1_vip_color7.avif' },
-  { id: 'color7', name: '紫色', image: 'https://media.cheshi8899.com/media/media-1756084723321-874400306-style_1_vip_color8.avif' },
-  { id: 'color8', name: '橙色', image: 'https://media.cheshi8899.com/media/media-1756084723183-411276279-style_1_vip_color9.avif' },
-  { id: 'color9', name: '粉色', image: 'https://media.cheshi8899.com/media/media-1756084723041-541182858-style_1_vip_color10.avif' },
-  { id: 'color10', name: '青色', image: 'https://media.cheshi8899.com/media/media-1756084722928-768032392-style_1_vip_style0.avif' }
+  {
+    id: 'color1',
+    name: '金色',
+    image:
+      'https://media.cheshi8899.com/media/media-1756084724117-248517786-style_1_vip_color2.avif',
+  },
+  {
+    id: 'color2',
+    name: '银色',
+    image:
+      'https://media.cheshi8899.com/media/media-1756084723983-980058730-style_1_vip_color3.avif',
+  },
+  {
+    id: 'color3',
+    name: '铜色',
+    image:
+      'https://media.cheshi8899.com/media/media-1756084723850-421767660-style_1_vip_color4.avif',
+  },
+  {
+    id: 'color4',
+    name: '红色',
+    image:
+      'https://media.cheshi8899.com/media/media-1756084723734-656919956-style_1_vip_color5.avif',
+  },
+  {
+    id: 'color5',
+    name: '蓝色',
+    image:
+      'https://media.cheshi8899.com/media/media-1756084723591-416052528-style_1_vip_color6.avif',
+  },
+  {
+    id: 'color6',
+    name: '绿色',
+    image:
+      'https://media.cheshi8899.com/media/media-1756084723456-975551315-style_1_vip_color7.avif',
+  },
+  {
+    id: 'color7',
+    name: '紫色',
+    image:
+      'https://media.cheshi8899.com/media/media-1756084723321-874400306-style_1_vip_color8.avif',
+  },
+  {
+    id: 'color8',
+    name: '橙色',
+    image:
+      'https://media.cheshi8899.com/media/media-1756084723183-411276279-style_1_vip_color9.avif',
+  },
+  {
+    id: 'color9',
+    name: '粉色',
+    image:
+      'https://media.cheshi8899.com/media/media-1756084723041-541182858-style_1_vip_color10.avif',
+  },
+  {
+    id: 'color10',
+    name: '青色',
+    image:
+      'https://media.cheshi8899.com/media/media-1756084722928-768032392-style_1_vip_style0.avif',
+  },
 ];
 
 // VIP样式选项 - 使用实际上传的图片
 const vipStyles = [
-  { id: 'style1', name: '1星', image: 'https://media.cheshi8899.com/media/media-1756084722842-582069789-style_1_vip_style1.avif' },
-  { id: 'style2', name: '2星', image: 'https://media.cheshi8899.com/media/media-1756084722740-802103472-style_1_vip_style2.avif' },
-  { id: 'style3', name: '3星', image: 'https://media.cheshi8899.com/media/media-1756084722636-333894626-style_1_vip_style3.avif' },
-  { id: 'style4', name: '4星', image: 'https://media.cheshi8899.com/media/media-1756084722532-886989642-style_1_vip_style4.avif' },
-  { id: 'style5', name: '5星', image: 'https://media.cheshi8899.com/media/media-1756084722447-561278426-style_1_vip_style5.avif' },
-  { id: 'style6', name: '3钻', image: 'https://media.cheshi8899.com/media/media-1756084722361-747879972-style_1_vip_style6.avif' },
-  { id: 'style7', name: '5钻', image: 'https://media.cheshi8899.com/media/media-1756084722271-216094122-style_1_vip_style7.avif' },
-  { id: 'style8', name: '皇冠1', image: 'https://media.cheshi8899.com/media/media-1756084722181-225699275-style_1_vip_style8.avif' },
-  { id: 'style9', name: '皇冠2', image: 'https://media.cheshi8899.com/media/media-1756084722063-17229909-style_1_vip_style9.avif' },
-  { id: 'style10', name: '皇冠3', image: 'https://media.cheshi8899.com/media/media-1756084721842-860245261-style_1_vip_style10.avif' }
+  {
+    id: 'style1',
+    name: '1星',
+    image:
+      'https://media.cheshi8899.com/media/media-1756084722842-582069789-style_1_vip_style1.avif',
+  },
+  {
+    id: 'style2',
+    name: '2星',
+    image:
+      'https://media.cheshi8899.com/media/media-1756084722740-802103472-style_1_vip_style2.avif',
+  },
+  {
+    id: 'style3',
+    name: '3星',
+    image:
+      'https://media.cheshi8899.com/media/media-1756084722636-333894626-style_1_vip_style3.avif',
+  },
+  {
+    id: 'style4',
+    name: '4星',
+    image:
+      'https://media.cheshi8899.com/media/media-1756084722532-886989642-style_1_vip_style4.avif',
+  },
+  {
+    id: 'style5',
+    name: '5星',
+    image:
+      'https://media.cheshi8899.com/media/media-1756084722447-561278426-style_1_vip_style5.avif',
+  },
+  {
+    id: 'style6',
+    name: '3钻',
+    image:
+      'https://media.cheshi8899.com/media/media-1756084722361-747879972-style_1_vip_style6.avif',
+  },
+  {
+    id: 'style7',
+    name: '5钻',
+    image:
+      'https://media.cheshi8899.com/media/media-1756084722271-216094122-style_1_vip_style7.avif',
+  },
+  {
+    id: 'style8',
+    name: '皇冠1',
+    image:
+      'https://media.cheshi8899.com/media/media-1756084722181-225699275-style_1_vip_style8.avif',
+  },
+  {
+    id: 'style9',
+    name: '皇冠2',
+    image:
+      'https://media.cheshi8899.com/media/media-1756084722063-17229909-style_1_vip_style9.avif',
+  },
+  {
+    id: 'style10',
+    name: '皇冠3',
+    image:
+      'https://media.cheshi8899.com/media/media-1756084721842-860245261-style_1_vip_style10.avif',
+  },
 ];
 
 // 选择颜色
 function selectColor(colorId: string) {
   // Find the color object and set the actual image URL
-  const selectedColor = vipColors.find(color => color.id === colorId);
+  const selectedColor = vipColors.find((color) => color.id === colorId);
   if (selectedColor) {
     formData.color = selectedColor.image;
-    console.log('🎨 Color selected:', { colorId, colorUrl: selectedColor.image });
+    console.log('🎨 Color selected:', {
+      colorId,
+      colorUrl: selectedColor.image,
+    });
   }
 }
 
 // 选择样式
 function selectStyle(styleId: string) {
   formData.vipStyle = styleId;
-  
+
   if (styleId === '' || !styleId) {
     // Clear the icon when no style is selected
     formData.icon = '';
     console.log('🎨 Style cleared - no selection');
   } else {
     // Find the style object and set the actual image URL
-    const selectedStyle = vipStyles.find(style => style.id === styleId);
+    const selectedStyle = vipStyles.find((style) => style.id === styleId);
     if (selectedStyle) {
       formData.icon = selectedStyle.image; // Store the actual image URL in the icon field
-      console.log('🎨 Style selected:', { styleId, iconUrl: selectedStyle.image });
+      console.log('🎨 Style selected:', {
+        styleId,
+        iconUrl: selectedStyle.image,
+      });
     }
   }
 }
 
 // 获取选中的样式
 function getSelectedStyle() {
-  return vipStyles.find(style => style.id === formData.vipStyle);
+  return vipStyles.find((style) => style.id === formData.vipStyle);
 }
 
 // 获取选中的颜色
 function getSelectedColor() {
-  return vipColors.find(color => color.image === formData.color);
+  return vipColors.find((color) => color.image === formData.color);
 }
 
 // 处理图片加载错误
@@ -566,14 +678,24 @@ async function getNextVIPLevel() {
   try {
     console.log('🔄 正在获取VIP等级列表...');
     // 调用API获取最新的VIP等级
-    const response = await getVIPLevels({ pageSize: 100, sortBy: 'level', sortOrder: 'desc' });
+    const response = await getVIPLevels({
+      pageSize: 100,
+      sortBy: 'level',
+      sortOrder: 'desc',
+    });
     console.log('📊 VIP等级API响应:', response);
-    
+
     if (response && response.list && response.list.length > 0) {
       // Find the next available level starting from 0
-      const existingLevels = (response.list || (response as any).data?.list || []).map((level: VIPLevel) => level.level).sort((a, b) => a - b);
+      const existingLevels = (
+        response.list ||
+        (response as any).data?.list ||
+        []
+      )
+        .map((level: VIPLevel) => level.level)
+        .sort((a, b) => a - b);
       let nextLevel = 0;
-      
+
       // Find the first gap or use max + 1
       for (let i = 0; i < existingLevels.length; i++) {
         if (existingLevels[i] !== nextLevel) {
@@ -581,9 +703,11 @@ async function getNextVIPLevel() {
         }
         nextLevel++;
       }
-      
+
       formData.level = nextLevel;
-      console.log(`✅ 找到下一个可用等级: ${formData.level}`, { existingLevels });
+      console.log(`✅ 找到下一个可用等级: ${formData.level}`, {
+        existingLevels,
+      });
     } else {
       formData.level = 0;
       console.log('✅ 没有现有VIP等级，使用默认等级: 0');
@@ -602,29 +726,52 @@ async function getNextVIPLevel() {
 const rules: FormRules = {
   level: [
     { required: true, message: '请输入VIP等级', trigger: 'blur' },
-    { type: 'number', min: 0, max: 100, message: 'VIP等级必须在0-100之间', trigger: 'blur' },
+    {
+      type: 'number',
+      min: 0,
+      max: 100,
+      message: 'VIP等级必须在0-100之间',
+      trigger: 'blur',
+    },
   ],
   name: [
     { required: true, message: '请输入等级名称', trigger: 'blur' },
-    { min: 1, max: 50, message: '等级名称长度必须在1-50个字符之间', trigger: 'blur' },
+    {
+      min: 1,
+      max: 50,
+      message: '等级名称长度必须在1-50个字符之间',
+      trigger: 'blur',
+    },
   ],
-  color: [
-    { required: true, message: '请选择等级颜色', trigger: 'change' },
-  ],
-  currency: [
-    { required: true, message: '请选择币种', trigger: 'change' },
-  ],
+  color: [{ required: true, message: '请选择等级颜色', trigger: 'change' }],
+  currency: [{ required: true, message: '请选择币种', trigger: 'change' }],
   requiredDeposit: [
-    { type: 'number', min: 0, message: '晋级需再充值不能为负数', trigger: 'blur' },
+    {
+      type: 'number',
+      min: 0,
+      message: '晋级需再充值不能为负数',
+      trigger: 'blur',
+    },
   ],
   requiredBet: [
-    { type: 'number', min: 0, message: '晋级需再打码不能为负数', trigger: 'blur' },
+    {
+      type: 'number',
+      min: 0,
+      message: '晋级需再打码不能为负数',
+      trigger: 'blur',
+    },
   ],
   upgradeBonus: [
     { type: 'number', min: 0, message: '晋级奖金不能为负数', trigger: 'blur' },
   ],
   monthlyRebate: [
-    { type: 'number', min: 0, max: 100, message: '月俸禄必须在0-100之间', trigger: 'blur' },
+    {
+      type: 'number',
+      min: 0,
+      max: 100,
+      message: '月俸禄必须在0-100之间',
+      trigger: 'blur',
+    },
   ],
   weeklyTaskValue: [
     { type: 'number', min: 0, message: '周俸禄不能为负数', trigger: 'blur' },
@@ -633,31 +780,76 @@ const rules: FormRules = {
     { type: 'number', min: 0, message: '日俸禄不能为负数', trigger: 'blur' },
   ],
   monthlyDepositRequirement: [
-    { type: 'number', min: 0, message: '当月充值要求不能为负数', trigger: 'blur' },
+    {
+      type: 'number',
+      min: 0,
+      message: '当月充值要求不能为负数',
+      trigger: 'blur',
+    },
   ],
   monthlyBetRequirement: [
-    { type: 'number', min: 0, message: '当月打码要求不能为负数', trigger: 'blur' },
+    {
+      type: 'number',
+      min: 0,
+      message: '当月打码要求不能为负数',
+      trigger: 'blur',
+    },
   ],
   monthlyLimit: [
-    { type: 'number', min: 0, message: '月累计封顶不能为负数', trigger: 'blur' },
+    {
+      type: 'number',
+      min: 0,
+      message: '月累计封顶不能为负数',
+      trigger: 'blur',
+    },
   ],
   weeklyDepositRequirement: [
-    { type: 'number', min: 0, message: '当周充值要求不能为负数', trigger: 'blur' },
+    {
+      type: 'number',
+      min: 0,
+      message: '当周充值要求不能为负数',
+      trigger: 'blur',
+    },
   ],
   weeklyBetRequirement: [
-    { type: 'number', min: 0, message: '当周打码要求不能为负数', trigger: 'blur' },
+    {
+      type: 'number',
+      min: 0,
+      message: '当周打码要求不能为负数',
+      trigger: 'blur',
+    },
   ],
   weeklyLimit: [
-    { type: 'number', min: 0, message: '周累计封顶不能为负数', trigger: 'blur' },
+    {
+      type: 'number',
+      min: 0,
+      message: '周累计封顶不能为负数',
+      trigger: 'blur',
+    },
   ],
   dailyDepositRequirement: [
-    { type: 'number', min: 0, message: '当日充值要求不能为负数', trigger: 'blur' },
+    {
+      type: 'number',
+      min: 0,
+      message: '当日充值要求不能为负数',
+      trigger: 'blur',
+    },
   ],
   dailyBetRequirement: [
-    { type: 'number', min: 0, message: '当日打码要求不能为负数', trigger: 'blur' },
+    {
+      type: 'number',
+      min: 0,
+      message: '当日打码要求不能为负数',
+      trigger: 'blur',
+    },
   ],
   dailyLimit: [
-    { type: 'number', min: 0, message: '日累计封顶不能为负数', trigger: 'blur' },
+    {
+      type: 'number',
+      min: 0,
+      message: '日累计封顶不能为负数',
+      trigger: 'blur',
+    },
   ],
   birthdayBonus: [
     { type: 'number', min: 0, message: '生日礼金不能为负数', trigger: 'blur' },
@@ -685,10 +877,12 @@ watch(
         monthlyRebate: newItem.monthlyRebate,
         weeklyTaskValue: newItem.weeklyTaskValue,
         dailyTaskValue: newItem.dailyTaskValue,
-        monthlyDepositRequirement: (newItem as any).monthlyDepositRequirement || 0,
+        monthlyDepositRequirement:
+          (newItem as any).monthlyDepositRequirement || 0,
         monthlyBetRequirement: (newItem as any).monthlyBetRequirement || 0,
         monthlyLimit: (newItem as any).monthlyLimit || 0,
-        weeklyDepositRequirement: (newItem as any).weeklyDepositRequirement || 0,
+        weeklyDepositRequirement:
+          (newItem as any).weeklyDepositRequirement || 0,
         weeklyBetRequirement: (newItem as any).weeklyBetRequirement || 0,
         weeklyLimit: (newItem as any).weeklyLimit || 0,
         dailyDepositRequirement: (newItem as any).dailyDepositRequirement || 0,
@@ -698,7 +892,7 @@ watch(
         isActive: newItem.isActive,
         displayOrder: newItem.displayOrder,
       });
-      
+
       console.log('🎨 Initializing VIP form for editing:', {
         itemId: newItem.id,
         color: newItem.color,
@@ -706,12 +900,14 @@ watch(
         vipStyle: (newItem as any).vipStyle,
         formDataColor: formData.color,
         formDataIcon: formData.icon,
-        formDataVipStyle: formData.vipStyle
+        formDataVipStyle: formData.vipStyle,
       });
-      
+
       // Initialize vipStyle based on stored icon if vipStyle is not set
       if (newItem.icon && !(newItem as any).vipStyle) {
-        const matchingStyle = vipStyles.find(style => style.image === newItem.icon);
+        const matchingStyle = vipStyles.find(
+          (style) => style.image === newItem.icon,
+        );
         if (matchingStyle) {
           formData.vipStyle = matchingStyle.id;
         }
@@ -721,7 +917,7 @@ watch(
       }
     }
   },
-  { immediate: true, deep: true }
+  { immediate: true, deep: true },
 );
 
 // 事件处理
@@ -729,11 +925,11 @@ const handleSubmit = async () => {
   try {
     await formRef.value?.validate();
     submitLoading.value = true;
-    
+
     console.log('🔄 Submitting form data:', formData);
     console.log('📊 Is editing:', isEditing.value);
     console.log('📊 Editing item:', props.editingItem);
-    
+
     if (isEditing.value) {
       console.log('🔄 Updating VIP level with ID:', props.editingItem!.id);
       await updateVIPLevel(props.editingItem!.id, formData);
@@ -743,16 +939,21 @@ const handleSubmit = async () => {
       await createVIPLevel(formData);
       message.success('创建VIP等级成功');
     }
-    
+
     emit('success');
     showModal.value = false;
   } catch (error) {
     if (error instanceof Error) {
-      message.error(error.message || `${isEditing.value ? '更新' : '创建'}VIP等级失败`);
+      message.error(
+        error.message || `${isEditing.value ? '更新' : '创建'}VIP等级失败`,
+      );
     } else {
       message.error('表单验证失败，请检查输入');
     }
-    console.error(`Error ${isEditing.value ? 'updating' : 'creating'} VIP level:`, error);
+    console.error(
+      `Error ${isEditing.value ? 'updating' : 'creating'} VIP level:`,
+      error,
+    );
   } finally {
     submitLoading.value = false;
   }
@@ -765,7 +966,7 @@ const handleCancel = () => {
 // 重置表单
 const resetForm = () => {
   formRef.value?.restoreValidation();
-  
+
   if (props.editingItem) {
     Object.assign(formData, {
       id: props.editingItem.id, // Set the id for editing
@@ -779,13 +980,18 @@ const resetForm = () => {
       upgradeBonus: props.editingItem.upgradeBonus,
       monthlyRebate: props.editingItem.monthlyRebate,
       dailyTaskValue: props.editingItem.dailyTaskValue,
-      monthlyDepositRequirement: (props.editingItem as any).monthlyDepositRequirement || 0,
-      monthlyBetRequirement: (props.editingItem as any).monthlyBetRequirement || 0,
+      monthlyDepositRequirement:
+        (props.editingItem as any).monthlyDepositRequirement || 0,
+      monthlyBetRequirement:
+        (props.editingItem as any).monthlyBetRequirement || 0,
       monthlyLimit: (props.editingItem as any).monthlyLimit || 0,
-      weeklyDepositRequirement: (props.editingItem as any).weeklyDepositRequirement || 0,
-      weeklyBetRequirement: (props.editingItem as any).weeklyBetRequirement || 0,
+      weeklyDepositRequirement:
+        (props.editingItem as any).weeklyDepositRequirement || 0,
+      weeklyBetRequirement:
+        (props.editingItem as any).weeklyBetRequirement || 0,
       weeklyLimit: (props.editingItem as any).weeklyLimit || 0,
-      dailyDepositRequirement: (props.editingItem as any).dailyDepositRequirement || 0,
+      dailyDepositRequirement:
+        (props.editingItem as any).dailyDepositRequirement || 0,
       dailyBetRequirement: (props.editingItem as any).dailyBetRequirement || 0,
       dailyLimit: (props.editingItem as any).dailyLimit || 0,
       birthdayBonus: (props.editingItem as any).birthdayBonus || 0,
@@ -793,10 +999,12 @@ const resetForm = () => {
       isActive: props.editingItem.isActive,
       displayOrder: props.editingItem.displayOrder,
     });
-      
+
     // Initialize vipStyle based on stored icon if vipStyle is not set
     if (props.editingItem?.icon && !(props.editingItem as any).vipStyle) {
-      const matchingStyle = vipStyles.find(style => style.image === props.editingItem?.icon);
+      const matchingStyle = vipStyles.find(
+        (style) => style.image === props.editingItem?.icon,
+      );
       if (matchingStyle) {
         formData.vipStyle = matchingStyle.id;
       }
@@ -805,7 +1013,8 @@ const resetForm = () => {
     Object.assign(formData, {
       level: 0,
       name: '',
-      color: 'https://media.cheshi8899.com/media/media-1756084723456-975551315-style_1_vip_color7.avif', // Default to green color
+      color:
+        'https://media.cheshi8899.com/media/media-1756084723456-975551315-style_1_vip_color7.avif', // Default to green color
       icon: '',
       currency: 'BRL',
       requiredDeposit: 0,
@@ -1040,8 +1249,6 @@ watch(showModal, (show) => {
   transform: translate(-50%, -50%);
 }
 
-
-
 .status-text {
   margin-left: 8px;
   font-size: 14px;
@@ -1114,22 +1321,22 @@ watch(showModal, (show) => {
   .form-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .vip-level-form-modal {
     padding: 16px;
   }
-  
+
   .form-section {
     padding: 16px;
   }
-  
+
   .icon-settings-layout {
     grid-template-columns: 1fr;
     gap: 20px;
   }
-  
+
   .icon-preview {
     min-height: 150px;
   }
 }
-</style> 
+</style>

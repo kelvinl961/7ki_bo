@@ -1,18 +1,16 @@
 <template>
-  <div class="p-6 bg-gray-50 min-h-full">
+  <div class="min-h-full bg-gray-50 p-6">
     <!-- Page Header -->
     <div class="mb-6">
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-2xl font-semibold text-gray-900 mb-2">虚拟彩金池</h1>
+          <h1 class="mb-2 text-2xl font-semibold text-gray-900">虚拟彩金池</h1>
           <p class="text-gray-600">管理各个游戏或区域的虚拟彩金池配置</p>
         </div>
         <div class="flex gap-3">
-          <n-button type="primary" @click="handleAdd">
-            新增
-          </n-button>
-          <n-button 
-            type="default" 
+          <n-button type="primary" @click="handleAdd"> 新增 </n-button>
+          <n-button
+            type="default"
             @click="handleBulkConfig"
             :disabled="!hasSelectedRows"
           >
@@ -24,7 +22,7 @@
 
     <!-- Filter Section -->
     <n-card class="mb-4">
-      <div class="flex flex-wrap gap-4 items-end">
+      <div class="flex flex-wrap items-end gap-4">
         <!-- 虚拟彩金池ID -->
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium">虚拟彩金池ID</label>
@@ -65,12 +63,8 @@
 
         <!-- 操作按钮 -->
         <div class="flex gap-2">
-                  <n-button type="primary" @click="handleFilter">
-          搜索
-        </n-button>
-                  <n-button @click="handleReset">
-          重置
-        </n-button>
+          <n-button type="primary" @click="handleFilter"> 搜索 </n-button>
+          <n-button @click="handleReset"> 重置 </n-button>
         </div>
       </div>
     </n-card>
@@ -78,21 +72,24 @@
     <!-- Table Section -->
     <n-card>
       <!-- Bulk Operations -->
-      <div v-if="hasSelectedRows" class="mb-4 p-3 bg-blue-50 rounded-lg flex items-center justify-between">
+      <div
+        v-if="hasSelectedRows"
+        class="mb-4 flex items-center justify-between rounded-lg bg-blue-50 p-3"
+      >
         <div class="flex items-center gap-2">
-          <n-checkbox 
-            :checked="isAllSelected" 
+          <n-checkbox
+            :checked="isAllSelected"
             :indeterminate="isIndeterminate"
             @update:checked="handleSelectAll"
           >
             全选当前页
           </n-checkbox>
-          <span class="text-sm text-gray-600">已选择 {{ selectedRows.length }} 项</span>
+          <span class="text-sm text-gray-600"
+            >已选择 {{ selectedRows.length }} 项</span
+          >
         </div>
         <n-dropdown :options="bulkActions" @select="handleBulkAction">
-          <n-button size="small">
-            批量操作
-          </n-button>
+          <n-button size="small"> 批量操作 </n-button>
         </n-dropdown>
       </div>
 
@@ -186,18 +183,24 @@ import {
 
 // ✅ PERFORMANCE FIX: Lazy load modal components - they only load when modals are opened
 import { defineAsyncComponent } from 'vue';
-const VirtualBonusPoolForm = defineAsyncComponent(() => import('./components/VirtualBonusPoolForm.vue'));
-const VirtualBonusPoolDetail = defineAsyncComponent(() => import('./components/VirtualBonusPoolDetail.vue'));
-const VirtualBonusPoolBulkForm = defineAsyncComponent(() => import('./components/VirtualBonusPoolBulkForm.vue'));
-import { 
-  getVirtualBonusPools, 
-  createVirtualBonusPool, 
-  updateVirtualBonusPool, 
+const VirtualBonusPoolForm = defineAsyncComponent(
+  () => import('./components/VirtualBonusPoolForm.vue'),
+);
+const VirtualBonusPoolDetail = defineAsyncComponent(
+  () => import('./components/VirtualBonusPoolDetail.vue'),
+);
+const VirtualBonusPoolBulkForm = defineAsyncComponent(
+  () => import('./components/VirtualBonusPoolBulkForm.vue'),
+);
+import {
+  getVirtualBonusPools,
+  createVirtualBonusPool,
+  updateVirtualBonusPool,
   deleteVirtualBonusPool,
   toggleVirtualBonusPoolStatus,
   bulkDeleteVirtualBonusPools,
   bulkUpdateVirtualBonusPools,
-  type VirtualBonusPool 
+  type VirtualBonusPool,
 } from '#/api/virtualBonusPool';
 
 // Types (VirtualBonusPool is imported from API)
@@ -269,23 +272,29 @@ const backgroundStyleOptions = [
 ];
 
 // Computed
-const selectedRows = computed(() => 
-  tableData.value.filter(item => selectedRowKeys.value.includes(item.id))
+const selectedRows = computed(() =>
+  tableData.value.filter((item) => selectedRowKeys.value.includes(item.id)),
 );
 
 const selectedItems = computed(() => selectedRows.value);
 
 const hasSelectedRows = computed(() => selectedRowKeys.value.length > 0);
 
-const isAllSelected = computed(() => 
-  tableData.value.length > 0 && selectedRowKeys.value.length === tableData.value.length
+const isAllSelected = computed(
+  () =>
+    tableData.value.length > 0 &&
+    selectedRowKeys.value.length === tableData.value.length,
 );
 
-const isIndeterminate = computed(() => 
-  selectedRowKeys.value.length > 0 && selectedRowKeys.value.length < tableData.value.length
+const isIndeterminate = computed(
+  () =>
+    selectedRowKeys.value.length > 0 &&
+    selectedRowKeys.value.length < tableData.value.length,
 );
 
-const modalTitle = computed(() => modalMode.value === 'add' ? '新增' : '修改');
+const modalTitle = computed(() =>
+  modalMode.value === 'add' ? '新增' : '修改',
+);
 
 // Bulk actions
 const bulkActions = [
@@ -319,14 +328,17 @@ const columns: DataTableColumns<VirtualBonusPool> = [
     title: '币种',
     key: 'currency',
     width: 100,
-    render: (row) => h(NTag, { type: 'info', size: 'small' }, { default: () => row.currency }),
+    render: (row) =>
+      h(NTag, { type: 'info', size: 'small' }, { default: () => row.currency }),
   },
   {
     title: '展示形式',
     key: 'displayType',
     width: 120,
     render: (row) => {
-      const option = displayTypeOptions.find(opt => opt.value === row.displayType);
+      const option = displayTypeOptions.find(
+        (opt) => opt.value === row.displayType,
+      );
       return option?.label || row.displayType;
     },
   },
@@ -335,7 +347,10 @@ const columns: DataTableColumns<VirtualBonusPool> = [
     key: 'displayPosition',
     width: 120,
     render: (row) => {
-      if (typeof row.displayPosition === 'object' && row.displayPosition !== null) {
+      if (
+        typeof row.displayPosition === 'object' &&
+        row.displayPosition !== null
+      ) {
         // If it's an object, try to extract meaningful values
         const pos = row.displayPosition as any;
         if (pos.x !== undefined && pos.y !== undefined) {
@@ -361,9 +376,10 @@ const columns: DataTableColumns<VirtualBonusPool> = [
     render: (row) => {
       try {
         // Handle Prisma Decimal objects
-        const amount = typeof row.maxAmount === 'object' && row.maxAmount !== null 
-          ? parseFloat((row.maxAmount as any).toString()) 
-          : parseFloat(String(row.maxAmount));
+        const amount =
+          typeof row.maxAmount === 'object' && row.maxAmount !== null
+            ? parseFloat((row.maxAmount as any).toString())
+            : parseFloat(String(row.maxAmount));
         return isNaN(amount) ? '-' : amount.toLocaleString();
       } catch (error) {
         console.warn('Error formatting maxAmount:', row.maxAmount, error);
@@ -374,14 +390,15 @@ const columns: DataTableColumns<VirtualBonusPool> = [
   },
   {
     title: '最小展示金额',
-    key: 'minAmount', 
+    key: 'minAmount',
     width: 130,
     render: (row) => {
       try {
         // Handle Prisma Decimal objects
-        const amount = typeof row.minAmount === 'object' && row.minAmount !== null 
-          ? parseFloat((row.minAmount as any).toString()) 
-          : parseFloat(String(row.minAmount));
+        const amount =
+          typeof row.minAmount === 'object' && row.minAmount !== null
+            ? parseFloat((row.minAmount as any).toString())
+            : parseFloat(String(row.minAmount));
         return isNaN(amount) ? '-' : amount.toLocaleString();
       } catch (error) {
         console.warn('Error formatting minAmount:', row.minAmount, error);
@@ -402,7 +419,7 @@ const columns: DataTableColumns<VirtualBonusPool> = [
     width: 130,
     render: (row) => {
       if (!row.numberStyle) return '-';
-      
+
       // Check if it's a URL (image)
       if (row.numberStyle.startsWith('http') || row.numberStyle.includes('/')) {
         return h('div', { class: 'flex items-center justify-center' }, [
@@ -420,17 +437,23 @@ const columns: DataTableColumns<VirtualBonusPool> = [
                   nextElement.style.display = 'inline';
                 }
               }
-            }
+            },
           }),
-          h('span', { 
-            style: 'display: none;',
-            class: 'text-xs text-gray-500'
-          }, '加载失败')
+          h(
+            'span',
+            {
+              style: 'display: none;',
+              class: 'text-xs text-gray-500',
+            },
+            '加载失败',
+          ),
         ]);
       }
-      
+
       // Check if it's a preset style
-      const option = numberStyleOptions.find(opt => opt.value === row.numberStyle);
+      const option = numberStyleOptions.find(
+        (opt) => opt.value === row.numberStyle,
+      );
       return option?.label || row.numberStyle;
     },
   },
@@ -440,9 +463,12 @@ const columns: DataTableColumns<VirtualBonusPool> = [
     width: 100,
     render: (row) => {
       if (!row.backgroundStyle) return '-';
-      
+
       // Check if it's a URL (image)
-      if (row.backgroundStyle.startsWith('http') || row.backgroundStyle.includes('/')) {
+      if (
+        row.backgroundStyle.startsWith('http') ||
+        row.backgroundStyle.includes('/')
+      ) {
         return h('div', { class: 'flex items-center justify-center' }, [
           h('img', {
             src: row.backgroundStyle,
@@ -458,17 +484,23 @@ const columns: DataTableColumns<VirtualBonusPool> = [
                   nextElement.style.display = 'inline';
                 }
               }
-            }
+            },
           }),
-          h('span', { 
-            style: 'display: none;',
-            class: 'text-xs text-gray-500'
-          }, '加载失败')
+          h(
+            'span',
+            {
+              style: 'display: none;',
+              class: 'text-xs text-gray-500',
+            },
+            '加载失败',
+          ),
         ]);
       }
-      
+
       // Check if it's a preset style
-      const option = backgroundStyleOptions.find(opt => opt.value === row.backgroundStyle);
+      const option = backgroundStyleOptions.find(
+        (opt) => opt.value === row.backgroundStyle,
+      );
       return option?.label || row.backgroundStyle;
     },
   },
@@ -477,10 +509,11 @@ const columns: DataTableColumns<VirtualBonusPool> = [
     key: 'status',
     width: 80,
     align: 'center',
-    render: (row) => h(NSwitch, {
-      value: row.status,
-      onUpdateValue: (value: boolean) => handleStatusChange(row.id, value),
-    }),
+    render: (row) =>
+      h(NSwitch, {
+        value: row.status,
+        onUpdateValue: (value: boolean) => handleStatusChange(row.id, value),
+      }),
   },
   {
     title: '备注',
@@ -508,28 +541,45 @@ const columns: DataTableColumns<VirtualBonusPool> = [
     width: 200,
     align: 'center',
     fixed: 'right',
-    render: (row) => h(NSpace, { size: 'small' }, {
-      default: () => [
-        h(NButton, {
-          size: 'small',
-          type: 'primary',
-          secondary: true,
-          onClick: () => handleEdit(row),
-        }, { default: () => '修改' }),
-        h(NButton, {
-          size: 'small',
-          type: 'info',
-          secondary: true,
-          onClick: () => handleDetail(row),
-        }, { default: () => '详情' }),
-        h(NButton, {
-          size: 'small',
-          type: 'error',
-          secondary: true,
-          onClick: () => handleDelete(row),
-        }, { default: () => '删除' }),
-      ],
-    }),
+    render: (row) =>
+      h(
+        NSpace,
+        { size: 'small' },
+        {
+          default: () => [
+            h(
+              NButton,
+              {
+                size: 'small',
+                type: 'primary',
+                secondary: true,
+                onClick: () => handleEdit(row),
+              },
+              { default: () => '修改' },
+            ),
+            h(
+              NButton,
+              {
+                size: 'small',
+                type: 'info',
+                secondary: true,
+                onClick: () => handleDetail(row),
+              },
+              { default: () => '详情' },
+            ),
+            h(
+              NButton,
+              {
+                size: 'small',
+                type: 'error',
+                secondary: true,
+                onClick: () => handleDelete(row),
+              },
+              { default: () => '删除' },
+            ),
+          ],
+        },
+      ),
   },
 ];
 
@@ -542,12 +592,17 @@ const loadData = async () => {
       pageSize: pagination.pageSize,
       poolId: filterForm.poolId || undefined,
       displayType: filterForm.displayType || undefined,
-      status: filterForm.status === 'true' ? true : filterForm.status === 'false' ? false : undefined,
+      status:
+        filterForm.status === 'true'
+          ? true
+          : filterForm.status === 'false'
+            ? false
+            : undefined,
     };
 
     const response = await getVirtualBonusPools(params);
     console.log('API Response:', response);
-    
+
     // Handle both old and new API response formats
     if (response.data && Array.isArray(response.data)) {
       // New format: {success: true, data: [...], total: number, page: number, pageSize: number}
@@ -562,7 +617,7 @@ const loadData = async () => {
       tableData.value = [];
       pagination.total = 0;
     }
-    
+
     console.log('Table data set to:', tableData.value);
     console.log('Pagination total set to:', pagination.total);
   } catch (error) {
@@ -590,12 +645,14 @@ const handleReset = () => {
 };
 
 const handleCheck = (rowKeys: (string | number)[]) => {
-  selectedRowKeys.value = rowKeys.map(key => typeof key === 'string' ? parseInt(key) : key);
+  selectedRowKeys.value = rowKeys.map((key) =>
+    typeof key === 'string' ? parseInt(key) : key,
+  );
 };
 
 const handleSelectAll = (checked: boolean) => {
   if (checked) {
-    selectedRowKeys.value = tableData.value.map(row => row.id);
+    selectedRowKeys.value = tableData.value.map((row) => row.id);
   } else {
     selectedRowKeys.value = [];
   }
@@ -641,7 +698,7 @@ const handleStatusChange = async (id: number, status: boolean) => {
   try {
     await toggleVirtualBonusPoolStatus(id);
     // Update local data
-    const item = tableData.value.find(item => item.id === id);
+    const item = tableData.value.find((item) => item.id === id);
     if (item) {
       item.status = status;
     }
@@ -650,7 +707,7 @@ const handleStatusChange = async (id: number, status: boolean) => {
     message.error('状态更新失败');
     console.error('Status change error:', error);
     // Revert the status change
-    const item = tableData.value.find(item => item.id === id);
+    const item = tableData.value.find((item) => item.id === id);
     if (item) {
       item.status = !status;
     }
@@ -690,19 +747,21 @@ const handleBulkAction = async (key: string) => {
       case 'enable':
         await bulkUpdateVirtualBonusPools({
           ids: selectedRowKeys.value,
-          updates: { status: true }
+          updates: { status: true },
         });
         message.success('批量启用成功');
         break;
       case 'disable':
         await bulkUpdateVirtualBonusPools({
           ids: selectedRowKeys.value,
-          updates: { status: false }
+          updates: { status: false },
         });
         message.success('批量禁用成功');
         break;
       case 'delete':
-        const confirmed = window.confirm(`确认删除选中的 ${selectedRows.value.length} 项吗？`);
+        const confirmed = window.confirm(
+          `确认删除选中的 ${selectedRows.value.length} 项吗？`,
+        );
         if (confirmed) {
           await bulkDeleteVirtualBonusPools(selectedRowKeys.value);
           message.success('批量删除成功');
@@ -721,7 +780,7 @@ const handleBulkSubmit = async (data: any) => {
   try {
     await bulkUpdateVirtualBonusPools({
       ids: selectedRowKeys.value,
-      updates: data
+      updates: data,
     });
     message.success('批量修改成功');
     showBulkModal.value = false;
@@ -756,4 +815,4 @@ onMounted(() => {
   --n-button-width: 16px;
   --n-button-height: 16px;
 }
-</style> 
+</style>

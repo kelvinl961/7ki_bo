@@ -26,12 +26,12 @@ export interface BetTransactionFilters {
 export interface BetTransactionItem {
   id: string;
   userId: number;
-  betLogId: number | null;
+  betLogId: null | number;
   gameProvider: string;
   gameCategory: string;
   gameName: string;
-  gameId: string | null;
-  roundId: string | null;
+  gameId: null | string;
+  roundId: null | string;
   type: string;
   amount: number;
   balanceBefore: number;
@@ -39,32 +39,32 @@ export interface BetTransactionItem {
   currency: string;
   turnover: number;
   validBet: number;
-  odds: number | null;
-  description: string | null;
+  odds: null | number;
+  description: null | string;
   metadata: any;
   createdAt: string;
-  userUuid: string | null;
-  sessionId: string | null;
+  userUuid: null | string;
+  sessionId: null | string;
   user: {
-    id: number;
     account: string;
-    name: string | null;
-    userID: string | null;
-    uuid: string | null;
+    id: number;
+    name: null | string;
+    userID: null | string;
+    uuid: null | string;
   };
   consolidatedData?: {
     betAmount: number;
-    winAmount: number;
-    victoryDefeatAmount: number; // Net win/loss
     netAmount: number;
-    transactionCount: number;
-    status: 'won' | 'lost' | 'draw';
     originalTransactions: Array<{
-      id: string;
-      type: string;
       amount: number;
       createdAt: string;
+      id: string;
+      type: string;
     }>;
+    status: 'draw' | 'lost' | 'won';
+    transactionCount: number;
+    victoryDefeatAmount: number; // Net win/loss
+    winAmount: number;
   };
 }
 
@@ -77,83 +77,89 @@ export interface BetTransactionListResponse {
   };
   pageTotals: {
     totalAmount: number;
-    totalValidBet: number;
     totalTurnover: number;
+    totalValidBet: number;
   };
   overallTotals: {
-    totalAmount: number;
-    totalValidBet: number;
-    totalTurnover: number;
     count: number;
+    totalAmount: number;
+    totalTurnover: number;
+    totalValidBet: number;
   };
 }
 
 export interface BetTransactionStatistics {
   totals: {
-    totalAmount: number;
-    totalValidBet: number;
-    totalTurnover: number;
     count: number;
+    totalAmount: number;
+    totalTurnover: number;
+    totalValidBet: number;
   };
   byType: Array<{
-    type: string;
     amount: number;
-    validBet: number;
     count: number;
+    type: string;
+    validBet: number;
   }>;
   byProvider: Array<{
-    provider: string;
     amount: number;
-    validBet: number;
     count: number;
+    provider: string;
+    validBet: number;
   }>;
   byCategory: Array<{
-    category: string;
     amount: number;
-    validBet: number;
+    category: string;
     count: number;
     memberWinLoss: number;
     profitRatio: number;
+    validBet: number;
   }>;
   byGame: Array<{
-    provider: string;
-    category: string;
-    gameName: string;
     amount: number;
-    validBet: number;
+    category: string;
     count: number;
+    gameName: string;
     memberWinLoss: number;
     profitRatio: number;
+    provider: string;
+    validBet: number;
   }>;
-  userInfo?: {
-    id: number;
+  userInfo?: null | {
     account: string;
-    userID: string | null;
-    name: string | null;
     currency: string;
-  } | null;
+    id: number;
+    name: null | string;
+    userID: null | string;
+  };
 }
 
 /**
  * Get all bet transactions with filters
  */
 export async function getBetTransactionsApi(
-  filters: BetTransactionFilters = {}
+  filters: BetTransactionFilters = {},
 ): Promise<BetTransactionListResponse> {
-  return requestClient.get<BetTransactionListResponse>('/admin/bet-transactions', {
-    params: filters
-  });
+  return requestClient.get<BetTransactionListResponse>(
+    '/admin/bet-transactions',
+    {
+      params: filters,
+    },
+  );
 }
 
 /**
  * Get bet transaction statistics
  */
 export async function getBetTransactionStatisticsApi(
-  filters: Partial<BetTransactionFilters> = {}
+  filters: Partial<BetTransactionFilters> = {},
 ): Promise<BetTransactionStatistics> {
-  return requestClient.get<BetTransactionStatistics>('/admin/bet-transactions/statistics', {
-    params: filters
-  });
+  return requestClient.get<BetTransactionStatistics>(
+    '/admin/bet-transactions/statistics',
+    {
+      params: filters,
+    },
+  );
 }
 
 /**
@@ -176,4 +182,3 @@ export async function getGameCategoriesApi(): Promise<string[]> {
 export async function getBetTransactionTypesApi(): Promise<string[]> {
   return requestClient.get<string[]>('/admin/bet-transactions/types');
 }
-

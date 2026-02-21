@@ -32,8 +32,8 @@ export interface FavoriteGameSingleResponse {
 export interface FavoriteGameCheckResponse {
   success: boolean;
   data: {
+    favoriteId: null | number;
     isFavorite: boolean;
-    favoriteId: number | null;
   };
 }
 
@@ -67,46 +67,64 @@ export function getFavoriteGames(userId: number) {
  * Add a game to favorites
  */
 export function addGameToFavorites(userId: number, gameId: string) {
-  return requestClient.post<FavoriteGameSingleResponse>(`/favorite-games/${userId}`, {
-    gameId
-  });
+  return requestClient.post<FavoriteGameSingleResponse>(
+    `/favorite-games/${userId}`,
+    {
+      gameId,
+    },
+  );
 }
 
 /**
  * Remove a game from favorites
  */
 export function removeGameFromFavorites(userId: number, gameId: string) {
-  return requestClient.delete<{ success: boolean; message: string }>(`/favorite-games/${userId}/${gameId}`);
+  return requestClient.delete<{ message: string; success: boolean }>(
+    `/favorite-games/${userId}/${gameId}`,
+  );
 }
 
 /**
  * Bulk add games to favorites
  */
 export function bulkAddGamesToFavorites(userId: number, gameIds: string[]) {
-  return requestClient.post<BulkFavoriteResponse>(`/favorite-games/${userId}/bulk`, {
-    gameIds
-  });
+  return requestClient.post<BulkFavoriteResponse>(
+    `/favorite-games/${userId}/bulk`,
+    {
+      gameIds,
+    },
+  );
 }
 
 /**
  * Bulk remove games from favorites
  */
-export function bulkRemoveGamesFromFavorites(userId: number, gameIds: string[]) {
-  return requestClient.delete<BulkFavoriteResponse>(`/favorite-games/${userId}/bulk`, {
-    data: { gameIds }
-  });
+export function bulkRemoveGamesFromFavorites(
+  userId: number,
+  gameIds: string[],
+) {
+  return requestClient.delete<BulkFavoriteResponse>(
+    `/favorite-games/${userId}/bulk`,
+    {
+      data: { gameIds },
+    },
+  );
 }
 
 /**
  * Check if a game is in favorites
  */
 export function checkGameInFavorites(userId: number, gameId: string) {
-  return requestClient.get<FavoriteGameCheckResponse>(`/favorite-games/${userId}/check/${gameId}`);
+  return requestClient.get<FavoriteGameCheckResponse>(
+    `/favorite-games/${userId}/check/${gameId}`,
+  );
 }
 
 /**
  * Get user's favorite games count
  */
 export function getFavoriteGamesCount(userId: number) {
-  return requestClient.get<FavoriteGameCountResponse>(`/favorite-games/${userId}/count`);
-} 
+  return requestClient.get<FavoriteGameCountResponse>(
+    `/favorite-games/${userId}/count`,
+  );
+}

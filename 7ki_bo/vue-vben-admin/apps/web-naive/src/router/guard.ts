@@ -89,14 +89,14 @@ function setupAccessGuard(router: Router) {
     if (accessStore.isAccessChecked) {
       return true;
     }
-    
+
     // ✅ PERFORMANCE FIX: Use cached user info if available, only fetch if needed
     let userInfo = userStore.userInfo;
     if (!userInfo) {
       // Only fetch user info if not cached
       userInfo = await authStore.fetchUserInfo();
     }
-    const resolvedUser = userInfo || { roles: [], homePath: '/home' } as any;
+    const resolvedUser = userInfo || ({ roles: [], homePath: '/home' } as any);
     const userRoles = resolvedUser?.roles ?? [];
 
     // ✅ PERFORMANCE FIX: Generate routes and menus (this should be fast if menu API is optimized)
@@ -112,8 +112,9 @@ function setupAccessGuard(router: Router) {
     accessStore.setAccessMenus(accessibleMenus);
     accessStore.setAccessRoutes(accessibleRoutes);
     accessStore.setIsAccessChecked(true);
-    
-    const candidateHome = resolvedUser?.homePath || preferences.app.defaultHomePath;
+
+    const candidateHome =
+      resolvedUser?.homePath || preferences.app.defaultHomePath;
     const redirectPath = (from.query.redirect ??
       (to.path === preferences.app.defaultHomePath
         ? candidateHome

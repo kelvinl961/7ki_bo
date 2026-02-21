@@ -34,19 +34,19 @@ import SmartDataGrid from '@/components/smart/SmartDataGrid/index.vue';
 
 const tableData = ref([
   { id: 1, name: 'John', email: 'john@example.com' },
-  { id: 2, name: 'Jane', email: 'jane@example.com' }
+  { id: 2, name: 'Jane', email: 'jane@example.com' },
 ]);
 
 const columns = [
   { title: 'ID', key: 'id', width: 80 },
   { title: 'Name', key: 'name', width: 120 },
-  { title: 'Email', key: 'email', width: 200 }
+  { title: 'Email', key: 'email', width: 200 },
 ];
 
 const pagination = reactive({
   page: 1,
   pageSize: 20,
-  total: 100
+  total: 100,
 });
 </script>
 ```
@@ -67,11 +67,11 @@ const pagination = reactive({
   >
     <template #actionBar="{ selectedCount, selectedRows }">
       <n-card>
-        <div class="flex justify-between items-center">
+        <div class="flex items-center justify-between">
           <span>已选择 {{ selectedCount }} 条数据</span>
           <div class="flex gap-2">
-            <n-button 
-              v-if="selectedCount > 0" 
+            <n-button
+              v-if="selectedCount > 0"
               type="error"
               @click="handleBulkDelete(selectedRows)"
             >
@@ -139,7 +139,7 @@ const pagination = reactive({
 ## Props
 
 | Prop | Type | Default | Description |
-|------|------|---------|-------------|
+| --- | --- | --- | --- |
 | `data` | `T[]` | `[]` | Table data array |
 | `columns` | `DataTableColumns<T>` | `[]` | Table columns configuration |
 | `loading` | `boolean` | `false` | Loading state |
@@ -161,7 +161,7 @@ const pagination = reactive({
 ## Events
 
 | Event | Parameters | Description |
-|-------|------------|-------------|
+| --- | --- | --- |
 | `update:page` | `(page: number)` | Page change |
 | `update:pageSize` | `(pageSize: number)` | Page size change |
 | `update:selectedKeys` | `(keys: (string \| number)[])` | Selection change |
@@ -173,7 +173,7 @@ const pagination = reactive({
 ## Slots
 
 | Slot | Parameters | Description |
-|------|------------|-------------|
+| --- | --- | --- |
 | `header` | `()` | Header content |
 | `footer` | `()` | Footer content |
 | `actionBar` | `{ selectedCount: number, selectedRows: T[] }` | Action bar content |
@@ -183,23 +183,24 @@ const pagination = reactive({
 
 ## Exposed Methods
 
-| Method | Parameters | Description |
-|--------|------------|-------------|
-| `refresh` | `()` | Refresh table data |
-| `clearSelection` | `()` | Clear all selections |
-| `selectAll` | `()` | Select all rows |
-| `getSelectedRows` | `()` | Get selected row data |
-| `getSelectedKeys` | `()` | Get selected row keys |
-| `scrollToTop` | `()` | Scroll to top |
-| `getTableRef` | `()` | Get table reference |
+| Method            | Parameters | Description           |
+| ----------------- | ---------- | --------------------- |
+| `refresh`         | `()`       | Refresh table data    |
+| `clearSelection`  | `()`       | Clear all selections  |
+| `selectAll`       | `()`       | Select all rows       |
+| `getSelectedRows` | `()`       | Get selected row data |
+| `getSelectedKeys` | `()`       | Get selected row keys |
+| `scrollToTop`     | `()`       | Scroll to top         |
+| `getTableRef`     | `()`       | Get table reference   |
 
 ## Migration from Standard DataTable
 
 ### Before (Standard DataTable)
+
 ```vue
 <template>
   <n-card>
-    <div class="flex justify-between items-center mb-4">
+    <div class="mb-4 flex items-center justify-between">
       <div>已选择 {{ selectedIds.length }} 条数据</div>
       <n-button @click="fetchData" :loading="loading">刷新</n-button>
     </div>
@@ -225,7 +226,7 @@ const selectedIds = ref([]);
 const pagination = reactive({
   page: 1,
   pageSize: 20,
-  total: 0
+  total: 0,
 });
 
 const paginationConfig = computed(() => ({
@@ -235,7 +236,7 @@ const paginationConfig = computed(() => ({
   showSizePicker: true,
   pageSizes: [10, 20, 50, 100],
   onUpdatePage: handlePageChange,
-  onUpdatePageSize: handlePageSizeChange
+  onUpdatePageSize: handlePageSizeChange,
 }));
 
 const handlePageChange = (page) => {
@@ -252,6 +253,7 @@ const handlePageSizeChange = (pageSize) => {
 ```
 
 ### After (SmartDataGrid)
+
 ```vue
 <template>
   <SmartDataGrid
@@ -275,7 +277,7 @@ const selectedIds = ref([]);
 const pagination = reactive({
   page: 1,
   pageSize: 20,
-  total: 0
+  total: 0,
 });
 
 const handlePageChange = (page) => {

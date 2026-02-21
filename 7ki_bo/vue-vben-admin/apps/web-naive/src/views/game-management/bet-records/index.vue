@@ -9,13 +9,20 @@
     </div>
 
     <!-- Tabs -->
-    <n-tabs v-model:value="activeTab" type="line" animated @update:value="handleTabChange">
+    <n-tabs
+      v-model:value="activeTab"
+      type="line"
+      animated
+      @update:value="handleTabChange"
+    >
       <n-tab-pane name="details" tab="投注明细">
         <!-- Filter Card -->
-        <n-card :bordered="false" class="mb-4 rounded-16px shadow-sm">
+        <n-card :bordered="false" class="rounded-16px mb-4 shadow-sm">
           <div class="filter-section">
             <!-- Row 1: Date Range and Basic Filters -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            <div
+              class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4"
+            >
               <!-- Date Range -->
               <div class="filter-item">
                 <n-form-item label="投注时间">
@@ -75,7 +82,9 @@
             </div>
 
             <!-- Row 2: Search Filters -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            <div
+              class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4"
+            >
               <!-- Game Name -->
               <div class="filter-item">
                 <n-form-item label="游戏名称">
@@ -132,9 +141,13 @@
             </div>
 
             <!-- Action Buttons -->
-            <div class="flex justify-between items-center">
-              <div class="flex gap-2 items-center flex-wrap">
-                <n-button type="primary" @click="handleSearch" :loading="loading">
+            <div class="flex items-center justify-between">
+              <div class="flex flex-wrap items-center gap-2">
+                <n-button
+                  type="primary"
+                  @click="handleSearch"
+                  :loading="loading"
+                >
                   <template #icon>
                     <n-icon><SearchOutline /></n-icon>
                   </template>
@@ -152,13 +165,13 @@
                   </template>
                   导出
                 </n-button>
-                
+
                 <!-- Consolidation Toggle -->
                 <n-divider vertical />
                 <div class="flex items-center gap-2">
                   <span class="text-sm text-gray-600">合并显示:</span>
-                  <n-switch 
-                    v-model:value="consolidateView" 
+                  <n-switch
+                    v-model:value="consolidateView"
                     @update:value="handleConsolidateChange"
                     size="small"
                   >
@@ -171,7 +184,7 @@
                         <HelpCircleOutline />
                       </n-icon>
                     </template>
-                    开启后：每局游戏显示为一行（投注+结果）<br/>
+                    开启后：每局游戏显示为一行（投注+结果）<br />
                     关闭后：显示所有交易明细（下注、中奖分开）
                   </n-tooltip>
                 </div>
@@ -184,7 +197,10 @@
         </n-card>
 
         <!-- Statistics Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4" v-if="showStatistics">
+        <div
+          class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-4"
+          v-if="showStatistics"
+        >
           <n-card :bordered="false" class="rounded-16px shadow-sm">
             <n-statistic label="总投注金额" :value="statistics.totalAmount">
               <template #prefix>
@@ -229,19 +245,33 @@
           @refresh="loadData"
         >
           <template #actionBar>
-            <n-card :bordered="false" class="rounded-16px shadow-sm mb-4">
-              <div class="flex justify-between items-center">
+            <n-card :bordered="false" class="rounded-16px mb-4 shadow-sm">
+              <div class="flex items-center justify-between">
                 <div class="text-sm">
                   <span class="font-semibold">页面合计：</span>
-                  投注金额: <span class="text-gray-800 font-semibold">{{ formatCurrency(Math.abs(pageTotals.totalAmount)) }}</span>
-                  &nbsp;|&nbsp;
-                  有效投注: <span class="text-gray-800 font-semibold">{{ formatCurrency(pageTotals.totalValidBet) }}</span>
-                  &nbsp;|&nbsp;
-                  预扣税: <span class="text-gray-500 font-semibold">0.00</span>
-                  &nbsp;|&nbsp;
-                  会员输赢: <span :class="pageTotals.totalAmount >= 0 ? 'text-red-600 font-bold' : 'text-green-600 font-bold'">{{ formatCurrency(pageTotals.totalAmount) }}</span>
-                  &nbsp;|&nbsp;
-                  流水: <span class="text-gray-600 font-semibold">{{ formatCurrency(pageTotals.totalTurnover) }}</span>
+                  投注金额:
+                  <span class="font-semibold text-gray-800">{{
+                    formatCurrency(Math.abs(pageTotals.totalAmount))
+                  }}</span>
+                  &nbsp;|&nbsp; 有效投注:
+                  <span class="font-semibold text-gray-800">{{
+                    formatCurrency(pageTotals.totalValidBet)
+                  }}</span>
+                  &nbsp;|&nbsp; 预扣税:
+                  <span class="font-semibold text-gray-500">0.00</span>
+                  &nbsp;|&nbsp; 会员输赢:
+                  <span
+                    :class="
+                      pageTotals.totalAmount >= 0
+                        ? 'font-bold text-red-600'
+                        : 'font-bold text-green-600'
+                    "
+                    >{{ formatCurrency(pageTotals.totalAmount) }}</span
+                  >
+                  &nbsp;|&nbsp; 流水:
+                  <span class="font-semibold text-gray-600">{{
+                    formatCurrency(pageTotals.totalTurnover)
+                  }}</span>
                 </div>
               </div>
             </n-card>
@@ -251,13 +281,17 @@
 
       <n-tab-pane name="statistics" tab="投注统计">
         <!-- Statistics Filter Card -->
-        <n-card :bordered="false" class="mb-4 rounded-16px shadow-sm">
+        <n-card :bordered="false" class="rounded-16px mb-4 shadow-sm">
           <div class="filter-section">
             <!-- Date Range and Search Filters -->
-            <div class="flex flex-wrap gap-3 items-start mb-4">
+            <div class="mb-4 flex flex-wrap items-start gap-3">
               <!-- Date Type Selector -->
               <div class="flex items-center gap-2">
-                <n-radio-group v-model:value="statsDateType" size="small" @update:value="handleStatsDateTypeChange">
+                <n-radio-group
+                  v-model:value="statsDateType"
+                  size="small"
+                  @update:value="handleStatsDateTypeChange"
+                >
                   <n-radio value="day">日</n-radio>
                   <n-radio value="week">周</n-radio>
                   <n-radio value="month">月</n-radio>
@@ -295,8 +329,8 @@
 
               <!-- Search & Reset Buttons -->
               <div class="flex gap-2">
-                <n-button 
-                  type="primary" 
+                <n-button
+                  type="primary"
                   size="small"
                   :loading="statsLoading"
                   @click="handleStatsSearch"
@@ -310,12 +344,22 @@
             </div>
 
             <!-- Summary Info -->
-            <div v-if="statsData.summary" class="text-sm text-gray-600 bg-blue-50 rounded p-2">
-              会员账号: <span class="font-semibold text-blue-600">{{ statsFilters.memberAccount }}</span>
-              &nbsp;|&nbsp;
-              会员ID: <span class="font-semibold">{{ statsData.userInfo?.userID || '-' }}</span>
-              &nbsp;|&nbsp;
-              会员币种: <span class="font-semibold">{{ statsData.userInfo?.currency || 'BRL' }}</span>
+            <div
+              v-if="statsData.summary"
+              class="rounded bg-blue-50 p-2 text-sm text-gray-600"
+            >
+              会员账号:
+              <span class="font-semibold text-blue-600">{{
+                statsFilters.memberAccount
+              }}</span>
+              &nbsp;|&nbsp; 会员ID:
+              <span class="font-semibold">{{
+                statsData.userInfo?.userID || '-'
+              }}</span>
+              &nbsp;|&nbsp; 会员币种:
+              <span class="font-semibold">{{
+                statsData.userInfo?.currency || 'BRL'
+              }}</span>
             </div>
           </div>
         </n-card>
@@ -323,16 +367,16 @@
         <!-- Statistics Content -->
         <template v-if="statsData.summary">
           <!-- Summary by Type Table -->
-          <n-card :bordered="false" class="mb-4 rounded-16px shadow-sm">
+          <n-card :bordered="false" class="rounded-16px mb-4 shadow-sm">
             <template #header>
-              <div class="flex justify-between items-center">
+              <div class="flex items-center justify-between">
                 <span class="font-semibold">类型汇总</span>
                 <div class="text-sm text-gray-600">
                   总计 {{ statsData.byType?.length || 0 }} 条记录
                 </div>
               </div>
             </template>
-            
+
             <n-data-table
               :columns="statsTypeColumns"
               :data="statsData.byType"
@@ -347,7 +391,7 @@
           <!-- Detail by Game Table -->
           <n-card :bordered="false" class="rounded-16px shadow-sm">
             <template #header>
-              <div class="flex justify-between items-center">
+              <div class="flex items-center justify-between">
                 <span class="font-semibold">游戏明细</span>
                 <div class="text-sm text-gray-600">
                   共 {{ statsGameData.length }} 条记录
@@ -418,11 +462,13 @@ import {
   NTabs,
   NTag,
   NTooltip,
-  useMessage
+  useMessage,
 } from 'naive-ui';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 import { defineAsyncComponent } from 'vue';
-const UserDetailModal = defineAsyncComponent(() => import('../../../components/user/UserDetailModal.vue'));
+const UserDetailModal = defineAsyncComponent(
+  () => import('../../../components/user/UserDetailModal.vue'),
+);
 import {
   SearchOutline,
   RefreshOutline,
@@ -431,10 +477,12 @@ import {
   CheckmarkCircle,
   Sync,
   Receipt,
-  HelpCircleOutline
+  HelpCircleOutline,
 } from '@vicons/ionicons5';
 import { Page } from '@vben/common-ui';
-const SmartDataGrid = defineAsyncComponent(() => import('../../../components/smart/SmartDataGrid/index.vue'));
+const SmartDataGrid = defineAsyncComponent(
+  () => import('../../../components/smart/SmartDataGrid/index.vue'),
+);
 import { notification } from '#/adapter/naive';
 import {
   getBetTransactionsApi,
@@ -443,7 +491,7 @@ import {
   getGameCategoriesApi,
   getBetTransactionTypesApi,
   type BetTransactionItem,
-  type BetTransactionFilters
+  type BetTransactionFilters,
 } from '#/api/game/betTransactions';
 import type { DataTableColumns } from 'naive-ui';
 
@@ -453,13 +501,13 @@ const message = useMessage();
 
 // Game category translation map
 const gameCategoryLabels: Record<string, string> = {
-  'arcade': '街机',
-  'SLOT': '电子',
-  'fishing': '捕鱼',
-  'sports': '体育',
-  'LIVE': '真人',
-  'BLOCKCHAIN': '区块链',
-  'card': '棋牌'
+  arcade: '街机',
+  SLOT: '电子',
+  fishing: '捕鱼',
+  sports: '体育',
+  LIVE: '真人',
+  BLOCKCHAIN: '区块链',
+  card: '棋牌',
 };
 
 // Helper function to translate game category
@@ -483,7 +531,7 @@ const statsLoading = ref(false);
 const statsDateType = ref('week');
 const statsDateRange = ref<[number, number] | null>(null);
 const statsFilters = reactive({
-  memberAccount: undefined as string | undefined
+  memberAccount: undefined as string | undefined,
 });
 const statsData = ref<{
   summary?: any;
@@ -498,7 +546,7 @@ const statsGamePagination = reactive({
   page: 1,
   pageSize: 20,
   showSizePicker: true,
-  pageSizes: [10, 20, 50, 100]
+  pageSizes: [10, 20, 50, 100],
 });
 
 // Filters
@@ -509,7 +557,7 @@ const filters = reactive<Partial<BetTransactionFilters>>({
   username: undefined,
   type: undefined,
   minAmount: undefined,
-  maxAmount: undefined
+  maxAmount: undefined,
 });
 
 // Pagination
@@ -518,21 +566,21 @@ const paginationReactive = reactive({
   pageSize: 20,
   total: 0,
   showSizePicker: true,
-  pageSizes: [10, 20, 50, 100, 200]
+  pageSizes: [10, 20, 50, 100, 200],
 });
 
 // Totals
 const pageTotals = ref({
   totalAmount: 0,
   totalValidBet: 0,
-  totalTurnover: 0
+  totalTurnover: 0,
 });
 
 const statistics = ref({
   totalAmount: 0,
   totalValidBet: 0,
   totalTurnover: 0,
-  count: 0
+  count: 0,
 });
 
 // Filter Options
@@ -542,14 +590,14 @@ const typeOptions = ref<Array<{ label: string; value: string }>>([]);
 
 // Date Shortcuts
 const dateShortcuts = {
-  '今天': (): [number, number] => {
+  今天: (): [number, number] => {
     const now = new Date();
     now.setHours(0, 0, 0, 0);
     const end = new Date();
     end.setHours(23, 59, 59, 999);
     return [now.getTime(), end.getTime()];
   },
-  '昨天': (): [number, number] => {
+  昨天: (): [number, number] => {
     const now = new Date();
     now.setDate(now.getDate() - 1);
     now.setHours(0, 0, 0, 0);
@@ -557,7 +605,7 @@ const dateShortcuts = {
     end.setHours(23, 59, 59, 999);
     return [now.getTime(), end.getTime()];
   },
-  '最近7天': (): [number, number] => {
+  最近7天: (): [number, number] => {
     const now = new Date();
     now.setDate(now.getDate() - 6);
     now.setHours(0, 0, 0, 0);
@@ -565,7 +613,7 @@ const dateShortcuts = {
     end.setHours(23, 59, 59, 999);
     return [now.getTime(), end.getTime()];
   },
-  '最近30天': (): [number, number] => {
+  最近30天: (): [number, number] => {
     const now = new Date();
     now.setDate(now.getDate() - 29);
     now.setHours(0, 0, 0, 0);
@@ -573,7 +621,7 @@ const dateShortcuts = {
     end.setHours(23, 59, 59, 999);
     return [now.getTime(), end.getTime()];
   },
-  '本月': (): [number, number] => {
+  本月: (): [number, number] => {
     const now = new Date();
     now.setDate(1);
     now.setHours(0, 0, 0, 0);
@@ -581,7 +629,7 @@ const dateShortcuts = {
     end.setHours(23, 59, 59, 999);
     return [now.getTime(), end.getTime()];
   },
-  '上月': (): [number, number] => {
+  上月: (): [number, number] => {
     const now = new Date();
     now.setMonth(now.getMonth() - 1);
     now.setDate(1);
@@ -589,7 +637,7 @@ const dateShortcuts = {
     const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
     end.setHours(23, 59, 59, 999);
     return [now.getTime(), end.getTime()];
-  }
+  },
 };
 
 // Table Columns
@@ -600,8 +648,8 @@ const columns: DataTableColumns<BetTransactionItem> = [
     width: 180,
     fixed: 'left',
     ellipsis: {
-      tooltip: true
-    }
+      tooltip: true,
+    },
   },
   {
     title: '会员账号',
@@ -611,16 +659,16 @@ const columns: DataTableColumns<BetTransactionItem> = [
       const user = row.user || {};
       const account = user.account || 'N/A';
       const userId = user.id || row.userId;
-      
+
       return h(
         'span',
         {
           class: 'font-semibold text-blue-600 cursor-pointer hover:underline',
-          onClick: () => userId && handleUserClick(userId)
+          onClick: () => userId && handleUserClick(userId),
         },
-        account
+        account,
       );
-    }
+    },
   },
   {
     title: '会员ID',
@@ -629,43 +677,53 @@ const columns: DataTableColumns<BetTransactionItem> = [
     render: (row) => {
       const user = row.user || {};
       return user.userID || '-';
-    }
+    },
   },
   {
     title: '游戏平台',
     key: 'gameProvider',
     width: 120,
-    render: (row) => h(NTag, { type: 'info', size: 'small' }, { default: () => row.gameProvider })
+    render: (row) =>
+      h(
+        NTag,
+        { type: 'info', size: 'small' },
+        { default: () => row.gameProvider },
+      ),
   },
   {
     title: '游戏类型',
     key: 'gameCategory',
     width: 100,
-    render: (row) => h(NTag, { type: 'success', size: 'small' }, { default: () => translateGameCategory(row.gameCategory) })
+    render: (row) =>
+      h(
+        NTag,
+        { type: 'success', size: 'small' },
+        { default: () => translateGameCategory(row.gameCategory) },
+      ),
   },
   {
     title: '游戏名称',
     key: 'gameName',
     width: 150,
     ellipsis: {
-      tooltip: true
-    }
+      tooltip: true,
+    },
   },
   {
     title: '游戏ID',
     key: 'gameId',
     width: 120,
     ellipsis: {
-      tooltip: true
-    }
+      tooltip: true,
+    },
   },
   {
     title: '局号',
     key: 'roundId',
     width: 150,
     ellipsis: {
-      tooltip: true
-    }
+      tooltip: true,
+    },
   },
   {
     title: '交易类型',
@@ -678,11 +736,15 @@ const columns: DataTableColumns<BetTransactionItem> = [
         bet_lost: { color: 'error', label: '输' },
         bet_draw: { color: 'info', label: '平局' },
         bet_cancelled: { color: 'default', label: '取消' },
-        bet_refunded: { color: 'info', label: '退款' }
+        bet_refunded: { color: 'info', label: '退款' },
       };
       const config = typeMap[row.type] || { color: 'default', label: row.type };
-      return h(NTag, { type: config.color as any, size: 'small' }, { default: () => config.label });
-    }
+      return h(
+        NTag,
+        { type: config.color as any, size: 'small' },
+        { default: () => config.label },
+      );
+    },
   },
   {
     title: '投注金额',
@@ -691,27 +753,34 @@ const columns: DataTableColumns<BetTransactionItem> = [
     align: 'right',
     render: (row) => {
       // Show bet amount (always positive for consolidated view)
-      const amount = row.consolidatedData ? row.consolidatedData.betAmount : Math.abs(row.amount);
+      const amount = row.consolidatedData
+        ? row.consolidatedData.betAmount
+        : Math.abs(row.amount);
       return h(
         'span',
         { class: 'font-semibold text-gray-800' },
-        formatCurrency(amount)
+        formatCurrency(amount),
       );
-    }
+    },
   },
   {
     title: '有效投注',
     key: 'validBet',
     width: 110,
     align: 'right',
-    render: (row) => h('span', { class: 'font-semibold text-gray-800' }, formatCurrency(row.validBet))
+    render: (row) =>
+      h(
+        'span',
+        { class: 'font-semibold text-gray-800' },
+        formatCurrency(row.validBet),
+      ),
   },
   {
     title: '预扣税',
     key: 'preTax',
     width: 100,
     align: 'right',
-    render: () => h('span', { class: 'font-semibold text-gray-500' }, '0.00')
+    render: () => h('span', { class: 'font-semibold text-gray-500' }, '0.00'),
   },
   {
     title: '会员输赢',
@@ -720,7 +789,7 @@ const columns: DataTableColumns<BetTransactionItem> = [
     align: 'right',
     render: (row) => {
       let netAmount = 0;
-      
+
       if (row.consolidatedData) {
         // Consolidated view: use victory/defeat amount
         netAmount = row.consolidatedData.victoryDefeatAmount;
@@ -736,71 +805,76 @@ const columns: DataTableColumns<BetTransactionItem> = [
           netAmount = Number(row.amount);
         }
       }
-      
+
       const isWin = netAmount > 0;
       const isLoss = netAmount < 0;
-      
+
       return h(
         'span',
-        { 
-          class: isWin 
-            ? 'text-red-600 font-bold text-base' 
-            : isLoss 
-            ? 'text-green-600 font-bold text-base'
-            : 'text-gray-600 font-semibold'
+        {
+          class: isWin
+            ? 'text-red-600 font-bold text-base'
+            : isLoss
+              ? 'text-green-600 font-bold text-base'
+              : 'text-gray-600 font-semibold',
         },
-        formatCurrency(netAmount)
+        formatCurrency(netAmount),
       );
-    }
+    },
   },
   {
     title: '流水',
     key: 'turnover',
     width: 100,
     align: 'right',
-    render: (row) => h('span', { class: 'font-semibold text-gray-600' }, formatCurrency(row.turnover))
+    render: (row) =>
+      h(
+        'span',
+        { class: 'font-semibold text-gray-600' },
+        formatCurrency(row.turnover),
+      ),
   },
   {
     title: '投注前余额',
     key: 'balanceBefore',
     width: 120,
     align: 'right',
-    render: (row) => formatCurrency(row.balanceBefore)
+    render: (row) => formatCurrency(row.balanceBefore),
   },
   {
     title: '投注后余额',
     key: 'balanceAfter',
     width: 120,
     align: 'right',
-    render: (row) => formatCurrency(row.balanceAfter)
+    render: (row) => formatCurrency(row.balanceAfter),
   },
   {
     title: '币种',
     key: 'currency',
     width: 80,
-    align: 'center'
+    align: 'center',
   },
   {
     title: '赔率',
     key: 'odds',
     width: 100,
     align: 'right',
-    render: (row) => row.odds ? Number(row.odds).toFixed(2) : '-'
+    render: (row) => (row.odds ? Number(row.odds).toFixed(2) : '-'),
   },
   {
     title: '投注时间',
     key: 'createdAt',
     width: 160,
-    render: (row) => formatDateTime(row.createdAt)
+    render: (row) => formatDateTime(row.createdAt),
   },
   {
     title: '描述',
     key: 'description',
     width: 200,
     ellipsis: {
-      tooltip: true
-    }
-  }
+      tooltip: true,
+    },
+  },
 ];
 
 // Methods
@@ -813,7 +887,7 @@ const loadData = async () => {
       consolidate: consolidateView.value,
       // Only exclude bet_placed when consolidating (consolidation creates proper results)
       excludeBetPlaced: consolidateView.value,
-      ...filters
+      ...filters,
     };
 
     // Add date range
@@ -826,22 +900,28 @@ const loadData = async () => {
 
     const response = await getBetTransactionsApi(params);
 
-    console.log('📊 [BetRecords] Raw API Response:', JSON.stringify(response, null, 2));
+    console.log(
+      '📊 [BetRecords] Raw API Response:',
+      JSON.stringify(response, null, 2),
+    );
     console.log('📊 [BetRecords] Response type:', typeof response);
     console.log('📊 [BetRecords] Has list?', !!(response as any)?.list);
-    console.log('📊 [BetRecords] Has data.list?', !!(response as any)?.data?.list);
+    console.log(
+      '📊 [BetRecords] Has data.list?',
+      !!(response as any)?.data?.list,
+    );
 
     // Response interceptor should unwrap {code: 0, data: {...}} to just {...}
     // But handle both cases to be safe
     let responseData: any = response;
-    
+
     // Check if response is wrapped in a data property
     if (response && (response as any).data) {
       // Check if it's {code: 0, data: {...}} format
       if ((response as any).code === 0 && (response as any).data) {
         responseData = (response as any).data;
         console.log('📊 [BetRecords] Unwrapped {code: 0, data: {...}} format');
-      } 
+      }
       // Check if it's {data: {...}} format
       else if ((response as any).data && (response as any).data.list) {
         responseData = (response as any).data;
@@ -851,9 +931,12 @@ const loadData = async () => {
 
     // Now responseData should be {list: [...], pagination: {...}, ...}
     const list = responseData?.list || responseData?.data?.list || [];
-    const pagination = responseData?.pagination || responseData?.data?.pagination;
-    const pageTotalsData = responseData?.pageTotals || responseData?.data?.pageTotals;
-    const overallTotalsData = responseData?.overallTotals || responseData?.data?.overallTotals;
+    const pagination =
+      responseData?.pagination || responseData?.data?.pagination;
+    const pageTotalsData =
+      responseData?.pageTotals || responseData?.data?.pageTotals;
+    const overallTotalsData =
+      responseData?.overallTotals || responseData?.data?.overallTotals;
 
     console.log('📊 [BetRecords] Extracted list length:', list.length);
     console.log('📊 [BetRecords] Extracted pagination:', pagination);
@@ -861,12 +944,12 @@ const loadData = async () => {
 
     if (Array.isArray(list) && list.length > 0) {
       let displayList = [...list]; // Create a copy to avoid mutating original
-      
+
       // If NOT consolidating, filter out bet_placed on frontend
       // (Can't do it backend due to pagination, and some providers don't send bet_lost)
       if (!consolidateView.value) {
         // Keep bet_placed for now, but mark losses properly
-        displayList = list.map(item => {
+        displayList = list.map((item) => {
           // If it's a bet_placed with no corresponding bet_won, treat as loss
           if (item.type === 'bet_placed') {
             return {
@@ -879,21 +962,40 @@ const loadData = async () => {
                 netAmount: item.amount,
                 transactionCount: 1,
                 status: 'lost',
-                originalTransactions: []
-              }
+                originalTransactions: [],
+              },
             };
           }
           return item;
         });
       }
-      
-      console.log('📊 [BetRecords] Final displayList length:', displayList.length);
-      console.log('📊 [BetRecords] First 3 items:', displayList.slice(0, 3).map(item => ({ id: item.id, type: item.type, amount: item.amount })));
-      
+
+      console.log(
+        '📊 [BetRecords] Final displayList length:',
+        displayList.length,
+      );
+      console.log(
+        '📊 [BetRecords] First 3 items:',
+        displayList.slice(0, 3).map((item) => ({
+          id: item.id,
+          type: item.type,
+          amount: item.amount,
+        })),
+      );
+
       tableData.value = displayList;
       paginationReactive.total = pagination?.total || 0;
-      pageTotals.value = pageTotalsData || { totalAmount: 0, totalValidBet: 0, totalTurnover: 0 };
-      statistics.value = overallTotalsData || { totalAmount: 0, totalValidBet: 0, totalTurnover: 0, count: 0 };
+      pageTotals.value = pageTotalsData || {
+        totalAmount: 0,
+        totalValidBet: 0,
+        totalTurnover: 0,
+      };
+      statistics.value = overallTotalsData || {
+        totalAmount: 0,
+        totalValidBet: 0,
+        totalTurnover: 0,
+        count: 0,
+      };
       showStatistics.value = true;
     } else {
       console.warn('⚠️ [BetRecords] No valid list found in response');
@@ -915,7 +1017,7 @@ const loadData = async () => {
     console.error('Error loading bet transactions:', error);
     notification.error({
       content: '加载投注记录失败',
-      duration: 3000
+      duration: 3000,
     });
   } finally {
     loading.value = false;
@@ -927,19 +1029,19 @@ const loadFilterOptions = async () => {
     const [providers, categories, types] = await Promise.all([
       getGameProvidersApi(),
       getGameCategoriesApi(),
-      getBetTransactionTypesApi()
+      getBetTransactionTypesApi(),
     ]);
 
     // Response interceptor unwraps the data
     if (providers && Array.isArray(providers)) {
-      providerOptions.value = providers.map(p => ({ label: p, value: p }));
+      providerOptions.value = providers.map((p) => ({ label: p, value: p }));
     }
 
     if (categories && Array.isArray(categories)) {
       // 🎯 FIX: Use Chinese labels for game categories
-      categoryOptions.value = categories.map(c => ({
+      categoryOptions.value = categories.map((c) => ({
         label: translateGameCategory(c),
-        value: c
+        value: c,
       }));
     }
 
@@ -950,11 +1052,11 @@ const loadFilterOptions = async () => {
         bet_lost: '输',
         bet_draw: '平局',
         bet_cancelled: '取消',
-        bet_refunded: '退款'
+        bet_refunded: '退款',
       };
-      typeOptions.value = types.map(t => ({
+      typeOptions.value = types.map((t) => ({
         label: typeLabels[t] || t,
-        value: t
+        value: t,
       }));
     }
   } catch (error) {
@@ -988,7 +1090,7 @@ const handleSearch = () => {
 };
 
 const handleReset = () => {
-  Object.keys(filters).forEach(key => {
+  Object.keys(filters).forEach((key) => {
     filters[key as keyof typeof filters] = undefined;
   });
   dateRange.value = null;
@@ -1011,7 +1113,7 @@ const handleExport = async () => {
     console.error('Error exporting:', error);
     notification.error({
       content: '导出失败',
-      duration: 3000
+      duration: 3000,
     });
   } finally {
     exporting.value = false;
@@ -1034,8 +1136,8 @@ const handleTabChange = (value: string) => {
     path: route.path,
     query: {
       ...route.query,
-      tab: value
-    }
+      tab: value,
+    },
   });
 };
 
@@ -1053,47 +1155,57 @@ const statsTypeColumns: DataTableColumns<any> = [
     render: (row) => {
       // Map game categories to Chinese names
       const categoryMap: Record<string, string> = {
-        'SLOT': '电子',
-        'FISHING': '捕鱼',
-        'fishing': '捕鱼',
-        'LIVE': '真人',
-        'SPORT': '体育',
-        'LOTTERY': '彩票',
-        'POKER': '扑克',
-        'TABLE': '桌游',
-        'ARCADE': '街机'
+        SLOT: '电子',
+        FISHING: '捕鱼',
+        fishing: '捕鱼',
+        LIVE: '真人',
+        SPORT: '体育',
+        LOTTERY: '彩票',
+        POKER: '扑克',
+        TABLE: '桌游',
+        ARCADE: '街机',
       };
       const label = categoryMap[row.type] || row.type || row.category || '-';
       return h(NTag, { type: 'info', size: 'small' }, { default: () => label });
-    }
+    },
   },
   {
     title: '总注单量',
     key: 'count',
     width: 120,
     align: 'right',
-    render: (row) => h('span', { class: 'font-semibold' }, row.count || 0)
+    render: (row) => h('span', { class: 'font-semibold' }, row.count || 0),
   },
   {
     title: '总投注金额',
     key: 'totalAmount',
     width: 150,
     align: 'right',
-    render: (row) => h('span', { class: 'text-blue-600 font-semibold' }, formatCurrency(Math.abs(row.totalAmount || row.amount || 0)))
+    render: (row) =>
+      h(
+        'span',
+        { class: 'text-blue-600 font-semibold' },
+        formatCurrency(Math.abs(row.totalAmount || row.amount || 0)),
+      ),
   },
   {
     title: '总有效投注',
     key: 'totalValidBet',
     width: 150,
     align: 'right',
-    render: (row) => h('span', { class: 'text-green-600 font-semibold' }, formatCurrency(Math.abs(row.totalValidBet || row.validBet || 0)))
+    render: (row) =>
+      h(
+        'span',
+        { class: 'text-green-600 font-semibold' },
+        formatCurrency(Math.abs(row.totalValidBet || row.validBet || 0)),
+      ),
   },
   {
     title: '预扣税',
     key: 'preTax',
     width: 120,
     align: 'right',
-    render: () => h('span', { class: 'font-semibold' }, '0.00')
+    render: () => h('span', { class: 'font-semibold' }, '0.00'),
   },
   {
     title: '会员输赢',
@@ -1105,17 +1217,26 @@ const statsTypeColumns: DataTableColumns<any> = [
       const isPositive = Number(value) >= 0;
       return h(
         'span',
-        { class: isPositive ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold' },
-        formatCurrency(value)
+        {
+          class: isPositive
+            ? 'text-green-600 font-semibold'
+            : 'text-red-600 font-semibold',
+        },
+        formatCurrency(value),
       );
-    }
+    },
   },
   {
     title: '占单量',
     key: 'occupiedCount',
     width: 120,
     align: 'right',
-    render: (row) => h('span', { class: 'font-semibold' }, row.occupiedCount || row.count || 0)
+    render: (row) =>
+      h(
+        'span',
+        { class: 'font-semibold' },
+        row.occupiedCount || row.count || 0,
+      ),
   },
   {
     title: '获利比',
@@ -1127,11 +1248,15 @@ const statsTypeColumns: DataTableColumns<any> = [
       const isPositive = Number(ratio) >= 0;
       return h(
         'span',
-        { class: isPositive ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold' },
-        `${Number(ratio).toFixed(2)}%`
+        {
+          class: isPositive
+            ? 'text-green-600 font-semibold'
+            : 'text-red-600 font-semibold',
+        },
+        `${Number(ratio).toFixed(2)}%`,
       );
-    }
-  }
+    },
+  },
 ];
 
 const statsGameColumns: DataTableColumns<any> = [
@@ -1140,7 +1265,12 @@ const statsGameColumns: DataTableColumns<any> = [
     key: 'gameProvider',
     width: 100,
     fixed: 'left',
-    render: (row) => h(NTag, { type: 'info', size: 'small' }, { default: () => row.gameProvider || '-' })
+    render: (row) =>
+      h(
+        NTag,
+        { type: 'info', size: 'small' },
+        { default: () => row.gameProvider || '-' },
+      ),
   },
   {
     title: '类别',
@@ -1148,53 +1278,68 @@ const statsGameColumns: DataTableColumns<any> = [
     width: 100,
     render: (row) => {
       const categoryMap: Record<string, string> = {
-        'SLOT': '电子',
-        'FISHING': '捕鱼',
-        'LIVE': '真人',
-        'SPORT': '体育',
-        'LOTTERY': '彩票',
-        'POKER': '扑克',
-        'TABLE': '桌游',
-        'ARCADE': '街机'
+        SLOT: '电子',
+        FISHING: '捕鱼',
+        LIVE: '真人',
+        SPORT: '体育',
+        LOTTERY: '彩票',
+        POKER: '扑克',
+        TABLE: '桌游',
+        ARCADE: '街机',
       };
       const label = categoryMap[row.gameCategory] || row.gameCategory || '-';
-      return h(NTag, { type: 'success', size: 'small' }, { default: () => label });
-    }
+      return h(
+        NTag,
+        { type: 'success', size: 'small' },
+        { default: () => label },
+      );
+    },
   },
   {
     title: '游戏名称',
     key: 'gameName',
     width: 180,
     ellipsis: { tooltip: true },
-    render: (row) => h('span', { class: 'font-medium' }, row.gameName || '-')
+    render: (row) => h('span', { class: 'font-medium' }, row.gameName || '-'),
   },
   {
     title: '注单数量',
     key: 'betCount',
     width: 100,
     align: 'right',
-    render: (row) => h('span', { class: 'font-semibold' }, row.count || row.betCount || 0)
+    render: (row) =>
+      h('span', { class: 'font-semibold' }, row.count || row.betCount || 0),
   },
   {
     title: '投注金额',
     key: 'betAmount',
     width: 140,
     align: 'right',
-    render: (row) => h('span', { class: 'text-blue-600 font-semibold' }, formatCurrency(Math.abs(row.amount || row.betAmount || 0)))
+    render: (row) =>
+      h(
+        'span',
+        { class: 'text-blue-600 font-semibold' },
+        formatCurrency(Math.abs(row.amount || row.betAmount || 0)),
+      ),
   },
   {
     title: '有效投注',
     key: 'validBet',
     width: 140,
     align: 'right',
-    render: (row) => h('span', { class: 'text-green-600 font-semibold' }, formatCurrency(Math.abs(row.validBet || 0)))
+    render: (row) =>
+      h(
+        'span',
+        { class: 'text-green-600 font-semibold' },
+        formatCurrency(Math.abs(row.validBet || 0)),
+      ),
   },
   {
     title: '预扣税',
     key: 'preTax',
     width: 120,
     align: 'right',
-    render: () => h('span', { class: 'font-semibold' }, '0.00')
+    render: () => h('span', { class: 'font-semibold' }, '0.00'),
   },
   {
     title: '会员输赢',
@@ -1206,10 +1351,14 @@ const statsGameColumns: DataTableColumns<any> = [
       const isPositive = Number(value) >= 0;
       return h(
         'span',
-        { class: isPositive ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold' },
-        formatCurrency(value)
+        {
+          class: isPositive
+            ? 'text-green-600 font-semibold'
+            : 'text-red-600 font-semibold',
+        },
+        formatCurrency(value),
       );
-    }
+    },
   },
   {
     title: '获利比',
@@ -1221,11 +1370,15 @@ const statsGameColumns: DataTableColumns<any> = [
       const isPositive = Number(ratio) >= 0;
       return h(
         'span',
-        { class: isPositive ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold' },
-        `${Number(ratio).toFixed(2)}%`
+        {
+          class: isPositive
+            ? 'text-green-600 font-semibold'
+            : 'text-red-600 font-semibold',
+        },
+        `${Number(ratio).toFixed(2)}%`,
       );
-    }
-  }
+    },
+  },
 ];
 
 // Statistics Methods
@@ -1263,7 +1416,7 @@ const handleStatsSearch = async () => {
   statsLoading.value = true;
   try {
     const params: any = {
-      username: statsFilters.memberAccount
+      username: statsFilters.memberAccount,
     };
 
     // Add date range if selected
@@ -1275,11 +1428,11 @@ const handleStatsSearch = async () => {
     }
 
     const response = await getBetTransactionStatisticsApi(params);
-    
+
     if (response) {
       // Group by category (SLOT, FISHING, etc.)
       const categoryMap = new Map<string, any>();
-      
+
       if (response.byCategory && Array.isArray(response.byCategory)) {
         response.byCategory.forEach((category: any) => {
           const key = category.category;
@@ -1292,7 +1445,7 @@ const handleStatsSearch = async () => {
               preTax: 0,
               memberWinLoss: 0,
               occupiedCount: 0,
-              profitRatio: 0
+              profitRatio: 0,
             });
           }
           const item = categoryMap.get(key)!;
@@ -1310,11 +1463,14 @@ const handleStatsSearch = async () => {
 
       statsData.value = {
         summary: response.totals,
-        userInfo: response.userInfo || { userID: statsFilters.memberAccount, currency: 'BRL' },
+        userInfo: response.userInfo || {
+          userID: statsFilters.memberAccount,
+          currency: 'BRL',
+        },
         byType: Array.from(categoryMap.values()),
         byProvider: response.byProvider,
         byCategory: response.byCategory,
-        byGame: response.byGame || []
+        byGame: response.byGame || [],
       };
 
       // Prepare game detail data from byGame
@@ -1329,16 +1485,16 @@ const handleStatsSearch = async () => {
         validBet: Number(game.validBet || 0),
         preTax: 0,
         memberWinLoss: game.memberWinLoss || 0,
-        profitRatio: game.profitRatio || 0
+        profitRatio: game.profitRatio || 0,
       }));
-      
+
       message.success('查询成功');
     }
   } catch (error) {
     console.error('Error loading bet statistics:', error);
     notification.error({
       content: '加载投注统计失败',
-      duration: 3000
+      duration: 3000,
     });
   } finally {
     statsLoading.value = false;
@@ -1376,7 +1532,7 @@ const formatDateTime = (dateStr: string): string => {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
-    hour12: false
+    hour12: false,
   });
 };
 
@@ -1451,4 +1607,3 @@ onMounted(() => {
   }
 }
 </style>
-

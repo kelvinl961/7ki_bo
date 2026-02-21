@@ -9,45 +9,45 @@ export interface FirstWithdrawalRule {
 
 export interface WithdrawalSettings {
   id?: number;
-  
+
   // === BASIC SETTINGS ===
   dailyLimit: number;
   maintenanceWindow?: string;
   maxAmount: number;
   minAmount: number;
   processingTime: string;
-  
+
   // Frontend Task Display
   frontendTaskDisplayEnabled: boolean;
   hideUnverifiedTasks?: boolean;
-  
-  // CPF Validation Settings  
+
+  // CPF Validation Settings
   cpfValidationMode: 'disabled' | 'format_only' | 'third_party';
   cpfFormatValidationEnabled?: boolean;
   cpfThirdPartyValidationEnabled?: boolean;
-  
+
   // Member Concurrent Withdrawals
   memberConcurrentWithdrawals: number;
-  
+
   // Withdrawal Page Sorting
   withdrawalQueueSortBy?: string;
   queueSortOrder?: string[];
-  
+
   // === BUSINESS RULES ===
   // Payment Validity
   paymentValidityHours: number;
-  
+
   // Withdrawal Fees
-  feeMode?: 'descending' | 'ascending'; // Legacy field for compatibility
+  feeMode?: 'ascending' | 'descending'; // Legacy field for compatibility
   feeRoundingMode: 'down' | 'up';
   feeExample: string;
-  
+
   // Review Notifications
   reviewNotificationEnabled: boolean;
-  
+
   // Limit Display
   showCompleteLimits: boolean;
-  
+
   // Account Restrictions
   limitUnverifiedMembers: boolean;
   restrictFirstDepositAccount?: boolean;
@@ -56,32 +56,32 @@ export interface WithdrawalSettings {
   limitWithdrawalAccountEnabled?: boolean;
   enableAccountLimits?: boolean;
   limitDigitalCurrencyWithdrawal?: boolean;
-  
+
   // === DIGITAL CURRENCY ===
   // Member Currency
   baseCurrency?: string;
   applyToAllCurrencies?: boolean;
-  
+
   // Allowed Digital Currencies
   allowedDigitalCurrencies: {
-    USDT_TRC20: boolean;
-    USDT_ERC20: boolean;
-    USDC: boolean;
-    TRX: boolean;
     BTC: boolean;
     ETH: boolean;
+    TRX: boolean;
+    USDC: boolean;
+    USDT_ERC20: boolean;
+    USDT_TRC20: boolean;
   };
-  
+
   // Precision Mode
   precisionMode?: string;
-  
+
   // === MEMBER RESTRICTIONS ===
   // Blacklist Level
   blacklistLevel?: string;
-  
+
   // First Withdrawal Rules
   firstWithdrawalRules: FirstWithdrawalRule[];
-  
+
   // Metadata
   createdAt?: string;
   updatedAt?: string;
@@ -97,9 +97,9 @@ export interface ApiResponse<T = any> {
 }
 
 export interface ValidationOptions {
-  cpfValidationModes: Array<{ value: string; label: string }>;
-  feeModes: Array<{ value: string; label: string }>;
-  queueSortOptions: Array<{ value: string; label: string }>;
+  cpfValidationModes: Array<{ label: string; value: string }>;
+  feeModes: Array<{ label: string; value: string }>;
+  queueSortOptions: Array<{ label: string; value: string }>;
 }
 
 const withdrawalSettingsApi = {
@@ -114,16 +114,26 @@ const withdrawalSettingsApi = {
   /**
    * Create or update withdrawal settings
    */
-  saveSettings: async (data: WithdrawalSettings): Promise<ApiResponse<WithdrawalSettings>> => {
-    const response = await requestClient.post('/wallet/withdrawal-settings', data);
+  saveSettings: async (
+    data: WithdrawalSettings,
+  ): Promise<ApiResponse<WithdrawalSettings>> => {
+    const response = await requestClient.post(
+      '/wallet/withdrawal-settings',
+      data,
+    );
     return response; // Don't unwrap - response interceptor already handles this
   },
 
   /**
    * Update withdrawal settings
    */
-  updateSettings: async (data: WithdrawalSettings): Promise<ApiResponse<WithdrawalSettings>> => {
-    const response = await requestClient.put('/wallet/withdrawal-settings', data);
+  updateSettings: async (
+    data: WithdrawalSettings,
+  ): Promise<ApiResponse<WithdrawalSettings>> => {
+    const response = await requestClient.put(
+      '/wallet/withdrawal-settings',
+      data,
+    );
     return response; // Don't unwrap - response interceptor already handles this
   },
 
@@ -131,7 +141,10 @@ const withdrawalSettingsApi = {
    * Update specific setting field
    */
   updateField: async (field: string, value: any): Promise<ApiResponse> => {
-    const response = await requestClient.put('/wallet/withdrawal-settings/field', { field, value });
+    const response = await requestClient.put(
+      '/wallet/withdrawal-settings/field',
+      { field, value },
+    );
     return response; // Don't unwrap - response interceptor already handles this
   },
 
@@ -139,7 +152,9 @@ const withdrawalSettingsApi = {
    * Reset settings to defaults
    */
   resetToDefaults: async (): Promise<ApiResponse<WithdrawalSettings>> => {
-    const response = await requestClient.post('/wallet/withdrawal-settings/reset');
+    const response = await requestClient.post(
+      '/wallet/withdrawal-settings/reset',
+    );
     return response; // Don't unwrap - response interceptor already handles this
   },
 
@@ -147,7 +162,9 @@ const withdrawalSettingsApi = {
    * Get validation options for form dropdowns
    */
   getValidationOptions: async (): Promise<ApiResponse<ValidationOptions>> => {
-    const response = await requestClient.get('/wallet/withdrawal-settings/validation-options');
+    const response = await requestClient.get(
+      '/wallet/withdrawal-settings/validation-options',
+    );
     return response; // Don't unwrap - response interceptor already handles this
   },
 
@@ -199,7 +216,7 @@ const withdrawalSettingsApi = {
       secretKey: r.secretKey ?? '',
       callbackUrl: r.callbackUrl ?? '',
       status: r.status ?? 'active',
-      arrivalStatus: r.arrivalStatus ?? 'instant'
+      arrivalStatus: r.arrivalStatus ?? 'instant',
     }));
 
     return { success: true, data: { channels, total } } as ApiResponse<any>;
@@ -208,30 +225,50 @@ const withdrawalSettingsApi = {
   /**
    * Update channel setting (real API)
    */
-  updateChannelSetting: async (channelId: string, data: Record<string, any>): Promise<ApiResponse> => {
-    const response = await requestClient.put(`/third-party-channels/${channelId}`, data);
+  updateChannelSetting: async (
+    channelId: string,
+    data: Record<string, any>,
+  ): Promise<ApiResponse> => {
+    const response = await requestClient.put(
+      `/third-party-channels/${channelId}`,
+      data,
+    );
     return response.data;
   },
 
   /**
    * Create or update withdrawal channel (real API)
    */
-  saveWithdrawalChannel: async (channelData: any): Promise<ApiResponse<any>> => {
+  saveWithdrawalChannel: async (
+    channelData: any,
+  ): Promise<ApiResponse<any>> => {
     if (channelData?.id) {
-      const response = await requestClient.put(`/third-party-channels/${channelData.id}`, channelData);
+      const response = await requestClient.put(
+        `/third-party-channels/${channelData.id}`,
+        channelData,
+      );
       return response.data;
     }
-    const response = await requestClient.post('/third-party-channels', channelData);
+    const response = await requestClient.post(
+      '/third-party-channels',
+      channelData,
+    );
     return response.data;
   },
 
   /**
    * Save withdrawal method configuration
    */
-  saveWithdrawalMethodConfig: async (channelId: string, config: any): Promise<ApiResponse<any>> => {
-    const resp = await requestClient.put(`/third-party-channels/${channelId}/withdrawal-config`, config);
+  saveWithdrawalMethodConfig: async (
+    channelId: string,
+    config: any,
+  ): Promise<ApiResponse<any>> => {
+    const resp = await requestClient.put(
+      `/third-party-channels/${channelId}/withdrawal-config`,
+      config,
+    );
     return resp.data;
-  }
+  },
 };
 
 export { withdrawalSettingsApi };

@@ -2,13 +2,16 @@
   <div class="image-upload-demo">
     <div class="demo-header">
       <h1>Enhanced Image Upload Demo</h1>
-      <p>Test the new image upload system with database storage and proper URL generation</p>
+      <p>
+        Test the new image upload system with database storage and proper URL
+        generation
+      </p>
     </div>
 
     <div class="demo-content">
       <div class="demo-section">
         <h2>Single Image Upload</h2>
-        <ImageUpload 
+        <ImageUpload
           :multiple="false"
           :max-files="1"
           category="demo"
@@ -20,7 +23,7 @@
 
       <div class="demo-section">
         <h2>Multiple Images Upload</h2>
-        <ImageUpload 
+        <ImageUpload
           :multiple="true"
           :max-files="5"
           category="demo"
@@ -33,27 +36,49 @@
       <div v-if="uploadedFiles.length" class="demo-section">
         <h2>Uploaded Files</h2>
         <div class="uploaded-files-grid">
-          <div v-for="file in uploadedFiles" :key="file.id" class="uploaded-file-card">
-            <img :src="getImageUrl(file.url)" :alt="file.alt || file.originalName" class="file-image" />
+          <div
+            v-for="file in uploadedFiles"
+            :key="file.id"
+            class="uploaded-file-card"
+          >
+            <img
+              :src="getImageUrl(file.url)"
+              :alt="file.alt || file.originalName"
+              class="file-image"
+            />
             <div class="file-details">
               <h3>{{ file.originalName }}</h3>
               <p class="file-url">{{ file.url }}</p>
               <p class="file-info">
-                Size: {{ formatFileSize(file.size) }} • 
-                Dimensions: {{ file.width }}x{{ file.height }} • 
-                Format: {{ file.format }}
+                Size: {{ formatFileSize(file.size) }} • Dimensions:
+                {{ file.width }}x{{ file.height }} • Format: {{ file.format }}
               </p>
-              <div v-if="file.thumbnailUrl || file.mediumUrl" class="file-variants">
-                <p v-if="file.thumbnailUrl"><strong>Thumbnail:</strong> {{ file.thumbnailUrl }}</p>
-                <p v-if="file.mediumUrl"><strong>Medium:</strong> {{ file.mediumUrl }}</p>
+              <div
+                v-if="file.thumbnailUrl || file.mediumUrl"
+                class="file-variants"
+              >
+                <p v-if="file.thumbnailUrl">
+                  <strong>Thumbnail:</strong> {{ file.thumbnailUrl }}
+                </p>
+                <p v-if="file.mediumUrl">
+                  <strong>Medium:</strong> {{ file.mediumUrl }}
+                </p>
               </div>
               <div class="file-metadata">
                 <p><strong>Category:</strong> {{ file.category }}</p>
                 <p v-if="file.alt"><strong>Alt Text:</strong> {{ file.alt }}</p>
-                <p v-if="file.description"><strong>Description:</strong> {{ file.description }}</p>
-                <p v-if="file.tags && file.tags.length"><strong>Tags:</strong> {{ file.tags.join(', ') }}</p>
-                <p><strong>Public:</strong> {{ file.isPublic ? 'Yes' : 'No' }}</p>
-                <p><strong>Uploaded:</strong> {{ formatDate(file.createdAt) }}</p>
+                <p v-if="file.description">
+                  <strong>Description:</strong> {{ file.description }}
+                </p>
+                <p v-if="file.tags && file.tags.length">
+                  <strong>Tags:</strong> {{ file.tags.join(', ') }}
+                </p>
+                <p>
+                  <strong>Public:</strong> {{ file.isPublic ? 'Yes' : 'No' }}
+                </p>
+                <p>
+                  <strong>Uploaded:</strong> {{ formatDate(file.createdAt) }}
+                </p>
               </div>
             </div>
           </div>
@@ -74,8 +99,13 @@
 import { ref } from 'vue';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 import { defineAsyncComponent } from 'vue';
-const ImageUpload = defineAsyncComponent(() => import('../../components/ImageUpload.vue'));
-import { getImageUrlByEnvironment, formatFileSize } from '../../utils/imageUtils';
+const ImageUpload = defineAsyncComponent(
+  () => import('../../components/ImageUpload.vue'),
+);
+import {
+  getImageUrlByEnvironment,
+  formatFileSize,
+} from '../../utils/imageUtils';
 import type { UploadedFile } from '../../api/upload';
 
 const uploadedFiles = ref<UploadedFile[]>([]);
@@ -245,4 +275,4 @@ function formatDate(date: Date | string | undefined): string {
   border-radius: 6px;
   font-size: 14px;
 }
-</style> 
+</style>

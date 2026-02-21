@@ -1,11 +1,13 @@
 # Brand Logo Settings (LOGO及图片设置)
 
 ## Overview
+
 The Brand Logo Settings page provides a comprehensive interface for managing brand configurations, logos, and related images within the system. This implementation includes full CRUD operations, image upload functionality, and responsive design.
 
 ## Features
 
 ### 🎯 Core Functionality
+
 - **Create/Edit/Delete** brand settings
 - **Image Upload** with drag-and-drop support
 - **Real-time Preview** of uploaded images
@@ -16,11 +18,13 @@ The Brand Logo Settings page provides a comprehensive interface for managing bra
 ### 🔧 Technical Implementation
 
 #### Frontend Components
+
 - **BrandLogoSetting.vue**: Main page component with table and modals
 - **ImageUpload.vue**: Reusable image upload component
 - **API Integration**: Full REST API client with TypeScript types
 
 #### Backend APIs
+
 - **GET /api/brand-settings**: List with filtering and pagination
 - **POST /api/brand-settings**: Create new brand setting
 - **PUT /api/brand-settings/:id**: Update existing brand setting
@@ -30,6 +34,7 @@ The Brand Logo Settings page provides a comprehensive interface for managing bra
 ## Component Structure
 
 ### BrandLogoSetting.vue
+
 ```vue
 <template>
   <!-- Header with actions -->
@@ -38,12 +43,12 @@ The Brand Logo Settings page provides a comprehensive interface for managing bra
     <n-card class="mb-4">
       <!-- Logo type, brand code, site URL filters -->
     </n-card>
-    
+
     <!-- Data table -->
     <n-card>
       <n-data-table />
     </n-card>
-    
+
     <!-- Create/Edit Modal -->
     <n-modal>
       <n-form>
@@ -55,6 +60,7 @@ The Brand Logo Settings page provides a comprehensive interface for managing bra
 ```
 
 ### ImageUpload.vue
+
 ```vue
 <template>
   <div class="image-upload">
@@ -69,6 +75,7 @@ The Brand Logo Settings page provides a comprehensive interface for managing bra
 ## Database Schema
 
 ### BrandSetting Model
+
 ```prisma
 model BrandSetting {
   id             Int      @id @default(autoincrement())
@@ -92,6 +99,7 @@ model BrandSetting {
 ## API Endpoints
 
 ### Brand Settings Management
+
 ```typescript
 // Get list with pagination and filters
 GET /api/brand-settings?page=1&pageSize=10&logoType=自定义图片
@@ -118,6 +126,7 @@ DELETE /api/brand-settings/1
 ```
 
 ### Image Upload
+
 ```typescript
 // Upload single image
 POST /api/upload/image
@@ -142,21 +151,25 @@ Content-Type: multipart/form-data
 ## Usage Guide
 
 ### 1. Accessing the Page
+
 Navigate to `/operateManager/brandManager?activeName=logoSetting`
 
 ### 2. Managing Brand Settings
+
 - **Create**: Click "新增设置" button
 - **Edit**: Click "修改" in the action column
 - **View Details**: Click "详情" in the action column
 - **Delete**: Available through edit modal
 
 ### 3. Image Management
+
 - **Upload**: Drag and drop or click to select images
 - **Preview**: Click eye icon to view full-size image
 - **Delete**: Click trash icon to remove image
 - **Size Limits**: Different limits for different image types
 
 ### 4. Search & Filter
+
 - **Logo Type**: Filter by "自定义图片" or "默认LOGO"
 - **Brand Code**: Text search in brand codes
 - **Site URL**: Text search in site URLs
@@ -164,16 +177,19 @@ Navigate to `/operateManager/brandManager?activeName=logoSetting`
 ## Technical Features
 
 ### 🔒 Security
+
 - **Authentication**: All endpoints require JWT authentication
 - **Validation**: Comprehensive input validation
 - **File Upload**: Secure file handling with type and size restrictions
 
 ### 📱 Responsive Design
+
 - **Grid Layout**: Responsive grid system
 - **Mobile-First**: Optimized for mobile devices
 - **Touch-Friendly**: Large touch targets and gestures
 
 ### 🎨 UI/UX
+
 - **Modern Design**: Clean, professional interface
 - **Real-time Feedback**: Loading states and success messages
 - **Error Handling**: User-friendly error messages
@@ -182,6 +198,7 @@ Navigate to `/operateManager/brandManager?activeName=logoSetting`
 ## Development Notes
 
 ### File Structure
+
 ```
 src/
 ├── views/brand/
@@ -194,6 +211,7 @@ src/
 ```
 
 ### Backend Files
+
 ```
 backend/
 ├── src/routes/
@@ -208,6 +226,7 @@ backend/
 ```
 
 ### Dependencies
+
 - **Frontend**: Vue 3, Naive UI, @iconify/vue
 - **Backend**: Express, Prisma, Multer, UUID
 - **Database**: PostgreSQL
@@ -215,16 +234,19 @@ backend/
 ## Best Practices
 
 ### 1. Performance
+
 - **Lazy Loading**: Components and routes are lazy-loaded
 - **Pagination**: Server-side pagination for large datasets
 - **Image Optimization**: Automatic image compression and resizing
 
 ### 2. Maintainability
+
 - **TypeScript**: Full type safety throughout
 - **Modular Design**: Reusable components and utilities
 - **Documentation**: Comprehensive inline documentation
 
 ### 3. Error Handling
+
 - **Validation**: Client and server-side validation
 - **Fallbacks**: Graceful degradation for failed operations
 - **Logging**: Comprehensive error logging
@@ -232,6 +254,7 @@ backend/
 ## Testing
 
 ### Manual Testing Checklist
+
 - [ ] Create new brand setting
 - [ ] Upload different image types
 - [ ] Update existing settings
@@ -241,6 +264,7 @@ backend/
 - [ ] Error handling scenarios
 
 ### API Testing
+
 ```bash
 # Test brand settings endpoint
 curl -X GET http://localhost:5000/api/brand-settings \
@@ -255,12 +279,14 @@ curl -X POST http://localhost:5000/api/upload/image \
 ## Troubleshooting
 
 ### Common Issues
+
 1. **Images not uploading**: Check file size limits and formats
 2. **Authorization errors**: Verify JWT token validity
 3. **Database errors**: Ensure schema is up to date
 4. **Missing images**: Check static file serving configuration
 
 ### Debug Tips
+
 - Enable browser developer tools for network debugging
 - Check server logs for backend errors
 - Verify database connection and schema
@@ -268,4 +294,4 @@ curl -X POST http://localhost:5000/api/upload/image \
 
 ---
 
-*This implementation provides a complete, production-ready Brand Logo Settings management system with modern UI/UX and robust backend architecture.* 
+_This implementation provides a complete, production-ready Brand Logo Settings management system with modern UI/UX and robust backend architecture._

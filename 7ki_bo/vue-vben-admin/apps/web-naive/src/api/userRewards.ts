@@ -7,18 +7,18 @@ export interface RewardStatus {
   totalRewardAmount: number;
   currency: string;
   activities: Array<{
-    id: string;
-    type: string;
-    currency: string;
     claimableUnits: number;
+    currency: string;
+    id: string;
     rewardAmount: number;
+    type: string;
   }>;
   lastCheckedAt: string;
 }
 
 export interface RewardNotification {
   id: string;
-  type: 'success' | 'info' | 'warning' | 'error';
+  type: 'error' | 'info' | 'success' | 'warning';
   title: string;
   message: string;
   timestamp: string;
@@ -48,12 +48,12 @@ export function getUserRewardStatus() {
 export function getUserRewardNotifications() {
   return requestClient.get<{
     notifications: RewardNotification[];
-    unreadCount: number;
     stats: {
+      pendingClaims: number;
       todayParticipations: number;
       totalRecentClaims: number;
-      pendingClaims: number;
     };
+    unreadCount: number;
   }>('/api/user/rewards/notifications');
 }
 

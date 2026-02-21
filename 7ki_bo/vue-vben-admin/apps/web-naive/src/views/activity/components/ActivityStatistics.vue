@@ -11,16 +11,16 @@
               @update:modelValue="handleQuickDateSelect"
             />
           </div>
-          
+
           <!-- 日期范围选择器 -->
-          <div class="flex flex-col ml-4">
+          <div class="ml-4 flex flex-col">
             <TimezoneDatePicker
               v-model="dateRange"
               @update:modelValue="handleDateRangeChange"
             />
           </div>
         </n-form-item>
-        
+
         <n-form-item label="活动类型">
           <n-select
             v-model:value="filters.activityType"
@@ -31,7 +31,7 @@
             @update:value="handleFilterChange"
           />
         </n-form-item>
-        
+
         <n-form-item label="状态">
           <n-select
             v-model:value="filters.status"
@@ -42,7 +42,7 @@
             @update:value="handleFilterChange"
           />
         </n-form-item>
-        
+
         <n-form-item label="币种">
           <n-select
             v-model:value="filters.currency"
@@ -53,7 +53,7 @@
             @update:value="handleFilterChange"
           />
         </n-form-item>
-        
+
         <n-form-item>
           <n-button type="primary" @click="loadData">
             <template #icon>
@@ -62,7 +62,7 @@
             搜索
           </n-button>
         </n-form-item>
-        
+
         <n-form-item>
           <n-button @click="handleExport" :loading="exporting">
             <template #icon>
@@ -106,7 +106,11 @@
         </n-gi>
         <n-gi>
           <n-card>
-            <n-statistic label="总奖励发放" :value="overview.totalRewardsDistributed" :precision="2">
+            <n-statistic
+              label="总奖励发放"
+              :value="overview.totalRewardsDistributed"
+              :precision="2"
+            >
               <template #prefix>
                 <i class="i-ion:diamond-outline text-warning" />
               </template>
@@ -122,14 +126,14 @@
     <!-- 活动统计表格 -->
     <n-card class="statistics-table">
       <template #header>
-        <div class="flex justify-between items-center">
+        <div class="flex items-center justify-between">
           <span class="text-lg font-semibold">活动统计明细</span>
           <n-tag :type="loading ? 'info' : 'success'">
             {{ loading ? '加载中...' : `共 ${pagination.total} 条数据` }}
           </n-tag>
         </div>
       </template>
-      
+
       <n-data-table
         :columns="columns"
         :data="tableData"
@@ -170,13 +174,17 @@ import {
 } from '#/api/activityStats';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 import { defineAsyncComponent } from 'vue';
-const TimezoneDatePicker = defineAsyncComponent(() => import('#/components/common/TimezoneDatePicker.vue'));
-const QuickDateSelect = defineAsyncComponent(() => import('#/components/common/QuickDateSelect.vue'));
+const TimezoneDatePicker = defineAsyncComponent(
+  () => import('#/components/common/TimezoneDatePicker.vue'),
+);
+const QuickDateSelect = defineAsyncComponent(
+  () => import('#/components/common/QuickDateSelect.vue'),
+);
 import {
   formatDateTimeInTimezone,
   getNowInTimezone,
   convertTimezoneToUTC,
-  getDisplayTimezone
+  getDisplayTimezone,
 } from '#/utils/timezoneUtils';
 
 // State
@@ -281,7 +289,11 @@ const columns: DataTableColumns<ActivityStatistics> = [
     width: 100,
     align: 'center',
     render(row) {
-      return h(NTag, { type: 'info', size: 'small' }, { default: () => row.activityTypeLabel });
+      return h(
+        NTag,
+        { type: 'info', size: 'small' },
+        { default: () => row.activityTypeLabel },
+      );
     },
   },
   {
@@ -290,7 +302,11 @@ const columns: DataTableColumns<ActivityStatistics> = [
     width: 120,
     align: 'right',
     render(row) {
-      return h('span', { class: 'text-success font-mono' }, row.claimedUsers.toLocaleString());
+      return h(
+        'span',
+        { class: 'text-success font-mono' },
+        row.claimedUsers.toLocaleString(),
+      );
     },
   },
   {
@@ -299,7 +315,11 @@ const columns: DataTableColumns<ActivityStatistics> = [
     width: 100,
     align: 'right',
     render(row) {
-      return h('span', { class: 'text-info font-mono' }, row.claimCount.toLocaleString());
+      return h(
+        'span',
+        { class: 'text-info font-mono' },
+        row.claimCount.toLocaleString(),
+      );
     },
   },
   {
@@ -308,7 +328,11 @@ const columns: DataTableColumns<ActivityStatistics> = [
     width: 120,
     align: 'right',
     render(row) {
-      return h('span', { class: 'text-primary font-mono' }, row.eligibleUsers.toLocaleString());
+      return h(
+        'span',
+        { class: 'text-primary font-mono' },
+        row.eligibleUsers.toLocaleString(),
+      );
     },
   },
   {
@@ -317,7 +341,11 @@ const columns: DataTableColumns<ActivityStatistics> = [
     width: 120,
     align: 'right',
     render(row) {
-      return h('span', { class: 'text-success font-mono' }, `${row.claimedAmount.toFixed(2)}`);
+      return h(
+        'span',
+        { class: 'text-success font-mono' },
+        `${row.claimedAmount.toFixed(2)}`,
+      );
     },
   },
   {
@@ -326,7 +354,11 @@ const columns: DataTableColumns<ActivityStatistics> = [
     width: 120,
     align: 'right',
     render(row) {
-      return h('span', { class: 'text-warning font-mono' }, `${row.activityAmount.toFixed(2)}`);
+      return h(
+        'span',
+        { class: 'text-warning font-mono' },
+        `${row.activityAmount.toFixed(2)}`,
+      );
     },
   },
   {
@@ -341,8 +373,15 @@ const columns: DataTableColumns<ActivityStatistics> = [
         paused: { type: 'warning', text: '暂停' },
         archived: { type: 'error', text: '已归档' },
       };
-      const statusInfo = statusMap[row.status] || { type: 'default', text: '未知' };
-      return h(NTag, { type: statusInfo.type as any, size: 'small' }, { default: () => statusInfo.text });
+      const statusInfo = statusMap[row.status] || {
+        type: 'default',
+        text: '未知',
+      };
+      return h(
+        NTag,
+        { type: statusInfo.type as any, size: 'small' },
+        { default: () => statusInfo.text },
+      );
     },
   },
 ];
@@ -368,13 +407,13 @@ const paginationConfig = computed(() => ({
 // Date range handlers
 const handleQuickDateSelect = (value: 'day' | 'week' | 'month' | null) => {
   if (!value) return;
-  
+
   const tz = getDisplayTimezone();
   const tzNow = getNowInTimezone(tz);
-  
+
   let startYear: number, startMonth: number, startDay: number;
   let endYear: number, endMonth: number, endDay: number;
-  
+
   if (value === 'day') {
     // Today
     startYear = tzNow.year;
@@ -393,7 +432,8 @@ const handleQuickDateSelect = (value: 'day' | 'week' | 'month' | null) => {
     endYear = tzNow.year;
     endMonth = tzNow.month;
     endDay = tzNow.day;
-  } else { // 'month'
+  } else {
+    // 'month'
     // Last 30 days
     const monthAgo = new Date(tzNow.year, tzNow.month - 1, tzNow.day);
     monthAgo.setDate(monthAgo.getDate() - 30);
@@ -404,11 +444,27 @@ const handleQuickDateSelect = (value: 'day' | 'week' | 'month' | null) => {
     endMonth = tzNow.month;
     endDay = tzNow.day;
   }
-  
+
   // Convert to UTC timestamps
-  const startDateUTC = convertTimezoneToUTC(startYear, startMonth, startDay, 0, 0, 0, tz);
-  const endDateUTC = convertTimezoneToUTC(endYear, endMonth, endDay, 23, 59, 59, tz);
-  
+  const startDateUTC = convertTimezoneToUTC(
+    startYear,
+    startMonth,
+    startDay,
+    0,
+    0,
+    0,
+    tz,
+  );
+  const endDateUTC = convertTimezoneToUTC(
+    endYear,
+    endMonth,
+    endDay,
+    23,
+    59,
+    59,
+    tz,
+  );
+
   dateRange.value = [startDateUTC.getTime(), endDateUTC.getTime()];
 };
 
@@ -425,7 +481,7 @@ const getQueryParams = () => {
     const [start, end] = dateRange.value;
     const startDateObj = new Date(start);
     const endDateObj = new Date(end);
-    
+
     // Get date components in display timezone
     const startTz = new Intl.DateTimeFormat('en-US', {
       timeZone: tz,
@@ -435,9 +491,9 @@ const getQueryParams = () => {
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
-      hour12: false
+      hour12: false,
     }).formatToParts(startDateObj);
-    
+
     const endTz = new Intl.DateTimeFormat('en-US', {
       timeZone: tz,
       year: 'numeric',
@@ -446,29 +502,29 @@ const getQueryParams = () => {
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
-      hour12: false
+      hour12: false,
     }).formatToParts(endDateObj);
-    
+
     const startUTC = convertTimezoneToUTC(
-      parseInt(startTz.find(p => p.type === 'year')!.value),
-      parseInt(startTz.find(p => p.type === 'month')!.value),
-      parseInt(startTz.find(p => p.type === 'day')!.value),
-      parseInt(startTz.find(p => p.type === 'hour')!.value),
-      parseInt(startTz.find(p => p.type === 'minute')!.value),
-      parseInt(startTz.find(p => p.type === 'second')!.value),
-      tz
+      parseInt(startTz.find((p) => p.type === 'year')!.value),
+      parseInt(startTz.find((p) => p.type === 'month')!.value),
+      parseInt(startTz.find((p) => p.type === 'day')!.value),
+      parseInt(startTz.find((p) => p.type === 'hour')!.value),
+      parseInt(startTz.find((p) => p.type === 'minute')!.value),
+      parseInt(startTz.find((p) => p.type === 'second')!.value),
+      tz,
     );
-    
+
     const endUTC = convertTimezoneToUTC(
-      parseInt(endTz.find(p => p.type === 'year')!.value),
-      parseInt(endTz.find(p => p.type === 'month')!.value),
-      parseInt(endTz.find(p => p.type === 'day')!.value),
-      parseInt(endTz.find(p => p.type === 'hour')!.value),
-      parseInt(endTz.find(p => p.type === 'minute')!.value),
-      parseInt(endTz.find(p => p.type === 'second')!.value),
-      tz
+      parseInt(endTz.find((p) => p.type === 'year')!.value),
+      parseInt(endTz.find((p) => p.type === 'month')!.value),
+      parseInt(endTz.find((p) => p.type === 'day')!.value),
+      parseInt(endTz.find((p) => p.type === 'hour')!.value),
+      parseInt(endTz.find((p) => p.type === 'minute')!.value),
+      parseInt(endTz.find((p) => p.type === 'second')!.value),
+      tz,
     );
-    
+
     params.startDate = startUTC.toISOString();
     params.endDate = endUTC.toISOString();
   }
@@ -485,7 +541,7 @@ const loadData = async () => {
   loading.value = true;
   try {
     const params = getQueryParams();
-    
+
     // Load main statistics
     const [statsResponse, overviewResponse] = await Promise.all([
       getActivityStatistics(params),
@@ -499,10 +555,12 @@ const loadData = async () => {
     tableData.value = statsResponse.statistics;
     pagination.value = statsResponse.pagination;
     overview.value = overviewResponse;
-
   } catch (error: any) {
     console.error('Error loading activity statistics:', error);
-    const errorMessage = error?.response?.data?.message || error?.message || '加载活动统计数据失败';
+    const errorMessage =
+      error?.response?.data?.message ||
+      error?.message ||
+      '加载活动统计数据失败';
     message.error(`加载活动统计数据失败: ${errorMessage}`);
   } finally {
     loading.value = false;
@@ -521,7 +579,8 @@ const loadOverview = async () => {
     overview.value = response;
   } catch (error: any) {
     console.error('Error loading overview:', error);
-    const errorMessage = error?.response?.data?.message || error?.message || '加载概览数据失败';
+    const errorMessage =
+      error?.response?.data?.message || error?.message || '加载概览数据失败';
     message.error(`加载概览数据失败: ${errorMessage}`);
   }
 };

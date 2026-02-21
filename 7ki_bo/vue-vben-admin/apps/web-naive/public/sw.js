@@ -62,7 +62,7 @@ async function handleImageRequest(request) {
   if (cachedResponse) {
     // Check if cached response is still fresh
     const cachedTime = cachedResponse.headers.get('x-cached-time');
-    if (cachedTime && Date.now() - parseInt(cachedTime) < CACHE_DURATION) {
+    if (cachedTime && Date.now() - Number.parseInt(cachedTime) < CACHE_DURATION) {
       console.log('Serving from cache:', request.url);
       return cachedResponse;
     }

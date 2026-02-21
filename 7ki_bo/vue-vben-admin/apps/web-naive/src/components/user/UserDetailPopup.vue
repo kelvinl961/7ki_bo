@@ -1,5 +1,10 @@
 <template>
-  <n-modal v-model:show="visible" preset="card" :style="{ width: '1200px' }" title="用户详情">
+  <n-modal
+    v-model:show="visible"
+    preset="card"
+    :style="{ width: '1200px' }"
+    title="用户详情"
+  >
     <n-tabs v-model:value="activeTab" type="card" animated>
       <!-- 会员概览 -->
       <n-tab-pane name="overview" tab="会员概览">
@@ -8,61 +13,66 @@
           <div class="space-y-4">
             <n-card title="基本账户信息" size="small">
               <div class="space-y-3">
-                <div class="flex justify-between items-center">
+                <div class="flex items-center justify-between">
                   <span class="text-gray-600">帐户状态:</span>
                   <div class="flex items-center gap-2">
-                    <n-tag :type="userDetail.status === '正常' ? 'success' : 'error'" size="small">
+                    <n-tag
+                      :type="userDetail.status === '正常' ? 'success' : 'error'"
+                      size="small"
+                    >
                       {{ userDetail.status }}
                     </n-tag>
-                    <n-button text type="primary" size="tiny">修改状态</n-button>
+                    <n-button text type="primary" size="tiny"
+                      >修改状态</n-button
+                    >
                   </div>
                 </div>
-                
+
                 <div class="flex justify-between">
                   <span class="text-gray-600">帐号类型:</span>
                   <span>{{ userDetail.accountType }}</span>
                 </div>
-                
+
                 <div class="flex justify-between">
                   <span class="text-gray-600">自我禁止状态:</span>
                   <span>{{ userDetail.selfExclusionStatus || '--' }}</span>
                 </div>
-                
+
                 <div class="flex justify-between">
                   <span class="text-gray-600">上级代理:</span>
                   <span>{{ userDetail.referrer }}</span>
                 </div>
-                
+
                 <div class="flex justify-between">
                   <span class="text-gray-600">代理佣金:</span>
                   <span>{{ formatCurrency(userDetail.agentCommission) }}</span>
                 </div>
-                
-                <div class="flex justify-between items-center">
+
+                <div class="flex items-center justify-between">
                   <span class="text-gray-600">实名姓名:</span>
                   <div class="flex items-center gap-2">
                     <span>{{ userDetail.realName }}</span>
                     <n-button text type="primary" size="tiny">记录</n-button>
                   </div>
                 </div>
-                
+
                 <div class="flex justify-between">
                   <span class="text-gray-600">币种:</span>
                   <span>{{ userDetail.currency }}</span>
                 </div>
-                
+
                 <div class="flex justify-between">
                   <span class="text-gray-600">奖励钱包:</span>
-                 <!-- <span>{{ formatCurrency(userDetail.rewardWallet) }}</span> -->
-                 <span>{{ 0 }}</span>
+                  <!-- <span>{{ formatCurrency(userDetail.rewardWallet) }}</span> -->
+                  <span>{{ 0 }}</span>
                 </div>
-                
+
                 <div class="flex justify-between">
                   <span class="text-gray-600">利息宝:</span>
                   <span>{{ formatCurrency(userDetail.savingsWallet) }}</span>
                 </div>
-                
-                <div class="flex justify-between items-center">
+
+                <div class="flex items-center justify-between">
                   <span class="text-gray-600">VIP等级:</span>
                   <div class="flex items-center gap-2">
                     <span>{{ userDetail.vipLevel }}</span>
@@ -70,7 +80,7 @@
                   </div>
                 </div>
               </div>
-              
+
               <template #action>
                 <div class="flex gap-2">
                   <n-button size="small" type="primary">更多关联</n-button>
@@ -85,79 +95,138 @@
           <div class="space-y-4">
             <n-card title="资金投注行为" size="small">
               <div class="space-y-3">
-                <div class="flex justify-between items-center">
+                <div class="flex items-center justify-between">
                   <span class="text-gray-600">账户余额:</span>
                   <div class="flex items-center gap-3">
-                    <span>可用: {{ formatCurrency(userDetail.balance) }} | 冻结: {{ formatCurrency(userDetail.frozenBalance) }}</span>
+                    <span
+                      >可用: {{ formatCurrency(userDetail.balance) }} | 冻结:
+                      {{ formatCurrency(userDetail.frozenBalance) }}</span
+                    >
                     <div class="flex gap-1">
-                      <n-button size="tiny" type="primary" @click="handleRefreshBalance">刷新</n-button>
-                      <n-button size="tiny" type="warning" @click="handleManualPullback">人工拉回</n-button>
-                      <n-button size="tiny" type="info" @click="handleAccountRecords">账变记录</n-button>
-                      <n-button size="tiny" type="success" @click="handleManualCredit">手动加款</n-button>
-                      <n-button size="tiny" type="error" @click="handleManualDebit">手动扣除</n-button>
+                      <n-button
+                        size="tiny"
+                        type="primary"
+                        @click="handleRefreshBalance"
+                        >刷新</n-button
+                      >
+                      <n-button
+                        size="tiny"
+                        type="warning"
+                        @click="handleManualPullback"
+                        >人工拉回</n-button
+                      >
+                      <n-button
+                        size="tiny"
+                        type="info"
+                        @click="handleAccountRecords"
+                        >账变记录</n-button
+                      >
+                      <n-button
+                        size="tiny"
+                        type="success"
+                        @click="handleManualCredit"
+                        >手动加款</n-button
+                      >
+                      <n-button
+                        size="tiny"
+                        type="error"
+                        @click="handleManualDebit"
+                        >手动扣除</n-button
+                      >
                     </div>
                   </div>
                 </div>
-                
+
                 <div class="flex justify-between">
                   <span class="text-gray-600">累计充值:</span>
-                  <span>{{ userDetail.rechargeCount }}次 | {{ formatCurrency(userDetail.rechargeAmount) }}</span>
+                  <span
+                    >{{ userDetail.rechargeCount }}次 |
+                    {{ formatCurrency(userDetail.rechargeAmount) }}</span
+                  >
                 </div>
-                
+
                 <div class="flex justify-between">
                   <span class="text-gray-600">累计提现:</span>
-                  <span>{{ userDetail.withdrawCount }}次 | {{ formatCurrency(userDetail.withdrawAmount) }}</span>
+                  <span
+                    >{{ userDetail.withdrawCount }}次 |
+                    {{ formatCurrency(userDetail.withdrawAmount) }}</span
+                  >
                 </div>
-                
+
                 <div class="flex justify-between">
                   <span class="text-gray-600">今日投注:</span>
-                  <span>有效: {{ formatCurrency(userDetail.todayValidBet) }} | 总投注: {{ formatCurrency(userDetail.todayBetAmount) }}</span>
+                  <span
+                    >有效: {{ formatCurrency(userDetail.todayValidBet) }} |
+                    总投注:
+                    {{ formatCurrency(userDetail.todayBetAmount) }}</span
+                  >
                 </div>
-                
+
                 <div class="flex justify-between">
                   <span class="text-gray-600">今日损益:</span>
-                  <span :class="userDetail.todayProfit >= 0 ? 'text-green-600' : 'text-red-600'">
+                  <span
+                    :class="
+                      userDetail.todayProfit >= 0
+                        ? 'text-green-600'
+                        : 'text-red-600'
+                    "
+                  >
                     {{ formatCurrency(userDetail.todayProfit) }}
                   </span>
                 </div>
-                
+
                 <div class="flex justify-between">
                   <span class="text-gray-600">活动优惠:</span>
-                  <span>任务: {{ formatCurrency(userDetail.promotionStats.task) }} | 充值: {{ formatCurrency(userDetail.promotionStats.rechargeReward) }}</span>
+                  <span
+                    >任务:
+                    {{ formatCurrency(userDetail.promotionStats.task) }} | 充值:
+                    {{
+                      formatCurrency(userDetail.promotionStats.rechargeReward)
+                    }}</span
+                  >
                 </div>
-                
-                <div class="flex justify-between items-center">
+
+                <div class="flex items-center justify-between">
                   <span class="text-gray-600">会员层级:</span>
                   <div class="flex items-center gap-2">
                     <span>{{ userDetail.level }}</span>
                     <n-button text type="primary" size="tiny">修改</n-button>
                   </div>
                 </div>
-                
-                <div class="flex justify-between items-center">
+
+                <div class="flex items-center justify-between">
                   <span class="text-gray-600">会员标签:</span>
                   <div class="flex items-center gap-2">
                     <n-tag size="small">{{ userDetail.tag }}</n-tag>
                     <n-button text type="primary" size="tiny">修改</n-button>
                   </div>
                 </div>
-                
+
                 <div class="flex justify-between">
                   <span class="text-gray-600">登录密码:</span>
-                  <span>****** (同密码人数: {{ userDetail.passwordMatchCount }})</span>
+                  <span
+                    >****** (同密码人数:
+                    {{ userDetail.passwordMatchCount }})</span
+                  >
                 </div>
-                
+
                 <div class="flex justify-between">
                   <span class="text-gray-600">提现密码:</span>
-                  <span>****** (同密码人数: {{ userDetail.sameWithdrawalPinCount || 0 }})</span>
+                  <span
+                    >****** (同密码人数:
+                    {{ userDetail.sameWithdrawalPinCount || 0 }})</span
+                  >
                 </div>
-                
+
                 <div class="flex justify-between">
                   <span class="text-gray-600">提现账号:</span>
-                  <span>{{ userDetail.withdrawAccountCount }}个 (同号人数: {{ userDetail.sameAccountCount }})</span>
+                  <span
+                    >{{ userDetail.withdrawAccountCount }}个 (同号人数:
+                    {{ userDetail.sameAccountCount }})</span
+                  >
                 </div>
               </div>
-              
+
               <template #action>
                 <div class="flex gap-2">
                   <n-button size="small" type="primary">更多关联</n-button>
@@ -176,71 +245,87 @@
                   <h4 class="font-medium text-gray-800">注册信息</h4>
                   <div class="flex justify-between">
                     <span class="text-gray-600">注册IP:</span>
-                    <span>{{ userDetail.registrationIp }} (同IP人数: {{ userDetail.sameRegIpCount }})</span>
+                    <span
+                      >{{ userDetail.registrationIp }} (同IP人数:
+                      {{ userDetail.sameRegIpCount }})</span
+                    >
                   </div>
-                  
+
                   <div class="flex justify-between">
                     <span class="text-gray-600">注册时间:</span>
-                    <span>{{ formatDateTime(userDetail.registrationTime) }}</span>
+                    <span>{{
+                      formatDateTime(userDetail.registrationTime)
+                    }}</span>
                   </div>
-                  
+
                   <div class="flex justify-between">
                     <span class="text-gray-600">注册域名:</span>
                     <span>{{ userDetail.registrationDomain }}</span>
                   </div>
-                  
+
                   <div class="flex justify-between">
                     <span class="text-gray-600">注册设备号:</span>
                     <span>{{ userDetail.registrationDeviceId }}</span>
                   </div>
-                  
+
                   <div class="flex justify-between">
                     <span class="text-gray-600">注册浏览器指纹:</span>
-                    <span class="truncate">{{ userDetail.registrationFingerprint }}</span>
+                    <span class="truncate">{{
+                      userDetail.registrationFingerprint
+                    }}</span>
                   </div>
-                  
+
                   <div class="flex justify-between">
                     <span class="text-gray-600">注册来源:</span>
-                    <n-tag :type="userDetail.registrationSource === '官网' ? 'info' : 'success'" size="small">
+                    <n-tag
+                      :type="
+                        userDetail.registrationSource === '官网'
+                          ? 'info'
+                          : 'success'
+                      "
+                      size="small"
+                    >
                       {{ userDetail.registrationSource }}
                     </n-tag>
                   </div>
                 </div>
-                
+
                 <div class="space-y-3">
                   <h4 class="font-medium text-gray-800">最后登录信息</h4>
                   <div class="flex justify-between">
                     <span class="text-gray-600">最后登录IP:</span>
                     <span>{{ userDetail.lastLoginIp }}</span>
                   </div>
-                  
+
                   <div class="flex justify-between">
                     <span class="text-gray-600">地理位置:</span>
                     <span>{{ userDetail.lastLoginLocation }}</span>
                   </div>
-                  
+
                   <div class="flex justify-between">
                     <span class="text-gray-600">最后登录时间:</span>
                     <span>{{ formatDateTime(userDetail.lastLoginTime) }}</span>
                   </div>
-                  
+
                   <div class="flex justify-between">
                     <span class="text-gray-600">最后登录域名:</span>
                     <span>{{ userDetail.lastLoginDomain }}</span>
                   </div>
-                  
+
                   <div class="flex justify-between">
                     <span class="text-gray-600">最后登录设备号:</span>
                     <span>{{ userDetail.lastLoginDeviceId }}</span>
                   </div>
-                  
+
                   <div class="flex justify-between">
                     <span class="text-gray-600">最后登录指纹:</span>
-                    <span class="truncate">{{ userDetail.lastLoginFingerprint }}</span>
+                    <span class="truncate">{{
+                      userDetail.lastLoginFingerprint
+                    }}</span>
                   </div>
                 </div>
               </div>
-              
+
               <template #action>
                 <div class="flex gap-2">
                   <n-button size="small" type="primary">更多关联</n-button>
@@ -255,7 +340,11 @@
 
       <!-- 联系方式 -->
       <n-tab-pane name="contact" tab="联系方式">
-        <n-result status="info" title="需安全密码解密" description="请输入安全密码以查看联系方式信息">
+        <n-result
+          status="info"
+          title="需安全密码解密"
+          description="请输入安全密码以查看联系方式信息"
+        >
           <template #footer>
             <n-space>
               <n-input type="password" placeholder="请输入安全密码" />
@@ -267,16 +356,12 @@
 
       <!-- 个人资料 -->
       <n-tab-pane name="profile" tab="个人资料">
-        <div class="text-center text-gray-500 py-12">
-          个人资料功能开发中...
-        </div>
+        <div class="py-12 text-center text-gray-500">个人资料功能开发中...</div>
       </n-tab-pane>
 
       <!-- 提现账号 -->
       <n-tab-pane name="withdraw" tab="提现账号">
-        <div class="text-center text-gray-500 py-12">
-          提现账号功能开发中...
-        </div>
+        <div class="py-12 text-center text-gray-500">提现账号功能开发中...</div>
       </n-tab-pane>
 
       <!-- 账户交易 -->
@@ -288,21 +373,21 @@
               <n-form inline :show-label="false">
                 <n-form-item>
                   <n-button-group>
-                    <n-button 
+                    <n-button
                       :type="dateFilter === 'today' ? 'primary' : 'default'"
                       @click="setDateFilter('today')"
                       size="small"
                     >
                       日
                     </n-button>
-                    <n-button 
+                    <n-button
                       :type="dateFilter === 'week' ? 'primary' : 'default'"
                       @click="setDateFilter('week')"
                       size="small"
                     >
                       周
                     </n-button>
-                    <n-button 
+                    <n-button
                       :type="dateFilter === 'month' ? 'primary' : 'default'"
                       @click="setDateFilter('month')"
                       size="small"
@@ -311,7 +396,7 @@
                     </n-button>
                   </n-button-group>
                 </n-form-item>
-                
+
                 <n-form-item>
                   <n-date-picker
                     v-model:value="dateRange"
@@ -322,7 +407,7 @@
                     @update:value="handleDateRangeChange"
                   />
                 </n-form-item>
-                
+
                 <n-form-item>
                   <n-select
                     v-model:value="transactionTypeFilter"
@@ -338,7 +423,7 @@
                     <n-option value="bonus" label="奖金" />
                   </n-select>
                 </n-form-item>
-                
+
                 <n-form-item>
                   <n-input
                     v-model:value="transactionNumberFilter"
@@ -347,19 +432,22 @@
                     clearable
                   />
                 </n-form-item>
-                
+
                 <n-form-item>
                   <n-button type="primary" @click="handleSearchTransactions">
                     搜索
                   </n-button>
-                  <n-button style="margin-left: 8px" @click="handleResetFilters">
+                  <n-button
+                    style="margin-left: 8px"
+                    @click="handleResetFilters"
+                  >
                     重置
                   </n-button>
                 </n-form-item>
               </n-form>
             </n-card>
           </div>
-          
+
           <!-- 交易记录表格 -->
           <n-data-table
             :loading="transactionLoading"
@@ -377,77 +465,80 @@
 
       <!-- 投注统计 -->
       <n-tab-pane name="betting" tab="投注统计">
-        <div class="text-center text-gray-500 py-12">
-          投注统计功能开发中...
-        </div>
+        <div class="py-12 text-center text-gray-500">投注统计功能开发中...</div>
       </n-tab-pane>
 
       <!-- 会员消息 -->
       <n-tab-pane name="messages" tab="会员消息">
-        <div class="text-center text-gray-500 py-12">
-          会员消息功能开发中...
-        </div>
+        <div class="py-12 text-center text-gray-500">会员消息功能开发中...</div>
       </n-tab-pane>
 
       <!-- 会员日志 -->
       <n-tab-pane name="logs" tab="会员日志">
-        <div class="text-center text-gray-500 py-12">
-          会员日志功能开发中...
-        </div>
+        <div class="py-12 text-center text-gray-500">会员日志功能开发中...</div>
       </n-tab-pane>
 
       <!-- 登录设备 -->
       <n-tab-pane name="devices" tab="登录设备">
-        <div class="text-center text-gray-500 py-12">
-          登录设备功能开发中...
-        </div>
+        <div class="py-12 text-center text-gray-500">登录设备功能开发中...</div>
       </n-tab-pane>
 
       <!-- 账号同关联 -->
       <n-tab-pane name="associations" tab="账号同关联">
-        <div class="text-center text-gray-500 py-12">
+        <div class="py-12 text-center text-gray-500">
           账号同关联功能开发中...
         </div>
       </n-tab-pane>
     </n-tabs>
 
     <!-- Manual Credit Modal -->
-    <ManualCreditModal ref="manualCreditModalRef" :user="props.user" @success="handleTransactionSuccess" />
-    
+    <ManualCreditModal
+      ref="manualCreditModalRef"
+      :user="props.user"
+      @success="handleTransactionSuccess"
+    />
+
     <!-- Manual Debit Modal -->
-    <ManualDebitModal ref="manualDebitModalRef" :user="props.user" @success="handleTransactionSuccess" />
+    <ManualDebitModal
+      ref="manualDebitModalRef"
+      :user="props.user"
+      @success="handleTransactionSuccess"
+    />
   </n-modal>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, h, watch } from 'vue';
-import { 
-  NModal, 
-  NTabs, 
-  NTabPane, 
-  NCard, 
-  NTag, 
-  NButton, 
+import {
+  NModal,
+  NTabs,
+  NTabPane,
+  NCard,
+  NTag,
+  NButton,
   NButtonGroup,
-  NResult, 
-  NSpace, 
+  NResult,
+  NSpace,
   NInput,
   NStatistic,
   NDataTable,
   NDatePicker,
   NForm,
   NFormItem,
-  NSelect
+  NSelect,
 } from 'naive-ui';
 import { useAccessStore } from '@vben/stores';
 import { getUserByIdApi } from '#/api/core/user-management';
-import { getUserSecurityStatsApi, type UserSecurityStats } from '#/api/core/user-detail';
-import { 
-  getUserTransactionHistory, 
-  formatTransactionType, 
+import {
+  getUserSecurityStatsApi,
+  type UserSecurityStats,
+} from '#/api/core/user-detail';
+import {
+  getUserTransactionHistory,
+  formatTransactionType,
   formatTransactionStatus,
   type TransactionRecord,
-  getUserTransactionStats
+  getUserTransactionStats,
 } from '#/api/core/transaction';
 import ManualCreditModal from './ManualCreditModal.vue';
 import ManualDebitModal from './ManualDebitModal.vue';
@@ -573,10 +664,14 @@ const transactionPreviewColumns = computed(() => [
     key: 'transactionType',
     width: 80,
     render(row: TransactionRecord) {
-      return h(NTag, { 
-        type: getTransactionTypeColor(row),
-        size: 'small'
-      }, { default: () => getTransactionCategoryText(row) });
+      return h(
+        NTag,
+        {
+          type: getTransactionTypeColor(row),
+          size: 'small',
+        },
+        { default: () => getTransactionCategoryText(row) },
+      );
     },
   },
   {
@@ -584,9 +679,13 @@ const transactionPreviewColumns = computed(() => [
     key: 'amount',
     width: 100,
     render(row: TransactionRecord) {
-      return h('span', { 
-        class: row.amount >= 0 ? 'text-green-600' : 'text-red-600'
-      }, formatCurrency(row.amount));
+      return h(
+        'span',
+        {
+          class: row.amount >= 0 ? 'text-green-600' : 'text-red-600',
+        },
+        formatCurrency(row.amount),
+      );
     },
   },
   {
@@ -595,10 +694,14 @@ const transactionPreviewColumns = computed(() => [
     width: 80,
     render(row: TransactionRecord) {
       const status = formatTransactionStatus(row.status);
-      return h(NTag, { 
-        type: status.type,
-        size: 'small'
-      }, { default: () => status.text });
+      return h(
+        NTag,
+        {
+          type: status.type,
+          size: 'small',
+        },
+        { default: () => status.text },
+      );
     },
   },
   {
@@ -648,11 +751,15 @@ const transactionFullColumns = computed(() => [
       const type = row.transactionType;
       const color = getTransactionTypeColor(row);
       const text = getTransactionCategoryText(row);
-      
-      return h(NTag, { 
-        type: color,
-        size: 'small'
-      }, { default: () => text });
+
+      return h(
+        NTag,
+        {
+          type: color,
+          size: 'small',
+        },
+        { default: () => text },
+      );
     },
   },
   {
@@ -668,7 +775,9 @@ const transactionFullColumns = computed(() => [
     key: 'balanceBefore',
     width: 120,
     render(row: TransactionRecord) {
-      return typeof row.balanceBefore === 'number' && !isNaN(row.balanceBefore) ? formatCurrency(row.balanceBefore) : '-';
+      return typeof row.balanceBefore === 'number' && !isNaN(row.balanceBefore)
+        ? formatCurrency(row.balanceBefore)
+        : '-';
     },
   },
   {
@@ -679,28 +788,32 @@ const transactionFullColumns = computed(() => [
       if (typeof row.amount !== 'number' || isNaN(row.amount)) {
         return '-';
       }
-      
+
       // Determine if this should be red (debit/withdrawal) or green (credit/deposit)
       let shouldBeRed = false;
-      
+
       // Real withdrawals from Withdrawal table
       if (row.transactionType === 'withdrawal') {
         shouldBeRed = true;
       }
-      
+
       // Manual debits from ManualTransaction table
       if (row.transactionType === 'manual' && row.type === 'debit') {
         shouldBeRed = true;
       }
-      
+
       // For other transaction types, use the sign of the amount
       if (!shouldBeRed) {
         shouldBeRed = row.amount < 0;
       }
-      
-      return h('span', { 
-        class: shouldBeRed ? 'text-red-600' : 'text-green-600' 
-      }, formatCurrency(Math.abs(row.amount)));
+
+      return h(
+        'span',
+        {
+          class: shouldBeRed ? 'text-red-600' : 'text-green-600',
+        },
+        formatCurrency(Math.abs(row.amount)),
+      );
     },
   },
   {
@@ -708,7 +821,9 @@ const transactionFullColumns = computed(() => [
     key: 'balanceAfter',
     width: 120,
     render(row: TransactionRecord) {
-      return typeof row.balanceAfter === 'number' && !isNaN(row.balanceAfter) ? formatCurrency(row.balanceAfter) : '-';
+      return typeof row.balanceAfter === 'number' && !isNaN(row.balanceAfter)
+        ? formatCurrency(row.balanceAfter)
+        : '-';
     },
   },
   {
@@ -744,7 +859,7 @@ const userDetail = computed<UserDetail>(() => {
   const userData = currentUserData.value || props.user;
   const stats = userStats.value;
   const bonus = bonusStats.value;
-  
+
   if (!userData) {
     return {
       id: 0,
@@ -771,7 +886,7 @@ const userDetail = computed<UserDetail>(() => {
         bonus: 0,
         task: 0,
         rechargeReward: 0,
-        abandonedReward: 0
+        abandonedReward: 0,
       },
       tag: '',
       level: '',
@@ -791,7 +906,7 @@ const userDetail = computed<UserDetail>(() => {
       lastLoginDeviceId: '',
       lastLoginTime: '',
       lastLoginDomain: '',
-      lastLoginFingerprint: ''
+      lastLoginFingerprint: '',
     };
   }
 
@@ -806,7 +921,7 @@ const userDetail = computed<UserDetail>(() => {
     status: userData.status || (userData.isBanned ? '冻结' : '正常'),
     accountType: '正式账号',
     selfExclusionStatus: undefined,
-    agentCommission: 1250.00,
+    agentCommission: 1250.0,
     // Use real balance data from API
     rewardWallet: Number(userData.rewardWallet) || 0,
     savingsWallet: Number(userData.savingsWallet) || 0,
@@ -823,7 +938,7 @@ const userDetail = computed<UserDetail>(() => {
       bonus: stats?.totalBonusReceived ?? 0,
       task: bonus.task,
       rechargeReward: bonus.rechargeReward,
-      abandonedReward: bonus.abandonedReward
+      abandonedReward: bonus.abandonedReward,
     },
     tag: '活跃用户',
     level: '默认层级',
@@ -833,7 +948,8 @@ const userDetail = computed<UserDetail>(() => {
     sameAccountCount: 0, // Will be fetched from API
     registrationIp: userData.registrationIp || '192.168.1.100',
     registrationDomain: userData.registrationDomain || 'www.example.com',
-    registrationTime: userData.registrationTime || userData.createdAt || '2024-01-15 14:30:25',
+    registrationTime:
+      userData.registrationTime || userData.createdAt || '2024-01-15 14:30:25',
     registrationDeviceId: 'DEV_123456789',
     registrationFingerprint: 'FP_abcdef123456',
     registrationSource: '官网',
@@ -843,7 +959,7 @@ const userDetail = computed<UserDetail>(() => {
     lastLoginDeviceId: 'DEV_987654321',
     lastLoginTime: userData.lastLoginTime || '2024-01-30 15:45:12',
     lastLoginDomain: 'www.example.com',
-    lastLoginFingerprint: 'FP_xyz789abc456'
+    lastLoginFingerprint: 'FP_xyz789abc456',
   };
 });
 
@@ -856,281 +972,308 @@ watch(activeTab, (newTab) => {
 });
 
 // Methods
-  // Helper functions for transaction display
-  const getTransactionCategoryText = (transaction: any): string => {
-    // Handle real withdrawals from Withdrawal table
-    if (transaction.transactionType === 'withdrawal') {
-      return '提款';
+// Helper functions for transaction display
+const getTransactionCategoryText = (transaction: any): string => {
+  // Handle real withdrawals from Withdrawal table
+  if (transaction.transactionType === 'withdrawal') {
+    return '提款';
+  }
+
+  // Handle manual transactions from ManualTransaction table
+  if (transaction.transactionType === 'manual') {
+    if (transaction.type === 'debit') {
+      return '手动扣款';
+    } else if (transaction.type === 'credit') {
+      return '手动加款';
     }
-    
-    // Handle manual transactions from ManualTransaction table
-    if (transaction.transactionType === 'manual') {
-      if (transaction.type === 'debit') {
-        return '手动扣款';
-      } else if (transaction.type === 'credit') {
-        return '手动加款';
-      }
-      return '手动';
+    return '手动';
+  }
+
+  // Handle other transaction types
+  switch (transaction.transactionType) {
+    case 'deposit':
+      return '存款';
+    case 'bet':
+      return '投注';
+    case 'bonus':
+      return '奖金';
+    default:
+      return '其他';
+  }
+};
+
+const getTransactionSubTypeText = (transaction: any): string => {
+  // Handle real withdrawals from Withdrawal table
+  if (transaction.transactionType === 'withdrawal') {
+    return transaction.paymentMethod || '提款';
+  }
+
+  // Handle manual transactions from ManualTransaction table
+  if (transaction.transactionType === 'manual') {
+    if (transaction.type === 'debit') {
+      return transaction.subType === 'manual_deduct' ? '手动扣款' : '扣款';
+    } else if (transaction.type === 'credit') {
+      return transaction.subType === 'manual_credit' ? '手动加款' : '加款';
     }
-    
-    // Handle other transaction types
-    switch (transaction.transactionType) {
-      case 'deposit':
-        return '存款';
-      case 'bet':
-        return '投注';
-      case 'bonus':
-        return '奖金';
-      default:
-        return '其他';
-    }
-  };
+    return transaction.description || '手动操作';
+  }
 
-  const getTransactionSubTypeText = (transaction: any): string => {
-    // Handle real withdrawals from Withdrawal table
-    if (transaction.transactionType === 'withdrawal') {
-      return transaction.paymentMethod || '提款';
-    }
-    
-    // Handle manual transactions from ManualTransaction table
-    if (transaction.transactionType === 'manual') {
-      if (transaction.type === 'debit') {
-        return transaction.subType === 'manual_deduct' ? '手动扣款' : '扣款';
-      } else if (transaction.type === 'credit') {
-        return transaction.subType === 'manual_credit' ? '手动加款' : '加款';
-      }
-      return transaction.description || '手动操作';
-    }
-    
-    // Handle other transaction types
-    switch (transaction.transactionType) {
-      case 'deposit':
-        return transaction.paymentMethod || '存款';
-      case 'bet':
-        return '投注';
-      case 'bonus':
-        return '奖金';
-      default:
-        return transaction.description || '其他';
-    }
-  };
+  // Handle other transaction types
+  switch (transaction.transactionType) {
+    case 'deposit':
+      return transaction.paymentMethod || '存款';
+    case 'bet':
+      return '投注';
+    case 'bonus':
+      return '奖金';
+    default:
+      return transaction.description || '其他';
+  }
+};
 
-  const getTransactionTypeColor = (transaction: any) => {
-    // Handle real withdrawals and manual debits with red color
-    if (transaction.transactionType === 'withdrawal') {
-      return 'error'; // Red for real withdrawals
-    }
-    
-    if (transaction.transactionType === 'manual' && transaction.type === 'debit') {
-      return 'error'; // Red for manual debits
-    }
-    
-    // Handle other transaction types
-    switch (transaction.transactionType) {
-      case 'deposit':
-        return 'success';
-      case 'manual':
-        return transaction.type === 'credit' ? 'success' : 'error';
-      case 'bet':
-        return 'info';
-      case 'bonus':
-        return 'warning';
-      default:
-        return 'default';
-    }
-  };
+const getTransactionTypeColor = (transaction: any) => {
+  // Handle real withdrawals and manual debits with red color
+  if (transaction.transactionType === 'withdrawal') {
+    return 'error'; // Red for real withdrawals
+  }
 
-  // Helper function to format transaction status
-  const formatTransactionStatus = (status: string) => {
-    switch (status) {
-      case 'completed':
-      case 'success':
-        return { type: 'success', text: '成功' };
-      case 'pending':
-        return { type: 'warning', text: '处理中' };
-      case 'failed':
-      case 'rejected':
-        return { type: 'error', text: '失败' };
-      default:
-        return { type: 'default', text: status || '未知' };
-    }
-  };
+  if (
+    transaction.transactionType === 'manual' &&
+    transaction.type === 'debit'
+  ) {
+    return 'error'; // Red for manual debits
+  }
 
-  // Helper function to format transaction type for display
-  const formatTransactionType = (transaction: any): string => {
-    return getTransactionCategoryText(transaction);
-  };
+  // Handle other transaction types
+  switch (transaction.transactionType) {
+    case 'deposit':
+      return 'success';
+    case 'manual':
+      return transaction.type === 'credit' ? 'success' : 'error';
+    case 'bet':
+      return 'info';
+    case 'bonus':
+      return 'warning';
+    default:
+      return 'default';
+  }
+};
 
-  // Date filter handlers
-  const setDateFilter = (type: 'today' | 'week' | 'month') => {
-    dateFilter.value = type;
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    
-    switch (type) {
-      case 'today':
-        dateRange.value = [today.getTime(), now.getTime()];
-        break;
-      case 'week':
-        const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-        dateRange.value = [weekAgo.getTime(), now.getTime()];
-        break;
-      case 'month':
-        const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
-        dateRange.value = [monthAgo.getTime(), now.getTime()];
-        break;
-    }
-    handleSearchTransactions();
-  };
+// Helper function to format transaction status
+const formatTransactionStatus = (status: string) => {
+  switch (status) {
+    case 'completed':
+    case 'success':
+      return { type: 'success', text: '成功' };
+    case 'pending':
+      return { type: 'warning', text: '处理中' };
+    case 'failed':
+    case 'rejected':
+      return { type: 'error', text: '失败' };
+    default:
+      return { type: 'default', text: status || '未知' };
+  }
+};
 
-  const handleDateRangeChange = () => {
-    dateFilter.value = '';
-    handleSearchTransactions();
-  };
+// Helper function to format transaction type for display
+const formatTransactionType = (transaction: any): string => {
+  return getTransactionCategoryText(transaction);
+};
 
-  const handleTransactionTypeFilter = () => {
-    handleSearchTransactions();
-  };
+// Date filter handlers
+const setDateFilter = (type: 'today' | 'week' | 'month') => {
+  dateFilter.value = type;
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-  const handleSearchTransactions = () => {
-    transactionPagination.value.page = 1;
-    fetchAllTransactions();
-  };
+  switch (type) {
+    case 'today':
+      dateRange.value = [today.getTime(), now.getTime()];
+      break;
+    case 'week':
+      const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+      dateRange.value = [weekAgo.getTime(), now.getTime()];
+      break;
+    case 'month':
+      const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+      dateRange.value = [monthAgo.getTime(), now.getTime()];
+      break;
+  }
+  handleSearchTransactions();
+};
 
-  const handleResetFilters = () => {
-    dateFilter.value = '';
-    dateRange.value = null;
-    transactionTypeFilter.value = '';
-    transactionNumberFilter.value = '';
-    // Don't set date filter to 'today' - show all transactions
-    handleSearchTransactions();
-  };
+const handleDateRangeChange = () => {
+  dateFilter.value = '';
+  handleSearchTransactions();
+};
 
-  // Transaction pagination handlers
-  const handleTransactionPageChange = (page: number) => {
-    transactionPagination.value.page = page;
-    fetchAllTransactions();
-  };
+const handleTransactionTypeFilter = () => {
+  handleSearchTransactions();
+};
 
-  const handleTransactionPageSizeChange = (pageSize: number) => {
-    transactionPagination.value.pageSize = pageSize;
-    transactionPagination.value.page = 1;
-    fetchAllTransactions();
-  };
+const handleSearchTransactions = () => {
+  transactionPagination.value.page = 1;
+  fetchAllTransactions();
+};
 
-  // Fetch recent transactions for preview
-  const fetchRecentTransactions = async () => {
-    if (!props.user?.id) return;
+const handleResetFilters = () => {
+  dateFilter.value = '';
+  dateRange.value = null;
+  transactionTypeFilter.value = '';
+  transactionNumberFilter.value = '';
+  // Don't set date filter to 'today' - show all transactions
+  handleSearchTransactions();
+};
 
-    transactionLoading.value = true;
-    try {
-      const response = await getUserTransactionHistory(props.user.id, {
-        type: 'all',
-        page: 1,
-        pageSize: 5 // Only get the 5 most recent for preview
-      });
-      // Process transactions - handle string values from API
-      recentTransactions.value = response.list.map(transaction => ({
-        ...transaction,
-        amount: typeof transaction.amount === 'string' ? parseFloat(transaction.amount) : transaction.amount,
-        balanceBefore: typeof transaction.balanceBefore === 'string' ? parseFloat(transaction.balanceBefore) : transaction.balanceBefore,
-        balanceAfter: typeof transaction.balanceAfter === 'string' ? parseFloat(transaction.balanceAfter) : transaction.balanceAfter,
-      }));
-    } catch (error) {
-      console.error('获取最近交易记录失败:', error);
-      notification.error({
-        content: '获取最近交易记录失败',
-        duration: 3000,
-      });
-      recentTransactions.value = [];
-    } finally {
-      transactionLoading.value = false;
-    }
-  };
+// Transaction pagination handlers
+const handleTransactionPageChange = (page: number) => {
+  transactionPagination.value.page = page;
+  fetchAllTransactions();
+};
 
-  // Fetch all transactions for the full table
-  const fetchAllTransactions = async () => {
-    if (!props.user?.id) return;
+const handleTransactionPageSizeChange = (pageSize: number) => {
+  transactionPagination.value.pageSize = pageSize;
+  transactionPagination.value.page = 1;
+  fetchAllTransactions();
+};
 
-    transactionLoading.value = true;
-    try {
-      const response = await getUserTransactionHistory(props.user.id, {
-        type: transactionTypeFilter.value || 'all',
-        page: transactionPagination.value.page,
-        pageSize: transactionPagination.value.pageSize,
-        startTime: dateRange.value?.[0],
-        endTime: dateRange.value?.[1],
-        orderNumber: transactionNumberFilter.value || '',
-      });
-      // Process transactions - handle string values from API
-      const processedTransactions = response.list.map(transaction => ({
-        ...transaction,
-        amount: typeof transaction.amount === 'string' ? parseFloat(transaction.amount) : transaction.amount,
-        balanceBefore: typeof transaction.balanceBefore === 'string' ? parseFloat(transaction.balanceBefore) : transaction.balanceBefore,
-        balanceAfter: typeof transaction.balanceAfter === 'string' ? parseFloat(transaction.balanceAfter) : transaction.balanceAfter,
-      }));
-      allTransactions.value = processedTransactions;
-      transactionPagination.value.itemCount = response.pagination?.total || processedTransactions.length;
-      console.log("✅ Transaction list loaded:", allTransactions.value);
-      console.log("📊 Raw response:", response);
-      console.log("📊 Processed transactions:", processedTransactions);
-    } catch (error) {
-      console.error('❌ 获取交易记录失败:', error);
-      notification.error({
-        content: '获取交易记录失败',
-        duration: 3000,
-      });
-      allTransactions.value = [];
-    } finally {
-      transactionLoading.value = false;
-    }
-  };
+// Fetch recent transactions for preview
+const fetchRecentTransactions = async () => {
+  if (!props.user?.id) return;
 
-  // Fetch user stats from backend
-  const fetchUserStats = async () => {
-    if (!props.user?.id) return;
-    try {
-      userStats.value = await getUserTransactionStats(props.user.id);
-    } catch (error) {
-      console.error('Failed to fetch user stats:', error);
-      userStats.value = null;
-    }
-  };
+  transactionLoading.value = true;
+  try {
+    const response = await getUserTransactionHistory(props.user.id, {
+      type: 'all',
+      page: 1,
+      pageSize: 5, // Only get the 5 most recent for preview
+    });
+    // Process transactions - handle string values from API
+    recentTransactions.value = response.list.map((transaction) => ({
+      ...transaction,
+      amount:
+        typeof transaction.amount === 'string'
+          ? parseFloat(transaction.amount)
+          : transaction.amount,
+      balanceBefore:
+        typeof transaction.balanceBefore === 'string'
+          ? parseFloat(transaction.balanceBefore)
+          : transaction.balanceBefore,
+      balanceAfter:
+        typeof transaction.balanceAfter === 'string'
+          ? parseFloat(transaction.balanceAfter)
+          : transaction.balanceAfter,
+    }));
+  } catch (error) {
+    console.error('获取最近交易记录失败:', error);
+    notification.error({
+      content: '获取最近交易记录失败',
+      duration: 3000,
+    });
+    recentTransactions.value = [];
+  } finally {
+    transactionLoading.value = false;
+  }
+};
 
-  // Fetch all bonus transactions and compute sums by subType
-  const fetchBonusStats = async () => {
-    if (!props.user?.id) return;
-    try {
-      // Fetch all bonus transactions (large pageSize for now)
-      const response = await getUserTransactionHistory(props.user.id, { type: 'bonus', page: 1, pageSize: 1000 });
-      const list = response.list || [];
-      bonusStats.value = list.reduce(
-        (acc, tx) => {
-          if (tx.subType === 'task') acc.task += Number(tx.amount) || 0;
-          if (tx.subType === 'recharge_reward') acc.rechargeReward += Number(tx.amount) || 0;
-          if (tx.subType === 'abandoned_reward') acc.abandonedReward += Number(tx.amount) || 0;
-          return acc;
-        },
-        { task: 0, rechargeReward: 0, abandonedReward: 0 }
-      );
-    } catch (error) {
-      console.error('Failed to fetch bonus stats:', error);
-      bonusStats.value = { task: 0, rechargeReward: 0, abandonedReward: 0 };
-    }
-  };
+// Fetch all transactions for the full table
+const fetchAllTransactions = async () => {
+  if (!props.user?.id) return;
 
+  transactionLoading.value = true;
+  try {
+    const response = await getUserTransactionHistory(props.user.id, {
+      type: transactionTypeFilter.value || 'all',
+      page: transactionPagination.value.page,
+      pageSize: transactionPagination.value.pageSize,
+      startTime: dateRange.value?.[0],
+      endTime: dateRange.value?.[1],
+      orderNumber: transactionNumberFilter.value || '',
+    });
+    // Process transactions - handle string values from API
+    const processedTransactions = response.list.map((transaction) => ({
+      ...transaction,
+      amount:
+        typeof transaction.amount === 'string'
+          ? parseFloat(transaction.amount)
+          : transaction.amount,
+      balanceBefore:
+        typeof transaction.balanceBefore === 'string'
+          ? parseFloat(transaction.balanceBefore)
+          : transaction.balanceBefore,
+      balanceAfter:
+        typeof transaction.balanceAfter === 'string'
+          ? parseFloat(transaction.balanceAfter)
+          : transaction.balanceAfter,
+    }));
+    allTransactions.value = processedTransactions;
+    transactionPagination.value.itemCount =
+      response.pagination?.total || processedTransactions.length;
+    console.log('✅ Transaction list loaded:', allTransactions.value);
+    console.log('📊 Raw response:', response);
+    console.log('📊 Processed transactions:', processedTransactions);
+  } catch (error) {
+    console.error('❌ 获取交易记录失败:', error);
+    notification.error({
+      content: '获取交易记录失败',
+      duration: 3000,
+    });
+    allTransactions.value = [];
+  } finally {
+    transactionLoading.value = false;
+  }
+};
 
-  // Utility functions
-  const formatCurrency = (amount: number): string => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(amount);
-  };
+// Fetch user stats from backend
+const fetchUserStats = async () => {
+  if (!props.user?.id) return;
+  try {
+    userStats.value = await getUserTransactionStats(props.user.id);
+  } catch (error) {
+    console.error('Failed to fetch user stats:', error);
+    userStats.value = null;
+  }
+};
 
-  const formatDateTime = (dateString: string): string => {
-    return new Date(dateString).toLocaleString('pt-BR');
-  };
+// Fetch all bonus transactions and compute sums by subType
+const fetchBonusStats = async () => {
+  if (!props.user?.id) return;
+  try {
+    // Fetch all bonus transactions (large pageSize for now)
+    const response = await getUserTransactionHistory(props.user.id, {
+      type: 'bonus',
+      page: 1,
+      pageSize: 1000,
+    });
+    const list = response.list || [];
+    bonusStats.value = list.reduce(
+      (acc, tx) => {
+        if (tx.subType === 'task') acc.task += Number(tx.amount) || 0;
+        if (tx.subType === 'recharge_reward')
+          acc.rechargeReward += Number(tx.amount) || 0;
+        if (tx.subType === 'abandoned_reward')
+          acc.abandonedReward += Number(tx.amount) || 0;
+        return acc;
+      },
+      { task: 0, rechargeReward: 0, abandonedReward: 0 },
+    );
+  } catch (error) {
+    console.error('Failed to fetch bonus stats:', error);
+    bonusStats.value = { task: 0, rechargeReward: 0, abandonedReward: 0 };
+  }
+};
+
+// Utility functions
+const formatCurrency = (amount: number): string => {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  }).format(amount);
+};
+
+const formatDateTime = (dateString: string): string => {
+  return new Date(dateString).toLocaleString('pt-BR');
+};
 
 // Balance action handlers
 const handleRefreshBalance = async () => {
@@ -1163,14 +1306,14 @@ const handleManualDebit = () => {
 
 const handleTransactionSuccess = async (transactionData?: any) => {
   console.log('Transaction completed successfully', transactionData);
-  
+
   // Add a small delay to ensure backend has processed the transaction
-  await new Promise(resolve => setTimeout(resolve, 500));
-  
+  await new Promise((resolve) => setTimeout(resolve, 500));
+
   // Always refresh user data from API to get the latest balance
   // This ensures we show real database values, not calculated ones
   await refreshUserData();
-  
+
   console.log('User data refreshed after transaction');
   console.log('Updated user data emitted to parent component');
 };
@@ -1184,7 +1327,7 @@ const refreshUserData = async () => {
     }
 
     console.log('🔄 Refreshing user data for ID:', props.user.id);
-    
+
     let response;
     try {
       response = await getUserByIdApi(props.user.id.toString());
@@ -1193,9 +1336,9 @@ const refreshUserData = async () => {
       console.error('🚨 API call failed:', apiError);
       throw apiError;
     }
-    
+
     console.log('📡 API Response:', response);
-    
+
     // Handle different possible response structures
     let userData;
     if (response?.data?.data) {
@@ -1211,22 +1354,22 @@ const refreshUserData = async () => {
       userData = response;
       console.log('📊 Using response directly');
     }
-    
+
     console.log('🎯 Extracted user data:', userData);
 
     // Validate the extracted user data
     if (!userData || typeof userData !== 'object') {
       console.error('❌ Invalid userData type:', typeof userData, userData);
-      throw new Error("Invalid user data format");
+      throw new Error('Invalid user data format');
     }
-    
+
     if (!userData.id) {
       console.error('❌ Missing user ID in response:', userData);
-      throw new Error("Missing user ID in response");
+      throw new Error('Missing user ID in response');
     }
 
     console.log('✅ Validation passed, updating user data');
-    
+
     // ✅ Preserve reactivity - ensure currentUserData is initialized
     if (!currentUserData.value) {
       currentUserData.value = {};
@@ -1234,18 +1377,21 @@ const refreshUserData = async () => {
     Object.assign(currentUserData.value, userData);
 
     console.log('💾 Updated currentUserData:', currentUserData.value);
-    
+
     // ✅ OPTIMIZATION: Fetch security statistics in background (non-blocking)
     // Don't await - let it load in background while popup is already visible
     getUserSecurityStatsApi(props.user.id)
       .then((securityStats) => {
         console.log('📊 Security stats received:', securityStats);
-        
+
         // Update user detail with real security stats
         if (userDetail.value) {
-          userDetail.value.passwordMatchCount = securityStats.passwordMatchCount;
-          userDetail.value.sameWithdrawalPinCount = securityStats.sameWithdrawalPinCount;
-          userDetail.value.withdrawAccountCount = securityStats.withdrawAccountCount;
+          userDetail.value.passwordMatchCount =
+            securityStats.passwordMatchCount;
+          userDetail.value.sameWithdrawalPinCount =
+            securityStats.sameWithdrawalPinCount;
+          userDetail.value.withdrawAccountCount =
+            securityStats.withdrawAccountCount;
           userDetail.value.sameAccountCount = securityStats.sameAccountCount;
           userDetail.value.sameRegIpCount = securityStats.sameRegIpCount;
           console.log('✅ Security stats updated in userDetail');
@@ -1255,21 +1401,27 @@ const refreshUserData = async () => {
         console.error('❌ Failed to fetch security stats:', securityError);
         // Don't fail the whole operation if security stats fail
       });
-    
-    // Emit the updated user data to parent component
-    emit("userUpdated", userData);
-    console.log('📤 Emitted userUpdated event');
 
+    // Emit the updated user data to parent component
+    emit('userUpdated', userData);
+    console.log('📤 Emitted userUpdated event');
   } catch (error: any) {
-    console.error("❌ Failed to refresh user data:");
-    console.error("Error message:", error?.message);
-    console.error("Error object:", error);
-    console.error("Error type:", typeof error);
-    console.error("User ID was:", props.user?.id);
-    
+    console.error('❌ Failed to refresh user data:');
+    console.error('Error message:', error?.message);
+    console.error('Error object:', error);
+    console.error('Error type:', typeof error);
+    console.error('User ID was:', props.user?.id);
+
     // Check if this is actually a successful response being thrown as an error
-    if (error && typeof error === 'object' && error.success === true && error.data) {
-      console.log('🔧 Detected successful response in error - attempting to extract data');
+    if (
+      error &&
+      typeof error === 'object' &&
+      error.success === true &&
+      error.data
+    ) {
+      console.log(
+        '🔧 Detected successful response in error - attempting to extract data',
+      );
       try {
         const userData = error.data;
         if (userData && userData.id) {
@@ -1278,7 +1430,7 @@ const refreshUserData = async () => {
             currentUserData.value = {};
           }
           Object.assign(currentUserData.value, userData);
-          emit("userUpdated", userData);
+          emit('userUpdated', userData);
           console.log('💾 Recovery successful, user data updated');
           return; // Success!
         }
@@ -1286,7 +1438,7 @@ const refreshUserData = async () => {
         console.error('Failed to recover from error:', recoveryError);
       }
     }
-    
+
     // Don't throw the error, just log it to prevent UI disruption
   }
 };
@@ -1303,7 +1455,6 @@ const handleViewAllTransactions = () => {
     // that fetches transactions and updates the recentTransactions ref.
   }
 };
-
 
 const open = () => {
   visible.value = true;
@@ -1328,7 +1479,7 @@ const close = () => {
 // Expose methods
 defineExpose({
   open,
-  close
+  close,
 });
 </script>
 
@@ -1419,4 +1570,4 @@ defineExpose({
 .gap-3 {
   gap: 0.75rem;
 }
-</style> 
+</style>

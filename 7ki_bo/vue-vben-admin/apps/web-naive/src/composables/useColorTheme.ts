@@ -1,14 +1,14 @@
-import { ref, computed, watch } from 'vue';
+import type { ColorClasses, ColorPalette } from '../utils/colorUtils';
+
+import { computed, ref } from 'vue';
+
 import {
-  getColorPaletteById,
-  generateColorClasses,
-  getPrimaryColorById,
-  getBrandColorInfo,
   applyColorTheme,
-  generateCSSCustomProperties,
+  generateColorClasses,
   generateColorPreviewStyles,
-  type ColorPalette,
-  type ColorClasses
+  generateCSSCustomProperties,
+  getBrandColorInfo,
+  getColorPaletteById,
 } from '../utils/colorUtils';
 
 /**
@@ -26,7 +26,7 @@ export function useColorTheme() {
     currentSkinColorId.value = skinColorId;
     currentPalette.value = getColorPaletteById(skinColorId);
     currentColorClasses.value = generateColorClasses(currentPalette.value);
-    
+
     // Apply CSS custom properties to document root
     applyCSSCustomProperties();
   };
@@ -36,19 +36,19 @@ export function useColorTheme() {
    */
   const applyCSSCustomProperties = () => {
     if (!currentPalette.value) return;
-    
+
     const customProperties = generateCSSCustomProperties(currentPalette.value);
     const style = document.createElement('style');
     style.textContent = `:root { ${customProperties} }`;
-    
+
     // Remove existing theme styles
     const existingStyle = document.querySelector('#dynamic-theme-styles');
     if (existingStyle) {
       existingStyle.remove();
     }
-    
+
     style.id = 'dynamic-theme-styles';
-    document.head.appendChild(style);
+    document.head.append(style);
   };
 
   /**
@@ -57,7 +57,7 @@ export function useColorTheme() {
   const applyThemeToContent = (content: string, skinColorId?: string) => {
     const targetSkinColorId = skinColorId || currentSkinColorId.value;
     if (!targetSkinColorId) return content;
-    
+
     return applyColorTheme(content, targetSkinColorId);
   };
 
@@ -86,7 +86,7 @@ export function useColorTheme() {
       primary: colorInfo.palette.primary,
       secondary: colorInfo.palette.secondary,
       accent: colorInfo.palette.accent,
-      classes: colorInfo.classes
+      classes: colorInfo.classes,
     };
   };
 
@@ -103,20 +103,20 @@ export function useColorTheme() {
     currentSkinColorId,
     currentPalette,
     currentColorClasses,
-    
+
     // Computed
     isThemeActive,
     primaryColor,
     secondaryColor,
     accentColor,
-    
+
     // Methods
     setSkinColor,
     applyThemeToContent,
     getColorInfo,
     getPreviewStyles,
     generateColorPreview,
-    applyCSSCustomProperties
+    applyCSSCustomProperties,
   };
 }
 
@@ -171,7 +171,7 @@ export function useSkinColorOptions() {
     { value: '1697165753468780546', label: 'Bottega Veneta绿' },
     { value: '1822080907778543618', label: 'Rolex绿' },
     { value: '1822084756339769345', label: 'Guerlain紫' },
-    { value: '1924287844941955073', label: 'Gucci黑' }
+    { value: '1924287844941955073', label: 'Gucci黑' },
   ];
 
   const { getColorInfo } = useColorTheme();
@@ -180,9 +180,9 @@ export function useSkinColorOptions() {
    * Enhanced skin color options with color information
    */
   const enhancedSkinColorOptions = computed(() => {
-    return skinColorOptions.map(option => ({
+    return skinColorOptions.map((option) => ({
       ...option,
-      colorInfo: getColorInfo(option.value)
+      colorInfo: getColorInfo(option.value),
     }));
   });
 
@@ -190,7 +190,9 @@ export function useSkinColorOptions() {
    * Get skin color option by value
    */
   const getSkinColorOption = (value: string) => {
-    return enhancedSkinColorOptions.value.find(option => option.value === value);
+    return enhancedSkinColorOptions.value.find(
+      (option) => option.value === value,
+    );
   };
 
   /**
@@ -205,6 +207,6 @@ export function useSkinColorOptions() {
     skinColorOptions,
     enhancedSkinColorOptions,
     getSkinColorOption,
-    getSkinColorLabel
+    getSkinColorLabel,
   };
-} 
+}

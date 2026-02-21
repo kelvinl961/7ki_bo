@@ -9,14 +9,14 @@ export interface RebateConfig {
   validBetThreshold: number;
   rebateAmountPer10k: number;
   remarks?: string;
-  type?: 'validBet' | 'netProfit';
+  type?: 'netProfit' | 'validBet';
   isActive?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
 
 export interface RebateSettingsQuery {
-  type: 'validBet' | 'netProfit';
+  type: 'netProfit' | 'validBet';
   page?: number;
   pageSize?: number;
   gameCategory?: string;
@@ -27,16 +27,16 @@ export interface RebateSettingsResponse {
   success: boolean;
   data: RebateConfig[];
   pagination?: {
-    total: number;
     page: number;
     pageSize: number;
+    total: number;
     totalPages: number;
   };
 }
 
 export interface BatchImportData {
   file: File;
-  type: 'validBet' | 'netProfit';
+  type: 'netProfit' | 'validBet';
 }
 
 // API Functions
@@ -44,7 +44,9 @@ export interface BatchImportData {
 /**
  * Get rebate settings list
  */
-export async function getRebateSettings(params: RebateSettingsQuery): Promise<RebateSettingsResponse> {
+export async function getRebateSettings(
+  params: RebateSettingsQuery,
+): Promise<RebateSettingsResponse> {
   const response = await requestClient.get('/rebate-settings', { params });
   console.log('Rebate settings API response:', response);
   return response;
@@ -60,14 +62,19 @@ export async function getRebateSettingById(id: string): Promise<RebateConfig> {
 /**
  * Create new rebate setting
  */
-export async function createRebateSetting(data: Omit<RebateConfig, 'id' | 'createdAt' | 'updatedAt'>): Promise<RebateConfig> {
+export async function createRebateSetting(
+  data: Omit<RebateConfig, 'createdAt' | 'id' | 'updatedAt'>,
+): Promise<RebateConfig> {
   return requestClient.post('/rebate-settings', data);
 }
 
 /**
  * Update rebate setting
  */
-export async function updateRebateSetting(id: string, data: Partial<RebateConfig>): Promise<RebateConfig> {
+export async function updateRebateSetting(
+  id: string,
+  data: Partial<RebateConfig>,
+): Promise<RebateConfig> {
   return requestClient.put(`/rebate-settings/${id}`, data);
 }
 
@@ -88,46 +95,55 @@ export async function batchDeleteRebateSettings(ids: string[]): Promise<void> {
 /**
  * Batch update rebate settings
  */
-export async function batchUpdateRebateSettings(data: { ids: string[]; updates: Partial<RebateConfig> }): Promise<void> {
+export async function batchUpdateRebateSettings(data: {
+  ids: string[];
+  updates: Partial<RebateConfig>;
+}): Promise<void> {
   return requestClient.post('/rebate-settings/batch-update', data);
 }
 
 /**
  * Download template file
  */
-export async function downloadRebateTemplate(type: 'validBet' | 'netProfit'): Promise<Blob> {
+export async function downloadRebateTemplate(
+  type: 'netProfit' | 'validBet',
+): Promise<Blob> {
   return requestClient.get(`/rebate-settings/template/${type}`, {
-    responseType: 'blob'
+    responseType: 'blob',
   });
 }
 
 /**
  * Batch import rebate settings
  */
-export async function batchImportRebateSettings(data: BatchImportData): Promise<{
-  success: number;
-  failed: number;
+export async function batchImportRebateSettings(
+  data: BatchImportData,
+): Promise<{
   errors?: string[];
+  failed: number;
+  success: number;
 }> {
   const formData = new FormData();
   formData.append('file', data.file);
   formData.append('type', data.type);
-  
+
   return requestClient.post('/rebate-settings/batch-import', formData, {
     headers: {
-      'Content-Type': 'multipart/form-data'
-    }
+      'Content-Type': 'multipart/form-data',
+    },
   });
 }
 
 /**
  * Get rebate statistics
  */
-export async function getRebateStatistics(type: 'validBet' | 'netProfit'): Promise<{
-  totalConfigs: number;
-  totalGameCategories: number;
+export async function getRebateStatistics(
+  type: 'netProfit' | 'validBet',
+): Promise<{
   averageRebateRate: number;
   lastUpdated: string;
+  totalConfigs: number;
+  totalGameCategories: number;
 }> {
   return requestClient.get(`/rebate-settings/statistics/${type}`);
 }
@@ -135,9 +151,11 @@ export async function getRebateStatistics(type: 'validBet' | 'netProfit'): Promi
 /**
  * Validate rebate configuration
  */
-export async function validateRebateConfig(data: Omit<RebateConfig, 'id' | 'createdAt' | 'updatedAt'>): Promise<{
-  valid: boolean;
+export async function validateRebateConfig(
+  data: Omit<RebateConfig, 'createdAt' | 'id' | 'updatedAt'>,
+): Promise<{
   errors?: string[];
+  valid: boolean;
   warnings?: string[];
 }> {
   return requestClient.post('/rebate-settings/validate', data);
@@ -146,11 +164,13 @@ export async function validateRebateConfig(data: Omit<RebateConfig, 'id' | 'crea
 /**
  * Get game categories
  */
-export async function getGameCategories(): Promise<Array<{
-  value: string;
-  label: string;
-  description?: string;
-}>> {
+export async function getGameCategories(): Promise<
+  Array<{
+    description?: string;
+    label: string;
+    value: string;
+  }>
+> {
   const response = await requestClient.get('/rebate-settings/game-categories');
   // The response interceptor returns the whole object for success responses
   // So we need to extract the data from the response
@@ -159,4 +179,4 @@ export async function getGameCategories(): Promise<Array<{
     return response.data;
   }
   return [];
-} 
+}

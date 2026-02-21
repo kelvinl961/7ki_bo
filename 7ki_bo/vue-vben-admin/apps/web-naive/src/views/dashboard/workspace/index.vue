@@ -23,7 +23,9 @@ import { openWindow } from '@vben/utils';
 
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 import { defineAsyncComponent } from 'vue';
-const AnalyticsVisitsSource = defineAsyncComponent(() => import('../analytics/analytics-visits-source.vue'));
+const AnalyticsVisitsSource = defineAsyncComponent(
+  () => import('../analytics/analytics-visits-source.vue'),
+);
 
 const userStore = useUserStore();
 

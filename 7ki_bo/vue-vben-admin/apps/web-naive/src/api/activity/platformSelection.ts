@@ -29,10 +29,10 @@ export interface PlatformsWithGamesResponse {
   data: PlatformWithGames[];
   total: number;
   summary: {
-    totalPlatforms: number;
-    totalGames: number;
     enabledPlatforms: number;
     featuredPlatforms: number;
+    totalGames: number;
+    totalPlatforms: number;
   };
 }
 
@@ -59,9 +59,9 @@ export interface ValidationResult {
   valid: boolean;
   error?: string;
   gameValidations?: Array<{
+    error?: string;
     gameId: string;
     valid: boolean;
-    error?: string;
   }>;
 }
 
@@ -70,9 +70,9 @@ export interface ValidationResponse {
   allValid: boolean;
   validationResults: ValidationResult[];
   summary: {
+    invalidPlatforms: number;
     totalPlatforms: number;
     validPlatforms: number;
-    invalidPlatforms: number;
   };
 }
 
@@ -82,9 +82,12 @@ export interface ValidationResponse {
 export async function getPlatformsWithGames(params?: {
   includeDisabled?: boolean;
 }): Promise<PlatformsWithGamesResponse> {
-  return requestClient.get<PlatformsWithGamesResponse>('/platform-selection/platforms-with-games', {
-    params
-  });
+  return requestClient.get<PlatformsWithGamesResponse>(
+    '/platform-selection/platforms-with-games',
+    {
+      params,
+    },
+  );
 }
 
 /**
@@ -93,23 +96,23 @@ export async function getPlatformsWithGames(params?: {
 export async function getGamesByPlatform(
   platformId: number,
   params?: {
-    includeDisabled?: boolean;
     gameType?: string;
+    includeDisabled?: boolean;
     search?: string;
-  }
+  },
 ): Promise<{
-  success: boolean;
   data: GameItem[];
-  total: number;
   platformId: number;
+  success: boolean;
+  total: number;
 }> {
   return requestClient.get<{
-    success: boolean;
     data: GameItem[];
-    total: number;
     platformId: number;
+    success: boolean;
+    total: number;
   }>(`/platform-selection/platform/${platformId}/games`, {
-    params
+    params,
   });
 }
 
@@ -119,5 +122,8 @@ export async function getGamesByPlatform(
 export async function validatePlatformSelection(config: {
   wageringPlatformConfig: WageringPlatformConfig;
 }): Promise<ValidationResponse> {
-  return requestClient.post<ValidationResponse>('/platform-selection/validate', config);
+  return requestClient.post<ValidationResponse>(
+    '/platform-selection/validate',
+    config,
+  );
 }

@@ -11,31 +11,33 @@ export function useImagePreloader() {
 
     return new Promise((resolve, reject) => {
       const img = new Image();
-      
-      img.onload = () => {
+
+      img.addEventListener('load', () => {
         preloadedImages.value.add(url);
         resolve();
-      };
-      
+      });
+
       img.onerror = () => {
         console.warn('Failed to preload image:', url);
         reject(new Error(`Failed to preload image: ${url}`));
       };
-      
+
       img.src = url;
     });
   };
 
   // Preload multiple images
   const preloadImages = async (urls: string[]): Promise<void> => {
-    const validUrls = urls.filter(url => url && !preloadedImages.value.has(url));
-    
+    const validUrls = urls.filter(
+      (url) => url && !preloadedImages.value.has(url),
+    );
+
     if (validUrls.length === 0) {
       return;
     }
 
     try {
-      await Promise.all(validUrls.map(url => preloadImage(url)));
+      await Promise.all(validUrls.map((url) => preloadImage(url)));
       console.log(`Preloaded ${validUrls.length} images`);
     } catch (error) {
       console.warn('Some images failed to preload:', error);
@@ -52,12 +54,12 @@ export function useImagePreloader() {
       'appInternalLogo',
       'lobbyLogo',
       'webFavicon',
-      'webLogo'
+      'webLogo',
     ];
 
     const imageUrls = imageTypes
-      .map(type => brandLogo[type])
-      .filter(url => url && typeof url === 'string');
+      .map((type) => brandLogo[type])
+      .filter((url) => url && typeof url === 'string');
 
     if (imageUrls.length > 0) {
       await preloadImages(imageUrls);
@@ -76,13 +78,13 @@ export function useImagePreloader() {
       'appInternalLogo',
       'lobbyLogo',
       'webFavicon',
-      'webLogo'
+      'webLogo',
     ];
 
-    const allImageUrls = tableData.flatMap(item => 
+    const allImageUrls = tableData.flatMap((item) =>
       imageTypes
-        .map(type => item[type])
-        .filter(url => url && typeof url === 'string')
+        .map((type) => item[type])
+        .filter((url) => url && typeof url === 'string'),
     );
 
     if (allImageUrls.length > 0) {
@@ -106,6 +108,6 @@ export function useImagePreloader() {
     preloadBrandLogoImages,
     preloadTableImages,
     isImagePreloaded,
-    clearPreloadedImages
+    clearPreloadedImages,
   };
-} 
+}

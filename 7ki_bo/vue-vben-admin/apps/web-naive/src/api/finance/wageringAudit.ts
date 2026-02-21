@@ -24,7 +24,7 @@ export interface WageringAuditItem {
   sourceType: string;
   sourceId: string;
   sourceAmount: number;
-  sourceDescription: string | null;
+  sourceDescription: null | string;
   multiplier: number;
   requiredBetAmount: number;
   currentBetAmount: number;
@@ -33,20 +33,20 @@ export interface WageringAuditItem {
   status: string;
   priority: number;
   createdAt: string;
-  activatedAt: string | null;
-  completedAt: string | null;
-  expiresAt: string | null;
-  cancelledAt: string | null;
-  cancellationReason: string | null;
+  activatedAt: null | string;
+  completedAt: null | string;
+  expiresAt: null | string;
+  cancelledAt: null | string;
+  cancellationReason: null | string;
   metadata: any;
   auditVersion: number;
   progressPercentage: string;
   user: {
-    id: number;
     account: string;
-    name: string | null;
-    userID: string | null;
-    uuid: string | null;
+    id: number;
+    name: null | string;
+    userID: null | string;
+    uuid: null | string;
   };
 }
 
@@ -58,41 +58,41 @@ export interface WageringAuditListResponse {
     total: number;
   };
   pageTotals: {
-    totalSourceAmount: number;
-    totalRequiredBet: number;
     totalCurrentBet: number;
     totalRemaining: number;
+    totalRequiredBet: number;
+    totalSourceAmount: number;
   };
   overallTotals: {
-    totalSourceAmount: number;
-    totalRequiredBet: number;
+    count: number;
     totalCurrentBet: number;
     totalRemaining: number;
-    count: number;
+    totalRequiredBet: number;
+    totalSourceAmount: number;
   };
 }
 
 export interface WageringAuditStatistics {
   totals: {
-    totalSourceAmount: number;
-    totalRequiredBet: number;
+    count: number;
     totalCurrentBet: number;
     totalRemaining: number;
-    count: number;
+    totalRequiredBet: number;
+    totalSourceAmount: number;
   };
   byStatus: Array<{
-    status: string;
-    sourceAmount: number;
-    requiredBet: number;
-    currentBet: number;
     count: number;
+    currentBet: number;
+    requiredBet: number;
+    sourceAmount: number;
+    status: string;
   }>;
   bySourceType: Array<{
-    sourceType: string;
-    sourceAmount: number;
-    requiredBet: number;
-    currentBet: number;
     count: number;
+    currentBet: number;
+    requiredBet: number;
+    sourceAmount: number;
+    sourceType: string;
   }>;
 }
 
@@ -100,22 +100,28 @@ export interface WageringAuditStatistics {
  * Get all wagering audits with filters
  */
 export async function getWageringAuditsApi(
-  filters: WageringAuditFilters = {}
+  filters: WageringAuditFilters = {},
 ): Promise<WageringAuditListResponse> {
-  return requestClient.get<WageringAuditListResponse>('/admin/wagering-audits', {
-    params: filters
-  });
+  return requestClient.get<WageringAuditListResponse>(
+    '/admin/wagering-audits',
+    {
+      params: filters,
+    },
+  );
 }
 
 /**
  * Get wagering audit statistics
  */
 export async function getWageringAuditStatisticsApi(
-  filters: Partial<WageringAuditFilters> = {}
+  filters: Partial<WageringAuditFilters> = {},
 ): Promise<WageringAuditStatistics> {
-  return requestClient.get<WageringAuditStatistics>('/admin/wagering-audits/statistics', {
-    params: filters
-  });
+  return requestClient.get<WageringAuditStatistics>(
+    '/admin/wagering-audits/statistics',
+    {
+      params: filters,
+    },
+  );
 }
 
 /**
@@ -135,14 +141,17 @@ export async function getAuditStatusesApi(): Promise<string[]> {
 /**
  * Cancel an audit (admin operation)
  */
-export async function cancelAuditApi(auditId: string, reason: string): Promise<{
-  success: boolean;
-  message: string;
+export async function cancelAuditApi(
+  auditId: string,
+  reason: string,
+): Promise<{
   data?: {
     auditId: string;
-    reason: string;
     cancelledAt: string;
+    reason: string;
   };
+  message: string;
+  success: boolean;
 }> {
   return requestClient.post(`/admin/audits/${auditId}/cancel`, { reason });
 }
@@ -150,15 +159,19 @@ export async function cancelAuditApi(auditId: string, reason: string): Promise<{
 /**
  * Force complete an audit (admin operation)
  */
-export async function forceCompleteAuditApi(auditId: string, reason: string): Promise<{
-  success: boolean;
-  message: string;
+export async function forceCompleteAuditApi(
+  auditId: string,
+  reason: string,
+): Promise<{
   data?: {
     auditId: string;
-    reason: string;
     completedAt: string;
+    reason: string;
   };
+  message: string;
+  success: boolean;
 }> {
-  return requestClient.post(`/admin/audits/${auditId}/force-complete`, { reason });
+  return requestClient.post(`/admin/audits/${auditId}/force-complete`, {
+    reason,
+  });
 }
-

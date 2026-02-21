@@ -1,8 +1,5 @@
 <template>
-  <Page 
-    title="游戏管理" 
-    description="热门游戏管理与配置"
-  >
+  <Page title="游戏管理" description="热门游戏管理与配置">
     <!-- 面包屑导航 -->
     <div class="mb-4">
       <n-breadcrumb>
@@ -12,9 +9,9 @@
     </div>
 
     <!-- 主要内容区域 -->
-    <n-tabs 
-      v-model:value="activeTab" 
-      type="line" 
+    <n-tabs
+      v-model:value="activeTab"
+      type="line"
       animated
       @update:value="handleTabChange"
     >
@@ -55,14 +52,14 @@
 <script setup lang="ts">
 import { ref, onMounted, defineAsyncComponent } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { 
-  NBreadcrumb, 
-  NBreadcrumbItem, 
-  NButton, 
-  NCard, 
-  NEmpty, 
-  NTabPane, 
-  NTabs 
+import {
+  NBreadcrumb,
+  NBreadcrumbItem,
+  NButton,
+  NCard,
+  NEmpty,
+  NTabPane,
+  NTabs,
 } from 'naive-ui';
 import { Page } from '@vben/common-ui';
 import { notification } from '#/adapter/naive';
@@ -135,4 +132,4 @@ onMounted(() => {
 :deep(.n-empty) {
   padding: 80px 0;
 }
-</style> 
+</style>

@@ -1,10 +1,7 @@
 <template>
   <div class="share-management">
     <n-card>
-      <n-empty 
-        description="分享管理功能正在开发中..."
-        size="large"
-      >
+      <n-empty description="分享管理功能正在开发中..." size="large">
         <template #extra>
           <n-button type="primary" @click="handleComingSoon">
             敬请期待
@@ -40,4 +37,4 @@ const handleComingSoon = () => {
   align-items: center;
   justify-content: center;
 }
-</style> 
+</style>

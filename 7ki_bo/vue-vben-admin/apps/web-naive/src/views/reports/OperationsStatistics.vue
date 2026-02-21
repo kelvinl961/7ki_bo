@@ -5,7 +5,7 @@
       <n-tabs
         v-model:value="activeTab"
         type="line"
-        class="mb-6 tab-outside"
+        class="tab-outside mb-6"
         pane-class="p-0"
       >
         <n-tab-pane name="daily-report" tab="日运营报表" :lazy="true">
@@ -62,12 +62,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import {
-  NCard,
-  NTabs,
-  NTabPane,
-  NIcon,
-} from 'naive-ui';
+import { NCard, NTabs, NTabPane, NIcon } from 'naive-ui';
 import {
   CalendarOutline,
   PersonOutline,
@@ -78,10 +73,18 @@ import { Page } from '@vben/common-ui';
 
 // ✅ PERFORMANCE FIX: Lazy load tab components - they only load when their tab is opened
 import { defineAsyncComponent } from 'vue';
-const DailyOperationsReport = defineAsyncComponent(() => import('./DailyOperationsReport.vue'));
-const MemberTotalReport = defineAsyncComponent(() => import('./MemberTotalReport.vue'));
-const SingleMemberReport = defineAsyncComponent(() => import('./SingleMemberReport.vue'));
-const ActivityCharts = defineAsyncComponent(() => import('./ActivityCharts.vue'));
+const DailyOperationsReport = defineAsyncComponent(
+  () => import('./DailyOperationsReport.vue'),
+);
+const MemberTotalReport = defineAsyncComponent(
+  () => import('./MemberTotalReport.vue'),
+);
+const SingleMemberReport = defineAsyncComponent(
+  () => import('./SingleMemberReport.vue'),
+);
+const ActivityCharts = defineAsyncComponent(
+  () => import('./ActivityCharts.vue'),
+);
 
 const activeTab = ref('daily-report');
 </script>

@@ -2,34 +2,34 @@
  * Domain Management Types
  */
 
-export type CDNProvider = 
-  | 'CLOUDFLARE' 
-  | 'AWS' 
-  | 'TENCENT_CLOUD' 
-  | 'ALIYUN' 
-  | 'HUAWEI_CLOUD' 
-  | 'OTHER';
+export type CDNProvider =
+  | 'ALIYUN'
+  | 'AWS'
+  | 'CLOUDFLARE'
+  | 'HUAWEI_CLOUD'
+  | 'OTHER'
+  | 'TENCENT_CLOUD';
 
-export type DomainStatus = 
-  | 'NORMAL' 
-  | 'VERIFICATION_PENDING' 
-  | 'DISABLED' 
-  | 'EXPIRED';
+export type DomainStatus =
+  | 'DISABLED'
+  | 'EXPIRED'
+  | 'NORMAL'
+  | 'VERIFICATION_PENDING';
 
-export type DomainUseType = 
-  | 'WEB_HALL' 
-  | 'APP_HALL' 
-  | 'DOWNLOAD_SITE' 
-  | 'BACKEND_API' 
-  | 'OSS_ACCELERATION' 
-  | 'TRANSFER_PAGE' 
-  | 'APP_UPDATE';
+export type DomainUseType =
+  | 'APP_HALL'
+  | 'APP_UPDATE'
+  | 'BACKEND_API'
+  | 'DOWNLOAD_SITE'
+  | 'OSS_ACCELERATION'
+  | 'TRANSFER_PAGE'
+  | 'WEB_HALL';
 
-export type SecurityStatus = 'UNKNOWN' | 'NORMAL' | 'BLOCKED';
+export type SecurityStatus = 'BLOCKED' | 'NORMAL' | 'UNKNOWN';
 
 export type PortType = 'DEFAULT' | 'FIXED';
 
-export type DeviceBlocking = 'NONE' | 'BLOCK_MOBILE' | 'BLOCK_PC';
+export type DeviceBlocking = 'BLOCK_MOBILE' | 'BLOCK_PC' | 'NONE';
 
 export type EntranceType = 'ALL' | 'APP_ONLY' | 'H5_PWA';
 
@@ -50,24 +50,24 @@ export interface Domain {
   certificateExpiryDate?: string;
   usageScenario?: string;
   备注?: string;
-  
+
   // Classification
   useType?: DomainUseType;
   isParentDomain: boolean;
   parentDomainId?: number;
   subDomainCount: number;
-  
+
   // DNS Configuration
   dnsRecords?: any[];
   nameservers?: string[];
   cdnConfiguration?: any;
-  
+
   // CDN Management
   canChangeCDN: boolean;
   availableCDNNodes?: string[];
   lastCDNSwitch?: string;
   domainRefreshing: number;
-  
+
   // Security
   isFirewall: SecurityStatus;
   isHijack: SecurityStatus;
@@ -76,24 +76,24 @@ export interface Domain {
   is360Hijack: SecurityStatus;
   isPutOnRecord: SecurityStatus;
   blockadedArea?: string;
-  
+
   // Port Management
   portType: PortType;
   customPort?: number;
   portStartDate?: string;
   portAutoRecycle: boolean;
-  
+
   // Agent & Promotion
   isPromotionDomain: boolean;
   boundAgentId?: string;
   enabledEntrance: EntranceType;
   blockedDevice: DeviceBlocking;
-  
+
   // SSL
   sslEnabled: boolean;
   sslCertificate?: any;
   certificateType: number;
-  
+
   // Metadata
   siteCode?: string;
   appId?: string;
@@ -112,11 +112,11 @@ export interface HealthCheckResult {
   domainName: string;
   cdnProvider: string;
   healthScore: number;
-  status: '优' | '良' | '差';
+  status: '优' | '差' | '良';
   responseTime: number;
   testedRegions?: RegionCheckResult[];
   failedRegions?: string[];
-  checkType: 'HTTP' | 'DNS';
+  checkType: 'DNS' | 'HTTP';
   checkUrl?: string;
   resolvedIp?: string;
   isDNSPolluted?: boolean;
@@ -142,34 +142,34 @@ export interface TrafficStats {
   domainName: string;
   cdnProvider: string;
   month: string;
-  
+
   // Cost
   totalCost: number;
   nodeFee: number;
   excessCost: number;
-  
+
   // Traffic
   freeTraffic: number;
   usedTraffic: number;
   excessTraffic: number;
   excessUnitPrice: number;
-  
+
   // Bandwidth
   peakBandwidth: number;
   avgBandwidth: number;
-  
+
   // Subdomains
   freeSubdomains: number;
   usedSubdomains: number;
   excessSubdomains: number;
   subdomainUnitPrice: number;
-  
+
   // Requests
   totalRequests: bigint;
   cachedRequests: bigint;
   uncachedRequests: bigint;
   cacheHitRate: number;
-  
+
   createdAt: string;
   updatedAt: string;
 }
@@ -253,4 +253,3 @@ export interface TrafficFilter {
   minCost?: number;
   maxCost?: number;
 }
-

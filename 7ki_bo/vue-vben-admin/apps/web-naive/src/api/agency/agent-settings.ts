@@ -4,8 +4,8 @@ import { requestClient } from '#/api/request';
 export interface AgentNetProfitSettings {
   id: number;
   currency: string;
-  excludePromotions: boolean;  // 排除优惠和活动
-  excludeGameCosts: boolean;   // 三方游戏统一成本
+  excludePromotions: boolean; // 排除优惠和活动
+  excludeGameCosts: boolean; // 三方游戏统一成本
   excludeDepositFees: boolean; // 充值手续费
   excludeWithdrawFees: boolean; // 提现手续费
   excludePreviousBalance: boolean; // 上期结余
@@ -75,18 +75,34 @@ export interface UpdatePublicSettingsRequest {
 
 // Net Profit Settings API
 export function getNetProfitSettingsApi(currency: string = 'BRL') {
-  return requestClient.get<{ data: AgentNetProfitSettings }>(`/agent-settings/net-profit/${currency}`);
+  return requestClient.get<{ data: AgentNetProfitSettings }>(
+    `/agent-settings/net-profit/${currency}`,
+  );
 }
 
-export function updateNetProfitSettingsApi(currency: string = 'BRL', data: UpdateNetProfitSettingsRequest) {
-  return requestClient.put<{ data: AgentNetProfitSettings }>(`/agent-settings/net-profit/${currency}`, data);
+export function updateNetProfitSettingsApi(
+  currency: string = 'BRL',
+  data: UpdateNetProfitSettingsRequest,
+) {
+  return requestClient.put<{ data: AgentNetProfitSettings }>(
+    `/agent-settings/net-profit/${currency}`,
+    data,
+  );
 }
 
 // Public Agent Settings API
 export function getPublicSettingsApi(currency: string = 'BRL') {
-  return requestClient.get<{ data: AgentPublicSettings }>(`/agent-settings/public/${currency}`);
+  return requestClient.get<{ data: AgentPublicSettings }>(
+    `/agent-settings/public/${currency}`,
+  );
 }
 
-export function updatePublicSettingsApi(currency: string = 'BRL', data: UpdatePublicSettingsRequest) {
-  return requestClient.put<{ data: AgentPublicSettings }>(`/agent-settings/public/${currency}`, data);
+export function updatePublicSettingsApi(
+  currency: string = 'BRL',
+  data: UpdatePublicSettingsRequest,
+) {
+  return requestClient.put<{ data: AgentPublicSettings }>(
+    `/agent-settings/public/${currency}`,
+    data,
+  );
 }

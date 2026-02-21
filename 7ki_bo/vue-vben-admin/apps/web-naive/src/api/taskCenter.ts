@@ -5,10 +5,20 @@ export interface TaskCenter {
   id: number;
   title: string;
   description?: string;
-  category: 'NOVICE_WELFARE' | 'DAILY_TASK' | 'WEEKLY_TASK' | 'THREE_DAY_RANKING';
+  category:
+    | 'DAILY_TASK'
+    | 'NOVICE_WELFARE'
+    | 'THREE_DAY_RANKING'
+    | 'WEEKLY_TASK';
   taskType: string;
   sortOrder: number;
-  rewardType: 'CASH' | 'POINTS' | 'BONUS' | 'FREE_SPINS' | 'DISCOUNT' | 'CUSTOM';
+  rewardType:
+    | 'BONUS'
+    | 'CASH'
+    | 'CUSTOM'
+    | 'DISCOUNT'
+    | 'FREE_SPINS'
+    | 'POINTS';
   rewardAmount: number;
   rewardCurrency: string;
   isActive: boolean;
@@ -18,48 +28,48 @@ export interface TaskCenter {
   triggerConditions?: any;
   claimRestrictions?: any;
   memberGroups: string[];
-  
+
   // 🎯 NEW: Enhanced settings from Screenshot 2
-  taskValidity?: 'long_term' | 'limited_time';
-  claimMethod?: 'MANUAL' | 'AUTOMATIC' | string;
-  claimTimeType?: 'REAL_TIME' | 'NEXT_DAY' | string;
-  
+  taskValidity?: 'limited_time' | 'long_term';
+  claimMethod?: 'AUTOMATIC' | 'MANUAL' | string;
+  claimTimeType?: 'NEXT_DAY' | 'REAL_TIME' | string;
+
   // 🎯 NEW: Claim Entries
   claimEntries?: {
     androidApp: boolean;
-    iosApp: boolean;
+    androidH5: boolean;
+    deviceBindingOnce: boolean;
     h5: boolean;
-    pwa: boolean;
+    iosApp: boolean;
+    iosH5: boolean;
     iosWeb: boolean;
     pcWeb: boolean;
-    androidH5: boolean;
-    iosH5: boolean;
+    pwa: boolean;
     sameDeviceOnce: boolean;
     webLoginOnce: boolean;
-    deviceBindingOnce: boolean;
   };
-  
+
   // 🎯 NEW: Restrictions
   restrictions?: string[];
-  
+
   // 🎯 CRITICAL: Audit Settings (稽核倍数设置)
   auditSettings?: {
-    auditRequired: boolean;
-    auditMultiplier: number;
     auditManualReviewRequired: boolean;
+    auditMultiplier: number;
+    auditRequired: boolean;
   };
-  
+
   // 🎯 NEW: Login Redirect Methods
   loginRedirectMethod?: {
-    beforeLogin: 'high_frequency' | 'custom';
-    afterLogin: 'high_frequency' | 'custom';
+    afterLogin: 'custom' | 'high_frequency';
+    beforeLogin: 'custom' | 'high_frequency';
     directAfterRecharge: boolean;
   };
-  
+
   // 🎯 NEW: Reward Rules
   rewardRules?: {
-    explanationType: 'default' | 'custom';
     customText: string;
+    explanationType: 'custom' | 'default';
   };
 
   // Legacy fields (backward compatibility)
@@ -93,63 +103,73 @@ export interface TaskCenterCreateRequest {
   // Basic Information
   title: string;
   description?: string;
-  category: 'NOVICE_WELFARE' | 'DAILY_TASK' | 'WEEKLY_TASK' | 'THREE_DAY_RANKING';
+  category:
+    | 'DAILY_TASK'
+    | 'NOVICE_WELFARE'
+    | 'THREE_DAY_RANKING'
+    | 'WEEKLY_TASK';
   taskType: string;
   sortOrder?: number;
-  rewardType: 'CASH' | 'POINTS' | 'BONUS' | 'FREE_SPINS' | 'DISCOUNT' | 'CUSTOM';
+  rewardType:
+    | 'BONUS'
+    | 'CASH'
+    | 'CUSTOM'
+    | 'DISCOUNT'
+    | 'FREE_SPINS'
+    | 'POINTS';
   rewardAmount: number;
   rewardCurrency?: string;
   isActive?: boolean;
   activityLevel?: number; // 🎯 NEW: Activity level field
   ruleDescription?: string;
-  
+
   // Task Conditions
   taskConditions: any;
   triggerConditions?: any;
   claimRestrictions?: any;
   memberGroups?: string[];
-  
+
   // 🎯 NEW: Enhanced settings from Screenshot 2
-  taskValidity?: 'long_term' | 'limited_time';
-  claimMethod?: 'MANUAL' | 'AUTOMATIC';
-  claimTimeType?: 'REAL_TIME' | 'NEXT_DAY';
-  
+  taskValidity?: 'limited_time' | 'long_term';
+  claimMethod?: 'AUTOMATIC' | 'MANUAL';
+  claimTimeType?: 'NEXT_DAY' | 'REAL_TIME';
+
   // 🎯 NEW: Claim Entries
   claimEntries?: {
     androidApp: boolean;
-    iosApp: boolean;
+    androidH5: boolean;
+    deviceBindingOnce: boolean;
     h5: boolean;
-    pwa: boolean;
+    iosApp: boolean;
+    iosH5: boolean;
     iosWeb: boolean;
     pcWeb: boolean;
-    androidH5: boolean;
-    iosH5: boolean;
+    pwa: boolean;
     sameDeviceOnce: boolean;
     webLoginOnce: boolean;
-    deviceBindingOnce: boolean;
   };
-  
+
   // 🎯 NEW: Restrictions
   restrictions?: string[];
-  
+
   // 🎯 CRITICAL: Audit Settings (稽核倍数设置)
   auditSettings?: {
-    auditRequired: boolean;
-    auditMultiplier: number;
     auditManualReviewRequired: boolean;
+    auditMultiplier: number;
+    auditRequired: boolean;
   };
-  
+
   // 🎯 NEW: Login Redirect Methods
   loginRedirectMethod?: {
-    beforeLogin: 'high_frequency' | 'custom';
-    afterLogin: 'high_frequency' | 'custom';
+    afterLogin: 'custom' | 'high_frequency';
+    beforeLogin: 'custom' | 'high_frequency';
     directAfterRecharge: boolean;
   };
-  
+
   // 🎯 NEW: Reward Rules
   rewardRules?: {
-    explanationType: 'default' | 'custom';
     customText: string;
+    explanationType: 'custom' | 'default';
   };
 
   // Legacy Platform selection (backward compatibility)
@@ -199,12 +219,12 @@ export interface TaskCenterListResponse {
 export interface TaskCenterStatsResponse {
   success: boolean;
   data: {
-    total: number;
     active: number;
-    inactive: number;
-    totalRewardAmount: number;
     byCategory: Record<string, number>;
     byRewardType: Record<string, number>;
+    inactive: number;
+    total: number;
+    totalRewardAmount: number;
   };
 }
 
@@ -217,42 +237,42 @@ export interface GlobalSettings {
 
 // Task Category enum
 export enum TaskCategory {
-  NOVICE_WELFARE = 'NOVICE_WELFARE',
   DAILY_TASK = 'DAILY_TASK',
+  NOVICE_WELFARE = 'NOVICE_WELFARE',
+  THREE_DAY_RANKING = 'THREE_DAY_RANKING',
   WEEKLY_TASK = 'WEEKLY_TASK',
-  THREE_DAY_RANKING = 'THREE_DAY_RANKING'
 }
 
 // Helper functions for labels
 export function getTaskTypeLabel(taskType: string): string {
   const taskTypeLabels: Record<string, string> = {
-    'REGISTRATION': '注册任务',
-    'LOGIN': '登录任务',
-    'DEPOSIT': '充值任务',
-    'BETTING': '投注任务',
-    'WITHDRAWAL': '提现任务',
-    'REFERRAL': '推荐任务',
-    'PROFILE_COMPLETION': '完善资料',
-    'EMAIL_VERIFICATION': '邮箱验证',
-    'PHONE_VERIFICATION': '手机验证',
-    'BANK_BINDING': '银行卡绑定',
-    'REAL_NAME_AUTH': '实名认证',
-    'FIRST_DEPOSIT': '首充任务',
-    'DAILY_LOGIN': '每日登录',
-    'WEEKLY_LOGIN': '每周登录',
-    'CUSTOM': '自定义任务'
+    REGISTRATION: '注册任务',
+    LOGIN: '登录任务',
+    DEPOSIT: '充值任务',
+    BETTING: '投注任务',
+    WITHDRAWAL: '提现任务',
+    REFERRAL: '推荐任务',
+    PROFILE_COMPLETION: '完善资料',
+    EMAIL_VERIFICATION: '邮箱验证',
+    PHONE_VERIFICATION: '手机验证',
+    BANK_BINDING: '银行卡绑定',
+    REAL_NAME_AUTH: '实名认证',
+    FIRST_DEPOSIT: '首充任务',
+    DAILY_LOGIN: '每日登录',
+    WEEKLY_LOGIN: '每周登录',
+    CUSTOM: '自定义任务',
   };
   return taskTypeLabels[taskType] || taskType;
 }
 
 export function getRewardTypeLabel(rewardType: string): string {
   const rewardTypeLabels: Record<string, string> = {
-    'CASH': '现金奖励',
-    'POINTS': '积分奖励',
-    'BONUS': '奖金奖励',
-    'FREE_SPINS': '免费旋转',
-    'DISCOUNT': '折扣优惠',
-    'CUSTOM': '自定义奖励'
+    CASH: '现金奖励',
+    POINTS: '积分奖励',
+    BONUS: '奖金奖励',
+    FREE_SPINS: '免费旋转',
+    DISCOUNT: '折扣优惠',
+    CUSTOM: '自定义奖励',
   };
   return rewardTypeLabels[rewardType] || rewardType;
 }
@@ -314,7 +334,9 @@ export function getTaskCenterList(params: TaskCenterListParams = {}) {
  */
 export function getTaskCenterById(id: number) {
   // Tasks are now hard-coded, get from list instead
-  return requestClient.get<{ success: boolean; data: TaskCenter }>(`/novice-welfare/tasks`);
+  return requestClient.get<{ data: TaskCenter; success: boolean }>(
+    `/novice-welfare/tasks`,
+  );
 }
 
 /**
@@ -323,16 +345,27 @@ export function getTaskCenterById(id: number) {
  */
 export function createTaskCenter(data: TaskCenterCreateRequest) {
   console.log('🔄 Redirecting task creation to settings save with versioning');
-  return requestClient.post<{ success: boolean; data: any; version: number; message: string }>('/novice-welfare-settings', data);
+  return requestClient.post<{
+    data: any;
+    message: string;
+    success: boolean;
+    version: number;
+  }>('/novice-welfare-settings', data);
 }
 
 /**
  * Update task center - Updates individual task in database
  * This updates the actual noviceWelfareTask record, not settings
  */
-export function updateTaskCenter(id: number, data: Partial<TaskCenterCreateRequest>) {
+export function updateTaskCenter(
+  id: number,
+  data: Partial<TaskCenterCreateRequest>,
+) {
   console.log(`🔄 Updating task ${id} with data:`, data);
-  return requestClient.put<{ success: boolean; data: any; message: string }>(`/novice-welfare/tasks/${id}`, data);
+  return requestClient.put<{ data: any; message: string; success: boolean }>(
+    `/novice-welfare/tasks/${id}`,
+    data,
+  );
 }
 
 /**
@@ -340,17 +373,28 @@ export function updateTaskCenter(id: number, data: Partial<TaskCenterCreateReque
  * Tasks are hard-coded and cannot be deleted
  */
 export function deleteTaskCenter(id: number) {
-  console.warn('⚠️ deleteTaskCenter: Tasks are hard-coded and cannot be deleted');
-  return Promise.reject(new Error('Task deletion not supported - tasks are hard-coded'));
+  console.warn(
+    '⚠️ deleteTaskCenter: Tasks are hard-coded and cannot be deleted',
+  );
+  return Promise.reject(
+    new Error('Task deletion not supported - tasks are hard-coded'),
+  );
 }
 
 /**
  * Bulk update task centers - NOT SUPPORTED IN NEW SYSTEM
  * Tasks are hard-coded and cannot be bulk updated
  */
-export function bulkUpdateTaskCenters(ids: number[], data: Partial<TaskCenter>) {
-  console.warn('⚠️ bulkUpdateTaskCenters: Tasks are hard-coded and cannot be bulk updated');
-  return Promise.reject(new Error('Bulk task updates not supported - tasks are hard-coded'));
+export function bulkUpdateTaskCenters(
+  ids: number[],
+  data: Partial<TaskCenter>,
+) {
+  console.warn(
+    '⚠️ bulkUpdateTaskCenters: Tasks are hard-coded and cannot be bulk updated',
+  );
+  return Promise.reject(
+    new Error('Bulk task updates not supported - tasks are hard-coded'),
+  );
 }
 
 /**
@@ -358,24 +402,36 @@ export function bulkUpdateTaskCenters(ids: number[], data: Partial<TaskCenter>) 
  * Tasks are hard-coded and cannot be deleted
  */
 export function bulkDeleteTaskCenters(ids: number[]) {
-  console.warn('⚠️ bulkDeleteTaskCenters: Tasks are hard-coded and cannot be deleted');
-  return Promise.reject(new Error('Bulk task deletion not supported - tasks are hard-coded'));
+  console.warn(
+    '⚠️ bulkDeleteTaskCenters: Tasks are hard-coded and cannot be deleted',
+  );
+  return Promise.reject(
+    new Error('Bulk task deletion not supported - tasks are hard-coded'),
+  );
 }
 
 /**
  * Get task center statistics
  */
 export function getTaskCenterStats() {
-  return requestClient.get<TaskCenterStatsResponse>('/novice-welfare-settings/summary');
+  return requestClient.get<TaskCenterStatsResponse>(
+    '/novice-welfare-settings/summary',
+  );
 }
 
 /**
  * Update task sort order - NOT SUPPORTED IN NEW SYSTEM
  * Tasks have predefined sort order
  */
-export function updateTaskSortOrder(tasks: Array<{ id: number; sortOrder: number }>) {
-  console.warn('⚠️ updateTaskSortOrder: Tasks have predefined sort order and cannot be reordered');
-  return Promise.reject(new Error('Task reordering not supported - tasks have predefined order'));
+export function updateTaskSortOrder(
+  tasks: Array<{ id: number; sortOrder: number }>,
+) {
+  console.warn(
+    '⚠️ updateTaskSortOrder: Tasks have predefined sort order and cannot be reordered',
+  );
+  return Promise.reject(
+    new Error('Task reordering not supported - tasks have predefined order'),
+  );
 }
 
 /**
@@ -383,21 +439,29 @@ export function updateTaskSortOrder(tasks: Array<{ id: number; sortOrder: number
  * Now supports individual task status updates
  */
 export function toggleTaskStatus(id: number, isActive: boolean) {
-  return requestClient.put<{ success: boolean; data: any; message: string }>(`/novice-welfare/tasks/${id}/status`, {
-    isActive,
-  });
+  return requestClient.put<{ data: any; message: string; success: boolean }>(
+    `/novice-welfare/tasks/${id}/status`,
+    {
+      isActive,
+    },
+  );
 }
 
 /**
  * Get global task settings
  */
 export function getGlobalTaskSettings() {
-  return requestClient.get<{ success: boolean; data: GlobalSettings }>('/novice-welfare-settings');
+  return requestClient.get<{ data: GlobalSettings; success: boolean }>(
+    '/novice-welfare-settings',
+  );
 }
 
 /**
  * Update global task settings
  */
 export function updateGlobalTaskSettings(settings: Partial<GlobalSettings>) {
-  return requestClient.post<{ success: boolean; data: GlobalSettings }>('/novice-welfare-settings', settings);
-} 
+  return requestClient.post<{ data: GlobalSettings; success: boolean }>(
+    '/novice-welfare-settings',
+    settings,
+  );
+}

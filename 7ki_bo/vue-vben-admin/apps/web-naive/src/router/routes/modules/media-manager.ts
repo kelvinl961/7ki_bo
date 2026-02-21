@@ -16,11 +16,12 @@ const routes: RouteRecordRaw[] = [
       {
         name: 'MediaManagerIndex',
         path: '',
-        //@ts-ignore
-        component: () => import('#/views/media-manager/index.vue').catch((err) => {
-          console.error('❌ Failed to load media-manager component:', err);
-          throw err;
-        }),
+        // @ts-ignore
+        component: () =>
+          import('#/views/media-manager/index.vue').catch((error) => {
+            console.error('❌ Failed to load media-manager component:', error);
+            throw error;
+          }),
         meta: {
           title: '媒体文件',
           icon: 'ic:baseline-photo-library',
@@ -33,4 +34,3 @@ const routes: RouteRecordRaw[] = [
 ];
 
 export default routes;
-

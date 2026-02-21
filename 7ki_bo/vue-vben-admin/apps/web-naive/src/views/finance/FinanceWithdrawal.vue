@@ -3,10 +3,18 @@
     <!-- Header and Filters -->
     <div class="header-section">
       <n-card :bordered="false" class="rounded-16px shadow-sm">
-        <div class="flex justify-between items-center mb-4">
+        <div class="mb-4 flex items-center justify-between">
           <div>
-            <h2 class="text-xl font-semibold text-gray-800">{{ props.isMyWithdrawal ? '由我出款' : '财务出款' }}</h2>
-            <p class="text-sm text-gray-600 mt-1">{{ props.isMyWithdrawal ? '我负责处理的提现出款' : '待财务处理的提现出款' }}</p>
+            <h2 class="text-xl font-semibold text-gray-800">
+              {{ props.isMyWithdrawal ? '由我出款' : '财务出款' }}
+            </h2>
+            <p class="mt-1 text-sm text-gray-600">
+              {{
+                props.isMyWithdrawal
+                  ? '我负责处理的提现出款'
+                  : '待财务处理的提现出款'
+              }}
+            </p>
           </div>
           <div class="flex gap-3">
             <!-- 🚀 SmartAutoRefresh Component -->
@@ -23,7 +31,7 @@
         <!-- Filter Section -->
         <div class="filter-section">
           <!-- Time Filter -->
-          <div class="flex flex-wrap items-center gap-4 mb-4">
+          <div class="mb-4 flex flex-wrap items-center gap-4">
             <div class="flex items-center gap-2">
               <span class="text-sm font-medium text-gray-600">申请时间</span>
               <n-radio-group v-model:value="filters.timeRange" size="small">
@@ -43,7 +51,9 @@
           </div>
 
           <!-- Search Filters -->
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4 mb-4">
+          <div
+            class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6"
+          >
             <!-- Member ID -->
             <div class="filter-item">
               <n-form-item label="会员账号">
@@ -121,7 +131,7 @@
           </div>
 
           <!-- Action Buttons -->
-          <div class="flex justify-between items-center">
+          <div class="flex items-center justify-between">
             <div class="flex gap-2">
               <n-button type="primary" @click="applyFilters" :loading="loading">
                 <template #icon>
@@ -135,9 +145,7 @@
                 </template>
                 高级搜索
               </n-button>
-              <n-button @click="clearFilters">
-                重置
-              </n-button>
+              <n-button @click="clearFilters"> 重置 </n-button>
               <n-button
                 type="primary"
                 :disabled="selectedIds.length === 0"
@@ -145,18 +153,14 @@
               >
                 批量操作 ({{ selectedIds.length }})
               </n-button>
-              <n-button>
-                自己提定的
-              </n-button>
+              <n-button> 自己提定的 </n-button>
             </div>
-            <div class="text-sm text-gray-600 flex items-center gap-2">
+            <div class="flex items-center gap-2 text-sm text-gray-600">
               已选择 {{ selectedIds.length }} 条数据
               <n-tag v-if="props.isMyWithdrawal" type="info" size="small">
                 我的出款
               </n-tag>
-              <n-tag v-else type="success" size="small">
-                财务出款
-              </n-tag>
+              <n-tag v-else type="success" size="small"> 财务出款 </n-tag>
               <!-- 🚀 NEW: SmartAutoRefresh Component -->
               <SmartAutoRefresh
                 v-model="autoRefreshEnabled"
@@ -165,7 +169,7 @@
                 :on-refresh="fetchData"
                 @interval-change="handleRefreshIntervalChange"
               />
-              <span class="text-blue-600 cursor-pointer">导出搜索</span>
+              <span class="cursor-pointer text-blue-600">导出搜索</span>
             </div>
           </div>
         </div>
@@ -184,7 +188,10 @@
       :scroll-x="2200"
       size="small"
       class="single-line-table"
-      @update:selected-keys="(keys: (string | number)[]) => selectedIds = keys.map(k => String(k))"
+      @update:selected-keys="
+        (keys: (string | number)[]) =>
+          (selectedIds = keys.map((k) => String(k)))
+      "
       @update:page="handlePageChange"
       @update:page-size="handlePageSizeChange"
       @refresh="fetchData"
@@ -192,23 +199,19 @@
     >
       <template #actionBar="{ selectedCount, selectedRows }">
         <n-card :bordered="false" class="rounded-16px shadow-sm">
-          <div class="flex justify-between items-center">
+          <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <!-- 主要操作按钮 -->
               <div class="flex gap-2">
-                <n-button 
-                  type="primary" 
-                  @click="fetchData"
-                  :loading="loading"
-                >
+                <n-button type="primary" @click="fetchData" :loading="loading">
                   <template #icon>
                     <n-icon><ReloadOutline /></n-icon>
                   </template>
                   刷新
                 </n-button>
-                <n-button 
+                <n-button
                   v-if="!props.isMyWithdrawal"
-                  type="info" 
+                  type="info"
                   @click="showBulkAssignModal"
                   :disabled="selectedCount === 0"
                 >
@@ -218,7 +221,7 @@
                   分配给我
                 </n-button>
               </div>
-              
+
               <!-- 全选当前页 + 批量操作 dropdown -->
               <n-checkbox
                 :checked="isAllCurrentPageSelected"
@@ -231,27 +234,47 @@
                 :options="batchOperationDropdownOptions"
                 :disabled="selectedCount === 0"
                 trigger="click"
-                @select="(key: string) => onBatchOperationSelect(key, selectedRows)"
+                @select="
+                  (key: string) => onBatchOperationSelect(key, selectedRows)
+                "
               >
-                <n-button type="primary" size="small" :disabled="selectedCount === 0">
-                  {{ selectedCount > 0 ? `批量操作 (${selectedCount})` : '批量操作' }}
+                <n-button
+                  type="primary"
+                  size="small"
+                  :disabled="selectedCount === 0"
+                >
+                  {{
+                    selectedCount > 0
+                      ? `批量操作 (${selectedCount})`
+                      : '批量操作'
+                  }}
                   <template #icon>
                     <n-icon class="ml-1"><ChevronUpOutline /></n-icon>
                   </template>
                 </n-button>
               </n-dropdown>
-              <span class="text-sm text-gray-600">已选择 {{ selectedCount }} 条数据</span>
-              <span class="text-sm text-gray-600">共 {{ paginationReactive.total }} 条</span>
-              <n-tag v-if="props.isMyWithdrawal" type="info" size="small">我的出款</n-tag>
+              <span class="text-sm text-gray-600"
+                >已选择 {{ selectedCount }} 条数据</span
+              >
+              <span class="text-sm text-gray-600"
+                >共 {{ paginationReactive.total }} 条</span
+              >
+              <n-tag v-if="props.isMyWithdrawal" type="info" size="small"
+                >我的出款</n-tag
+              >
               <n-tag v-else type="warning" size="small">财务出款</n-tag>
               <div class="summary-info">
-                <span class="font-medium">总计: {{ totalAmount.toFixed(2) }}</span>
+                <span class="font-medium"
+                  >总计: {{ totalAmount.toFixed(2) }}</span
+                >
               </div>
             </div>
-            
+
             <div class="flex items-center gap-4">
               <div class="flex gap-2">
-                <n-button size="small" @click="clearSelection">清空选择</n-button>
+                <n-button size="small" @click="clearSelection"
+                  >清空选择</n-button
+                >
                 <n-button size="small" @click="selectAll">全选</n-button>
               </div>
             </div>
@@ -321,11 +344,18 @@
           </n-alert>
         </div>
         <div class="max-h-60 overflow-y-auto">
-          <div v-for="item in processModal.items" :key="item.id" class="border rounded p-2 mb-2">
+          <div
+            v-for="item in processModal.items"
+            :key="item.id"
+            class="mb-2 rounded border p-2"
+          >
             <div class="text-sm">
               <div><strong>订单号:</strong> {{ item.orderId }}</div>
               <div><strong>会员:</strong> {{ item.memberAccount }}</div>
-              <div><strong>金额:</strong> {{ item.rewardAmount }} {{ item.currency }}</div>
+              <div>
+                <strong>金额:</strong> {{ item.rewardAmount }}
+                {{ item.currency }}
+              </div>
               <div><strong>收款方式:</strong> {{ item.paymentMethod }}</div>
             </div>
           </div>
@@ -368,11 +398,18 @@
           </n-alert>
         </div>
         <div class="max-h-60 overflow-y-auto">
-          <div v-for="item in assignModal.items" :key="item.id" class="border rounded p-2 mb-2">
+          <div
+            v-for="item in assignModal.items"
+            :key="item.id"
+            class="mb-2 rounded border p-2"
+          >
             <div class="text-sm">
               <div><strong>订单号:</strong> {{ item.orderId }}</div>
               <div><strong>会员:</strong> {{ item.memberAccount }}</div>
-              <div><strong>金额:</strong> {{ item.rewardAmount }} {{ item.currency }}</div>
+              <div>
+                <strong>金额:</strong> {{ item.rewardAmount }}
+                {{ item.currency }}
+              </div>
             </div>
           </div>
         </div>
@@ -440,7 +477,9 @@
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-600">申请时间:</span>
-                <span>{{ formatDateTime(detailModal.data.applicationTime) }}</span>
+                <span>{{
+                  formatDateTime(detailModal.data.applicationTime)
+                }}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-600">状态:</span>
@@ -456,16 +495,28 @@
               <div class="flex justify-between">
                 <span class="text-gray-600">提现金额:</span>
                 <span class="font-semibold text-green-600">
-                  {{ detailModal.data.rewardAmount }} {{ detailModal.data.currency }}
+                  {{ detailModal.data.rewardAmount }}
+                  {{ detailModal.data.currency }}
                 </span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-600">手续费:</span>
-                <span>{{ detailModal.data.fees || 0 }} {{ detailModal.data.currency }}</span>
+                <span
+                  >{{ detailModal.data.fees || 0 }}
+                  {{ detailModal.data.currency }}</span
+                >
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-600">实际到账:</span>
-                <span>{{ ((detailModal.data.rewardAmount || 0) - (detailModal.data.fees || 0)).toFixed(2) }} {{ detailModal.data.currency }}</span>
+                <span
+                  >{{
+                    (
+                      (detailModal.data.rewardAmount || 0) -
+                      (detailModal.data.fees || 0)
+                    ).toFixed(2)
+                  }}
+                  {{ detailModal.data.currency }}</span
+                >
               </div>
             </div>
           </n-card>
@@ -496,15 +547,15 @@
         <!-- Actions -->
         <div class="flex justify-end gap-3">
           <n-button @click="detailModal.show = false">关闭</n-button>
-          <n-button 
-            type="error" 
+          <n-button
+            type="error"
             @click="showSingleRejectModal(detailModal.data)"
             v-if="canReject(detailModal.data?.status)"
           >
             拒绝出款
           </n-button>
-          <n-button 
-            type="success" 
+          <n-button
+            type="success"
             @click="showSingleProcessModal(detailModal.data)"
             v-if="canApprove(detailModal.data?.status)"
           >
@@ -525,9 +576,11 @@
     >
       <div class="force-cancel-modal">
         <!-- Warning Message -->
-        <div class="warning-message mb-6 p-4 bg-orange-50 border border-orange-200 rounded-lg">
-          <div class="flex items-center gap-2 mb-3">
-            <span class="text-orange-600 font-medium">
+        <div
+          class="warning-message mb-6 rounded-lg border border-orange-200 bg-orange-50 p-4"
+        >
+          <div class="mb-3 flex items-center gap-2">
+            <span class="font-medium text-orange-600">
               请到三方支付后台确认这笔订单的真实状态，请谨慎操作避免损失，取消后提现金额将返还给会员！
             </span>
           </div>
@@ -542,7 +595,9 @@
             </div>
             <div>
               <span class="text-gray-600">会员ID：</span>
-              <span class="text-blue-600">{{ forceCancelModal.data.memberAccount }}</span>
+              <span class="text-blue-600">{{
+                forceCancelModal.data.memberAccount
+              }}</span>
               <n-tag type="info" size="small" class="ml-1">V1</n-tag>
             </div>
             <div>
@@ -550,30 +605,36 @@
               <span>{{ forceCancelModal.data.memberName || 'kelvin88' }}</span>
             </div>
           </div>
-          <div class="grid grid-cols-3 gap-4 text-sm mt-3">
+          <div class="mt-3 grid grid-cols-3 gap-4 text-sm">
             <div>
               <span class="text-gray-600">会员层级：</span>
-              <span>{{ forceCancelModal.data.memberTierName || '默认层级' }}</span>
+              <span>{{
+                forceCancelModal.data.memberTierName || '默认层级'
+              }}</span>
             </div>
             <div>
               <span class="text-gray-600">提现金额：</span>
-              <span class="font-semibold text-green-600">{{ forceCancelModal.data.rewardAmount }} BRL</span>
+              <span class="font-semibold text-green-600"
+                >{{ forceCancelModal.data.rewardAmount }} BRL</span
+              >
             </div>
             <div>
               <span class="text-gray-600">手续费：</span>
               <span>0.00 BRL</span>
             </div>
           </div>
-          <div class="text-sm mt-3">
+          <div class="mt-3 text-sm">
             <span class="text-gray-600">实际到账：</span>
-            <span class="font-semibold">{{ forceCancelModal.data.rewardAmount }} BRL</span>
+            <span class="font-semibold"
+              >{{ forceCancelModal.data.rewardAmount }} BRL</span
+            >
           </div>
         </div>
 
         <!-- Cancellation Reasons -->
-        <div class="grid grid-cols-2 gap-6 mb-6">
+        <div class="mb-6 grid grid-cols-2 gap-6">
           <div>
-            <label class="block text-sm font-medium mb-2">取消前台原因</label>
+            <label class="mb-2 block text-sm font-medium">取消前台原因</label>
             <n-input
               v-model:value="forceCancelModal.frontendReason"
               type="textarea"
@@ -581,12 +642,12 @@
               :rows="4"
               :maxlength="1000"
             />
-            <div class="text-right text-xs text-gray-500 mt-1">
+            <div class="mt-1 text-right text-xs text-gray-500">
               {{ forceCancelModal.frontendReason.length }}/1000
             </div>
           </div>
           <div>
-            <label class="block text-sm font-medium mb-2">取消后台原因</label>
+            <label class="mb-2 block text-sm font-medium">取消后台原因</label>
             <n-input
               v-model:value="forceCancelModal.backendReason"
               type="textarea"
@@ -594,7 +655,7 @@
               :rows="4"
               :maxlength="1000"
             />
-            <div class="text-right text-xs text-gray-500 mt-1">
+            <div class="mt-1 text-right text-xs text-gray-500">
               {{ forceCancelModal.backendReason.length }}/1000
             </div>
           </div>
@@ -603,7 +664,11 @@
         <!-- Actions -->
         <div class="flex justify-end gap-3">
           <n-button @click="forceCancelModal.show = false">取消</n-button>
-          <n-button type="primary" @click="handleForceCancel" :loading="forceCancelModal.loading">
+          <n-button
+            type="primary"
+            @click="handleForceCancel"
+            :loading="forceCancelModal.loading"
+          >
             确认
           </n-button>
         </div>
@@ -629,7 +694,9 @@
             </div>
             <div>
               <span class="text-gray-600">会员ID：</span>
-              <span class="text-blue-600">{{ forceRejectModal.data.memberAccount }}</span>
+              <span class="text-blue-600">{{
+                forceRejectModal.data.memberAccount
+              }}</span>
               <n-tag type="info" size="small" class="ml-1">V1</n-tag>
             </div>
             <div>
@@ -637,29 +704,35 @@
               <span>{{ forceRejectModal.data.memberName || 'kelvin88' }}</span>
             </div>
           </div>
-          <div class="grid grid-cols-3 gap-4 text-sm mt-3">
+          <div class="mt-3 grid grid-cols-3 gap-4 text-sm">
             <div>
               <span class="text-gray-600">会员层级：</span>
-              <span>{{ forceRejectModal.data.memberTierName || '默认层级' }}</span>
+              <span>{{
+                forceRejectModal.data.memberTierName || '默认层级'
+              }}</span>
             </div>
             <div>
               <span class="text-gray-600">提现金额：</span>
-              <span class="font-semibold text-green-600">{{ forceRejectModal.data.rewardAmount }} BRL</span>
+              <span class="font-semibold text-green-600"
+                >{{ forceRejectModal.data.rewardAmount }} BRL</span
+              >
             </div>
             <div>
               <span class="text-gray-600">手续费：</span>
               <span>0.00 BRL</span>
             </div>
           </div>
-          <div class="text-sm mt-3">
+          <div class="mt-3 text-sm">
             <span class="text-gray-600">实际到账：</span>
-            <span class="font-semibold">{{ forceRejectModal.data.rewardAmount }} BRL</span>
+            <span class="font-semibold"
+              >{{ forceRejectModal.data.rewardAmount }} BRL</span
+            >
           </div>
         </div>
 
         <!-- Wind Control Processing Options -->
         <div class="mb-6">
-          <div class="flex items-center gap-4 mb-3">
+          <div class="mb-3 flex items-center gap-4">
             <span class="text-sm font-medium">是否风控处理</span>
             <n-radio-group v-model:value="forceRejectModal.windControlProcess">
               <n-radio value="no">不处理</n-radio>
@@ -667,10 +740,13 @@
               <n-radio value="deduct_balance">扣除余额</n-radio>
             </n-radio-group>
           </div>
-          
+
           <!-- Audit Task Addition -->
-          <div v-if="forceRejectModal.windControlProcess === 'add_audit'" class="mb-4">
-            <div class="flex items-center gap-2 mb-2">
+          <div
+            v-if="forceRejectModal.windControlProcess === 'add_audit'"
+            class="mb-4"
+          >
+            <div class="mb-2 flex items-center gap-2">
               <span class="text-sm font-medium">增加稽核任务</span>
               <n-input-number
                 v-model:value="forceRejectModal.auditMultiplier"
@@ -682,22 +758,26 @@
               />
               <span class="text-sm">倍</span>
             </div>
-            <div class="text-sm text-gray-600 mb-3">
-              即需要再打码{{ forceRejectModal.auditMultiplier * 30.00 }}才能再次提现
+            <div class="mb-3 text-sm text-gray-600">
+              即需要再打码{{
+                forceRejectModal.auditMultiplier * 30.0
+              }}才能再次提现
             </div>
           </div>
         </div>
 
         <!-- Platform Selection -->
         <div class="mb-6">
-          <div class="text-sm font-medium mb-3">指定稽核平台</div>
+          <div class="mb-3 text-sm font-medium">指定稽核平台</div>
           <div class="platform-selection">
             <!-- Game Type Filters -->
-            <div class="flex gap-2 mb-4 flex-wrap">
+            <div class="mb-4 flex flex-wrap gap-2">
               <n-button
                 v-for="gameType in gameTypeFilters"
                 :key="gameType.value"
-                :type="selectedGameType === gameType.value ? 'primary' : 'default'"
+                :type="
+                  selectedGameType === gameType.value ? 'primary' : 'default'
+                "
                 size="small"
                 @click="selectedGameType = gameType.value"
               >
@@ -706,22 +786,33 @@
             </div>
 
             <!-- Platform Grid -->
-            <div class="platform-grid max-h-80 overflow-y-auto border rounded-lg p-4 bg-gray-50">
+            <div
+              class="platform-grid max-h-80 overflow-y-auto rounded-lg border bg-gray-50 p-4"
+            >
               <div class="grid grid-cols-2 gap-3">
                 <!-- Select All Option -->
-                <div 
-                  class="platform-card flex items-center p-3 bg-white rounded-lg border cursor-pointer hover:border-blue-300 transition-colors"
-                  :class="{ 'border-blue-500 bg-blue-50': forceRejectModal.platforms.all }"
-                  @click="handleSelectAllProviders(!forceRejectModal.platforms.all)"
+                <div
+                  class="platform-card flex cursor-pointer items-center rounded-lg border bg-white p-3 transition-colors hover:border-blue-300"
+                  :class="{
+                    'border-blue-500 bg-blue-50':
+                      forceRejectModal.platforms.all,
+                  }"
+                  @click="
+                    handleSelectAllProviders(!forceRejectModal.platforms.all)
+                  "
                 >
-                  <div class="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg mr-3">
+                  <div
+                    class="mr-3 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100"
+                  >
                     <span class="text-2xl">🎮</span>
                   </div>
                   <div class="flex-1">
                     <div class="font-medium text-gray-900">全部平台</div>
-                    <div class="text-sm text-gray-500">ALL • {{ filteredProviders.length }} 个平台</div>
+                    <div class="text-sm text-gray-500">
+                      ALL • {{ filteredProviders.length }} 个平台
+                    </div>
                   </div>
-                  <n-checkbox 
+                  <n-checkbox
                     :checked="forceRejectModal.platforms.all"
                     @click.stop
                     @update:checked="handleSelectAllProviders"
@@ -729,24 +820,41 @@
                 </div>
 
                 <!-- Individual Platforms -->
-                <div 
-                  v-for="provider in filteredProviders" 
+                <div
+                  v-for="provider in filteredProviders"
                   :key="provider.platformId"
-                  class="platform-card flex items-center p-3 bg-white rounded-lg border cursor-pointer hover:border-blue-300 transition-colors"
-                  :class="{ 'border-blue-500 bg-blue-50': forceRejectModal.platforms[provider.platformId] }"
+                  class="platform-card flex cursor-pointer items-center rounded-lg border bg-white p-3 transition-colors hover:border-blue-300"
+                  :class="{
+                    'border-blue-500 bg-blue-50':
+                      forceRejectModal.platforms[provider.platformId],
+                  }"
                   @click="toggleProviderSelection(provider.platformId)"
                 >
-                  <div class="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-purple-400 to-blue-500 rounded-lg mr-3">
-                    <span class="text-white font-bold text-sm">{{ provider.platformId.substring(0, 2) }}</span>
+                  <div
+                    class="mr-3 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-purple-400 to-blue-500"
+                  >
+                    <span class="text-sm font-bold text-white">{{
+                      provider.platformId.substring(0, 2)
+                    }}</span>
                   </div>
                   <div class="flex-1">
-                    <div class="font-medium text-gray-900">{{ provider.platformName }}</div>
-                    <div class="text-sm text-gray-500">{{ provider.gameType.toUpperCase() }} • {{ provider.gameCount || 0 }} 个游戏</div>
+                    <div class="font-medium text-gray-900">
+                      {{ provider.platformName }}
+                    </div>
+                    <div class="text-sm text-gray-500">
+                      {{ provider.gameType.toUpperCase() }} •
+                      {{ provider.gameCount || 0 }} 个游戏
+                    </div>
                   </div>
-                  <n-checkbox 
-                    :checked="forceRejectModal.platforms[provider.platformId] || false"
+                  <n-checkbox
+                    :checked="
+                      forceRejectModal.platforms[provider.platformId] || false
+                    "
                     @click.stop
-                    @update:checked="(checked) => updateProviderSelection(provider.platformId, checked)"
+                    @update:checked="
+                      (checked) =>
+                        updateProviderSelection(provider.platformId, checked)
+                    "
                   />
                 </div>
               </div>
@@ -754,19 +862,20 @@
 
             <!-- Selection Summary -->
             <div class="mt-3 text-sm text-gray-600">
-              已选择 {{ selectedProviderCount }} 个平台，共 {{ totalGamesCount }} 个游戏
+              已选择 {{ selectedProviderCount }} 个平台，共
+              {{ totalGamesCount }} 个游戏
             </div>
-            
-            <div class="text-sm text-gray-600 mt-3 p-3 bg-yellow-50 rounded">
+
+            <div class="mt-3 rounded bg-yellow-50 p-3 text-sm text-gray-600">
               提示：若此处勾选指定稽核但游戏管理选择稽核排除，则仍会被排除，即仍突围时以游戏管理为准
             </div>
           </div>
         </div>
 
         <!-- Rejection Reasons -->
-        <div class="grid grid-cols-2 gap-6 mb-6">
+        <div class="mb-6 grid grid-cols-2 gap-6">
           <div>
-            <label class="block text-sm font-medium mb-2">拒绝前台原因</label>
+            <label class="mb-2 block text-sm font-medium">拒绝前台原因</label>
             <n-input
               v-model:value="forceRejectModal.frontendReason"
               type="textarea"
@@ -774,12 +883,12 @@
               :rows="4"
               :maxlength="1000"
             />
-            <div class="text-right text-xs text-gray-500 mt-1">
+            <div class="mt-1 text-right text-xs text-gray-500">
               {{ forceRejectModal.frontendReason.length }}/1000
             </div>
           </div>
           <div>
-            <label class="block text-sm font-medium mb-2">拒绝后台原因</label>
+            <label class="mb-2 block text-sm font-medium">拒绝后台原因</label>
             <n-input
               v-model:value="forceRejectModal.backendReason"
               type="textarea"
@@ -787,7 +896,7 @@
               :rows="4"
               :maxlength="1000"
             />
-            <div class="text-right text-xs text-gray-500 mt-1">
+            <div class="mt-1 text-right text-xs text-gray-500">
               {{ forceRejectModal.backendReason.length }}/1000
             </div>
           </div>
@@ -796,7 +905,11 @@
         <!-- Actions -->
         <div class="flex justify-end gap-3">
           <n-button @click="forceRejectModal.show = false">取消</n-button>
-          <n-button type="primary" @click="handleForceReject" :loading="forceRejectModal.loading">
+          <n-button
+            type="primary"
+            @click="handleForceReject"
+            :loading="forceRejectModal.loading"
+          >
             确认
           </n-button>
         </div>
@@ -821,15 +934,20 @@
       <div class="approve-withdrawal-modal max-h-[75vh] overflow-y-auto">
         <!-- Order Summary Card -->
         <n-card title=" 订单概览" class="mb-6" size="small">
-          <div v-if="approveWithdrawalModal.data" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div
+            v-if="approveWithdrawalModal.data"
+            class="grid grid-cols-1 gap-6 lg:grid-cols-3"
+          >
             <!-- Amount Info -->
-            <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
+            <div
+              class="rounded-lg border border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 p-4"
+            >
               <div class="text-center">
-                <div class="text-2xl font-bold text-green-600 mb-1">
+                <div class="mb-1 text-2xl font-bold text-green-600">
                   {{ approveWithdrawalModal.data.rewardAmount }} BRL
                 </div>
                 <div class="text-sm text-gray-600">提现金额</div>
-                <div class="text-xs text-gray-500 mt-1">
+                <div class="mt-1 text-xs text-gray-500">
                   实际到账: {{ approveWithdrawalModal.data.rewardAmount }} BRL
                 </div>
               </div>
@@ -837,15 +955,19 @@
 
             <!-- Order Info -->
             <div class="space-y-3">
-              <div class="flex justify-between items-center">
+              <div class="flex items-center justify-between">
                 <span class="text-gray-600">订单号</span>
-                <span class="font-mono text-blue-600">{{ approveWithdrawalModal.data.orderId }}</span>
+                <span class="font-mono text-blue-600">{{
+                  approveWithdrawalModal.data.orderId
+                }}</span>
               </div>
-              <div class="flex justify-between items-center">
+              <div class="flex items-center justify-between">
                 <span class="text-gray-600">状态</span>
-                <n-tag type="warning" size="small">{{ getStatusText(approveWithdrawalModal.data.status) }}</n-tag>
+                <n-tag type="warning" size="small">{{
+                  getStatusText(approveWithdrawalModal.data.status)
+                }}</n-tag>
               </div>
-              <div class="flex justify-between items-center">
+              <div class="flex items-center justify-between">
                 <span class="text-gray-600">提现方式</span>
                 <n-tag type="info" size="small">PIX</n-tag>
               </div>
@@ -853,17 +975,19 @@
 
             <!-- Risk Info -->
             <div class="space-y-3">
-              <div class="flex justify-between items-center">
+              <div class="flex items-center justify-between">
                 <span class="text-gray-600">代付次数</span>
                 <span class="font-semibold">0</span>
               </div>
-              <div class="flex justify-between items-center">
+              <div class="flex items-center justify-between">
                 <span class="text-gray-600">重复IP人数</span>
                 <span class="font-semibold">0</span>
               </div>
-              <div class="flex justify-between items-center">
+              <div class="flex items-center justify-between">
                 <span class="text-gray-600">CPF</span>
-                <span class="font-mono text-xs">{{ approveWithdrawalModal.data.cpf || '123.141.241-24' }}</span>
+                <span class="font-mono text-xs">{{
+                  approveWithdrawalModal.data.cpf || '123.141.241-24'
+                }}</span>
               </div>
             </div>
           </div>
@@ -871,55 +995,111 @@
 
         <!-- Member Information -->
         <n-card title="👤 会员信息" class="mb-6" size="small">
-          <div v-if="approveWithdrawalModal.data" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div
+            v-if="approveWithdrawalModal.data"
+            class="grid grid-cols-1 gap-6 lg:grid-cols-2"
+          >
             <!-- Basic Info -->
             <div class="space-y-3">
-              <div class="flex justify-between items-center">
+              <div class="flex items-center justify-between">
                 <span class="text-gray-600">会员ID</span>
-                <span class="text-blue-600 font-semibold">{{ approveWithdrawalModal.data.memberInfo?.userID || approveWithdrawalModal.data.memberAccount }}</span>
+                <span class="font-semibold text-blue-600">{{
+                  approveWithdrawalModal.data.memberInfo?.userID ||
+                  approveWithdrawalModal.data.memberAccount
+                }}</span>
               </div>
-              <div class="flex justify-between items-center">
+              <div class="flex items-center justify-between">
                 <span class="text-gray-600">会员账号</span>
-                <span>{{ approveWithdrawalModal.data.memberInfo?.name || approveWithdrawalModal.data.memberName || approveWithdrawalModal.data.memberAccount }}</span>
+                <span>{{
+                  approveWithdrawalModal.data.memberInfo?.name ||
+                  approveWithdrawalModal.data.memberName ||
+                  approveWithdrawalModal.data.memberAccount
+                }}</span>
               </div>
-              <div class="flex justify-between items-center">
+              <div class="flex items-center justify-between">
                 <span class="text-gray-600">VIP等级</span>
-                <n-tag v-if="approveWithdrawalModal.data.memberInfo?.vipLevel" type="info" size="small">
-                  {{ approveWithdrawalModal.data.memberInfo.vipLevel.name || `V${approveWithdrawalModal.data.memberInfo.vipLevel.level}` }}
+                <n-tag
+                  v-if="approveWithdrawalModal.data.memberInfo?.vipLevel"
+                  type="info"
+                  size="small"
+                >
+                  {{
+                    approveWithdrawalModal.data.memberInfo.vipLevel.name ||
+                    `V${approveWithdrawalModal.data.memberInfo.vipLevel.level}`
+                  }}
                 </n-tag>
                 <n-tag v-else type="info" size="small">未设置</n-tag>
               </div>
-              <div class="flex justify-between items-center">
+              <div class="flex items-center justify-between">
                 <span class="text-gray-600">会员层级</span>
-                <span>{{ approveWithdrawalModal.data.memberInfo?.memberTier?.tierName || '默认层级' }}</span>
+                <span>{{
+                  approveWithdrawalModal.data.memberInfo?.memberTier
+                    ?.tierName || '默认层级'
+                }}</span>
               </div>
-              <div class="flex justify-between items-center">
+              <div class="flex items-center justify-between">
                 <span class="text-gray-600">注册来源</span>
-                <span>{{ approveWithdrawalModal.data.memberInfo?.registrationDomain || '官网' }}</span>
+                <span>{{
+                  approveWithdrawalModal.data.memberInfo?.registrationDomain ||
+                  '官网'
+                }}</span>
               </div>
             </div>
 
             <!-- Financial Info -->
             <div class="space-y-3">
-              <div class="flex justify-between items-center">
+              <div class="flex items-center justify-between">
                 <span class="text-gray-600">账户余额</span>
-                <span class="text-red-600 font-semibold">R$ {{ formatCurrency(approveWithdrawalModal.data.memberInfo?.balance || 0) }}</span>
+                <span class="font-semibold text-red-600"
+                  >R$
+                  {{
+                    formatCurrency(
+                      approveWithdrawalModal.data.memberInfo?.balance || 0,
+                    )
+                  }}</span
+                >
               </div>
-              <div class="flex justify-between items-center">
+              <div class="flex items-center justify-between">
                 <span class="text-gray-600">累计充值</span>
-                <span class="text-green-600 font-semibold">R$ {{ formatCurrency(approveWithdrawalModal.data.memberInfo?.totalDeposit || 0) }}</span>
+                <span class="font-semibold text-green-600"
+                  >R$
+                  {{
+                    formatCurrency(
+                      approveWithdrawalModal.data.memberInfo?.totalDeposit || 0,
+                    )
+                  }}</span
+                >
               </div>
-              <div class="flex justify-between items-center">
+              <div class="flex items-center justify-between">
                 <span class="text-gray-600">累计提现</span>
-                <span>R$ {{ formatCurrency(approveWithdrawalModal.data.memberInfo?.totalWithdrawal || 0) }}</span>
+                <span
+                  >R$
+                  {{
+                    formatCurrency(
+                      approveWithdrawalModal.data.memberInfo?.totalWithdrawal ||
+                        0,
+                    )
+                  }}</span
+                >
               </div>
-              <div class="flex justify-between items-center">
+              <div class="flex items-center justify-between">
                 <span class="text-gray-600">充/提次数</span>
-                <span>{{ approveWithdrawalModal.data.memberInfo?.depositCount || 0 }}/{{ approveWithdrawalModal.data.memberInfo?.withdrawalCount || 0 }}</span>
+                <span
+                  >{{
+                    approveWithdrawalModal.data.memberInfo?.depositCount || 0
+                  }}/{{
+                    approveWithdrawalModal.data.memberInfo?.withdrawalCount || 0
+                  }}</span
+                >
               </div>
-              <div class="flex justify-between items-center">
+              <div class="flex items-center justify-between">
                 <span class="text-gray-600">充/提差额</span>
-                <span class="text-red-600 font-semibold">{{ formatCurrency(approveWithdrawalModal.data.memberInfo?.depositWithdrawalDiff || 0) }}</span>
+                <span class="font-semibold text-red-600">{{
+                  formatCurrency(
+                    approveWithdrawalModal.data.memberInfo
+                      ?.depositWithdrawalDiff || 0,
+                  )
+                }}</span>
               </div>
             </div>
           </div>
@@ -937,21 +1117,35 @@
               { title: '投注金额', key: 'betAmount', width: 100 },
               { title: '输赢', key: 'profit', width: 100 },
               { title: '优惠金额', key: 'bonus', width: 100 },
-              { title: '操作', key: 'actions', width: 200 }
+              { title: '操作', key: 'actions', width: 200 },
             ]"
-            :data="approveWithdrawalModal.data?.bettingStatistics ? [approveWithdrawalModal.data.bettingStatistics.today] : []"
+            :data="
+              approveWithdrawalModal.data?.bettingStatistics
+                ? [approveWithdrawalModal.data.bettingStatistics.today]
+                : []
+            "
             :single-line="false"
             size="small"
             :loading="approveWithdrawalModal.loading"
           >
             <template #empty>
-              <div class="text-center py-4 text-gray-400">暂无数据</div>
+              <div class="py-4 text-center text-gray-400">暂无数据</div>
             </template>
             <template #difference="{ row }">
-              <span class="text-red-600 font-semibold">{{ row.difference }}</span>
+              <span class="font-semibold text-red-600">{{
+                row.difference
+              }}</span>
             </template>
             <template #profit="{ row }">
-              <span :class="parseFloat(row.profit) >= 0 ? 'text-green-600' : 'text-red-600'" class="font-semibold">{{ row.profit }}</span>
+              <span
+                :class="
+                  parseFloat(row.profit) >= 0
+                    ? 'text-green-600'
+                    : 'text-red-600'
+                "
+                class="font-semibold"
+                >{{ row.profit }}</span
+              >
             </template>
             <template #actions="{ row }">
               <div class="flex gap-1">
@@ -964,29 +1158,103 @@
 
         <!-- Risk Assessment -->
         <n-card title="⚠️ 风控评估" class="mb-6" size="small">
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <div :class="approveWithdrawalModal.data?.riskAssessment?.level === 'low' ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'" class="p-4 rounded-lg border">
+          <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+            <div
+              :class="
+                approveWithdrawalModal.data?.riskAssessment?.level === 'low'
+                  ? 'border-green-200 bg-green-50'
+                  : 'border-gray-200 bg-gray-50'
+              "
+              class="rounded-lg border p-4"
+            >
               <div class="text-center">
-                <div :class="approveWithdrawalModal.data?.riskAssessment?.level === 'low' ? 'text-green-600' : 'text-gray-600'" class="font-semibold">
-                  {{ approveWithdrawalModal.data?.riskAssessment?.level === 'low' ? '低风险' : '风险等级: ' + (approveWithdrawalModal.data?.riskAssessment?.level || '未知') }}
+                <div
+                  :class="
+                    approveWithdrawalModal.data?.riskAssessment?.level === 'low'
+                      ? 'text-green-600'
+                      : 'text-gray-600'
+                  "
+                  class="font-semibold"
+                >
+                  {{
+                    approveWithdrawalModal.data?.riskAssessment?.level === 'low'
+                      ? '低风险'
+                      : '风险等级: ' +
+                        (approveWithdrawalModal.data?.riskAssessment?.level ||
+                          '未知')
+                  }}
                 </div>
-                <div class="text-xs text-gray-600 mt-1">正常提现用户</div>
+                <div class="mt-1 text-xs text-gray-600">正常提现用户</div>
               </div>
             </div>
-            <div :class="approveWithdrawalModal.data?.riskAssessment?.isFirstWithdrawal ? 'bg-blue-50 border-blue-200' : 'bg-gray-50 border-gray-200'" class="p-4 rounded-lg border">
+            <div
+              :class="
+                approveWithdrawalModal.data?.riskAssessment?.isFirstWithdrawal
+                  ? 'border-blue-200 bg-blue-50'
+                  : 'border-gray-200 bg-gray-50'
+              "
+              class="rounded-lg border p-4"
+            >
               <div class="text-center">
-                <div :class="approveWithdrawalModal.data?.riskAssessment?.isFirstWithdrawal ? 'text-blue-600' : 'text-gray-400'" class="font-semibold">
-                  {{ approveWithdrawalModal.data?.riskAssessment?.isFirstWithdrawal ? '首次提现' : '非首次提现' }}
+                <div
+                  :class="
+                    approveWithdrawalModal.data?.riskAssessment
+                      ?.isFirstWithdrawal
+                      ? 'text-blue-600'
+                      : 'text-gray-400'
+                  "
+                  class="font-semibold"
+                >
+                  {{
+                    approveWithdrawalModal.data?.riskAssessment
+                      ?.isFirstWithdrawal
+                      ? '首次提现'
+                      : '非首次提现'
+                  }}
                 </div>
-                <div class="text-xs text-gray-600 mt-1">{{ approveWithdrawalModal.data?.riskAssessment?.isFirstWithdrawal ? '需要额外关注' : '正常用户' }}</div>
+                <div class="mt-1 text-xs text-gray-600">
+                  {{
+                    approveWithdrawalModal.data?.riskAssessment
+                      ?.isFirstWithdrawal
+                      ? '需要额外关注'
+                      : '正常用户'
+                  }}
+                </div>
               </div>
             </div>
-            <div :class="approveWithdrawalModal.data?.riskAssessment?.isRecentlyActive ? 'bg-orange-50 border-orange-200' : 'bg-gray-50 border-gray-200'" class="p-4 rounded-lg border">
+            <div
+              :class="
+                approveWithdrawalModal.data?.riskAssessment?.isRecentlyActive
+                  ? 'border-orange-200 bg-orange-50'
+                  : 'border-gray-200 bg-gray-50'
+              "
+              class="rounded-lg border p-4"
+            >
               <div class="text-center">
-                <div :class="approveWithdrawalModal.data?.riskAssessment?.isRecentlyActive ? 'text-orange-600' : 'text-gray-400'" class="font-semibold">
-                  {{ approveWithdrawalModal.data?.riskAssessment?.isRecentlyActive ? '近期活跃' : '非活跃' }}
+                <div
+                  :class="
+                    approveWithdrawalModal.data?.riskAssessment
+                      ?.isRecentlyActive
+                      ? 'text-orange-600'
+                      : 'text-gray-400'
+                  "
+                  class="font-semibold"
+                >
+                  {{
+                    approveWithdrawalModal.data?.riskAssessment
+                      ?.isRecentlyActive
+                      ? '近期活跃'
+                      : '非活跃'
+                  }}
                 </div>
-                <div class="text-xs text-gray-600 mt-1">{{ approveWithdrawalModal.data?.riskAssessment?.isRecentlyActive ? '投注活跃用户' : '无近期投注' }}</div>
+                <div class="mt-1 text-xs text-gray-600">
+                  {{
+                    approveWithdrawalModal.data?.riskAssessment
+                      ?.isRecentlyActive
+                      ? '投注活跃用户'
+                      : '无近期投注'
+                  }}
+                </div>
               </div>
             </div>
           </div>
@@ -994,27 +1262,30 @@
       </div>
 
       <template #action>
-        <div class="flex justify-between items-center">
-          <div class="text-sm text-gray-500">
-            审核后订单将进入出款流程
-          </div>
+        <div class="flex items-center justify-between">
+          <div class="text-sm text-gray-500">审核后订单将进入出款流程</div>
           <div class="flex gap-3">
-            <n-button 
+            <n-button
               @click="approveWithdrawalModal.show = false"
               :disabled="approveWithdrawalModal.loading"
             >
               取消
             </n-button>
-            <n-button 
-              type="error" 
-              @click="approveWithdrawalModal.data && showForceRejectModal(approveWithdrawalModal.data)"
-              :disabled="approveWithdrawalModal.loading || !approveWithdrawalModal.data"
+            <n-button
+              type="error"
+              @click="
+                approveWithdrawalModal.data &&
+                showForceRejectModal(approveWithdrawalModal.data)
+              "
+              :disabled="
+                approveWithdrawalModal.loading || !approveWithdrawalModal.data
+              "
             >
               拒绝出款
             </n-button>
-            <n-button 
-              type="primary" 
-              @click="handleApproveWithdrawal" 
+            <n-button
+              type="primary"
+              @click="handleApproveWithdrawal"
               :loading="approveWithdrawalModal.loading"
             >
               批准出款
@@ -1036,12 +1307,15 @@
     >
       <div class="wagering-notification">
         <!-- Header Message -->
-        <div class="text-center mb-6">
-          <div class="text-orange-600 text-lg font-medium mb-2">
-            您还需 {{ wageringModal.data?.totalWageringRemaining?.toFixed(2) || '0.00' }} 
+        <div class="mb-6 text-center">
+          <div class="mb-2 text-lg font-medium text-orange-600">
+            您还需
+            {{
+              wageringModal.data?.totalWageringRemaining?.toFixed(2) || '0.00'
+            }}
             <span class="text-green-600">🔄</span> 有效投注才能提现呀！
           </div>
-          <div class="text-gray-600 text-sm">
+          <div class="text-sm text-gray-600">
             <n-button type="primary" text @click="goToBetting">去投注</n-button>
           </div>
         </div>
@@ -1056,7 +1330,7 @@
               { label: '注册账号', value: '注册账号' },
               { label: '充值赠送', value: '充值赠送' },
               { label: '领取奖励', value: '领取奖励' },
-              { label: '投注', value: '投注' }
+              { label: '投注', value: '投注' },
             ]"
             placeholder="筛选来源"
             clearable
@@ -1066,19 +1340,25 @@
         </div>
 
         <!-- Wagering Tasks List -->
-        <div class="space-y-3 max-h-80 overflow-y-auto">
-          <div 
-            v-for="audit in filteredAudits" 
+        <div class="max-h-80 space-y-3 overflow-y-auto">
+          <div
+            v-for="audit in filteredAudits"
             :key="audit.auditId"
-            class="border rounded-lg p-4 bg-gray-50"
+            class="rounded-lg border bg-gray-50 p-4"
           >
-            <div class="flex items-center justify-between mb-3">
+            <div class="mb-3 flex items-center justify-between">
               <div class="flex items-center gap-3">
-                <div class="text-orange-500 font-semibold">
+                <div class="font-semibold text-orange-500">
                   +{{ audit.rewardAmount.toFixed(2) }}
                 </div>
                 <div class="text-sm text-gray-600">
-                  (×{{ audit.requiredBetAmount > 0 ? (audit.requiredBetAmount / audit.rewardAmount).toFixed(2) : '1.00' }}倍)
+                  (×{{
+                    audit.requiredBetAmount > 0
+                      ? (audit.requiredBetAmount / audit.rewardAmount).toFixed(
+                          2,
+                        )
+                      : '1.00'
+                  }}倍)
                 </div>
               </div>
               <div class="text-right">
@@ -1091,7 +1371,7 @@
               </div>
             </div>
 
-            <div class="flex items-center gap-2 text-sm text-gray-600 mb-2">
+            <div class="mb-2 flex items-center gap-2 text-sm text-gray-600">
               <span>来源: {{ audit.source }}</span>
               <span class="ml-auto">{{ formatDateTime(audit.createdAt) }}</span>
             </div>
@@ -1103,19 +1383,17 @@
         </div>
 
         <!-- Footer Note -->
-        <div class="text-center text-sm text-gray-500 mt-6 p-4 bg-blue-50 rounded">
-          当账户资产 < 10,00时，系统将自动解除所有投注任务<br>
+        <div
+          class="mt-6 rounded bg-blue-50 p-4 text-center text-sm text-gray-500"
+        >
+          当账户资产 < 10,00时，系统将自动解除所有投注任务<br />
           (需注单统计完成后才能触发自动解除)
         </div>
 
         <!-- Actions -->
-        <div class="flex justify-center gap-3 mt-6">
-          <n-button @click="wageringModal.show = false">
-            关闭
-          </n-button>
-          <n-button type="primary" @click="goToBetting">
-            去投注
-          </n-button>
+        <div class="mt-6 flex justify-center gap-3">
+          <n-button @click="wageringModal.show = false"> 关闭 </n-button>
+          <n-button type="primary" @click="goToBetting"> 去投注 </n-button>
         </div>
       </div>
     </n-modal>
@@ -1129,10 +1407,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted, computed, h, watch, defineAsyncComponent } from 'vue';
+import {
+  ref,
+  reactive,
+  onMounted,
+  onUnmounted,
+  computed,
+  h,
+  watch,
+  defineAsyncComponent,
+} from 'vue';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
-const SmartAutoRefresh = defineAsyncComponent(() => import('../../components/smart/SmartAutoRefresh/index.vue'));
-const SmartDataGrid = defineAsyncComponent(() => import('../../components/smart/SmartDataGrid/index.vue'));
+const SmartAutoRefresh = defineAsyncComponent(
+  () => import('../../components/smart/SmartAutoRefresh/index.vue'),
+);
+const SmartDataGrid = defineAsyncComponent(
+  () => import('../../components/smart/SmartDataGrid/index.vue'),
+);
 
 // Props
 interface Props {
@@ -1140,19 +1431,19 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  isMyWithdrawal: false
+  isMyWithdrawal: false,
 });
 
 const emit = defineEmits<{
   'refresh-tabs': [];
 }>();
 
-import { 
-  NButton, 
-  NCard, 
-  NInput, 
-  NSelect, 
-  NDatePicker, 
+import {
+  NButton,
+  NCard,
+  NInput,
+  NSelect,
+  NDatePicker,
   NFormItem,
   NModal,
   NAlert,
@@ -1164,14 +1455,22 @@ import {
   NCheckbox,
   useMessage,
   useDialog,
-  type DataTableColumns
+  type DataTableColumns,
 } from 'naive-ui';
-import { ReloadOutline, SearchOutline, PersonOutline, CopyOutline, ChevronUpOutline } from '@vicons/ionicons5';
+import {
+  ReloadOutline,
+  SearchOutline,
+  PersonOutline,
+  CopyOutline,
+  ChevronUpOutline,
+} from '@vicons/ionicons5';
 import { financeWithdrawalApi } from '#/api/finance/financeWithdrawal';
 import { useUserStore } from '@vben/stores';
 import { getGamePlatformListApi } from '#/api/game/platform';
 import { formatCurrency, formatDateTime } from '#/utils/format';
-const UserDetailModal = defineAsyncComponent(() => import('#/components/user/UserDetailModal.vue'));
+const UserDetailModal = defineAsyncComponent(
+  () => import('#/components/user/UserDetailModal.vue'),
+);
 
 // Member detail modal refs
 const showMemberDetailModal = ref(false);
@@ -1257,15 +1556,36 @@ const autoRefreshEnabled = ref(false);
 // Helper functions to get date ranges
 const getTodayDateRange = (): [number, number] => {
   const now = new Date();
-  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
-  const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+  const startOfDay = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    0,
+    0,
+    0,
+  );
+  const endOfDay = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    23,
+    59,
+    59,
+  );
   return [startOfDay.getTime(), endOfDay.getTime()];
 };
 
 const getMonthDateRange = (): [number, number] => {
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0);
-  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+  const endOfMonth = new Date(
+    now.getFullYear(),
+    now.getMonth() + 1,
+    0,
+    23,
+    59,
+    59,
+  );
   return [startOfMonth.getTime(), endOfMonth.getTime()];
 };
 
@@ -1278,7 +1598,7 @@ const filters = reactive({
   amount: '',
   withdrawalMethod: '',
   approvalStatus: 'all', // Default to showing all records
-  operator: ''
+  operator: '',
 });
 
 // Pagination - SmartDataGrid compatible
@@ -1293,17 +1613,17 @@ const processModal = reactive({
   show: false,
   items: [] as WithdrawalRecord[],
   status: '',
-  notes: ''
+  notes: '',
 });
 
 const assignModal = reactive({
   show: false,
-  items: [] as WithdrawalRecord[]
+  items: [] as WithdrawalRecord[],
 });
 
 const detailModal = reactive({
   show: false,
-  data: null as WithdrawalRecord | null
+  data: null as WithdrawalRecord | null,
 });
 
 const wageringModal = reactive({
@@ -1328,7 +1648,7 @@ const wageringModal = reactive({
       status: string;
     }>;
     message?: string;
-  } | null
+  } | null,
 });
 
 // Force Cancel Modal
@@ -1337,7 +1657,7 @@ const forceCancelModal = reactive({
   loading: false,
   data: null as WithdrawalRecord | null,
   frontendReason: '',
-  backendReason: ''
+  backendReason: '',
 });
 
 // Force Reject Modal
@@ -1350,27 +1670,27 @@ const forceRejectModal = reactive({
   selectedPlatform: 'poker',
   platforms: {} as Record<string, boolean>,
   frontendReason: '',
-  backendReason: ''
+  backendReason: '',
 });
 
 // Approve Withdrawal Modal
 const approveWithdrawalModal = reactive({
   show: false,
   loading: false,
-  data: null as WithdrawalRecord | null
+  data: null as WithdrawalRecord | null,
 });
 
 // Options
 const thirdPartyOptions = [
   { label: 'PIX自动代付', value: 'PIX_AUTO' },
   { label: '银行转账', value: 'BANK_TRANSFER' },
-  { label: '数字钱包', value: 'DIGITAL_WALLET' }
+  { label: '数字钱包', value: 'DIGITAL_WALLET' },
 ];
 
 const withdrawalMethodOptions = [
   { label: 'PIX', value: 'PIX' },
   { label: '银行卡', value: 'BANK_CARD' },
-  { label: '数字钱包', value: 'WALLET' }
+  { label: '数字钱包', value: 'WALLET' },
 ];
 
 const approvalStatusOptions = [
@@ -1380,19 +1700,19 @@ const approvalStatusOptions = [
   { label: '已审核', value: 'approved' },
   { label: '处理中', value: 'processing' },
   { label: '已完成', value: 'completed' },
-  { label: '已拒绝', value: 'rejected' }
+  { label: '已拒绝', value: 'rejected' },
 ];
 
 const processStatusOptions = [
   { label: '处理成功', value: 'success' },
   { label: '处理失败', value: 'failed' },
-  { label: '待确认', value: 'pending_confirmation' }
+  { label: '待确认', value: 'pending_confirmation' },
 ];
 
 const batchOperationOptions = [
   { label: '批量处理', value: 'batch_process' },
   { label: '批量分配', value: 'batch_assign' },
-  { label: '批量导出', value: 'batch_export' }
+  { label: '批量导出', value: 'batch_export' },
 ];
 
 // 批量操作下拉选项（与全部提现一致）
@@ -1407,9 +1727,11 @@ const batchOperationDropdownOptions = [
   { label: '批量刷新回调', key: 'batch-refresh-callback' },
   { label: '批量审核出款', key: 'batch-approve' },
   { label: '批量重新代付', key: 'batch-repay' },
-  { label: '批量已人工出款', key: 'batch-manual-withdrawal' }
+  { label: '批量已人工出款', key: 'batch-manual-withdrawal' },
 ];
-const batchOperationDropdownOptionsSelect = batchOperationDropdownOptions.map(o => ({ label: o.label, value: o.key }));
+const batchOperationDropdownOptionsSelect = batchOperationDropdownOptions.map(
+  (o) => ({ label: o.label, value: o.key }),
+);
 
 const showFilterBatchModal = ref(false);
 const filterBatchActionKey = ref('');
@@ -1428,14 +1750,29 @@ async function submitFilterBatchModal() {
     message.warning('请选择操作类型');
     return false;
   }
-  const orderIds = selectedIds.value.map(id => String(id));
-  const selectedRows = tableData.value.filter(r => selectedIds.value.includes(r.id));
+  const orderIds = selectedIds.value.map((id) => String(id));
+  const selectedRows = tableData.value.filter((r) =>
+    selectedIds.value.includes(r.id),
+  );
   showFilterBatchModal.value = false;
-  if (['batch-force-cancel', 'batch-force-reject', 'batch-remark'].includes(filterBatchActionKey.value)) {
-    batchReasonModal.value = { show: true, actionKey: filterBatchActionKey.value, orderIds, reason: filterBatchReason.value };
+  if (
+    ['batch-force-cancel', 'batch-force-reject', 'batch-remark'].includes(
+      filterBatchActionKey.value,
+    )
+  ) {
+    batchReasonModal.value = {
+      show: true,
+      actionKey: filterBatchActionKey.value,
+      orderIds,
+      reason: filterBatchReason.value,
+    };
     return true;
   }
-  await runFinanceBatchAction(filterBatchActionKey.value, orderIds, filterBatchReason.value);
+  await runFinanceBatchAction(
+    filterBatchActionKey.value,
+    orderIds,
+    filterBatchReason.value,
+  );
   return true;
 }
 
@@ -1470,7 +1807,7 @@ const gameTypeFilters = [
   { label: '街机', value: 'ARCADE' },
   { label: '模拟', value: 'SIMULATION' },
   { label: '斗鸡', value: 'COCKFIGHT' },
-  { label: '区块链', value: 'BLOCKCHAIN' }
+  { label: '区块链', value: 'BLOCKCHAIN' },
 ];
 
 // Computed properties for the new UI
@@ -1478,33 +1815,38 @@ const filteredProviders = computed(() => {
   console.log('🔍 Filtering providers:', {
     selectedGameType: selectedGameType.value,
     totalProviders: availableProviders.value.length,
-    gameTypes: availableProviders.value.map(p => p.gameType)
+    gameTypes: availableProviders.value.map((p) => p.gameType),
   });
-  
+
   if (selectedGameType.value === '全部') {
     return availableProviders.value;
   }
-  const filtered = availableProviders.value.filter(provider => 
-    provider.gameType === selectedGameType.value
+  const filtered = availableProviders.value.filter(
+    (provider) => provider.gameType === selectedGameType.value,
   );
-  
-  console.log(`🎯 Filtered ${filtered.length} providers for ${selectedGameType.value}:`, filtered);
+
+  console.log(
+    `🎯 Filtered ${filtered.length} providers for ${selectedGameType.value}:`,
+    filtered,
+  );
   return filtered;
 });
 
 const selectedProviderCount = computed(() => {
-  const selectedKeys = Object.keys(forceRejectModal.platforms).filter(key => 
-    key !== 'all' && forceRejectModal.platforms[key]
+  const selectedKeys = Object.keys(forceRejectModal.platforms).filter(
+    (key) => key !== 'all' && forceRejectModal.platforms[key],
   );
   return selectedKeys.length;
 });
 
 const totalGamesCount = computed(() => {
-  const selectedKeys = Object.keys(forceRejectModal.platforms).filter(key => 
-    key !== 'all' && forceRejectModal.platforms[key]
+  const selectedKeys = Object.keys(forceRejectModal.platforms).filter(
+    (key) => key !== 'all' && forceRejectModal.platforms[key],
   );
   return selectedKeys.reduce((total, platformId) => {
-    const provider = availableProviders.value.find(p => p.platformId === platformId);
+    const provider = availableProviders.value.find(
+      (p) => p.platformId === platformId,
+    );
     return total + (provider?.gameCount || 0);
   }, 0);
 });
@@ -1512,32 +1854,42 @@ const totalGamesCount = computed(() => {
 // Fetch available game providers using the same API as promotion templates
 const fetchAvailableProviders = async () => {
   try {
-    console.log('🎮 Loading game providers using getGamePlatformListApi (Finance)...');
-    const response = await getGamePlatformListApi({ 
+    console.log(
+      '🎮 Loading game providers using getGamePlatformListApi (Finance)...',
+    );
+    const response = await getGamePlatformListApi({
       pageSize: 1000,
-      isEnabled: true 
+      isEnabled: true,
     });
-    
+
     console.log('Platform API response (Finance):', response);
-    
+
     if (response.list && response.list.length > 0) {
-      availableProviders.value = response.list.map(platform => ({
+      availableProviders.value = response.list.map((platform) => ({
         platformId: platform.platformId,
         platformName: platform.platformName,
         gameType: platform.gameType,
         isEnabled: platform.isEnabled,
-        gameCount: platform.subGameCount || 0
+        gameCount: platform.subGameCount || 0,
       }));
-      
+
       // Update audit platforms for backward compatibility
-      auditPlatforms.value = availableProviders.value.map(provider => ({
+      auditPlatforms.value = availableProviders.value.map((provider) => ({
         key: provider.platformId,
-        label: provider.platformName
+        label: provider.platformName,
       }));
-      
-      console.log('✅ Loaded game providers successfully (Finance):', availableProviders.value.length);
-      console.log(' Sample providers (Finance):', availableProviders.value.slice(0, 5));
-      console.log('🎮 All game types found:', [...new Set(availableProviders.value.map(p => p.gameType))]);
+
+      console.log(
+        '✅ Loaded game providers successfully (Finance):',
+        availableProviders.value.length,
+      );
+      console.log(
+        ' Sample providers (Finance):',
+        availableProviders.value.slice(0, 5),
+      );
+      console.log('🎮 All game types found:', [
+        ...new Set(availableProviders.value.map((p) => p.gameType)),
+      ]);
     }
   } catch (error) {
     console.error('❌ Failed to fetch game providers (Finance):', error);
@@ -1550,23 +1902,25 @@ const fetchAvailableProviders = async () => {
       { key: 'POKER', label: '棋牌' },
       { key: 'FISHING', label: '捕鱼' },
       { key: 'LIVE', label: '真人' },
-      { key: 'SPORTS', label: '体育' }
+      { key: 'SPORTS', label: '体育' },
     ];
-    
+
     // Also populate availableProviders from fallback
-    availableProviders.value = auditPlatforms.value.map(platform => ({
+    availableProviders.value = auditPlatforms.value.map((platform) => ({
       platformId: platform.key,
       platformName: platform.label,
       gameType: '',
-      isEnabled: true
+      isEnabled: true,
     }));
   }
 };
 
-
 // Computed
 const totalAmount = computed(() => {
-  return tableData.value.reduce((sum, item) => sum + (item.rewardAmount || 0), 0);
+  return tableData.value.reduce(
+    (sum, item) => sum + (item.rewardAmount || 0),
+    0,
+  );
 });
 
 const selectedCount = computed(() => selectedIds.value.length);
@@ -1574,13 +1928,13 @@ const hasSelection = computed(() => selectedIds.value.length > 0);
 
 const filteredAudits = computed(() => {
   if (!wageringModal.data?.pendingAudits) return [];
-  
+
   if (wageringModal.filterType === 'all') {
     return wageringModal.data.pendingAudits;
   }
-  
-  return wageringModal.data.pendingAudits.filter(audit => 
-    audit.source === wageringModal.filterType
+
+  return wageringModal.data.pendingAudits.filter(
+    (audit) => audit.source === wageringModal.filterType,
   );
 });
 
@@ -1592,9 +1946,9 @@ const showMemberDetail = (row: WithdrawalRecord) => {
     'row.userID': row.userID,
     'typeof row.memberId': typeof row.memberId,
     'Number(row.memberId)': Number(row.memberId),
-    'will pass to modal': Number(row.memberId)
+    'will pass to modal': Number(row.memberId),
   });
-  
+
   // Validate memberId before opening modal
   const userId = Number(row.memberId);
   if (!userId || isNaN(userId) || userId === 0) {
@@ -1602,7 +1956,7 @@ const showMemberDetail = (row: WithdrawalRecord) => {
     console.error('❌ Invalid memberId:', row.memberId);
     return;
   }
-  
+
   // Use the internal database ID (memberId), not the 9-digit userID
   currentMemberUserId.value = userId;
   showMemberDetailModal.value = true;
@@ -1612,7 +1966,7 @@ const columns: DataTableColumns<WithdrawalRecord> = [
   {
     type: 'selection',
     fixed: 'left',
-    width: 50
+    width: 50,
   },
   // 1. 订单号
   {
@@ -1620,121 +1974,209 @@ const columns: DataTableColumns<WithdrawalRecord> = [
     key: 'orderId',
     width: 140,
     fixed: 'left',
-    render: (row) => h('div', { class: 'space-y-1' }, [
-      h(NButton, {
-        text: true,
-        type: 'primary',
-        size: 'small',
-        class: 'font-mono font-medium',
-        onClick: () => showDetail(row)
-      }, { default: () => row.orderId }),
-      row.thirdPartyOrderNo && h('div', { class: 'text-xs text-gray-500 font-mono' }, row.thirdPartyOrderNo)
-    ])
+    render: (row) =>
+      h('div', { class: 'space-y-1' }, [
+        h(
+          NButton,
+          {
+            text: true,
+            type: 'primary',
+            size: 'small',
+            class: 'font-mono font-medium',
+            onClick: () => showDetail(row),
+          },
+          { default: () => row.orderId },
+        ),
+        row.thirdPartyOrderNo &&
+          h(
+            'div',
+            { class: 'text-xs text-gray-500 font-mono' },
+            row.thirdPartyOrderNo,
+          ),
+      ]),
   },
   // 2. 会员ID (VIP等级)
   {
     title: '会员ID (VIP等级)',
     key: 'memberId',
     width: 130,
-    render: (row) => h('div', { class: 'text-center space-y-1' }, [
-      h(NButton, {
-        text: true,
-        type: 'primary',
-        size: 'small',
-        class: 'font-mono font-medium',
-        onClick: () => showMemberDetail(row)
-      }, { default: () => row.displayMemberId || row.userID || row.memberId }),
-      h(NTag, { size: 'small', type: 'info' }, { default: () => row.vipLevel || 'VIP0' })
-    ])
+    render: (row) =>
+      h('div', { class: 'text-center space-y-1' }, [
+        h(
+          NButton,
+          {
+            text: true,
+            type: 'primary',
+            size: 'small',
+            class: 'font-mono font-medium',
+            onClick: () => showMemberDetail(row),
+          },
+          { default: () => row.displayMemberId || row.userID || row.memberId },
+        ),
+        h(
+          NTag,
+          { size: 'small', type: 'info' },
+          { default: () => row.vipLevel || 'VIP0' },
+        ),
+      ]),
   },
   // 3. 会员账号 (会员层级)
   {
     title: '会员账号 (会员层级)',
     key: 'memberAccount',
     width: 140,
-    render: (row) => h('div', { class: 'space-y-1' }, [
-      h(NButton, {
-        text: true,
-        type: 'primary',
-        size: 'small',
-        class: 'font-medium',
-        onClick: () => showMemberDetail(row)
-      }, { default: () => row.accountName || row.memberAccount }),
-      h('div', { class: 'text-xs text-gray-500' }, row.memberTierName || '默认层级')
-    ])
+    render: (row) =>
+      h('div', { class: 'space-y-1' }, [
+        h(
+          NButton,
+          {
+            text: true,
+            type: 'primary',
+            size: 'small',
+            class: 'font-medium',
+            onClick: () => showMemberDetail(row),
+          },
+          { default: () => row.accountName || row.memberAccount },
+        ),
+        h(
+          'div',
+          { class: 'text-xs text-gray-500' },
+          row.memberTierName || '默认层级',
+        ),
+      ]),
   },
   // 4. 申请时间 (操作时间) (完成时长)
   {
     title: '申请时间 (操作时间) (完成时长)',
     key: 'appliedAt',
     width: 180,
-    render: (row) => h('div', { class: 'text-center space-y-1' }, [
-      h('div', { class: 'text-xs' }, formatDateTime(row.appliedAt || row.applicationTime)),
-      h('div', { class: 'text-xs text-gray-500' }, formatDateTime(row.updatedAt || row.completedTime)),
-      h('div', { 
-        class: 'text-xs font-medium',
-        style: { color: row.processedTime !== '-' ? '#10b981' : '#9ca3af' }
-      }, row.processedTime || '-')
-    ])
+    render: (row) =>
+      h('div', { class: 'text-center space-y-1' }, [
+        h(
+          'div',
+          { class: 'text-xs' },
+          formatDateTime(row.appliedAt || row.applicationTime),
+        ),
+        h(
+          'div',
+          { class: 'text-xs text-gray-500' },
+          formatDateTime(row.updatedAt || row.completedTime),
+        ),
+        h(
+          'div',
+          {
+            class: 'text-xs font-medium',
+            style: { color: row.processedTime !== '-' ? '#10b981' : '#9ca3af' },
+          },
+          row.processedTime || '-',
+        ),
+      ]),
   },
   // 5. 会员币种 (比例)
   {
     title: '会员币种 (比例)',
     key: 'memberCurrency',
     width: 120,
-    render: (row) => h('div', { class: 'text-center space-y-1' }, [
-      h('div', { class: 'font-medium' }, row.currency || 'BRL'),
-      h('div', { class: 'text-xs text-gray-500' }, `(${row.exchangeRate || '0.05'})`)
-    ])
+    render: (row) =>
+      h('div', { class: 'text-center space-y-1' }, [
+        h('div', { class: 'font-medium' }, row.currency || 'BRL'),
+        h(
+          'div',
+          { class: 'text-xs text-gray-500' },
+          `(${row.exchangeRate || '0.05'})`,
+        ),
+      ]),
   },
   // 6. 提现金额 (当前余额)
   {
     title: '提现金额 (当前余额)',
     key: 'withdrawAmount',
     width: 140,
-    render: (row) => h('div', { class: 'text-center space-y-1' }, [
-      h('div', { class: 'font-semibold text-red-600' }, formatCurrency(row.withdrawAmount || row.withdrawalAmount || row.amount)),
-      h('div', { class: 'text-xs text-gray-500' }, formatCurrency(row.currentBalance || row.beforeAmount || 0))
-    ])
+    render: (row) =>
+      h('div', { class: 'text-center space-y-1' }, [
+        h(
+          'div',
+          { class: 'font-semibold text-red-600' },
+          formatCurrency(
+            row.withdrawAmount || row.withdrawalAmount || row.amount,
+          ),
+        ),
+        h(
+          'div',
+          { class: 'text-xs text-gray-500' },
+          formatCurrency(row.currentBalance || row.beforeAmount || 0),
+        ),
+      ]),
   },
   // 7. 到账币种汇率
   {
     title: '到账币种汇率',
     key: 'arrivalCurrency',
     width: 120,
-    render: (row) => h('div', { class: 'text-center space-y-1' }, [
-      h('div', { class: 'font-medium' }, row.currency || 'BRL'),
-      h('div', { class: 'text-xs text-gray-500' }, `汇率: ${row.exchangeRate || '0.05'}`)
-    ])
+    render: (row) =>
+      h('div', { class: 'text-center space-y-1' }, [
+        h('div', { class: 'font-medium' }, row.currency || 'BRL'),
+        h(
+          'div',
+          { class: 'text-xs text-gray-500' },
+          `汇率: ${row.exchangeRate || '0.05'}`,
+        ),
+      ]),
   },
   // 8. 预计到帐 (手续费) (实际到账)
   {
     title: '预计到帐 (手续费) (实际到账)',
     key: 'estimatedAmount',
     width: 160,
-    render: (row) => h('div', { class: 'text-center space-y-1' }, [
-      h('div', { class: 'text-xs font-semibold text-green-600' }, formatCurrency(row.estimatedAmount || row.estimatedReceived || row.approvalAmount || 0)),
-      h('div', { class: 'text-xs text-gray-500' }, `手续费: ${formatCurrency(row.fee || row.fees || 0)}`),
-      h('div', { class: 'text-xs' }, `实际: ${formatCurrency(row.estimatedReceived || row.estimatedAmount || row.approvalAmount || 0)}`),
-      h('div', { class: 'flex gap-1 justify-center mt-2' }, [
-        h(NButton, {
-          size: 'tiny',
-          type: 'info',
-          onClick: () => {
-            // Navigate to 投注任务(稽核) with user context
-            window.location.href = `/finance/wagering-audit?userId=${row.memberId}`;
-          }
-        }, { default: () => '稽核' }),
-        h(NButton, {
-          size: 'tiny',
-          type: 'primary',
-          onClick: () => {
-            // Navigate to 游戏 -> 投注记录 with user context
-            window.location.href = `/game-management/bet-records?userId=${row.memberId}`;
-          }
-        }, { default: () => '投注' })
-      ])
-    ])
+    render: (row) =>
+      h('div', { class: 'text-center space-y-1' }, [
+        h(
+          'div',
+          { class: 'text-xs font-semibold text-green-600' },
+          formatCurrency(
+            row.estimatedAmount ||
+              row.estimatedReceived ||
+              row.approvalAmount ||
+              0,
+          ),
+        ),
+        h(
+          'div',
+          { class: 'text-xs text-gray-500' },
+          `手续费: ${formatCurrency(row.fee || row.fees || 0)}`,
+        ),
+        h(
+          'div',
+          { class: 'text-xs' },
+          `实际: ${formatCurrency(row.estimatedReceived || row.estimatedAmount || row.approvalAmount || 0)}`,
+        ),
+        h('div', { class: 'flex gap-1 justify-center mt-2' }, [
+          h(
+            NButton,
+            {
+              size: 'tiny',
+              type: 'info',
+              onClick: () => {
+                // Navigate to 投注任务(稽核) with user context
+                window.location.href = `/finance/wagering-audit?userId=${row.memberId}`;
+              },
+            },
+            { default: () => '稽核' },
+          ),
+          h(
+            NButton,
+            {
+              size: 'tiny',
+              type: 'primary',
+              onClick: () => {
+                // Navigate to 游戏 -> 投注记录 with user context
+                window.location.href = `/game-management/bet-records?userId=${row.memberId}`;
+              },
+            },
+            { default: () => '投注' },
+          ),
+        ]),
+      ]),
   },
   // 9. 充 / 提次数 (累计充 / 提差额) (重复IP人数)
   {
@@ -1742,21 +2184,35 @@ const columns: DataTableColumns<WithdrawalRecord> = [
     key: 'counts',
     width: 180,
     render: (row) => {
-      const rechargeCount = row.rechargeWithdrawCount?.rechargeCount || row.depositCount || 0;
-      const withdrawCount = row.rechargeWithdrawCount?.withdrawCount || row.withdrawalCount || 0;
+      const rechargeCount =
+        row.rechargeWithdrawCount?.rechargeCount || row.depositCount || 0;
+      const withdrawCount =
+        row.rechargeWithdrawCount?.withdrawCount || row.withdrawalCount || 0;
       const totalDeposit = row.totalDeposit || 0;
       const totalWithdraw = row.totalWithdraw || 0;
       const difference = totalDeposit - totalWithdraw;
       const duplicateIP = row.rechargeWithdrawCount?.duplicateIP || 0;
-      
+
       return h('div', { class: 'text-center space-y-1' }, [
-        h('div', { class: 'text-xs' }, `充${rechargeCount} / 提${withdrawCount}次`),
-        h('div', { 
-          class: `text-xs font-medium ${difference >= 0 ? 'text-green-600' : 'text-red-600'}` 
-        }, `差额: ${formatCurrency(difference)}`),
-        h('div', { class: 'text-xs text-orange-600' }, `重复IP: ${duplicateIP}人`)
+        h(
+          'div',
+          { class: 'text-xs' },
+          `充${rechargeCount} / 提${withdrawCount}次`,
+        ),
+        h(
+          'div',
+          {
+            class: `text-xs font-medium ${difference >= 0 ? 'text-green-600' : 'text-red-600'}`,
+          },
+          `差额: ${formatCurrency(difference)}`,
+        ),
+        h(
+          'div',
+          { class: 'text-xs text-orange-600' },
+          `重复IP: ${duplicateIP}人`,
+        ),
       ]);
-    }
+    },
   },
   // 10. 收款方式 (收款人信息) - ✅ ENHANCED: Same as "全部提现" tab
   {
@@ -1766,23 +2222,32 @@ const columns: DataTableColumns<WithdrawalRecord> = [
     render: (row) => {
       // ✅ FIX: Fallback to row fields if withdrawChannelInfo is missing or empty
       const info = row.withdrawChannelInfo || {};
-      const pixType = info.type || row.paymentMethod || row.withdrawMethod || 'PIX';
-      
+      const pixType =
+        info.type || row.paymentMethod || row.withdrawMethod || 'PIX';
+
       // ✅ FIX: Check if info has meaningful data (not just empty strings)
-      const hasInfoData = info.account || info.name || info.cpf || info.phone || info.email;
-      
+      const hasInfoData =
+        info.account || info.name || info.cpf || info.phone || info.email;
+
       // ✅ FIX: If withdrawChannelInfo is empty or has no meaningful data, try to build from row data
-      const fallbackInfo = !hasInfoData ? {
-        type: row.paymentMethod || row.withdrawMethod || info.type || 'PIX',
-        accountType: row.accountType || info.accountType || '',
-        name: row.accountHolderName || row.memberName || info.name || '',
-        account: row.accountNumber || row.memberBankAccount || row.bankAccount || info.account || '',
-        cpf: row.cpf || info.cpf || '',
-        phone: row.accountPhone || info.phone || '',
-        email: row.accountEmail || info.email || '',
-        bankCode: row.bankName || row.memberBank || info.bankCode || ''
-      } : {};
-      
+      const fallbackInfo = !hasInfoData
+        ? {
+            type: row.paymentMethod || row.withdrawMethod || info.type || 'PIX',
+            accountType: row.accountType || info.accountType || '',
+            name: row.accountHolderName || row.memberName || info.name || '',
+            account:
+              row.accountNumber ||
+              row.memberBankAccount ||
+              row.bankAccount ||
+              info.account ||
+              '',
+            cpf: row.cpf || info.cpf || '',
+            phone: row.accountPhone || info.phone || '',
+            email: row.accountEmail || info.email || '',
+            bankCode: row.bankName || row.memberBank || info.bankCode || '',
+          }
+        : {};
+
       // Merge fallback info with actual info (actual info takes precedence, but fallback fills gaps)
       const displayInfo = {
         type: info.type || fallbackInfo.type || pixType,
@@ -1792,9 +2257,9 @@ const columns: DataTableColumns<WithdrawalRecord> = [
         cpf: info.cpf || fallbackInfo.cpf || '',
         phone: info.phone || fallbackInfo.phone || '',
         email: info.email || fallbackInfo.email || '',
-        bankCode: info.bankCode || fallbackInfo.bankCode || ''
+        bankCode: info.bankCode || fallbackInfo.bankCode || '',
       };
-      
+
       // Helper function to map accountType to display format
       const getAccountTypeDisplay = (accountType: string): string => {
         if (!accountType) return '';
@@ -1804,20 +2269,20 @@ const columns: DataTableColumns<WithdrawalRecord> = [
         }
         // Handle direct formats
         const typeMap: Record<string, string> = {
-          'CPF': 'CPF',
-          'PHONE': 'PHONE',
-          'EMAIL': 'EMAIL',
-          'RANDOM_KEY': 'RANDOM_KEY',
-          'CNPJ': 'CNPJ',
-          'EVP': 'EVP',
-          'BANK': 'BANK'
+          CPF: 'CPF',
+          PHONE: 'PHONE',
+          EMAIL: 'EMAIL',
+          RANDOM_KEY: 'RANDOM_KEY',
+          CNPJ: 'CNPJ',
+          EVP: 'EVP',
+          BANK: 'BANK',
         };
         return typeMap[accountType] || accountType;
       };
-      
+
       const accountType = displayInfo.accountType || displayInfo.type || '';
       const displayType = getAccountTypeDisplay(accountType);
-      
+
       // Build copy all text - include type and CPF
       const copyAllText = [
         displayInfo.name ? `真实姓名：${displayInfo.name}` : '',
@@ -1825,114 +2290,163 @@ const columns: DataTableColumns<WithdrawalRecord> = [
         displayType ? `类型：${displayType}` : '',
         displayInfo.cpf ? `CPF：${displayInfo.cpf}` : '',
         displayInfo.phone ? `电话：${displayInfo.phone}` : '',
-        displayInfo.email ? `邮箱：${displayInfo.email}` : ''
-      ].filter(Boolean).join('\n');
-      
+        displayInfo.email ? `邮箱：${displayInfo.email}` : '',
+      ]
+        .filter(Boolean)
+        .join('\n');
+
       // ✅ FIX: Show at least payment method type even if no other info
       if (!copyAllText && !displayInfo.account && !displayInfo.name) {
         return h('div', { class: 'bg-gray-50 p-2 rounded' }, [
           h('div', { class: 'font-semibold text-sm text-gray-600' }, pixType),
-          h('div', { class: 'text-xs text-gray-400 mt-1' }, '暂无收款信息')
+          h('div', { class: 'text-xs text-gray-400 mt-1' }, '暂无收款信息'),
         ]);
       }
-      
+
       const copyAll = () => {
         if (copyAllText) {
           navigator.clipboard.writeText(copyAllText);
           message.success('已复制全部信息');
         }
       };
-      
+
       const copyField = (value: string, label: string) => {
         navigator.clipboard.writeText(value);
         message.success(`已复制${label}`);
       };
-      
+
       return h('div', { class: 'bg-gray-50 p-2 rounded space-y-1' }, [
         // Header with payment method and copy all button
         h('div', { class: 'flex items-center justify-between mb-2' }, [
           h('div', { class: 'font-semibold text-sm' }, pixType),
-          copyAllText && h(NButton, {
-            text: true,
-            type: 'primary',
-            size: 'tiny',
-            onClick: copyAll
-          }, { default: () => '复制全部' })
+          copyAllText &&
+            h(
+              NButton,
+              {
+                text: true,
+                type: 'primary',
+                size: 'tiny',
+                onClick: copyAll,
+              },
+              { default: () => '复制全部' },
+            ),
         ]),
         // Name
-        displayInfo.name && h('div', { class: 'flex items-center justify-between text-xs' }, [
-          h('span', { class: 'text-gray-600' }, '真实姓名：'),
-          h('div', { class: 'flex items-center gap-1' }, [
-            h('span', { class: 'font-medium' }, displayInfo.name),
-            h(NButton, {
-              text: true,
-              size: 'tiny',
-              onClick: () => copyField(displayInfo.name, '真实姓名')
-            }, { default: () => h(NIcon, { size: 14, component: CopyOutline }) })
-          ])
-        ]),
+        displayInfo.name &&
+          h('div', { class: 'flex items-center justify-between text-xs' }, [
+            h('span', { class: 'text-gray-600' }, '真实姓名：'),
+            h('div', { class: 'flex items-center gap-1' }, [
+              h('span', { class: 'font-medium' }, displayInfo.name),
+              h(
+                NButton,
+                {
+                  text: true,
+                  size: 'tiny',
+                  onClick: () => copyField(displayInfo.name, '真实姓名'),
+                },
+                {
+                  default: () => h(NIcon, { size: 14, component: CopyOutline }),
+                },
+              ),
+            ]),
+          ]),
         // Account/Address
-        displayInfo.account && h('div', { class: 'flex items-center justify-between text-xs' }, [
-          h('span', { class: 'text-gray-600' }, '账号/地址：'),
-          h('div', { class: 'flex items-center gap-1' }, [
-            h('span', { class: 'font-medium' }, displayInfo.account),
-            h(NButton, {
-              text: true,
-              size: 'tiny',
-              onClick: () => copyField(displayInfo.account, '账号/地址')
-            }, { default: () => h(NIcon, { size: 14, component: CopyOutline }) })
-          ])
-        ]),
+        displayInfo.account &&
+          h('div', { class: 'flex items-center justify-between text-xs' }, [
+            h('span', { class: 'text-gray-600' }, '账号/地址：'),
+            h('div', { class: 'flex items-center gap-1' }, [
+              h('span', { class: 'font-medium' }, displayInfo.account),
+              h(
+                NButton,
+                {
+                  text: true,
+                  size: 'tiny',
+                  onClick: () => copyField(displayInfo.account, '账号/地址'),
+                },
+                {
+                  default: () => h(NIcon, { size: 14, component: CopyOutline }),
+                },
+              ),
+            ]),
+          ]),
         // Type (账户类型) - Always show if available
-        displayType && h('div', { class: 'flex items-center justify-between text-xs' }, [
-          h('span', { class: 'text-gray-600' }, '类型：'),
-          h('div', { class: 'flex items-center gap-1' }, [
-            h('span', { class: 'font-medium' }, displayType),
-            h(NButton, {
-              text: true,
-              size: 'tiny',
-              onClick: () => copyField(displayType, '类型')
-            }, { default: () => h(NIcon, { size: 14, component: CopyOutline }) })
-          ])
-        ]),
+        displayType &&
+          h('div', { class: 'flex items-center justify-between text-xs' }, [
+            h('span', { class: 'text-gray-600' }, '类型：'),
+            h('div', { class: 'flex items-center gap-1' }, [
+              h('span', { class: 'font-medium' }, displayType),
+              h(
+                NButton,
+                {
+                  text: true,
+                  size: 'tiny',
+                  onClick: () => copyField(displayType, '类型'),
+                },
+                {
+                  default: () => h(NIcon, { size: 14, component: CopyOutline }),
+                },
+              ),
+            ]),
+          ]),
         // CPF
-        displayInfo.cpf && h('div', { class: 'flex items-center justify-between text-xs' }, [
-          h('span', { class: 'text-gray-600' }, 'CPF：'),
-          h('div', { class: 'flex items-center gap-1' }, [
-            h('span', { class: 'font-medium' }, displayInfo.cpf),
-            h(NButton, {
-              text: true,
-              size: 'tiny',
-              onClick: () => copyField(displayInfo.cpf, 'CPF')
-            }, { default: () => h(NIcon, { size: 14, component: CopyOutline }) })
-          ])
-        ]),
+        displayInfo.cpf &&
+          h('div', { class: 'flex items-center justify-between text-xs' }, [
+            h('span', { class: 'text-gray-600' }, 'CPF：'),
+            h('div', { class: 'flex items-center gap-1' }, [
+              h('span', { class: 'font-medium' }, displayInfo.cpf),
+              h(
+                NButton,
+                {
+                  text: true,
+                  size: 'tiny',
+                  onClick: () => copyField(displayInfo.cpf, 'CPF'),
+                },
+                {
+                  default: () => h(NIcon, { size: 14, component: CopyOutline }),
+                },
+              ),
+            ]),
+          ]),
         // Phone
-        displayInfo.phone && h('div', { class: 'flex items-center justify-between text-xs' }, [
-          h('span', { class: 'text-gray-600' }, '电话：'),
-          h('div', { class: 'flex items-center gap-1' }, [
-            h('span', { class: 'font-medium' }, displayInfo.phone),
-            h(NButton, {
-              text: true,
-              size: 'tiny',
-              onClick: () => copyField(displayInfo.phone, '电话')
-            }, { default: () => h(NIcon, { size: 14, component: CopyOutline }) })
-          ])
-        ]),
+        displayInfo.phone &&
+          h('div', { class: 'flex items-center justify-between text-xs' }, [
+            h('span', { class: 'text-gray-600' }, '电话：'),
+            h('div', { class: 'flex items-center gap-1' }, [
+              h('span', { class: 'font-medium' }, displayInfo.phone),
+              h(
+                NButton,
+                {
+                  text: true,
+                  size: 'tiny',
+                  onClick: () => copyField(displayInfo.phone, '电话'),
+                },
+                {
+                  default: () => h(NIcon, { size: 14, component: CopyOutline }),
+                },
+              ),
+            ]),
+          ]),
         // Email
-        displayInfo.email && h('div', { class: 'flex items-center justify-between text-xs' }, [
-          h('span', { class: 'text-gray-600' }, '邮箱：'),
-          h('div', { class: 'flex items-center gap-1' }, [
-            h('span', { class: 'font-medium' }, displayInfo.email),
-            h(NButton, {
-              text: true,
-              size: 'tiny',
-              onClick: () => copyField(displayInfo.email, '邮箱')
-            }, { default: () => h(NIcon, { size: 14, component: CopyOutline }) })
-          ])
-        ])
+        displayInfo.email &&
+          h('div', { class: 'flex items-center justify-between text-xs' }, [
+            h('span', { class: 'text-gray-600' }, '邮箱：'),
+            h('div', { class: 'flex items-center gap-1' }, [
+              h('span', { class: 'font-medium' }, displayInfo.email),
+              h(
+                NButton,
+                {
+                  text: true,
+                  size: 'tiny',
+                  onClick: () => copyField(displayInfo.email, '邮箱'),
+                },
+                {
+                  default: () => h(NIcon, { size: 14, component: CopyOutline }),
+                },
+              ),
+            ]),
+          ]),
       ]);
-    }
+    },
   },
   // 11. 订单状态 (操作人)
   {
@@ -1941,21 +2455,24 @@ const columns: DataTableColumns<WithdrawalRecord> = [
     width: 140,
     render: (row) => {
       const statusMap = {
-        'unlocked': { type: 'default', text: '未锁定' },
-        'pending': { type: 'warning', text: '待出款' },
-        'reviewing': { type: 'info', text: '审核中' },
-        'completed': { type: 'success', text: '已付款' },
-        'approved': { type: 'success', text: '已付款' },
-        'success': { type: 'success', text: '已付款' },
-        'processing': { type: 'info', text: '处理中' },
-        'rejected': { type: 'error', text: '已拒绝' },
-        'failed': { type: 'error', text: '失败' },
-        'cancelled': { type: 'default', text: '已取消' },
-        'canceled': { type: 'default', text: '已取消' },
-        'risk_review': { type: 'warning', text: '风控审核' }
+        unlocked: { type: 'default', text: '未锁定' },
+        pending: { type: 'warning', text: '待出款' },
+        reviewing: { type: 'info', text: '审核中' },
+        completed: { type: 'success', text: '已付款' },
+        approved: { type: 'success', text: '已付款' },
+        success: { type: 'success', text: '已付款' },
+        processing: { type: 'info', text: '处理中' },
+        rejected: { type: 'error', text: '已拒绝' },
+        failed: { type: 'error', text: '失败' },
+        cancelled: { type: 'default', text: '已取消' },
+        canceled: { type: 'default', text: '已取消' },
+        risk_review: { type: 'warning', text: '风控审核' },
       };
-      const status = statusMap[row.status as keyof typeof statusMap] || { type: 'default', text: row.status };
-      
+      const status = statusMap[row.status as keyof typeof statusMap] || {
+        type: 'default',
+        text: row.status,
+      };
+
       // 🎯 NEW: Operator name display logic
       let operatorDisplay = '';
       if (row.reviewer || row.operator) {
@@ -1968,12 +2485,17 @@ const columns: DataTableColumns<WithdrawalRecord> = [
         // If not locked, show "未锁定"
         operatorDisplay = '未锁定';
       }
-      
+
       return h('div', { class: 'text-center space-y-1' }, [
-        h(NTag, { type: status.type as any, size: 'small' }, { default: () => status.text }),
-        operatorDisplay && h('div', { class: 'text-xs text-gray-500' }, operatorDisplay)
+        h(
+          NTag,
+          { type: status.type as any, size: 'small' },
+          { default: () => status.text },
+        ),
+        operatorDisplay &&
+          h('div', { class: 'text-xs text-gray-500' }, operatorDisplay),
       ]);
-    }
+    },
   },
   // 12. 前台备注
   {
@@ -1985,9 +2507,9 @@ const columns: DataTableColumns<WithdrawalRecord> = [
       return h('div', { class: 'text-xs' }, [
         frontendNote
           ? h('div', { class: 'text-gray-700' }, frontendNote)
-          : h('span', { class: 'text-gray-400 text-center' }, '-')
+          : h('span', { class: 'text-gray-400 text-center' }, '-'),
       ]);
-    }
+    },
   },
   // 13. 后台备注
   {
@@ -1995,24 +2517,34 @@ const columns: DataTableColumns<WithdrawalRecord> = [
     key: 'backendNotes',
     width: 200,
     render: (row) => {
-      const backendNote = row.backendNotes || row.backendNote || row.description || row.notes || '';
-      const hasError = row.status === 'failed' || row.status === 'rejected' || 
-                       (backendNote && (
-                         backendNote.toLowerCase().includes('error') ||
-                         backendNote.toLowerCase().includes('failed') ||
-                         backendNote.toLowerCase().includes('错误') ||
-                         backendNote.toLowerCase().includes('失败')
-                       ));
-      
+      const backendNote =
+        row.backendNotes ||
+        row.backendNote ||
+        row.description ||
+        row.notes ||
+        '';
+      const hasError =
+        row.status === 'failed' ||
+        row.status === 'rejected' ||
+        (backendNote &&
+          (backendNote.toLowerCase().includes('error') ||
+            backendNote.toLowerCase().includes('failed') ||
+            backendNote.toLowerCase().includes('错误') ||
+            backendNote.toLowerCase().includes('失败')));
+
       return h('div', { class: 'text-xs' }, [
         backendNote
           ? h('div', { class: hasError ? 'space-y-1' : '' }, [
               hasError && h('div', { class: 'text-red-500' }, '错误信息：'),
-              h('div', { class: hasError ? 'text-red-600' : 'text-gray-700' }, backendNote)
+              h(
+                'div',
+                { class: hasError ? 'text-red-600' : 'text-gray-700' },
+                backendNote,
+              ),
             ])
-          : h('span', { class: 'text-gray-400 text-center' }, '-')
+          : h('span', { class: 'text-gray-400 text-center' }, '-'),
       ]);
-    }
+    },
   },
   // 14. 三方备注
   {
@@ -2020,24 +2552,29 @@ const columns: DataTableColumns<WithdrawalRecord> = [
     key: 'thirdPartyNotes',
     width: 200,
     render: (row) => {
-      const thirdPartyNote = row.thirdPartyNotes || row.thirdPartyError || row.gatewayError || '';
-      const hasError = thirdPartyNote && (
-        thirdPartyNote.toLowerCase().includes('error') ||
-        thirdPartyNote.toLowerCase().includes('failed') ||
-        thirdPartyNote.toLowerCase().includes('拒绝') ||
-        thirdPartyNote.toLowerCase().includes('错误') ||
-        thirdPartyNote.toLowerCase().includes('失败')
-      );
-      
+      const thirdPartyNote =
+        row.thirdPartyNotes || row.thirdPartyError || row.gatewayError || '';
+      const hasError =
+        thirdPartyNote &&
+        (thirdPartyNote.toLowerCase().includes('error') ||
+          thirdPartyNote.toLowerCase().includes('failed') ||
+          thirdPartyNote.toLowerCase().includes('拒绝') ||
+          thirdPartyNote.toLowerCase().includes('错误') ||
+          thirdPartyNote.toLowerCase().includes('失败'));
+
       return h('div', { class: 'text-xs' }, [
         thirdPartyNote
           ? h('div', { class: 'space-y-1' }, [
               h('div', { class: 'text-orange-500 text-xs' }, '三方响应：'),
-              h('div', { class: hasError ? 'text-red-600' : 'text-gray-700' }, thirdPartyNote)
+              h(
+                'div',
+                { class: hasError ? 'text-red-600' : 'text-gray-700' },
+                thirdPartyNote,
+              ),
             ])
-          : h('span', { class: 'text-gray-400 text-center' }, '-')
+          : h('span', { class: 'text-gray-400 text-center' }, '-'),
       ]);
-    }
+    },
   },
   // 15. 三方代付 (代付次数)
   {
@@ -2047,19 +2584,26 @@ const columns: DataTableColumns<WithdrawalRecord> = [
     render: (row) => {
       const gateway = row.paymentGateway || row.thirdPartyProvider || 'Pay4z';
       let displayName = gateway;
-      
+
       // 🎯 NEW: Chinese translations for gateway names
       if (gateway.toLowerCase() === 'manual') {
         displayName = '人工出款';
-      } else if (gateway.toLowerCase() === 'auto_system' || gateway === 'auto_system') {
+      } else if (
+        gateway.toLowerCase() === 'auto_system' ||
+        gateway === 'auto_system'
+      ) {
         displayName = '免审出款';
       }
-      
+
       return h('div', { class: 'text-center space-y-1' }, [
         h('div', { class: 'font-medium text-xs' }, displayName),
-        h('div', { class: 'text-xs text-gray-500' }, `代付次数: ${row.withdrawCount || row.withdrawalCount || row.refreshCount || 1}`)
+        h(
+          'div',
+          { class: 'text-xs text-gray-500' },
+          `代付次数: ${row.withdrawCount || row.withdrawalCount || row.refreshCount || 1}`,
+        ),
       ]);
-    }
+    },
   },
   // 16. 操作 (Keep existing actions column)
   {
@@ -2069,14 +2613,24 @@ const columns: DataTableColumns<WithdrawalRecord> = [
     fixed: 'right',
     render: (row) => {
       const actions = [];
-      
+
       // For 风控审核 and 财务出款 states: only show lock/unlock until locked
-      const isRiskOrFinanceState = ['pending', 'reviewing', 'risk_review_required', 'finance_pending'].includes(row.status);
-      
+      const isRiskOrFinanceState = [
+        'pending',
+        'reviewing',
+        'risk_review_required',
+        'finance_pending',
+      ].includes(row.status);
+
       if (isRiskOrFinanceState) {
         // 🎯 FIX: Only show lock/unlock for pending/processing statuses
-        const canLockUnlock = ['pending', 'reviewing', 'processing', 'risk_review'].includes(row.status);
-        
+        const canLockUnlock = [
+          'pending',
+          'reviewing',
+          'processing',
+          'risk_review',
+        ].includes(row.status);
+
         if (canLockUnlock) {
           actions.push(
             h(
@@ -2084,21 +2638,22 @@ const columns: DataTableColumns<WithdrawalRecord> = [
               {
                 size: 'small',
                 type: row.isLocked ? 'warning' : 'default',
-                onClick: () => row.isLocked ? unlockOrder(row) : lockOrder(row)
+                onClick: () =>
+                  row.isLocked ? unlockOrder(row) : lockOrder(row),
               },
-              { 
+              {
                 default: () => {
                   if (row.isLocked) {
                     return row.lockedBy ? `解锁 (${row.lockedBy})` : '解锁';
                   } else {
                     return '锁定';
                   }
-                }
-              }
-            )
+                },
+              },
+            ),
           );
         }
-        
+
         // Show other actions only when record is locked
         if (row.isLocked) {
           actions.push(
@@ -2108,61 +2663,70 @@ const columns: DataTableColumns<WithdrawalRecord> = [
               {
                 size: 'small',
                 type: 'success',
-                onClick: () => showApproveWithdrawalModal(row)
+                onClick: () => showApproveWithdrawalModal(row),
               },
-              { default: () => '审核出款' }
+              { default: () => '审核出款' },
             ),
-            
+
             // Manual withdrawal - 已人工出款
             h(
               NButton,
               {
                 size: 'small',
                 type: 'primary',
-                onClick: () => showManualWithdrawalModal(row)
+                onClick: () => showManualWithdrawalModal(row),
               },
-              { default: () => '已人工出款' }
+              { default: () => '已人工出款' },
             ),
-            
+
             // Force Cancel - 强制取消
             h(
               NButton,
               {
                 size: 'small',
                 type: 'warning',
-                onClick: () => showForceCancelModal(row)
+                onClick: () => showForceCancelModal(row),
               },
-              { default: () => '强制取消' }
+              { default: () => '强制取消' },
             ),
-            
+
             // Force Reject - 强制拒绝
             h(
               NButton,
               {
                 size: 'small',
                 type: 'error',
-                onClick: () => showForceRejectModal(row)
+                onClick: () => showForceRejectModal(row),
               },
-              { default: () => '强制拒绝' }
+              { default: () => '强制拒绝' },
             ),
-            
+
             // Notes - Only show if locked
-            ...(row.isLocked ? [h(
-              NButton,
-              {
-                size: 'small',
-                type: 'info',
-                onClick: () => showNotesModal(row)
-              },
-              { default: () => '备注' }
-            )] : [])
+            ...(row.isLocked
+              ? [
+                  h(
+                    NButton,
+                    {
+                      size: 'small',
+                      type: 'info',
+                      onClick: () => showNotesModal(row),
+                    },
+                    { default: () => '备注' },
+                  ),
+                ]
+              : []),
           );
         }
       } else {
         // For other states, show all actions
-        // 🎯 FIX: Only show lock/unlock for pending/processing statuses  
-        const canLockUnlock = ['pending', 'reviewing', 'processing', 'risk_review'].includes(row.status);
-        
+        // 🎯 FIX: Only show lock/unlock for pending/processing statuses
+        const canLockUnlock = [
+          'pending',
+          'reviewing',
+          'processing',
+          'risk_review',
+        ].includes(row.status);
+
         if (canLockUnlock) {
           actions.push(
             h(
@@ -2170,61 +2734,74 @@ const columns: DataTableColumns<WithdrawalRecord> = [
               {
                 size: 'small',
                 type: row.isLocked ? 'warning' : 'default',
-                onClick: () => row.isLocked ? unlockOrder(row) : lockOrder(row)
+                onClick: () =>
+                  row.isLocked ? unlockOrder(row) : lockOrder(row),
               },
-              { 
+              {
                 default: () => {
                   if (row.isLocked) {
                     return row.lockedBy ? `解锁 (${row.lockedBy})` : '解锁';
                   } else {
                     return '锁定';
                   }
-                }
-              }
-            )
+                },
+              },
+            ),
           );
         }
-        
+
         // Other action buttons - Only show approve/reject buttons for pending withdrawals
         actions.push(
-          ...(canApprove(row.status) ? [
-            h(
-              NButton,
-              {
-                size: 'small',
-                type: 'success',
-                onClick: () => showSingleApproveModal(row)
-              },
-              { default: () => '批准' }
-            )
-          ] : []),
-          ...(canReject(row.status) ? [
-            h(
-              NButton,
-              {
-                size: 'small',
-                type: 'error',
-                onClick: () => showSingleRejectModal(row)
-              },
-              { default: () => '拒绝' }
-            )
-          ] : []),
+          ...(canApprove(row.status)
+            ? [
+                h(
+                  NButton,
+                  {
+                    size: 'small',
+                    type: 'success',
+                    onClick: () => showSingleApproveModal(row),
+                  },
+                  { default: () => '批准' },
+                ),
+              ]
+            : []),
+          ...(canReject(row.status)
+            ? [
+                h(
+                  NButton,
+                  {
+                    size: 'small',
+                    type: 'error',
+                    onClick: () => showSingleRejectModal(row),
+                  },
+                  { default: () => '拒绝' },
+                ),
+              ]
+            : []),
           // Notes - Only show if locked
-          ...(row.isLocked ? [h(
-            NButton,
-            {
-              size: 'small',
-              type: 'info',
-              onClick: () => showNotesModal(row)
-            },
-            { default: () => '备注' }
-          )] : [])
+          ...(row.isLocked
+            ? [
+                h(
+                  NButton,
+                  {
+                    size: 'small',
+                    type: 'info',
+                    onClick: () => showNotesModal(row),
+                  },
+                  { default: () => '备注' },
+                ),
+              ]
+            : []),
         );
       }
-      
-      return h('div', { class: 'flex gap-1 flex-wrap justify-center' }, actions);
-    }
-  }
+
+      return h(
+        'div',
+        { class: 'flex gap-1 flex-wrap justify-center' },
+        actions,
+      );
+    },
+  },
 ];
 
 // Helper functions
@@ -2233,9 +2810,11 @@ const getCurrentUser = () => {
   const userInfo = userStore.userInfo;
   if (userInfo) {
     // Use username or id from actual user store
-    return userInfo.username || userInfo.userId || userInfo.id?.toString() || 'admin';
+    return (
+      userInfo.username || userInfo.userId || userInfo.id?.toString() || 'admin'
+    );
   }
-  
+
   // Fallback to admin for development/testing (matches backend)
   return 'admin';
 };
@@ -2243,9 +2822,9 @@ const getCurrentUser = () => {
 const lockOrder = async (row: WithdrawalRecord) => {
   try {
     const response = await financeWithdrawalApi.lockWithdrawal(row.id, 'lock');
-    
+
     console.log('🔍 Lock response:', response);
-    
+
     // Check if response has success property or if it's directly successful
     if (response && (response.success === true || response.message)) {
       message.success(response.message || `订单 ${row.orderId} 已锁定`);
@@ -2266,10 +2845,13 @@ const lockOrder = async (row: WithdrawalRecord) => {
 
 const unlockOrder = async (row: WithdrawalRecord) => {
   try {
-    const response = await financeWithdrawalApi.lockWithdrawal(row.id, 'unlock');
-    
+    const response = await financeWithdrawalApi.lockWithdrawal(
+      row.id,
+      'unlock',
+    );
+
     console.log('🔍 Unlock response:', response);
-    
+
     // Check if response has success property or if it's directly successful
     if (response && (response.success === true || response.message)) {
       message.success(response.message || `订单 ${row.orderId} 已解锁`);
@@ -2306,7 +2888,7 @@ const showForceWithdrawalModal = (row: WithdrawalRecord) => {
       } catch (error) {
         message.error('强制出款失败');
       }
-    }
+    },
   });
 };
 
@@ -2323,7 +2905,7 @@ const showForceFailureModal = (row: WithdrawalRecord) => {
       } catch (error) {
         message.error('强制失败操作失败');
       }
-    }
+    },
   });
 };
 
@@ -2340,26 +2922,43 @@ const showReWithdrawalModal = (row: WithdrawalRecord) => {
       } catch (error) {
         message.error('重新出款设置失败');
       }
-    }
+    },
   });
 };
 
 const showManualWithdrawalModal = (row: WithdrawalRecord) => {
   dialog.warning({
     title: '人工出款确认',
-    content: () => h('div', [
-      h('div', { class: 'mb-3' }, `确认人工出款订单 ${row.orderId}？`),
-      h('div', { class: 'text-sm text-gray-600 mb-2' }, `提现金额: ${row.amount} ${row.currency}`),
-      h('div', { class: 'text-sm text-gray-600 mb-2' }, `会员账号: ${row.memberAccount}`),
-      h('div', { class: 'text-orange-600 text-sm font-medium' }, '⚠️ 此操作将直接标记为已完成，不调用第三方支付接口'),
-      h('div', { class: 'text-red-600 text-sm mt-2' }, '请确保已通过其他方式完成实际转账！')
-    ]),
+    content: () =>
+      h('div', [
+        h('div', { class: 'mb-3' }, `确认人工出款订单 ${row.orderId}？`),
+        h(
+          'div',
+          { class: 'text-sm text-gray-600 mb-2' },
+          `提现金额: ${row.amount} ${row.currency}`,
+        ),
+        h(
+          'div',
+          { class: 'text-sm text-gray-600 mb-2' },
+          `会员账号: ${row.memberAccount}`,
+        ),
+        h(
+          'div',
+          { class: 'text-orange-600 text-sm font-medium' },
+          '⚠️ 此操作将直接标记为已完成，不调用第三方支付接口',
+        ),
+        h(
+          'div',
+          { class: 'text-red-600 text-sm mt-2' },
+          '请确保已通过其他方式完成实际转账！',
+        ),
+      ]),
     positiveText: '确认人工出款',
     negativeText: '取消',
     onPositiveClick: async () => {
       try {
         const response = await financeWithdrawalApi.manualWithdrawal(row.id);
-        
+
         if (response.success) {
           message.success('人工出款标记成功');
           // Refresh data to show updated status
@@ -2373,7 +2972,7 @@ const showManualWithdrawalModal = (row: WithdrawalRecord) => {
         console.error('Manual withdrawal error:', error);
         message.error(error.response?.data?.message || '人工出款失败');
       }
-    }
+    },
   });
 };
 
@@ -2384,10 +2983,11 @@ const refreshOrderStatus = async (row: WithdrawalRecord) => {
       '刷新成功',
       '该三方代付不支持刷新',
       '每3分钟才能刷新一次',
-      '刷新失败'
+      '刷新失败',
     ];
-    const result = refreshResults[Math.floor(Math.random() * refreshResults.length)];
-    
+    const result =
+      refreshResults[Math.floor(Math.random() * refreshResults.length)];
+
     if (result === '刷新成功') {
       message.success(result);
     } else if (result === '刷新失败') {
@@ -2406,22 +3006,22 @@ const notesModal = reactive({
   loading: false,
   data: null as WithdrawalRecord | null,
   noteType: 'backend' as 'frontend' | 'backend' | 'system',
-  noteContent: ''
+  noteContent: '',
 });
 
 const noteTypeOptions = [
   { label: '后台备注', value: 'backend' },
   { label: '前台备注', value: 'frontend' },
-  { label: '系统备注', value: 'system' }
+  { label: '系统备注', value: 'system' },
 ];
 
 const showNotesModal = (row: WithdrawalRecord) => {
   notesModal.data = row;
-  
+
   // Determine note type and content based on existing notes
   let noteType: 'frontend' | 'backend' | 'system' = 'backend';
   let noteContent = '';
-  
+
   if (row.frontendNotes || row.frontendNote) {
     noteType = 'frontend';
     noteContent = row.frontendNotes || row.frontendNote || '';
@@ -2432,34 +3032,38 @@ const showNotesModal = (row: WithdrawalRecord) => {
     noteType = 'system';
     noteContent = row.systemNotes || '';
   }
-  
+
   notesModal.noteType = noteType;
   notesModal.noteContent = noteContent;
   notesModal.show = true;
 };
 
 // Watch for note type changes and update content accordingly
-watch(() => notesModal.noteType, (newType) => {
-  if (!notesModal.data || !notesModal.show) return;
-  
-  const row = notesModal.data;
-  
-  // Update content based on selected type
-  if (newType === 'frontend') {
-    notesModal.noteContent = row.frontendNotes || row.frontendNote || '';
-  } else if (newType === 'backend') {
-    notesModal.noteContent = row.backendNotes || row.backendNote || row.description || '';
-  } else if (newType === 'system') {
-    notesModal.noteContent = row.systemNotes || '';
-  }
-});
+watch(
+  () => notesModal.noteType,
+  (newType) => {
+    if (!notesModal.data || !notesModal.show) return;
+
+    const row = notesModal.data;
+
+    // Update content based on selected type
+    if (newType === 'frontend') {
+      notesModal.noteContent = row.frontendNotes || row.frontendNote || '';
+    } else if (newType === 'backend') {
+      notesModal.noteContent =
+        row.backendNotes || row.backendNote || row.description || '';
+    } else if (newType === 'system') {
+      notesModal.noteContent = row.systemNotes || '';
+    }
+  },
+);
 
 const handleSaveNotes = async () => {
   if (!notesModal.data) return;
-  
+
   try {
     notesModal.loading = true;
-    
+
     // Map note type to correct field names
     const noteData: any = {};
     if (notesModal.noteType === 'frontend') {
@@ -2469,75 +3073,88 @@ const handleSaveNotes = async () => {
     } else if (notesModal.noteType === 'system') {
       noteData.systemNotes = notesModal.noteContent;
     }
-    
-    console.log('💾 Saving notes:', { orderId: notesModal.data.orderId, noteData });
-    
+
+    console.log('💾 Saving notes:', {
+      orderId: notesModal.data.orderId,
+      noteData,
+    });
+
     // Call API to update notes - use orderId (trxId) instead of internal id
-    const response = await financeWithdrawalApi.updateNote(notesModal.data.orderId, noteData);
-    
+    const response = await financeWithdrawalApi.updateNote(
+      notesModal.data.orderId,
+      noteData,
+    );
+
     console.log('✅ API Response:', response);
-    
+
     // Response interceptor returns the data directly, so if we have a trxId, it's successful
     const isSuccess = response && (response.trxId || response.success === true);
-    
+
     if (isSuccess) {
       console.log('✅ Update successful, updating table data...');
-      
+
       // Update local table data immediately with the returned data
       if (notesModal.data) {
         console.log('🔍 Looking for order:', notesModal.data.orderId);
         console.log('🔍 Table data length:', tableData.value.length);
-        
-        const rowIndex = tableData.value.findIndex(r => r.orderId === notesModal.data!.orderId);
+
+        const rowIndex = tableData.value.findIndex(
+          (r) => r.orderId === notesModal.data!.orderId,
+        );
         console.log('📍 Found row at index:', rowIndex);
-        
+
         if (rowIndex !== -1) {
           // Response interceptor returns data directly, so response IS the data
           const responseData = response;
-          
+
           console.log('💾 Updating row with data:', {
             noteData,
             responseData: {
               frontendNotes: responseData.frontendNotes,
               backendNotes: responseData.backendNotes,
-              systemNotes: responseData.systemNotes
-            }
+              systemNotes: responseData.systemNotes,
+            },
           });
-          
+
           // Create a new object to ensure reactivity
           const updatedRow = { ...tableData.value[rowIndex] };
-          
+
           if (noteData.frontendNotes !== undefined) {
-            updatedRow.frontendNotes = responseData.frontendNotes || noteData.frontendNotes;
-            updatedRow.frontendNote = responseData.frontendNotes || noteData.frontendNotes;
+            updatedRow.frontendNotes =
+              responseData.frontendNotes || noteData.frontendNotes;
+            updatedRow.frontendNote =
+              responseData.frontendNotes || noteData.frontendNotes;
           }
           if (noteData.backendNotes !== undefined) {
-            updatedRow.backendNotes = responseData.backendNotes || noteData.backendNotes;
-            updatedRow.backendNote = responseData.backendNotes || noteData.backendNotes;
+            updatedRow.backendNotes =
+              responseData.backendNotes || noteData.backendNotes;
+            updatedRow.backendNote =
+              responseData.backendNotes || noteData.backendNotes;
           }
           if (noteData.systemNotes !== undefined) {
-            updatedRow.systemNotes = responseData.systemNotes || noteData.systemNotes;
+            updatedRow.systemNotes =
+              responseData.systemNotes || noteData.systemNotes;
           }
-          
+
           // Replace the entire row object to ensure Vue detects the change
           tableData.value[rowIndex] = updatedRow;
-          
-          console.log('✅ Updated row:', { 
-            frontendNotes: updatedRow.frontendNotes, 
+
+          console.log('✅ Updated row:', {
+            frontendNotes: updatedRow.frontendNotes,
             backendNotes: updatedRow.backendNotes,
-            systemNotes: updatedRow.systemNotes
+            systemNotes: updatedRow.systemNotes,
           });
         } else {
           console.error('❌ Row not found in table data!');
         }
       }
-      
+
       message.success('备注更新成功');
       notesModal.show = false;
-      
+
       // Force table to re-render by creating a new array reference
       tableData.value = [...tableData.value];
-      
+
       // Refresh data from server
       console.log('🔄 Refreshing data from server...');
       await fetchData();
@@ -2551,9 +3168,11 @@ const handleSaveNotes = async () => {
     console.error('Error details:', {
       message: error.message,
       response: error.response,
-      data: error.response?.data
+      data: error.response?.data,
     });
-    message.error(error.response?.data?.message || error.message || '备注更新失败');
+    message.error(
+      error.response?.data?.message || error.message || '备注更新失败',
+    );
   } finally {
     notesModal.loading = false;
   }
@@ -2571,16 +3190,19 @@ const showForceCancelModal = (row: WithdrawalRecord) => {
 
 const handleForceCancel = async () => {
   if (!forceCancelModal.data) return;
-  
+
   try {
     forceCancelModal.loading = true;
-    
+
     // Call API to force cancel withdrawal
-    const response = await financeWithdrawalApi.forceCancel(forceCancelModal.data.id, {
-      frontendReason: forceCancelModal.frontendReason,
-      backendReason: forceCancelModal.backendReason
-    });
-    
+    const response = await financeWithdrawalApi.forceCancel(
+      forceCancelModal.data.id,
+      {
+        frontendReason: forceCancelModal.frontendReason,
+        backendReason: forceCancelModal.backendReason,
+      },
+    );
+
     if (response.success) {
       message.success('强制取消成功，提现金额已返还给会员');
       forceCancelModal.show = false;
@@ -2599,28 +3221,37 @@ const handleForceCancel = async () => {
 
 const handleForceReject = async () => {
   if (!forceRejectModal.data) return;
-  
+
   try {
     forceRejectModal.loading = true;
-    
+
     // Prepare audit task data if adding audit
-    let auditTaskData: { multiplier: number; platforms: { [key: string]: boolean }; selectedPlatform: string; } | undefined;
+    let auditTaskData:
+      | {
+          multiplier: number;
+          platforms: { [key: string]: boolean };
+          selectedPlatform: string;
+        }
+      | undefined;
     if (forceRejectModal.windControlProcess === 'add_audit') {
       auditTaskData = {
         multiplier: forceRejectModal.auditMultiplier,
         platforms: forceRejectModal.platforms,
-        selectedPlatform: forceRejectModal.selectedPlatform
+        selectedPlatform: forceRejectModal.selectedPlatform,
       };
     }
-    
+
     // Call API to force reject withdrawal
-    const response = await financeWithdrawalApi.forceReject(forceRejectModal.data.id, {
-      windControlProcess: forceRejectModal.windControlProcess,
-      auditTask: auditTaskData,
-      frontendReason: forceRejectModal.frontendReason,
-      backendReason: forceRejectModal.backendReason
-    });
-    
+    const response = await financeWithdrawalApi.forceReject(
+      forceRejectModal.data.id,
+      {
+        windControlProcess: forceRejectModal.windControlProcess,
+        auditTask: auditTaskData,
+        frontendReason: forceRejectModal.frontendReason,
+        backendReason: forceRejectModal.backendReason,
+      },
+    );
+
     if (response.success) {
       let successMessage = '强制拒绝成功';
       if (forceRejectModal.windControlProcess === 'add_audit') {
@@ -2649,15 +3280,16 @@ const showForceRejectModal = (row: WithdrawalRecord) => {
   forceRejectModal.data = row;
   forceRejectModal.windControlProcess = 'no';
   forceRejectModal.auditMultiplier = 1;
-  forceRejectModal.selectedPlatform = availableProviders.value[0]?.platformId || 'PG';
-  
+  forceRejectModal.selectedPlatform =
+    availableProviders.value[0]?.platformId || 'PG';
+
   // ✅ FIX: Initialize platform selections with "all platforms" selected by default
   const newPlatforms: Record<string, boolean> = { all: true };
-  availableProviders.value.forEach(provider => {
+  availableProviders.value.forEach((provider) => {
     newPlatforms[provider.platformId] = true; // ✅ FIX: Select all platforms by default
   });
   forceRejectModal.platforms = newPlatforms;
-  
+
   forceRejectModal.frontendReason = '';
   forceRejectModal.backendReason = '';
   forceRejectModal.show = true;
@@ -2667,20 +3299,24 @@ const showForceRejectModal = (row: WithdrawalRecord) => {
 // Provider selection handlers for force reject modal
 const handleProviderSelection = () => {
   // Update 'all' checkbox based on individual selections
-  const selectedCount = Object.values(forceRejectModal.platforms).filter(selected => selected && typeof selected === 'boolean').length;
-  forceRejectModal.platforms.all = selectedCount === availableProviders.value.length;
+  const selectedCount = Object.values(forceRejectModal.platforms).filter(
+    (selected) => selected && typeof selected === 'boolean',
+  ).length;
+  forceRejectModal.platforms.all =
+    selectedCount === availableProviders.value.length;
 };
 
 const handleSelectAllProviders = (checked: boolean) => {
   forceRejectModal.platforms.all = checked;
   // Update individual provider selections
-  availableProviders.value.forEach(provider => {
+  availableProviders.value.forEach((provider) => {
     forceRejectModal.platforms[provider.platformId] = checked;
   });
 };
 
 const toggleProviderSelection = (platformId: string) => {
-  forceRejectModal.platforms[platformId] = !forceRejectModal.platforms[platformId];
+  forceRejectModal.platforms[platformId] =
+    !forceRejectModal.platforms[platformId];
   handleProviderSelection();
 };
 
@@ -2694,18 +3330,18 @@ const showApproveWithdrawalModal = async (row: WithdrawalRecord) => {
   approveWithdrawalModal.data = row;
   approveWithdrawalModal.show = true;
   approveWithdrawalModal.loading = true;
-  
+
   try {
     const { riskControlApi } = await import('#/api/finance/riskControl');
     const detailResponse = await riskControlApi.getWithdrawalDetails(row.id);
-    
+
     if (detailResponse.success && detailResponse.data) {
       approveWithdrawalModal.data = {
         ...row,
         ...detailResponse.data.withdrawal,
         memberInfo: detailResponse.data.memberInfo,
         bettingStatistics: detailResponse.data.bettingStatistics,
-        riskAssessment: detailResponse.data.riskAssessment
+        riskAssessment: detailResponse.data.riskAssessment,
       };
     }
   } catch (error) {
@@ -2717,28 +3353,30 @@ const showApproveWithdrawalModal = async (row: WithdrawalRecord) => {
 
 const handleApproveWithdrawal = async () => {
   if (!approveWithdrawalModal.data) return;
-  
+
   try {
     approveWithdrawalModal.loading = true;
-    
+
     // Call API to approve withdrawal for processing
-    const response = await financeWithdrawalApi.approveWithdrawal(approveWithdrawalModal.data.id);
-    
+    const response = await financeWithdrawalApi.approveWithdrawal(
+      approveWithdrawalModal.data.id,
+    );
+
     if (response.success) {
       message.success('审核出款成功，订单已进入处理流程，等待第三方处理');
       approveWithdrawalModal.show = false;
-      
+
       // 🚀 Update item status to processing (will remain visible until third-party completes)
       // Once third-party responds (success/failed), it will disappear from the tab automatically
       const withdrawalId = approveWithdrawalModal.data.id;
-      const item = tableData.value.find(item => item.id === withdrawalId);
+      const item = tableData.value.find((item) => item.id === withdrawalId);
       if (item) {
         item.status = 'processing'; // Status stays as processing, buttons won't show anymore
       }
-      
+
       // Refresh data to sync with backend
       await fetchData();
-      
+
       // Emit refresh event for tab counts
       emit('refresh-tabs');
     } else {
@@ -2761,11 +3399,11 @@ const showWageringModal = (wageringData: any) => {
 const goToBetting = () => {
   // Close the modal first
   wageringModal.show = false;
-  
+
   // Navigate to betting/games page
   // You can customize this URL based on your game routing
   window.open('/games', '_blank');
-  
+
   // Or use Vue router if you prefer internal navigation
   // router.push('/games');
 };
@@ -2791,38 +3429,52 @@ const clearSelection = () => {
 };
 
 const selectAll = () => {
-  selectedIds.value = tableData.value.map(row => row.id);
+  selectedIds.value = tableData.value.map((row) => row.id);
 };
 
 // 全选当前页
-const currentPageOrderIds = computed(() => tableData.value.map(row => row.id));
+const currentPageOrderIds = computed(() =>
+  tableData.value.map((row) => row.id),
+);
 const isAllCurrentPageSelected = computed(() => {
   const ids = currentPageOrderIds.value;
   if (ids.length === 0) return false;
-  return ids.every(id => selectedIds.value.includes(id));
+  return ids.every((id) => selectedIds.value.includes(id));
 });
 const isCurrentPageIndeterminate = computed(() => {
   const ids = currentPageOrderIds.value;
   if (ids.length === 0) return false;
-  const selected = ids.filter(id => selectedIds.value.includes(id));
+  const selected = ids.filter((id) => selectedIds.value.includes(id));
   return selected.length > 0 && selected.length < ids.length;
 });
 const toggleSelectAllCurrentPage = (checked: boolean) => {
   if (checked) {
-    selectedIds.value = [...new Set([...selectedIds.value, ...currentPageOrderIds.value])];
+    selectedIds.value = [
+      ...new Set([...selectedIds.value, ...currentPageOrderIds.value]),
+    ];
   } else {
     const pageSet = new Set(currentPageOrderIds.value);
-    selectedIds.value = selectedIds.value.filter(id => !pageSet.has(id));
+    selectedIds.value = selectedIds.value.filter((id) => !pageSet.has(id));
   }
 };
 
-const batchReasonModal = ref<{ show: boolean; actionKey: string; orderIds: string[]; reason: string }>({ show: false, actionKey: '', orderIds: [], reason: '' });
+const batchReasonModal = ref<{
+  show: boolean;
+  actionKey: string;
+  orderIds: string[];
+  reason: string;
+}>({ show: false, actionKey: '', orderIds: [], reason: '' });
 function openBatchReasonModal(actionKey: string, orderIds: string[]) {
   batchReasonModal.value = { show: true, actionKey, orderIds, reason: '' };
 }
 async function submitBatchReasonModal() {
   const { actionKey, orderIds, reason } = batchReasonModal.value;
-  if (!reason.trim() && ['batch-force-cancel', 'batch-force-reject', 'batch-remark'].includes(actionKey)) {
+  if (
+    !reason.trim() &&
+    ['batch-force-cancel', 'batch-force-reject', 'batch-remark'].includes(
+      actionKey,
+    )
+  ) {
     message.warning('请输入操作说明');
     return;
   }
@@ -2830,7 +3482,11 @@ async function submitBatchReasonModal() {
   await runFinanceBatchAction(actionKey, orderIds, reason.trim());
 }
 
-async function runFinanceBatchAction(actionKey: string, orderIds: string[], reason: string = '') {
+async function runFinanceBatchAction(
+  actionKey: string,
+  orderIds: string[],
+  reason: string = '',
+) {
   const len = orderIds.length;
   try {
     loading.value = true;
@@ -2840,80 +3496,148 @@ async function runFinanceBatchAction(actionKey: string, orderIds: string[], reas
         try {
           const res = await financeWithdrawalApi.lockWithdrawal(id, 'lock');
           if (res?.success !== false) ok++;
-        } catch (_) { /* skip */ }
+        } catch (_) {
+          /* skip */
+        }
       }
-      message[ok === len ? 'success' : 'warning'](ok === len ? `批量锁定成功 (${len} 条)` : `部分成功 ${ok}/${len} 条`);
-      await fetchData(); selectedIds.value = []; emit('refresh-tabs');
+      message[ok === len ? 'success' : 'warning'](
+        ok === len ? `批量锁定成功 (${len} 条)` : `部分成功 ${ok}/${len} 条`,
+      );
+      await fetchData();
+      selectedIds.value = [];
+      emit('refresh-tabs');
     } else if (actionKey === 'batch-unlock') {
       let ok = 0;
       for (const id of orderIds) {
         try {
           const res = await financeWithdrawalApi.lockWithdrawal(id, 'unlock');
           if (res?.success !== false) ok++;
-        } catch (_) { /* skip */ }
+        } catch (_) {
+          /* skip */
+        }
       }
-      message[ok === len ? 'success' : 'warning'](ok === len ? `批量解锁成功 (${len} 条)` : `部分成功 ${ok}/${len} 条`);
-      await fetchData(); selectedIds.value = []; emit('refresh-tabs');
+      message[ok === len ? 'success' : 'warning'](
+        ok === len ? `批量解锁成功 (${len} 条)` : `部分成功 ${ok}/${len} 条`,
+      );
+      await fetchData();
+      selectedIds.value = [];
+      emit('refresh-tabs');
     } else if (actionKey === 'batch-approve') {
       let ok = 0;
       for (const id of orderIds) {
         try {
           const res = await financeWithdrawalApi.approveWithdrawal(id);
           if (res?.success !== false) ok++;
-        } catch (_) { /* skip */ }
+        } catch (_) {
+          /* skip */
+        }
       }
-      message[ok === len ? 'success' : 'warning'](ok === len ? `批量审核出款成功 (${len} 条)` : `部分成功 ${ok}/${len} 条`);
-      await fetchData(); selectedIds.value = []; emit('refresh-tabs');
+      message[ok === len ? 'success' : 'warning'](
+        ok === len
+          ? `批量审核出款成功 (${len} 条)`
+          : `部分成功 ${ok}/${len} 条`,
+      );
+      await fetchData();
+      selectedIds.value = [];
+      emit('refresh-tabs');
     } else if (actionKey === 'batch-force-cancel') {
       let ok = 0;
       for (const id of orderIds) {
         try {
-          const res = await financeWithdrawalApi.forceCancel(id, { frontendReason: reason, backendReason: reason });
+          const res = await financeWithdrawalApi.forceCancel(id, {
+            frontendReason: reason,
+            backendReason: reason,
+          });
           if (res?.success !== false) ok++;
-        } catch (_) { /* skip */ }
+        } catch (_) {
+          /* skip */
+        }
       }
-      message[ok === len ? 'success' : 'warning'](ok === len ? `批量强制取消成功 (${len} 条)` : `部分成功 ${ok}/${len} 条`);
-      await fetchData(); selectedIds.value = []; emit('refresh-tabs');
+      message[ok === len ? 'success' : 'warning'](
+        ok === len
+          ? `批量强制取消成功 (${len} 条)`
+          : `部分成功 ${ok}/${len} 条`,
+      );
+      await fetchData();
+      selectedIds.value = [];
+      emit('refresh-tabs');
     } else if (actionKey === 'batch-force-reject') {
       let ok = 0;
       for (const id of orderIds) {
         try {
-          const res = await financeWithdrawalApi.forceReject(id, { windControlProcess: 'no', frontendReason: reason, backendReason: reason });
+          const res = await financeWithdrawalApi.forceReject(id, {
+            windControlProcess: 'no',
+            frontendReason: reason,
+            backendReason: reason,
+          });
           if (res?.success !== false) ok++;
-        } catch (_) { /* skip */ }
+        } catch (_) {
+          /* skip */
+        }
       }
-      message[ok === len ? 'success' : 'warning'](ok === len ? `批量强制拒绝成功 (${len} 条)` : `部分成功 ${ok}/${len} 条`);
-      await fetchData(); selectedIds.value = []; emit('refresh-tabs');
+      message[ok === len ? 'success' : 'warning'](
+        ok === len
+          ? `批量强制拒绝成功 (${len} 条)`
+          : `部分成功 ${ok}/${len} 条`,
+      );
+      await fetchData();
+      selectedIds.value = [];
+      emit('refresh-tabs');
     } else if (actionKey === 'batch-remark') {
       let ok = 0;
       for (const id of orderIds) {
         try {
-          const res = await financeWithdrawalApi.updateNote(id, { backendNotes: reason });
+          const res = await financeWithdrawalApi.updateNote(id, {
+            backendNotes: reason,
+          });
           if (res?.success !== false) ok++;
-        } catch (_) { /* skip */ }
+        } catch (_) {
+          /* skip */
+        }
       }
-      message[ok === len ? 'success' : 'warning'](ok === len ? `批量备注成功 (${len} 条)` : `部分成功 ${ok}/${len} 条`);
-      await fetchData(); selectedIds.value = []; emit('refresh-tabs');
+      message[ok === len ? 'success' : 'warning'](
+        ok === len ? `批量备注成功 (${len} 条)` : `部分成功 ${ok}/${len} 条`,
+      );
+      await fetchData();
+      selectedIds.value = [];
+      emit('refresh-tabs');
     } else if (actionKey === 'batch-force-success') {
       let ok = 0;
       for (const id of orderIds) {
         try {
-          const res = await financeWithdrawalApi.processWithdrawal(id, { action: 'confirm' });
+          const res = await financeWithdrawalApi.processWithdrawal(id, {
+            action: 'confirm',
+          });
           if (res?.success !== false) ok++;
-        } catch (_) { /* skip */ }
+        } catch (_) {
+          /* skip */
+        }
       }
-      message[ok === len ? 'success' : 'warning'](ok === len ? `批量强制成功 (${len} 条)` : `部分成功 ${ok}/${len} 条`);
-      await fetchData(); selectedIds.value = []; emit('refresh-tabs');
+      message[ok === len ? 'success' : 'warning'](
+        ok === len ? `批量强制成功 (${len} 条)` : `部分成功 ${ok}/${len} 条`,
+      );
+      await fetchData();
+      selectedIds.value = [];
+      emit('refresh-tabs');
     } else if (actionKey === 'batch-force-fail') {
       let ok = 0;
       for (const id of orderIds) {
         try {
-          const res = await financeWithdrawalApi.processWithdrawal(id, { action: 'reject', notes: reason || '批量强制失败' });
+          const res = await financeWithdrawalApi.processWithdrawal(id, {
+            action: 'reject',
+            notes: reason || '批量强制失败',
+          });
           if (res?.success !== false) ok++;
-        } catch (_) { /* skip */ }
+        } catch (_) {
+          /* skip */
+        }
       }
-      message[ok === len ? 'success' : 'warning'](ok === len ? `批量强制失败 (${len} 条)` : `部分成功 ${ok}/${len} 条`);
-      await fetchData(); selectedIds.value = []; emit('refresh-tabs');
+      message[ok === len ? 'success' : 'warning'](
+        ok === len ? `批量强制失败 (${len} 条)` : `部分成功 ${ok}/${len} 条`,
+      );
+      await fetchData();
+      selectedIds.value = [];
+      emit('refresh-tabs');
     } else if (actionKey === 'batch-refresh-callback') {
       message.info('批量刷新回调请在三方代付或重新代付中使用');
     } else if (actionKey === 'batch-repay') {
@@ -2924,10 +3648,16 @@ async function runFinanceBatchAction(actionKey: string, orderIds: string[], reas
         try {
           const res = await financeWithdrawalApi.manualWithdrawal(id);
           if (res?.success !== false) ok++;
-        } catch (_) { /* skip */ }
+        } catch (_) {
+          /* skip */
+        }
       }
-      message[ok === len ? 'success' : 'warning'](ok === len ? `批量已人工出款 (${len} 条)` : `部分成功 ${ok}/${len} 条`);
-      await fetchData(); selectedIds.value = []; emit('refresh-tabs');
+      message[ok === len ? 'success' : 'warning'](
+        ok === len ? `批量已人工出款 (${len} 条)` : `部分成功 ${ok}/${len} 条`,
+      );
+      await fetchData();
+      selectedIds.value = [];
+      emit('refresh-tabs');
     }
   } catch (e: any) {
     message.error(e?.message || '批量操作失败');
@@ -2937,9 +3667,14 @@ async function runFinanceBatchAction(actionKey: string, orderIds: string[], reas
 }
 
 function onBatchOperationSelect(key: string, selectedRows: WithdrawalRecord[]) {
-  const orderIds = selectedRows.map(r => String(r.id)).filter(Boolean);
-  if (orderIds.length === 0) { message.warning('请先选择要操作的记录'); return; }
-  if (['batch-force-cancel', 'batch-force-reject', 'batch-remark'].includes(key)) {
+  const orderIds = selectedRows.map((r) => String(r.id)).filter(Boolean);
+  if (orderIds.length === 0) {
+    message.warning('请先选择要操作的记录');
+    return;
+  }
+  if (
+    ['batch-force-cancel', 'batch-force-reject', 'batch-remark'].includes(key)
+  ) {
     openBatchReasonModal(key, orderIds);
     return;
   }
@@ -2956,7 +3691,7 @@ const fetchData = async () => {
   try {
     const params: any = {
       page: paginationReactive.page,
-      limit: paginationReactive.pageSize
+      limit: paginationReactive.pageSize,
     };
 
     // Add filters - use full datetime for accurate filtering (matching AutoWithdrawal)
@@ -2966,29 +3701,32 @@ const fetchData = async () => {
       endDate.setHours(23, 59, 59, 999);
       params.endDate = endDate.toISOString();
     }
-    
+
     if (filters.memberAccount) params.memberAccount = filters.memberAccount;
-    if (filters.thirdPartyPayment) params.thirdPartyPayment = filters.thirdPartyPayment;
+    if (filters.thirdPartyPayment)
+      params.thirdPartyPayment = filters.thirdPartyPayment;
     if (filters.amount) params.amount = filters.amount;
-    if (filters.withdrawalMethod) params.withdrawalMethod = filters.withdrawalMethod;
+    if (filters.withdrawalMethod)
+      params.withdrawalMethod = filters.withdrawalMethod;
     if (filters.approvalStatus) params.approvalStatus = filters.approvalStatus;
     if (filters.operator) params.operator = filters.operator;
-    
+
     // Add filter for "由我出款" - only show withdrawals assigned to current user
     if (props.isMyWithdrawal) {
       params.assignedToMe = true;
     }
 
     try {
-      const response = await financeWithdrawalApi.getWithdrawalsForProcessing(params);
-      
+      const response =
+        await financeWithdrawalApi.getWithdrawalsForProcessing(params);
+
       // Handle the full response object returned by the API
       if (response && response.success && response.data) {
         // Extract data from the response object
         const responseData = response.data;
         if (responseData.withdrawals) {
           const withdrawalsArray = responseData.withdrawals || [];
-          
+
           const mappedData = withdrawalsArray.map((item: any) => ({
             ...item,
             memberId: item.memberId, // Internal database ID (e.g., 7) - DO NOT OVERWRITE
@@ -3001,12 +3739,16 @@ const fetchData = async () => {
             depositCount: item.depositCount || 0,
             frontendNotes: item.frontendNotes || '',
             backendNotes: item.backendNotes || '',
-            thirdPartyNotes: item.thirdPartyNotes || item.thirdPartyError || item.gatewayError || '',
+            thirdPartyNotes:
+              item.thirdPartyNotes ||
+              item.thirdPartyError ||
+              item.gatewayError ||
+              '',
             thirdPartyProvider: item.thirdPartyProvider || '',
             refreshCount: item.refreshCount || 0,
-            lastRefreshTime: item.lastRefreshTime || null
+            lastRefreshTime: item.lastRefreshTime || null,
           }));
-          
+
           tableData.value = mappedData;
           paginationReactive.total = responseData.pagination?.total || 0;
         } else {
@@ -3057,23 +3799,25 @@ const clearFilters = () => {
     amount: '',
     withdrawalMethod: '',
     approvalStatus: 'all', // Default to showing all records
-    operator: ''
+    operator: '',
   });
   paginationReactive.page = 1;
   fetchData();
 };
 
 // Watch for timeRange changes and update dateRange accordingly (matching AutoWithdrawal)
-watch(() => filters.timeRange, (newValue) => {
-  if (newValue === 'today') {
-    filters.dateRange = getTodayDateRange();
-  } else if (newValue === 'month') {
-    filters.dateRange = getMonthDateRange();
-  }
-  // Automatically fetch data when time range changes (matching AutoWithdrawal)
-  fetchData();
-});
-
+watch(
+  () => filters.timeRange,
+  (newValue) => {
+    if (newValue === 'today') {
+      filters.dateRange = getTodayDateRange();
+    } else if (newValue === 'month') {
+      filters.dateRange = getMonthDateRange();
+    }
+    // Automatically fetch data when time range changes (matching AutoWithdrawal)
+    fetchData();
+  },
+);
 
 const showDetail = async (row: WithdrawalRecord) => {
   detailModal.data = row;
@@ -3081,7 +3825,9 @@ const showDetail = async (row: WithdrawalRecord) => {
 };
 
 const showBulkProcessModal = () => {
-  const selectedItems = tableData.value.filter(item => selectedIds.value.includes(item.id));
+  const selectedItems = tableData.value.filter((item) =>
+    selectedIds.value.includes(item.id),
+  );
   processModal.items = selectedItems;
   processModal.status = '';
   processModal.notes = '';
@@ -3089,7 +3835,9 @@ const showBulkProcessModal = () => {
 };
 
 const showBulkAssignModal = () => {
-  const selectedItems = tableData.value.filter(item => selectedIds.value.includes(item.id));
+  const selectedItems = tableData.value.filter((item) =>
+    selectedIds.value.includes(item.id),
+  );
   assignModal.items = selectedItems;
   assignModal.show = true;
 };
@@ -3123,41 +3871,48 @@ const handleBatchProcess = async () => {
     }
 
     const action = processModal.status === 'success' ? 'confirm' : 'reject';
-    
+
     try {
       const response = await financeWithdrawalApi.bulkProcess({
-        withdrawalIds: processModal.items.map(item => item.id),
+        withdrawalIds: processModal.items.map((item) => item.id),
         action,
-        notes: processModal.notes
+        notes: processModal.notes,
       });
-      
+
       if (response.success) {
         const actionText = action === 'confirm' ? '批准' : '拒绝';
-        message.success(`成功${actionText} ${processModal.items.length} 个出款申请`);
+        message.success(
+          `成功${actionText} ${processModal.items.length} 个出款申请`,
+        );
         processModal.show = false;
         selectedIds.value = [];
-        
+
         // 🚀 Immediately remove items from table if rejected (disappear immediately)
-      // For approve, items stay visible in "processing" status until third-party completes
-      if (action === 'reject') {
-        const processedIds = processModal.items.map(item => item.id);
-        tableData.value = tableData.value.filter(item => !processedIds.includes(item.id));
-        
-        // Update pagination total
-        paginationReactive.total = Math.max(0, paginationReactive.total - processedIds.length);
-      } else if (action === 'confirm') {
-        // For approve/confirm, update status to processing (stays visible until third-party completes)
-        const processedIds = processModal.items.map(item => item.id);
-        tableData.value.forEach(item => {
-          if (processedIds.includes(item.id)) {
-            item.status = 'processing';
-          }
-        });
-      }
-        
+        // For approve, items stay visible in "processing" status until third-party completes
+        if (action === 'reject') {
+          const processedIds = processModal.items.map((item) => item.id);
+          tableData.value = tableData.value.filter(
+            (item) => !processedIds.includes(item.id),
+          );
+
+          // Update pagination total
+          paginationReactive.total = Math.max(
+            0,
+            paginationReactive.total - processedIds.length,
+          );
+        } else if (action === 'confirm') {
+          // For approve/confirm, update status to processing (stays visible until third-party completes)
+          const processedIds = processModal.items.map((item) => item.id);
+          tableData.value.forEach((item) => {
+            if (processedIds.includes(item.id)) {
+              item.status = 'processing';
+            }
+          });
+        }
+
         // Then refresh to sync with backend
         await fetchData();
-        
+
         // Emit refresh event for tab counts
         emit('refresh-tabs');
       } else {
@@ -3165,7 +3920,9 @@ const handleBatchProcess = async () => {
       }
     } catch (apiError) {
       console.warn('API call failed:', apiError);
-      message.success(`成功处理 ${processModal.items.length} 个出款申请 (模拟)`);
+      message.success(
+        `成功处理 ${processModal.items.length} 个出款申请 (模拟)`,
+      );
       processModal.show = false;
       selectedIds.value = [];
       fetchData();
@@ -3179,9 +3936,9 @@ const handleBatchAssign = async () => {
   try {
     try {
       const response = await financeWithdrawalApi.bulkAssign({
-        withdrawalIds: assignModal.items.map(item => item.id)
+        withdrawalIds: assignModal.items.map((item) => item.id),
       });
-      
+
       if (response.success) {
         message.success(`成功分配 ${assignModal.items.length} 个出款申请`);
         assignModal.show = false;
@@ -3207,24 +3964,29 @@ const formatDateTime = (dateTime: string) => {
   return new Date(dateTime).toLocaleString('zh-CN');
 };
 
-const getStatusType = (status: string): "success" | "warning" | "error" | "default" | "primary" | "info" => {
-  const statusMap: Record<string, "success" | "warning" | "error" | "default" | "primary" | "info"> = {
-    'pending': 'warning',
-    'processing': 'info',
-    'success': 'success',
-    'failed': 'error',
-    'approved': 'success'
+const getStatusType = (
+  status: string,
+): 'success' | 'warning' | 'error' | 'default' | 'primary' | 'info' => {
+  const statusMap: Record<
+    string,
+    'success' | 'warning' | 'error' | 'default' | 'primary' | 'info'
+  > = {
+    pending: 'warning',
+    processing: 'info',
+    success: 'success',
+    failed: 'error',
+    approved: 'success',
   };
   return statusMap[status] || 'default';
 };
 
 const getStatusText = (status: string) => {
   const statusMap: Record<string, string> = {
-    'pending': '待处理',
-    'processing': '处理中',
-    'success': '提现成功',
-    'failed': '失败',
-    'approved': '提现成功'
+    pending: '待处理',
+    processing: '处理中',
+    success: '提现成功',
+    failed: '失败',
+    approved: '提现成功',
   };
   return statusMap[status] || status;
 };
@@ -3247,7 +4009,11 @@ const canReject = (status: string) => {
 
 // Auto-refresh methods (simplified with SmartAutoRefresh)
 const handleRefreshIntervalChange = (newInterval: number) => {
-  console.log('FinanceWithdrawal: Refresh interval changed to', newInterval, 'seconds');
+  console.log(
+    'FinanceWithdrawal: Refresh interval changed to',
+    newInterval,
+    'seconds',
+  );
   // SmartAutoRefresh component handles all timer logic
 };
 

@@ -46,14 +46,14 @@ export interface PaymentSummary {
 export interface PaymentStatisticsResponse {
   success: boolean;
   data: {
-    statistics: PaymentStatistic[];
-    summary: PaymentSummary;
     pagination: {
-      page: number;
       limit: number;
+      page: number;
       total: number;
       totalPages: number;
     };
+    statistics: PaymentStatistic[];
+    summary: PaymentSummary;
   };
   message?: string;
 }
@@ -61,7 +61,9 @@ export interface PaymentStatisticsResponse {
 /**
  * 获取代付统计数据
  */
-export function getPaymentStatistics(params?: PaymentStatisticsFilters): Promise<PaymentStatisticsResponse> {
+export function getPaymentStatistics(
+  params?: PaymentStatisticsFilters,
+): Promise<PaymentStatisticsResponse> {
   console.log('📡 Requesting payment statistics with params:', params);
   return requestClient.get('/wallet/payment-statistics', { params });
 }
@@ -69,10 +71,12 @@ export function getPaymentStatistics(params?: PaymentStatisticsFilters): Promise
 /**
  * 导出代付统计数据
  */
-export function exportPaymentStatistics(params?: PaymentStatisticsFilters): Promise<any> {
+export function exportPaymentStatistics(
+  params?: PaymentStatisticsFilters,
+): Promise<any> {
   console.log('📤 Exporting payment statistics with params:', params);
-  return requestClient.get('/wallet/payment-statistics/export', { 
+  return requestClient.get('/wallet/payment-statistics/export', {
     params,
-    responseType: 'blob'
+    responseType: 'blob',
   });
 }

@@ -2,7 +2,10 @@
   <div>
     <div class="mb-4">
       <n-alert type="info" title="批量修改说明">
-        <p>当前选中了 <strong>{{ selectedItems.length }}</strong> 个虚拟彩金池配置。</p>
+        <p>
+          当前选中了
+          <strong>{{ selectedItems.length }}</strong> 个虚拟彩金池配置。
+        </p>
         <p>只需填写要修改的字段，未填写的字段将保持原值不变。</p>
       </n-alert>
     </div>
@@ -11,14 +14,12 @@
     <div class="mb-6">
       <n-card title="选中的项目" size="small">
         <div class="selected-items-grid">
-          <div 
-            v-for="item in selectedItems" 
+          <div
+            v-for="item in selectedItems"
             :key="item.id"
             class="selected-item"
           >
-            <n-tag type="info" size="small">
-              ID: {{ item.id }}
-            </n-tag>
+            <n-tag type="info" size="small"> ID: {{ item.id }} </n-tag>
             <span class="item-currency">{{ item.currency }}</span>
             <span class="item-position">{{ item.displayPosition }}</span>
           </div>
@@ -36,8 +37,8 @@
       <n-grid :cols="2" :x-gap="16" :y-gap="16">
         <!-- 展示形式 -->
         <n-form-item-gi label="展示形式">
-          <n-checkbox 
-            v-model:checked="enableFields.displayType" 
+          <n-checkbox
+            v-model:checked="enableFields.displayType"
             @update:checked="handleFieldToggle('displayType', $event)"
           >
             修改展示形式
@@ -53,7 +54,7 @@
 
         <!-- 金额数字样式 -->
         <n-form-item-gi label="金额数字样式">
-          <n-checkbox 
+          <n-checkbox
             v-model:checked="enableFields.numberStyle"
             @update:checked="handleFieldToggle('numberStyle', $event)"
           >
@@ -70,7 +71,7 @@
 
         <!-- 背景风格 -->
         <n-form-item-gi label="背景风格">
-          <n-checkbox 
+          <n-checkbox
             v-model:checked="enableFields.backgroundStyle"
             @update:checked="handleFieldToggle('backgroundStyle', $event)"
           >
@@ -87,7 +88,7 @@
 
         <!-- 小数点位数 -->
         <n-form-item-gi label="小数点位数">
-          <n-checkbox 
+          <n-checkbox
             v-model:checked="enableFields.decimalPlaces"
             @update:checked="handleFieldToggle('decimalPlaces', $event)"
           >
@@ -108,15 +109,15 @@
 
         <!-- 状态 -->
         <n-form-item-gi label="状态">
-          <n-checkbox 
+          <n-checkbox
             v-model:checked="enableFields.status"
             @update:checked="handleFieldToggle('status', $event)"
           >
             修改状态
           </n-checkbox>
           <div class="mt-2">
-            <n-switch 
-              v-model:value="formData.status" 
+            <n-switch
+              v-model:value="formData.status"
               :disabled="!enableFields.status"
             />
             <span class="ml-2 text-sm text-gray-600">
@@ -127,7 +128,7 @@
 
         <!-- 最大展示金额调整 -->
         <n-form-item-gi label="最大金额调整">
-          <n-checkbox 
+          <n-checkbox
             v-model:checked="enableFields.maxAmountAdjustment"
             @update:checked="handleFieldToggle('maxAmountAdjustment', $event)"
           >
@@ -152,7 +153,7 @@
 
         <!-- 最小展示金额调整 -->
         <n-form-item-gi label="最小金额调整">
-          <n-checkbox 
+          <n-checkbox
             v-model:checked="enableFields.minAmountAdjustment"
             @update:checked="handleFieldToggle('minAmountAdjustment', $event)"
           >
@@ -177,7 +178,7 @@
 
         <!-- 备注 -->
         <n-form-item-gi label="备注" :span="2">
-          <n-checkbox 
+          <n-checkbox
             v-model:checked="enableFields.remark"
             @update:checked="handleFieldToggle('remark', $event)"
           >
@@ -199,19 +200,25 @@
     <div v-if="hasEnabledFields" class="mt-6">
       <n-card title="变更预览" size="small">
         <div class="changes-preview">
-          <div v-for="(field, key) in enabledChanges" :key="key" class="change-item">
+          <div
+            v-for="(field, key) in enabledChanges"
+            :key="key"
+            class="change-item"
+          >
             <n-tag type="warning" size="small">{{ getFieldLabel(key) }}</n-tag>
-            <span class="change-description">{{ getChangeDescription(key, field) }}</span>
+            <span class="change-description">{{
+              getChangeDescription(key, field)
+            }}</span>
           </div>
         </div>
       </n-card>
     </div>
 
-    <div class="flex justify-end gap-3 mt-6">
+    <div class="mt-6 flex justify-end gap-3">
       <n-button @click="handleCancel">取消</n-button>
-      <n-button 
-        type="primary" 
-        @click="handleSubmit" 
+      <n-button
+        type="primary"
+        @click="handleSubmit"
         :loading="submitting"
         :disabled="!hasEnabledFields"
       >
@@ -312,12 +319,12 @@ const backgroundStyleOptions = [
 
 // Computed
 const hasEnabledFields = computed(() => {
-  return Object.values(enableFields).some(enabled => enabled);
+  return Object.values(enableFields).some((enabled) => enabled);
 });
 
 const enabledChanges = computed(() => {
   const changes: Record<string, any> = {};
-  Object.keys(enableFields).forEach(key => {
+  Object.keys(enableFields).forEach((key) => {
     if (enableFields[key as keyof typeof enableFields]) {
       changes[key] = formData[key as keyof typeof formData];
     }
@@ -348,7 +355,10 @@ const handleFieldToggle = (field: string, enabled: boolean) => {
 };
 
 const getAmountPlaceholder = (type: 'max' | 'min') => {
-  const adjustmentType = type === 'max' ? formData.maxAmountAdjustmentType : formData.minAmountAdjustmentType;
+  const adjustmentType =
+    type === 'max'
+      ? formData.maxAmountAdjustmentType
+      : formData.minAmountAdjustmentType;
   switch (adjustmentType) {
     case 'multiply':
       return '输入倍数 (如: 1.5)';
@@ -378,13 +388,19 @@ const getFieldLabel = (field: string) => {
 const getChangeDescription = (field: string, value: any) => {
   switch (field) {
     case 'displayType':
-      const displayOption = displayTypeOptions.find(opt => opt.value === value);
+      const displayOption = displayTypeOptions.find(
+        (opt) => opt.value === value,
+      );
       return `→ ${displayOption?.label || value}`;
     case 'numberStyle':
-      const numberOption = numberStyleOptions.find(opt => opt.value === value);
+      const numberOption = numberStyleOptions.find(
+        (opt) => opt.value === value,
+      );
       return `→ ${numberOption?.label || value}`;
     case 'backgroundStyle':
-      const bgOption = backgroundStyleOptions.find(opt => opt.value === value);
+      const bgOption = backgroundStyleOptions.find(
+        (opt) => opt.value === value,
+      );
       return `→ ${bgOption?.label || value}`;
     case 'decimalPlaces':
       return `→ ${value} 位`;
@@ -415,7 +431,7 @@ const handleSubmit = () => {
 
   // Prepare submission data
   const changes = {
-    selectedIds: props.selectedItems.map(item => item.id),
+    selectedIds: props.selectedItems.map((item) => item.id),
     enabledFields: { ...enableFields },
     changes: { ...enabledChanges.value },
     formData: { ...formData },
@@ -499,4 +515,4 @@ const handleCancel = () => {
 .ml-2 {
   margin-left: 8px;
 }
-</style> 
+</style>

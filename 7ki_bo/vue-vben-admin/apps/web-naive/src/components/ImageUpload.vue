@@ -1,6 +1,12 @@
 <template>
   <div class="image-upload">
-    <div class="upload-area" @click="triggerFileInput" @drop="handleDrop" @dragover="handleDragOver" @dragleave="handleDragLeave">
+    <div
+      class="upload-area"
+      @click="triggerFileInput"
+      @drop="handleDrop"
+      @dragover="handleDragOver"
+      @dragleave="handleDragLeave"
+    >
       <input
         ref="fileInput"
         type="file"
@@ -9,17 +15,29 @@
         @change="handleFileSelect"
         style="display: none"
       />
-      
+
       <div class="upload-content" :class="{ 'drag-over': isDragOver }">
         <div v-if="!uploadedFiles.length" class="upload-placeholder">
           <Icon name="mdi:cloud-upload" size="48" class="upload-icon" />
-          <p class="upload-text">Click to upload or drag and drop images here</p>
-          <p class="upload-hint">Supports: JPG, PNG, GIF, WebP, SVG (Max 20MB)</p>
+          <p class="upload-text">
+            Click to upload or drag and drop images here
+          </p>
+          <p class="upload-hint">
+            Supports: JPG, PNG, GIF, WebP, SVG (Max 20MB)
+          </p>
         </div>
-        
+
         <div v-else class="uploaded-files">
-          <div v-for="(file, index) in uploadedFiles" :key="index" class="file-item">
-            <img :src="getImageUrl(file.url)" :alt="file.alt || file.originalName" class="file-preview" />
+          <div
+            v-for="(file, index) in uploadedFiles"
+            :key="index"
+            class="file-item"
+          >
+            <img
+              :src="getImageUrl(file.url)"
+              :alt="file.alt || file.originalName"
+              class="file-preview"
+            />
             <div class="file-info">
               <p class="file-name">{{ file.originalName }}</p>
               <p class="file-size">{{ formatFileSize(file.size) }}</p>
@@ -32,36 +50,72 @@
         </div>
       </div>
     </div>
-    
+
     <div v-if="uploadedFiles.length" class="upload-actions">
-      <button @click="uploadFiles" :disabled="isUploading" class="upload-btn" type="button">
-        <Icon v-if="isUploading" name="mdi:loading" size="16" class="spinning" />
-        {{ isUploading ? 'Uploading...' : `Upload ${uploadedFiles.length} file(s)` }}
+      <button
+        @click="uploadFiles"
+        :disabled="isUploading"
+        class="upload-btn"
+        type="button"
+      >
+        <Icon
+          v-if="isUploading"
+          name="mdi:loading"
+          size="16"
+          class="spinning"
+        />
+        {{
+          isUploading
+            ? 'Uploading...'
+            : `Upload ${uploadedFiles.length} file(s)`
+        }}
       </button>
-      <button @click="clearFiles" class="clear-btn" type="button">Clear All</button>
+      <button @click="clearFiles" class="clear-btn" type="button">
+        Clear All
+      </button>
     </div>
-    
+
     <div v-if="uploadedFiles.length" class="upload-options">
       <div class="option-group">
         <label for="category">Category:</label>
-        <input v-model="uploadOptions.category" id="category" type="text" placeholder="e.g., avatars, banners" />
+        <input
+          v-model="uploadOptions.category"
+          id="category"
+          type="text"
+          placeholder="e.g., avatars, banners"
+        />
       </div>
-      
+
       <div class="option-group">
         <label for="alt">Alt Text:</label>
-        <input v-model="uploadOptions.alt" id="alt" type="text" placeholder="Image description for accessibility" />
+        <input
+          v-model="uploadOptions.alt"
+          id="alt"
+          type="text"
+          placeholder="Image description for accessibility"
+        />
       </div>
-      
+
       <div class="option-group">
         <label for="description">Description:</label>
-        <textarea v-model="uploadOptions.description" id="description" placeholder="Optional description"></textarea>
+        <textarea
+          v-model="uploadOptions.description"
+          id="description"
+          placeholder="Optional description"
+        ></textarea>
       </div>
-      
+
       <div class="option-group">
         <label for="tags">Tags:</label>
-        <input v-model="tagsInput" id="tags" type="text" placeholder="tag1, tag2, tag3" @blur="updateTags" />
+        <input
+          v-model="tagsInput"
+          id="tags"
+          type="text"
+          placeholder="tag1, tag2, tag3"
+          @blur="updateTags"
+        />
       </div>
-      
+
       <div class="option-group">
         <label>
           <input v-model="uploadOptions.isPublic" type="checkbox" />
@@ -69,15 +123,23 @@
         </label>
       </div>
     </div>
-    
+
     <div v-if="uploadResults.length" class="upload-results">
       <h3>Upload Results</h3>
       <div v-for="result in uploadResults" :key="result.id" class="result-item">
-        <img :src="getImageUrl(result.url)" :alt="result.alt || result.originalName" class="result-preview" />
+        <img
+          :src="getImageUrl(result.url)"
+          :alt="result.alt || result.originalName"
+          class="result-preview"
+        />
         <div class="result-info">
           <p class="result-name">{{ result.originalName }}</p>
           <p class="result-url">{{ result.url }}</p>
-          <p class="result-size">{{ formatFileSize(result.size) }} • {{ result.width }}x{{ result.height }}</p>
+          <p class="result-size">
+            {{ formatFileSize(result.size) }} • {{ result.width }}x{{
+              result.height
+            }}
+          </p>
           <div v-if="result.thumbnailUrl" class="result-thumbnails">
             <span>Thumbnail: {{ result.thumbnailUrl }}</span>
             <span v-if="result.mediumUrl">Medium: {{ result.mediumUrl }}</span>
@@ -90,8 +152,17 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
-import { uploadSingleImage, uploadMultipleImages, type UploadedFile, type UploadOptions } from '../api/upload';
-import { getImageUrlByEnvironment, formatFileSize, validateImageFile } from '../utils/imageUtils';
+import {
+  uploadSingleImage,
+  uploadMultipleImages,
+  type UploadedFile,
+  type UploadOptions,
+} from '../api/upload';
+import {
+  getImageUrlByEnvironment,
+  formatFileSize,
+  validateImageFile,
+} from '../utils/imageUtils';
 
 interface Props {
   multiple?: boolean;
@@ -142,7 +213,7 @@ function handleFileSelect(event: Event) {
 function handleDrop(event: DragEvent) {
   event.preventDefault();
   isDragOver.value = false;
-  
+
   if (event.dataTransfer?.files) {
     addFiles(Array.from(event.dataTransfer.files));
   }
@@ -160,7 +231,7 @@ function handleDragLeave(event: DragEvent) {
 
 function addFiles(files: File[]) {
   const validFiles: File[] = [];
-  
+
   for (const file of files) {
     const validation = validateImageFile(file);
     if (validation.valid) {
@@ -169,12 +240,12 @@ function addFiles(files: File[]) {
       emit('error', validation.error || 'Invalid file');
     }
   }
-  
+
   if (uploadedFiles.value.length + validFiles.length > props.maxFiles) {
     emit('error', `Maximum ${props.maxFiles} files allowed`);
     return;
   }
-  
+
   uploadedFiles.value.push(...validFiles);
 }
 
@@ -189,7 +260,10 @@ function clearFiles() {
 
 function updateTags() {
   if (tagsInput.value.trim()) {
-    uploadOptions.tags = tagsInput.value.split(',').map(tag => tag.trim()).filter(tag => tag);
+    uploadOptions.tags = tagsInput.value
+      .split(',')
+      .map((tag) => tag.trim())
+      .filter((tag) => tag);
   } else {
     uploadOptions.tags = [];
   }
@@ -204,25 +278,27 @@ async function uploadFiles() {
     emit('error', 'No files to upload');
     return;
   }
-  
+
   isUploading.value = true;
-  
+
   try {
     let results: UploadedFile[];
-    
+
     if (props.multiple && uploadedFiles.value.length > 1) {
       results = await uploadMultipleImages(uploadedFiles.value, uploadOptions);
     } else {
-      const result = await uploadSingleImage(uploadedFiles.value[0], uploadOptions);
+      const result = await uploadSingleImage(
+        uploadedFiles.value[0],
+        uploadOptions,
+      );
       results = [result];
     }
-    
+
     uploadResults.value = results;
     emit('uploaded', results);
-    
+
     // Clear files after successful upload
     clearFiles();
-    
   } catch (error) {
     console.error('Upload error:', error);
     emit('error', error instanceof Error ? error.message : 'Upload failed');
@@ -510,4 +586,4 @@ async function uploadFiles() {
     transform: rotate(360deg);
   }
 }
-</style> 
+</style>

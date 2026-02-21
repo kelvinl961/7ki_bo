@@ -1,6 +1,11 @@
 <template>
   <Page title="游戏管理" description="平台与子游戏管理">
-    <n-tabs v-model:value="activeTab" type="line" animated @update:value="handleTabChange">
+    <n-tabs
+      v-model:value="activeTab"
+      type="line"
+      animated
+      @update:value="handleTabChange"
+    >
       <n-tab-pane name="platform" tab="平台管理">
         <PlatformTable @manage-subgames="handleManageSubgames" />
       </n-tab-pane>
@@ -23,10 +28,14 @@ import { useRoute, useRouter } from 'vue-router';
 import { Page } from '@vben/common-ui';
 import { NTabs, NTabPane } from 'naive-ui';
 // ✅ PERFORMANCE FIX: Lazy load tab components - they only load when their tab is opened
-const PlatformTable = defineAsyncComponent(() => import('./platform/index.vue'));
+const PlatformTable = defineAsyncComponent(
+  () => import('./platform/index.vue'),
+);
 const SubgameTable = defineAsyncComponent(() => import('./subgame/index.vue'));
 const HotGameTable = defineAsyncComponent(() => import('./hot-game/index.vue'));
-const VirtualBonusPoolTable = defineAsyncComponent(() => import('./virtual-bonus-pool/index.vue'));
+const VirtualBonusPoolTable = defineAsyncComponent(
+  () => import('./virtual-bonus-pool/index.vue'),
+);
 
 const route = useRoute();
 const router = useRouter();
@@ -53,8 +62,11 @@ const handleTabChange = (value: string) => {
 // Initialize tab from URL query parameter
 onMounted(() => {
   const tab = route.query.tab as string;
-  if (tab && ['platform', 'subgame', 'hot-game', 'virtual-bonus-pool'].includes(tab)) {
+  if (
+    tab &&
+    ['platform', 'subgame', 'hot-game', 'virtual-bonus-pool'].includes(tab)
+  ) {
     activeTab.value = tab;
   }
 });
-</script> 
+</script>

@@ -4,7 +4,7 @@ export interface DailyReportParams {
   startDate: string;
   endDate: string;
   currency?: string;
-  granularity?: 'day' | 'week' | 'month';
+  granularity?: 'day' | 'month' | 'week';
   forceRefresh?: string;
 }
 
@@ -18,16 +18,21 @@ export interface DailyReportResponse {
 /**
  * Get daily operations report
  */
-export async function getDailyOperationsReport(params: DailyReportParams): Promise<DailyReportResponse> {
+export async function getDailyOperationsReport(
+  params: DailyReportParams,
+): Promise<DailyReportResponse> {
   return requestClient.get('/operations-statistics/daily-report', {
-    params
+    params,
   });
 }
 
 /**
  * Clear operations statistics cache
  */
-export async function clearOperationsCache(): Promise<{ success: boolean; message: string }> {
+export async function clearOperationsCache(): Promise<{
+  message: string;
+  success: boolean;
+}> {
   return requestClient.post('/operations-statistics/clear-cache');
 }
 
@@ -37,4 +42,3 @@ export async function clearOperationsCache(): Promise<{ success: boolean; messag
 export async function getCacheStats(): Promise<any> {
   return requestClient.get('/operations-statistics/cache-stats');
 }
-

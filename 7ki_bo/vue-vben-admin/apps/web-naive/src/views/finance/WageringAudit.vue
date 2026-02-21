@@ -9,13 +9,20 @@
     </div>
 
     <!-- Tabs -->
-    <n-tabs v-model:value="activeTab" type="line" animated @update:value="handleTabChange">
+    <n-tabs
+      v-model:value="activeTab"
+      type="line"
+      animated
+      @update:value="handleTabChange"
+    >
       <n-tab-pane name="details" tab="投注任务明细">
         <!-- Filter Card -->
-        <n-card :bordered="false" class="mb-4 rounded-16px shadow-sm">
+        <n-card :bordered="false" class="rounded-16px mb-4 shadow-sm">
           <div class="filter-section">
             <!-- Row 1: Date Range and Basic Filters -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            <div
+              class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4"
+            >
               <!-- Date Range -->
               <div class="filter-item">
                 <n-form-item label="创建时间">
@@ -72,7 +79,9 @@
             </div>
 
             <!-- Row 2: Search Filters -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            <div
+              class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4"
+            >
               <!-- Min Required Amount -->
               <div class="filter-item">
                 <n-form-item label="最小稽核金额">
@@ -105,9 +114,13 @@
             </div>
 
             <!-- Action Buttons -->
-            <div class="flex justify-between items-center">
+            <div class="flex items-center justify-between">
               <div class="flex gap-2">
-                <n-button type="primary" @click="handleSearch" :loading="loading">
+                <n-button
+                  type="primary"
+                  @click="handleSearch"
+                  :loading="loading"
+                >
                   <template #icon>
                     <n-icon><SearchOutline /></n-icon>
                   </template>
@@ -134,7 +147,10 @@
         </n-card>
 
         <!-- Statistics Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4" v-if="showStatistics">
+        <div
+          class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-4"
+          v-if="showStatistics"
+        >
           <n-card :bordered="false" class="rounded-16px shadow-sm">
             <n-statistic label="总源金额" :value="statistics.totalSourceAmount">
               <template #prefix>
@@ -143,7 +159,10 @@
             </n-statistic>
           </n-card>
           <n-card :bordered="false" class="rounded-16px shadow-sm">
-            <n-statistic label="总稽核金额" :value="statistics.totalRequiredBet">
+            <n-statistic
+              label="总稽核金额"
+              :value="statistics.totalRequiredBet"
+            >
               <template #prefix>
                 <n-icon color="#2080f0"><TrendingUp /></n-icon>
               </template>
@@ -179,17 +198,26 @@
           @refresh="loadData"
         >
           <template #actionBar>
-            <n-card :bordered="false" class="rounded-16px shadow-sm mb-4">
-              <div class="flex justify-between items-center">
+            <n-card :bordered="false" class="rounded-16px mb-4 shadow-sm">
+              <div class="flex items-center justify-between">
                 <div class="text-sm">
                   <span class="font-semibold">页面合计：</span>
-                  源金额: <span class="text-blue-600 font-semibold">{{ formatCurrency(pageTotals.totalSourceAmount) }}</span>
-                  &nbsp;|&nbsp;
-                  稽核金额: <span class="text-green-600 font-semibold">{{ formatCurrency(pageTotals.totalRequiredBet) }}</span>
-                  &nbsp;|&nbsp;
-                  已完成: <span class="text-orange-600 font-semibold">{{ formatCurrency(pageTotals.totalCurrentBet) }}</span>
-                  &nbsp;|&nbsp;
-                  剩余: <span class="text-red-600 font-semibold">{{ formatCurrency(pageTotals.totalRemaining) }}</span>
+                  源金额:
+                  <span class="font-semibold text-blue-600">{{
+                    formatCurrency(pageTotals.totalSourceAmount)
+                  }}</span>
+                  &nbsp;|&nbsp; 稽核金额:
+                  <span class="font-semibold text-green-600">{{
+                    formatCurrency(pageTotals.totalRequiredBet)
+                  }}</span>
+                  &nbsp;|&nbsp; 已完成:
+                  <span class="font-semibold text-orange-600">{{
+                    formatCurrency(pageTotals.totalCurrentBet)
+                  }}</span>
+                  &nbsp;|&nbsp; 剩余:
+                  <span class="font-semibold text-red-600">{{
+                    formatCurrency(pageTotals.totalRemaining)
+                  }}</span>
                 </div>
               </div>
             </n-card>
@@ -201,9 +229,7 @@
         <n-card :bordered="false" class="rounded-16px shadow-sm">
           <n-empty description="稽核统计功能开发中...">
             <template #extra>
-              <n-button size="small">
-                敬请期待
-              </n-button>
+              <n-button size="small"> 敬请期待 </n-button>
             </template>
           </n-empty>
         </n-card>
@@ -240,7 +266,7 @@ import {
   NTag,
   NProgress,
   useMessage,
-  useDialog
+  useDialog,
 } from 'naive-ui';
 import {
   SearchOutline,
@@ -249,13 +275,17 @@ import {
   TrendingUp,
   CheckmarkCircle,
   Cash,
-  Hourglass
+  Hourglass,
 } from '@vicons/ionicons5';
 import { Page } from '@vben/common-ui';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 import { defineAsyncComponent } from 'vue';
-const SmartDataGrid = defineAsyncComponent(() => import('../../components/smart/SmartDataGrid/index.vue'));
-const UserDetailModal = defineAsyncComponent(() => import('../../components/user/UserDetailModal.vue'));
+const SmartDataGrid = defineAsyncComponent(
+  () => import('../../components/smart/SmartDataGrid/index.vue'),
+);
+const UserDetailModal = defineAsyncComponent(
+  () => import('../../components/user/UserDetailModal.vue'),
+);
 import { notification } from '#/adapter/naive';
 import {
   getWageringAuditsApi,
@@ -264,7 +294,7 @@ import {
   cancelAuditApi,
   forceCompleteAuditApi,
   type WageringAuditItem,
-  type WageringAuditFilters
+  type WageringAuditFilters,
 } from '#/api/finance/wageringAudit';
 import type { DataTableColumns } from 'naive-ui';
 
@@ -289,7 +319,7 @@ const filters = reactive<Partial<WageringAuditFilters>>({
   status: undefined,
   username: undefined,
   minRequiredAmount: undefined,
-  maxRequiredAmount: undefined
+  maxRequiredAmount: undefined,
 });
 
 // Pagination
@@ -298,7 +328,7 @@ const paginationReactive = reactive({
   pageSize: 20,
   total: 0,
   showSizePicker: true,
-  pageSizes: [10, 20, 50, 100, 200]
+  pageSizes: [10, 20, 50, 100, 200],
 });
 
 // Totals
@@ -306,7 +336,7 @@ const pageTotals = ref({
   totalSourceAmount: 0,
   totalRequiredBet: 0,
   totalCurrentBet: 0,
-  totalRemaining: 0
+  totalRemaining: 0,
 });
 
 const statistics = ref({
@@ -314,7 +344,7 @@ const statistics = ref({
   totalRequiredBet: 0,
   totalCurrentBet: 0,
   totalRemaining: 0,
-  count: 0
+  count: 0,
 });
 
 // Filter Options
@@ -323,14 +353,14 @@ const statusOptions = ref<Array<{ label: string; value: string }>>([]);
 
 // Date Shortcuts
 const dateShortcuts = {
-  '今天': (): [number, number] => {
+  今天: (): [number, number] => {
     const now = new Date();
     now.setHours(0, 0, 0, 0);
     const end = new Date();
     end.setHours(23, 59, 59, 999);
     return [now.getTime(), end.getTime()];
   },
-  '昨天': (): [number, number] => {
+  昨天: (): [number, number] => {
     const now = new Date();
     now.setDate(now.getDate() - 1);
     now.setHours(0, 0, 0, 0);
@@ -338,7 +368,7 @@ const dateShortcuts = {
     end.setHours(23, 59, 59, 999);
     return [now.getTime(), end.getTime()];
   },
-  '最近7天': (): [number, number] => {
+  最近7天: (): [number, number] => {
     const now = new Date();
     now.setDate(now.getDate() - 6);
     now.setHours(0, 0, 0, 0);
@@ -346,7 +376,7 @@ const dateShortcuts = {
     end.setHours(23, 59, 59, 999);
     return [now.getTime(), end.getTime()];
   },
-  '最近30天': (): [number, number] => {
+  最近30天: (): [number, number] => {
     const now = new Date();
     now.setDate(now.getDate() - 29);
     now.setHours(0, 0, 0, 0);
@@ -354,7 +384,7 @@ const dateShortcuts = {
     end.setHours(23, 59, 59, 999);
     return [now.getTime(), end.getTime()];
   },
-  '本月': (): [number, number] => {
+  本月: (): [number, number] => {
     const now = new Date();
     now.setDate(1);
     now.setHours(0, 0, 0, 0);
@@ -362,7 +392,7 @@ const dateShortcuts = {
     end.setHours(23, 59, 59, 999);
     return [now.getTime(), end.getTime()];
   },
-  '上月': (): [number, number] => {
+  上月: (): [number, number] => {
     const now = new Date();
     now.setMonth(now.getMonth() - 1);
     now.setDate(1);
@@ -370,7 +400,7 @@ const dateShortcuts = {
     const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
     end.setHours(23, 59, 59, 999);
     return [now.getTime(), end.getTime()];
-  }
+  },
 };
 
 // Table Columns
@@ -381,27 +411,28 @@ const columns: DataTableColumns<WageringAuditItem> = [
     width: 180,
     fixed: 'left',
     ellipsis: {
-      tooltip: true
-    }
+      tooltip: true,
+    },
   },
   {
     title: '会员账号',
     key: 'user.account',
     width: 120,
-    render: (row) => h(
-      'span',
-      {
-        class: 'font-semibold text-blue-600 cursor-pointer hover:underline',
-        onClick: () => handleUserClick(row.user.id)
-      },
-      row.user.account
-    )
+    render: (row) =>
+      h(
+        'span',
+        {
+          class: 'font-semibold text-blue-600 cursor-pointer hover:underline',
+          onClick: () => handleUserClick(row.user.id),
+        },
+        row.user.account,
+      ),
   },
   {
     title: '会员ID',
     key: 'user.userID',
     width: 120,
-    render: (row) => row.user.userID || '-'
+    render: (row) => row.user.userID || '-',
   },
   {
     title: '触发模式',
@@ -411,129 +442,149 @@ const columns: DataTableColumns<WageringAuditItem> = [
       // ✅ Use the same comprehensive mapping as the dropdown
       const sourceTypeMap: Record<string, string> = {
         // Activity & Rewards
-        'activity_reward': '活动奖励',
-        'activity': '活动',
-        'activity_audit': '活动稽核',
-        'newbie_activity': '新人活动',
-        'novice_welfare_task': '新手福利任务',
-        'promotion_reward': '促销奖励',
-        'promotion': '促销',
-        'task_reward': '任务奖励',
-        'TASK_REWARD': '任务奖励',
-        'general_reward': '通用奖励',
-        'bonus_granted': '奖金发放',
-        'reward': '奖励',
-        'bonus': '奖金',
-        
+        activity_reward: '活动奖励',
+        activity: '活动',
+        activity_audit: '活动稽核',
+        newbie_activity: '新人活动',
+        novice_welfare_task: '新手福利任务',
+        promotion_reward: '促销奖励',
+        promotion: '促销',
+        task_reward: '任务奖励',
+        TASK_REWARD: '任务奖励',
+        general_reward: '通用奖励',
+        bonus_granted: '奖金发放',
+        reward: '奖励',
+        bonus: '奖金',
+
         // Deposit & Recharge
-        'deposit': '充值',
-        'recharge': '充值',
-        'member_recharge': '会员充值',
-        'deposit_bonus': '存款奖励',
-        
+        deposit: '充值',
+        recharge: '充值',
+        member_recharge: '会员充值',
+        deposit_bonus: '存款奖励',
+
         // VIP & Level Rewards
-        'vip': 'VIP',
-        'vip_reward': 'VIP奖励',
-        'vip_bonus': 'VIP奖金',
-        'VIP_BONUS': 'VIP奖金',
-        
+        vip: 'VIP',
+        vip_reward: 'VIP奖励',
+        vip_bonus: 'VIP奖金',
+        VIP_BONUS: 'VIP奖金',
+
         // Rescue & Special
-        'rescue': '救援',
-        'rescue_bonus': '救援奖金',
-        
+        rescue: '救援',
+        rescue_bonus: '救援奖金',
+
         // Manual Operations
-        'manual': '人工解除',
-        'manual_credit': '人工加款',
-        'manual_debit': '人工扣款',
-        
+        manual: '人工解除',
+        manual_credit: '人工加款',
+        manual_debit: '人工扣款',
+
         // Audit & Reject
-        'FORCE_REJECT_AUDIT': '强制拒绝稽核',
-        'force_reject_audit': '强制拒绝稽核',
-        
+        FORCE_REJECT_AUDIT: '强制拒绝稽核',
+        force_reject_audit: '强制拒绝稽核',
+
         // Commission & Rebate
-        'commission': '佣金',
-        'COMMISSION': '佣金',
-        'agent_commission': '代理佣金',
-        'rebate': '返水',
-        'referral_bonus': '推荐奖励',
-        
+        commission: '佣金',
+        COMMISSION: '佣金',
+        agent_commission: '代理佣金',
+        rebate: '返水',
+        referral_bonus: '推荐奖励',
+
         // Financial Operations
-        'adjustment': '资金修复',
-        'correction': '资金修复',
-        'fund_adjustment': '资金调整',
-        'fee_charged': '手续费',
-        'refund': '退款',
-        'interest_treasure': '利息宝',
-        'guarantee_claim': '保障金',
-        'agent_transfer': '代理转账',
-        'credit_loan': '信用贷款',
-        'security_deposit': '保证金',
-        'club_activity': '俱乐部活动',
-        'lucky_wheel': '幸运转盘',
-        'provident_fund': '公积金',
-        'mystery_box': '神秘宝箱',
-        'tip_reward': '小费奖励',
-        
+        adjustment: '资金修复',
+        correction: '资金修复',
+        fund_adjustment: '资金调整',
+        fee_charged: '手续费',
+        refund: '退款',
+        interest_treasure: '利息宝',
+        guarantee_claim: '保障金',
+        agent_transfer: '代理转账',
+        credit_loan: '信用贷款',
+        security_deposit: '保证金',
+        club_activity: '俱乐部活动',
+        lucky_wheel: '幸运转盘',
+        provident_fund: '公积金',
+        mystery_box: '神秘宝箱',
+        tip_reward: '小费奖励',
+
         // Wagering
-        'wagering': '流水',
-        'newbie': '新人'
+        wagering: '流水',
+        newbie: '新人',
       };
-      
+
       const label = sourceTypeMap[row.sourceType] || row.sourceType;
       return h(NTag, { type: 'info', size: 'small' }, { default: () => label });
-    }
+    },
   },
   {
     title: '来源描述',
     key: 'sourceDescription',
     width: 200,
     ellipsis: {
-      tooltip: true
+      tooltip: true,
     },
-    render: (row) => translateSourceDescription(row.sourceDescription)
+    render: (row) => translateSourceDescription(row.sourceDescription),
   },
   {
     title: '来源ID',
     key: 'sourceId',
     width: 150,
     ellipsis: {
-      tooltip: true
-    }
+      tooltip: true,
+    },
   },
   {
     title: '源金额',
     key: 'sourceAmount',
     width: 120,
     align: 'right',
-    render: (row) => h('span', { class: 'font-semibold text-green-600' }, formatCurrency(row.sourceAmount))
+    render: (row) =>
+      h(
+        'span',
+        { class: 'font-semibold text-green-600' },
+        formatCurrency(row.sourceAmount),
+      ),
   },
   {
     title: '稽核倍数',
     key: 'multiplier',
     width: 100,
     align: 'right',
-    render: (row) => `${row.multiplier}x`
+    render: (row) => `${row.multiplier}x`,
   },
   {
     title: '稽核金额',
     key: 'requiredBetAmount',
     width: 120,
     align: 'right',
-    render: (row) => h('span', { class: 'font-semibold text-blue-600' }, formatCurrency(row.requiredBetAmount))
+    render: (row) =>
+      h(
+        'span',
+        { class: 'font-semibold text-blue-600' },
+        formatCurrency(row.requiredBetAmount),
+      ),
   },
   {
     title: '已完成',
     key: 'currentBetAmount',
     width: 120,
     align: 'right',
-    render: (row) => h('span', { class: 'font-semibold text-orange-600' }, formatCurrency(row.currentBetAmount))
+    render: (row) =>
+      h(
+        'span',
+        { class: 'font-semibold text-orange-600' },
+        formatCurrency(row.currentBetAmount),
+      ),
   },
   {
     title: '剩余',
     key: 'remainingBetAmount',
     width: 120,
     align: 'right',
-    render: (row) => h('span', { class: 'font-semibold text-red-600' }, formatCurrency(row.remainingBetAmount))
+    render: (row) =>
+      h(
+        'span',
+        { class: 'font-semibold text-red-600' },
+        formatCurrency(row.remainingBetAmount),
+      ),
   },
   {
     title: '进度',
@@ -541,24 +592,25 @@ const columns: DataTableColumns<WageringAuditItem> = [
     width: 150,
     render: (row) => {
       const percentage = Number(row.progressPercentage);
-      const status = percentage >= 100 ? 'success' : percentage >= 50 ? 'info' : 'warning';
+      const status =
+        percentage >= 100 ? 'success' : percentage >= 50 ? 'info' : 'warning';
       return h('div', { class: 'flex items-center gap-2' }, [
         h(NProgress, {
           type: 'line',
           percentage: Math.min(percentage, 100),
           status,
           showIndicator: false,
-          height: 8
+          height: 8,
         }),
-        h('span', { class: 'text-xs font-semibold' }, `${percentage}%`)
+        h('span', { class: 'text-xs font-semibold' }, `${percentage}%`),
       ]);
-    }
+    },
   },
   {
     title: '优先级',
     key: 'priority',
     width: 80,
-    align: 'center'
+    align: 'center',
   },
   {
     title: '状态',
@@ -570,35 +622,42 @@ const columns: DataTableColumns<WageringAuditItem> = [
         active: { color: 'info', label: '进行中' },
         completed: { color: 'success', label: '已完成' },
         expired: { color: 'warning', label: '已过期' },
-        cancelled: { color: 'error', label: '已取消' }
+        cancelled: { color: 'error', label: '已取消' },
       };
-      const config = statusMap[row.status] || { color: 'default', label: row.status };
-      return h(NTag, { type: config.color as any, size: 'small' }, { default: () => config.label });
-    }
+      const config = statusMap[row.status] || {
+        color: 'default',
+        label: row.status,
+      };
+      return h(
+        NTag,
+        { type: config.color as any, size: 'small' },
+        { default: () => config.label },
+      );
+    },
   },
   {
     title: '创建时间',
     key: 'createdAt',
     width: 160,
-    render: (row) => formatDateTime(row.createdAt)
+    render: (row) => formatDateTime(row.createdAt),
   },
   {
     title: '激活时间',
     key: 'activatedAt',
     width: 160,
-    render: (row) => row.activatedAt ? formatDateTime(row.activatedAt) : '-'
+    render: (row) => (row.activatedAt ? formatDateTime(row.activatedAt) : '-'),
   },
   {
     title: '完成时间',
     key: 'completedAt',
     width: 160,
-    render: (row) => row.completedAt ? formatDateTime(row.completedAt) : '-'
+    render: (row) => (row.completedAt ? formatDateTime(row.completedAt) : '-'),
   },
   {
     title: '过期时间',
     key: 'expiresAt',
     width: 160,
-    render: (row) => row.expiresAt ? formatDateTime(row.expiresAt) : '-'
+    render: (row) => (row.expiresAt ? formatDateTime(row.expiresAt) : '-'),
   },
   {
     title: '操作',
@@ -613,22 +672,30 @@ const columns: DataTableColumns<WageringAuditItem> = [
 
       return h('div', { class: 'flex gap-2' }, [
         // Clear (Cancel) button
-        h(NButton, {
-          type: 'error',
-          size: 'small',
-          secondary: true,
-          onClick: () => handleCancelAudit(row)
-        }, { default: () => '清除' }),
-        
+        h(
+          NButton,
+          {
+            type: 'error',
+            size: 'small',
+            secondary: true,
+            onClick: () => handleCancelAudit(row),
+          },
+          { default: () => '清除' },
+        ),
+
         // Complete button
-        h(NButton, {
-          type: 'success',
-          size: 'small',
-          onClick: () => handleCompleteAudit(row)
-        }, { default: () => '完成' })
+        h(
+          NButton,
+          {
+            type: 'success',
+            size: 'small',
+            onClick: () => handleCompleteAudit(row),
+          },
+          { default: () => '完成' },
+        ),
       ]);
-    }
-  }
+    },
+  },
 ];
 
 // Methods
@@ -638,7 +705,7 @@ const loadData = async () => {
     const params: WageringAuditFilters = {
       page: paginationReactive.page,
       pageSize: paginationReactive.pageSize,
-      ...filters
+      ...filters,
     };
 
     // Add date range
@@ -663,7 +730,7 @@ const loadData = async () => {
     console.error('Error loading wagering audits:', error);
     notification.error({
       content: '加载稽核记录失败',
-      duration: 3000
+      duration: 3000,
     });
   } finally {
     loading.value = false;
@@ -674,7 +741,7 @@ const loadFilterOptions = async () => {
   try {
     const [sourceTypes, statuses] = await Promise.all([
       getSourceTypesApi(),
-      getAuditStatusesApi()
+      getAuditStatusesApi(),
     ]);
 
     // Response interceptor unwraps the data
@@ -682,80 +749,80 @@ const loadFilterOptions = async () => {
       // ✅ Comprehensive mapping of all source types to standardized Chinese labels
       const sourceTypeLabels: Record<string, string> = {
         // Activity & Rewards
-        'activity_reward': '活动奖励',
-        'activity': '活动',
-        'activity_audit': '活动稽核',
-        'newbie_activity': '新人活动',
-        'novice_welfare_task': '新手福利任务',
-        'promotion_reward': '促销奖励',
-        'promotion': '促销',
-        'task_reward': '任务奖励',
-        'TASK_REWARD': '任务奖励',
-        'general_reward': '通用奖励',
-        'bonus_granted': '奖金发放',
-        'reward': '奖励',
-        'bonus': '奖金',
-        
+        activity_reward: '活动奖励',
+        activity: '活动',
+        activity_audit: '活动稽核',
+        newbie_activity: '新人活动',
+        novice_welfare_task: '新手福利任务',
+        promotion_reward: '促销奖励',
+        promotion: '促销',
+        task_reward: '任务奖励',
+        TASK_REWARD: '任务奖励',
+        general_reward: '通用奖励',
+        bonus_granted: '奖金发放',
+        reward: '奖励',
+        bonus: '奖金',
+
         // Deposit & Recharge
-        'deposit': '充值',
-        'recharge': '充值',
-        'member_recharge': '会员充值',
-        'deposit_bonus': '存款奖励',
-        
+        deposit: '充值',
+        recharge: '充值',
+        member_recharge: '会员充值',
+        deposit_bonus: '存款奖励',
+
         // VIP & Level Rewards
-        'vip': 'VIP',
-        'vip_reward': 'VIP奖励',
-        'vip_bonus': 'VIP奖金',
-        'VIP_BONUS': 'VIP奖金',
-        
+        vip: 'VIP',
+        vip_reward: 'VIP奖励',
+        vip_bonus: 'VIP奖金',
+        VIP_BONUS: 'VIP奖金',
+
         // Rescue & Special
-        'rescue': '救援',
-        'rescue_bonus': '救援奖金',
-        
+        rescue: '救援',
+        rescue_bonus: '救援奖金',
+
         // Manual Operations
-        'manual': '人工解除',
-        'manual_credit': '人工加款',
-        'manual_debit': '人工扣款',
-        
+        manual: '人工解除',
+        manual_credit: '人工加款',
+        manual_debit: '人工扣款',
+
         // Audit & Reject
-        'FORCE_REJECT_AUDIT': '强制拒绝稽核',
-        'force_reject_audit': '强制拒绝稽核',
-        
+        FORCE_REJECT_AUDIT: '强制拒绝稽核',
+        force_reject_audit: '强制拒绝稽核',
+
         // Commission & Rebate
-        'commission': '佣金',
-        'COMMISSION': '佣金',
-        'agent_commission': '代理佣金',
-        'rebate': '返水',
-        'referral_bonus': '推荐奖励',
-        
+        commission: '佣金',
+        COMMISSION: '佣金',
+        agent_commission: '代理佣金',
+        rebate: '返水',
+        referral_bonus: '推荐奖励',
+
         // Financial Operations
-        'adjustment': '资金修复',
-        'correction': '资金修复',
-        'fund_adjustment': '资金调整',
-        'fee_charged': '手续费',
-        'refund': '退款',
-        'interest_treasure': '利息宝',
-        'guarantee_claim': '保障金',
-        'agent_transfer': '代理转账',
-        'credit_loan': '信用贷款',
-        'security_deposit': '保证金',
-        'club_activity': '俱乐部活动',
-        'lucky_wheel': '幸运转盘',
-        'provident_fund': '公积金',
-        'mystery_box': '神秘宝箱',
-        'tip_reward': '小费奖励',
-        
+        adjustment: '资金修复',
+        correction: '资金修复',
+        fund_adjustment: '资金调整',
+        fee_charged: '手续费',
+        refund: '退款',
+        interest_treasure: '利息宝',
+        guarantee_claim: '保障金',
+        agent_transfer: '代理转账',
+        credit_loan: '信用贷款',
+        security_deposit: '保证金',
+        club_activity: '俱乐部活动',
+        lucky_wheel: '幸运转盘',
+        provident_fund: '公积金',
+        mystery_box: '神秘宝箱',
+        tip_reward: '小费奖励',
+
         // Wagering
-        'wagering': '流水',
-        'newbie': '新人'
+        wagering: '流水',
+        newbie: '新人',
       };
-      
+
       // Sort source types alphabetically by Chinese label for better UX
       sourceTypeOptions.value = sourceTypes
-        .map(st => ({
+        .map((st) => ({
           label: sourceTypeLabels[st] || st,
           value: st,
-          original: st
+          original: st,
         }))
         .sort((a, b) => {
           // Sort by Chinese label, but keep unmapped items at the end
@@ -766,9 +833,9 @@ const loadFilterOptions = async () => {
           if (sourceTypeLabels[b.original]) return 1;
           return a.original.localeCompare(b.original);
         })
-        .map(item => ({
+        .map((item) => ({
           label: item.label,
-          value: item.value
+          value: item.value,
         }));
     }
 
@@ -778,11 +845,11 @@ const loadFilterOptions = async () => {
         active: '进行中',
         completed: '已完成',
         expired: '已过期',
-        cancelled: '已取消'
+        cancelled: '已取消',
       };
-      statusOptions.value = statuses.map(s => ({
+      statusOptions.value = statuses.map((s) => ({
         label: statusLabels[s] || s,
-        value: s
+        value: s,
       }));
     }
   } catch (error) {
@@ -796,7 +863,7 @@ const handleSearch = () => {
 };
 
 const handleReset = () => {
-  Object.keys(filters).forEach(key => {
+  Object.keys(filters).forEach((key) => {
     filters[key as keyof typeof filters] = undefined;
   });
   dateRange.value = null;
@@ -813,7 +880,7 @@ const handleExport = async () => {
     console.error('Error exporting:', error);
     notification.error({
       content: '导出失败',
-      duration: 3000
+      duration: 3000,
     });
   } finally {
     exporting.value = false;
@@ -836,8 +903,8 @@ const handleTabChange = (value: string) => {
     path: route.path,
     query: {
       ...route.query,
-      tab: value
-    }
+      tab: value,
+    },
   });
 };
 
@@ -856,7 +923,7 @@ const handleCancelAudit = async (row: WageringAuditItem) => {
       try {
         const reason = `管理员手动清除稽核 - 用户: ${row.user.account}`;
         const response = await cancelAuditApi(row.id, reason);
-        
+
         if (response.success) {
           message.success('稽核已清除');
           await loadData();
@@ -867,7 +934,7 @@ const handleCancelAudit = async (row: WageringAuditItem) => {
         console.error('Error cancelling audit:', error);
         message.error('清除稽核失败');
       }
-    }
+    },
   });
 };
 
@@ -881,7 +948,7 @@ const handleCompleteAudit = async (row: WageringAuditItem) => {
       try {
         const reason = `管理员手动完成稽核 - 用户: ${row.user.account}`;
         const response = await forceCompleteAuditApi(row.id, reason);
-        
+
         if (response.success) {
           message.success('稽核已完成');
           await loadData();
@@ -892,42 +959,42 @@ const handleCompleteAudit = async (row: WageringAuditItem) => {
         console.error('Error completing audit:', error);
         message.error('完成稽核失败');
       }
-    }
+    },
   });
 };
 
 // Utility Functions
 const translateSourceDescription = (description: string | null): string => {
   if (!description) return '-';
-  
+
   // Common phrase mappings - matching UserDetailModal.vue
   const translations: Record<string, string> = {
     // Deposits & Withdrawals
-    'deposit': '充值',
-    'Deposit': '充值',
-    'recharge': '充值',
-    'Recharge': '充值',
-    'member_recharge': '会员充值',
+    deposit: '充值',
+    Deposit: '充值',
+    recharge: '充值',
+    Recharge: '充值',
+    member_recharge: '会员充值',
     'Member recharge': '会员充值',
-    'withdrawal': '提现',
-    'Withdrawal': '提现',
-    'withdraw': '提现',
-    'Withdraw': '提现',
-    
+    withdrawal: '提现',
+    Withdrawal: '提现',
+    withdraw: '提现',
+    Withdraw: '提现',
+
     // Betting
-    'bet_placed': '投注',
+    bet_placed: '投注',
     'Bet placed': '投注',
-    'bet': '投注',
-    'Bet': '投注',
-    'bet_won': '派彩',
+    bet: '投注',
+    Bet: '投注',
+    bet_won: '派彩',
     'Bet won': '派彩',
-    'bet_win': '派彩',
+    bet_win: '派彩',
     'Bet win': '派彩',
-    'bet_lost': '投注',
+    bet_lost: '投注',
     'Bet lost': '投注',
-    'bet_settle': '结算',
+    bet_settle: '结算',
     'Bet settle': '结算',
-    
+
     // Check-in rewards
     'Day 1 check-in reward': '第1天签到奖励',
     'Day 2 check-in reward': '第2天签到奖励',
@@ -940,65 +1007,65 @@ const translateSourceDescription = (description: string | null): string => {
     'Check-in reward': '签到奖励',
     'check in reward': '签到奖励',
     'Check in reward': '签到奖励',
-    
+
     // Rewards & Bonuses
-    'bonus': '奖励',
-    'Bonus': '奖励',
-    'activity_reward': '活动',
+    bonus: '奖励',
+    Bonus: '奖励',
+    activity_reward: '活动',
     'Activity reward': '活动',
-    'activity': '活动',
-    'Activity': '活动',
-    'task_reward': '任务奖励',
+    activity: '活动',
+    Activity: '活动',
+    task_reward: '任务奖励',
     'Task reward': '任务奖励',
-    'vip_reward': 'VIP奖励',
+    vip_reward: 'VIP奖励',
     'VIP reward': 'VIP奖励',
-    'VIP': 'VIP',
-    'deposit_bonus': '存款奖励',
+    VIP: 'VIP',
+    deposit_bonus: '存款奖励',
     'Deposit bonus': '存款奖励',
-    'referral_bonus': '推荐奖励',
+    referral_bonus: '推荐奖励',
     'Referral bonus': '推荐奖励',
-    'rebate': '返水',
-    'Rebate': '返水',
-    'commission': '佣金',
-    'Commission': '佣金',
-    
+    rebate: '返水',
+    Rebate: '返水',
+    commission: '佣金',
+    Commission: '佣金',
+
     // Manual operations
-    'manual_credit': '人工加款',
+    manual_credit: '人工加款',
     'Manual credit': '人工加款',
-    'manual_debit': '人工扣款',
+    manual_debit: '人工扣款',
     'Manual debit': '人工扣款',
-    'manual': '人工',
-    'Manual': '人工',
-    'adjustment': '资金修复',
-    'Adjustment': '资金修复',
-    'correction': '资金修复',
-    'Correction': '资金修复',
-    
+    manual: '人工',
+    Manual: '人工',
+    adjustment: '资金修复',
+    Adjustment: '资金修复',
+    correction: '资金修复',
+    Correction: '资金修复',
+
     // Others
-    'rescue': '救援',
-    'Rescue': '救援',
+    rescue: '救援',
+    Rescue: '救援',
     'rescue bonus': '救援奖金',
     'Rescue bonus': '救援奖金',
-    'newbie': '新人',
-    'Newbie': '新人',
-    'wagering': '流水',
-    'Wagering': '流水',
-    'promotion': '促销',
-    'Promotion': '促销',
+    newbie: '新人',
+    Newbie: '新人',
+    wagering: '流水',
+    Wagering: '流水',
+    promotion: '促销',
+    Promotion: '促销',
     'first deposit': '首充',
     'First deposit': '首充',
     'bonus unlock': '奖金解锁',
     'Bonus unlock': '奖金解锁',
-    
+
     // Fees
-    'fee': '手续费',
-    'Fee': '手续费',
-    'withdrawal_fee': '提现手续费',
-    'Withdrawal fee': '提现手续费'
+    fee: '手续费',
+    Fee: '手续费',
+    withdrawal_fee: '提现手续费',
+    'Withdrawal fee': '提现手续费',
   };
 
   let translated = description;
-  
+
   // Replace each known phrase
   Object.entries(translations).forEach(([en, zh]) => {
     translated = translated.replace(new RegExp(en, 'gi'), zh);
@@ -1022,7 +1089,7 @@ const formatDateTime = (dateStr: string): string => {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
-    hour12: false
+    hour12: false,
   });
 };
 
@@ -1089,4 +1156,3 @@ onMounted(() => {
   }
 }
 </style>
-

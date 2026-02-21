@@ -60,7 +60,9 @@ export interface WithdrawAccountListResponse {
 /**
  * Get withdrawal accounts by user ID
  */
-export async function getWithdrawAccountsByUserIdApi(params: WithdrawAccountListParams): Promise<WithdrawAccountListResponse> {
+export async function getWithdrawAccountsByUserIdApi(
+  params: WithdrawAccountListParams,
+): Promise<WithdrawAccountListResponse> {
   const queryParams = new URLSearchParams({
     page: (params.page || 1).toString(),
     pageSize: (params.pageSize || 20).toString(),
@@ -69,24 +71,26 @@ export async function getWithdrawAccountsByUserIdApi(params: WithdrawAccountList
   try {
     // Backend route is mounted at /api/withdrawal-accounts
     // List-by-user endpoint: GET /api/withdrawal-accounts/users/:userId
-    const response = await requestClient.get(`/withdrawal-accounts/users/${params.userId}?${queryParams}`);
-    
+    const response = await requestClient.get(
+      `/withdrawal-accounts/users/${params.userId}?${queryParams}`,
+    );
+
     // ✅ FIX: Handle backend response structure correctly
     // Backend returns: { success: true, data: { list: [], pagination: {} } }
     if (response?.data?.success && response.data.data) {
       return response.data.data;
     }
-    
+
     // Fallback: if response.data is already the data structure
     if (response?.data?.list && response.data.pagination) {
       return response.data;
     }
-    
+
     // Fallback: if response is already the data structure
     if (response?.list && response.pagination) {
       return response;
     }
-    
+
     // If no valid structure, return empty
     console.warn('Unexpected response structure:', response);
     return {
@@ -95,12 +99,12 @@ export async function getWithdrawAccountsByUserIdApi(params: WithdrawAccountList
         current: params.page || 1,
         pageSize: params.pageSize || 20,
         total: 0,
-        totalPages: 0
-      }
+        totalPages: 0,
+      },
     };
   } catch (error: any) {
     console.error('Failed to fetch withdrawal accounts:', error);
-    
+
     // ✅ FIX: Better error handling - check if it's a network error or API error
     if (error?.response?.data) {
       const errorData = error.response.data;
@@ -108,9 +112,11 @@ export async function getWithdrawAccountsByUserIdApi(params: WithdrawAccountList
       if (errorData.messageKey) {
         throw new Error(errorData.messageKey);
       }
-      throw new Error(errorData.message || 'Failed to fetch withdrawal accounts');
+      throw new Error(
+        errorData.message || 'Failed to fetch withdrawal accounts',
+      );
     }
-    
+
     throw new Error(error?.message || 'Failed to fetch withdrawal accounts');
   }
 }
@@ -118,7 +124,9 @@ export async function getWithdrawAccountsByUserIdApi(params: WithdrawAccountList
 /**
  * Create new withdrawal account
  */
-export async function createWithdrawAccountApi(params: CreateWithdrawAccountParams): Promise<WithdrawAccount> {
+export async function createWithdrawAccountApi(
+  params: CreateWithdrawAccountParams,
+): Promise<WithdrawAccount> {
   try {
     const response = await requestClient.post('/withdrawal-accounts', params);
     return response.data || response;
@@ -137,9 +145,15 @@ export async function createWithdrawAccountApi(params: CreateWithdrawAccountPara
 /**
  * Update withdrawal account
  */
-export async function updateWithdrawAccountApi(accountId: string, params: UpdateWithdrawAccountParams): Promise<WithdrawAccount> {
+export async function updateWithdrawAccountApi(
+  accountId: string,
+  params: UpdateWithdrawAccountParams,
+): Promise<WithdrawAccount> {
   try {
-    const response = await requestClient.put(`/withdrawal-accounts/${accountId}`, params);
+    const response = await requestClient.put(
+      `/withdrawal-accounts/${accountId}`,
+      params,
+    );
     return response.data || response;
   } catch (error: any) {
     if (error?.success && error?.data) {
@@ -156,9 +170,15 @@ export async function updateWithdrawAccountApi(accountId: string, params: Update
 /**
  * Toggle withdrawal account status
  */
-export async function toggleWithdrawAccountStatusApi(accountId: string, status: 'ACTIVE' | 'DISABLED'): Promise<WithdrawAccount> {
+export async function toggleWithdrawAccountStatusApi(
+  accountId: string,
+  status: 'ACTIVE' | 'DISABLED',
+): Promise<WithdrawAccount> {
   try {
-    const response = await requestClient.put(`/withdrawal-accounts/${accountId}/status`, { status });
+    const response = await requestClient.put(
+      `/withdrawal-accounts/${accountId}/status`,
+      { status },
+    );
     return response.data || response;
   } catch (error: any) {
     if (error?.success && error?.data) {
@@ -175,11 +195,13 @@ export async function toggleWithdrawAccountStatusApi(accountId: string, status: 
 /**
  * Delete withdrawal account
  */
-export async function deleteWithdrawAccountApi(accountId: string): Promise<void> {
+export async function deleteWithdrawAccountApi(
+  accountId: string,
+): Promise<void> {
   try {
     await requestClient.delete(`/withdrawal-accounts/${accountId}`);
   } catch (error: any) {
     console.error('Failed to delete withdrawal account:', error);
     throw new Error('Failed to delete withdrawal account');
   }
-} 
+}

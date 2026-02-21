@@ -20,9 +20,7 @@
             placeholder="选择RTP值"
             filterable
           />
-          <template #feedback>
-            当前运营商权限支持10-97的RTP值
-          </template>
+          <template #feedback> 当前运营商权限支持10-97的RTP值 </template>
         </n-form-item>
 
         <n-form-item label="游戏" path="GameId">
@@ -107,9 +105,7 @@
             >
               设置RTP
             </n-button>
-            <n-button @click="handleReset">
-              重置表单
-            </n-button>
+            <n-button @click="handleReset"> 重置表单 </n-button>
           </div>
         </n-form-item>
       </n-form>
@@ -280,7 +276,11 @@ const historyColumns: DataTableColumns<any> = [
     width: 80,
     align: 'center',
     render: (row) => {
-      return h(NTag, { type: 'info', size: 'small' }, { default: () => row.rtp });
+      return h(
+        NTag,
+        { type: 'info', size: 'small' },
+        { default: () => row.rtp },
+      );
     },
   },
   {
@@ -297,7 +297,13 @@ const historyColumns: DataTableColumns<any> = [
     width: 80,
     align: 'center',
     render: (row) => {
-      return row.removeRtp ? h(NTag, { type: 'warning', size: 'small' }, { default: () => row.removeRtp }) : '-';
+      return row.removeRtp
+        ? h(
+            NTag,
+            { type: 'warning', size: 'small' },
+            { default: () => row.removeRtp },
+          )
+        : '-';
     },
   },
   {
@@ -306,7 +312,13 @@ const historyColumns: DataTableColumns<any> = [
     width: 80,
     align: 'center',
     render: (row) => {
-      return row.buyRtp ? h(NTag, { type: 'success', size: 'small' }, { default: () => row.buyRtp }) : '-';
+      return row.buyRtp
+        ? h(
+            NTag,
+            { type: 'success', size: 'small' },
+            { default: () => row.buyRtp },
+          )
+        : '-';
     },
   },
   {
@@ -315,7 +327,9 @@ const historyColumns: DataTableColumns<any> = [
     width: 120,
     align: 'center',
     render: (row) => {
-      return row.personWinMaxMult !== null && row.personWinMaxMult !== undefined ? row.personWinMaxMult : 100;
+      return row.personWinMaxMult !== null && row.personWinMaxMult !== undefined
+        ? row.personWinMaxMult
+        : 100;
     },
   },
   {
@@ -324,7 +338,10 @@ const historyColumns: DataTableColumns<any> = [
     width: 120,
     align: 'center',
     render: (row) => {
-      return row.personWinMaxScore !== null && row.personWinMaxScore !== undefined ? row.personWinMaxScore : 1000000;
+      return row.personWinMaxScore !== null &&
+        row.personWinMaxScore !== undefined
+        ? row.personWinMaxScore
+        : 1000000;
     },
   },
   {
@@ -341,31 +358,46 @@ const historyColumns: DataTableColumns<any> = [
     width: 100,
     align: 'center',
     render: (row) => {
-      const statusMap: Record<string, { type: 'success' | 'error' | 'warning'; text: string }> = {
+      const statusMap: Record<
+        string,
+        { type: 'success' | 'error' | 'warning'; text: string }
+      > = {
         success: { type: 'success', text: '成功' },
         failed: { type: 'error', text: '失败' },
         pending: { type: 'warning', text: '处理中' },
       };
-      const status = statusMap[row.status] || { type: 'warning', text: row.status };
-      return h(NTag, { type: status.type, size: 'small' }, { default: () => status.text });
+      const status = statusMap[row.status] || {
+        type: 'warning',
+        text: row.status,
+      };
+      return h(
+        NTag,
+        { type: status.type, size: 'small' },
+        { default: () => status.text },
+      );
     },
   },
 ];
 
 // Computed
 const canSubmit = computed(() => {
-  return formData.Rtp !== null && formData.GameId && formData.GameId.length > 0 && props.userDetail?.account;
+  return (
+    formData.Rtp !== null &&
+    formData.GameId &&
+    formData.GameId.length > 0 &&
+    props.userDetail?.account
+  );
 });
 
 // Methods
 const handleSearchGames = async (query: string) => {
   console.log('🔍 handleSearchGames called with query:', query);
-  
+
   // Reset pagination when search query changes
   currentSearchQuery.value = query;
   currentPage.value = 1;
   hasMoreGames.value = true;
-  
+
   if (!query || query.length < 2) {
     // Load initial games
     await loadInitialGames();
@@ -376,7 +408,7 @@ const handleSearchGames = async (query: string) => {
   try {
     const result = await searchGamesWithPagination(query, 1);
     console.log('✅ Search result:', result);
-    
+
     if (!result || result.length === 0) {
       message.warning('没有找到匹配的游戏');
       // Keep ALL option even when no results
@@ -384,16 +416,16 @@ const handleSearchGames = async (query: string) => {
       hasMoreGames.value = false;
       return;
     }
-    
+
     // Add search results, keep ALL option
     gameOptions.value = [
       { label: 'ALL（全部slots游戏）', value: 'ALL' },
       ...result.map((game: any) => ({
         label: game.gameName,
         value: game.gameId,
-      }))
+      })),
     ];
-    
+
     // Check if there are more results
     hasMoreGames.value = result.length >= 20;
   } catch (error) {
@@ -411,12 +443,12 @@ const searchGamesWithPagination = async (query: string, page: number) => {
     params: {
       search: query || '',
       limit: 20,
-      page: page
-    }
+      page: page,
+    },
   });
-  
+
   console.log('🎮 searchGamesWithPagination response:', response);
-  
+
   // Handle different response formats
   if (response && response.data && Array.isArray(response.data)) {
     return response.data;
@@ -425,7 +457,7 @@ const searchGamesWithPagination = async (query: string, page: number) => {
   } else if (response && response.data) {
     return response.data;
   }
-  
+
   return [];
 };
 
@@ -434,9 +466,13 @@ const handleScroll = async (e: Event) => {
   const scrollTop = target.scrollTop;
   const scrollHeight = target.scrollHeight;
   const clientHeight = target.clientHeight;
-  
+
   // Check if scrolled near bottom (within 50px)
-  if (scrollTop + clientHeight >= scrollHeight - 50 && !gamesLoading.value && hasMoreGames.value) {
+  if (
+    scrollTop + clientHeight >= scrollHeight - 50 &&
+    !gamesLoading.value &&
+    hasMoreGames.value
+  ) {
     console.log('📜 Loading more games...');
     await loadMoreGames();
   }
@@ -448,11 +484,11 @@ const loadInitialGames = async () => {
   currentPage.value = 1;
   currentSearchQuery.value = '';
   hasMoreGames.value = true;
-  
+
   try {
     const result = await searchGamesWithPagination('', 1);
     console.log('✅ Initial games loaded:', result);
-    
+
     if (!result || result.length === 0) {
       console.warn('⚠️ No games found in database');
       gameOptions.value = [{ label: 'ALL（全部slots游戏）', value: 'ALL' }];
@@ -460,16 +496,16 @@ const loadInitialGames = async () => {
       hasMoreGames.value = false;
       return;
     }
-    
+
     // Add "ALL" option at the beginning
     gameOptions.value = [
       { label: 'ALL（全部slots游戏）', value: 'ALL' },
       ...result.map((game: any) => ({
         label: game.gameName,
         value: game.gameId,
-      }))
+      })),
     ];
-    
+
     // Check if there are more results
     hasMoreGames.value = result.length >= 20;
     console.log('✅ Game options set:', gameOptions.value.length, 'options');
@@ -486,28 +522,31 @@ const loadInitialGames = async () => {
 
 const loadMoreGames = async () => {
   if (!hasMoreGames.value || gamesLoading.value) return;
-  
+
   console.log('📜 Loading more games, page:', currentPage.value + 1);
   gamesLoading.value = true;
-  
+
   try {
     currentPage.value += 1;
-    const result = await searchGamesWithPagination(currentSearchQuery.value, currentPage.value);
-    
+    const result = await searchGamesWithPagination(
+      currentSearchQuery.value,
+      currentPage.value,
+    );
+
     if (!result || result.length === 0) {
       hasMoreGames.value = false;
       console.log('✅ No more games to load');
       return;
     }
-    
+
     // Append new games to existing options (skip ALL option)
     const newGames = result.map((game: any) => ({
       label: game.gameName,
       value: game.gameId,
     }));
-    
+
     gameOptions.value = [...gameOptions.value, ...newGames];
-    
+
     // Check if there are more results
     hasMoreGames.value = result.length >= 20;
     console.log('✅ Loaded more games, total now:', gameOptions.value.length);
@@ -521,15 +560,18 @@ const loadMoreGames = async () => {
 
 const handleGameSelect = (value: string[]) => {
   console.log('Selected games:', value);
-  
+
   // If "ALL" is selected, clear other selections
   if (value && value.includes('ALL') && value.length > 1) {
     // If ALL was just added, keep only ALL
-    if (formData.GameId.length < value.length && value[value.length - 1] === 'ALL') {
+    if (
+      formData.GameId.length < value.length &&
+      value[value.length - 1] === 'ALL'
+    ) {
       formData.GameId = ['ALL'];
     } else {
       // If another game was added after ALL, remove ALL
-      formData.GameId = value.filter(g => g !== 'ALL');
+      formData.GameId = value.filter((g) => g !== 'ALL');
     }
   }
 };
@@ -548,8 +590,10 @@ const handleSubmit = async () => {
 
     // Prepare request data using the current user's ID
     // Join multiple game IDs with comma
-    const gameIds = Array.isArray(formData.GameId) ? formData.GameId.join(',') : formData.GameId;
-    
+    const gameIds = Array.isArray(formData.GameId)
+      ? formData.GameId.join(',')
+      : formData.GameId;
+
     const requestData: any = {
       userAccount: props.userDetail.account, // Use the user account instead of ID
       Rtp: formData.Rtp!,
@@ -572,12 +616,14 @@ const handleSubmit = async () => {
     // Call API
     const result = await setPlayerRtpApi(requestData);
 
-    message.success(`RTP设置成功！影响的玩家数: ${result.data?.PidList?.length || 0}`);
-    
+    message.success(
+      `RTP设置成功！影响的玩家数: ${result.data?.PidList?.length || 0}`,
+    );
+
     // Reset to page 1 and reload history to show the new record at the top
     pagination.page = 1;
     await loadHistory();
-    
+
     // Don't reset form - keep the latest saved values displayed
   } catch (error: any) {
     message.error(`RTP设置失败: ${error?.message || '未知错误'}`);
@@ -599,7 +645,7 @@ const handleReset = () => {
 
 const loadHistory = async () => {
   if (!props.userDetail?.account) return;
-  
+
   historyLoading.value = true;
   try {
     // Filter history by user account
@@ -608,10 +654,12 @@ const loadHistory = async () => {
       pageSize: pagination.pageSize,
       userAccount: props.userDetail.account,
     } as any);
-    
+
     historyData.value = result.data || [];
     pagination.itemCount = result.total || 0; // Update total count for pagination
-    console.log(`✅ Loaded ${result.data?.length || 0} of ${result.total || 0} RTP history records for user: ${props.userDetail.account}`);
+    console.log(
+      `✅ Loaded ${result.data?.length || 0} of ${result.total || 0} RTP history records for user: ${props.userDetail.account}`,
+    );
   } catch (error) {
     console.error('Load RTP history error:', error);
     // Don't show error message for history load failure
@@ -623,7 +671,7 @@ const loadHistory = async () => {
 // Load last saved configuration from API
 const loadLastConfig = async () => {
   if (!props.userDetail?.account) return;
-  
+
   try {
     // Get the most recent config for this specific user
     const result = await getPlayerRtpHistoryApi({
@@ -631,35 +679,39 @@ const loadLastConfig = async () => {
       pageSize: 1,
       userAccount: props.userDetail.account,
     } as any);
-    
+
     if (result.data && result.data.length > 0) {
       const lastConfig = result.data[0];
       if (!lastConfig) return;
-      
+
       console.log('📥 Loading last saved player RTP config:', lastConfig);
-      
+
       // Load RTP value
       formData.Rtp = lastConfig.rtp || null;
-      
+
       // Load GameId (split comma-separated string into array)
-      formData.GameId = lastConfig.gameId ? lastConfig.gameId.split(',') : ['ALL'];
-      
+      formData.GameId = lastConfig.gameId
+        ? lastConfig.gameId.split(',')
+        : ['ALL'];
+
       // Load RemoveRTP (handle null/undefined properly)
-      formData.RemoveRTP = lastConfig.removeRtp !== undefined && lastConfig.removeRtp !== null 
-        ? lastConfig.removeRtp 
-        : null;
-      
+      formData.RemoveRTP =
+        lastConfig.removeRtp !== undefined && lastConfig.removeRtp !== null
+          ? lastConfig.removeRtp
+          : null;
+
       // Load BuyRTP (handle null/undefined properly)
-      formData.BuyRTP = lastConfig.buyRtp !== undefined && lastConfig.buyRtp !== null 
-        ? lastConfig.buyRtp 
-        : null;
-      
+      formData.BuyRTP =
+        lastConfig.buyRtp !== undefined && lastConfig.buyRtp !== null
+          ? lastConfig.buyRtp
+          : null;
+
       // Load PersonWinMaxMult (use ?? operator for proper null handling)
       formData.PersonWinMaxMult = lastConfig.personWinMaxMult ?? 100;
-      
+
       // Load PersonWinMaxScore (use ?? operator for proper null handling)
       formData.PersonWinMaxScore = lastConfig.personWinMaxScore ?? 1000000;
-      
+
       console.log('✅ Last player RTP config loaded into form:', {
         Rtp: formData.Rtp,
         GameId: formData.GameId,
@@ -678,7 +730,7 @@ const loadLastConfig = async () => {
 onMounted(async () => {
   // Load initial games
   loadInitialGames();
-  
+
   // Load last saved config from API
   if (props.userId) {
     await loadLastConfig();
@@ -710,4 +762,3 @@ onMounted(async () => {
   gap: 12px;
 }
 </style>
-

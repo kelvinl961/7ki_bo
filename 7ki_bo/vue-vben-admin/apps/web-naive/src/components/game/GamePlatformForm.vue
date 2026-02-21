@@ -101,7 +101,10 @@
           </n-upload-trigger>
         </n-upload>
 
-        <div v-if="formData.imageUrl && !imageFileList.length" class="image-preview">
+        <div
+          v-if="formData.imageUrl && !imageFileList.length"
+          class="image-preview"
+        >
           <n-image
             :src="formData.imageUrl"
             :alt="formData.platformName"
@@ -111,9 +114,7 @@
             class="preview-image"
           />
           <div class="image-actions">
-            <n-button size="small" @click="handleReplaceImage">
-              替换
-            </n-button>
+            <n-button size="small" @click="handleReplaceImage"> 替换 </n-button>
             <n-button size="small" type="error" @click="handleRemoveImage">
               删除
             </n-button>
@@ -188,7 +189,10 @@ import {
 } from 'naive-ui';
 import { CloudUploadOutline } from '@vicons/ionicons5';
 import { notification } from '#/adapter/naive';
-import type { GamePlatformRecord, CreateGamePlatformParams } from '#/api/game/gamePlatform';
+import type {
+  GamePlatformRecord,
+  CreateGamePlatformParams,
+} from '#/api/game/gamePlatform';
 
 interface Props {
   initialData?: GamePlatformRecord;
@@ -270,9 +274,7 @@ const formRules: FormRules = {
     { required: true, message: '币种不能为空', trigger: 'blur' },
     { max: 10, message: '币种不能超过10个字符', trigger: 'blur' },
   ],
-  imageUrl: [
-    { type: 'url', message: '请输入有效的图片URL', trigger: 'blur' },
-  ],
+  imageUrl: [{ type: 'url', message: '请输入有效的图片URL', trigger: 'blur' }],
 };
 
 // 初始化表单数据
@@ -305,7 +307,13 @@ const handleImageUploadChange = (options: { fileList: UploadFileInfo[] }) => {
   imageFileList.value = options.fileList;
 };
 
-const handleImageUploadFinish = ({ file, event }: { file: UploadFileInfo; event?: ProgressEvent }) => {
+const handleImageUploadFinish = ({
+  file,
+  event,
+}: {
+  file: UploadFileInfo;
+  event?: ProgressEvent;
+}) => {
   if (event?.target) {
     const response = JSON.parse((event.target as XMLHttpRequest).response);
     if (response.success) {
@@ -348,11 +356,15 @@ const resetForm = () => {
 };
 
 // 监听 props 变化
-watch(() => props.initialData, () => {
-  nextTick(() => {
-    initFormData();
-  });
-}, { immediate: true });
+watch(
+  () => props.initialData,
+  () => {
+    nextTick(() => {
+      initFormData();
+    });
+  },
+  { immediate: true },
+);
 
 // 暴露方法
 defineExpose({
@@ -401,4 +413,4 @@ defineExpose({
   flex-direction: column;
   gap: 8px;
 }
-</style> 
+</style>

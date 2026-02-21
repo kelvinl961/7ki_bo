@@ -56,22 +56,22 @@ export interface WithdrawalRecord {
 
 export interface RiskAssessment {
   score: number;
-  level: 'LOW' | 'MEDIUM' | 'HIGH';
+  level: 'HIGH' | 'LOW' | 'MEDIUM';
   flags: string[];
 }
 
 export interface WithdrawalDetail extends WithdrawalRecord {
   riskAssessment?: RiskAssessment;
   user?: {
-    id: number;
     account: string;
-    name?: string;
     cpf?: string;
-    vipLevel?: {
-      name: string;
-      level: number;
-    };
     deposits?: any[];
+    id: number;
+    name?: string;
+    vipLevel?: {
+      level: number;
+      name: string;
+    };
     withdrawals?: any[];
   };
 }
@@ -79,13 +79,13 @@ export interface WithdrawalDetail extends WithdrawalRecord {
 export interface GetWithdrawalsResponse {
   success: boolean;
   data: {
-    withdrawals: WithdrawalRecord[];
     pagination: {
       current: number;
       pageSize: number;
       total: number;
       totalPages: number;
     };
+    withdrawals: WithdrawalRecord[];
   };
   message?: string;
 }
@@ -93,42 +93,42 @@ export interface GetWithdrawalsResponse {
 export interface WithdrawalDetailResponse {
   success: boolean;
   data: {
-    withdrawal: WithdrawalDetail;
-    memberInfo?: {
-      id: number;
-      account: string;
-      userID?: string;
-      name: string;
-      balance: number;
-      vipLevel: {
-        name: string;
-        level: number;
-      } | null;
-      memberTier: {
-        tierName: string;
-        tierCode: string | null;
+    bettingStatistics?: {
+      today: {
+        betAmount: string;
+        betCount: number;
+        bonus: string;
+        deposit: string;
+        difference: string;
+        period: string;
+        profit: string;
+        withdrawal: string;
       };
+    };
+    memberInfo?: {
+      account: string;
+      balance: number;
+      depositCount: number;
+      depositWithdrawalDiff: number;
+      duplicateIpCount: number;
+      id: number;
+      memberTier: {
+        tierCode: null | string;
+        tierName: string;
+      };
+      name: string;
       registrationDomain: string;
       totalDeposit: number;
       totalWithdrawal: number;
-      depositCount: number;
-      withdrawalCount: number;
-      depositWithdrawalDiff: number;
-      duplicateIpCount: number;
-    };
-    bettingStatistics?: {
-      today: {
-        period: string;
-        deposit: string;
-        withdrawal: string;
-        difference: string;
-        betCount: number;
-        betAmount: string;
-        profit: string;
-        bonus: string;
+      userID?: string;
+      vipLevel: null | {
+        level: number;
+        name: string;
       };
+      withdrawalCount: number;
     };
     riskAssessment: RiskAssessment;
+    withdrawal: WithdrawalDetail;
   };
   message?: string;
 }
@@ -164,8 +164,8 @@ export interface BulkOperationResponse {
   data: {
     results: Array<{
       id: string;
-      success: boolean;
       message: string;
+      success: boolean;
     }>;
   };
 }
@@ -181,8 +181,12 @@ export const riskControlApi = {
   /**
    * Get withdrawals for risk control review
    */
-  async getWithdrawalsForReview(filters: RiskControlFilters): Promise<GetWithdrawalsResponse> {
-    const response = await requestClient.get('/risk-control/withdrawals', { params: filters });
+  async getWithdrawalsForReview(
+    filters: RiskControlFilters,
+  ): Promise<GetWithdrawalsResponse> {
+    const response = await requestClient.get('/risk-control/withdrawals', {
+      params: filters,
+    });
     // Response interceptor returns the whole response object for success: true format
     return response;
   },
@@ -190,8 +194,12 @@ export const riskControlApi = {
   /**
    * Get withdrawal details for review
    */
-  async getWithdrawalDetails(withdrawalId: string): Promise<WithdrawalDetailResponse> {
-    const response = await requestClient.get(`/risk-control/withdrawals/${withdrawalId}`);
+  async getWithdrawalDetails(
+    withdrawalId: string,
+  ): Promise<WithdrawalDetailResponse> {
+    const response = await requestClient.get(
+      `/risk-control/withdrawals/${withdrawalId}`,
+    );
     // Response interceptor returns the whole response object for success: true format
     return response;
   },
@@ -199,8 +207,14 @@ export const riskControlApi = {
   /**
    * Approve withdrawal
    */
-  async approveWithdrawal(withdrawalId: string, data: ApprovalRequest): Promise<OperationResponse> {
-    const response = await requestClient.post(`/risk-control/withdrawals/${withdrawalId}/approve`, data);
+  async approveWithdrawal(
+    withdrawalId: string,
+    data: ApprovalRequest,
+  ): Promise<OperationResponse> {
+    const response = await requestClient.post(
+      `/risk-control/withdrawals/${withdrawalId}/approve`,
+      data,
+    );
     // Response interceptor returns the whole response object for success: true format
     return response;
   },
@@ -208,8 +222,14 @@ export const riskControlApi = {
   /**
    * Reject withdrawal
    */
-  async rejectWithdrawal(withdrawalId: string, data: RejectionRequest): Promise<OperationResponse> {
-    const response = await requestClient.post(`/risk-control/withdrawals/${withdrawalId}/reject`, data);
+  async rejectWithdrawal(
+    withdrawalId: string,
+    data: RejectionRequest,
+  ): Promise<OperationResponse> {
+    const response = await requestClient.post(
+      `/risk-control/withdrawals/${withdrawalId}/reject`,
+      data,
+    );
     // Response interceptor returns the whole response object for success: true format
     return response;
   },
@@ -218,7 +238,9 @@ export const riskControlApi = {
    * Lock withdrawal for review
    */
   async lockWithdrawal(withdrawalId: string): Promise<OperationResponse> {
-    const response = await requestClient.post(`/risk-control/withdrawals/${withdrawalId}/lock`);
+    const response = await requestClient.post(
+      `/risk-control/withdrawals/${withdrawalId}/lock`,
+    );
     // Response interceptor returns the whole response object for success: true format
     return response;
   },
@@ -227,7 +249,9 @@ export const riskControlApi = {
    * Unlock withdrawal
    */
   async unlockWithdrawal(withdrawalId: string): Promise<OperationResponse> {
-    const response = await requestClient.post(`/risk-control/withdrawals/${withdrawalId}/unlock`);
+    const response = await requestClient.post(
+      `/risk-control/withdrawals/${withdrawalId}/unlock`,
+    );
     // Response interceptor returns the whole response object for success: true format
     return response;
   },
@@ -235,8 +259,14 @@ export const riskControlApi = {
   /**
    * Force cancel withdrawal (return funds to user)
    */
-  async forceCancelWithdrawal(withdrawalId: string, data: { reason: string; frontendReason?: string; backendReason?: string }): Promise<OperationResponse> {
-    const response = await requestClient.post(`/risk-control/withdrawals/${withdrawalId}/force-cancel`, data);
+  async forceCancelWithdrawal(
+    withdrawalId: string,
+    data: { backendReason?: string; frontendReason?: string; reason: string },
+  ): Promise<OperationResponse> {
+    const response = await requestClient.post(
+      `/risk-control/withdrawals/${withdrawalId}/force-cancel`,
+      data,
+    );
     // Response interceptor returns the whole response object for success: true format
     return response;
   },
@@ -245,7 +275,10 @@ export const riskControlApi = {
    * Bulk approve withdrawals
    */
   async bulkApprove(data: BulkApprovalRequest): Promise<BulkOperationResponse> {
-    const response = await requestClient.post('/risk-control/withdrawals/bulk-approve', data);
+    const response = await requestClient.post(
+      '/risk-control/withdrawals/bulk-approve',
+      data,
+    );
     // Response interceptor returns the whole response object for success: true format
     return response;
   },
@@ -254,7 +287,10 @@ export const riskControlApi = {
    * Bulk reject withdrawals
    */
   async bulkReject(data: BulkRejectionRequest): Promise<BulkOperationResponse> {
-    const response = await requestClient.post('/risk-control/withdrawals/bulk-reject', data);
+    const response = await requestClient.post(
+      '/risk-control/withdrawals/bulk-reject',
+      data,
+    );
     // Response interceptor returns the whole response object for success: true format
     return response;
   },
@@ -262,8 +298,13 @@ export const riskControlApi = {
   /**
    * Get risk control statistics
    */
-  async getRiskControlStats(params?: { startDate?: string; endDate?: string }): Promise<any> {
-    const response = await requestClient.get('/risk-control/statistics', { params });
+  async getRiskControlStats(params?: {
+    endDate?: string;
+    startDate?: string;
+  }): Promise<any> {
+    const response = await requestClient.get('/risk-control/statistics', {
+      params,
+    });
     // Response interceptor returns the whole response object for success: true format
     return response;
   },
@@ -272,9 +313,9 @@ export const riskControlApi = {
    * Export risk control data
    */
   async exportRiskControlData(filters: RiskControlFilters): Promise<Blob> {
-    const response = await requestClient.get('/risk-control/export', { 
+    const response = await requestClient.get('/risk-control/export', {
       params: filters,
-      responseType: 'blob' 
+      responseType: 'blob',
     });
     // For blob responses, return response.data directly
     return response.data;
@@ -283,28 +324,37 @@ export const riskControlApi = {
   /**
    * Force cancel withdrawal (alias for compatibility)
    */
-  async forceCancel(withdrawalId: string, data: { frontendReason: string; backendReason: string }): Promise<OperationResponse> {
+  async forceCancel(
+    withdrawalId: string,
+    data: { backendReason: string; frontendReason: string },
+  ): Promise<OperationResponse> {
     return this.forceCancelWithdrawal(withdrawalId, {
       reason: data.frontendReason || data.backendReason,
       frontendReason: data.frontendReason,
-      backendReason: data.backendReason
+      backendReason: data.backendReason,
     });
   },
 
   /**
    * Force reject withdrawal with audit task
    */
-  async forceReject(withdrawalId: string, data: {
-    windControlProcess: 'no' | 'add_audit' | 'deduct_balance';
-    auditTask?: {
-      multiplier: number;
-      platforms: { [key: string]: boolean };
-      selectedPlatform: string;
-    };
-    frontendReason: string;
-    backendReason: string;
-  }): Promise<OperationResponse> {
-    const response = await requestClient.post(`/risk-control/withdrawals/${withdrawalId}/force-reject`, data);
+  async forceReject(
+    withdrawalId: string,
+    data: {
+      auditTask?: {
+        multiplier: number;
+        platforms: { [key: string]: boolean };
+        selectedPlatform: string;
+      };
+      backendReason: string;
+      frontendReason: string;
+      windControlProcess: 'add_audit' | 'deduct_balance' | 'no';
+    },
+  ): Promise<OperationResponse> {
+    const response = await requestClient.post(
+      `/risk-control/withdrawals/${withdrawalId}/force-reject`,
+      data,
+    );
     return response;
-  }
+  },
 };

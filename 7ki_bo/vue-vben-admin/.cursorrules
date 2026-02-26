@@ -1,0 +1,292 @@
+# Vue Vben Admin - Cursor IDE Rules
+
+You are an expert Vue 3 + TypeScript + Vite developer working on Vue Vben Admin, an enterprise-level admin template. Follow these rules strictly.
+
+## Project Architecture
+
+### Monorepo Structure
+- This is a pnpm workspace monorepo with multiple apps and packages
+- Main apps: `web-antd`, `web-ele`, `web-naive`, `backend-mock`, `playground`
+- Shared packages in `packages/` directory
+- Use workspace references (`workspace:*`) for internal dependencies
+
+### Technology Stack
+- **Frontend**: Vue 3 Composition API, TypeScript, Vite 6, Ant Design Vue
+- **State Management**: Pinia
+- **Routing**: Vue Router 4  
+- **Styling**: Tailwind CSS, SCSS
+- **Testing**: Vitest, Playwright
+- **Backend Mock**: Nitro framework
+- **Build**: Vite with custom configurations
+
+## Code Style & Standards
+
+### TypeScript
+- Use strict TypeScript configuration
+- Always define interfaces for props, emit events, and data structures
+- Use `ref()`, `reactive()`, `computed()` from Vue
+- Prefer `const` over `let`, avoid `var`
+- Use proper type annotations, avoid `any`
+
+```typescript
+// ✅ Good
+interface UserItem {
+  id: string;
+  name: string;
+  status: 'active' | 'inactive';
+}
+
+const users = ref<UserItem[]>([]);
+
+// ❌ Bad  
+const users = ref([]);
+```
+
+### Vue Components
+- Use `<script setup lang="ts">` syntax
+- Use Composition API exclusively
+- Define component props with TypeScript interfaces
+- Use proper component naming (PascalCase)
+
+```vue
+<!-- ✅ Good -->
+<script setup lang="ts">
+interface Props {
+  title: string;
+  items: UserItem[];
+}
+
+const props = defineProps<Props>();
+const emit = defineEmits<{
+  update: [value: string];
+}>();
+</script>
+
+<!-- ❌ Bad -->
+<script setup>
+const props = defineProps(['title', 'items']);
+</script>
+```
+
+### File Structure
+- Components: PascalCase (`UserList.vue`)
+- Composables: camelCase with `use` prefix (`useUserManagement.ts`)
+- Utils: camelCase (`formatDate.ts`)
+- Types: PascalCase interfaces/types (`types.ts`)
+- Constants: UPPER_SNAKE_CASE
+
+### Import Rules
+- Use path aliases: `#/` for src files, `@vben/` for packages
+- Group imports: Vue/3rd party → Internal packages → Local files
+- Use explicit imports, avoid default exports for utilities
+
+```typescript
+// ✅ Good
+import { computed, ref } from 'vue';
+import { Button, Table } from 'ant-design-vue';
+import { Page } from '@vben/common-ui';
+import type { UserItem } from '#/types/user';
+
+// ❌ Bad
+import * as Vue from 'vue';
+import AntD from 'ant-design-vue';
+```
+
+## Vue Vben Admin Specific
+
+### Component Structure
+- Use `@vben/common-ui` components (Page, Card, etc.)
+- Follow existing layout patterns
+- Use Ant Design Vue components consistently
+- Implement proper loading states and error handling
+
+### Routing
+- Define routes in `src/router/routes/modules/`
+- Use proper meta configuration for permissions, titles
+- Follow existing route structure patterns
+
+```typescript
+// ✅ Good
+const routes: RouteRecordRaw[] = [
+  {
+    meta: {
+      icon: 'ic:baseline-people',
+      keepAlive: true,
+      order: 200,
+      title: '用户管理',
+    },
+    name: 'UserManagement',
+    path: '/user-management',
+    children: [...],
+  },
+];
+```
+
+### State Management
+- Use Pinia stores for complex state
+- Keep component state local when possible
+- Use composables for reusable logic
+
+### API Integration
+- Define API functions in `src/api/` directory
+- Use proper TypeScript interfaces for requests/responses
+- Handle loading states and error cases
+- Use consistent error handling patterns
+
+## Styling Guidelines
+
+### Tailwind CSS
+- Use Tailwind classes for styling
+- Follow responsive design patterns
+- Use consistent spacing scale
+- Prefer Tailwind over custom CSS
+
+```vue
+<!-- ✅ Good -->
+<div class="flex flex-col gap-4 p-6">
+  <Card class="mb-4">
+    <div class="flex justify-between items-center">
+
+<!-- ❌ Bad -->
+<div style="display: flex; gap: 16px;">
+```
+
+### Component Styling
+- Use scoped styles when custom CSS is needed
+- Follow BEM methodology for custom classes
+- Maintain consistency with design system
+
+## Development Patterns
+
+### Error Handling
+- Always handle async operations properly
+- Use try/catch for API calls
+- Provide meaningful error messages
+- Implement loading states
+
+```typescript
+// ✅ Good
+const loading = ref(false);
+
+const fetchUsers = async () => {
+  try {
+    loading.value = true;
+    const data = await userApi.getUsers();
+    users.value = data;
+  } catch (error) {
+    message.error('Failed to load users');
+    console.error('Error fetching users:', error);
+  } finally {
+    loading.value = false;
+  }
+};
+```
+
+### Performance
+- Use `computed()` for derived state
+- Implement proper list keys
+- Use `v-memo` for expensive renders when needed
+- Lazy load routes and components
+
+### Testing
+- Write unit tests for utilities and composables
+- Test component behavior, not implementation
+- Use meaningful test descriptions
+- Mock external dependencies
+
+## Specific Rules
+
+### Forms & Validation
+- Use Ant Design Vue form components
+- Implement proper validation with clear error messages
+- Handle form submission states
+
+### Tables & Data Display
+- Use Ant Design Vue Table component
+- Implement pagination, sorting, filtering
+- Handle empty states properly
+- Use proper column configurations
+
+### Internationalization
+- Use the built-in i18n system
+- Define translations in appropriate locale files
+- Use translation keys consistently
+
+### Security
+- Sanitize user inputs
+- Use proper authentication checks
+- Follow OWASP guidelines
+- Never expose sensitive data in frontend
+
+## File Naming Conventions
+
+### Components
+- `index.vue` for main component in folder
+- `components/` subfolder for related components
+- Use descriptive, specific names
+
+### API Files
+- Group by feature: `user/`, `auth/`, etc.
+- Use descriptive function names: `getUserList`, `updateUser`
+
+### Types
+- `types.ts` for component-specific types
+- `index.ts` for package exports
+- Use descriptive interface names
+
+## Code Review Guidelines
+
+### Before Committing
+- Ensure TypeScript compilation passes
+- Run linting and fix all issues
+- Test functionality thoroughly
+- Update documentation if needed
+
+### Code Quality
+- Keep functions small and focused
+- Use descriptive variable names
+- Add comments for complex logic
+- Remove console.logs before committing
+
+### Git Practices
+- Use conventional commit messages
+- Keep commits atomic and focused
+- Write clear pull request descriptions
+
+## Performance Optimization
+
+### Bundle Size
+- Use dynamic imports for routes
+- Tree-shake unused code
+- Optimize images and assets
+- Monitor bundle analysis
+
+### Runtime Performance
+- Avoid unnecessary re-renders
+- Use proper Vue reactivity patterns
+- Implement virtual scrolling for large lists
+- Optimize API calls
+
+## Debugging Guidelines
+
+### Development
+- Use Vue DevTools for component debugging
+- Use browser DevTools for performance analysis
+- Log meaningful information for debugging
+- Handle edge cases gracefully
+
+## Documentation
+
+### Code Documentation
+- Document complex functions and components
+- Use JSDoc comments for public APIs
+- Keep README files updated
+- Document setup and deployment procedures
+
+### Comments
+- Explain why, not what
+- Keep comments up to date
+- Use TODO comments for future improvements
+- Document workarounds and their reasons
+
+Remember: This is an enterprise-level project. Prioritize maintainability, performance, and developer experience. Always consider the impact of changes on the entire monorepo structure. 

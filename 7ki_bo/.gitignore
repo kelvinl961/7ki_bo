@@ -3,6 +3,3 @@ server3.pem
 node_modules/
 .pnpm-store/
 
-# Editor
-.cursor/
-.cursorrules

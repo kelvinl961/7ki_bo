@@ -668,14 +668,23 @@
     <n-modal
       v-model:show="forceRejectModal.show"
       preset="card"
-      title="强制拒绝"
+      :title="
+        forceRejectModal.batchOrderIds?.length
+          ? `强制拒绝 (共 ${forceRejectModal.batchOrderIds.length} 笔待出款)`
+          : '强制拒绝'
+      "
       :style="{ width: 'min(90vw, 800px)' }"
       :closable="true"
       :mask-closable="false"
     >
       <div class="force-reject-modal">
-        <!-- Order Info -->
-        <div v-if="forceRejectModal.data" class="order-info mb-6">
+        <!-- Order Info (single row only; hide for batch) -->
+        <div
+          v-if="
+            forceRejectModal.data && !forceRejectModal.batchOrderIds?.length
+          "
+          class="order-info mb-6"
+        >
           <div class="grid grid-cols-3 gap-4 text-sm">
             <div>
               <span class="text-gray-600">订单号：</span>
@@ -1124,6 +1133,8 @@ const forceRejectModal = reactive({
   show: false,
   loading: false,
   data: null as WithdrawalRecord | null,
+  /** When set, confirm applies the same options to all these IDs (batch mode) */
+  batchOrderIds: null as string[] | null,
   windControlProcess: 'no' as 'no' | 'add_audit' | 'deduct_balance',
   auditMultiplier: 1,
   selectedPlatform: 'poker',
@@ -1224,7 +1235,7 @@ const totalGamesCount = computed(() => {
     const provider = availableProviders.value.find(
       (p) => p.platformId === platformId,
     );
-    return total + (provider?.gameCount || 0);
+    return total + Number(provider?.gameCount ?? 0);
   }, 0);
 });
 
@@ -2141,24 +2152,63 @@ async function submitFilterBatchModal() {
     message.warning('请选择操作类型');
     return false;
   }
-  const orderIds = selectedIds.value.map((id) => String(id));
   const selectedRows = tableData.value.filter((r) =>
     selectedIds.value.includes(r.id),
   );
+  const pendingRows =
+    filterBatchActionKey.value === 'batch-force-reject' ||
+    filterBatchActionKey.value === 'batch-force-cancel' ||
+    filterBatchActionKey.value === 'batch-remark'
+      ? selectedRows.filter(
+          (r) => r.status === 'pending' || r.status === 'risk_review',
+        )
+      : selectedRows;
+  const orderIds =
+    filterBatchActionKey.value === 'batch-force-reject'
+      ? pendingRows.map((r) => String(r.id))
+      : selectedRows.map((r) => String(r.id));
+
   showFilterBatchModal.value = false;
+
+  if (filterBatchActionKey.value === 'batch-force-reject') {
+    if (pendingRows.length === 0) {
+      message.warning('所选记录中无待处理状态，仅处理待出款/风控审核订单');
+      return true;
+    }
+    if (pendingRows.length < selectedRows.length) {
+      message.info(`已过滤非待处理订单，将仅处理 ${pendingRows.length} 笔`);
+    }
+    showForceRejectModalForBatch(pendingRows);
+    return true;
+  }
+
   if (
-    ['batch-force-cancel', 'batch-force-reject', 'batch-remark'].includes(
+    ['batch-force-cancel', 'batch-remark'].includes(
       filterBatchActionKey.value,
     )
   ) {
+    if (
+      orderIds.length === 0 &&
+      pendingRows.length === 0 &&
+      selectedRows.length > 0
+    ) {
+      message.warning('所选记录中无待处理状态，仅处理待出款/风控审核订单');
+      return true;
+    }
+    const idsToUse =
+      filterBatchActionKey.value === 'batch-force-cancel' ||
+      filterBatchActionKey.value === 'batch-remark'
+        ? pendingRows.map((r) => String(r.id))
+        : orderIds;
     batchReasonModal.value = {
       show: true,
       actionKey: filterBatchActionKey.value,
-      orderIds,
+      orderIds: idsToUse,
       reason: filterBatchReason.value,
     };
     return true;
   }
+
   await runRiskBatchAction(
     filterBatchActionKey.value,
     orderIds,
@@ -2201,6 +2251,20 @@ const batchReasonModal = ref<{
   reason: string;
 }>({ show: false, actionKey: '', orderIds: [], reason: '' });
 function openBatchReasonModal(actionKey: string, orderIds: string[]) {
+  if (actionKey === 'batch-force-reject') {
+    const selectedRows = tableData.value.filter((r) =>
+      orderIds.includes(String(r.id)),
+    );
+    const pendingRows = selectedRows.filter(
+      (r) => r.status === 'pending' || r.status === 'risk_review',
+    );
+    if (pendingRows.length === 0) {
+      message.warning('所选记录中无待处理状态，仅处理待出款/风控审核订单');
+      return;
+    }
+    showForceRejectModalForBatch(pendingRows);
+    return;
+  }
   batchReasonModal.value = { show: true, actionKey, orderIds, reason: '' };
 }
 async function submitBatchReasonModal() {
@@ -2259,12 +2323,23 @@ async function runRiskBatchAction(
       selectedIds.value = [];
       emit('refresh-tabs');
     } else if (actionKey === 'batch-approve') {
+      const allowedIds = orderIds.filter((id) => {
+        const row = tableData.value.find((r) => String(r.id) === id);
+        return row?.status === 'pending' || row?.status === 'risk_review';
+      });
+      if (allowedIds.length === 0) {
+        message.warning('所选记录中无待处理状态，仅处理待出款/风控审核订单，已跳过');
+        return;
+      }
+      if (allowedIds.length < orderIds.length) {
+        message.info(`已跳过 ${orderIds.length - allowedIds.length} 笔非待处理订单，仅处理 ${allowedIds.length} 笔`);
+      }
       const res = await riskControlApi.bulkApprove({
-        withdrawalIds: orderIds,
+        withdrawalIds: allowedIds,
         notes: reason || '批量审核出款',
       });
       if (res?.success !== false) {
-        message.success(`批量审核出款成功 (${len} 条)`);
+        message.success(`批量审核出款成功 (${allowedIds.length} 条)`);
         await fetchData();
         selectedIds.value = [];
         emit('refresh-tabs');
@@ -2334,14 +2409,31 @@ async function runRiskBatchAction(
 }
 
 function onBatchOperationSelect(key: string, selectedRows: WithdrawalRecord[]) {
-  const orderIds = selectedRows.map((r) => String(r.id)).filter(Boolean);
+  const pendingOnly =
+    key === 'batch-approve' ||
+    key === 'batch-force-cancel' ||
+    key === 'batch-force-reject' ||
+    key === 'batch-remark';
+  const rows = pendingOnly
+    ? selectedRows.filter((r) => r.status === 'pending' || r.status === 'risk_review')
+    : selectedRows;
+  const orderIds = rows.map((r) => String(r.id)).filter(Boolean);
+
   if (orderIds.length === 0) {
-    message.warning('请先选择要操作的记录');
+    if (selectedRows.length > 0 && pendingOnly)
+      message.warning('所选记录中无待处理状态，仅处理待出款/风控审核订单');
+    else message.warning('请先选择要操作的记录');
     return;
   }
-  if (
-    ['batch-force-cancel', 'batch-force-reject', 'batch-remark'].includes(key)
-  ) {
+  if (pendingOnly && rows.length < selectedRows.length) {
+    message.info(`已过滤非待处理订单，将仅处理 ${orderIds.length} 笔`);
+  }
+
+  if (key === 'batch-force-reject') {
+    showForceRejectModalForBatch(rows);
+    return;
+  }
+  if (['batch-force-cancel', 'batch-remark'].includes(key)) {
     openBatchReasonModal(key, orderIds);
     return;
   }
@@ -2439,6 +2531,7 @@ const updateProviderSelection = (platformId: string, checked: boolean) => {
 const showForceRejectModal = (row: WithdrawalRecord) => {
   console.log('强制拒绝 button clicked (Risk Control)', row);
   forceRejectModal.data = row;
+  forceRejectModal.batchOrderIds = null;
   forceRejectModal.windControlProcess = 'no';
   forceRejectModal.auditMultiplier = 1;
   forceRejectModal.selectedPlatform =
@@ -2454,16 +2547,38 @@ const showForceRejectModal = (row: WithdrawalRecord) => {
   forceRejectModal.frontendReason = '';
   forceRejectModal.backendReason = '';
   forceRejectModal.show = true;
-  console.log('Force reject modal should show:', forceRejectModal.show);
+};
+
+const showForceRejectModalForBatch = (rows: WithdrawalRecord[]) => {
+  if (rows.length === 0) return;
+  forceRejectModal.data = rows[0];
+  forceRejectModal.batchOrderIds = rows.map((r) => String(r.id));
+  forceRejectModal.windControlProcess = 'no';
+  forceRejectModal.auditMultiplier = 1;
+  forceRejectModal.selectedPlatform =
+    availableProviders.value[0]?.platformId || 'PG';
+  const newPlatforms: Record<string, boolean> = { all: true };
+  availableProviders.value.forEach((provider) => {
+    newPlatforms[provider.platformId] = true;
+  });
+  forceRejectModal.platforms = newPlatforms;
+  forceRejectModal.frontendReason = '';
+  forceRejectModal.backendReason = '';
+  forceRejectModal.show = true;
 };
 
 const handleForceReject = async () => {
-  if (!forceRejectModal.data) return;
+  const ids =
+    forceRejectModal.batchOrderIds?.length > 0
+      ? forceRejectModal.batchOrderIds
+      : forceRejectModal.data
+        ? [forceRejectModal.data.id]
+        : [];
+  if (ids.length === 0) return;
 
   try {
     forceRejectModal.loading = true;
 
-    // Prepare audit task data if adding audit
     let auditTaskData:
       | {
           multiplier: number;
@@ -2479,16 +2594,36 @@ const handleForceReject = async () => {
       };
     }
 
-    // Call API to force reject withdrawal
-    const response = await riskControlApi.forceReject(
-      forceRejectModal.data.id,
-      {
-        windControlProcess: forceRejectModal.windControlProcess,
-        auditTask: auditTaskData,
-        frontendReason: forceRejectModal.frontendReason,
-        backendReason: forceRejectModal.backendReason,
-      },
-    );
+    const payload = {
+      windControlProcess: forceRejectModal.windControlProcess,
+      auditTask: auditTaskData,
+      frontendReason: forceRejectModal.frontendReason,
+      backendReason: forceRejectModal.backendReason,
+    };
+
+    if (ids.length > 1) {
+      let ok = 0;
+      for (const id of ids) {
+        try {
+          const res = await riskControlApi.forceReject(id, payload);
+          if (res?.success !== false) ok++;
+        } catch (_) {
+          /* skip */
+        }
+      }
+      message[ok === ids.length ? 'success' : 'warning'](
+        ok === ids.length
+          ? `批量强制拒绝成功 (${ok} 条)`
+          : `部分成功 ${ok}/${ids.length} 条`,
+      );
+      forceRejectModal.batchOrderIds = null;
+      forceRejectModal.show = false;
+      await fetchData();
+      emit('refresh-tabs');
+      return;
+    }
+
+    const response = await riskControlApi.forceReject(ids[0], payload);
 
     if (response.success) {
       let successMessage = '强制拒绝成功';
@@ -2499,6 +2634,7 @@ const handleForceReject = async () => {
       }
       message.success(successMessage);
       forceRejectModal.show = false;
+      forceRejectModal.batchOrderIds = null;
       await fetchData();
       emit('refresh-tabs');
     } else {

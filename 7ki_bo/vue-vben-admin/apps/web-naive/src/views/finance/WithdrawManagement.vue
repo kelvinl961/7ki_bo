@@ -663,6 +663,182 @@
       />
     </n-modal>
 
+    <!-- Force Reject Modal (强制拒绝) - same as screenshot -->
+    <n-modal
+      v-model:show="batchForceRejectModal.show"
+      preset="card"
+      :title="
+        batchForceRejectModal.batchOrderIds?.length
+          ? `强制拒绝 (共 ${batchForceRejectModal.batchOrderIds.length} 笔待出款)`
+          : '强制拒绝'
+      "
+      :style="{ width: 'min(90vw, 800px)' }"
+      :closable="true"
+      :mask-closable="false"
+    >
+      <div class="force-reject-modal">
+        <!-- Order info: single row only; hide for batch -->
+        <div
+          v-if="
+            batchForceRejectModal.data &&
+            (!batchForceRejectModal.batchOrderIds ||
+              batchForceRejectModal.batchOrderIds.length <= 1)
+          "
+          class="order-info mb-6"
+        >
+          <div class="grid grid-cols-3 gap-4 text-sm">
+            <div>
+              <span class="text-gray-600">订单号：</span>
+              <span>{{ batchForceRejectModal.data.orderId }}</span>
+            </div>
+            <div>
+              <span class="text-gray-600">会员ID：</span>
+              <span class="text-blue-600">{{ batchForceRejectModal.data.memberId }}</span>
+            </div>
+            <div>
+              <span class="text-gray-600">会员账号：</span>
+              <span>{{ batchForceRejectModal.data.accountName }}</span>
+            </div>
+            <div>
+              <span class="text-gray-600">会员层级：</span>
+              <span>{{ batchForceRejectModal.data.memberTag || '-' }}</span>
+            </div>
+            <div>
+              <span class="text-gray-600">提现金额：</span>
+              <span class="font-semibold text-green-600"
+                >{{ batchForceRejectModal.data.withdrawAmount }} {{ batchForceRejectModal.data.currency }}</span
+              >
+            </div>
+            <div>
+              <span class="text-gray-600">手续费：</span>
+              <span>{{ batchForceRejectModal.data.fee ?? 0 }} {{ batchForceRejectModal.data.currency }}</span>
+            </div>
+          </div>
+          <div class="mt-3 text-sm">
+            <span class="text-gray-600">实际到账：</span>
+            <span class="font-semibold"
+              >{{ batchForceRejectModal.data.estimatedReceived ?? batchForceRejectModal.data.withdrawAmount }} {{ batchForceRejectModal.data.currency }}</span
+            >
+          </div>
+        </div>
+        <div class="mb-6">
+          <div class="mb-3 flex items-center gap-4">
+            <span class="text-sm font-medium">是否风控处理</span>
+            <n-radio-group v-model:value="batchForceRejectModal.windControlProcess">
+              <n-radio value="no">不处理</n-radio>
+              <n-radio value="add_audit">增加稽核任务</n-radio>
+              <n-radio value="deduct_balance">扣除余额</n-radio>
+            </n-radio-group>
+          </div>
+          <div
+            v-if="batchForceRejectModal.windControlProcess === 'add_audit'"
+            class="mb-4"
+          >
+            <div class="mb-2 flex items-center gap-2">
+              <span class="text-sm font-medium">增加稽核任务</span>
+              <n-input-number
+                v-model:value="batchForceRejectModal.auditMultiplier"
+                :min="1"
+                :max="100"
+                :step="1"
+                class="w-24"
+              />
+              <span class="text-sm">倍</span>
+            </div>
+            <div class="mb-3 text-sm text-gray-600">
+              即需要再打码 {{ batchForceRejectModal.auditMultiplier * 30.0 }} 才能再次提现
+            </div>
+          </div>
+        </div>
+        <div class="mb-6">
+          <div class="mb-3 text-sm font-medium">指定稽核平台</div>
+          <div class="platform-grid max-h-80 overflow-y-auto rounded-lg border bg-gray-50 p-4">
+            <div class="grid grid-cols-2 gap-3">
+              <div
+                class="platform-card flex cursor-pointer items-center rounded-lg border bg-white p-3"
+                :class="{ 'border-blue-500 bg-blue-50': batchForceRejectModal.platforms.all }"
+                @click="batchForceRejectModal.platforms.all = !batchForceRejectModal.platforms.all"
+              >
+                <div class="mr-3 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
+                  <span class="text-2xl">🎮</span>
+                </div>
+                <div class="flex-1">
+                  <div class="font-medium text-gray-900">全部平台</div>
+                  <div class="text-sm text-gray-500">ALL • {{ batchForceRejectPlatforms.length }} 个平台</div>
+                </div>
+                <n-checkbox
+                  :checked="batchForceRejectModal.platforms.all"
+                  @click.stop
+                  @update:checked="(c: boolean) => (batchForceRejectModal.platforms.all = c)"
+                />
+              </div>
+              <div
+                v-for="p in batchForceRejectPlatforms"
+                :key="p.platformId"
+                class="platform-card flex cursor-pointer items-center rounded-lg border bg-white p-3"
+                :class="{ 'border-blue-500 bg-blue-50': batchForceRejectModal.platforms[p.platformId] }"
+                @click="toggleBatchForceRejectPlatform(p.platformId)"
+              >
+                <div class="mr-3 flex h-12 w-12 items-center justify-center rounded-lg bg-gray-200">
+                  <span class="text-sm font-bold">{{ p.platformId?.substring(0, 2) || '?' }}</span>
+                </div>
+                <div class="flex-1">
+                  <div class="font-medium text-gray-900">{{ p.platformName }}</div>
+                  <div class="text-sm text-gray-500">{{ (p.gameType || '').toUpperCase() }} • {{ p.gameCount || 0 }} 个游戏</div>
+                </div>
+                <n-checkbox
+                  :checked="!!batchForceRejectModal.platforms[p.platformId]"
+                  @click.stop
+                  @update:checked="(c: boolean) => (batchForceRejectModal.platforms[p.platformId] = c)"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="mt-3 rounded bg-yellow-50 p-3 text-sm text-gray-600">
+            提示：若此处勾选指定稽核但游戏管理选择稽核排除，则仍会被排除，即冲突时以游戏管理为准
+          </div>
+        </div>
+        <div class="mb-6 grid grid-cols-2 gap-6">
+          <div>
+            <label class="mb-2 block text-sm font-medium">拒绝前台原因</label>
+            <n-input
+              v-model:value="batchForceRejectModal.frontendReason"
+              type="textarea"
+              placeholder="请输入拒绝前台原因"
+              :rows="4"
+              :maxlength="1000"
+            />
+            <div class="mt-1 text-right text-xs text-gray-500">
+              {{ batchForceRejectModal.frontendReason.length }}/1000
+            </div>
+          </div>
+          <div>
+            <label class="mb-2 block text-sm font-medium">拒绝后台原因</label>
+            <n-input
+              v-model:value="batchForceRejectModal.backendReason"
+              type="textarea"
+              placeholder="请输入拒绝后台原因"
+              :rows="4"
+              :maxlength="1000"
+            />
+            <div class="mt-1 text-right text-xs text-gray-500">
+              {{ batchForceRejectModal.backendReason.length }}/1000
+            </div>
+          </div>
+        </div>
+        <div class="flex justify-end gap-3">
+          <n-button @click="batchForceRejectModal.show = false">取消</n-button>
+          <n-button
+            type="primary"
+            :loading="batchForceRejectModal.loading"
+            @click="submitBatchForceReject"
+          >
+            确认
+          </n-button>
+        </div>
+      </div>
+    </n-modal>
+
     <!-- Withdrawal Detail Modal -->
     <n-modal
       v-model:show="showDetailModal"
@@ -1173,6 +1349,7 @@ import { financeWithdrawalApi } from '#/api/finance/financeWithdrawal';
 import { rePaymentApi } from '#/api/finance/rePayment';
 import { searchUsersApi } from '#/api/core/user-management';
 import { getMemberTiersApi } from '#/api/core/memberTier';
+import { getGamePlatformListApi } from '#/api/game/platform';
 import { formatCurrency, formatDateTime } from '#/utils/format';
 
 // Interfaces
@@ -2215,6 +2392,116 @@ const batchReasonModal = ref<{
   reason: '',
 });
 
+// 批量强制拒绝 - 与截图一致的弹窗（风控选项 + 稽核平台 + 前后台原因）
+const batchForceRejectPlatforms = ref<{ platformId: string; platformName: string; gameType: string; gameCount?: number }[]>([]);
+const batchForceRejectModal = ref<{
+  show: boolean;
+  loading: boolean;
+  data: WithdrawOrder | null;
+  batchOrderIds: string[];
+  windControlProcess: 'no' | 'add_audit' | 'deduct_balance';
+  auditMultiplier: number;
+  platforms: Record<string, boolean>;
+  frontendReason: string;
+  backendReason: string;
+}>({
+  show: false,
+  loading: false,
+  data: null,
+  batchOrderIds: [],
+  windControlProcess: 'no',
+  auditMultiplier: 1,
+  platforms: { all: true },
+  frontendReason: '',
+  backendReason: '',
+});
+
+async function openBatchForceRejectModal(rows: WithdrawOrder[]) {
+  if (rows.length === 0) return;
+  batchForceRejectModal.value.data = rows[0];
+  batchForceRejectModal.value.batchOrderIds = rows.map((r) => r.orderId).filter(Boolean);
+  batchForceRejectModal.value.windControlProcess = 'no';
+  batchForceRejectModal.value.auditMultiplier = 1;
+  batchForceRejectModal.value.frontendReason = '';
+  batchForceRejectModal.value.backendReason = '';
+  if (batchForceRejectPlatforms.value.length === 0) {
+    try {
+      const res = await getGamePlatformListApi({ pageSize: 1000, isEnabled: true });
+      const list = (res as any)?.list ?? (res as any)?.data?.list ?? [];
+      batchForceRejectPlatforms.value = list.map((p: any) => ({
+        platformId: p.platformId || p.id,
+        platformName: p.platformName || p.name || p.platformId,
+        gameType: p.gameType || 'ALL',
+        gameCount: p.gameCount ?? 0,
+      }));
+      const newPlatforms: Record<string, boolean> = { all: true };
+      batchForceRejectPlatforms.value.forEach((p) => {
+        newPlatforms[p.platformId] = true;
+      });
+      batchForceRejectModal.value.platforms = newPlatforms;
+    } catch (_) {
+      batchForceRejectModal.value.platforms = { all: true };
+    }
+  } else {
+    const newPlatforms: Record<string, boolean> = { all: true };
+    batchForceRejectPlatforms.value.forEach((p) => {
+      newPlatforms[p.platformId] = true;
+    });
+    batchForceRejectModal.value.platforms = newPlatforms;
+  }
+  batchForceRejectModal.value.show = true;
+}
+
+function toggleBatchForceRejectPlatform(platformId: string) {
+  const m = batchForceRejectModal.value;
+  m.platforms[platformId] = !m.platforms[platformId];
+  const selected = batchForceRejectPlatforms.value.filter((p) => m.platforms[p.platformId]).length;
+  m.platforms.all = selected === batchForceRejectPlatforms.value.length;
+}
+
+async function submitBatchForceReject() {
+  const m = batchForceRejectModal.value;
+  const ids = m.batchOrderIds;
+  if (ids.length === 0) return;
+  try {
+    m.loading = true;
+    let auditTaskData: { multiplier: number; platforms: Record<string, boolean>; selectedPlatform: string } | undefined;
+    if (m.windControlProcess === 'add_audit') {
+      auditTaskData = {
+        multiplier: m.auditMultiplier,
+        platforms: m.platforms,
+        selectedPlatform: batchForceRejectPlatforms.value[0]?.platformId || 'PG',
+      };
+    }
+    const payload = {
+      windControlProcess: m.windControlProcess,
+      auditTask: auditTaskData,
+      frontendReason: m.frontendReason,
+      backendReason: m.backendReason,
+    };
+    let ok = 0;
+    for (const id of ids) {
+      try {
+        const res = await financeWithdrawalApi.forceReject(id, payload);
+        if (res?.success !== false) ok++;
+      } catch (_) {
+        /* skip */
+      }
+    }
+    message[ok === ids.length ? 'success' : 'warning'](
+      ok === ids.length ? `批量强制拒绝成功 (${ok} 条)` : `部分成功 ${ok}/${ids.length} 条`,
+    );
+    m.show = false;
+    m.batchOrderIds = [];
+    await fetchData();
+    checkedRowKeys.value = [];
+  } catch (e: any) {
+    message.error(e?.message || '批量强制拒绝失败');
+  } finally {
+    m.loading = false;
+  }
+}
+
 function openBatchReasonModal(actionKey: string, orderIds: string[]) {
   batchReasonModal.value = { show: true, actionKey, orderIds, reason: '' };
 }
@@ -2264,12 +2551,23 @@ async function runBatchAction(
         message.error(res?.message || '批量解锁失败');
       }
     } else if (actionKey === 'batch-approve') {
+      const pendingOrderIds = orderIds.filter((orderId) => {
+        const row = tableData.value.find((r) => r.orderId === orderId);
+        return row?.status === 'pending';
+      });
+      if (pendingOrderIds.length === 0) {
+        message.warning('所选记录中无待出款状态，仅处理待出款订单，已跳过');
+        return;
+      }
+      if (pendingOrderIds.length < orderIds.length) {
+        message.info(`已跳过 ${orderIds.length - pendingOrderIds.length} 笔非待出款订单，仅处理 ${pendingOrderIds.length} 笔待出款`);
+      }
       const res = await withdrawalApi.batchApprove(
-        orderIds,
+        pendingOrderIds,
         reason || '批量审核出款',
       );
       if (res?.success !== false) {
-        message.success(`批量审核出款成功 (${len} 条)`);
+        message.success(`批量审核出款成功 (${pendingOrderIds.length} 条)`);
         await fetchData();
         checkedRowKeys.value = [];
       } else {
@@ -2402,14 +2700,32 @@ async function runBatchAction(
 }
 
 function onBatchOperationSelect(key: string, selectedRows: WithdrawOrder[]) {
-  const orderIds = selectedRows.map((r) => r.orderId).filter(Boolean);
+  const pendingOnly =
+    key === 'batch-approve' ||
+    key === 'approve' ||
+    key === 'batch-force-cancel' ||
+    key === 'batch-force-reject' ||
+    key === 'batch-remark';
+  const rows = pendingOnly
+    ? selectedRows.filter((r) => r.status === 'pending')
+    : selectedRows;
+  const orderIds = rows.map((r) => r.orderId).filter(Boolean);
+
   if (orderIds.length === 0) {
-    message.warning('请先选择要操作的记录');
+    if (selectedRows.length > 0 && pendingOnly)
+      message.warning('所选记录中无待出款状态，仅处理待出款订单');
+    else message.warning('请先选择要操作的记录');
     return;
   }
-  if (
-    ['batch-force-cancel', 'batch-force-reject', 'batch-remark'].includes(key)
-  ) {
+  if (pendingOnly && rows.length < selectedRows.length) {
+    message.info(`已过滤非待出款订单，将仅处理 ${orderIds.length} 笔待出款`);
+  }
+
+  if (key === 'batch-force-reject') {
+    openBatchForceRejectModal(rows);
+    return;
+  }
+  if (['batch-force-cancel', 'batch-remark'].includes(key)) {
     openBatchReasonModal(key, orderIds);
     return;
   }

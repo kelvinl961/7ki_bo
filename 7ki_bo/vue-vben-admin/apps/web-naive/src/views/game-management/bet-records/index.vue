@@ -890,12 +890,10 @@ const loadData = async () => {
       ...filters,
     };
 
-    // Add date range
+    // Add date range (preserve user-selected start/end time, do not force 23:59:59)
     if (dateRange.value) {
       params.startDate = new Date(dateRange.value[0]).toISOString();
-      const endDate = new Date(dateRange.value[1]);
-      endDate.setHours(23, 59, 59, 999);
-      params.endDate = endDate.toISOString();
+      params.endDate = new Date(dateRange.value[1]).toISOString();
     }
 
     const response = await getBetTransactionsApi(params);
@@ -1065,23 +1063,13 @@ const loadFilterOptions = async () => {
 };
 
 const handleDateRangeUpdate = (value: [number, number] | null) => {
-  if (value && Array.isArray(value) && value.length === 2) {
-    const endDate = new Date(value[1]);
-    endDate.setHours(23, 59, 59, 999);
-    dateRange.value = [value[0], endDate.getTime()];
-  } else {
-    dateRange.value = value;
-  }
+  // Preserve user-selected end time (datetimerange), do not override to 23:59:59
+  dateRange.value = value;
 };
 
 const handleStatsDateRangeUpdate = (value: [number, number] | null) => {
-  if (value && Array.isArray(value) && value.length === 2) {
-    const endDate = new Date(value[1]);
-    endDate.setHours(23, 59, 59, 999);
-    statsDateRange.value = [value[0], endDate.getTime()];
-  } else {
-    statsDateRange.value = value;
-  }
+  // Preserve user-selected end time (datetimerange), do not override to 23:59:59
+  statsDateRange.value = value;
 };
 
 const handleSearch = () => {
@@ -1422,9 +1410,7 @@ const handleStatsSearch = async () => {
     // Add date range if selected
     if (statsDateRange.value) {
       params.startDate = new Date(statsDateRange.value[0]).toISOString();
-      const endDate = new Date(statsDateRange.value[1]);
-      endDate.setHours(23, 59, 59, 999);
-      params.endDate = endDate.toISOString();
+      params.endDate = new Date(statsDateRange.value[1]).toISOString();
     }
 
     const response = await getBetTransactionStatisticsApi(params);

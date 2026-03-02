@@ -982,7 +982,7 @@ const showRePaymentModal = (row: RePaymentRecord) => {
 const showManualProcessModal = (row: RePaymentRecord) => {
   dialog.warning({
     title: '人工出款确认',
-    content: `确认人工出款订单 ${row.orderId}？此操作将把状态改为"已付款"，请谨慎操作！`,
+    content: `确认人工出款订单 ${row.orderId}？此操作将把状态改为"已人工"，请谨慎操作！`,
     positiveText: '确认人工出款',
     negativeText: '取消',
     onPositiveClick: async () => {

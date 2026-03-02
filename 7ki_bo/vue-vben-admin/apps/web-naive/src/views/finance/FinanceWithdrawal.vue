@@ -2511,10 +2511,20 @@ const columns: DataTableColumns<WithdrawalRecord> = [
         canceled: { type: 'default', text: '已取消' },
         risk_review: { type: 'warning', text: '风控审核' },
       };
-      const status = statusMap[row.status as keyof typeof statusMap] || {
+      let status = statusMap[row.status as keyof typeof statusMap] || {
         type: 'default',
         text: row.status,
       };
+      // 人工出款时显示「已人工」而非「已付款」
+      const isManual =
+        (row.paymentGateway || row.thirdPartyProvider || '').toLowerCase() ===
+        'manual';
+      if (
+        isManual &&
+        ['completed', 'approved', 'success'].includes(row.status)
+      ) {
+        status = { ...status, text: '已人工' };
+      }
 
       // 🎯 NEW: Operator name display logic
       let operatorDisplay = '';

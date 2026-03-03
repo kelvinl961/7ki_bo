@@ -182,6 +182,16 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
           if (data.data && Array.isArray(data.data) && data.pagination) {
             return data; // Return the whole response including pagination
           }
+          // Merchant/sub-merchant RTP set API: backend returns { code: 0, data: { message, changedRtpValue, configuration } }
+          // Component checks response.code === 0, so return full response to preserve code
+          if (
+            data.data &&
+            typeof data.data === 'object' &&
+            data.data.changedRtpValue !== undefined &&
+            data.data.message
+          ) {
+            return data;
+          }
           return data.data;
         }
 

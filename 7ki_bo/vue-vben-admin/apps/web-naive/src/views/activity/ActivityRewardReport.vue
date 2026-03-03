@@ -14,29 +14,106 @@
       <n-card title="筛选条件" class="mb-4">
         <!-- Filter -->
         <div class="filter-section">
-          <n-form inline :label-width="72" label-placement="left">
-            <n-form-item label="日期范围">
-              <n-date-picker
-                v-model:value="dateRange"
-                type="daterange"
-                clearable
-                placeholder="选择开始和结束日期"
-                format="yyyy-MM-dd"
-                :shortcuts="dateShortcuts"
-                style="width: 280px"
-              />
-            </n-form-item>
-            <n-form-item :show-label="false">
-              <n-space>
-                <n-button type="primary" :loading="loading" @click="fetchData">
-                  搜索
-                </n-button>
-                <n-button @click="resetFilters">重置</n-button>
-                <n-button type="success" :loading="exporting" @click="handleExport">
-                  导出
-                </n-button>
-              </n-space>
-            </n-form-item>
+          <n-form :label-width="100" label-placement="left">
+            <n-grid :cols="24" :x-gap="12" :y-gap="12">
+              <n-gi :span="24">
+                <n-form-item label="开始日期 - 结束日期">
+                  <n-space align="center" :size="12">
+                    <n-radio-group v-model:value="timeGranularity" @update:value="onTimeGranularityChange">
+                      <n-radio-button value="day">日</n-radio-button>
+                      <n-radio-button value="week">周</n-radio-button>
+                      <n-radio-button value="month">月</n-radio-button>
+                    </n-radio-group>
+                    <n-date-picker
+                      v-model:value="dateRange"
+                      type="datetimerange"
+                      clearable
+                      placeholder="选择开始和结束日期时间"
+                      format="yyyy-MM-dd HH:mm:ss"
+                      style="width: 380px"
+                    />
+                  </n-space>
+                </n-form-item>
+              </n-gi>
+              <n-gi :span="6">
+                <n-form-item label="订单号">
+                  <n-input
+                    v-model:value="filters.orderNo"
+                    placeholder="订单号"
+                    clearable
+                    style="width: 100%"
+                  />
+                </n-form-item>
+              </n-gi>
+              <n-gi :span="6">
+                <n-form-item label="用户ID/账号">
+                  <n-input
+                    v-model:value="filters.userIdOrAccount"
+                    placeholder="用户ID 或 账号"
+                    clearable
+                    style="width: 100%"
+                  />
+                </n-form-item>
+              </n-gi>
+              <n-gi :span="6">
+                <n-form-item label="优惠来源">
+                  <n-select
+                    v-model:value="filters.benefitSource"
+                    :options="benefitSourceOptions"
+                    placeholder="多选"
+                    multiple
+                    clearable
+                    style="width: 100%"
+                  />
+                </n-form-item>
+              </n-gi>
+              <n-gi :span="6">
+                <n-form-item v-if="filters.benefitSource?.includes('活动')" label="活动名称">
+                  <n-input
+                    v-model:value="filters.activityName"
+                    placeholder="活动名称"
+                    clearable
+                    style="width: 100%"
+                  />
+                </n-form-item>
+              </n-gi>
+              <n-gi :span="6">
+                <n-form-item label="领取方式">
+                  <n-select
+                    v-model:value="filters.collectionMethod"
+                    :options="collectionMethodOptions"
+                    placeholder="全部领取方式"
+                    clearable
+                    style="width: 100%"
+                  />
+                </n-form-item>
+              </n-gi>
+              <n-gi :span="6">
+                <n-form-item label="奖励类型">
+                  <n-select
+                    v-model:value="filters.rewardType"
+                    :options="rewardTypeOptions"
+                    placeholder="多选"
+                    multiple
+                    clearable
+                    style="width: 100%"
+                  />
+                </n-form-item>
+              </n-gi>
+              <n-gi :span="12">
+                <n-form-item :show-label="false">
+                  <n-space>
+                    <n-button type="primary" :loading="loading" @click="fetchData">
+                      搜索
+                    </n-button>
+                    <n-button @click="resetFilters">重置</n-button>
+                    <n-button type="success" :loading="exporting" @click="handleExport">
+                      导出
+                    </n-button>
+                  </n-space>
+                </n-form-item>
+              </n-gi>
+            </n-grid>
           </n-form>
         </div>
 
@@ -98,8 +175,14 @@ import {
   NCard,
   NForm,
   NFormItem,
+  NGrid,
+  NGi,
+  NInput,
+  NSelect,
   NDatePicker,
   NButton,
+  NRadioGroup,
+  NRadioButton,
   NSpin,
   NAlert,
   NEmpty,
@@ -128,7 +211,7 @@ const totalCount = ref(0);
 const showUserDetailModal = ref(false);
 const currentUserIdForDetail = ref(0);
 
-/** 今天 00:00:00 和 23:59:59.999 的时间戳（本地时区） */
+/** 今天 00:00:00 和 23:59:59.999（本地） */
 function getTodayRange(): [number, number] {
   const now = new Date();
   const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0).getTime();
@@ -136,33 +219,80 @@ function getTodayRange(): [number, number] {
   return [start, end];
 }
 
+/** 本周一 00:00:00 至周日 23:59:59.999 */
+function getWeekRange(): [number, number] {
+  const now = new Date();
+  const day = now.getDay();
+  const diffToMonday = day === 0 ? -6 : 1 - day;
+  const monday = new Date(now);
+  monday.setDate(now.getDate() + diffToMonday);
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  const start = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate(), 0, 0, 0, 0).getTime();
+  const end = new Date(sunday.getFullYear(), sunday.getMonth(), sunday.getDate(), 23, 59, 59, 999).getTime();
+  return [start, end];
+}
+
+/** 本月 1 日 00:00:00 至最后一日 23:59:59.999 */
+function getMonthRange(): [number, number] {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0).getTime();
+  const end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999).getTime();
+  return [start, end];
+}
+
+const timeGranularity = ref<'day' | 'week' | 'month'>('day');
 const dateRange = ref<[number, number] | null>(getTodayRange());
 
-/** 日期快捷选项 */
-const dateShortcuts: Record<string, () => [number, number]> = {
-  今天: () => getTodayRange(),
-  昨天: () => {
-    const d = new Date();
-    d.setDate(d.getDate() - 1);
-    const start = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0).getTime();
-    const end = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999).getTime();
-    return [start, end];
-  },
-  最近7天: () => {
-    const end = getTodayRange()[1];
-    const start = new Date();
-    start.setDate(start.getDate() - 6);
-    const s = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 0, 0, 0, 0).getTime();
-    return [s, end];
-  },
-  最近30天: () => {
-    const end = getTodayRange()[1];
-    const start = new Date();
-    start.setDate(start.getDate() - 29);
-    const s = new Date(start.getFullYear(), start.getMonth(), start.getDate(), 0, 0, 0, 0).getTime();
-    return [s, end];
-  },
-};
+/** 筛选条件 */
+const filters = ref({
+  orderNo: '',
+  userIdOrAccount: '',
+  benefitSource: [] as string[],
+  activityName: '',
+  collectionMethod: null as string | null,
+  rewardType: [] as string[],
+});
+
+const benefitSourceOptions = [
+  { label: '活动', value: '活动' },
+  { label: '任务', value: '任务' },
+  { label: '返水', value: '返水' },
+  { label: '返佣', value: '返佣' },
+  { label: 'VIP奖励', value: 'VIP奖励' },
+  { label: '利息宝', value: '利息宝' },
+  { label: '幸运转盘', value: '幸运转盘' },
+  { label: '公积金', value: '公积金' },
+  { label: '盲盒抽奖', value: '盲盒抽奖' },
+  { label: '充值优惠', value: '充值优惠' },
+  { label: '银商结算', value: '银商结算' },
+  { label: 'SVIP奖励', value: 'SVIP奖励' },
+  { label: '积分抽奖', value: '积分抽奖' },
+  { label: '折扣券', value: '折扣券' },
+];
+
+const collectionMethodOptions = [
+  { label: '全部领取方式', value: '' },
+  { label: '手动领取', value: '手动领取' },
+  { label: '系统派发', value: '系统派发' },
+  { label: '后台手动派发', value: '后台手动派发' },
+  { label: '活动扣除', value: '活动扣除' },
+];
+
+const rewardTypeOptions = [
+  { label: '奖金', value: '奖金' },
+  { label: '加倍奖金', value: '加倍奖金' },
+  { label: '活跃度', value: '活跃度' },
+  { label: '幸运值', value: '幸运值' },
+  { label: '积分', value: '积分' },
+  { label: '盲盒免费次数', value: '盲盒免费次数' },
+];
+
+function onTimeGranularityChange(value: 'day' | 'week' | 'month') {
+  if (value === 'day') dateRange.value = getTodayRange();
+  else if (value === 'week') dateRange.value = getWeekRange();
+  else if (value === 'month') dateRange.value = getMonthRange();
+}
 
 
 const paginationPage = ref(1);
@@ -207,6 +337,7 @@ function formatDateTime(iso: string | undefined): string {
 }
 
 const columns: DataTableColumns<RewardHistoryItem> = [
+  { title: '订单号', key: 'orderNo', width: 140, ellipsis: { tooltip: true } },
   { title: '优惠名称', key: 'benefitName', width: 160, ellipsis: { tooltip: true } },
   { title: '会员币种', key: 'memberCurrency', width: 100, ellipsis: { tooltip: true } },
   { title: '发放奖励', key: 'grantedReward', width: 100, render: (row) => row.grantedReward ?? '-' },
@@ -239,8 +370,8 @@ const columns: DataTableColumns<RewardHistoryItem> = [
   { title: '获取时间', key: 'acquisitionTime', width: 165, ellipsis: { tooltip: true }, render: (row) => formatDateTime(row.acquisitionTime) },
 ];
 
-/** 表格横向滚动宽度（10 列），保证所有列都能显示 */
-const tableScrollX = 1265;
+/** 表格横向滚动宽度（11 列，含订单号），保证所有列都能显示 */
+const tableScrollX = 1405;
 
 async function fetchData() {
   loading.value = true;
@@ -254,10 +385,20 @@ async function fetchData() {
     };
     const startDate = toYmd(range[0]) || toYmd(today[0]);
     const endDate = toYmd(range[1]) || toYmd(today[1]);
-    // 服务端分页：按当前页码和每页条数请求，点击页码时加载对应页
+    const orderNo = filters.value.orderNo?.trim() || undefined;
+    const userIdOrAccount = filters.value.userIdOrAccount?.trim() || undefined;
     const res = await getRewardHistory({
       startDate,
       endDate,
+      orderNo,
+      userId: userIdOrAccount,
+      memberAccount: userIdOrAccount,
+      benefitSource: filters.value.benefitSource?.length ? filters.value.benefitSource : undefined,
+      activityName: filters.value.benefitSource?.includes('活动') && filters.value.activityName?.trim()
+        ? filters.value.activityName.trim()
+        : undefined,
+      collectionMethod: filters.value.collectionMethod || undefined,
+      rewardType: filters.value.rewardType?.length ? filters.value.rewardType : undefined,
       page: paginationPage.value,
       pageSize: paginationPageSize.value,
     });
@@ -287,6 +428,7 @@ async function fetchData() {
                       : [];
     // 统一为 camelCase，兼容后端返回 snake_case（如 benefit_name → benefitName）
     const fieldMap: Record<string, string> = {
+      order_no: 'orderNo',
       acquisition_time: 'acquisitionTime',
       benefit_name: 'benefitName',
       member_currency: 'memberCurrency',
@@ -325,7 +467,16 @@ async function fetchData() {
 }
 
 function resetFilters() {
+  timeGranularity.value = 'day';
   dateRange.value = getTodayRange();
+  filters.value = {
+    orderNo: '',
+    userIdOrAccount: '',
+    benefitSource: [],
+    activityName: '',
+    collectionMethod: null,
+    rewardType: [],
+  };
   paginationPage.value = 1;
   fetchData();
 }

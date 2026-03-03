@@ -3,6 +3,13 @@ import { requestClient } from './request';
 export interface RewardHistoryParams {
   startDate?: string;
   endDate?: string;
+  orderNo?: string;
+  userId?: string;
+  memberAccount?: string;
+  benefitSource?: string[];
+  activityName?: string;
+  collectionMethod?: string;
+  rewardType?: string[];
   page?: number;
   pageSize?: number;
 }
@@ -39,16 +46,22 @@ export interface RewardHistoryListResponse {
 export async function getRewardHistory(
   params: RewardHistoryParams,
 ): Promise<RewardHistoryListResponse> {
-  const response = await requestClient.get('/admin/reward-history', {
-    params: {
-      ...params,
-      start_date: params.startDate,
-      end_date: params.endDate,
-      page: params.page ?? 1,
-      pageSize: params.pageSize ?? 20,
-      page_size: params.pageSize ?? 20,
-    },
-  });
+  const query: Record<string, unknown> = {
+    ...params,
+    start_date: params.startDate,
+    end_date: params.endDate,
+    order_no: params.orderNo,
+    user_id: params.userId,
+    member_account: params.memberAccount,
+    activity_name: params.activityName,
+    collection_method: params.collectionMethod,
+    page: params.page ?? 1,
+    pageSize: params.pageSize ?? 20,
+    page_size: params.pageSize ?? 20,
+  };
+  if (params.benefitSource?.length) query.benefit_source = params.benefitSource;
+  if (params.rewardType?.length) query.reward_type = params.rewardType;
+  const response = await requestClient.get('/admin/reward-history', { params: query });
   return response as RewardHistoryListResponse;
 }
 

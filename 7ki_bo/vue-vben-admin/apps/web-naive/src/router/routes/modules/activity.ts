@@ -40,6 +40,15 @@ const routes: RouteRecordRaw[] = [
       },
       {
         meta: {
+          title: '优惠明细',
+        },
+        name: 'ActivityRewardReport',
+        path: '/preferentialActivitiesNew/activity-reward-report',
+        // @ts-ignore
+        component: () => import('#/views/activity/ActivityRewardReport.vue'),
+      },
+      {
+        meta: {
           icon: 'ic:outline-emoji-events',
           title: 'VIP奖励',
         },

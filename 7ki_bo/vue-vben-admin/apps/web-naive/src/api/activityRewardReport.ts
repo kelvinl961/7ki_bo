@@ -29,6 +29,11 @@ export interface RewardHistoryItem {
   id?: string;
   orderNo?: string;
   createdAt?: string;
+  /** 详情接口可能返回 */
+  activityId?: string | number;
+  activityName?: string;
+  rewardCondition?: string;
+  lossAmount?: number;
 }
 
 export interface RewardHistoryListResponse {

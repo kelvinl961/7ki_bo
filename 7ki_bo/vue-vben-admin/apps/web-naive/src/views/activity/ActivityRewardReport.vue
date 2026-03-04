@@ -165,6 +165,55 @@
         :user-id="currentUserIdForDetail"
         @refresh="fetchData"
       />
+
+      <!-- 优惠明细详情弹窗 -->
+      <n-modal
+        v-model:show="showRewardDetailModal"
+        preset="card"
+        title="详情"
+        style="width: 560px; max-width: 90vw"
+        :bordered="false"
+        size="huge"
+        :mask-closable="false"
+      >
+        <div v-if="rewardDetail" class="reward-detail">
+          <n-card size="small" :bordered="false" class="mb-0">
+            <div class="detail-grid">
+              <div class="detail-row">
+                <span class="detail-label">会员账号</span>
+                <span class="detail-value">{{ rewardDetail.memberAccount ?? '-' }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">活动名称</span>
+                <span class="detail-value">{{ rewardDetail.activityName ?? rewardDetail.benefitName ?? '-' }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">活动ID</span>
+                <span class="detail-value">{{ rewardDetail.activityId ?? '-' }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">奖励类型</span>
+                <span class="detail-value">{{ rewardDetail.rewardType ?? '-' }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">赠送奖励</span>
+                <span class="detail-value detail-value--reward">{{ rewardDetail.grantedReward != null ? Number(rewardDetail.grantedReward).toFixed(2) : '-' }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">领取时间</span>
+                <span class="detail-value">{{ formatDateTime(rewardDetail.acquisitionTime) }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">领取方式</span>
+                <span class="detail-value">{{ rewardDetail.collectionMethod ?? '-' }}</span>
+              </div>
+            </div>
+          </n-card>
+        </div>
+        <template #footer>
+          <n-button @click="showRewardDetailModal = false">关闭</n-button>
+        </template>
+      </n-modal>
     </Page>
   </div>
 </template>
@@ -187,11 +236,12 @@ import {
   NAlert,
   NEmpty,
   NSpace,
+  NModal,
   type DataTableColumns,
 } from 'naive-ui';
 import { useMessage } from 'naive-ui';
 import { Page } from '@vben/common-ui';
-import { getRewardHistory } from '#/api/activityRewardReport';
+import { getRewardHistory, getRewardHistoryByOrderNo } from '#/api/activityRewardReport';
 import { exportGridData } from '#/utils/exportUtils';
 import type { RewardHistoryItem } from '#/api/activityRewardReport';
 
@@ -211,6 +261,9 @@ const totalCount = ref(0);
 const totalGrantedReward = ref<number>(0);
 const showUserDetailModal = ref(false);
 const currentUserIdForDetail = ref(0);
+const showRewardDetailModal = ref(false);
+const rewardDetail = ref<RewardHistoryItem | null>(null);
+const loadingRewardDetail = ref(false);
 
 /** 今天 00:00:00 和 23:59:59.999（本地） */
 function getTodayRange(): [number, number] {
@@ -331,6 +384,57 @@ function openUserDetail(row: RewardHistoryItem) {
   showUserDetailModal.value = true;
 }
 
+const detailFieldMap: Record<string, string> = {
+  order_no: 'orderNo',
+  acquisition_time: 'acquisitionTime',
+  benefit_name: 'benefitName',
+  member_currency: 'memberCurrency',
+  member_id: 'memberId',
+  member_account: 'memberAccount',
+  benefit_source: 'benefitSource',
+  source_type: 'sourceType',
+  collection_method: 'collectionMethod',
+  reward_type: 'rewardType',
+  granted_reward: 'grantedReward',
+  activity_id: 'activityId',
+  activity_name: 'activityName',
+  reward_condition: 'rewardCondition',
+  loss_amount: 'lossAmount',
+};
+
+function normalizeDetail(row: Record<string, unknown>): RewardHistoryItem {
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(row)) {
+    const key = detailFieldMap[k] ?? k;
+    out[key] = v;
+  }
+  return out as RewardHistoryItem;
+}
+
+async function handleViewDetail(row: RewardHistoryItem) {
+  const orderNo = row.orderNo?.trim();
+  if (!orderNo) {
+    rewardDetail.value = row;
+    showRewardDetailModal.value = true;
+    return;
+  }
+  loadingRewardDetail.value = true;
+  rewardDetail.value = null;
+  try {
+    const res = await getRewardHistoryByOrderNo(orderNo);
+    const raw = res && typeof res === 'object' && !Array.isArray(res) ? (res as Record<string, unknown>) : null;
+    const data = raw?.data && typeof raw.data === 'object' ? (raw.data as Record<string, unknown>) : raw;
+    const item = data ? normalizeDetail(data) : row;
+    rewardDetail.value = item;
+    showRewardDetailModal.value = true;
+  } catch {
+    rewardDetail.value = row;
+    showRewardDetailModal.value = true;
+  } finally {
+    loadingRewardDetail.value = false;
+  }
+}
+
 function formatDateTime(iso: string | undefined): string {
   if (!iso) return '-';
   const d = new Date(iso);
@@ -382,10 +486,34 @@ const columns: DataTableColumns<RewardHistoryItem> = [
   { title: '发放方式', key: 'collectionMethod', width: 110, ellipsis: { tooltip: true } },
   { title: '奖励类型', key: 'rewardType', width: 100, ellipsis: { tooltip: true } },
   { title: '获取时间', key: 'acquisitionTime', width: 165, ellipsis: { tooltip: true }, render: (row) => formatDateTime(row.acquisitionTime) },
+  {
+    title: '操作',
+    key: 'actions',
+    width: 100,
+    fixed: 'right',
+    render: (row) =>
+      h(
+        NSpace,
+        { size: 'small', justify: 'center' },
+        {
+          default: () =>
+            h(
+              NButton,
+              {
+                size: 'small',
+                type: 'primary',
+                text: true,
+                onClick: () => handleViewDetail(row),
+              },
+              { default: () => '详情' },
+            ),
+        },
+      ),
+  },
 ];
 
-/** 表格横向滚动宽度（11 列，含订单号），保证所有列都能显示 */
-const tableScrollX = 1405;
+/** 表格横向滚动宽度（12 列，含操作） */
+const tableScrollX = 1505;
 
 async function fetchData() {
   loading.value = true;
@@ -565,6 +693,39 @@ onMounted(() => {
 .totals-summary .total-value--reward {
   color: #18a058;
 }
+
+/* 详情弹窗两列布局（参考 RechargeManagement） */
+.reward-detail .detail-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.reward-detail .detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.reward-detail .detail-row:last-child {
+  border-bottom: none;
+}
+.reward-detail .detail-label {
+  color: #666;
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-right: 16px;
+}
+.reward-detail .detail-value {
+  font-size: 14px;
+  text-align: right;
+  word-break: break-all;
+}
+.reward-detail .detail-value--reward {
+  font-weight: 600;
+  color: #18a058;
+}
+
 /* 会员账号链接：蓝色+悬停下划线，表格内用 :deep 穿透 */
 .activity-reward-report :deep(.link-account) {
   color: #2080f0 !important;

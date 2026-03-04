@@ -1,16 +1,6 @@
 <template>
   <div class="activity-reward-report">
-    <Page
-      title="优惠明细"
-      description="查看活动奖励发放明细，支持筛选与导出"
-    >
-      <div class="mb-4">
-        <n-breadcrumb>
-          <n-breadcrumb-item>优惠活动</n-breadcrumb-item>
-          <n-breadcrumb-item>优惠明细</n-breadcrumb-item>
-        </n-breadcrumb>
-      </div>
-
+    <Page>
       <n-card title="筛选条件" class="mb-4">
         <!-- Filter -->
         <div class="filter-section">
@@ -151,6 +141,14 @@
             </template>
           </SmartDataGrid>
 
+          <div
+            v-if="listData.length > 0 && !loading"
+            class="total-row"
+          >
+            <span class="total-label">发放奖励合计：</span>
+            <span class="total-value">{{ totalGrantedReward.toFixed(2) }}</span>
+          </div>
+
           <n-empty v-else-if="!loading" description="暂无数据" style="padding: 40px 0" />
           <div v-else class="py-8 text-center">
             <n-spin size="large" />
@@ -208,6 +206,7 @@ const exporting = ref(false);
 const error = ref('');
 const listData = ref<RewardHistoryItem[]>([]);
 const totalCount = ref(0);
+const totalGrantedReward = ref<number>(0);
 const showUserDetailModal = ref(false);
 const currentUserIdForDetail = ref(0);
 
@@ -364,7 +363,20 @@ const columns: DataTableColumns<RewardHistoryItem> = [
         : (row.memberAccount ?? '-'),
   },
   { title: '优惠来源', key: 'benefitSource', width: 100, ellipsis: { tooltip: true } },
-  { title: '来源类型', key: 'sourceType', width: 100, ellipsis: { tooltip: true } },
+  {
+    title: '来源类型',
+    key: 'sourceType',
+    width: 100,
+    ellipsis: { tooltip: true },
+    render: (row) => {
+      const sourceTypeMap: Record<string, string> = {
+        redpacket: '红包',
+        promotion: '推广',
+        newbie: '新人彩金',
+      };
+      return sourceTypeMap[row.sourceType ?? ''] ?? (row.sourceType ?? '-');
+    },
+  },
   { title: '发放方式', key: 'collectionMethod', width: 110, ellipsis: { tooltip: true } },
   { title: '奖励类型', key: 'rewardType', width: 100, ellipsis: { tooltip: true } },
   { title: '获取时间', key: 'acquisitionTime', width: 165, ellipsis: { tooltip: true }, render: (row) => formatDateTime(row.acquisitionTime) },
@@ -457,10 +469,22 @@ async function fetchData() {
             : normalizedRows.length;
     listData.value = normalizedRows;
     totalCount.value = total;
+    // totalGrantedReward 来自接口 total_granted_reward / totalGrantedReward，否则用当前页合计
+    const apiTotal =
+      (typeof (raw?.totalGrantedReward ?? raw?.total_granted_reward) === 'number'
+        ? (raw?.totalGrantedReward ?? raw?.total_granted_reward) as number
+        : undefined) ??
+      (typeof (inner?.totalGrantedReward ?? inner?.total_granted_reward) === 'number'
+        ? (inner?.totalGrantedReward ?? inner?.total_granted_reward) as number
+        : undefined);
+    totalGrantedReward.value =
+      apiTotal ??
+      normalizedRows.reduce((sum, r) => sum + (Number(r.grantedReward) || 0), 0);
   } catch (e: any) {
     error.value = e?.message || '加载失败';
     listData.value = [];
     totalCount.value = 0;
+    totalGrantedReward.value = 0;
   } finally {
     loading.value = false;
   }
@@ -512,6 +536,20 @@ onMounted(() => {
 }
 .reward-report-table {
   min-width: 1265px;
+}
+.total-row {
+  margin-top: 12px;
+  padding: 10px 0;
+  font-size: 24px;
+  text-align: right;
+}
+.total-row .total-label {
+  color: #666;
+  margin-right: 8px;
+}
+.total-row .total-value {
+  font-weight: 600;
+  color: #666;
 }
 /* 会员账号链接：蓝色+悬停下划线，表格内用 :deep 穿透 */
 .activity-reward-report :deep(.link-account) {

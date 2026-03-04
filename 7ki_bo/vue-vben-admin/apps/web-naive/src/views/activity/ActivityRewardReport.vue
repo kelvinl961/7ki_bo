@@ -143,10 +143,12 @@
 
           <div
             v-if="listData.length > 0 && !loading"
-            class="total-row"
+            class="totals-summary"
           >
-            <span class="total-label">发放奖励合计：</span>
-            <span class="total-value">{{ totalGrantedReward.toFixed(2) }}</span>
+            <div class="total-item">
+              <span class="total-label">发放奖励合计:</span>
+              <span class="total-value total-value--reward">{{ totalGrantedReward.toFixed(2) }}</span>
+            </div>
           </div>
 
           <n-empty v-else-if="!loading" description="暂无数据" style="padding: 40px 0" />
@@ -537,19 +539,31 @@ onMounted(() => {
 .reward-report-table {
   min-width: 1265px;
 }
-.total-row {
-  margin-top: 12px;
-  padding: 10px 0;
-  font-size: 24px;
-  text-align: right;
+/* 合计栏样式与线上充值页一致：小字号、无背景、右对齐 */
+.totals-summary {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: flex-start;
 }
-.total-row .total-label {
+.totals-summary .total-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.totals-summary .total-label {
+  font-weight: 500;
   color: #666;
-  margin-right: 8px;
+  font-size: 14px;
 }
-.total-row .total-value {
+.totals-summary .total-value {
   font-weight: 600;
-  color: #666;
+  color: #333;
+  font-size: 14px;
+}
+.totals-summary .total-value--reward {
+  color: #18a058;
 }
 /* 会员账号链接：蓝色+悬停下划线，表格内用 :deep 穿透 */
 .activity-reward-report :deep(.link-account) {

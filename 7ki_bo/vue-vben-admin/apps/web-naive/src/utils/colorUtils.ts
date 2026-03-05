@@ -6,6 +6,7 @@
 export interface ColorPalette {
   primary: string;
   secondary: string;
+  tertiary?: string;
   accent: string;
   textPrimary: string;
   textSecondary: string;
@@ -32,13 +33,14 @@ export interface ColorClasses {
 export const brandColorPalettes: Record<string, ColorPalette> = {
   // Bvlgari蓝黑
   '15': {
-    primary: '#1E3A8A',
-    secondary: '#64748B',
-    accent: '#0EA5E9',
-    textPrimary: '#1E293B',
-    textSecondary: '#64748B',
+    primary: '#0e131b',
+    secondary: '#151d29',
+    tertiary: '#182434',
+    accent: '#111923',
+    textPrimary: '#FFFFFF',
+    textSecondary: '#005DFE',
     textAccent: '#0284C7',
-    buttonColor: '#2563EB',
+    buttonColor: '#005dfe',
   },
   // Tom Ford绿
   '1687419125085335554': {
@@ -506,7 +508,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
  * Brand color definitions with their base colors (kept for backward compatibility)
  */
 export const brandColorMap: Record<string, string> = {
-  '15': '#1E3A8A', // Bvlgari蓝黑
+  '15': '#0e131b', // Bvlgari蓝黑
   '1687419125085335554': '#10B981', // Tom Ford绿
   '1687419804829954050': '#F59E0B', // Ferrari黄
   '1687423728032313346': '#DC2626', // Armani红

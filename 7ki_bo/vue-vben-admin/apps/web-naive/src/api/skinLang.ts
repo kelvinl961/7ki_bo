@@ -15,13 +15,15 @@ export interface BrandSkinLangConfig {
   // 自动生成的主题色彩
   primaryColor?: string;
   secondaryColor?: string;
+  tertiaryColor?: string;
   accentColor?: string;
   colorPalette?: {
+    primary: string;
+    secondary: string;
+    tertiary: string;
     accent: string;
     generated: boolean;
     generatedAt: string;
-    primary: string;
-    secondary: string;
   };
   // New color fields from ColorPalette
   textPrimary?: string; // Dark text color for headings
@@ -66,13 +68,15 @@ export interface BrandSkinLangCreateRequest {
   // 自动生成的主题色彩
   primaryColor?: string;
   secondaryColor?: string;
+  tertiaryColor?: string;
   accentColor?: string;
   colorPalette?: {
+    primary: string;
+    secondary: string;
+    tertiary: string;
     accent: string;
     generated: boolean;
     generatedAt: string;
-    primary: string;
-    secondary: string;
   };
   // New color fields from ColorPalette
   textPrimary?: string; // Dark text color for headings

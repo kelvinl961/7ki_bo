@@ -6,6 +6,7 @@
 export interface ColorPalette {
   primary: string;
   secondary: string;
+  tertiary: string;
   accent: string;
   textPrimary: string;
   textSecondary: string;
@@ -32,28 +33,31 @@ export interface ColorClasses {
 export const brandColorPalettes: Record<string, ColorPalette> = {
   // Bvlgari蓝黑
   '15': {
-    primary: '#1E3A8A',
-    secondary: '#64748B',
-    accent: '#0EA5E9',
-    textPrimary: '#1E293B',
-    textSecondary: '#64748B',
+    primary: '#0e131b',
+    secondary: '#151d29',
+    tertiary: '#182434',
+    accent: '#111923',
+    textPrimary: '#FFFFFF',
+    textSecondary: '#005DFE',
     textAccent: '#0284C7',
-    buttonColor: '#2563EB',
+    buttonColor: '#005dfe',
   },
   // Tom Ford绿
   '1687419125085335554': {
-    primary: '#10B981',
-    secondary: '#6B7280',
-    accent: '#34D399',
-    textPrimary: '#111827',
+    primary: '#18747e',
+    secondary: '#054146',
+    tertiary: '#182434',
+    accent: '#05484e',
+    textPrimary: '#054146',
     textSecondary: '#6B7280',
     textAccent: '#059669',
-    buttonColor: '#059669',
+    buttonColor: '#06D0DF',
   },
   // Ferrari黄
   '1687419804829954050': {
     primary: '#F59E0B',
     secondary: '#78716C',
+    tertiary: '#182434',
     accent: '#FBBF24',
     textPrimary: '#1C1917',
     textSecondary: '#78716C',
@@ -64,6 +68,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1687423728032313346': {
     primary: '#DC2626',
     secondary: '#6B7280',
+    tertiary: '#182434',
     accent: '#EF4444',
     textPrimary: '#1F2937',
     textSecondary: '#6B7280',
@@ -74,6 +79,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1687424061300416513': {
     primary: '#3B82F6',
     secondary: '#64748B',
+    tertiary: '#182434',
     accent: '#60A5FA',
     textPrimary: '#1E293B',
     textSecondary: '#64748B',
@@ -84,6 +90,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1687424270198022145': {
     primary: '#8B5CF6',
     secondary: '#6B7280',
+    tertiary: '#182434',
     accent: '#A78BFA',
     textPrimary: '#1F2937',
     textSecondary: '#6B7280',
@@ -94,6 +101,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1692485205460766722': {
     primary: '#F59E0B',
     secondary: '#374151',
+    tertiary: '#182434',
     accent: '#FBBF24',
     textPrimary: '#111827',
     textSecondary: '#6B7280',
@@ -104,6 +112,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1692485850558005250': {
     primary: '#84CC16',
     secondary: '#6B7280',
+    tertiary: '#182434',
     accent: '#A3E635',
     textPrimary: '#1F2937',
     textSecondary: '#6B7280',
@@ -114,6 +123,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1692486746230812674': {
     primary: '#EF4444',
     secondary: '#6B7280',
+    tertiary: '#182434',
     accent: '#F87171',
     textPrimary: '#1F2937',
     textSecondary: '#6B7280',
@@ -124,6 +134,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1692488006900928514': {
     primary: '#06B6D4',
     secondary: '#64748B',
+    tertiary: '#182434',
     accent: '#22D3EE',
     textPrimary: '#1E293B',
     textSecondary: '#64748B',
@@ -134,6 +145,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1692488483161190401': {
     primary: '#7C2D12',
     secondary: '#78716C',
+    tertiary: '#182434',
     accent: '#A16207',
     textPrimary: '#1C1917',
     textSecondary: '#78716C',
@@ -144,6 +156,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1692488808662204418': {
     primary: '#1E40AF',
     secondary: '#64748B',
+    tertiary: '#182434',
     accent: '#3B82F6',
     textPrimary: '#1E293B',
     textSecondary: '#64748B',
@@ -154,6 +167,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1692489196854333442': {
     primary: '#059669',
     secondary: '#6B7280',
+    tertiary: '#182434',
     accent: '#10B981',
     textPrimary: '#1F2937',
     textSecondary: '#6B7280',
@@ -164,6 +178,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1692489501242617857': {
     primary: '#92400E',
     secondary: '#78716C',
+    tertiary: '#182434',
     accent: '#C2410C',
     textPrimary: '#1C1917',
     textSecondary: '#78716C',
@@ -174,6 +189,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1692489827560214530': {
     primary: '#047857',
     secondary: '#6B7280',
+    tertiary: '#182434',
     accent: '#059669',
     textPrimary: '#1F2937',
     textSecondary: '#6B7280',
@@ -184,6 +200,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1692490140235583490': {
     primary: '#7C3AED',
     secondary: '#6B7280',
+    tertiary: '#182434',
     accent: '#8B5CF6',
     textPrimary: '#1F2937',
     textSecondary: '#6B7280',
@@ -194,6 +211,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697159683483983873': {
     primary: '#1E40AF',
     secondary: '#64748B',
+    tertiary: '#182434',
     accent: '#3B82F6',
     textPrimary: '#1E293B',
     textSecondary: '#64748B',
@@ -204,6 +222,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697159980803305474': {
     primary: '#1E3A8A',
     secondary: '#64748B',
+    tertiary: '#182434',
     accent: '#2563EB',
     textPrimary: '#1E293B',
     textSecondary: '#64748B',
@@ -214,6 +233,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697160139817517057': {
     primary: '#3B82F6',
     secondary: '#64748B',
+    tertiary: '#182434',
     accent: '#60A5FA',
     textPrimary: '#1E293B',
     textSecondary: '#64748B',
@@ -224,6 +244,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697160330594295810': {
     primary: '#6B7280',
     secondary: '#9CA3AF',
+    tertiary: '#182434',
     accent: '#374151',
     textPrimary: '#111827',
     textSecondary: '#6B7280',
@@ -234,6 +255,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697160465763233793': {
     primary: '#1E40AF',
     secondary: '#64748B',
+    tertiary: '#182434',
     accent: '#3B82F6',
     textPrimary: '#1E293B',
     textSecondary: '#64748B',
@@ -244,6 +266,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697160834305101825': {
     primary: '#7C2D12',
     secondary: '#78716C',
+    tertiary: '#182434',
     accent: '#A16207',
     textPrimary: '#1C1917',
     textSecondary: '#78716C',
@@ -254,6 +277,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697160986273185793': {
     primary: '#6B7280',
     secondary: '#9CA3AF',
+    tertiary: '#182434',
     accent: '#374151',
     textPrimary: '#111827',
     textSecondary: '#6B7280',
@@ -264,6 +288,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697161119648129025': {
     primary: '#EA580C',
     secondary: '#78716C',
+    tertiary: '#182434',
     accent: '#F97316',
     textPrimary: '#1C1917',
     textSecondary: '#78716C',
@@ -274,6 +299,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697161307920756738': {
     primary: '#92400E',
     secondary: '#78716C',
+    tertiary: '#182434',
     accent: '#C2410C',
     textPrimary: '#1C1917',
     textSecondary: '#78716C',
@@ -284,6 +310,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697161596809916417': {
     primary: '#C2410C',
     secondary: '#78716C',
+    tertiary: '#182434',
     accent: '#EA580C',
     textPrimary: '#1C1917',
     textSecondary: '#78716C',
@@ -294,6 +321,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697161777339891714': {
     primary: '#EC4899',
     secondary: '#6B7280',
+    tertiary: '#182434',
     accent: '#F472B6',
     textPrimary: '#1F2937',
     textSecondary: '#6B7280',
@@ -304,6 +332,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697161995892490242': {
     primary: '#F97316',
     secondary: '#78716C',
+    tertiary: '#182434',
     accent: '#FB923C',
     textPrimary: '#1C1917',
     textSecondary: '#78716C',
@@ -314,6 +343,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697162642566025217': {
     primary: '#16A34A',
     secondary: '#6B7280',
+    tertiary: '#182434',
     accent: '#22C55E',
     textPrimary: '#1F2937',
     textSecondary: '#6B7280',
@@ -324,6 +354,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697162790520283138': {
     primary: '#EAB308',
     secondary: '#78716C',
+    tertiary: '#182434',
     accent: '#FDE047',
     textPrimary: '#1C1917',
     textSecondary: '#78716C',
@@ -334,6 +365,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697163109007503361': {
     primary: '#A16207',
     secondary: '#78716C',
+    tertiary: '#182434',
     accent: '#D97706',
     textPrimary: '#1C1917',
     textSecondary: '#78716C',
@@ -344,6 +376,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697163285008887809': {
     primary: '#111827',
     secondary: '#374151',
+    tertiary: '#182434',
     accent: '#6B7280',
     textPrimary: '#F9FAFB',
     textSecondary: '#D1D5DB',
@@ -354,6 +387,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697163805310021633': {
     primary: '#DC2626',
     secondary: '#6B7280',
+    tertiary: '#182434',
     accent: '#EF4444',
     textPrimary: '#1F2937',
     textSecondary: '#6B7280',
@@ -364,6 +398,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697163938916524034': {
     primary: '#7C3AED',
     secondary: '#6B7280',
+    tertiary: '#182434',
     accent: '#8B5CF6',
     textPrimary: '#1F2937',
     textSecondary: '#6B7280',
@@ -374,6 +409,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697164125656219650': {
     primary: '#1877F2',
     secondary: '#64748B',
+    tertiary: '#182434',
     accent: '#42A5F5',
     textPrimary: '#1E293B',
     textSecondary: '#64748B',
@@ -384,6 +420,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697164281092911105': {
     primary: '#42B883',
     secondary: '#6B7280',
+    tertiary: '#182434',
     accent: '#66BB6A',
     textPrimary: '#1F2937',
     textSecondary: '#6B7280',
@@ -394,6 +431,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697164409843445761': {
     primary: '#1DA1F2',
     secondary: '#64748B',
+    tertiary: '#182434',
     accent: '#42A5F5',
     textPrimary: '#1E293B',
     textSecondary: '#64748B',
@@ -404,6 +442,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697164886393913346': {
     primary: '#26A17B',
     secondary: '#6B7280',
+    tertiary: '#182434',
     accent: '#4CAF50',
     textPrimary: '#1F2937',
     textSecondary: '#6B7280',
@@ -414,6 +453,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697165024871976962': {
     primary: '#DC2626',
     secondary: '#6B7280',
+    tertiary: '#182434',
     accent: '#EF4444',
     textPrimary: '#1F2937',
     textSecondary: '#6B7280',
@@ -424,6 +464,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697165145999220737': {
     primary: '#92400E',
     secondary: '#78716C',
+    tertiary: '#182434',
     accent: '#C2410C',
     textPrimary: '#1C1917',
     textSecondary: '#78716C',
@@ -434,6 +475,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697165288065609730': {
     primary: '#DC2626',
     secondary: '#6B7280',
+    tertiary: '#182434',
     accent: '#EF4444',
     textPrimary: '#1F2937',
     textSecondary: '#6B7280',
@@ -444,6 +486,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697165446718234626': {
     primary: '#DC2626',
     secondary: '#6B7280',
+    tertiary: '#182434',
     accent: '#EF4444',
     textPrimary: '#1F2937',
     textSecondary: '#6B7280',
@@ -454,6 +497,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697165616248053761': {
     primary: '#92400E',
     secondary: '#78716C',
+    tertiary: '#182434',
     accent: '#C2410C',
     textPrimary: '#1C1917',
     textSecondary: '#78716C',
@@ -464,6 +508,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1697165753468780546': {
     primary: '#059669',
     secondary: '#6B7280',
+    tertiary: '#182434',
     accent: '#10B981',
     textPrimary: '#1F2937',
     textSecondary: '#6B7280',
@@ -474,6 +519,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1822080907778543618': {
     primary: '#161616',
     secondary: '#1e1e1e',
+    tertiary: '#182434',
     accent: '#22C55E',
     textPrimary: '#1F2937',
     textSecondary: '#6B7280',
@@ -484,6 +530,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1822084756339769345': {
     primary: '#8B5CF6',
     secondary: '#6B7280',
+    tertiary: '#182434',
     accent: '#A78BFA',
     textPrimary: '#1F2937',
     textSecondary: '#6B7280',
@@ -494,6 +541,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   '1924287844941955073': {
     primary: '#111827',
     secondary: '#374151',
+    tertiary: '#182434',
     accent: '#6B7280',
     textPrimary: '#F9FAFB',
     textSecondary: '#D1D5DB',
@@ -506,8 +554,8 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
  * Brand color definitions with their base colors (kept for backward compatibility)
  */
 export const brandColorMap: Record<string, string> = {
-  '15': '#1E3A8A', // Bvlgari蓝黑
-  '1687419125085335554': '#10B981', // Tom Ford绿
+  '15': '#0e131b', // Bvlgari蓝黑
+  '1687419125085335554': '#055F67', // Tom Ford绿
   '1687419804829954050': '#F59E0B', // Ferrari黄
   '1687423728032313346': '#DC2626', // Armani红
   '1687424061300416513': '#3B82F6', // Corum蓝
@@ -644,6 +692,7 @@ export function getColorPaletteById(skinColorId: string): ColorPalette {
   return {
     primary: primaryColor,
     secondary: '#6B7280', // Default gray secondary
+    tertiary: '#111827', // Default dark tertiary
     accent: '#10B981', // Default green accent
     textPrimary: '#1F2937', // Default dark gray for primary text
     textSecondary: '#6B7280', // Default medium gray for secondary text
@@ -672,6 +721,7 @@ export function generateColorPalette(primaryColor: string): ColorPalette {
   return {
     primary: primaryColor,
     secondary: '#6B7280', // Gray secondary - adjust this hex value as needed
+    tertiary: '#111827', // Dark tertiary - adjust this hex value as needed
     accent: '#10B981', // Green accent - adjust this hex value as needed
     textPrimary: '#1F2937', // Dark gray for primary text - adjust as needed
     textSecondary: '#6B7280', // Medium gray for secondary text - adjust as needed

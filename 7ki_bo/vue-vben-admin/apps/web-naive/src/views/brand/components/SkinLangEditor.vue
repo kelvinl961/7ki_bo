@@ -252,6 +252,7 @@ import {
   getSkinColorRGB,
   getSkinColorValues,
 } from '#/composables/useSkinPreview';
+import { getColorPaletteById } from '../../../utils/colorUtils';
 import { notification } from '#/adapter/naive';
 import type {
   BrandSkinLangConfig,
@@ -609,6 +610,10 @@ const handleSubmit = async () => {
     ];
     const uniqueLanguages = [...new Set(allLanguages)];
 
+    // Derive full color palette for the selected skin color
+    const palette = getColorPaletteById(formModel.skinColor || '15');
+    const generatedAt = new Date().toISOString();
+
     const submitData: BrandSkinLangCreateRequest = {
       brandId: formModel.brandId,
       brandCode: formModel.brandCode,
@@ -626,6 +631,23 @@ const handleSubmit = async () => {
       skinColor: formModel.skinColor,
       skinColorRgb: formModel.skinColorRgb,
       skinColorHex: formModel.skinColorHex,
+      // Persist full theme palette so layout/config APIs can reuse it
+      primaryColor: palette.primary,
+      secondaryColor: palette.secondary,
+      tertiaryColor: palette.tertiary,
+      accentColor: palette.accent,
+      colorPalette: {
+        primary: palette.primary,
+        secondary: palette.secondary,
+        tertiary: palette.tertiary,
+        accent: palette.accent,
+        generated: true,
+        generatedAt,
+      },
+      textPrimary: palette.textPrimary,
+      textSecondary: palette.textSecondary,
+      textAccent: palette.textAccent,
+      buttonColor: palette.buttonColor,
     };
 
     await nextTick();

@@ -12,6 +12,7 @@ export interface ColorPalette {
   textSecondary: string;
   textAccent: string;
   buttonColor: string;
+  borderColor: string;
 }
 
 export interface ColorClasses {
@@ -24,6 +25,7 @@ export interface ColorClasses {
   borderPrimary: string;
   borderSecondary: string;
   borderAccent: string;
+  borderColor: string;
   buttonColor: string;
 }
 
@@ -41,6 +43,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#005DFE',
     textAccent: '#0284C7',
     buttonColor: '#005dfe',
+    borderColor: '#374151',
   },
   // Tom Ford绿
   '1687419125085335554': {
@@ -52,17 +55,19 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#6B7280',
     textAccent: '#059669',
     buttonColor: '#06D0DF',
+    borderColor: '#374151',
   },
   // Ferrari黄
   '1687419804829954050': {
-    primary: '#F59E0B',
-    secondary: '#78716C',
-    tertiary: '#182434',
+    primary: '#1C1C1C',
+    secondary: '#1C1C1C',
+    tertiary: '#000000',
     accent: '#FBBF24',
-    textPrimary: '#1C1917',
-    textSecondary: '#78716C',
+    textPrimary: '#000000',
+    textSecondary: '#feb705',
     textAccent: '#D97706',
-    buttonColor: '#D97706',
+    buttonColor: '#feb705',
+    borderColor: '#374151',
   },
   // Armani红
   '1687423728032313346': {
@@ -74,6 +79,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#6B7280',
     textAccent: '#B91C1C',
     buttonColor: '#DC2626',
+    borderColor: '#374151',
   },
   // Corum蓝
   '1687424061300416513': {
@@ -85,6 +91,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#64748B',
     textAccent: '#2563EB',
     buttonColor: '#3B82F6',
+    borderColor: '#374151',
   },
   // Aston Martin紫
   '1687424270198022145': {
@@ -96,6 +103,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#6B7280',
     textAccent: '#7C3AED',
     buttonColor: '#8B5CF6',
+    borderColor: '#374151',
   },
   // Roger Dubuis黑金
   '1692485205460766722': {
@@ -107,6 +115,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#6B7280',
     textAccent: '#D97706',
     buttonColor: '#F59E0B',
+    borderColor: '#374151',
   },
   // Porsche黄绿
   '1692485850558005250': {
@@ -118,6 +127,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#6B7280',
     textAccent: '#65A30D',
     buttonColor: '#84CC16',
+    borderColor: '#374151',
   },
   // Cartier红
   '1692486746230812674': {
@@ -129,6 +139,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#6B7280',
     textAccent: '#DC2626',
     buttonColor: '#EF4444',
+    borderColor: '#374151',
   },
   // Estee Lauder蓝
   '1692488006900928514': {
@@ -140,6 +151,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#64748B',
     textAccent: '#0891B2',
     buttonColor: '#06B6D4',
+    borderColor: '#374151',
   },
   // Burgundy红
   '1692488483161190401': {
@@ -151,6 +163,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#78716C',
     textAccent: '#92400E',
     buttonColor: '#7C2D12',
+    borderColor: '#374151',
   },
   // IWC蓝
   '1692488808662204418': {
@@ -162,6 +175,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#64748B',
     textAccent: '#1D4ED8',
     buttonColor: '#1E40AF',
+    borderColor: '#374151',
   },
   // Gucci绿金
   '1692489196854333442': {
@@ -173,6 +187,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#6B7280',
     textAccent: '#047857',
     buttonColor: '#059669',
+    borderColor: '#374151',
   },
   // Burberry褐
   '1692489501242617857': {
@@ -184,6 +199,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#78716C',
     textAccent: '#A16207',
     buttonColor: '#92400E',
+    borderColor: '#374151',
   },
   // La Mer 绿
   '1692489827560214530': {
@@ -195,6 +211,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#6B7280',
     textAccent: '#065F46',
     buttonColor: '#047857',
+    borderColor: '#374151',
   },
   // Ebay紫
   '1692490140235583490': {
@@ -206,6 +223,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#6B7280',
     textAccent: '#6D28D9',
     buttonColor: '#7C3AED',
+    borderColor: '#374151',
   },
   // Dior克莱因蓝
   '1697159683483983873': {
@@ -217,6 +235,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#64748B',
     textAccent: '#1D4ED8',
     buttonColor: '#1E40AF',
+    borderColor: '#374151',
   },
   // Chivas Regal邦迪蓝
   '1697159980803305474': {
@@ -228,6 +247,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#64748B',
     textAccent: '#1D4ED8',
     buttonColor: '#1E3A8A',
+    borderColor: '#374151',
   },
   // Furla蓝
   '1697160139817517057': {
@@ -239,6 +259,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#64748B',
     textAccent: '#2563EB',
     buttonColor: '#3B82F6',
+    borderColor: '#374151',
   },
   // Bottega Veneta莫兰迪灰
   '1697160330594295810': {
@@ -250,6 +271,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#6B7280',
     textAccent: '#4B5563',
     buttonColor: '#6B7280',
+    borderColor: '#374151',
   },
   // Embraer蓝
   '1697160465763233793': {
@@ -261,6 +283,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#64748B',
     textAccent: '#1D4ED8',
     buttonColor: '#1E40AF',
+    borderColor: '#374151',
   },
   // Bordeaux红
   '1697160834305101825': {
@@ -272,6 +295,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#78716C',
     textAccent: '#92400E',
     buttonColor: '#7C2D12',
+    borderColor: '#374151',
   },
   // Breguet灰
   '1697160986273185793': {
@@ -283,6 +307,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#6B7280',
     textAccent: '#4B5563',
     buttonColor: '#6B7280',
+    borderColor: '#374151',
   },
   // Hermes橙
   '1697161119648129025': {
@@ -294,6 +319,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#78716C',
     textAccent: '#C2410C',
     buttonColor: '#EA580C',
+    borderColor: '#374151',
   },
   // BVLGARI褐
   '1697161307920756738': {
@@ -305,6 +331,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#78716C',
     textAccent: '#A16207',
     buttonColor: '#92400E',
+    borderColor: '#374151',
   },
   // Hermes棕橙
   '1697161596809916417': {
@@ -316,17 +343,19 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#78716C',
     textAccent: '#A16207',
     buttonColor: '#C2410C',
+    borderColor: '#374151',
   },
   // Elsa Schiaparelli粉
   '1697161777339891714': {
-    primary: '#EC4899',
-    secondary: '#6B7280',
-    tertiary: '#182434',
+    primary: '#e06f8b',
+    secondary: '#C15473',
+    tertiary: '#b94b6b',
     accent: '#F472B6',
-    textPrimary: '#1F2937',
-    textSecondary: '#6B7280',
+    textPrimary: '#C15473',
+    textSecondary: '#ffe7b8',
     textAccent: '#DB2777',
-    buttonColor: '#EC4899',
+    buttonColor: '#ffe7b8',
+    borderColor: '#f8e0e2',
   },
   // Lancome水蜜桃色
   '1697161995892490242': {
@@ -338,6 +367,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#78716C',
     textAccent: '#EA580C',
     buttonColor: '#F97316',
+    borderColor: '#374151',
   },
   // Lacoste绿
   '1697162642566025217': {
@@ -349,6 +379,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#6B7280',
     textAccent: '#15803D',
     buttonColor: '#16A34A',
+    borderColor: '#374151',
   },
   // Versace黄
   '1697162790520283138': {
@@ -360,6 +391,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#78716C',
     textAccent: '#CA8A04',
     buttonColor: '#EAB308',
+    borderColor: '#374151',
   },
   // Bvlgari棕
   '1697163109007503361': {
@@ -371,6 +403,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#78716C',
     textAccent: '#92400E',
     buttonColor: '#A16207',
+    borderColor: '#374151',
   },
   // Prada黑
   '1697163285008887809': {
@@ -382,6 +415,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#D1D5DB',
     textAccent: '#9CA3AF',
     buttonColor: '#111827',
+    borderColor: '#374151',
   },
   // Victoria Secret红
   '1697163805310021633': {
@@ -393,6 +427,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#6B7280',
     textAccent: '#B91C1C',
     buttonColor: '#DC2626',
+    borderColor: '#374151',
   },
   // Anna Sui紫
   '1697163938916524034': {
@@ -404,6 +439,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#6B7280',
     textAccent: '#6D28D9',
     buttonColor: '#7C3AED',
+    borderColor: '#374151',
   },
   // Facebook蓝
   '1697164125656219650': {
@@ -415,6 +451,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#64748B',
     textAccent: '#1565C0',
     buttonColor: '#1877F2',
+    borderColor: '#374151',
   },
   // Facebook绿
   '1697164281092911105': {
@@ -426,6 +463,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#6B7280',
     textAccent: '#388E3C',
     buttonColor: '#42B883',
+    borderColor: '#374151',
   },
   // Twitter蓝
   '1697164409843445761': {
@@ -437,6 +475,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#64748B',
     textAccent: '#1976D2',
     buttonColor: '#1DA1F2',
+    borderColor: '#374151',
   },
   // USDT绿
   '1697164886393913346': {
@@ -448,6 +487,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#6B7280',
     textAccent: '#2E7D32',
     buttonColor: '#26A17B',
+    borderColor: '#374151',
   },
   // SK-II红
   '1697165024871976962': {
@@ -459,6 +499,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#6B7280',
     textAccent: '#B91C1C',
     buttonColor: '#DC2626',
+    borderColor: '#374151',
   },
   // Patek Philippe浅棕
   '1697165145999220737': {
@@ -470,6 +511,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#78716C',
     textAccent: '#A16207',
     buttonColor: '#92400E',
+    borderColor: '#374151',
   },
   // Microsoft红
   '1697165288065609730': {
@@ -481,6 +523,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#6B7280',
     textAccent: '#B91C1C',
     buttonColor: '#DC2626',
+    borderColor: '#374151',
   },
   // 3CE提香红
   '1697165446718234626': {
@@ -492,6 +535,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#6B7280',
     textAccent: '#B91C1C',
     buttonColor: '#DC2626',
+    borderColor: '#374151',
   },
   // Louis Vuitton棕
   '1697165616248053761': {
@@ -503,6 +547,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#78716C',
     textAccent: '#A16207',
     buttonColor: '#92400E',
+    borderColor: '#374151',
   },
   // Bottega Veneta绿
   '1697165753468780546': {
@@ -514,6 +559,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#6B7280',
     textAccent: '#047857',
     buttonColor: '#059669',
+    borderColor: '#374151',
   },
   // Rolex绿
   '1822080907778543618': {
@@ -525,6 +571,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#6B7280',
     textAccent: '#15803D',
     buttonColor: '#78df2c',
+    borderColor: '#374151',
   },
   // Guerlain紫
   '1822084756339769345': {
@@ -536,6 +583,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#6B7280',
     textAccent: '#7C3AED',
     buttonColor: '#8B5CF6',
+    borderColor: '#374151',
   },
   // Gucci黑
   '1924287844941955073': {
@@ -547,6 +595,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     textSecondary: '#D1D5DB',
     textAccent: '#9CA3AF',
     buttonColor: '#111827',
+    borderColor: '#374151',
   },
 };
 
@@ -698,6 +747,7 @@ export function getColorPaletteById(skinColorId: string): ColorPalette {
     textSecondary: '#6B7280', // Default medium gray for secondary text
     textAccent: '#059669', // Default darker green for accent text
     buttonColor: '#3B82F6', // Default blue for buttons
+    borderColor: '#374151', // Default border
   };
 }
 
@@ -727,6 +777,7 @@ export function generateColorPalette(primaryColor: string): ColorPalette {
     textSecondary: '#6B7280', // Medium gray for secondary text - adjust as needed
     textAccent: '#059669', // Darker green for accent text - adjust as needed
     buttonColor: '#3B82F6', // Blue for buttons - adjust as needed
+    borderColor: '#374151', // Border - adjust as needed
   };
 }
 
@@ -745,6 +796,7 @@ export function generateCSSCustomProperties(palette: ColorPalette): string {
     --color-primary: ${palette.primary};
     --color-secondary: ${palette.secondary};
     --color-accent: ${palette.accent};
+    --color-border: ${palette.borderColor};
     
     --color-primary-rgb: ${hexToRgb(palette.primary)};
     --color-secondary-rgb: ${hexToRgb(palette.secondary)};
@@ -776,6 +828,7 @@ export function generateColorClasses(palette: ColorPalette): ColorClasses {
     borderPrimary: `border-[${palette.primary}]`,
     borderSecondary: `border-[${palette.secondary}]`,
     borderAccent: `border-[${palette.accent}]`,
+    borderColor: `border-[${palette.borderColor}]`,
     buttonColor: `bg-[${palette.buttonColor}]`,
   };
 }

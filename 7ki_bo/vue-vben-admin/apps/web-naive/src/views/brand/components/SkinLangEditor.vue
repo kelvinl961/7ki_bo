@@ -636,11 +636,13 @@ const handleSubmit = async () => {
       secondaryColor: palette.secondary,
       tertiaryColor: palette.tertiary,
       accentColor: palette.accent,
+      borderColor: palette.borderColor,
       colorPalette: {
         primary: palette.primary,
         secondary: palette.secondary,
         tertiary: palette.tertiary,
         accent: palette.accent,
+        borderColor: palette.borderColor,
         generated: true,
         generatedAt,
       },

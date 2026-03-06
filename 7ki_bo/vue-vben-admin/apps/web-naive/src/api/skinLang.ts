@@ -17,11 +17,13 @@ export interface BrandSkinLangConfig {
   secondaryColor?: string;
   tertiaryColor?: string;
   accentColor?: string;
+  borderColor?: string;
   colorPalette?: {
     primary: string;
     secondary: string;
     tertiary: string;
     accent: string;
+    borderColor?: string;
     generated: boolean;
     generatedAt: string;
   };
@@ -70,11 +72,13 @@ export interface BrandSkinLangCreateRequest {
   secondaryColor?: string;
   tertiaryColor?: string;
   accentColor?: string;
+  borderColor?: string;
   colorPalette?: {
     primary: string;
     secondary: string;
     tertiary: string;
     accent: string;
+    borderColor?: string;
     generated: boolean;
     generatedAt: string;
   };

@@ -97,6 +97,7 @@ export function useColorTheme() {
   const primaryColor = computed(() => currentPalette.value?.primary || '');
   const secondaryColor = computed(() => currentPalette.value?.secondary || '');
   const accentColor = computed(() => currentPalette.value?.accent || '');
+  const borderColor = computed(() => currentPalette.value?.borderColor || '');
 
   return {
     // State
@@ -109,6 +110,7 @@ export function useColorTheme() {
     primaryColor,
     secondaryColor,
     accentColor,
+    borderColor,
 
     // Methods
     setSkinColor,

@@ -10,14 +10,26 @@
     <div class="brand-skin-setting grid grid-cols-1 gap-6 lg:grid-cols-3">
       <!-- 左侧：表单 -->
       <div class="lg:col-span-1 space-y-6">
-        <n-card title="皮肤颜色" class="rounded-16px shadow-sm">
-          <n-form
-            ref="formRef"
-            :model="formData"
-            :rules="formRules"
-            label-placement="top"
-            require-mark-placement="right-hanging"
-          >
+        <n-form
+          ref="formRef"
+          :model="formData"
+          :rules="formRules"
+          label-placement="top"
+          require-mark-placement="right-hanging"
+        >
+          <n-card title="基本信息" class="rounded-16px shadow-sm">
+            <n-form-item label="品牌ID" path="brandId" required>
+              <n-input v-model:value="formData.brandId" placeholder="品牌ID" clearable />
+            </n-form-item>
+            <n-form-item label="品牌编号" path="brandCode" required>
+              <n-input v-model:value="formData.brandCode" placeholder="品牌编号" clearable />
+            </n-form-item>
+            <n-form-item label="品牌名称" path="brandName" required>
+              <n-input v-model:value="formData.brandName" placeholder="品牌名称" clearable />
+            </n-form-item>
+          </n-card>
+
+          <n-card title="皮肤颜色" class="rounded-16px shadow-sm">
             <n-form-item label="选择皮肤预设" path="skinColorId">
               <n-select
                 v-model:value="formData.skinColorId"
@@ -98,10 +110,9 @@
                 style="width: 100%"
               />
             </n-form-item>
-          </n-form>
-        </n-card>
+          </n-card>
 
-        <n-card title="大厅背景" class="rounded-16px shadow-sm">
+          <n-card title="大厅背景" class="rounded-16px shadow-sm">
           <n-form-item label="背景类型" path="lobbyBackgroundType">
             <n-radio-group
               v-model:value="formData.lobbyBackgroundType"
@@ -132,9 +143,9 @@
               <div class="mt-1 text-xs text-gray-400">选「自定义图片背景」时生效</div>
             </template>
           </n-form-item>
-        </n-card>
+          </n-card>
 
-        <n-card title="生效时间" class="rounded-16px shadow-sm">
+          <n-card title="生效时间" class="rounded-16px shadow-sm">
           <n-form-item label="开始时间" path="effectiveStartTime">
             <n-date-picker
               v-model:value="formData.effectiveStartTime"
@@ -156,7 +167,54 @@
           <n-alert type="info" :show-icon="true" class="mt-2">
             不设置结束时间表示长期有效
           </n-alert>
-        </n-card>
+          </n-card>
+
+          <n-card title="语言设置" class="rounded-16px shadow-sm">
+          <div
+            v-for="clientType in clientTypes"
+            :key="clientType.key"
+            class="mb-4 last:mb-0"
+          >
+            <h5 class="client-type-title mb-2 text-sm font-medium text-gray-600">
+              {{ clientType.label }}
+            </h5>
+            <n-checkbox-group v-model:value="formData.clientLanguages[clientType.key]">
+              <div class="language-checkboxes flex flex-wrap gap-x-4 gap-y-1">
+                <n-checkbox
+                  v-for="lang in availableLanguages"
+                  :key="lang.value"
+                  :value="lang.value"
+                  :label="lang.label"
+                />
+              </div>
+            </n-checkbox-group>
+          </div>
+          </n-card>
+
+          <n-card title="其他设置" class="rounded-16px shadow-sm">
+            <n-form-item label="请求认证模式" path="authMode" required>
+              <n-select
+                v-model:value="formData.authMode"
+                :options="authModeOptions"
+                placeholder="选择认证模式"
+                clearable
+                style="width: 100%"
+              />
+            </n-form-item>
+            <n-form-item label="APP配置" path="appSetting">
+              <n-input v-model:value="formData.appSetting" placeholder="输入APP配置" clearable />
+            </n-form-item>
+            <n-form-item label="备注信息" path="backendRemark">
+              <n-input
+                v-model:value="formData.backendRemark"
+                type="textarea"
+                :rows="3"
+                placeholder="输入备注信息"
+                clearable
+              />
+            </n-form-item>
+          </n-card>
+        </n-form>
 
         <div class="flex flex-col gap-2">
           <div class="flex gap-2">
@@ -171,133 +229,8 @@
         </div>
       </div>
 
-      <!-- 右侧：预览与详情 -->
+      <!-- 右侧：预览在上，详情在下 -->
       <div class="lg:col-span-2 space-y-6">
-        <n-card title="详情（当前所有设置）" class="rounded-16px shadow-sm">
-          <div class="detail-grid grid grid-cols-2 gap-x-6 gap-y-4 text-sm">
-            <div class="detail-item">
-              <span class="text-gray-500">皮肤预设</span>
-              <div class="mt-1 font-medium">
-                {{ skinColorLabel || '—' }}
-              </div>
-            </div>
-            <div class="detail-item">
-              <span class="text-gray-500">主色</span>
-              <div class="mt-1 flex items-center gap-2">
-                <span
-                  class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
-                  :style="{ backgroundColor: formData.primaryColor }"
-                />
-                <span class="font-mono font-medium">{{ formData.primaryColor }}</span>
-              </div>
-            </div>
-            <div class="detail-item">
-              <span class="text-gray-500">次色</span>
-              <div class="mt-1 flex items-center gap-2">
-                <span
-                  class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
-                  :style="{ backgroundColor: formData.secondaryColor }"
-                />
-                <span class="font-mono font-medium">{{ formData.secondaryColor }}</span>
-              </div>
-            </div>
-            <div class="detail-item">
-              <span class="text-gray-500">强调色</span>
-              <div class="mt-1 flex items-center gap-2">
-                <span
-                  class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
-                  :style="{ backgroundColor: formData.accentColor }"
-                />
-                <span class="font-mono font-medium">{{ formData.accentColor }}</span>
-              </div>
-            </div>
-            <div class="detail-item">
-              <span class="text-gray-500">第三色</span>
-              <div class="mt-1 flex items-center gap-2">
-                <span
-                  class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
-                  :style="{ backgroundColor: formData.tertiaryColor }"
-                />
-                <span class="font-mono font-medium">{{ formData.tertiaryColor }}</span>
-              </div>
-            </div>
-            <div class="detail-item">
-              <span class="text-gray-500">主文字色</span>
-              <div class="mt-1 flex items-center gap-2">
-                <span
-                  class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
-                  :style="{ backgroundColor: formData.textPrimaryColor }"
-                />
-                <span class="font-mono font-medium">{{ formData.textPrimaryColor }}</span>
-              </div>
-            </div>
-            <div class="detail-item">
-              <span class="text-gray-500">次文字色</span>
-              <div class="mt-1 flex items-center gap-2">
-                <span
-                  class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
-                  :style="{ backgroundColor: formData.textSecondaryColor }"
-                />
-                <span class="font-mono font-medium">{{ formData.textSecondaryColor }}</span>
-              </div>
-            </div>
-            <div class="detail-item">
-              <span class="text-gray-500">强调文字色</span>
-              <div class="mt-1 flex items-center gap-2">
-                <span
-                  class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
-                  :style="{ backgroundColor: formData.textAccentColor }"
-                />
-                <span class="font-mono font-medium">{{ formData.textAccentColor }}</span>
-              </div>
-            </div>
-            <div class="detail-item">
-              <span class="text-gray-500">按钮色</span>
-              <div class="mt-1 flex items-center gap-2">
-                <span
-                  class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
-                  :style="{ backgroundColor: formData.buttonColor }"
-                />
-                <span class="font-mono font-medium">{{ formData.buttonColor }}</span>
-              </div>
-            </div>
-            <div class="detail-item">
-              <span class="text-gray-500">大厅背景类型</span>
-              <div class="mt-1 font-medium">
-                {{ lobbyBackgroundTypeLabel }}
-              </div>
-            </div>
-            <div class="detail-item">
-              <span class="text-gray-500">背景颜色</span>
-              <div class="mt-1 flex items-center gap-2">
-                <span
-                  class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
-                  :style="{ backgroundColor: formData.lobbyBackgroundColor }"
-                />
-                <span class="font-mono font-medium">{{ formData.lobbyBackgroundColor }}</span>
-              </div>
-            </div>
-            <div class="detail-item">
-              <span class="text-gray-500">背景图片</span>
-              <div class="mt-1 font-medium truncate" :title="formData.lobbyBackgroundImageUrl || '—'">
-                {{ formData.lobbyBackgroundImageUrl ? '已设置' : '—' }}
-              </div>
-            </div>
-            <div class="detail-item">
-              <span class="text-gray-500">生效开始</span>
-              <div class="mt-1 font-medium">
-                {{ formatTime(formData.effectiveStartTime) || '—' }}
-              </div>
-            </div>
-            <div class="detail-item">
-              <span class="text-gray-500">生效结束</span>
-              <div class="mt-1 font-medium">
-                {{ formatTime(formData.effectiveEndTime) || '长期有效' }}
-              </div>
-            </div>
-          </div>
-        </n-card>
-
         <n-card title="模板与皮肤预览" class="rounded-16px shadow-sm">
           <div class="preview-toolbar mb-2 flex items-center justify-between">
             <span class="text-sm text-gray-600">预览</span>
@@ -422,6 +355,173 @@
             移动端以电话格式展示，主色/次色/强调色与大厅背景会实时反映在顶栏、横幅、游戏区与底部导航。
           </p>
         </n-card>
+
+        <n-card title="详情（当前所有设置）" class="rounded-16px shadow-sm">
+          <div class="detail-grid grid grid-cols-2 gap-x-6 gap-y-4 text-sm">
+            <div class="detail-item">
+              <span class="text-gray-500">皮肤预设</span>
+              <div class="mt-1 font-medium">
+                {{ skinColorLabel || '—' }}
+              </div>
+            </div>
+            <div class="detail-item">
+              <span class="text-gray-500">主色</span>
+              <div class="mt-1 flex items-center gap-2">
+                <span
+                  class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
+                  :style="{ backgroundColor: formData.primaryColor }"
+                />
+                <span class="font-mono font-medium">{{ formData.primaryColor }}</span>
+              </div>
+            </div>
+            <div class="detail-item">
+              <span class="text-gray-500">次色</span>
+              <div class="mt-1 flex items-center gap-2">
+                <span
+                  class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
+                  :style="{ backgroundColor: formData.secondaryColor }"
+                />
+                <span class="font-mono font-medium">{{ formData.secondaryColor }}</span>
+              </div>
+            </div>
+            <div class="detail-item">
+              <span class="text-gray-500">强调色</span>
+              <div class="mt-1 flex items-center gap-2">
+                <span
+                  class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
+                  :style="{ backgroundColor: formData.accentColor }"
+                />
+                <span class="font-mono font-medium">{{ formData.accentColor }}</span>
+              </div>
+            </div>
+            <div class="detail-item">
+              <span class="text-gray-500">第三色</span>
+              <div class="mt-1 flex items-center gap-2">
+                <span
+                  class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
+                  :style="{ backgroundColor: formData.tertiaryColor }"
+                />
+                <span class="font-mono font-medium">{{ formData.tertiaryColor }}</span>
+              </div>
+            </div>
+            <div class="detail-item">
+              <span class="text-gray-500">主文字色</span>
+              <div class="mt-1 flex items-center gap-2">
+                <span
+                  class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
+                  :style="{ backgroundColor: formData.textPrimaryColor }"
+                />
+                <span class="font-mono font-medium">{{ formData.textPrimaryColor }}</span>
+              </div>
+            </div>
+            <div class="detail-item">
+              <span class="text-gray-500">次文字色</span>
+              <div class="mt-1 flex items-center gap-2">
+                <span
+                  class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
+                  :style="{ backgroundColor: formData.textSecondaryColor }"
+                />
+                <span class="font-mono font-medium">{{ formData.textSecondaryColor }}</span>
+              </div>
+            </div>
+            <div class="detail-item">
+              <span class="text-gray-500">强调文字色</span>
+              <div class="mt-1 flex items-center gap-2">
+                <span
+                  class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
+                  :style="{ backgroundColor: formData.textAccentColor }"
+                />
+                <span class="font-mono font-medium">{{ formData.textAccentColor }}</span>
+              </div>
+            </div>
+            <div class="detail-item">
+              <span class="text-gray-500">按钮色</span>
+              <div class="mt-1 flex items-center gap-2">
+                <span
+                  class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
+                  :style="{ backgroundColor: formData.buttonColor }"
+                />
+                <span class="font-mono font-medium">{{ formData.buttonColor }}</span>
+              </div>
+            </div>
+            <div class="detail-item">
+              <span class="text-gray-500">大厅背景类型</span>
+              <div class="mt-1 font-medium">
+                {{ lobbyBackgroundTypeLabel }}
+              </div>
+            </div>
+            <div class="detail-item">
+              <span class="text-gray-500">背景颜色</span>
+              <div class="mt-1 flex items-center gap-2">
+                <span
+                  class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
+                  :style="{ backgroundColor: formData.lobbyBackgroundColor }"
+                />
+                <span class="font-mono font-medium">{{ formData.lobbyBackgroundColor }}</span>
+              </div>
+            </div>
+            <div class="detail-item">
+              <span class="text-gray-500">背景图片</span>
+              <div class="mt-1 font-medium truncate" :title="formData.lobbyBackgroundImageUrl || '—'">
+                {{ formData.lobbyBackgroundImageUrl ? '已设置' : '—' }}
+              </div>
+            </div>
+            <div class="detail-item">
+              <span class="text-gray-500">生效开始</span>
+              <div class="mt-1 font-medium">
+                {{ formatTime(formData.effectiveStartTime) || '—' }}
+              </div>
+            </div>
+            <div class="detail-item">
+              <span class="text-gray-500">生效结束</span>
+              <div class="mt-1 font-medium">
+                {{ formatTime(formData.effectiveEndTime) || '长期有效' }}
+              </div>
+            </div>
+            <!-- 基本信息 -->
+            <div class="detail-item col-span-2">
+              <span class="section-label text-base font-medium text-gray-700">基本信息</span>
+            </div>
+            <div class="detail-item">
+              <span class="text-gray-500">品牌ID</span>
+              <div class="mt-1 font-medium">{{ formData.brandId || '—' }}</div>
+            </div>
+            <div class="detail-item">
+              <span class="text-gray-500">品牌编号</span>
+              <div class="mt-1 font-medium">{{ formData.brandCode || '—' }}</div>
+            </div>
+            <div class="detail-item">
+              <span class="text-gray-500">品牌名称</span>
+              <div class="mt-1 font-medium">{{ formData.brandName || '—' }}</div>
+            </div>
+            <!-- 语言设置 -->
+            <div class="detail-item col-span-2">
+              <span class="section-label text-base font-medium text-gray-700">语言设置</span>
+            </div>
+            <div class="detail-item col-span-2">
+              <span class="text-gray-500">已选语言</span>
+              <div class="mt-1 font-medium">
+                {{ clientLanguagesDetailText || '—' }}
+              </div>
+            </div>
+            <!-- 其他设置 -->
+            <div class="detail-item col-span-2">
+              <span class="section-label text-base font-medium text-gray-700">其他设置</span>
+            </div>
+            <div class="detail-item">
+              <span class="text-gray-500">请求认证模式</span>
+              <div class="mt-1 font-medium">{{ formData.authMode || '—' }}</div>
+            </div>
+            <div class="detail-item">
+              <span class="text-gray-500">APP配置</span>
+              <div class="mt-1 font-medium">{{ formData.appSetting || '—' }}</div>
+            </div>
+            <div class="detail-item">
+              <span class="text-gray-500">备注信息</span>
+              <div class="mt-1 font-medium break-words">{{ formData.backendRemark || '—' }}</div>
+            </div>
+          </div>
+        </n-card>
       </div>
     </div>
   </Page>
@@ -433,7 +533,10 @@ import {
   NCard,
   NForm,
   NFormItem,
+  NInput,
   NSelect,
+  NCheckbox,
+  NCheckboxGroup,
   NRadioGroup,
   NRadio,
   NColorPicker,
@@ -454,6 +557,7 @@ import type { ColorPalette } from '#/utils/colorUtils';
 import { getGameListApi } from '#/api/game/subgame';
 import type { GameItem } from '#/api/game/subgame';
 import { getBannerList } from '#/api/lobbyBanner';
+import type { ClientLanguagesMap as ApiClientLanguagesMap } from '#/api/brand/brandSkin';
 import {
   getBrandSkinConfigApi,
   saveBrandSkinConfigApi,
@@ -473,6 +577,14 @@ const previewGames = ref<GameItem[]>([]);
 /** 预览区使用的真实 Banner 图（来自大厅 Banner 接口，取第一条启用） */
 const previewBannerUrl = ref<string>('');
 
+/** 客户端语言按端拆分 */
+interface ClientLanguagesMap {
+  desktop: string[];
+  h5: string[];
+  ios: string[];
+  android: string[];
+}
+
 interface FormModel {
   skinColorId: string | null;
   primaryColor: string;
@@ -488,6 +600,13 @@ interface FormModel {
   lobbyBackgroundImageUrl: string;
   effectiveStartTime: number | null;
   effectiveEndTime: number | null;
+  brandId: string;
+  brandCode: string;
+  brandName: string;
+  clientLanguages: ClientLanguagesMap;
+  authMode: string;
+  appSetting: string;
+  backendRemark: string;
 }
 
 /** 默认使用 Bvlgari蓝黑 '15' 色板 */
@@ -506,6 +625,18 @@ const defaultFormData: FormModel = {
   lobbyBackgroundImageUrl: '',
   effectiveStartTime: null,
   effectiveEndTime: null,
+  brandId: '',
+  brandCode: '',
+  brandName: '',
+  clientLanguages: {
+    desktop: ['zh-CN'],
+    h5: ['zh-CN'],
+    ios: ['zh-CN'],
+    android: ['zh-CN'],
+  },
+  authMode: '系统默认认证',
+  appSetting: '',
+  backendRemark: '',
 };
 
 const formData = ref<FormModel>({ ...defaultFormData });
@@ -525,7 +656,31 @@ const formRules: FormRules = {
   lobbyBackgroundImageUrl: [],
   effectiveStartTime: [],
   effectiveEndTime: [],
+  brandId: [{ required: true, message: '品牌ID不能为空', trigger: 'blur' }],
+  brandCode: [{ required: true, message: '品牌编号不能为空', trigger: 'blur' }],
+  brandName: [{ required: true, message: '品牌名称不能为空', trigger: 'blur' }],
+  authMode: [{ required: true, message: '请选择认证模式', trigger: ['blur', 'change'] }],
+  appSetting: [],
+  backendRemark: [],
 };
+
+const clientTypes = [{ key: 'desktop', label: '普通客户端' }];
+const availableLanguages = [
+  { value: 'zh-CN', label: '简体中文' },
+  { value: 'pt-BR', label: '葡萄牙语' },
+  { value: 'en-US', label: '英文' },
+  { value: 'zh-TW', label: '繁体中文' },
+  { value: 'ko-KR', label: '韩语' },
+  { value: 'ja-JP', label: '日语' },
+  { value: 'th-TH', label: '泰语' },
+  { value: 'vi-VN', label: '越南语' },
+];
+const authModeOptions = [
+  { label: '系统默认认证', value: '系统默认认证' },
+  { label: '双重认证', value: '双重认证' },
+  { label: '生物识别认证', value: '生物识别认证' },
+  { label: '短信验证', value: '短信验证' },
+];
 
 const { skinColorOptions, getSkinColorLabel } = useSkinColorOptions();
 
@@ -563,6 +718,23 @@ const lobbyBackgroundTypeLabel = computed(() => {
       ? '自定义图片'
       : '自定义图片（未设置）';
   return '—';
+});
+
+/** 详情区展示：已选语言汇总文本 */
+const clientLanguagesDetailText = computed(() => {
+  const map = formData.value.clientLanguages;
+  if (!map) return '—';
+  const all = [
+    ...(map.desktop ?? []),
+    ...(map.h5 ?? []),
+    ...(map.ios ?? []),
+    ...(map.android ?? []),
+  ];
+  const unique = [...new Set(all)];
+  if (unique.length === 0) return '—';
+  return unique
+    .map((code) => availableLanguages.find((l) => l.value === code)?.label ?? code)
+    .join('、');
 });
 
 const lobbyPreviewStyle = computed(() => {
@@ -611,6 +783,16 @@ function formatTime(timestamp: number | null): string {
   return d.toLocaleString('zh-CN');
 }
 
+function flattenClientLanguages(map: ClientLanguagesMap): string[] {
+  const all = [
+    ...(map.desktop ?? []),
+    ...(map.h5 ?? []),
+    ...(map.ios ?? []),
+    ...(map.android ?? []),
+  ];
+  return [...new Set(all)];
+}
+
 function handleSave() {
   formRef.value?.validate(async (err) => {
     if (err) return;
@@ -631,6 +813,13 @@ function handleSave() {
         lobbyBackgroundImageUrl: formData.value.lobbyBackgroundImageUrl,
         effectiveStartTime: formData.value.effectiveStartTime,
         effectiveEndTime: formData.value.effectiveEndTime,
+        brandId: formData.value.brandId || undefined,
+        brandCode: formData.value.brandCode || undefined,
+        brandName: formData.value.brandName || undefined,
+        clientLanguages: flattenClientLanguages(formData.value.clientLanguages),
+        authMode: formData.value.authMode || undefined,
+        appSetting: formData.value.appSetting || undefined,
+        backendRemark: formData.value.backendRemark || undefined,
       });
       message.success('配置已保存，前端在请求并应用品牌皮肤配置后会更新展示');
     } catch (e) {
@@ -644,6 +833,26 @@ function handleSave() {
 function handleReset() {
   formData.value = { ...defaultFormData };
   message.info('已重置为默认');
+}
+
+function normalizeClientLanguages(
+  raw: string[] | ApiClientLanguagesMap | undefined,
+): ClientLanguagesMap {
+  if (!raw) return defaultFormData.clientLanguages;
+  if (Array.isArray(raw)) {
+    return {
+      desktop: raw.length ? [...raw] : ['zh-CN'],
+      h5: raw.length ? [...raw] : ['zh-CN'],
+      ios: raw.length ? [...raw] : ['zh-CN'],
+      android: raw.length ? [...raw] : ['zh-CN'],
+    };
+  }
+  return {
+    desktop: raw.desktop ?? ['zh-CN'],
+    h5: raw.h5 ?? ['zh-CN'],
+    ios: raw.ios ?? ['zh-CN'],
+    android: raw.android ?? ['zh-CN'],
+  };
 }
 
 onMounted(async () => {
@@ -664,6 +873,13 @@ onMounted(async () => {
       formData.value.lobbyBackgroundImageUrl = saved.lobbyBackgroundImageUrl ?? formData.value.lobbyBackgroundImageUrl;
       formData.value.effectiveStartTime = saved.effectiveStartTime ?? formData.value.effectiveStartTime;
       formData.value.effectiveEndTime = saved.effectiveEndTime ?? formData.value.effectiveEndTime;
+      if (saved.brandId != null) formData.value.brandId = saved.brandId;
+      if (saved.brandCode != null) formData.value.brandCode = saved.brandCode;
+      if (saved.brandName != null) formData.value.brandName = saved.brandName;
+      formData.value.clientLanguages = normalizeClientLanguages(saved.clientLanguages);
+      if (saved.authMode != null) formData.value.authMode = saved.authMode;
+      if (saved.appSetting != null) formData.value.appSetting = saved.appSetting;
+      if (saved.backendRemark != null) formData.value.backendRemark = saved.backendRemark;
     }
   } catch {
     // 接口未实现或失败时使用默认

@@ -5,6 +5,14 @@ import { requestClient } from '#/api/request';
  * 后端需提供 GET/PUT 或 GET/POST 接口持久化；
  * 前端（用户端）需在首屏请求此配置并注入 CSS 变量或 theme，界面才会更新。
  */
+/** 客户端语言配置（按端拆分） */
+export interface ClientLanguagesMap {
+  desktop?: string[];
+  h5?: string[];
+  ios?: string[];
+  android?: string[];
+}
+
 export interface BrandSkinConfig {
   skinColorId?: string | null;
   primaryColor: string;
@@ -20,6 +28,16 @@ export interface BrandSkinConfig {
   lobbyBackgroundImageUrl?: string;
   effectiveStartTime?: number | null;
   effectiveEndTime?: number | null;
+  /** 基本信息 */
+  brandId?: string;
+  brandCode?: string;
+  brandName?: string;
+  /** 语言设置（可为一维数组或按端拆分） */
+  clientLanguages?: string[] | ClientLanguagesMap;
+  /** 其他设置 */
+  authMode?: string;
+  appSetting?: string;
+  backendRemark?: string;
 }
 
 /**

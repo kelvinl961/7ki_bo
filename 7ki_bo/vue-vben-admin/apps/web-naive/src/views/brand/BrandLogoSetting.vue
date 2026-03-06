@@ -312,6 +312,7 @@
     <SkinLangEditor
       v-model:show="showSkinLangModal"
       :editing-item="editingSkinLangItem"
+      :detail-mode="skinLangDetailMode"
       @submit="handleSkinLangSubmit"
     />
 
@@ -703,6 +704,8 @@ const skinLangCurrentPage = ref(1);
 const skinLangCurrentPageSize = ref(10);
 const showSkinLangModal = ref(false);
 const editingSkinLangItem = ref<BrandSkinLangConfig | null>(null);
+/** 皮肤语言配置弹窗是否为详情模式（只读+预览，仅关闭按钮） */
+const skinLangDetailMode = ref(false);
 
 // Skin Language Filters
 const skinLangFilters = reactive({
@@ -1489,6 +1492,7 @@ const resetSkinLangFilter = () => {
 };
 
 const handleSkinLangCreate = () => {
+  skinLangDetailMode.value = false;
   editingSkinLangItem.value = null;
   showSkinLangModal.value = true;
 };
@@ -1498,15 +1502,21 @@ const handleSkinLangRefresh = () => {
 };
 
 const handleSkinLangViewDetail = (row: BrandSkinLangConfig) => {
-  // Open detail view for skin lang config
-  console.log('View skin lang detail:', row);
-  // You can implement a detail modal here if needed
+  editingSkinLangItem.value = { ...row };
+  skinLangDetailMode.value = true;
+  showSkinLangModal.value = true;
 };
 
 const handleSkinLangEdit = (row: BrandSkinLangConfig) => {
+  skinLangDetailMode.value = false;
   editingSkinLangItem.value = { ...row };
   showSkinLangModal.value = true;
 };
+
+// 皮肤语言弹窗关闭时重置详情模式
+watch(showSkinLangModal, (visible) => {
+  if (!visible) skinLangDetailMode.value = false;
+});
 
 const handleSkinLangSubmit = async (data: BrandSkinLangCreateRequest) => {
   try {
@@ -1522,6 +1532,7 @@ const handleSkinLangSubmit = async (data: BrandSkinLangCreateRequest) => {
     
     showSkinLangModal.value = false;
     editingSkinLangItem.value = null;
+    skinLangDetailMode.value = false;
     loadSkinLangData(); // Refresh the data
   } catch (error) {
     console.error('Error submitting skin lang config:', error);

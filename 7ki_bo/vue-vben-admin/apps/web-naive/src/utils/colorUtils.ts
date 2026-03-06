@@ -555,7 +555,7 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
  */
 export const brandColorMap: Record<string, string> = {
   '15': '#0e131b', // Bvlgari蓝黑
-  '1687419125085335554': '#055F67', // Tom Ford绿
+  '1687419125085335554': '#10B981', // Tom Ford绿
   '1687419804829954050': '#F59E0B', // Ferrari黄
   '1687423728032313346': '#DC2626', // Armani红
   '1687424061300416513': '#3B82F6', // Corum蓝

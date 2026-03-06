@@ -22,6 +22,15 @@ const routes: RouteRecordRaw[] = [
       },
       {
         meta: {
+          title: '品牌皮肤设置',
+        },
+        name: 'BrandSkinSetting',
+        path: '/operateManager/brandSkinSetting',
+        // @ts-ignore
+        component: () => import('../../../views/brand/BrandSkinSetting.vue'),
+      },
+      {
+        meta: {
           title: '域名管理',
         },
         name: 'DomainManagement',

@@ -2,7 +2,7 @@
   <n-modal
     v-model:show="visible"
     preset="dialog"
-    :title="editingItem ? '编辑皮肤语言配置' : '新增皮肤语言配置'"
+    :title="computedModalTitle"
     style="width: 1200px; height: 800px"
     @after-leave="handleClose"
   >
@@ -16,6 +16,7 @@
             :rules="formRules"
             label-placement="left"
             label-width="120px"
+            require-mark-placement="right-hanging"
             class="editor-form"
           >
             <!-- Basic Info Section -->
@@ -40,7 +41,7 @@
               <h4 class="section-title">模板配置</h4>
 
               <n-form-item label="模板类型" path="templateType">
-                <n-radio-group v-model:value="formModel.templateType">
+                <n-radio-group v-model:value="formModel.templateType" :disabled="detailMode">
                   <n-radio value="main-site">主站</n-radio>
                   <n-radio value="skin-template">皮肤模板</n-radio>
                 </n-radio-group>
@@ -51,6 +52,7 @@
                   v-model:value="formModel.skinStyle"
                   :options="skinStyleOptions"
                   placeholder="选择皮肤风格"
+                  :disabled="detailMode"
                 />
               </n-form-item>
             </div>
@@ -60,7 +62,7 @@
               <h4 class="section-title">品牌图标</h4>
 
               <n-form-item label="玩法颜色" path="gameColor">
-                <n-radio-group v-model:value="formModel.gameColor">
+                <n-radio-group v-model:value="formModel.gameColor" :disabled="detailMode">
                   <n-radio value="有底色">有底色</n-radio>
                   <n-radio value="无底色">无底色</n-radio>
                 </n-radio-group>
@@ -70,6 +72,7 @@
                 <n-radio-group
                   v-model:value="formModel.skinColor"
                   class="skin-color-group"
+                  :disabled="detailMode"
                 >
                   <div class="skin-color-grid">
                     <n-radio
@@ -97,6 +100,7 @@
                   <h5 class="client-type-title">{{ clientType.label }}</h5>
                   <n-checkbox-group
                     v-model:value="formModel.clientLanguages[clientType.key]"
+                    :disabled="detailMode"
                   >
                     <div class="language-checkboxes">
                       <n-checkbox
@@ -120,6 +124,7 @@
                   v-model:value="formModel.authMode"
                   :options="authModeOptions"
                   placeholder="选择认证模式"
+                  :disabled="detailMode"
                 />
               </n-form-item>
 
@@ -127,6 +132,7 @@
                 <n-input
                   v-model:value="formModel.appSetting"
                   placeholder="输入APP配置"
+                  :readonly="detailMode"
                 />
               </n-form-item>
 
@@ -136,6 +142,7 @@
                   type="textarea"
                   :rows="3"
                   placeholder="输入备注信息"
+                  :readonly="detailMode"
                 />
               </n-form-item>
             </div>
@@ -216,10 +223,15 @@
 
     <template #action>
       <div class="dialog-actions">
-        <n-button @click="handleCancel">取消</n-button>
-        <n-button type="primary" @click="handleSubmit" :loading="submitting">
-          {{ editingItem ? '保存修改' : '创建配置' }}
-        </n-button>
+        <template v-if="detailMode">
+          <n-button type="primary" @click="handleCancel">关闭</n-button>
+        </template>
+        <template v-else>
+          <n-button @click="handleCancel">取消</n-button>
+          <n-button type="primary" @click="handleSubmit" :loading="submitting">
+            {{ editingItem ? '保存修改' : '创建配置' }}
+          </n-button>
+        </template>
       </div>
     </template>
   </n-modal>
@@ -262,6 +274,8 @@ import type {
 interface Props {
   show: boolean;
   editingItem?: BrandSkinLangConfig | null;
+  /** 详情模式：只读展示 + 预览，仅显示关闭按钮 */
+  detailMode?: boolean;
 }
 
 interface Emits {
@@ -271,6 +285,7 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   editingItem: null,
+  detailMode: false,
 });
 
 const emit = defineEmits<Emits>();
@@ -493,6 +508,11 @@ const formRules: FormRules = {
 };
 
 // Computed
+const computedModalTitle = computed(() => {
+  if (props.detailMode) return '皮肤语言配置详情';
+  return props.editingItem ? '编辑皮肤语言配置' : '新增皮肤语言配置';
+});
+
 const nextUpdateTime = computed(() => {
   const now = new Date();
   now.setHours(now.getHours() + 1);

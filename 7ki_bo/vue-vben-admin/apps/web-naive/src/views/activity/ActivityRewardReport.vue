@@ -129,6 +129,7 @@
             :loading="loading"
             :pagination="paginationReactive"
             :scroll-x="tableScrollX"
+            row-key="orderNo"
             remote
             size="small"
             class="reward-report-table"
@@ -311,6 +312,7 @@ const filters = ref({
 const benefitSourceOptions = [
   { label: '活动', value: '活动' },
   { label: '任务', value: '任务' },
+  { label: '新人福利', value: '新人福利' },
   { label: '返水', value: '返水' },
   { label: '返佣', value: '返佣' },
   { label: 'VIP奖励', value: 'VIP奖励' },
@@ -378,9 +380,15 @@ function handlePageSizeChange(pageSize: number) {
 }
 
 function openUserDetail(row: RewardHistoryItem) {
-  const id = row.memberId === undefined || row.memberId === null ? 0 : Number(row.memberId);
-  if (!id) return;
-  currentUserIdForDetail.value = id;
+  const internalId = row.id != null ? Number(row.id) : 0;
+  if (!internalId) return;
+  currentUserIdForDetail.value = internalId;
+  showUserDetailModal.value = true;
+}
+
+function openUpperAgentDetail(upperAgentId: number) {
+  if (!upperAgentId) return;
+  currentUserIdForDetail.value = upperAgentId;
   showUserDetailModal.value = true;
 }
 
@@ -391,6 +399,8 @@ const detailFieldMap: Record<string, string> = {
   member_currency: 'memberCurrency',
   member_id: 'memberId',
   member_account: 'memberAccount',
+  upper_agent_account: 'upperAgentAccount',
+  upper_agent_user_id: 'upperAgentUserID',
   benefit_source: 'benefitSource',
   source_type: 'sourceType',
   collection_method: 'collectionMethod',
@@ -453,7 +463,7 @@ const columns: DataTableColumns<RewardHistoryItem> = [
     width: 140,
     ellipsis: { tooltip: true },
     render: (row) =>
-      row.memberId !== undefined && row.memberId !== null
+      row.id != null && Number(row.id) !== 0
         ? h(
             'a',
             {
@@ -466,7 +476,43 @@ const columns: DataTableColumns<RewardHistoryItem> = [
             },
             (row.memberAccount ?? row.memberId ?? '-') as string,
           )
-        : (row.memberAccount ?? '-'),
+        : (row.memberAccount ?? row.memberId ?? '-'),
+  },
+  {
+    title: '上级代理',
+    key: 'upperAgent',
+    width: 180,
+    ellipsis: { tooltip: true },
+    render(row) {
+      const account = row.upperAgentAccount ?? (row as any).upper_agent_account;
+      const userID = row.upperAgentUserID ?? (row as any).upper_agent_user_id;
+      if (!account && !userID) return '-';
+      const agentId = Number(row.upperAgentId ?? (row as any).upper_agent_id ?? 0);
+      const canOpen = agentId > 0;
+      const linkStyle = { color: '#2080f0', cursor: 'pointer', textDecoration: 'none' };
+      const onClick = (e: Event) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (canOpen) {
+          openUpperAgentDetail(agentId);
+        } else {
+          message.info('上级代理详情暂不可用（需后端返回 upper_agent_id）');
+        }
+      };
+      return h(
+        'a',
+        {
+          class: 'link-account',
+          style: { ...linkStyle, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '2px' },
+          title: canOpen ? '点击查看上级代理详情' : '点击提示',
+          onClick,
+        },
+        [
+          account ? h('span', {}, account) : null,
+          userID ? h('span', { style: 'font-size: 12px;' }, `(${userID})`) : null,
+        ].filter(Boolean),
+      );
+    },
   },
   { title: '优惠来源', key: 'benefitSource', width: 100, ellipsis: { tooltip: true } },
   {
@@ -512,8 +558,7 @@ const columns: DataTableColumns<RewardHistoryItem> = [
   },
 ];
 
-/** 表格横向滚动宽度（12 列，含操作） */
-const tableScrollX = 1505;
+const tableScrollX = 1690;
 
 async function fetchData() {
   loading.value = true;
@@ -576,6 +621,9 @@ async function fetchData() {
       member_currency: 'memberCurrency',
       member_id: 'memberId',
       member_account: 'memberAccount',
+      upper_agent_account: 'upperAgentAccount',
+      upper_agent_user_id: 'upperAgentUserID',
+      upper_agent_id: 'upperAgentId',
       benefit_source: 'benefitSource',
       source_type: 'sourceType',
       collection_method: 'collectionMethod',

@@ -564,12 +564,12 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
   // Rolex绿
   '1822080907778543618': {
     primary: '#161616',
-    secondary: '#1e1e1e',
-    tertiary: '#182434',
+    secondary: '#000000',
+    tertiary: '#1e1e1e',
     accent: '#22C55E',
-    textPrimary: '#1F2937',
-    textSecondary: '#6B7280',
-    textAccent: '#15803D',
+    textPrimary: '#ffffff',
+    textSecondary: '#78df2c',
+    textAccent: '#000000',
     buttonColor: '#78df2c',
     borderColor: '#374151',
   },
@@ -598,6 +598,18 @@ export const brandColorPalettes: Record<string, ColorPalette> = {
     borderColor: '#374151',
   },
 };
+
+export const ROLEX_GREEN_SKIN_ID = '1822080907778543618';
+
+export const defaultBackgroundImageBySkinId: Record<string, string> = {
+  [ROLEX_GREEN_SKIN_ID]:
+    'https://mainbucket000-broker-prod.s3.sa-east-1.amazonaws.com/siteadmin/skin/lobby_asset/2-1-89/common/common/bg_pattern_tile.avif',
+};
+
+export function getDefaultBackgroundImage(skinColorId: string): string | undefined {
+  const url = defaultBackgroundImageBySkinId[skinColorId];
+  return url && url.trim() ? url : undefined;
+}
 
 /**
  * Brand color definitions with their base colors (kept for backward compatibility)

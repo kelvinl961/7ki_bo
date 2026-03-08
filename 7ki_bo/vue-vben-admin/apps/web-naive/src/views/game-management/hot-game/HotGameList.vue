@@ -456,10 +456,9 @@ const resetFilter = () => {
 
 // 刷新
 const handleRefresh = () => {
-  loadHotGameList();
+  loadHotGameList(true);
 };
 
-// 移除热门游戏（设置isHot1为false）
 const handleRemove = async (record: GameItem) => {
   try {
     await toggleGameApi(Number(record.id), { field: 'isHot1', value: false });
@@ -467,13 +466,14 @@ const handleRemove = async (record: GameItem) => {
       content: '已从热门中移除',
       duration: 3000,
     });
-    loadHotGameList();
+    loadHotGameList(true);
   } catch (error: any) {
     console.error('移除失败:', error);
     notification.error({
       content: error?.message || '移除失败',
       duration: 3000,
     });
+    loadHotGameList(true);
   }
 };
 
@@ -492,7 +492,7 @@ const handleBulkRemove = async (selectedRows: GameItem[]) => {
     );
     message.success(`成功移除 ${selectedRows.length} 个热门游戏`);
     checkedRowKeys.value = [];
-    loadHotGameList();
+    loadHotGameList(true);
   } catch (error: any) {
     console.error('批量移除失败:', error);
     message.error(error?.message || '批量移除失败');
@@ -571,18 +571,14 @@ const handleSaveSortOrder = async (row: GameItem) => {
 
     message.success(`排序已更新: ${oldSortOrder} → ${newSortOrder}`);
 
-    // ✅ FIX: Reload immediately after a short delay to ensure cache is cleared and data is fresh
-    // This ensures the UI reflects the latest sortOrder from the database
-    setTimeout(() => {
-      console.log(`🔄 [HOT_GAME] Reloading list to reflect updated sortOrder`);
-      loadHotGameList();
-    }, 300);
+    console.log(`🔄 [HOT_GAME] Reloading list to reflect updated sortOrder`);
+    loadHotGameList(true);
   } catch (error: any) {
     console.error('❌ [HOT_GAME] 更新排序失败:', error);
     message.error(error?.message || '更新排序失败');
 
     // 如果API失败，恢复原值并重新加载
-    loadHotGameList();
+    loadHotGameList(true);
   }
 };
 
@@ -602,7 +598,7 @@ const handleToggleRecommended = async (row: GameItem, value: boolean) => {
     console.error('切换推荐状态失败:', error);
     message.error(error?.message || '切换推荐状态失败');
     // 刷新以恢复原状态
-    loadHotGameList();
+    loadHotGameList(true);
   }
 };
 
@@ -634,8 +630,7 @@ const selectAll = () => {
   message.info('已全选');
 };
 
-// 加载热门游戏列表
-const loadHotGameList = async () => {
+const loadHotGameList = async (forceRefresh = false) => {
   try {
     loading.value = true;
     const params: GameListParams = {
@@ -647,6 +642,7 @@ const loadHotGameList = async () => {
       isEnabled: filterForm.isEnabled,
       isHot1: true, // 只显示热门游戏
     };
+    if (forceRefresh) params.forceRefresh = true;
 
     // ✅ 添加排序参数 - 默认按sortOrder升序
     if (sortState.value) {

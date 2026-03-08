@@ -60,6 +60,7 @@ export interface GameListParams {
   isHot2?: boolean;
   isRecommended?: boolean;
   search?: string;
+  forceRefresh?: boolean;
 }
 
 export interface GameListResponse {

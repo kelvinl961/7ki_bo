@@ -264,7 +264,7 @@ import {
   getSkinColorRGB,
   getSkinColorValues,
 } from '#/composables/useSkinPreview';
-import { getColorPaletteById } from '../../../utils/colorUtils';
+import { getColorPaletteById, getDefaultBackgroundImage } from '../../../utils/colorUtils';
 import { notification } from '#/adapter/naive';
 import type {
   BrandSkinLangConfig,
@@ -331,6 +331,7 @@ const formModel = reactive<
   brandIcon: 'rolex',
   operator: '当前用户',
   updatedAt: new Date().toISOString(),
+  backgroundImage: '',
 });
 
 // Preview setup - mobile only
@@ -531,6 +532,19 @@ watch(
   },
   { immediate: true },
 );
+
+// When user selects a skin, prefill default background image for that skin if we have one and field is empty
+watch(
+  () => formModel.skinColor,
+  (skinColor) => {
+    if (!skinColor) return;
+    const defaultBg = getDefaultBackgroundImage(skinColor);
+    if (defaultBg && !formModel.backgroundImage) {
+      formModel.backgroundImage = defaultBg;
+    }
+  },
+);
+
 // Watch for editing item changes
 watch(
   () => props.editingItem,
@@ -553,6 +567,10 @@ watch(
         skinColorHex:
           newItem.skinColorHex ||
           getSkinColorValues(newItem.skinColor || '15').hex,
+        backgroundImage:
+          newItem.backgroundImage ??
+          getDefaultBackgroundImage(newItem.skinColor || '') ??
+          '',
       });
     } else {
       // Reset form for new item
@@ -581,6 +599,7 @@ watch(
         brandIcon: 'rolex',
         operator: '当前用户',
         updatedAt: new Date().toISOString(),
+        backgroundImage: '',
       });
     }
   },
@@ -670,6 +689,11 @@ const handleSubmit = async () => {
       textSecondary: palette.textSecondary,
       textAccent: palette.textAccent,
       buttonColor: palette.buttonColor,
+      // Persist background image (use default for Rolex绿 when empty)
+      backgroundImage:
+        formModel.backgroundImage ||
+        getDefaultBackgroundImage(formModel.skinColor || '') ||
+        undefined,
     };
 
     await nextTick();

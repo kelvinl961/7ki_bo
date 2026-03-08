@@ -14,22 +14,24 @@ export interface RewardHistoryParams {
   pageSize?: number;
 }
 
-/** 优惠明细单条记录 - 与接口返回字段一致 */
 export interface RewardHistoryItem {
   acquisitionTime?: string;
   benefitName?: string;
   memberCurrency?: string;
-  memberId?: number;
+  id?: number;
+  memberId?: string | number;
   memberAccount?: string;
+  upperAgentAccount?: string;
+  upperAgentUserID?: string;
+  upperAgentId?: number;
   benefitSource?: string;
   sourceType?: string;
   collectionMethod?: string;
   rewardType?: string;
   grantedReward?: number;
-  id?: string;
   orderNo?: string;
+  rawId?: string;
   createdAt?: string;
-  /** 详情接口可能返回 */
   activityId?: string | number;
   activityName?: string;
   rewardCondition?: string;

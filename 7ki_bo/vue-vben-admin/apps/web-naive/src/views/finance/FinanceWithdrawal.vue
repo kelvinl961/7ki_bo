@@ -283,21 +283,310 @@
       </template>
     </SmartDataGrid>
 
-    <!-- 批量操作 - 填写原因 -->
+    <!-- 批量强制取消 / 批量备注 - 表格弹窗（与照片一致） -->
     <n-modal
       v-model:show="batchReasonModal.show"
-      preset="dialog"
-      title="操作说明"
-      positive-text="确认"
-      negative-text="取消"
-      @positive-click="submitBatchReasonModal"
+      preset="card"
+      class="batch-reason-modal-card"
+      :title="
+        batchReasonModal.actionKey === 'batch-force-cancel'
+          ? '批量强制取消'
+          : '批量备注'
+      "
+      :style="{ width: 'min(95vw, 1200px)' }"
+      :closable="true"
+      :mask-closable="false"
     >
-      <n-input
-        v-model:value="batchReasonModal.reason"
-        type="textarea"
-        placeholder="请输入操作说明（必填）"
-        :autosize="{ minRows: 3 }"
-      />
+      <div class="batch-reason-modal">
+        <!-- 批量强制取消：提示与警告 -->
+        <template v-if="batchReasonModal.actionKey === 'batch-force-cancel'">
+          <div
+            class="mb-4 flex items-start gap-2 rounded-lg border border-orange-200 bg-orange-50 p-4"
+          >
+            <n-icon size="20" class="text-orange-500 shrink-0 mt-0.5">
+              <WarningOutline />
+            </n-icon>
+            <div>
+              <p class="font-medium text-orange-800">
+                确认批量强制取消，选中的{{ batchReasonModal.rows?.length ?? 0 }}个订单？
+              </p>
+              <p class="mt-1 text-sm text-red-600">
+                请到三方支付后台确认这笔订单的真实状态，请谨慎操作避免损失，取消后提现金额将返还给会员！
+              </p>
+            </div>
+          </div>
+        </template>
+        <!-- 批量备注：已选条数 -->
+        <template v-else>
+          <p class="mb-4 text-gray-600">
+            已选择{{ batchReasonModal.rows?.length ?? 0 }}条数据
+          </p>
+        </template>
+
+        <!-- 表格区域 -->
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse text-sm">
+            <thead>
+              <tr class="border-b bg-gray-50">
+                <th class="whitespace-nowrap px-3 py-2 text-left font-medium">
+                  订单号
+                </th>
+                <th class="whitespace-nowrap px-3 py-2 text-left font-medium">
+                  品牌名称(ID)
+                </th>
+                <th class="whitespace-nowrap px-3 py-2 text-left font-medium">
+                  会员ID
+                </th>
+                <th class="whitespace-nowrap px-3 py-2 text-left font-medium">
+                  会员账号
+                </th>
+                <th class="whitespace-nowrap px-3 py-2 text-left font-medium">
+                  会员币种
+                </th>
+                <th class="whitespace-nowrap px-3 py-2 text-left font-medium">
+                  提现金额
+                </th>
+                <th class="min-w-[180px] px-3 py-2 text-left font-medium">
+                  <div
+                    v-if="batchReasonModal.actionKey === 'batch-force-cancel'"
+                    class="flex flex-wrap items-center justify-between gap-2"
+                  >
+                    <span>取消原因(前台展示)</span>
+                    <div class="flex items-center gap-2">
+                      <span class="text-xs text-gray-500">最多1000字</span>
+                      <span class="text-xs text-gray-500">此内容可作为</span>
+                      <n-input
+                        v-model:value="batchBulkFrontend"
+                        placeholder="输入后点覆盖"
+                        size="small"
+                        class="w-24"
+                        :maxlength="1000"
+                      />
+                      <n-button type="primary" size="tiny" @click="applyBulkBatch('frontend')">
+                        覆盖
+                      </n-button>
+                    </div>
+                  </div>
+                  <div v-else class="flex flex-wrap items-center justify-between gap-2">
+                    <span>前台备注</span>
+                    <div class="flex items-center gap-2">
+                      <span class="text-xs text-gray-500">最多1000字</span>
+                      <span class="text-xs text-gray-500">此内容可作为</span>
+                      <n-input
+                        v-model:value="batchBulkFrontend"
+                        placeholder="输入后点覆盖"
+                        size="small"
+                        class="w-24"
+                        :maxlength="1000"
+                      />
+                      <n-button type="primary" size="tiny" @click="applyBulkBatch('frontend')">
+                        覆盖
+                      </n-button>
+                    </div>
+                  </div>
+                </th>
+                <th class="min-w-[180px] px-3 py-2 text-left font-medium">
+                  <div
+                    v-if="batchReasonModal.actionKey === 'batch-force-cancel'"
+                    class="flex flex-wrap items-center justify-between gap-2"
+                  >
+                    <span>取消原因(后台展示)</span>
+                    <div class="flex items-center gap-2">
+                      <span class="text-xs text-gray-500">最多1000字</span>
+                      <span class="text-xs text-gray-500">此内容可作为</span>
+                      <n-input
+                        v-model:value="batchBulkBackend"
+                        placeholder="输入后点覆盖"
+                        size="small"
+                        class="w-24"
+                        :maxlength="1000"
+                      />
+                      <n-button type="primary" size="tiny" @click="applyBulkBatch('backend')">
+                        覆盖
+                      </n-button>
+                    </div>
+                  </div>
+                  <div v-else class="flex flex-wrap items-center justify-between gap-2">
+                    <span>后台备注</span>
+                    <div class="flex items-center gap-2">
+                      <span class="text-xs text-gray-500">最多1000字</span>
+                      <span class="text-xs text-gray-500">此内容可作为</span>
+                      <n-input
+                        v-model:value="batchBulkBackend"
+                        placeholder="输入后点覆盖"
+                        size="small"
+                        class="w-24"
+                        :maxlength="1000"
+                      />
+                      <n-button type="primary" size="tiny" @click="applyBulkBatch('backend')">
+                        覆盖
+                      </n-button>
+                    </div>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="row in batchReasonModal.rows"
+                :key="row.id"
+                class="border-b hover:bg-gray-50/50"
+              >
+                <td class="whitespace-nowrap px-3 py-2 font-mono">
+                  {{ row.orderId }}
+                </td>
+                <td class="whitespace-nowrap px-3 py-2">
+                  {{ (row as any).brandName || '-' }} ({{ (row as any).brandId || '-' }})
+                </td>
+                <td class="whitespace-nowrap px-3 py-2">
+                  <span>{{ row.displayMemberId || row.userID || row.memberId }}</span>
+                  <n-tag v-if="row.vipLevel" size="small" type="success" class="ml-1">
+                    {{ row.vipLevel }}
+                  </n-tag>
+                </td>
+                <td class="whitespace-nowrap px-3 py-2">
+                  {{ row.accountName || row.memberAccount }}
+                </td>
+                <td class="whitespace-nowrap px-3 py-2">
+                  {{ row.currency || 'BRL' }}
+                </td>
+                <td class="whitespace-nowrap px-3 py-2 font-medium">
+                  {{ formatCurrency(row.rewardAmount ?? row.withdrawAmount ?? row.withdrawalAmount ?? row.amount ?? 0) }}
+                </td>
+                <td class="px-3 py-2 align-top">
+                  <n-input
+                    v-if="batchReasonModal.actionKey === 'batch-force-cancel' && batchModalRowData[row.id]"
+                    :value="batchModalRowData[row.id]?.frontendReason"
+                    type="textarea"
+                    placeholder="输入前台取消原因"
+                    :autosize="{ minRows: 2 }"
+                    :maxlength="1000"
+                    class="resize-y"
+                    @update:value="(v: string) => setBatchRowField(row.id, 'frontendReason', v)"
+                  />
+                  <n-input
+                    v-else-if="batchModalRowData[row.id]"
+                    :value="batchModalRowData[row.id]?.frontendNotes"
+                    type="textarea"
+                    placeholder="请输入前台备注"
+                    :autosize="{ minRows: 2 }"
+                    :maxlength="1000"
+                    class="resize-y"
+                    @update:value="(v: string) => setBatchRowField(row.id, 'frontendNotes', v)"
+                  />
+                </td>
+                <td class="px-3 py-2 align-top">
+                  <n-input
+                    v-if="batchReasonModal.actionKey === 'batch-force-cancel' && batchModalRowData[row.id]"
+                    :value="batchModalRowData[row.id]?.backendReason"
+                    type="textarea"
+                    placeholder="输入后台取消原因"
+                    :autosize="{ minRows: 2 }"
+                    :maxlength="1000"
+                    class="resize-y"
+                    @update:value="(v: string) => setBatchRowField(row.id, 'backendReason', v)"
+                  />
+                  <n-input
+                    v-else-if="batchModalRowData[row.id]"
+                    :value="batchModalRowData[row.id]?.backendNotes"
+                    type="textarea"
+                    placeholder="请输入后台备注"
+                    :autosize="{ minRows: 2 }"
+                    :maxlength="1000"
+                    class="resize-y"
+                    @update:value="(v: string) => setBatchRowField(row.id, 'backendNotes', v)"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 底部按钮 -->
+        <div class="mt-6 flex justify-end gap-3">
+          <n-button @click="batchReasonModal.show = false">取消</n-button>
+          <n-button
+            type="primary"
+            :loading="batchReasonModal.loading"
+            @click="submitBatchReasonModal"
+          >
+            确认
+          </n-button>
+        </div>
+      </div>
+    </n-modal>
+
+    <!-- 批量锁定 / 批量解锁 - 确认弹窗 -->
+    <n-modal
+      v-model:show="batchLockConfirmModal.show"
+      preset="card"
+      class="batch-reason-modal-card"
+      :title="batchLockConfirmModal.actionKey === 'batch-unlock' ? '批量解锁' : '批量锁定'"
+      :style="{ width: 'min(95vw, 1200px)' }"
+      :closable="true"
+      :mask-closable="false"
+    >
+      <div class="batch-lock-confirm-modal">
+        <div
+          class="mb-4 flex items-center gap-2 rounded-lg border border-orange-200 bg-orange-50 p-4"
+        >
+          <n-icon size="20" class="shrink-0 mt-0.5 text-orange-500">
+            <WarningOutline />
+          </n-icon>
+          <p class="font-medium text-orange-800">
+            {{ batchLockConfirmModal.actionKey === 'batch-unlock' ? '确认批量解锁' : '确认批量锁定' }}，选择的{{ batchLockConfirmModal.rows?.length ?? 0 }}个订单？
+          </p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse text-sm">
+            <thead>
+              <tr class="border-b bg-gray-50">
+                <th class="whitespace-nowrap px-3 py-2 text-left font-medium">订单号</th>
+                <th class="whitespace-nowrap px-3 py-2 text-left font-medium">品牌名称(ID)</th>
+                <th class="whitespace-nowrap px-3 py-2 text-left font-medium">会员ID</th>
+                <th class="whitespace-nowrap px-3 py-2 text-left font-medium">会员账号</th>
+                <th class="whitespace-nowrap px-3 py-2 text-left font-medium">会员币种</th>
+                <th class="whitespace-nowrap px-3 py-2 text-left font-medium">提现金额</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="row in batchLockConfirmModal.rows"
+                :key="row.id"
+                class="border-b hover:bg-gray-50/50"
+              >
+                <td class="whitespace-nowrap px-3 py-2 font-mono">{{ row.orderId }}</td>
+                <td class="whitespace-nowrap px-3 py-2">
+                  {{ (row as any).brandName || '-' }} ({{ (row as any).brandId || '-' }})
+                </td>
+                <td class="whitespace-nowrap px-3 py-2">
+                  <span>{{ row.displayMemberId || row.userID || row.memberId }}</span>
+                  <n-tag v-if="row.vipLevel" size="small" type="success" class="ml-1">
+                    {{ row.vipLevel }}
+                  </n-tag>
+                </td>
+                <td class="whitespace-nowrap px-3 py-2">
+                  {{ row.accountName || row.memberAccount }}
+                </td>
+                <td class="whitespace-nowrap px-3 py-2">{{ row.currency || 'BRL' }}</td>
+                <td class="whitespace-nowrap px-3 py-2 font-medium">
+                  {{ formatCurrency(row.rewardAmount ?? row.withdrawAmount ?? row.withdrawalAmount ?? row.amount ?? 0) }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="mt-6 flex justify-end gap-3">
+          <n-button @click="batchLockConfirmModal.show = false">取消</n-button>
+          <n-button
+            type="primary"
+            :loading="batchLockConfirmModal.loading"
+            @click="submitBatchLockConfirm"
+          >
+            确认
+          </n-button>
+        </div>
+      </div>
     </n-modal>
 
     <!-- 筛选区批量操作弹窗（与全部提现一致） -->
@@ -1472,6 +1761,7 @@ import {
   PersonOutline,
   CopyOutline,
   ChevronUpOutline,
+  WarningOutline,
 } from '@vicons/ionicons5';
 import { financeWithdrawalApi } from '#/api/finance/financeWithdrawal';
 import { useUserStore } from '@vben/stores';
@@ -1765,8 +2055,7 @@ async function submitFilterBatchModal() {
   );
   const pendingRows =
     filterBatchActionKey.value === 'batch-force-reject' ||
-    filterBatchActionKey.value === 'batch-force-cancel' ||
-    filterBatchActionKey.value === 'batch-remark'
+    filterBatchActionKey.value === 'batch-force-cancel'
       ? selectedRows.filter((r) => r.status === 'pending')
       : selectedRows;
   const orderIds =
@@ -1793,21 +2082,24 @@ async function submitFilterBatchModal() {
       filterBatchActionKey.value,
     )
   ) {
-    if (orderIds.length === 0 && pendingRows.length === 0 && selectedRows.length > 0) {
+    // 批量强制取消：仅待出款；批量备注：全部选中
+    const idsToUse =
+      filterBatchActionKey.value === 'batch-force-cancel'
+        ? pendingRows.map((r) => String(r.id))
+        : selectedRows.map((r) => String(r.id));
+    if (filterBatchActionKey.value === 'batch-force-cancel' && idsToUse.length === 0 && selectedRows.length > 0) {
       message.warning('所选记录中无待出款状态，仅处理待出款订单');
       return true;
     }
-    const idsToUse =
-      filterBatchActionKey.value === 'batch-force-cancel' ||
-      filterBatchActionKey.value === 'batch-remark'
-        ? pendingRows.map((r) => String(r.id))
-        : orderIds;
-    batchReasonModal.value = {
-      show: true,
-      actionKey: filterBatchActionKey.value,
-      orderIds: idsToUse,
-      reason: filterBatchReason.value,
-    };
+    openBatchReasonModal(filterBatchActionKey.value, idsToUse);
+    return true;
+  }
+
+  if (['batch-lock', 'batch-unlock'].includes(filterBatchActionKey.value)) {
+    openBatchLockConfirmModal(
+      filterBatchActionKey.value as 'batch-lock' | 'batch-unlock',
+      selectedRows,
+    );
     return true;
   }
 
@@ -3559,14 +3851,65 @@ const toggleSelectAllCurrentPage = (checked: boolean) => {
   }
 };
 
+// 批量强制取消/批量备注：每行原因或备注
+type BatchModalRowItem = {
+  backendReason?: string;
+  backendNotes?: string;
+  frontendReason?: string;
+  frontendNotes?: string;
+};
+const batchModalRowData = ref<Record<string, BatchModalRowItem>>({});
+const batchBulkFrontend = ref('');
+const batchBulkBackend = ref('');
+
 const batchReasonModal = ref<{
   show: boolean;
+  loading?: boolean;
   actionKey: string;
   orderIds: string[];
+  rows: WithdrawalRecord[];
   reason: string;
-}>({ show: false, actionKey: '', orderIds: [], reason: '' });
+}>({
+  show: false,
+  loading: false,
+  actionKey: '',
+  orderIds: [],
+  rows: [],
+  reason: '',
+});
+
+// 批量锁定/批量解锁确认弹窗
+const batchLockConfirmModal = ref<{
+  show: boolean;
+  loading?: boolean;
+  actionKey: 'batch-lock' | 'batch-unlock';
+  rows: WithdrawalRecord[];
+}>({
+  show: false,
+  loading: false,
+  actionKey: 'batch-lock',
+  rows: [],
+});
+
+function openBatchLockConfirmModal(actionKey: 'batch-lock' | 'batch-unlock', rows: WithdrawalRecord[]) {
+  batchLockConfirmModal.value = {
+    show: true,
+    loading: false,
+    actionKey,
+    rows,
+  };
+}
+
+async function submitBatchLockConfirm() {
+  const { actionKey, rows } = batchLockConfirmModal.value;
+  const orderIds = rows.map((r) => String(r.id)).filter(Boolean);
+  batchLockConfirmModal.value.loading = true;
+  await runFinanceBatchAction(actionKey, orderIds);
+  batchLockConfirmModal.value.loading = false;
+  batchLockConfirmModal.value.show = false;
+}
+
 function openBatchReasonModal(actionKey: string, orderIds: string[]) {
-  // 批量强制拒绝 must always show the full 强制拒绝 modal (order info + 风控 + 稽核平台 + 原因)
   if (actionKey === 'batch-force-reject') {
     const selectedRows = tableData.value.filter((r) =>
       orderIds.includes(String(r.id)),
@@ -3579,27 +3922,97 @@ function openBatchReasonModal(actionKey: string, orderIds: string[]) {
     showForceRejectModalForBatch(pendingRows);
     return;
   }
-  batchReasonModal.value = { show: true, actionKey, orderIds, reason: '' };
-}
-async function submitBatchReasonModal() {
-  const { actionKey, orderIds, reason } = batchReasonModal.value;
-  if (
-    !reason.trim() &&
-    ['batch-force-cancel', 'batch-force-reject', 'batch-remark'].includes(
-      actionKey,
-    )
-  ) {
-    message.warning('请输入操作说明');
-    return;
+  const rows = tableData.value.filter((r) => orderIds.includes(String(r.id)));
+  const next: Record<string, BatchModalRowItem> = {};
+  if (actionKey === 'batch-force-cancel') {
+    rows.forEach((r) => {
+      next[r.id] = { frontendReason: '', backendReason: '' };
+    });
+  } else {
+    rows.forEach((r) => {
+      next[r.id] = { frontendNotes: '', backendNotes: '' };
+    });
   }
-  batchReasonModal.value.show = false;
-  await runFinanceBatchAction(actionKey, orderIds, reason.trim());
+  batchModalRowData.value = next;
+  batchBulkFrontend.value = '';
+  batchBulkBackend.value = '';
+  batchReasonModal.value = {
+    show: true,
+    loading: false,
+    actionKey,
+    orderIds,
+    rows,
+    reason: '',
+  };
 }
+
+function setBatchRowField(
+  rowId: string,
+  field: keyof BatchModalRowItem,
+  value: string,
+) {
+  const row = batchModalRowData.value[rowId];
+  if (row) row[field] = value;
+}
+
+function applyBulkBatch(field: 'frontend' | 'backend') {
+  const rows = batchReasonModal.value.rows;
+  const isCancel = batchReasonModal.value.actionKey === 'batch-force-cancel';
+  const text = field === 'frontend' ? batchBulkFrontend.value : batchBulkBackend.value;
+  rows.forEach((r) => {
+    const row = batchModalRowData.value[r.id];
+    if (!row) return;
+    if (isCancel) {
+      if (field === 'frontend') row.frontendReason = text;
+      else row.backendReason = text;
+    } else {
+      if (field === 'frontend') row.frontendNotes = text;
+      else row.backendNotes = text;
+    }
+  });
+}
+
+async function submitBatchReasonModal() {
+  const { actionKey, rows, orderIds } = batchReasonModal.value;
+  if (actionKey === 'batch-force-cancel') {
+    const missing = rows.some((r) => {
+      const d = batchModalRowData.value[r.id];
+      return !d || (!(d.frontendReason || '').trim() && !(d.backendReason || '').trim());
+    });
+    if (missing) {
+      message.warning('请为每个订单至少填写一项取消原因（前台或后台）');
+      return;
+    }
+  }
+  batchReasonModal.value.loading = true;
+  const rowPayloads = rows.map((r) => {
+    const d = batchModalRowData.value[r.id] || {};
+    return {
+      id: r.id,
+      frontendReason: d.frontendReason ?? '',
+      backendReason: d.backendReason ?? '',
+      frontendNotes: d.frontendNotes ?? '',
+      backendNotes: d.backendNotes ?? '',
+    };
+  });
+  await runFinanceBatchAction(actionKey, orderIds, '', rowPayloads);
+  batchReasonModal.value.loading = false;
+  batchReasonModal.value.show = false;
+}
+
+type BatchRowPayload = {
+  id: string;
+  frontendReason?: string;
+  backendReason?: string;
+  frontendNotes?: string;
+  backendNotes?: string;
+};
 
 async function runFinanceBatchAction(
   actionKey: string,
   orderIds: string[],
   reason: string = '',
+  rowPayloads?: BatchRowPayload[],
 ) {
   const len = orderIds.length;
   try {
@@ -3667,21 +4080,22 @@ async function runFinanceBatchAction(
       emit('refresh-tabs');
     } else if (actionKey === 'batch-force-cancel') {
       let ok = 0;
-      for (const id of orderIds) {
+      const payloads = rowPayloads?.length ? rowPayloads : orderIds.map((id) => ({ id, frontendReason: reason, backendReason: reason }));
+      for (const p of payloads) {
         try {
-          const res = await financeWithdrawalApi.forceCancel(id, {
-            frontendReason: reason,
-            backendReason: reason,
+          const res = await financeWithdrawalApi.forceCancel(p.id, {
+            frontendReason: p.frontendReason ?? reason,
+            backendReason: p.backendReason ?? reason,
           });
           if (res?.success !== false) ok++;
         } catch (_) {
           /* skip */
         }
       }
-      message[ok === len ? 'success' : 'warning'](
-        ok === len
-          ? `批量强制取消成功 (${len} 条)`
-          : `部分成功 ${ok}/${len} 条`,
+      message[ok === payloads.length ? 'success' : 'warning'](
+        ok === payloads.length
+          ? `批量强制取消成功 (${payloads.length} 条)`
+          : `部分成功 ${ok}/${payloads.length} 条`,
       );
       await fetchData();
       selectedIds.value = [];
@@ -3710,18 +4124,26 @@ async function runFinanceBatchAction(
       emit('refresh-tabs');
     } else if (actionKey === 'batch-remark') {
       let ok = 0;
-      for (const id of orderIds) {
-        try {
-          const res = await financeWithdrawalApi.updateNote(id, {
+      const payloads = rowPayloads?.length
+        ? rowPayloads
+        : orderIds.map((id) => ({
+            id,
             backendNotes: reason,
+            frontendNotes: reason,
+          }));
+      for (const p of payloads) {
+        try {
+          const res = await financeWithdrawalApi.updateNote(p.id, {
+            frontendNotes: (p as BatchRowPayload).frontendNotes,
+            backendNotes: (p as BatchRowPayload).backendNotes ?? reason,
           });
           if (res?.success !== false) ok++;
         } catch (_) {
           /* skip */
         }
       }
-      message[ok === len ? 'success' : 'warning'](
-        ok === len ? `批量备注成功 (${len} 条)` : `部分成功 ${ok}/${len} 条`,
+      message[ok === payloads.length ? 'success' : 'warning'](
+        ok === payloads.length ? `批量备注成功 (${payloads.length} 条)` : `部分成功 ${ok}/${payloads.length} 条`,
       );
       await fetchData();
       selectedIds.value = [];
@@ -3792,12 +4214,11 @@ async function runFinanceBatchAction(
 }
 
 function onBatchOperationSelect(key: string, selectedRows: WithdrawalRecord[]) {
-  // Only process rows that are still pending (待出款); skip already processed
+  // 批量备注：全部选中行都显示；批量强制取消/拒绝/审核：仅待出款
   const pendingOnly =
     key === 'batch-approve' ||
     key === 'batch-force-cancel' ||
-    key === 'batch-force-reject' ||
-    key === 'batch-remark';
+    key === 'batch-force-reject';
   const rows = pendingOnly
     ? selectedRows.filter((r) => r.status === 'pending')
     : selectedRows;
@@ -3819,6 +4240,10 @@ function onBatchOperationSelect(key: string, selectedRows: WithdrawalRecord[]) {
   }
   if (['batch-force-cancel', 'batch-remark'].includes(key)) {
     openBatchReasonModal(key, orderIds);
+    return;
+  }
+  if (key === 'batch-lock' || key === 'batch-unlock') {
+    openBatchLockConfirmModal(key, rows);
     return;
   }
   runFinanceBatchAction(key, orderIds);
@@ -4213,5 +4638,21 @@ onUnmounted(() => {
 .single-line-table :deep(.n-data-table-th) {
   background: #f8f9fa;
   font-weight: 600;
+}
+
+/* 批量强制取消/批量备注 弹窗标题居中 */
+.batch-reason-modal-card :deep(.n-card-header),
+.batch-reason-modal-card :deep(.n-card-header__main) {
+  text-align: center;
+  justify-content: center;
+}
+</style>
+
+<style>
+/* 弹窗可能被 teleport 到 body，需全局样式保证标题居中 */
+.batch-reason-modal-card .n-card-header,
+.batch-reason-modal-card .n-card-header__main {
+  text-align: center;
+  justify-content: center;
 }
 </style>

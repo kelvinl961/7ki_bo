@@ -291,7 +291,9 @@
       :title="
         batchReasonModal.actionKey === 'batch-force-cancel'
           ? '批量强制取消'
-          : '批量备注'
+          : batchReasonModal.actionKey === 'batch-manual-withdrawal'
+            ? '批量已人工出款'
+            : '批量备注'
       "
       :style="{ width: 'min(95vw, 1200px)' }"
       :closable="true"
@@ -314,6 +316,19 @@
                 请到三方支付后台确认这笔订单的真实状态，请谨慎操作避免损失，取消后提现金额将返还给会员！
               </p>
             </div>
+          </div>
+        </template>
+        <!-- 批量已人工出款：确认提示 -->
+        <template v-else-if="batchReasonModal.actionKey === 'batch-manual-withdrawal'">
+          <div
+            class="mb-4 flex items-center gap-2 rounded-lg border border-orange-200 bg-orange-50 p-4"
+          >
+            <n-icon size="20" class="mt-0.5 shrink-0 text-orange-500">
+              <WarningOutline />
+            </n-icon>
+            <p class="font-medium text-orange-800">
+              已选中{{ batchReasonModal.rows?.length ?? 0 }}条数据，确认批量已人工出款吗？
+            </p>
           </div>
         </template>
         <!-- 批量备注：已选条数 -->
@@ -2078,11 +2093,11 @@ async function submitFilterBatchModal() {
   }
 
   if (
-    ['batch-force-cancel', 'batch-remark'].includes(
+    ['batch-force-cancel', 'batch-remark', 'batch-manual-withdrawal'].includes(
       filterBatchActionKey.value,
     )
   ) {
-    // 批量强制取消：仅待出款；批量备注：全部选中
+    // 批量强制取消：仅待出款；批量备注/批量已人工出款：全部选中
     const idsToUse =
       filterBatchActionKey.value === 'batch-force-cancel'
         ? pendingRows.map((r) => String(r.id))
@@ -3929,6 +3944,7 @@ function openBatchReasonModal(actionKey: string, orderIds: string[]) {
       next[r.id] = { frontendReason: '', backendReason: '' };
     });
   } else {
+    // batch-remark、batch-manual-withdrawal：每行前台/后台备注
     rows.forEach((r) => {
       next[r.id] = { frontendNotes: '', backendNotes: '' };
     });
@@ -4191,16 +4207,29 @@ async function runFinanceBatchAction(
       message.info('请到「重新代付」页签进行批量重新代付');
     } else if (actionKey === 'batch-manual-withdrawal') {
       let ok = 0;
-      for (const id of orderIds) {
+      const payloads = rowPayloads?.length
+        ? rowPayloads
+        : orderIds.map((id) => ({ id, frontendNotes: '', backendNotes: '' }));
+      for (const p of payloads) {
         try {
-          const res = await financeWithdrawalApi.manualWithdrawal(id);
-          if (res?.success !== false) ok++;
+          const res = await financeWithdrawalApi.manualWithdrawal(p.id);
+          if (res?.success !== false) {
+            ok++;
+            if ((p.frontendNotes ?? '').trim() || (p.backendNotes ?? '').trim()) {
+              await financeWithdrawalApi.updateNote(p.id, {
+                frontendNotes: p.frontendNotes,
+                backendNotes: p.backendNotes,
+              });
+            }
+          }
         } catch (_) {
           /* skip */
         }
       }
-      message[ok === len ? 'success' : 'warning'](
-        ok === len ? `批量已人工出款 (${len} 条)` : `部分成功 ${ok}/${len} 条`,
+      message[ok === payloads.length ? 'success' : 'warning'](
+        ok === payloads.length
+          ? `批量已人工出款 (${payloads.length} 条)`
+          : `部分成功 ${ok}/${payloads.length} 条`,
       );
       await fetchData();
       selectedIds.value = [];
@@ -4238,7 +4267,7 @@ function onBatchOperationSelect(key: string, selectedRows: WithdrawalRecord[]) {
     showForceRejectModalForBatch(rows);
     return;
   }
-  if (['batch-force-cancel', 'batch-remark'].includes(key)) {
+  if (['batch-force-cancel', 'batch-remark', 'batch-manual-withdrawal'].includes(key)) {
     openBatchReasonModal(key, orderIds);
     return;
   }

@@ -21,6 +21,8 @@ export interface RewardHistoryItem {
   id?: number;
   memberId?: string | number;
   memberAccount?: string;
+  userId?: number;
+  userID?: string;
   upperAgentAccount?: string;
   upperAgentUserID?: string;
   upperAgentId?: number;

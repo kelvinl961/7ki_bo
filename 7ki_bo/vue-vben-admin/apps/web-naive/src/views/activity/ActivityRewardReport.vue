@@ -380,7 +380,11 @@ function handlePageSizeChange(pageSize: number) {
 }
 
 function openUserDetail(row: RewardHistoryItem) {
-  const internalId = row.id != null ? Number(row.id) : 0;
+  const internalId = row.userId != null
+    ? Number(row.userId)
+    : row.memberId != null
+      ? Number(row.memberId)
+      : 0;
   if (!internalId) return;
   currentUserIdForDetail.value = internalId;
   showUserDetailModal.value = true;
@@ -462,8 +466,14 @@ const columns: DataTableColumns<RewardHistoryItem> = [
     key: 'memberAccount',
     width: 140,
     ellipsis: { tooltip: true },
-    render: (row) =>
-      row.id != null && Number(row.id) !== 0
+    render: (row) => {
+      const internalId =
+        row.userId != null
+          ? Number(row.userId)
+          : row.memberId != null
+            ? Number(row.memberId)
+            : 0;
+      return internalId
         ? h(
             'a',
             {
@@ -476,7 +486,8 @@ const columns: DataTableColumns<RewardHistoryItem> = [
             },
             (row.memberAccount ?? row.memberId ?? '-') as string,
           )
-        : (row.memberAccount ?? row.memberId ?? '-'),
+        : (row.memberAccount ?? row.memberId ?? '-');
+    },
   },
   {
     title: '上级代理',
@@ -621,9 +632,13 @@ async function fetchData() {
       member_currency: 'memberCurrency',
       member_id: 'memberId',
       member_account: 'memberAccount',
+  // 兼容后端上级代理字段（旧：upper_agent_*，新：upline*）
       upper_agent_account: 'upperAgentAccount',
       upper_agent_user_id: 'upperAgentUserID',
       upper_agent_id: 'upperAgentId',
+  uplineAccount: 'upperAgentAccount',
+  uplineUserID: 'upperAgentUserID',
+  uplineUserId: 'upperAgentId',
       benefit_source: 'benefitSource',
       source_type: 'sourceType',
       collection_method: 'collectionMethod',

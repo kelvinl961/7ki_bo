@@ -979,7 +979,235 @@
       </div>
     </n-modal>
 
-    <!-- Force Reject Modal (强制拒绝) -->
+    <!-- 批量强制拒绝 - 表格弹窗（与参考图一致） -->
+    <n-modal
+      v-model:show="batchForceRejectModal.show"
+      preset="card"
+      class="batch-reason-modal-card"
+      title="批量强制拒绝"
+      :style="{ width: 'min(95vw, 1200px)' }"
+      :closable="true"
+      :mask-closable="false"
+    >
+      <div class="batch-force-reject-modal">
+        <div
+          class="mb-4 flex items-start gap-2 rounded-lg border border-orange-200 bg-orange-50 p-4"
+        >
+          <n-icon size="20" class="mt-0.5 shrink-0 text-orange-500">
+            <WarningOutline />
+          </n-icon>
+          <div>
+            <p class="font-medium text-orange-800">
+              确认批量强制拒绝，选中的{{ batchForceRejectModal.rows?.length ?? 0 }}个订单吗？
+            </p>
+            <p class="mt-1 text-sm text-red-600">
+              请到三方支付后台确认这笔订单的真实状态，请谨慎操作避免损失！
+            </p>
+          </div>
+        </div>
+        <!-- 稽核平台（当存在「增加稽核任务」时显示） -->
+        <div
+          v-if="hasBatchForceRejectAuditRows"
+          class="mb-4 rounded-lg border bg-gray-50 p-4"
+        >
+          <div class="mb-2 text-sm font-medium">稽核平台（增加稽核任务时适用）</div>
+          <div class="flex flex-wrap gap-2">
+            <n-checkbox
+              :checked="batchForceRejectPlatformsAll"
+              @update:checked="(v: boolean) => setBatchForceRejectPlatformsAll(v)"
+            >
+              全选
+            </n-checkbox>
+            <n-checkbox
+              v-for="p in availableProviders.slice(0, 12)"
+              :key="p.platformId"
+              :checked="batchForceRejectPlatforms[p.platformId] || false"
+              @update:checked="(v: boolean) => setBatchForceRejectPlatform(p.platformId, v)"
+            >
+              {{ p.platformName }}
+            </n-checkbox>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse text-sm">
+            <thead>
+              <tr class="border-b bg-gray-50">
+                <th class="whitespace-nowrap px-3 py-2 text-left font-medium">订单号</th>
+                <th class="whitespace-nowrap px-3 py-2 text-left font-medium">品牌名称(ID)</th>
+                <th class="whitespace-nowrap px-3 py-2 text-left font-medium">会员ID</th>
+                <th class="whitespace-nowrap px-3 py-2 text-left font-medium">会员账号</th>
+                <th class="whitespace-nowrap px-3 py-2 text-left font-medium">会员币种</th>
+                <th class="whitespace-nowrap px-3 py-2 text-left font-medium">提现金额</th>
+                <th class="min-w-[200px] px-3 py-2 text-left font-medium">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span>是否风控处罚</span>
+                    <n-radio-group v-model:value="batchForceRejectBulk.windControlProcess" size="small">
+                      <n-radio value="no">不处罚</n-radio>
+                      <n-radio value="add_audit">增加稽核任务</n-radio>
+                      <n-radio value="deduct_balance">扣除余额</n-radio>
+                    </n-radio-group>
+                    <n-button type="primary" size="tiny" @click="applyBatchForceRejectBulk('wind')">
+                      覆盖
+                    </n-button>
+                  </div>
+                </th>
+                <th class="min-w-[100px] px-3 py-2 text-left font-medium">
+                  <span>增加稽核任务</span>
+                  <div class="text-xs text-gray-500">最大20倍</div>
+                  <n-input-number
+                    v-model:value="batchForceRejectBulk.auditMultiplier"
+                    size="small"
+                    :min="0.01"
+                    :max="20"
+                    :step="0.01"
+                    class="mt-1 w-20"
+                  />
+                  <n-button type="primary" size="tiny" class="mt-1" @click="applyBatchForceRejectBulk('audit')">
+                    覆盖
+                  </n-button>
+                </th>
+                <th class="min-w-[100px] px-3 py-2 text-left font-medium">扣除余额</th>
+                <th class="min-w-[180px] px-3 py-2 text-left font-medium">
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span>拒绝原因(前台)</span>
+                    <div class="flex items-center gap-2">
+                      <span class="text-xs text-gray-500">最多1000字</span>
+                      <n-input
+                        v-model:value="batchForceRejectBulk.frontendReason"
+                        placeholder="此内容可作为"
+                        size="small"
+                        class="w-24"
+                        :maxlength="1000"
+                      />
+                      <n-button type="primary" size="tiny" @click="applyBatchForceRejectBulk('reason')">
+                        覆盖
+                      </n-button>
+                    </div>
+                  </div>
+                </th>
+                <th class="min-w-[180px] px-3 py-2 text-left font-medium">
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span>拒绝原因(后台)</span>
+                    <div class="flex items-center gap-2">
+                      <span class="text-xs text-gray-500">最多1000字</span>
+                      <n-input
+                        v-model:value="batchForceRejectBulk.backendReason"
+                        placeholder="此内容可作为"
+                        size="small"
+                        class="w-24"
+                        :maxlength="1000"
+                      />
+                      <n-button type="primary" size="tiny" @click="applyBatchForceRejectBulk('backendReason')">
+                        覆盖
+                      </n-button>
+                    </div>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="row in batchForceRejectModal.rows"
+                :key="row.id"
+                class="border-b hover:bg-gray-50/50"
+              >
+                <td class="whitespace-nowrap px-3 py-2 font-mono">{{ row.orderId }}</td>
+                <td class="whitespace-nowrap px-3 py-2">
+                  {{ (row as any).brandName || '-' }} ({{ (row as any).brandId || '-' }})
+                </td>
+                <td class="whitespace-nowrap px-3 py-2">
+                  <span>{{ row.displayMemberId || row.userID || row.memberId }}</span>
+                  <n-tag v-if="row.vipLevel" size="small" type="success" class="ml-1">
+                    {{ row.vipLevel }}
+                  </n-tag>
+                </td>
+                <td class="whitespace-nowrap px-3 py-2">{{ row.accountName || row.memberAccount }}</td>
+                <td class="whitespace-nowrap px-3 py-2">{{ row.currency || 'BRL' }}</td>
+                <td class="whitespace-nowrap px-3 py-2 font-medium">
+                  {{ formatCurrency(row.rewardAmount ?? row.withdrawAmount ?? row.withdrawalAmount ?? row.amount ?? 0) }}
+                </td>
+                <td class="px-3 py-2 align-top">
+                  <template v-if="batchForceRejectRowData[row.id]">
+                    <n-radio-group
+                      :value="batchForceRejectRowData[row.id]?.windControlProcess"
+                      size="small"
+                      @update:value="(v: string) => setBatchForceRejectRowField(row.id, 'windControlProcess', v)"
+                    >
+                      <n-radio value="no">不处罚</n-radio>
+                      <n-radio value="add_audit">增加稽核任务</n-radio>
+                      <n-radio value="deduct_balance">扣除余额</n-radio>
+                    </n-radio-group>
+                  </template>
+                </td>
+                <td class="px-3 py-2 align-top">
+                  <template v-if="batchForceRejectRowData[row.id]?.windControlProcess === 'add_audit'">
+                    <n-input-number
+                      :value="batchForceRejectRowData[row.id]?.auditMultiplier"
+                      size="small"
+                      :min="0.01"
+                      :max="20"
+                      :step="0.01"
+                      class="w-20"
+                      @update:value="(v: number | null) => setBatchForceRejectRowField(row.id, 'auditMultiplier', v ?? 1)"
+                    />
+                  </template>
+                  <span v-else class="text-gray-400">-</span>
+                </td>
+                <td class="px-3 py-2 align-top">
+                  <template v-if="batchForceRejectRowData[row.id]?.windControlProcess === 'deduct_balance'">
+                    <n-input-number
+                      :value="batchForceRejectRowData[row.id]?.deductAmount"
+                      size="small"
+                      :min="0"
+                      class="w-24"
+                      placeholder="金额"
+                      @update:value="(v: number | null) => setBatchForceRejectRowField(row.id, 'deductAmount', v ?? 0)"
+                    />
+                  </template>
+                  <span v-else class="text-gray-400">-</span>
+                </td>
+                <td class="px-3 py-2 align-top">
+                  <n-input
+                    v-if="batchForceRejectRowData[row.id]"
+                    :value="batchForceRejectRowData[row.id]?.frontendReason"
+                    type="textarea"
+                    placeholder="输入拒绝前台原因"
+                    :autosize="{ minRows: 2 }"
+                    :maxlength="1000"
+                    class="resize-y"
+                    @update:value="(v: string) => setBatchForceRejectRowField(row.id, 'frontendReason', v)"
+                  />
+                </td>
+                <td class="px-3 py-2 align-top">
+                  <n-input
+                    v-if="batchForceRejectRowData[row.id]"
+                    :value="batchForceRejectRowData[row.id]?.backendReason"
+                    type="textarea"
+                    placeholder="输入拒绝后台原因"
+                    :autosize="{ minRows: 2 }"
+                    :maxlength="1000"
+                    class="resize-y"
+                    @update:value="(v: string) => setBatchForceRejectRowField(row.id, 'backendReason', v)"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="mt-6 flex justify-end gap-3">
+          <n-button @click="batchForceRejectModal.show = false">取消</n-button>
+          <n-button
+            type="primary"
+            :loading="batchForceRejectModal.loading"
+            @click="submitBatchForceReject"
+          >
+            确认
+          </n-button>
+        </div>
+      </div>
+    </n-modal>
+
+    <!-- Force Reject Modal (强制拒绝) - 单笔 -->
     <n-modal
       v-model:show="forceRejectModal.show"
       preset="card"
@@ -1974,7 +2202,7 @@ const forceCancelModal = reactive({
   backendReason: '',
 });
 
-// Force Reject Modal
+// Force Reject Modal (单笔)
 const forceRejectModal = reactive({
   show: false,
   loading: false,
@@ -1987,6 +2215,135 @@ const forceRejectModal = reactive({
   frontendReason: '',
   backendReason: '',
 });
+
+// 批量强制拒绝 - 表格弹窗
+type BatchForceRejectRowItem = {
+  windControlProcess: 'no' | 'add_audit' | 'deduct_balance';
+  auditMultiplier: number;
+  deductAmount?: number;
+  frontendReason: string;
+  backendReason: string;
+};
+const batchForceRejectModal = ref<{
+  show: boolean;
+  loading?: boolean;
+  rows: WithdrawalRecord[];
+}>({ show: false, loading: false, rows: [] });
+const batchForceRejectRowData = ref<Record<string, BatchForceRejectRowItem>>({});
+const batchForceRejectBulk = reactive({
+  windControlProcess: 'no' as 'no' | 'add_audit' | 'deduct_balance',
+  auditMultiplier: 1,
+  frontendReason: '',
+  backendReason: '',
+});
+const batchForceRejectPlatforms = ref<Record<string, boolean>>({});
+const hasBatchForceRejectAuditRows = computed(() =>
+  batchForceRejectModal.value.rows.some(
+    (r) => batchForceRejectRowData.value[r.id]?.windControlProcess === 'add_audit',
+  ),
+);
+const batchForceRejectPlatformsAll = computed({
+  get: () => {
+    const ids = availableProviders.value.map((p) => p.platformId);
+    return ids.length > 0 && ids.every((id) => batchForceRejectPlatforms.value[id]);
+  },
+  set: (v: boolean) => {
+    availableProviders.value.forEach((p) => {
+      batchForceRejectPlatforms.value[p.platformId] = v;
+    });
+  },
+});
+function setBatchForceRejectPlatformsAll(v: boolean) {
+  availableProviders.value.forEach((p) => {
+    batchForceRejectPlatforms.value[p.platformId] = v;
+  });
+}
+function setBatchForceRejectPlatform(platformId: string, v: boolean) {
+  batchForceRejectPlatforms.value[platformId] = v;
+}
+function setBatchForceRejectRowField(
+  rowId: string,
+  field: keyof BatchForceRejectRowItem,
+  value: any,
+) {
+  const row = batchForceRejectRowData.value[rowId];
+  if (row) (row as any)[field] = value;
+}
+function applyBatchForceRejectBulk(
+  type: 'wind' | 'audit' | 'reason' | 'backendReason',
+) {
+  const rows = batchForceRejectModal.value.rows;
+  if (type === 'wind') {
+    rows.forEach((r) => {
+      const d = batchForceRejectRowData.value[r.id];
+      if (d) d.windControlProcess = batchForceRejectBulk.windControlProcess;
+    });
+  } else if (type === 'audit') {
+    rows.forEach((r) => {
+      const d = batchForceRejectRowData.value[r.id];
+      if (d && d.windControlProcess === 'add_audit')
+        d.auditMultiplier = batchForceRejectBulk.auditMultiplier;
+    });
+  } else if (type === 'backendReason') {
+    rows.forEach((r) => {
+      const d = batchForceRejectRowData.value[r.id];
+      if (d) d.backendReason = batchForceRejectBulk.backendReason;
+    });
+  } else {
+    rows.forEach((r) => {
+      const d = batchForceRejectRowData.value[r.id];
+      if (d) d.frontendReason = batchForceRejectBulk.frontendReason;
+    });
+  }
+}
+async function submitBatchForceReject() {
+  const rows = batchForceRejectModal.value.rows;
+  const platforms = batchForceRejectPlatforms.value;
+  const selectedPlatform =
+    Object.keys(platforms).find((k) => platforms[k]) ||
+    availableProviders.value[0]?.platformId ||
+    'PG';
+  batchForceRejectModal.value.loading = true;
+  let ok = 0;
+  for (const row of rows) {
+    const d = batchForceRejectRowData.value[row.id];
+    if (!d) continue;
+    if (!(d.frontendReason || '').trim()) {
+      message.warning(`订单 ${row.orderId} 请填写拒绝原因`);
+      batchForceRejectModal.value.loading = false;
+      return;
+    }
+    try {
+      let auditTask: { multiplier: number; platforms: Record<string, boolean>; selectedPlatform: string } | undefined;
+      if (d.windControlProcess === 'add_audit') {
+        auditTask = {
+          multiplier: d.auditMultiplier,
+          platforms: { ...platforms },
+          selectedPlatform,
+        };
+      }
+      const res = await financeWithdrawalApi.forceReject(row.id, {
+        windControlProcess: d.windControlProcess,
+        auditTask,
+        frontendReason: d.frontendReason,
+        backendReason: d.backendReason || d.frontendReason,
+      });
+      if (res?.success !== false) ok++;
+    } catch (_) {
+      /* skip */
+    }
+  }
+  message[ok === rows.length ? 'success' : 'warning'](
+    ok === rows.length
+      ? `批量强制拒绝成功 (${rows.length} 条)`
+      : `部分成功 ${ok}/${rows.length} 条`,
+  );
+  batchForceRejectModal.value.show = false;
+  batchForceRejectModal.value.loading = false;
+  await fetchData();
+  selectedIds.value = [];
+  emit('refresh-tabs');
+}
 
 // Approve Withdrawal Modal
 const approveWithdrawalModal = reactive({
@@ -3681,27 +4038,30 @@ const showForceRejectModal = (row: WithdrawalRecord) => {
   forceRejectModal.show = true;
 };
 
-/** Open Force Reject modal in batch mode (same options applied to all selected pending orders) */
+/** Open Force Reject modal in batch mode - 表格弹窗（与参考图一致） */
 const showForceRejectModalForBatch = (rows: WithdrawalRecord[]) => {
   if (rows.length === 0) return;
-  const first = rows[0];
-  if (!first) return;
-  forceRejectModal.data = first;
-  forceRejectModal.batchOrderIds = rows.map((r) => String(r.id));
-  forceRejectModal.windControlProcess = 'no';
-  forceRejectModal.auditMultiplier = 1;
-  forceRejectModal.selectedPlatform =
-    availableProviders.value[0]?.platformId || 'PG';
-
-  const newPlatforms: Record<string, boolean> = { all: true };
-  availableProviders.value.forEach((provider) => {
-    newPlatforms[provider.platformId] = true;
+  const next: Record<string, BatchForceRejectRowItem> = {};
+  rows.forEach((r) => {
+    next[r.id] = {
+      windControlProcess: 'no',
+      auditMultiplier: 1,
+      deductAmount: 0,
+      frontendReason: '',
+      backendReason: '',
+    };
   });
-  forceRejectModal.platforms = newPlatforms;
-
-  forceRejectModal.frontendReason = '';
-  forceRejectModal.backendReason = '';
-  forceRejectModal.show = true;
+  batchForceRejectRowData.value = next;
+  batchForceRejectBulk.windControlProcess = 'no';
+  batchForceRejectBulk.auditMultiplier = 1;
+  batchForceRejectBulk.frontendReason = '';
+  batchForceRejectBulk.backendReason = '';
+  const platforms: Record<string, boolean> = {};
+  availableProviders.value.forEach((p) => {
+    platforms[p.platformId] = true;
+  });
+  batchForceRejectPlatforms.value = platforms;
+  batchForceRejectModal.value = { show: true, loading: false, rows };
 };
 
 // Provider selection handlers for force reject modal

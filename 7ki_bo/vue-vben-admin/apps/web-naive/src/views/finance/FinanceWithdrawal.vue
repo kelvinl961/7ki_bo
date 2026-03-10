@@ -2387,22 +2387,22 @@ const batchOperationOptions = [
   { label: '批量导出', value: 'batch_export' },
 ];
 
-// 批量操作下拉选项（与全部提现一致）
-const batchOperationDropdownOptions = [
-  { label: '批量锁定', key: 'batch-lock' },
+// 批量操作：财务出款仅「批量锁定」；由我出款仅以下 6 项
+const batchOperationDropdownOptionsMyWithdrawal = [
   { label: '批量解锁', key: 'batch-unlock' },
   { label: '批量备注', key: 'batch-remark' },
   { label: '批量强制取消', key: 'batch-force-cancel' },
   { label: '批量强制拒绝', key: 'batch-force-reject' },
-  { label: '批量强制成功', key: 'batch-force-success' },
-  { label: '批量强制失败', key: 'batch-force-fail' },
-  { label: '批量刷新回调', key: 'batch-refresh-callback' },
   { label: '批量审核出款', key: 'batch-approve' },
-  { label: '批量重新代付', key: 'batch-repay' },
   { label: '批量已人工出款', key: 'batch-manual-withdrawal' },
 ];
-const batchOperationDropdownOptionsSelect = batchOperationDropdownOptions.map(
-  (o) => ({ label: o.label, value: o.key }),
+const batchOperationDropdownOptions = computed(() =>
+  props.isMyWithdrawal
+    ? batchOperationDropdownOptionsMyWithdrawal
+    : [{ label: '批量锁定', key: 'batch-lock' }],
+);
+const batchOperationDropdownOptionsSelect = computed(() =>
+  batchOperationDropdownOptions.value.map((o) => ({ label: o.label, value: o.key })),
 );
 
 const showFilterBatchModal = ref(false);
@@ -4267,6 +4267,24 @@ const batchLockConfirmModal = ref<{
 });
 
 function openBatchLockConfirmModal(actionKey: 'batch-lock' | 'batch-unlock', rows: WithdrawalRecord[]) {
+  if (actionKey === 'batch-lock') {
+    // 弹窗内只显示未锁定的订单，避免已锁定订单造成混淆
+    const toLock = rows.filter((r) => !(r.isLocked || r.lockedBy));
+    if (toLock.length === 0) {
+      message.warning('所选订单均已锁定，无需重复操作');
+      return;
+    }
+    if (toLock.length < rows.length) {
+      message.info(`已跳过 ${rows.length - toLock.length} 条已锁定订单，仅对 ${toLock.length} 条未锁定订单执行锁定`);
+    }
+    batchLockConfirmModal.value = {
+      show: true,
+      loading: false,
+      actionKey,
+      rows: toLock,
+    };
+    return;
+  }
   batchLockConfirmModal.value = {
     show: true,
     loading: false,
@@ -4277,8 +4295,8 @@ function openBatchLockConfirmModal(actionKey: 'batch-lock' | 'batch-unlock', row
 
 async function submitBatchLockConfirm() {
   const { actionKey, rows } = batchLockConfirmModal.value;
-  const orderIds = rows.map((r) => String(r.id)).filter(Boolean);
   batchLockConfirmModal.value.loading = true;
+  const orderIds = rows.map((r) => String(r.id)).filter(Boolean);
   await runFinanceBatchAction(actionKey, orderIds);
   batchLockConfirmModal.value.loading = false;
   batchLockConfirmModal.value.show = false;
@@ -4365,6 +4383,7 @@ async function submitBatchReasonModal() {
     const d = batchModalRowData.value[r.id] || {};
     return {
       id: r.id,
+      orderId: r.orderId,
       frontendReason: d.frontendReason ?? '',
       backendReason: d.backendReason ?? '',
       frontendNotes: d.frontendNotes ?? '',
@@ -4378,6 +4397,7 @@ async function submitBatchReasonModal() {
 
 type BatchRowPayload = {
   id: string;
+  orderId?: string;
   frontendReason?: string;
   backendReason?: string;
   frontendNotes?: string;
@@ -4509,7 +4529,9 @@ async function runFinanceBatchAction(
           }));
       for (const p of payloads) {
         try {
-          const res = await financeWithdrawalApi.updateNote(p.id, {
+          // 备注接口使用 orderId（与单条备注一致），无 orderId 时回退为 id
+          const noteId = (p as BatchRowPayload).orderId || p.id;
+          const res = await financeWithdrawalApi.updateNote(noteId, {
             frontendNotes: (p as BatchRowPayload).frontendNotes,
             backendNotes: (p as BatchRowPayload).backendNotes ?? reason,
           });
@@ -4576,7 +4598,8 @@ async function runFinanceBatchAction(
           if (res?.success !== false) {
             ok++;
             if ((p.frontendNotes ?? '').trim() || (p.backendNotes ?? '').trim()) {
-              await financeWithdrawalApi.updateNote(p.id, {
+              const noteId = (p as BatchRowPayload).orderId || p.id;
+              await financeWithdrawalApi.updateNote(noteId, {
                 frontendNotes: p.frontendNotes,
                 backendNotes: p.backendNotes,
               });

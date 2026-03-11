@@ -983,9 +983,9 @@
     <n-modal
       v-model:show="batchForceRejectModal.show"
       preset="card"
-      class="batch-reason-modal-card"
+      class="batch-reason-modal-card batch-force-reject-modal-card"
       title="批量强制拒绝"
-      :style="{ width: 'min(95vw, 1200px)' }"
+      :style="{ width: 'min(98vw, 1600px)' }"
       :closable="true"
       :mask-closable="false"
     >
@@ -1028,17 +1028,30 @@
             </n-checkbox>
           </div>
         </div>
-        <div class="overflow-x-auto">
-          <table class="w-full border-collapse text-sm">
+        <div class="batch-force-reject-table-wrap">
+          <table class="batch-force-reject-table w-full border-collapse text-sm" style="table-layout: fixed">
+            <colgroup>
+              <col style="width: 10%">
+              <col style="width: 9%">
+              <col style="width: 7%">
+              <col style="width: 9%">
+              <col style="width: 5%">
+              <col style="width: 7%">
+              <col style="width: 16%">
+              <col style="width: 9%">
+              <col style="width: 7%">
+              <col style="width: 11%">
+              <col style="width: 11%">
+            </colgroup>
             <thead>
               <tr class="border-b bg-gray-50">
-                <th class="whitespace-nowrap px-3 py-2 text-left font-medium">订单号</th>
-                <th class="whitespace-nowrap px-3 py-2 text-left font-medium">品牌名称(ID)</th>
-                <th class="whitespace-nowrap px-3 py-2 text-left font-medium">会员ID</th>
-                <th class="whitespace-nowrap px-3 py-2 text-left font-medium">会员账号</th>
-                <th class="whitespace-nowrap px-3 py-2 text-left font-medium">会员币种</th>
-                <th class="whitespace-nowrap px-3 py-2 text-left font-medium">提现金额</th>
-                <th class="min-w-[200px] px-3 py-2 text-left font-medium">
+                <th class="px-2 py-2 text-left font-medium">订单号</th>
+                <th class="px-2 py-2 text-left font-medium">品牌名称(ID)</th>
+                <th class="px-2 py-2 text-left font-medium">会员ID</th>
+                <th class="px-2 py-2 text-left font-medium">会员账号</th>
+                <th class="px-2 py-2 text-left font-medium">会员币种</th>
+                <th class="px-2 py-2 text-left font-medium">提现金额</th>
+                <th class="px-2 py-2 text-left font-medium">
                   <div class="flex flex-wrap items-center gap-2">
                     <span>是否风控处罚</span>
                     <n-radio-group v-model:value="batchForceRejectBulk.windControlProcess" size="small">
@@ -1051,7 +1064,7 @@
                     </n-button>
                   </div>
                 </th>
-                <th class="min-w-[100px] px-3 py-2 text-left font-medium">
+                <th class="px-2 py-2 text-left font-medium">
                   <span>增加稽核任务</span>
                   <div class="text-xs text-gray-500">最大20倍</div>
                   <n-input-number
@@ -1066,8 +1079,8 @@
                     覆盖
                   </n-button>
                 </th>
-                <th class="min-w-[100px] px-3 py-2 text-left font-medium">扣除余额</th>
-                <th class="min-w-[180px] px-3 py-2 text-left font-medium">
+                <th class="px-2 py-2 text-left font-medium">扣除余额</th>
+                <th class="px-2 py-2 text-left font-medium">
                   <div class="flex flex-wrap items-center justify-between gap-2">
                     <span>拒绝原因(前台)</span>
                     <div class="flex items-center gap-2">
@@ -1085,7 +1098,7 @@
                     </div>
                   </div>
                 </th>
-                <th class="min-w-[180px] px-3 py-2 text-left font-medium">
+                <th class="px-2 py-2 text-left font-medium">
                   <div class="flex flex-wrap items-center justify-between gap-2">
                     <span>拒绝原因(后台)</span>
                     <div class="flex items-center gap-2">
@@ -1111,22 +1124,18 @@
                 :key="row.id"
                 class="border-b hover:bg-gray-50/50"
               >
-                <td class="whitespace-nowrap px-3 py-2 font-mono">{{ row.orderId }}</td>
-                <td class="whitespace-nowrap px-3 py-2">
-                  {{ (row as any).brandName || '-' }} ({{ (row as any).brandId || '-' }})
-                </td>
-                <td class="whitespace-nowrap px-3 py-2">
+                <td class="px-2 py-2 font-mono text-xs break-all">{{ row.orderId }}</td>
+                <td class="px-2 py-2 text-xs break-all">{{ (row as any).brandName || '-' }} ({{ (row as any).brandId || '-' }})</td>
+                <td class="px-2 py-2 text-xs break-all">
                   <span>{{ row.displayMemberId || row.userID || row.memberId }}</span>
-                  <n-tag v-if="row.vipLevel" size="small" type="success" class="ml-1">
-                    {{ row.vipLevel }}
-                  </n-tag>
+                  <n-tag v-if="row.vipLevel" size="small" type="success" class="ml-1">{{ row.vipLevel }}</n-tag>
                 </td>
-                <td class="whitespace-nowrap px-3 py-2">{{ row.accountName || row.memberAccount }}</td>
-                <td class="whitespace-nowrap px-3 py-2">{{ row.currency || 'BRL' }}</td>
-                <td class="whitespace-nowrap px-3 py-2 font-medium">
+                <td class="px-2 py-2 text-xs break-all">{{ row.accountName || row.memberAccount }}</td>
+                <td class="px-2 py-2 text-xs">{{ row.currency || 'BRL' }}</td>
+                <td class="px-2 py-2 text-xs font-medium">
                   {{ formatCurrency(row.rewardAmount ?? row.withdrawAmount ?? row.withdrawalAmount ?? row.amount ?? 0) }}
                 </td>
-                <td class="px-3 py-2 align-top">
+                <td class="px-2 py-2 align-top">
                   <template v-if="batchForceRejectRowData[row.id]">
                     <n-radio-group
                       :value="batchForceRejectRowData[row.id]?.windControlProcess"
@@ -1139,7 +1148,7 @@
                     </n-radio-group>
                   </template>
                 </td>
-                <td class="px-3 py-2 align-top">
+                <td class="px-2 py-2 align-top">
                   <template v-if="batchForceRejectRowData[row.id]?.windControlProcess === 'add_audit'">
                     <n-input-number
                       :value="batchForceRejectRowData[row.id]?.auditMultiplier"
@@ -1153,7 +1162,7 @@
                   </template>
                   <span v-else class="text-gray-400">-</span>
                 </td>
-                <td class="px-3 py-2 align-top">
+                <td class="px-2 py-2 align-top">
                   <template v-if="batchForceRejectRowData[row.id]?.windControlProcess === 'deduct_balance'">
                     <n-input-number
                       :value="batchForceRejectRowData[row.id]?.deductAmount"
@@ -1166,7 +1175,7 @@
                   </template>
                   <span v-else class="text-gray-400">-</span>
                 </td>
-                <td class="px-3 py-2 align-top">
+                <td class="px-2 py-2 align-top">
                   <n-input
                     v-if="batchForceRejectRowData[row.id]"
                     :value="batchForceRejectRowData[row.id]?.frontendReason"
@@ -1178,7 +1187,7 @@
                     @update:value="(v: string) => setBatchForceRejectRowField(row.id, 'frontendReason', v)"
                   />
                 </td>
-                <td class="px-3 py-2 align-top">
+                <td class="px-2 py-2 align-top">
                   <n-input
                     v-if="batchForceRejectRowData[row.id]"
                     :value="batchForceRejectRowData[row.id]?.backendReason"
@@ -2311,11 +2320,6 @@ async function submitBatchForceReject() {
   for (const row of rows) {
     const d = batchForceRejectRowData.value[row.id];
     if (!d) continue;
-    if (!(d.frontendReason || '').trim()) {
-      message.warning(`订单 ${row.orderId} 请填写拒绝原因`);
-      batchForceRejectModal.value.loading = false;
-      return;
-    }
     try {
       let auditTask: { multiplier: number; platforms: Record<string, boolean>; selectedPlatform: string } | undefined;
       if (d.windControlProcess === 'add_audit') {
@@ -2328,8 +2332,8 @@ async function submitBatchForceReject() {
       const res = await financeWithdrawalApi.forceReject(row.id, {
         windControlProcess: d.windControlProcess,
         auditTask,
-        frontendReason: d.frontendReason,
-        backendReason: d.backendReason || d.frontendReason,
+        frontendReason: d.frontendReason ?? '',
+        backendReason: (d.backendReason || d.frontendReason) ?? '',
       });
       if (res?.success !== false) ok++;
     } catch (_) {
@@ -4397,16 +4401,6 @@ function applyBulkBatch(field: 'frontend' | 'backend') {
 
 async function submitBatchReasonModal() {
   const { actionKey, rows, orderIds } = batchReasonModal.value;
-  if (actionKey === 'batch-force-cancel') {
-    const missing = rows.some((r) => {
-      const d = batchModalRowData.value[r.id];
-      return !d || (!(d.frontendReason || '').trim() && !(d.backendReason || '').trim());
-    });
-    if (missing) {
-      message.warning('请为每个订单至少填写一项取消原因（前台或后台）');
-      return;
-    }
-  }
   batchReasonModal.value.loading = true;
   const rowPayloads = rows.map((r) => {
     const d = batchModalRowData.value[r.id] || {};
@@ -5124,6 +5118,17 @@ onUnmounted(() => {
   text-align: center;
   justify-content: center;
 }
+
+/* 批量强制拒绝：表格不横向滚动，全部列在一屏内显示 */
+.batch-force-reject-table-wrap {
+  overflow-x: visible;
+  max-width: 100%;
+}
+.batch-force-reject-table {
+  table-layout: fixed;
+  word-break: break-word;
+}
+
 </style>
 
 <style>

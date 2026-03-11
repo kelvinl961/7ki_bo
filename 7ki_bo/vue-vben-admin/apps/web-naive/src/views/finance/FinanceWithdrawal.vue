@@ -2006,7 +2006,10 @@ import {
   ChevronUpOutline,
   WarningOutline,
 } from '@vicons/ionicons5';
-import { financeWithdrawalApi } from '#/api/finance/financeWithdrawal';
+import {
+  financeWithdrawalApi,
+  isCompletedWithdrawalStatus,
+} from '#/api/finance/financeWithdrawal';
 import { useUserStore } from '@vben/stores';
 import { getGamePlatformListApi } from '#/api/game/platform';
 import { formatCurrency, formatDateTime } from '#/utils/format';
@@ -2387,23 +2390,24 @@ const batchOperationOptions = [
   { label: '批量导出', value: 'batch_export' },
 ];
 
-// 批量操作：财务出款仅「批量锁定」；由我出款仅以下 6 项
-const batchOperationDropdownOptionsMyWithdrawal = [
+// 批量操作：由我出款、财务出款均显示全部选项
+const batchOperationDropdownOptions = [
+  { label: '批量锁定', key: 'batch-lock' },
   { label: '批量解锁', key: 'batch-unlock' },
   { label: '批量备注', key: 'batch-remark' },
   { label: '批量强制取消', key: 'batch-force-cancel' },
   { label: '批量强制拒绝', key: 'batch-force-reject' },
+  { label: '批量强制成功', key: 'batch-force-success' },
+  { label: '批量强制失败', key: 'batch-force-fail' },
+  { label: '批量刷新回调', key: 'batch-refresh-callback' },
   { label: '批量审核出款', key: 'batch-approve' },
+  { label: '批量重新代付', key: 'batch-repay' },
   { label: '批量已人工出款', key: 'batch-manual-withdrawal' },
 ];
-const batchOperationDropdownOptions = computed(() =>
-  props.isMyWithdrawal
-    ? batchOperationDropdownOptionsMyWithdrawal
-    : [{ label: '批量锁定', key: 'batch-lock' }],
-);
-const batchOperationDropdownOptionsSelect = computed(() =>
-  batchOperationDropdownOptions.value.map((o) => ({ label: o.label, value: o.key })),
-);
+const batchOperationDropdownOptionsSelect = batchOperationDropdownOptions.map((o) => ({
+  label: o.label,
+  value: o.key,
+}));
 
 const showFilterBatchModal = ref(false);
 const filterBatchActionKey = ref('');
@@ -2425,27 +2429,24 @@ async function submitFilterBatchModal() {
   const selectedRows = tableData.value.filter((r) =>
     selectedIds.value.includes(r.id),
   );
-  const pendingRows =
-    filterBatchActionKey.value === 'batch-force-reject' ||
-    filterBatchActionKey.value === 'batch-force-cancel'
-      ? selectedRows.filter((r) => r.status === 'pending')
-      : selectedRows;
-  const orderIds =
-    filterBatchActionKey.value === 'batch-force-reject'
-      ? pendingRows.map((r) => String(r.id))
-      : selectedRows.map((r) => String(r.id));
+  // 解锁/备注/取消/拒绝/审核/人工出款：筛掉未锁定和已完成的订单
+  const rowsForOp = filterRowsForBatchOpLocked(
+    filterBatchActionKey.value,
+    selectedRows,
+  );
 
   showFilterBatchModal.value = false;
 
   if (filterBatchActionKey.value === 'batch-force-reject') {
-    if (pendingRows.length === 0) {
-      message.warning('所选记录中无待出款状态，仅处理待出款订单');
+    if (rowsForOp.length === 0) {
+      selectedIds.value = [];
+      message.warning('所选记录中没有符合该操作条件的订单');
       return true;
     }
-    if (pendingRows.length < selectedRows.length) {
-      message.info(`已过滤非待出款订单，将仅处理 ${pendingRows.length} 笔待出款`);
+    if (rowsForOp.length < selectedRows.length) {
+      selectedIds.value = rowsForOp.map((r) => String(r.id));
     }
-    showForceRejectModalForBatch(pendingRows);
+    showForceRejectModalForBatch(rowsForOp);
     return true;
   }
 
@@ -2454,25 +2455,53 @@ async function submitFilterBatchModal() {
       filterBatchActionKey.value,
     )
   ) {
-    // 批量强制取消：仅待出款；批量备注/批量已人工出款：全部选中
-    const idsToUse =
-      filterBatchActionKey.value === 'batch-force-cancel'
-        ? pendingRows.map((r) => String(r.id))
-        : selectedRows.map((r) => String(r.id));
-    if (filterBatchActionKey.value === 'batch-force-cancel' && idsToUse.length === 0 && selectedRows.length > 0) {
-      message.warning('所选记录中无待出款状态，仅处理待出款订单');
+    if (rowsForOp.length === 0) {
+      selectedIds.value = [];
+      message.warning('所选记录中没有符合该操作条件的订单');
       return true;
     }
-    openBatchReasonModal(filterBatchActionKey.value, idsToUse);
+    if (rowsForOp.length < selectedRows.length) {
+      selectedIds.value = rowsForOp.map((r) => String(r.id));
+    }
+    openBatchReasonModal(filterBatchActionKey.value, rowsForOp.map((r) => String(r.id)));
     return true;
   }
 
-  if (['batch-lock', 'batch-unlock'].includes(filterBatchActionKey.value)) {
-    openBatchLockConfirmModal(
-      filterBatchActionKey.value as 'batch-lock' | 'batch-unlock',
-      selectedRows,
-    );
+  if (filterBatchActionKey.value === 'batch-unlock') {
+    if (rowsForOp.length === 0) {
+      selectedIds.value = [];
+      message.warning('所选记录中没有符合该操作条件的订单');
+      return true;
+    }
+    if (rowsForOp.length < selectedRows.length) {
+      selectedIds.value = rowsForOp.map((r) => String(r.id));
+    }
+    openBatchLockConfirmModal('batch-unlock', rowsForOp);
     return true;
+  }
+
+  if (filterBatchActionKey.value === 'batch-lock') {
+    openBatchLockConfirmModal('batch-lock', selectedRows);
+    return true;
+  }
+
+  const useFilteredForOrderIds = [
+    'batch-approve',
+    'batch-refresh-callback',
+    'batch-repay',
+  ].includes(filterBatchActionKey.value);
+  const orderIds = useFilteredForOrderIds
+    ? rowsForOp.map((r) => String(r.id))
+    : selectedRows.map((r) => String(r.id));
+  if (useFilteredForOrderIds) {
+    if (rowsForOp.length === 0) {
+      selectedIds.value = [];
+      message.warning('所选记录中没有符合该操作条件的订单');
+      return true;
+    }
+    if (rowsForOp.length < selectedRows.length) {
+      selectedIds.value = rowsForOp.map((r) => String(r.id));
+    }
   }
 
   await runFinanceBatchAction(
@@ -4268,14 +4297,17 @@ const batchLockConfirmModal = ref<{
 
 function openBatchLockConfirmModal(actionKey: 'batch-lock' | 'batch-unlock', rows: WithdrawalRecord[]) {
   if (actionKey === 'batch-lock') {
-    // 弹窗内只显示未锁定的订单，避免已锁定订单造成混淆
-    const toLock = rows.filter((r) => !(r.isLocked || r.lockedBy));
+    // 只有待出款(pending)且未锁定的订单才可以被锁定；筛掉已锁定、非待出款
+    const toLock = rows.filter(
+      (r) => !(r.isLocked || r.lockedBy) && r.status === 'pending',
+    );
     if (toLock.length === 0) {
-      message.warning('所选订单均已锁定，无需重复操作');
+      selectedIds.value = [];
+      message.warning('没有符合锁定条件的订单（仅待出款且未锁定的订单可锁定）');
       return;
     }
     if (toLock.length < rows.length) {
-      message.info(`已跳过 ${rows.length - toLock.length} 条已锁定订单，仅对 ${toLock.length} 条未锁定订单执行锁定`);
+      selectedIds.value = toLock.map((r) => String(r.id));
     }
     batchLockConfirmModal.value = {
       show: true,
@@ -4308,10 +4340,7 @@ function openBatchReasonModal(actionKey: string, orderIds: string[]) {
       orderIds.includes(String(r.id)),
     );
     const pendingRows = selectedRows.filter((r) => r.status === 'pending');
-    if (pendingRows.length === 0) {
-      message.warning('所选记录中无待出款状态，仅处理待出款订单');
-      return;
-    }
+    if (pendingRows.length === 0) return;
     showForceRejectModalForBatch(pendingRows);
     return;
   }
@@ -4450,13 +4479,7 @@ async function runFinanceBatchAction(
         const row = tableData.value.find((r) => String(r.id) === id);
         return row?.status === 'pending';
       });
-      if (pendingIds.length === 0) {
-        message.warning('所选记录中无待出款状态，仅处理待出款订单，已跳过');
-        return;
-      }
-      if (pendingIds.length < orderIds.length) {
-        message.info(`已跳过 ${orderIds.length - pendingIds.length} 笔非待出款订单，仅处理 ${pendingIds.length} 笔待出款`);
-      }
+      if (pendingIds.length === 0) return;
       let ok = 0;
       for (const id of pendingIds) {
         try {
@@ -4625,25 +4648,68 @@ async function runFinanceBatchAction(
   }
 }
 
+/** 解锁/备注/取消/拒绝/审核出款/人工出款/回调/代付：仅操作已锁定且未完成的订单，筛选掉未锁定和已完成的。付款失败(payment_failed)视为未完成，允许参与备注/取消/拒绝/审核/人工/回调/代付 */
+function filterRowsForBatchOpLocked(
+  key: string,
+  rows: WithdrawalRecord[],
+): WithdrawalRecord[] {
+  const needLockedOnly =
+    key === 'batch-unlock' ||
+    key === 'batch-remark' ||
+    key === 'batch-force-cancel' ||
+    key === 'batch-force-reject' ||
+    key === 'batch-approve' ||
+    key === 'batch-manual-withdrawal' ||
+    key === 'batch-refresh-callback' ||
+    key === 'batch-repay';
+  if (!needLockedOnly) return rows;
+  // 仅保留已锁定的：与表格列「订单状态(操作人)」一致，必须 isLocked 且 lockedBy 有值才算已锁定
+  let filtered = rows.filter(
+    (r) =>
+      !!r.isLocked &&
+      r.lockedBy != null &&
+      String(r.lockedBy).trim() !== '',
+  );
+  if (key !== 'batch-unlock') {
+    // 备注/取消/拒绝/审核/人工/回调/代付：再排除已完成的订单（付款失败不算已完成）
+    filtered = filtered.filter((r) => !isCompletedWithdrawalStatus(r.status || ''));
+  }
+  // 审核出款/强制取消/强制拒绝：仅 pending 或 payment_failed（付款失败和已解锁场景下允许的操作）
+  if (
+    key === 'batch-approve' ||
+    key === 'batch-force-cancel' ||
+    key === 'batch-force-reject'
+  ) {
+    filtered = filtered.filter(
+      (r) => r.status === 'pending' || r.status === 'payment_failed',
+    );
+  }
+  return filtered;
+}
+
 function onBatchOperationSelect(key: string, selectedRows: WithdrawalRecord[]) {
-  // 批量备注：全部选中行都显示；批量强制取消/拒绝/审核：仅待出款
-  const pendingOnly =
+  // 解锁/备注/取消/拒绝/审核/人工出款：先筛掉未锁定和已完成的
+  const afterLockFilter = filterRowsForBatchOpLocked(key, selectedRows);
+  const pendingOrPaymentFailed =
     key === 'batch-approve' ||
     key === 'batch-force-cancel' ||
     key === 'batch-force-reject';
-  const rows = pendingOnly
-    ? selectedRows.filter((r) => r.status === 'pending')
-    : selectedRows;
+  const rows = pendingOrPaymentFailed
+    ? afterLockFilter.filter(
+        (r) => r.status === 'pending' || r.status === 'payment_failed',
+      )
+    : afterLockFilter;
   const orderIds = rows.map((r) => String(r.id)).filter(Boolean);
 
   if (orderIds.length === 0) {
-    if (selectedRows.length > 0 && pendingOnly)
-      message.warning('所选记录中无待出款状态，仅处理待出款订单');
-    else message.warning('请先选择要操作的记录');
+    if (selectedRows.length > 0) {
+      selectedIds.value = [];
+      message.warning('所选记录中没有符合该操作条件的订单');
+    }
     return;
   }
-  if (pendingOnly && rows.length < selectedRows.length) {
-    message.info(`已过滤非待出款订单，将仅处理 ${orderIds.length} 笔待出款`);
+  if (rows.length < selectedRows.length) {
+    selectedIds.value = orderIds;
   }
 
   if (key === 'batch-force-reject') {

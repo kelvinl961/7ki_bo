@@ -1,5 +1,22 @@
 import { requestClient } from '#/api/request';
 
+/** Statuses that mean "已完成操作", excluded from 财务出款 list when unlockedOnly */
+const COMPLETED_STATUSES = [
+  'completed',
+  'approved',
+  'success',
+  'rejected',
+  'failed',
+  'cancelled',
+  'canceled',
+  'force_withdrawn',
+  'payment_failed',
+] as const;
+
+export function isCompletedWithdrawalStatus(status: string): boolean {
+  return COMPLETED_STATUSES.includes(status as (typeof COMPLETED_STATUSES)[number]);
+}
+
 export interface FinanceWithdrawalFilters {
   startDate?: string;
   endDate?: string;
@@ -10,6 +27,10 @@ export interface FinanceWithdrawalFilters {
   approvalStatus?: string;
   operator?: string;
   assignedToMe?: boolean;
+  /** 仅返回未锁定的订单（财务出款用） */
+  unlockedOnly?: boolean;
+  /** 排除已完成的订单（财务出款用） */
+  excludeCompleted?: boolean;
   page?: number;
   limit?: number;
   sortBy?: string;

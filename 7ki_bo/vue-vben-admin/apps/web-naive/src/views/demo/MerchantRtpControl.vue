@@ -5,12 +5,7 @@
         <template #default>
           <ul>
             <li>✅ 商户级别的RTP调控</li>
-            <li>
-              ✅
-              支持设置游戏类型模式（心跳型、波动型、仿正型、混合型、稳定型、高中奖率、超高中奖率）
-            </li>
             <li>✅ 支持单个游戏或全部游戏调控</li>
-            <li>✅ 支持购买RTP和最大赢钱限制设置</li>
           </ul>
         </template>
       </n-alert>
@@ -24,14 +19,6 @@
         label-width="auto"
         require-mark-placement="right-hanging"
       >
-        <n-form-item label="游戏类型" path="GamePattern">
-          <n-select
-            v-model:value="formData.GamePattern"
-            :options="gamePatternOptions"
-            placeholder="选择游戏类型模式"
-          />
-        </n-form-item>
-
         <n-form-item label="RTP值" path="Rtp">
           <n-select
             v-model:value="formData.Rtp"
@@ -59,44 +46,6 @@
           />
           <template #feedback>
             可以选择多个游戏，或选择 ALL 应用到全部slots游戏
-          </template>
-        </n-form-item>
-
-        <n-form-item label="购买RTP" path="BuyRTP">
-          <n-select
-            v-model:value="formData.BuyRTP"
-            :options="buyRtpOptions"
-            placeholder="选择购买RTP（非必填）"
-            clearable
-          />
-          <template #feedback>
-            如果不填则值为0（默认值），当购买rtp开关权限未开启时设置此值为非0值时将会报错
-          </template>
-        </n-form-item>
-
-        <n-form-item label="最大赢钱倍数" path="MaxMultiple">
-          <n-input-number
-            v-model:value="formData.MaxMultiple"
-            placeholder="最大赢钱倍数"
-            :min="1"
-            :max="10000"
-            :default-value="100"
-            style="width: 100%"
-          />
-          <template #feedback> 非必填项，默认值100，范围1-10000 </template>
-        </n-form-item>
-
-        <n-form-item label="最大赢钱数" path="MaxWinPoints">
-          <n-input-number
-            v-model:value="formData.MaxWinPoints"
-            placeholder="最大赢钱数"
-            :min="1"
-            :max="100000000"
-            :default-value="1000000"
-            style="width: 100%"
-          />
-          <template #feedback>
-            非必填项，默认值1000000，范围1-100000000
           </template>
         </n-form-item>
 
@@ -132,16 +81,15 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, h } from 'vue';
 import {
-  NButton,
   NTag,
   NCard,
   NAlert,
   NForm,
   NFormItem,
   NSelect,
-  NInputNumber,
   NSpace,
   NDataTable,
+  NButton,
   useMessage,
   type FormInst,
   type DataTableColumns,
@@ -166,24 +114,9 @@ const currentSearchQuery = ref('');
 
 // Form data
 const formData = reactive({
-  GamePattern: null as number | null,
   Rtp: null as number | null,
   GameId: ['ALL'] as string[],
-  BuyRTP: 0,
-  MaxMultiple: 100,
-  MaxWinPoints: 1000000,
 });
-
-// Game pattern options
-const gamePatternOptions = [
-  { label: '心跳型', value: 1 },
-  { label: '波动型', value: 2 },
-  { label: '仿正型', value: 3 },
-  { label: '混合型', value: 4 },
-  { label: '稳定型', value: 5 },
-  { label: '高中奖率', value: 6 },
-  { label: '超高中奖率', value: 7 },
-];
 
 // RTP options (Max 97 - Operator Permission Limit)
 const rtpOptions = [
@@ -206,29 +139,8 @@ const rtpOptions = [
   { label: '97', value: 97 },
 ];
 
-// Buy RTP options
-const buyRtpOptions = [
-  { label: '0 (默认)', value: 0 },
-  { label: '10 (凄惨型)', value: 10 },
-  { label: '20', value: 20 },
-  { label: '30', value: 30 },
-  { label: '40', value: 40 },
-  { label: '50', value: 50 },
-  { label: '60', value: 60 },
-  { label: '70', value: 70 },
-  { label: '80', value: 80 },
-  { label: '85', value: 85 },
-  { label: '90', value: 90 },
-];
-
 // Form rules
 const rules = {
-  GamePattern: {
-    required: true,
-    type: 'number',
-    message: '请选择游戏类型',
-    trigger: 'change',
-  },
   Rtp: {
     required: true,
     type: 'number',
@@ -367,21 +279,9 @@ const handleSubmit = async () => {
       : formData.GameId;
 
     const requestData: any = {
-      GamePattern: formData.GamePattern!,
       Rtp: formData.Rtp!,
       GameId: gameIds,
     };
-
-    // Add optional fields
-    if (formData.BuyRTP !== undefined && formData.BuyRTP !== null) {
-      requestData.BuyRTP = formData.BuyRTP;
-    }
-    if (formData.MaxMultiple !== undefined && formData.MaxMultiple !== null) {
-      requestData.MaxMultiple = formData.MaxMultiple;
-    }
-    if (formData.MaxWinPoints !== undefined && formData.MaxWinPoints !== null) {
-      requestData.MaxWinPoints = formData.MaxWinPoints;
-    }
 
     const response = await requestClient.post(
       '/v1/operator/setRtp',
@@ -415,12 +315,8 @@ const handleSubmit = async () => {
 };
 
 const handleReset = () => {
-  formData.GamePattern = null;
   formData.Rtp = null;
   formData.GameId = ['ALL'];
-  formData.BuyRTP = 0;
-  formData.MaxMultiple = 100;
-  formData.MaxWinPoints = 1000000;
 };
 
 // History table
@@ -445,40 +341,8 @@ const pagination = reactive({
 
 const historyColumns: DataTableColumns<any> = [
   { title: '时间', key: 'createdAt', width: 180, ellipsis: { tooltip: true } },
-  {
-    title: '游戏类型',
-    key: 'gamePattern',
-    width: 120,
-    render: (row) => {
-      const pattern = gamePatternOptions.find(
-        (p) => p.value === row.gamePattern,
-      );
-      return pattern?.label || row.gamePattern;
-    },
-  },
   { title: 'RTP', key: 'rtp', width: 80, align: 'center' },
   { title: '游戏ID', key: 'gameId', width: 200, ellipsis: { tooltip: true } },
-  { title: '购买RTP', key: 'buyRtp', width: 100, align: 'center' },
-  {
-    title: '最大赢钱倍数',
-    key: 'maxMultiple',
-    width: 120,
-    align: 'center',
-    render: (row) =>
-      row.maxMultiple !== null && row.maxMultiple !== undefined
-        ? row.maxMultiple
-        : 100,
-  },
-  {
-    title: '最大赢钱数',
-    key: 'maxWinPoints',
-    width: 120,
-    align: 'center',
-    render: (row) =>
-      row.maxWinPoints !== null && row.maxWinPoints !== undefined
-        ? row.maxWinPoints
-        : 1000000,
-  },
   {
     title: '状态',
     key: 'status',
@@ -580,33 +444,14 @@ const loadLastConfig = async () => {
       const lastConfig = dataArray[0];
       console.log('📥 Loading last saved merchant RTP config:', lastConfig);
 
-      // Parse gamePattern from string to number
-      formData.GamePattern = parseInt(lastConfig.gamePattern) || null;
-
-      // Load RTP value
       formData.Rtp = lastConfig.rtp || null;
-
-      // Load GameId (split comma-separated string into array)
       formData.GameId = lastConfig.gameId
         ? lastConfig.gameId.split(',')
         : ['ALL'];
 
-      // Load BuyRTP (use ?? operator for proper null/0 handling)
-      formData.BuyRTP = lastConfig.buyRtp ?? 0;
-
-      // Load MaxMultiple (use ?? operator for proper null handling)
-      formData.MaxMultiple = lastConfig.maxMultiple ?? 100;
-
-      // Load MaxWinPoints (use ?? operator for proper null handling)
-      formData.MaxWinPoints = lastConfig.maxWinPoints ?? 1000000;
-
       console.log('✅ Last merchant RTP config loaded into form:', {
-        GamePattern: formData.GamePattern,
         Rtp: formData.Rtp,
         GameId: formData.GameId,
-        BuyRTP: formData.BuyRTP,
-        MaxMultiple: formData.MaxMultiple,
-        MaxWinPoints: formData.MaxWinPoints,
       });
     }
   } catch (error) {

@@ -1,6 +1,6 @@
 import { requestClient } from '#/api/request';
 
-/** Statuses that mean "已完成操作", excluded from 财务出款 list when unlockedOnly */
+/** Statuses that mean "已完成操作", excluded from 财务出款 list when unlockedOnly. 付款失败(payment_failed)不在此列，允许参与 备注/取消/拒绝/审核出款/人工出款/回调/代付 等批量操作 */
 const COMPLETED_STATUSES = [
   'completed',
   'approved',
@@ -10,7 +10,6 @@ const COMPLETED_STATUSES = [
   'cancelled',
   'canceled',
   'force_withdrawn',
-  'payment_failed',
 ] as const;
 
 export function isCompletedWithdrawalStatus(status: string): boolean {

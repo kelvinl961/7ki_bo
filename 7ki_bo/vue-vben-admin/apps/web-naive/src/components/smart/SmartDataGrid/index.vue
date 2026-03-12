@@ -72,12 +72,13 @@
       />
     </div>
 
-    <!-- Data Table -->
-    <n-card
-      :bordered="false"
-      class="smart-data-grid__table rounded-16px shadow-sm"
-    >
-      <n-data-table
+    <!-- Data Table：横向滚动容器限制在视口内，无需拉到页面最底部即可左右滑动 -->
+    <div class="smart-data-grid__scroll-container">
+      <n-card
+        :bordered="false"
+        class="smart-data-grid__table rounded-16px shadow-sm"
+      >
+        <n-data-table
         ref="tableRef"
         :columns="props.columns"
         :data="props.data"
@@ -107,6 +108,7 @@
         </template>
       </n-data-table>
     </n-card>
+    </div>
     <div
       class="smart-data-grid__pagination sticky bottom-0 z-10 mt-4 flex justify-end border-t border-gray-100 bg-white py-2"
     >
@@ -332,8 +334,16 @@ defineExpose(exposedMethods);
   width: 100%;
 }
 
+/* 表格+横向滚动限制在视口内，横向滚动条紧贴表格下方，无需滚到页面最底 */
+.smart-data-grid__scroll-container {
+  width: 100%;
+  max-height: min(75vh, 900px);
+  overflow: auto;
+}
+
 .smart-data-grid__table {
   width: 100%;
+  min-width: min-content;
 }
 
 /* Ensure table responsiveness */

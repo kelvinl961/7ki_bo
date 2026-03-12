@@ -14,6 +14,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           title: '品牌LOGO设置',
+          fullPathKey: false, // 子 tab 切换不新开标签页，与游戏管理一致
         },
         name: 'BrandLogoSetting',
         path: '/operateManager/brandLogoSetting',

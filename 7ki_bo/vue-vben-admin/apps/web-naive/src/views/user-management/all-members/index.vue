@@ -448,6 +448,7 @@ const accountTypeOptions = [
   { label: '正式账号-专业代理', value: 'official_agent_pro' },
   { label: '临时账号', value: 'temporary' },
   { label: '俱乐部账号', value: 'club' },
+  { label: 'TG会员(Telegram)', value: 'telegram' },
 ];
 
 // 工具函数 - 使用环境变量中的时区
@@ -1222,9 +1223,15 @@ const loadTableData = async () => {
       }
     }
 
-    // Account type
+    // Account type (TG会员 = filter by 注册域名 telegram, not accountType)
     if (filterForm.accountType && filterForm.accountType !== '') {
-      params.accountType = filterForm.accountType;
+      if (filterForm.accountType === 'telegram') {
+        params.searchField = 'registration_domain';
+        params.searchValue = 'telegram';
+        params.searchMode = 'exact';
+      } else {
+        params.accountType = filterForm.accountType;
+      }
     }
 
     // Account status

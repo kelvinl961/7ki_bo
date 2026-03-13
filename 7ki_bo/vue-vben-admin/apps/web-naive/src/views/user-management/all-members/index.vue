@@ -646,6 +646,7 @@ const columns: DataTableColumns<UserItem> = [
       > = {
         NORMAL: { text: '正常', type: 'success' },
         MANUAL_FREEZE: { text: '手动冻结', type: 'error' },
+        ABNORMAL_FREEZE: { text: '异常冻结', type: 'error' },
         PROHIBIT_BONUS: { text: '禁止领取优惠', type: 'warning' },
         PROHIBIT_WITHDRAWAL: { text: '禁止提现', type: 'error' },
         PROHIBIT_GAME_ENTRY: { text: '禁止进入游戏', type: 'warning' },
@@ -855,6 +856,7 @@ const handleSearchConditionChange = async (value: string | null) => {
         searchConditionValueOptions.value = [
           { label: '正常', value: 'NORMAL' },
           { label: '冻结', value: 'FROZEN' },
+          { label: '异常冻结', value: 'ABNORMAL_FREEZE' },
           { label: '锁定', value: 'LOCKED' },
           { label: '暂停', value: 'SUSPENDED' },
           { label: '临时', value: 'TEMPORARY' },

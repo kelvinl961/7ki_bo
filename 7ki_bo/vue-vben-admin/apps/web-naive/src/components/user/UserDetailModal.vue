@@ -1840,6 +1840,7 @@ const handleUpdateMemberTier = async () => {
 const statusOptions = [
   { label: '正常', value: 'NORMAL' },
   { label: '手动冻结', value: 'MANUAL_FREEZE' },
+  { label: '异常冻结', value: 'ABNORMAL_FREEZE' },
   { label: '禁止领取优惠', value: 'PROHIBIT_BONUS' },
   { label: '禁止提现', value: 'PROHIBIT_WITHDRAWAL' },
   { label: '禁止游戏入场', value: 'PROHIBIT_GAME_ENTRY' },
@@ -2401,6 +2402,7 @@ const getStatusType = (
     NORMAL: 'success',
     ACTIVE: 'success',
     MANUAL_FREEZE: 'error',
+    ABNORMAL_FREEZE: 'error',
     PROHIBIT_BONUS: 'warning',
     PROHIBIT_WITHDRAWAL: 'warning',
     PROHIBIT_GAME_ENTRY: 'warning',
@@ -2417,6 +2419,7 @@ const getStatusLabel = (status: string) => {
     NORMAL: '正常',
     ACTIVE: '正常',
     MANUAL_FREEZE: '手动冻结',
+    ABNORMAL_FREEZE: '异常冻结',
     PROHIBIT_BONUS: '禁止领取优惠',
     PROHIBIT_WITHDRAWAL: '禁止提现',
     PROHIBIT_GAME_ENTRY: '禁止游戏入场',

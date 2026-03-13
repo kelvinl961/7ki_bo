@@ -18,6 +18,7 @@ export interface UserDetailInfo {
     | 'BANNED'
     | 'BLACKLIST'
     | 'MANUAL_FREEZE'
+    | 'ABNORMAL_FREEZE'
     | 'MARGINAL'
     | 'NORMAL'
     | 'PROHIBIT_BONUS'

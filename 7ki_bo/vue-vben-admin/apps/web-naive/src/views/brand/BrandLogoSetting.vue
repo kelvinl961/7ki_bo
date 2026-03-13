@@ -614,7 +614,7 @@
 import { ref, reactive, computed, onMounted, h, watch, defineAsyncComponent } from 'vue';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 const SmartDataGrid = defineAsyncComponent(() => import('../../components/smart/SmartDataGrid/index.vue'));
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import type { FormInst, DataTableColumns, UploadFileInfo, FormRules } from 'naive-ui';
 import {
   getBrandLogoSettings,
@@ -671,7 +671,6 @@ import { getImageUrl } from '../../utils/imageUtils';
 const MediaLibrarySelector = defineAsyncComponent(() => import('../../components/MediaLibrarySelector.vue'));
 
 const route = useRoute();
-const router = useRouter();
 const { preloadTableImages } = useImagePreloader();
 const { clearCache } = useServiceWorker();
 const { getColorInfo, generateColorPreview, getPreviewStyles } = useColorTheme();
@@ -1337,21 +1336,8 @@ const skinLangColumns: DataTableColumns<BrandSkinLangConfig> = [
   },
 ];
 
-// Methods
+// Methods：子 tab 切换只改本地状态，不调用路由，避免顶部多开「品牌LOGO设置」标签页
 const handleTabChange = (value: string) => {
-  // Update the route query parameter safely
-  router.replace({
-    path: route.path,
-    query: {
-      ...route.query,
-      tab: value,
-    },
-  }).catch(err => {
-    // Ignore navigation errors
-    console.warn('Navigation warning:', err);
-  });
-  
-  // Load data based on the selected tab
   if (value === 'logo-settings') {
     loadData();
   } else if (value === 'skin-language') {

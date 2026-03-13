@@ -387,16 +387,16 @@
               />
             </n-form-item>
             <!-- 登录页入口图 -->
-            <n-form-item label="登录页入口图">
+            <!--<n-form-item label="登录页入口图">
               <MediaLibrarySelector 
                 v-model="formData.loginImageFileUrl" 
                 :accept-types="['image']"
                 placeholder="从媒体库选择或上传（建议1920x1080，≤3MB）"
               />
-            </n-form-item>
+            </n-form-item>-->
 
             <!-- APP商店图标 -->
-            <n-form-item label="APP商店图标">
+            <!--<n-form-item label="APP商店图标">
               <MediaLibrarySelector 
                 v-model="formData.appStoreImageFileUrl" 
                 :accept-types="['image']"
@@ -405,13 +405,13 @@
             </n-form-item>
 
             <!-- APP内部LOGO -->
-            <n-form-item label="APP内部LOGO">
+            <!--<n-form-item label="APP内部LOGO">
               <MediaLibrarySelector 
                 v-model="formData.appInternalLogoFileUrl" 
                 :accept-types="['image']"
                 placeholder="从媒体库选择或上传（建议200x80，≤500KB）"
               />
-            </n-form-item>
+            </n-form-item>-->
 
             <!-- 大厅LOGO -->
             <n-form-item label="大厅LOGO">

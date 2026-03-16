@@ -3247,16 +3247,16 @@ const columns: DataTableColumns<WithdrawalRecord> = [
       ]);
     },
   },
-  // 12. 前台备注
+  // 12. 前台备注（长备注自动换行便于阅读）
   {
     title: '前台备注',
     key: 'frontendNotes',
     width: 150,
     render: (row) => {
       const frontendNote = row.frontendNotes || row.frontendNote || '';
-      return h('div', { class: 'text-xs' }, [
+      return h('div', { class: 'text-xs min-w-0 remark-cell-content' }, [
         frontendNote
-          ? h('div', { class: 'text-gray-700' }, frontendNote)
+          ? h('div', { class: 'text-gray-700 break-words whitespace-normal' }, frontendNote)
           : h('span', { class: 'text-gray-400 text-center' }, '-'),
       ]);
     },
@@ -3282,13 +3282,13 @@ const columns: DataTableColumns<WithdrawalRecord> = [
             backendNote.toLowerCase().includes('错误') ||
             backendNote.toLowerCase().includes('失败')));
 
-      return h('div', { class: 'text-xs' }, [
+      return h('div', { class: 'text-xs min-w-0 remark-cell-content' }, [
         backendNote
           ? h('div', { class: hasError ? 'space-y-1' : '' }, [
               hasError && h('div', { class: 'text-red-500' }, '错误信息：'),
               h(
                 'div',
-                { class: hasError ? 'text-red-600' : 'text-gray-700' },
+                { class: `${hasError ? 'text-red-600' : 'text-gray-700'} break-words whitespace-normal` },
                 backendNote,
               ),
             ])
@@ -3312,13 +3312,13 @@ const columns: DataTableColumns<WithdrawalRecord> = [
           thirdPartyNote.toLowerCase().includes('错误') ||
           thirdPartyNote.toLowerCase().includes('失败'));
 
-      return h('div', { class: 'text-xs' }, [
+      return h('div', { class: 'text-xs min-w-0 remark-cell-content' }, [
         thirdPartyNote
           ? h('div', { class: 'space-y-1' }, [
               h('div', { class: 'text-orange-500 text-xs' }, '三方响应：'),
               h(
                 'div',
-                { class: hasError ? 'text-red-600' : 'text-gray-700' },
+                { class: `${hasError ? 'text-red-600' : 'text-gray-700'} break-words whitespace-normal` },
                 thirdPartyNote,
               ),
             ])
@@ -5091,6 +5091,16 @@ onUnmounted(() => {
 
 .single-line-table :deep(.n-data-table-td) {
   white-space: nowrap;
+}
+
+/* 备注列（前台/后台/三方）长文本自动换行，便于阅读 */
+.single-line-table :deep(.n-data-table-td:has(.remark-cell-content)) {
+  white-space: normal;
+}
+.single-line-table :deep(.remark-cell-content) {
+  word-break: break-word;
+  white-space: normal;
+  max-width: 100%;
 }
 
 .single-line-table :deep(.n-data-table-th) {

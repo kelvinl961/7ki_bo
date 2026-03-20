@@ -139,6 +139,17 @@ export async function getAuditStatusesApi(): Promise<string[]> {
 }
 
 /**
+ * Get single wagering audit detail by id (optional; backend may extend with eligiblePlatforms etc.)
+ */
+export async function getWageringAuditDetailApi(
+  auditId: string,
+): Promise<WageringAuditItem> {
+  return requestClient.get<WageringAuditItem>(
+    `/admin/wagering-audits/${auditId}`,
+  );
+}
+
+/**
  * Cancel an audit (admin operation)
  */
 export async function cancelAuditApi(

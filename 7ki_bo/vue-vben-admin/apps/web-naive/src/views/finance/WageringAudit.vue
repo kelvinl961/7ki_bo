@@ -242,11 +242,98 @@
       :user-id="currentUserId"
       @refresh="loadData"
     />
+
+    <!-- 投注任务详情 Modal -->
+    <n-modal
+      v-model:show="showDetailModal"
+      preset="card"
+      title="投注任务详情"
+      style="width: 98vw; max-width: 900px"
+      :mask-closable="true"
+      @close="currentDetailRow = null"
+    >
+      <template v-if="currentDetailRow">
+        <!-- 会员个人信息 -->
+        <n-card title="会员个人信息" size="small" class="mb-4">
+          <n-descriptions :column="2" label-placement="left" label-style="width: 120px">
+            <n-descriptions-item label="会员ID">{{ currentDetailRow.user?.id ?? '-' }}</n-descriptions-item>
+            <n-descriptions-item label="品牌名称(ID)">-</n-descriptions-item>
+            <n-descriptions-item label="会员账号">{{ currentDetailRow.user?.account ?? '-' }}</n-descriptions-item>
+            <n-descriptions-item label="真实姓名">{{ currentDetailRow.user?.name ?? '-' }}</n-descriptions-item>
+            <n-descriptions-item label="会员层级">-</n-descriptions-item>
+            <n-descriptions-item label="会员币种">-</n-descriptions-item>
+            <n-descriptions-item label="VIP等级">-</n-descriptions-item>
+          </n-descriptions>
+        </n-card>
+
+        <!-- 投注任务(稽核)信息 -->
+        <n-card title="投注任务(稽核)信息" size="small" class="mb-4">
+          <n-descriptions :column="2" label-placement="left" label-style="width: 140px">
+            <n-descriptions-item label="任务创建时间">{{ formatDateTime(currentDetailRow.createdAt) }}</n-descriptions-item>
+            <n-descriptions-item label="提现模式">-</n-descriptions-item>
+            <n-descriptions-item label="类型">{{ getSourceTypeLabel(currentDetailRow.sourceType) }}</n-descriptions-item>
+            <n-descriptions-item label="类型细项">{{ translateSourceDescription(currentDetailRow.sourceDescription) }}</n-descriptions-item>
+            <n-descriptions-item label="优惠名称">-</n-descriptions-item>
+            <n-descriptions-item label="金额">
+              <span class="inline-flex items-center gap-1">
+                {{ formatCurrency(currentDetailRow.sourceAmount) }}
+                <n-button text type="primary" size="tiny" @click="copyDetailValue(formatCurrency(currentDetailRow.sourceAmount))">复制</n-button>
+              </span>
+            </n-descriptions-item>
+            <n-descriptions-item label="要求倍数">{{ currentDetailRow.multiplier }}</n-descriptions-item>
+            <n-descriptions-item label="需有效投注">
+              <span class="inline-flex items-center gap-1">
+                {{ formatCurrency(currentDetailRow.requiredBetAmount) }}
+                <n-button text type="primary" size="tiny" @click="copyDetailValue(formatCurrency(currentDetailRow.requiredBetAmount))">复制</n-button>
+              </span>
+            </n-descriptions-item>
+            <n-descriptions-item label="已完成投注">{{ formatCurrency(currentDetailRow.currentBetAmount) }}</n-descriptions-item>
+            <n-descriptions-item label="未完成投注">
+              <span class="inline-flex items-center gap-1">
+                {{ formatCurrency(currentDetailRow.remainingBetAmount) }}
+                <n-button text type="primary" size="tiny" @click="copyDetailValue(formatCurrency(currentDetailRow.remainingBetAmount))">复制</n-button>
+              </span>
+            </n-descriptions-item>
+            <n-descriptions-item label="自动解除额度">-</n-descriptions-item>
+            <n-descriptions-item label="任务状态">{{ getStatusLabel(currentDetailRow.status) }}</n-descriptions-item>
+            <n-descriptions-item label="操作人">-</n-descriptions-item>
+            <n-descriptions-item label="操作时间">{{ formatDateTime(currentDetailRow.createdAt) }}</n-descriptions-item>
+          </n-descriptions>
+        </n-card>
+
+        <!-- 仅限以下指定游戏 -->
+        <n-card title="仅限以下指定游戏" size="small">
+          <p class="text-gray-500 text-sm mb-3">（即仅限以下游戏计入投注任务）</p>
+          <div class="mb-3 flex gap-2">
+            <n-input
+              v-model:value="detailGameSearch"
+              placeholder="请输入子游戏名称"
+              size="small"
+              clearable
+              style="max-width: 240px"
+            />
+            <n-button size="small">搜索</n-button>
+          </div>
+          <div v-if="detailEligiblePlatforms.length" class="flex flex-wrap gap-2">
+            <n-tag
+              v-for="(p, i) in detailEligiblePlatforms"
+              :key="i"
+              type="info"
+              size="small"
+            >
+              {{ p.description || p.gameProvider || p.gameType || '-' }}
+              <template v-if="p.contributionRate != null"> ({{ p.contributionRate }}%)</template>
+            </n-tag>
+          </div>
+          <div v-else class="text-gray-400 text-sm">暂无指定游戏限制</div>
+        </n-card>
+      </template>
+    </n-modal>
   </Page>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, h } from 'vue';
+import { ref, reactive, computed, onMounted, h } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
   NBreadcrumb,
@@ -254,11 +341,14 @@ import {
   NButton,
   NCard,
   NDatePicker,
+  NDescriptions,
+  NDescriptionsItem,
   NEmpty,
   NFormItem,
   NIcon,
   NInput,
   NInputNumber,
+  NModal,
   NSelect,
   NStatistic,
   NTabPane,
@@ -310,6 +400,9 @@ const activeTab = ref('details');
 const showStatistics = ref(false);
 const showUserDetailModal = ref(false);
 const currentUserId = ref<number>(0);
+const showDetailModal = ref(false);
+const currentDetailRow = ref<WageringAuditItem | null>(null);
+const detailGameSearch = ref('');
 const tableData = ref<WageringAuditItem[]>([]);
 const dateRange = ref<[number, number] | null>(null);
 
@@ -662,38 +755,49 @@ const columns: DataTableColumns<WageringAuditItem> = [
   {
     title: '操作',
     key: 'actions',
-    width: 180,
+    width: 220,
     fixed: 'right',
     render: (row) => {
-      // Only show actions for pending or active audits
-      if (!['pending', 'active'].includes(row.status)) {
-        return h('span', { class: 'text-gray-400 text-xs' }, '-');
+      const buttons = [
+        // 详情 - show for all rows
+        h(
+          NButton,
+          {
+            type: 'primary',
+            size: 'small',
+            quaternary: true,
+            onClick: () => handleOpenDetail(row),
+          },
+          { default: () => '详情' },
+        ),
+      ];
+
+      // 清除 & 完成 - only for pending or active
+      if (['pending', 'active'].includes(row.status)) {
+        buttons.push(
+          h(
+            NButton,
+            {
+              type: 'error',
+              size: 'small',
+              secondary: true,
+              onClick: () => handleCancelAudit(row),
+            },
+            { default: () => '清除' },
+          ),
+          h(
+            NButton,
+            {
+              type: 'success',
+              size: 'small',
+              onClick: () => handleCompleteAudit(row),
+            },
+            { default: () => '完成' },
+          ),
+        );
       }
 
-      return h('div', { class: 'flex gap-2' }, [
-        // Clear (Cancel) button
-        h(
-          NButton,
-          {
-            type: 'error',
-            size: 'small',
-            secondary: true,
-            onClick: () => handleCancelAudit(row),
-          },
-          { default: () => '清除' },
-        ),
-
-        // Complete button
-        h(
-          NButton,
-          {
-            type: 'success',
-            size: 'small',
-            onClick: () => handleCompleteAudit(row),
-          },
-          { default: () => '完成' },
-        ),
-      ]);
+      return h('div', { class: 'flex gap-2 flex-wrap' }, buttons);
     },
   },
 ];
@@ -911,6 +1015,96 @@ const handleTabChange = (value: string) => {
 const handleUserClick = (userId: number) => {
   currentUserId.value = userId;
   showUserDetailModal.value = true;
+};
+
+// Detail modal: source type label (same mapping as table column)
+const getSourceTypeLabel = (sourceType: string): string => {
+  const sourceTypeMap: Record<string, string> = {
+    activity_reward: '活动奖励',
+    activity: '活动',
+    activity_audit: '活动稽核',
+    newbie_activity: '新人活动',
+    novice_welfare_task: '新手福利任务',
+    promotion_reward: '促销奖励',
+    promotion: '促销',
+    task_reward: '任务奖励',
+    TASK_REWARD: '任务奖励',
+    general_reward: '通用奖励',
+    bonus_granted: '奖金发放',
+    reward: '奖励',
+    bonus: '奖金',
+    deposit: '充值',
+    recharge: '充值',
+    member_recharge: '会员充值',
+    deposit_bonus: '存款奖励',
+    vip: 'VIP',
+    vip_reward: 'VIP奖励',
+    vip_bonus: 'VIP奖金',
+    VIP_BONUS: 'VIP奖金',
+    rescue: '救援',
+    rescue_bonus: '救援奖金',
+    manual: '人工解除',
+    manual_credit: '人工加款',
+    manual_debit: '人工扣款',
+    FORCE_REJECT_AUDIT: '强制拒绝稽核',
+    force_reject_audit: '强制拒绝稽核',
+    commission: '佣金',
+    COMMISSION: '佣金',
+    agent_commission: '代理佣金',
+    rebate: '返水',
+    referral_bonus: '推荐奖励',
+    adjustment: '资金修复',
+    correction: '资金修复',
+    fund_adjustment: '资金调整',
+    fee_charged: '手续费',
+    refund: '退款',
+    wagering: '流水',
+    newbie: '新人',
+  };
+  return sourceTypeMap[sourceType] ?? sourceType;
+};
+
+const getStatusLabel = (status: string): string => {
+  const statusMap: Record<string, string> = {
+    pending: '待处理',
+    active: '进行中',
+    completed: '已完成',
+    expired: '已过期',
+    cancelled: '已取消',
+  };
+  return statusMap[status] ?? status;
+};
+
+const copyDetailValue = async (text: string) => {
+  try {
+    await navigator.clipboard.writeText(text);
+    message.success('已复制');
+  } catch {
+    message.error('复制失败');
+  }
+};
+
+// Eligible platforms for detail modal: from row.gameContributions or empty
+interface EligiblePlatformItem {
+  gameType?: string;
+  gameProvider?: string;
+  description?: string;
+  contributionRate?: number;
+}
+
+const detailEligiblePlatforms = computed<EligiblePlatformItem[]>(() => {
+  const row = currentDetailRow.value;
+  if (!row?.gameContributions) return [];
+  const g = row.gameContributions;
+  if (Array.isArray(g)) return g as EligiblePlatformItem[];
+  if (g && typeof g === 'object' && Array.isArray((g as any).eligiblePlatforms)) return (g as any).eligiblePlatforms;
+  return [];
+});
+
+const handleOpenDetail = (row: WageringAuditItem) => {
+  currentDetailRow.value = row;
+  detailGameSearch.value = '';
+  showDetailModal.value = true;
 };
 
 const handleCancelAudit = async (row: WageringAuditItem) => {

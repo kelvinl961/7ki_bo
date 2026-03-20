@@ -229,10 +229,34 @@ export interface TaskCenterStatsResponse {
 }
 
 export interface GlobalSettings {
+  // Core enable flags
   noviceWelfareEnabled: boolean;
   dailyTaskEnabled: boolean;
   weeklyTaskEnabled: boolean;
   threeDayMysteryEnabled: boolean;
+
+  // Global novice welfare restriction / entry flags (mirror backend NoviceWelfareSettings)
+  claimAndroidApp?: boolean;
+  claimIOSApp?: boolean;
+  claimTGApp?: boolean;
+  claimOriginalApp?: boolean;
+  claimPolarApp?: boolean;
+  claimMarketBag?: boolean;
+  claimPWAFastApp?: boolean;
+  claimIOSRedirect?: boolean;
+  claimSameDeviceOnce?: boolean;
+  claimPCWeb?: boolean;
+  claimAndroidH5?: boolean;
+  claimIOSH5?: boolean;
+  claimSameDeviceBindingOnce?: boolean;
+
+  // Stored selection data
+  memberGroups?: string[];
+  auditMultiplier?: number | string;
+
+  // Other restriction flags used in modal
+  requireFirstRecharge?: boolean;
+  [key: string]: any;
 }
 
 // Task Category enum

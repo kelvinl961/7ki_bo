@@ -17,6 +17,66 @@ import { refreshTokenApi } from './core';
 // Get API URL from app config (uses VITE_GLOB_API_URL from .env files)
 const { apiURL } = useAppConfig(import.meta.env, import.meta.env.PROD);
 
+const HMAC_SECRET = import.meta.env.VITE_HMAC_SECRET as string | undefined;
+
+function bytesToHex(buf: ArrayBuffer): string {
+  const bytes = new Uint8Array(buf);
+  return Array.from(bytes)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+async function hmacSha256Hex(secret: string, payload: string): Promise<string> {
+  // WebCrypto HMAC-SHA256
+  if (!globalThis.crypto?.subtle) {
+    throw new Error('WebCrypto crypto.subtle is not available');
+  }
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw',
+    enc.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  );
+  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(payload));
+  return bytesToHex(sig);
+}
+
+function shouldSignWithHmac(fullPath: string, method?: string): boolean {
+  const m = (method || 'GET').toUpperCase();
+  // Note: fullPath here should start with "/api"
+  if (fullPath.startsWith('/api/admin/')) return true;
+
+  if (fullPath.startsWith('/api/transactions/manual')) return true;
+  if (fullPath.startsWith('/api/transactions/deposits')) return true;
+  if (fullPath.startsWith('/api/transactions/withdrawals')) return true;
+
+  // Selective signing for finance withdrawal force actions
+  if (fullPath.startsWith('/api/wallet/finance-withdrawal') && m === 'POST') {
+    return fullPath.includes('/force-cancel') || fullPath.includes('/force-reject');
+  }
+
+  return false;
+}
+
+function paramsToQueryString(params: any): string {
+  if (!params || typeof params !== 'object') return '';
+
+  const usp = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value === undefined || value === null) continue;
+    if (Array.isArray(value)) {
+      for (const v of value) usp.append(key, String(v));
+    } else {
+      usp.append(key, String(value));
+    }
+  }
+
+  const qs = usp.toString();
+  return qs ? `?${qs}` : '';
+}
+
 function createRequestClient(baseURL: string, options?: RequestClientOptions) {
   const client = new RequestClient({
     ...options,
@@ -114,6 +174,36 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
 
       // 📱 Add device-id header for device tracking
       config.headers['device-id'] = getDeviceId();
+
+      // HMAC signing for protected finance/admin endpoints
+      try {
+        const method = (config.method || 'GET').toUpperCase();
+
+        // Normalize api base path to "/api" form (no scheme/host)
+        const apiPath = baseURL.replace(/^https?:\/\/[^/]+/, '');
+        const apiRoot = apiPath.replace(/\/$/, '');
+        const reqPath = config.url?.startsWith('/') ? config.url : `/${config.url || ''}`;
+        const queryString = paramsToQueryString((config as any).params);
+        const fullPath = `${apiRoot}${reqPath}${queryString}`;
+
+        if (HMAC_SECRET && shouldSignWithHmac(fullPath, method)) {
+          const timestamp = Date.now().toString();
+          const bodyRaw = (config as any).data ?? (config as any).body ?? {};
+          const bodyObj = bodyRaw === null || bodyRaw === undefined ? {} : bodyRaw;
+          const bodyString = JSON.stringify(bodyObj);
+
+          // IMPORTANT: match backend middleware: method + url + timestamp + JSON.stringify(body)
+          const payloadToSign = method + fullPath + timestamp + bodyString;
+          const signature = await hmacSha256Hex(HMAC_SECRET, payloadToSign);
+
+          config.headers['x-signature'] = signature;
+          config.headers['x-timestamp'] = timestamp;
+        } else if (shouldSignWithHmac(fullPath, method) && !HMAC_SECRET) {
+          console.warn('HMAC signing skipped: VITE_HMAC_SECRET missing');
+        }
+      } catch (e) {
+        console.error('HMAC signing failed, request will likely be rejected:', e);
+      }
 
       // ✅ IndexedDB Cache: Store cache check in config for response interceptor
       if (

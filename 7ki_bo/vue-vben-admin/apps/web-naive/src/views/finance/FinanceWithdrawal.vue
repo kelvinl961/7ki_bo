@@ -3198,9 +3198,12 @@ const columns: DataTableColumns<WithdrawalRecord> = [
         unlocked: { type: 'default', text: '未锁定' },
         pending: { type: 'warning', text: '待出款' },
         reviewing: { type: 'info', text: '审核中' },
-        completed: { type: 'success', text: '已付款' },
-        approved: { type: 'success', text: '已付款' },
-        success: { type: 'success', text: '已付款' },
+        // Third-party paid / completed
+        paid: { type: 'success', text: '已出款' },
+        completed: { type: 'success', text: '已出款' },
+        success: { type: 'success', text: '已出款' },
+        // Admin approval (not third-party paid)
+        approved: { type: 'success', text: '已人工' },
         processing: { type: 'info', text: '处理中' },
         rejected: { type: 'error', text: '已拒绝' },
         failed: { type: 'error', text: '失败' },
@@ -3208,24 +3211,49 @@ const columns: DataTableColumns<WithdrawalRecord> = [
         canceled: { type: 'default', text: '已取消' },
         risk_review: { type: 'warning', text: '风控审核' },
       };
-      let status = statusMap[row.status as keyof typeof statusMap] || {
+      const statusKey = String(row.status ?? '').toLowerCase();
+      let status = statusMap[statusKey as keyof typeof statusMap] || {
         type: 'default',
         text: row.status,
       };
-      // 人工出款时显示「已人工」而非「已付款」
+      if (statusKey === 'paid') {
+        status = { ...status, text: '已出款' };
+      }
+
       const isManual =
         (row.paymentGateway || row.thirdPartyProvider || '').toLowerCase() ===
         'manual';
+      const hasThirdPartyOrderNo = !!(row as any).thirdPartyOrderNo;
       if (
         isManual &&
-        ['completed', 'approved', 'success'].includes(row.status)
+        !hasThirdPartyOrderNo &&
+        ['completed', 'success'].includes(statusKey)
       ) {
         status = { ...status, text: '已人工' };
       }
 
       // 🎯 NEW: Operator name display logic
       let operatorDisplay = '';
-      if (row.reviewer || row.operator) {
+      const systemHintText = [
+        (row as any).systemNotes,
+        (row as any).notes,
+        row.description,
+        (row as any).frontendNote,
+        (row as any).financeNote,
+        (row as any).metadata?.processType,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      const isSystemAuto =
+        (row as any).operator === 'system' ||
+        (row as any).metadata?.processType === 'auto_withdrawal' ||
+        /auto[_\s-]*approved/i.test(systemHintText) ||
+        /auto\s*withdrawal\s*processed/i.test(systemHintText);
+
+      if (isSystemAuto) {
+        operatorDisplay = '系统';
+      } else if (row.reviewer || row.operator) {
         // If reviewer/operator exists, show it
         operatorDisplay = row.reviewer || row.operator;
       } else if (row.isLocked && row.lockedBy) {

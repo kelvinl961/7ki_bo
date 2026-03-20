@@ -885,7 +885,26 @@ const columns: DataTableColumns<AutoWithdrawalRecord> = [
     render: (row) => {
       // 🎯 NEW: Operator name display logic
       let operatorDisplay = '';
-      if (row.reviewer || row.operator) {
+      const systemHintText = [
+        (row as any).systemNotes,
+        (row as any).notes,
+        row.description,
+        (row as any).frontendNote,
+        (row as any).financeNote,
+        (row as any).metadata?.processType,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      const isSystemAuto =
+        (row as any).operator === 'system' ||
+        (row as any).metadata?.processType === 'auto_withdrawal' ||
+        /auto[_\s-]*approved/i.test(systemHintText) ||
+        /auto\s*withdrawal\s*processed/i.test(systemHintText);
+
+      if (isSystemAuto) {
+        operatorDisplay = '系统';
+      } else if (row.reviewer || row.operator) {
         // If reviewer/operator exists, show it
         operatorDisplay = row.reviewer || row.operator;
       } else if (row.isLocked && row.lockedBy) {
@@ -896,7 +915,7 @@ const columns: DataTableColumns<AutoWithdrawalRecord> = [
         operatorDisplay = '未锁定';
       } else {
         // Fallback
-        operatorDisplay = 'system';
+        operatorDisplay = '系统';
       }
 
       return h('div', { class: 'text-center' }, [

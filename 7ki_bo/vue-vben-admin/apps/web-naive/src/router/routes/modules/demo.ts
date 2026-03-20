@@ -19,6 +19,17 @@ const routes: RouteRecordRaw[] = [
         path: '/demo/merchant-rtp-control',
         component: () => import('../../../views/demo/MerchantRtpControl.vue'),
       },
+      {
+        meta: {
+          title: '条件RTP配置（演示）',
+        },
+        name: 'ConditionalRtpRuleBuilderDemo',
+        path: '/demo/conditional-rtp-config',
+        component: () =>
+          import(
+            '../../../views/demo/ConditionalRtpRuleBuilderDemo.vue'
+          ),
+      },
     ],
   },
 ];

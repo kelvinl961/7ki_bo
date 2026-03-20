@@ -201,6 +201,9 @@
               <n-checkbox v-model:checked="formData.claimIOSH5"
                 >iOS_H5可领取</n-checkbox
               >
+              <n-checkbox v-model:checked="formData.claimTGApp"
+                >TG_APP可领取</n-checkbox
+              >
             </div>
             <div class="entry-group">
               <n-checkbox v-model:checked="formData.claimSameDeviceBindingOnce"
@@ -390,6 +393,7 @@ const showModal = computed({
 // Popup method options
 const popupMethodOptions = [
   { label: '高频弹窗', value: 'HIGH_FREQUENCY' },
+  { label: '不弹窗', value: 'NO_POPUP' },
   { label: '自定义', value: 'CUSTOM' },
 ];
 
@@ -446,6 +450,7 @@ const formData = reactive({
   claimPCWeb: false,
   claimAndroidH5: false,
   claimIOSH5: false,
+  claimTGApp: false,
   claimSameDeviceBindingOnce: false,
 
   // Restrictions
@@ -555,20 +560,20 @@ watch(showModal, async (newValue) => {
             }
           } else if (key === 'auditMultiplier') {
             // Convert auditMultiplier to number (handles Decimal/string from backend)
-            const value = data[key];
+            const value = (data as any)[key];
             if (value !== undefined && value !== null) {
               const numValue =
                 typeof value === 'string' ? parseFloat(value) : Number(value);
               (formData as any)[key] = numValue;
               console.log(`✅ Loaded auditMultiplier: ${value} -> ${numValue}`);
             }
-          } else if (data[key] !== undefined && data[key] !== null) {
-            (formData as any)[key] = data[key];
+          } else if ((data as any)[key] !== undefined && (data as any)[key] !== null) {
+            (formData as any)[key] = (data as any)[key];
           }
         });
         console.log(
           '✅ Loaded settings from API, requireFirstRecharge:',
-          data.requireFirstRecharge,
+          (data as any).requireFirstRecharge,
         );
       }
     } catch (error) {

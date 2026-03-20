@@ -132,3 +132,57 @@ export async function searchGamesWithPagination(
     return [];
   }
 }
+
+// =============================
+// Conditional RTP config (demo)
+// =============================
+export type ConditionalPlayerDepositConditionType = 'NO_DEPOSIT' | 'GTE_AMOUNT';
+
+export interface ConditionalPlayerRtpRuleConditions {
+  registrationDaysMax?: number;
+  depositCondition: ConditionalPlayerDepositConditionType;
+  depositMinAmount?: number;
+}
+
+export interface ConditionalPlayerRtpRuleResult {
+  rtp: number;
+  games: string[];
+}
+
+export interface ConditionalPlayerRtpRule {
+  id: string;
+  enabled: boolean;
+  priority: number;
+  conditions: ConditionalPlayerRtpRuleConditions;
+  result: ConditionalPlayerRtpRuleResult;
+}
+
+export interface ConditionalPlayerRtpConfigPayload {
+  demoType: 'conditional_player_rtp';
+  priority: 'first-match-wins';
+  rules: ConditionalPlayerRtpRule[];
+}
+
+export interface ConditionalPlayerRtpConfigResponse {
+  code: number;
+  error: string;
+  data: {
+    demoType: 'conditional_player_rtp';
+    priority: 'first-match-wins';
+    rules: ConditionalPlayerRtpRule[];
+  };
+}
+
+export async function setConditionalPlayerRtpConfigApi(
+  params: ConditionalPlayerRtpConfigPayload,
+): Promise<ConditionalPlayerRtpConfigResponse> {
+  return await requestClient.post('/v1/player/conditional-rtp-config', params);
+}
+
+export async function getConditionalPlayerRtpConfigApi(): Promise<ConditionalPlayerRtpConfigResponse> {
+  return await requestClient.get('/v1/player/conditional-rtp-config');
+}
+
+export async function clearConditionalPlayerRtpConfigApi(): Promise<ConditionalPlayerRtpConfigResponse> {
+  return await requestClient.delete('/v1/player/conditional-rtp-config');
+}

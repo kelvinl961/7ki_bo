@@ -20,7 +20,7 @@
             placeholder="选择RTP值"
             filterable
           />
-          <template #feedback> 当前运营商权限支持10-97的RTP值 </template>
+          <template #feedback> 当前运营商权限支持 0、10–97 的 RTP 值 </template>
         </n-form-item>
 
         <n-form-item>
@@ -87,6 +87,7 @@ const historyLoading = ref(false);
 
 // RTP options (Max 97 - Operator Permission Limit)
 const rtpOptions = [
+  { label: '0', value: 0 },
   { label: '10', value: 10 },
   { label: '20', value: 20 },
   { label: '30', value: 30 },

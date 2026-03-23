@@ -56,6 +56,14 @@ export interface WithdrawalSettings {
   limitWithdrawalAccountEnabled?: boolean;
   enableAccountLimits?: boolean;
   limitDigitalCurrencyWithdrawal?: boolean;
+  /** 未充值用户累计可提现总额上限（成功提现之和，0=不启用） */
+  noDepositMaxWithdrawAmount?: number;
+  /** 未充值且超过累计可提额度时，会员端弹窗提示（可用 {{cap}} {{remaining}} {{withdrawn}}） */
+  noDepositRequireDepositMessage?: string | null;
+  /** 提现成功后再次提现时给用户的提示语（客户端展示） */
+  afterSuccessfulWithdrawRetryMessage?: string;
+  /** 成功充值后最多可绑定提现账号数（0=不启用本项） */
+  maxWithdrawalAccountsAfterDeposit?: number;
 
   // === DIGITAL CURRENCY ===
   // Member Currency
@@ -107,7 +115,10 @@ const withdrawalSettingsApi = {
    * Get withdrawal settings
    */
   getSettings: async (): Promise<ApiResponse<WithdrawalSettings>> => {
-    const response = await requestClient.get('/wallet/withdrawal-settings');
+    // Bust browser/CDN caches so the modal always shows values just saved on the server
+    const response = await requestClient.get('/wallet/withdrawal-settings', {
+      params: { _t: Date.now() },
+    });
     return response; // Don't unwrap - response interceptor already handles this
   },
 

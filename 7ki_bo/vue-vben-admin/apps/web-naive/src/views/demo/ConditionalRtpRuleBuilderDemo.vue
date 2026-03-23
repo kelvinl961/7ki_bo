@@ -48,7 +48,7 @@
             placeholder="选择 RTP"
             filterable
           />
-          <template #feedback> 当前权限：RTP 支持 10-97</template>
+          <template #feedback> 当前权限：RTP 支持 0、10–97</template>
         </n-form-item>
 
         <n-form-item label="游戏范围" path="games">
@@ -190,6 +190,7 @@ const loadingFromBackend = ref(false);
 const savingToBackend = ref(false);
 
 const rtpOptions = [
+  { label: '0', value: 0 },
   { label: '10', value: 10 },
   { label: '20', value: 20 },
   { label: '30', value: 30 },
@@ -332,11 +333,15 @@ const handleSaveToBackend = async () => {
     savingToBackend.value = true;
     const payload = buildPayload();
     const resp = await setConditionalPlayerRtpConfigApi(payload);
-    if (resp?.code === 0) {
-      message.success('已保存到后端');
-    } else {
-      message.error(resp?.error || '保存失败');
-    }
+    const respAny = resp as any;
+    const code = respAny?.code;
+    const errorText = respAny?.error;
+    const msg = respAny?.data?.message ?? respAny?.message;
+
+    // Interceptor might unwrap { code, error, data } into { message }.
+    const ok = code === 0 || (!code && !errorText && typeof msg === 'string');
+    if (ok) message.success('已保存到后端');
+    else message.error(errorText || '保存失败');
   } catch (e: any) {
     message.error(e?.message || '保存失败');
   } finally {
@@ -348,12 +353,19 @@ const handleLoadFromBackend = async () => {
   try {
     loadingFromBackend.value = true;
     const resp = await getConditionalPlayerRtpConfigApi();
-    if (resp?.code !== 0) {
-      message.error(resp?.error || '加载失败');
+    const respAny = resp as any;
+    const code = respAny?.code;
+    const errorText = respAny?.error;
+
+    // Interceptor might return either:
+    // 1) { code, error, data: { rules } }
+    // 2) { demoType, priority, rules } (code unwrapped)
+    if (code !== undefined && code !== 0) {
+      message.error(errorText || '加载失败');
       return;
     }
 
-    const backendRules = resp?.data?.rules || [];
+    const backendRules = respAny?.data?.rules ?? respAny?.rules ?? [];
     rulesList.value = backendRules.map((rule: any) => {
         const depositCondition =
           rule?.conditions?.depositCondition === 'GTE_AMOUNT'

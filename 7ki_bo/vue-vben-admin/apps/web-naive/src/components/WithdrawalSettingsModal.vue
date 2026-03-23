@@ -482,9 +482,76 @@
                 </n-form-item>
               </div>
 
+              <!-- 未充值提现上限 / 复提提示 -->
+              <div class="form-section">
+                <h4 class="section-title">未充值用户提现 / 复提提示</h4>
+                <n-form-item
+                  label="未充值累计可提现上限"
+                  path="noDepositMaxWithdrawAmount"
+                >
+                  <div class="flex flex-wrap items-center gap-4">
+                    <n-input-number
+                      v-model:value="formData.noDepositMaxWithdrawAmount"
+                      :min="0"
+                      :max="100000000"
+                      :precision="2"
+                      :show-button="false"
+                      style="width: 200px"
+                      placeholder="0 = 不启用"
+                    />
+                 
+                  </div>
+                </n-form-item>
+                <n-form-item
+                  label="需首充提示文案"
+                  path="noDepositRequireDepositMessage"
+                >
+                  <n-input
+                    v-model:value="formData.noDepositRequireDepositMessage"
+                    type="textarea"
+                    placeholder="留空则用系统默认。可写：请先完成首充后再提现。占位符：{{cap}} 上限、{{remaining}} 当前还可提、{{withdrawn}} 已成功提现累计"
+                    :autosize="{ minRows: 2, maxRows: 6 }"
+                    maxlength="2000"
+                    show-count
+                  />
+                </n-form-item>
+                <n-form-item
+                  label="提现成功后再次提现提示"
+                  path="afterSuccessfulWithdrawRetryMessage"
+                >
+                  <n-input
+                    v-model:value="formData.afterSuccessfulWithdrawRetryMessage"
+                    type="textarea"
+                    placeholder="会员曾成功提现后，再次发起提现时前台可展示的提示语（由客户端读取 validation-rules 等接口展示）"
+                    :autosize="{ minRows: 2, maxRows: 6 }"
+                    maxlength="2000"
+                    show-count
+                  />
+                </n-form-item>
+              </div>
+
               <!-- 添加提现账号限制 -->
               <div class="form-section">
                 <h4 class="section-title">账号限制</h4>
+                <n-form-item
+                  label="充值后可绑定账号数"
+                  path="maxWithdrawalAccountsAfterDeposit"
+                >
+                  <div class="flex flex-wrap items-center gap-4">
+                    <n-input-number
+                      v-model:value="formData.maxWithdrawalAccountsAfterDeposit"
+                      :min="0"
+                      :max="999"
+                      :precision="0"
+                      style="width: 160px"
+                      placeholder="0 = 不启用"
+                    />
+                    <n-text depth="3">
+                      已成功充值的会员，最多可绑定多少个提现账号（与「开启 PIX
+                      数量限制」等规则同时生效时取更严者）。0 = 不启用本项
+                    </n-text>
+                  </div>
+                </n-form-item>
                 <n-form-item
                   label="添加提现账号限制"
                   path="accountRestrictions"
@@ -811,8 +878,16 @@ interface WithdrawalSettings {
   restrictFirstDepositAccount: boolean;
   restrictFirstWithdrawalAccount: boolean;
   restrictBankCardBinding: boolean;
+  /** 未充值用户累计可提现上限（0=不启用） */
+  noDepositMaxWithdrawAmount: number;
+  /** 超过未充值可提额度时的提示（客户端提交提现时由接口返回） */
+  noDepositRequireDepositMessage: string;
+  /** 提现成功后再次提现时给用户的提示（客户端展示） */
+  afterSuccessfulWithdrawRetryMessage: string;
   reviewNotificationEnabled: boolean;
   showCompleteLimits: boolean;
+  /** 已成功充值用户最多可绑定提现账号数（0=不启用） */
+  maxWithdrawalAccountsAfterDeposit: number;
   blacklistLevel: string;
   allowedDigitalCurrencies: Record<string, boolean>;
   firstWithdrawalRules: Array<{
@@ -933,8 +1008,12 @@ const defaultFormData: WithdrawalSettings = {
   restrictFirstDepositAccount: false,
   restrictFirstWithdrawalAccount: false,
   restrictBankCardBinding: false,
+  noDepositMaxWithdrawAmount: 0,
+  noDepositRequireDepositMessage: '',
+  afterSuccessfulWithdrawRetryMessage: '',
   reviewNotificationEnabled: true,
   showCompleteLimits: false,
+  maxWithdrawalAccountsAfterDeposit: 0,
   blacklistLevel: '',
   allowedDigitalCurrencies: {
     USDT_TRC20: false,
@@ -1038,6 +1117,27 @@ const handleCancel = () => {
   emit('update:visible', false);
 };
 
+/** Merge GET/POST settings payload into the reactive form (normalizes booleans & numeric fields). */
+function applyServerDataToForm(raw: Record<string, any> | null | undefined) {
+  if (!raw || typeof raw !== 'object') return;
+  const d = raw;
+  Object.assign(formData, d, {
+    noDepositMaxWithdrawAmount: Number(d.noDepositMaxWithdrawAmount ?? 0),
+    noDepositRequireDepositMessage: String(
+      d.noDepositRequireDepositMessage ?? '',
+    ),
+    afterSuccessfulWithdrawRetryMessage: String(
+      d.afterSuccessfulWithdrawRetryMessage ?? '',
+    ),
+    maxWithdrawalAccountsAfterDeposit: Number(
+      d.maxWithdrawalAccountsAfterDeposit ?? 0,
+    ),
+    restrictFirstDepositAccount: Boolean(d.restrictFirstDepositAccount),
+    restrictFirstWithdrawalAccount: Boolean(d.restrictFirstWithdrawalAccount),
+    restrictBankCardBinding: Boolean(d.restrictBankCardBinding),
+  });
+}
+
 const handleSave = async () => {
   try {
     saving.value = true;
@@ -1077,7 +1177,7 @@ const handleSave = async () => {
 
     console.log('✅ All form validations passed, proceeding with API call...');
 
-    // Prepare data with required fields - exclude backend-only fields
+    // Prepare data with required fields - exclude backend-only / legacy mirror fields only
     const {
       id,
       createdAt,
@@ -1091,8 +1191,6 @@ const handleSave = async () => {
       cpfFormatValidationEnabled,
       cpfThirdPartyValidationEnabled,
       limitWithdrawalAccountEnabled,
-      restrictFirstWithdrawalAccount,
-      restrictBankCardBinding,
       enableAccountLimits,
       limitDigitalCurrencyWithdrawal,
       baseCurrency,
@@ -1115,6 +1213,9 @@ const handleSave = async () => {
 
     if (response.success) {
       console.log('✅ Settings saved successfully, closing modal...');
+      if (response.data) {
+        applyServerDataToForm(response.data as any);
+      }
       message.success('提现设置保存成功');
       emit('success');
       emit('update:visible', false);
@@ -1134,6 +1235,9 @@ const handleSave = async () => {
       console.log(
         '✅ Settings saved successfully (from error handler), closing modal...',
       );
+      if ((error as any).data) {
+        applyServerDataToForm((error as any).data);
+      }
       message.success('提现设置保存成功');
       emit('success');
       emit('update:visible', false);
@@ -1150,9 +1254,15 @@ const handleSave = async () => {
 // Load existing settings
 const loadSettings = async () => {
   try {
-    const response = await withdrawalSettingsApi.getSettings();
-    if (response.success && response.data) {
-      Object.assign(formData, response.data);
+    const response = await withdrawalSettingsApi.getSettings() as any;
+    const payload =
+      response?.success && response?.data != null
+        ? response.data
+        : response?.dailyLimit !== undefined
+          ? response
+          : null;
+    if (payload) {
+      applyServerDataToForm(payload);
     }
   } catch (error) {
     console.error('Failed to load settings:', error);
@@ -1164,7 +1274,7 @@ watch(
   () => props.editData,
   (newData) => {
     if (newData) {
-      Object.assign(formData, newData);
+      applyServerDataToForm(newData as any);
     }
   },
   { immediate: true },
@@ -1181,6 +1291,7 @@ watch(
       }
     }
   },
+  { immediate: true },
 );
 
 // Update fee example based on rounding mode

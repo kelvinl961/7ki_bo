@@ -48,6 +48,10 @@ function shouldSignWithHmac(fullPath: string, method?: string): boolean {
   // Note: fullPath here should start with "/api"
   if (fullPath.startsWith('/api/admin/')) return true;
 
+  // 🔒 Sensitive player RTP controls (role + HMAC)
+  if (fullPath.startsWith('/api/v1/player/setRtp')) return true;
+  if (fullPath.startsWith('/api/v1/player/conditional-rtp-config')) return true;
+
   if (fullPath.startsWith('/api/transactions/manual')) return true;
   if (fullPath.startsWith('/api/transactions/deposits')) return true;
   if (fullPath.startsWith('/api/transactions/withdrawals')) return true;
@@ -67,7 +71,10 @@ function paramsToQueryString(params: any): string {
   for (const [key, value] of Object.entries(params)) {
     if (value === undefined || value === null) continue;
     if (Array.isArray(value)) {
-      for (const v of value) usp.append(key, String(v));
+      // Keep array key format aligned with actual request serialization (key[]=v1&key[]=v2)
+      // so HMAC payload URL matches backend `req.originalUrl`.
+      const arrayKey = key.endsWith('[]') ? key : `${key}[]`;
+      for (const v of value) usp.append(arrayKey, String(v));
     } else {
       usp.append(key, String(value));
     }
@@ -75,6 +82,11 @@ function paramsToQueryString(params: any): string {
 
   const qs = usp.toString();
   return qs ? `?${qs}` : '';
+}
+
+function serializeParams(params: any): string {
+  const qs = paramsToQueryString(params);
+  return qs.startsWith('?') ? qs.slice(1) : qs;
 }
 
 function createRequestClient(baseURL: string, options?: RequestClientOptions) {
@@ -187,6 +199,10 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
         const fullPath = `${apiRoot}${reqPath}${queryString}`;
 
         if (HMAC_SECRET && shouldSignWithHmac(fullPath, method)) {
+          // Force the actual outgoing request query serialization to match signing exactly.
+          // Prevents HMAC mismatches from serializer differences.
+          (config as any).paramsSerializer = serializeParams;
+
           const timestamp = Date.now().toString();
           const bodyRaw = (config as any).data ?? (config as any).body ?? {};
           const bodyObj = bodyRaw === null || bodyRaw === undefined ? {} : bodyRaw;
@@ -280,6 +296,11 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
             data.data.changedRtpValue !== undefined &&
             data.data.message
           ) {
+            return data;
+          }
+          // Conditional RTP config APIs must return full { code, error, data }
+          // because the UI checks `resp.code === 0`.
+          if (typeof config?.url === 'string' && config.url.includes('conditional-rtp-config')) {
             return data;
           }
           return data.data;

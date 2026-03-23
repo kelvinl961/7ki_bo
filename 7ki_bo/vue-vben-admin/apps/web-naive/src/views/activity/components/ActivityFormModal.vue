@@ -4336,6 +4336,8 @@ import {
   Add,
   InformationCircle,
 } from '@vicons/ionicons5';
+import { useAppConfig } from '@vben/hooks';
+import { useAccessStore } from '@vben/stores';
 import { createActivity, updateActivityV2 } from '#/api/activity';
 import type { Activity, CreateActivityInput } from '#/api/activity';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking modal load
@@ -4372,6 +4374,26 @@ const emit = defineEmits<{
 
 // Composables
 const message = useMessage();
+const { apiURL } = useAppConfig(import.meta.env, import.meta.env.PROD);
+const accessStore = useAccessStore();
+
+/** Same path as backend `GET /api/activities/promotion/template/download` */
+function resolvePromotionTemplateDownloadUrl(): string {
+  const path = '/api/activities/promotion/template/download';
+  // Dev: use Vite proxy (same origin as admin) so fetch works without CORS issues
+  if (import.meta.env.DEV && typeof window !== 'undefined') {
+    return `${window.location.origin}${path}`;
+  }
+  const raw = String(apiURL || '').trim();
+  if (!raw) {
+    return path;
+  }
+  if (raw.startsWith('/')) {
+    return `${raw.replace(/\/+$/, '')}/activities/promotion/template/download`;
+  }
+  const base = raw.replace(/\/+$/, '');
+  return `${base}/activities/promotion/template/download`;
+}
 
 // Red packet style options with preview images
 const allRedPacketStyles = [
@@ -6451,21 +6473,80 @@ const addPromotionRewardSetting = () => {
 
 const downloadPromotionTemplate = async () => {
   try {
-    console.log('Download promotion template');
-
     // Check if this is a promotion activity type
     if (formData.activityType !== 'promotion') {
       message.error('只有推广类型活动支持模板下载');
       return;
     }
 
-    // Use generic template endpoint (no activity ID required)
-    const downloadUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/activities/promotion/template/download`;
+    const downloadUrl = resolvePromotionTemplateDownloadUrl();
+    const headers: Record<string, string> = {};
+    const token = accessStore.accessToken;
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
 
-    // Method 1: Direct window.open (works best for downloads)
-    window.open(downloadUrl, '_blank');
+    const response = await fetch(downloadUrl, {
+      method: 'GET',
+      credentials: 'include',
+      headers,
+    });
 
-    message.success('模板下载开始');
+    const contentType = response.headers.get('content-type') || '';
+
+    if (!response.ok) {
+      let errMsg = `下载失败 (${response.status})`;
+      try {
+        if (contentType.includes('application/json')) {
+          const err = await response.json();
+          errMsg =
+            (err as { message?: string; error?: string }).message ||
+            (err as { message?: string; error?: string }).error ||
+            errMsg;
+        }
+      } catch {
+        /* ignore */
+      }
+      message.error(errMsg);
+      return;
+    }
+
+    if (contentType.includes('application/json')) {
+      const json = (await response.json()) as {
+        message?: string;
+        error?: string;
+      };
+      message.error(json.message || json.error || '下载失败');
+      return;
+    }
+
+    const blob = await response.blob();
+    const disposition = response.headers.get('content-disposition') || '';
+    let filename = `promotion_reward_template_${
+      new Date().toISOString().split('T')[0]
+    }.csv`;
+    const filenameMatch = /filename\*?=(?:UTF-8'')?["']?([^"';\n]+)/i.exec(
+      disposition,
+    );
+    if (filenameMatch?.[1]) {
+      try {
+        filename = decodeURIComponent(filenameMatch[1].trim());
+      } catch {
+        filename = filenameMatch[1].trim();
+      }
+    }
+
+    const blobUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename;
+    a.rel = 'noopener';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(blobUrl);
+
+    message.success('模板已下载');
   } catch (error) {
     console.error('❌ Download failed:', error);
     message.error('模板下载失败');

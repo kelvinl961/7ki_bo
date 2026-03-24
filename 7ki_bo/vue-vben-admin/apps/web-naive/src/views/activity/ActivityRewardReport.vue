@@ -56,6 +56,20 @@
                   />
                 </n-form-item>
               </n-gi>
+              <n-gi v-if="filters.benefitSource === '活动'" :span="6">
+                <n-form-item label="活动名称">
+                  <n-select
+                    v-model:value="filters.activityId"
+                    :options="activitySelectOptions"
+                    placeholder="请选择或搜索活动"
+                    filterable
+                    clearable
+                    :loading="loadingActivitiesForFilter"
+                    @focus="loadActivitiesForRewardFilter"
+                    style="width: 100%"
+                  />
+                </n-form-item>
+              </n-gi>
               <n-gi :span="6">
                 <n-form-item label="领取方式">
                   <n-select
@@ -72,8 +86,7 @@
                   <n-select
                     v-model:value="filters.rewardType"
                     :options="rewardTypeOptions"
-                    placeholder="多选"
-                    multiple
+                    placeholder="请选择奖励类型"
                     clearable
                     style="width: 100%"
                   />
@@ -82,7 +95,7 @@
               <n-gi :span="12">
                 <n-form-item :show-label="false">
                   <n-space>
-                    <n-button type="primary" :loading="loading" @click="fetchData">
+                    <n-button type="primary" :loading="loading" @click="runSearch">
                       搜索
                     </n-button>
                     <n-button @click="resetFilters">重置</n-button>
@@ -209,7 +222,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, defineAsyncComponent, h } from 'vue';
+import { ref, computed, watch, onMounted, defineAsyncComponent, h } from 'vue';
 import {
   NCard,
   NForm,
@@ -231,6 +244,7 @@ import {
 } from 'naive-ui';
 import { useMessage } from 'naive-ui';
 import { Page } from '@vben/common-ui';
+import { getActivityList, type Activity } from '#/api/activity';
 import { getRewardHistory, getRewardHistoryByOrderNo } from '#/api/activityRewardReport';
 import { exportGridData } from '#/utils/exportUtils';
 import type { RewardHistoryItem } from '#/api/activityRewardReport';
@@ -293,9 +307,75 @@ const filters = ref({
   orderNo: '',
   userIdOrAccount: '',
   benefitSource: null as string | null,
+  activityId: null as number | null,
   collectionMethod: null as string | null,
-  rewardType: [] as string[],
+  rewardType: null as string | null,
 });
+
+const activityListForFilter = ref<Activity[]>([]);
+const loadingActivitiesForFilter = ref(false);
+
+function trimmedActivityLabel(a: Activity): string {
+  const raw = (a.config?.title ?? a.title ?? '').toString();
+  const t = raw.trim();
+  return t || `活动 #${a.id}`;
+}
+
+/** trim 标题并按去空格后的文案去重；若当前选中 ID 在重复组内则保留该 ID，避免选项被合并后显示异常 */
+const activitySelectOptions = computed(() => {
+  const currentId = filters.value.activityId;
+  const groups = new Map<string, Activity[]>();
+  for (const a of activityListForFilter.value) {
+    const label = trimmedActivityLabel(a);
+    let g = groups.get(label);
+    if (!g) {
+      g = [];
+      groups.set(label, g);
+    }
+    g.push(a);
+  }
+  const out: { label: string; value: number }[] = [];
+  for (const [label, acts] of groups) {
+    const preferred = acts.find((a) => a.id === currentId);
+    const pick = preferred ?? acts[0];
+    if (pick) out.push({ label, value: pick.id });
+  }
+  out.sort((a, b) => a.label.localeCompare(b.label, 'zh-CN'));
+  return out;
+});
+
+function activityTitleById(id: number | null): string | undefined {
+  if (id == null) return undefined;
+  const a = activityListForFilter.value.find((x) => x.id === id);
+  if (!a) return undefined;
+  const t = (a.config?.title ?? a.title ?? '').toString().trim();
+  return t || undefined;
+}
+
+async function loadActivitiesForRewardFilter() {
+  if (activityListForFilter.value.length > 0) return;
+  loadingActivitiesForFilter.value = true;
+  try {
+    const res = await getActivityList({ page: 1, pageSize: 500 });
+    activityListForFilter.value = res.list ?? [];
+  } catch {
+    message.error('加载活动列表失败');
+    activityListForFilter.value = [];
+  } finally {
+    loadingActivitiesForFilter.value = false;
+  }
+}
+
+watch(
+  () => filters.value.benefitSource,
+  (v) => {
+    if (v !== '活动') {
+      filters.value.activityId = null;
+    } else {
+      void loadActivitiesForRewardFilter();
+    }
+  },
+);
 
 const benefitSourceOptions = [
   { label: '活动', value: '活动' },
@@ -342,6 +422,12 @@ function onTimeGranularityChange(value: 'day' | 'week' | 'month') {
 const paginationPage = ref(1);
 const paginationPageSize = ref(20);
 
+/** 选中活动时：接口不传活动条件，在此存全量过滤后的结果，翻页仅本地切片 */
+const clientSideFilteredRows = ref<RewardHistoryItem[] | null>(null);
+
+const FETCH_CHUNK_SIZE = 500;
+const MAX_FETCH_PAGES = 120;
+
 /** 服务端分页：当前页数据即 listData，点击页码时再请求 */
 const tableData = computed(() => listData.value ?? []);
 
@@ -356,15 +442,38 @@ const paginationReactive = computed(() => ({
   prefix: ({ itemCount }: { itemCount: number }) => `共 ${itemCount} 条记录`,
 }));
 
+function applyClientSidePageSlice() {
+  const all = clientSideFilteredRows.value;
+  if (!all?.length) {
+    listData.value = [];
+    return;
+  }
+  const start = (paginationPage.value - 1) * paginationPageSize.value;
+  listData.value = all.slice(start, start + paginationPageSize.value);
+}
+
 function handlePageChange(page: number) {
   paginationPage.value = page;
-  fetchData();
+  if (clientSideFilteredRows.value !== null) {
+    applyClientSidePageSlice();
+  } else {
+    fetchData();
+  }
 }
 
 function handlePageSizeChange(pageSize: number) {
   paginationPageSize.value = pageSize;
   paginationPage.value = 1;
-  fetchData();
+  if (clientSideFilteredRows.value !== null) {
+    applyClientSidePageSlice();
+  } else {
+    fetchData();
+  }
+}
+
+function runSearch() {
+  paginationPage.value = 1;
+  void fetchData();
 }
 
 function openUserDetail(row: RewardHistoryItem) {
@@ -559,6 +668,85 @@ const columns: DataTableColumns<RewardHistoryItem> = [
 
 const tableScrollX = 1690;
 
+/** 列表行 snake_case → camelCase（含活动字段，供前端按活动筛选） */
+const rewardHistoryRowFieldMap: Record<string, string> = {
+  order_no: 'orderNo',
+  acquisition_time: 'acquisitionTime',
+  benefit_name: 'benefitName',
+  member_currency: 'memberCurrency',
+  member_id: 'memberId',
+  member_account: 'memberAccount',
+  upper_agent_account: 'upperAgentAccount',
+  upper_agent_user_id: 'upperAgentUserID',
+  upper_agent_id: 'upperAgentId',
+  uplineAccount: 'upperAgentAccount',
+  uplineUserID: 'upperAgentUserID',
+  uplineUserId: 'upperAgentId',
+  benefit_source: 'benefitSource',
+  source_type: 'sourceType',
+  collection_method: 'collectionMethod',
+  reward_type: 'rewardType',
+  granted_reward: 'grantedReward',
+  activity_id: 'activityId',
+  activity_name: 'activityName',
+};
+
+function normalizeRewardHistoryRow(row: Record<string, unknown>): RewardHistoryItem {
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(row)) {
+    const key = rewardHistoryRowFieldMap[k] ?? k;
+    out[key] = v;
+  }
+  return out as RewardHistoryItem;
+}
+
+function extractNormalizedRowsFromResponse(res: unknown): RewardHistoryItem[] {
+  const raw =
+    res && typeof res === 'object' && !Array.isArray(res)
+      ? (res as Record<string, unknown>)
+      : null;
+  const inner =
+    raw?.data && typeof raw.data === 'object' && !Array.isArray(raw.data)
+      ? (raw.data as Record<string, unknown>)
+      : null;
+  const rows: RewardHistoryItem[] = Array.isArray(raw?.data)
+    ? (raw.data as RewardHistoryItem[])
+    : Array.isArray(raw?.list)
+      ? (raw.list as RewardHistoryItem[])
+      : Array.isArray(raw?.records)
+        ? (raw.records as RewardHistoryItem[])
+        : Array.isArray(raw?.items)
+          ? (raw.items as RewardHistoryItem[])
+          : Array.isArray(raw?.result)
+            ? (raw.result as RewardHistoryItem[])
+            : Array.isArray(raw?.rows)
+              ? (raw.rows as RewardHistoryItem[])
+              : Array.isArray(inner?.list)
+                ? (inner.list as RewardHistoryItem[])
+                : Array.isArray(inner?.data)
+                  ? (inner.data as RewardHistoryItem[])
+                  : Array.isArray(inner?.records)
+                    ? (inner.records as RewardHistoryItem[])
+                    : Array.isArray(res)
+                      ? (res as RewardHistoryItem[])
+                      : [];
+  return rows.map((r) => normalizeRewardHistoryRow(r as Record<string, unknown>));
+}
+
+function rowMatchesSelectedActivity(
+  row: RewardHistoryItem,
+  selectedId: number,
+  title: string | undefined,
+): boolean {
+  const aid = row.activityId != null ? Number(row.activityId) : NaN;
+  if (!Number.isNaN(aid) && aid === selectedId) return true;
+  const t = (title ?? '').trim();
+  if (!t) return false;
+  const bn = (row.benefitName ?? '').toString().trim();
+  const an = (row.activityName ?? '').toString().trim();
+  return bn === t || an === t;
+}
+
 async function fetchData() {
   loading.value = true;
   error.value = '';
@@ -573,7 +761,14 @@ async function fetchData() {
     const endDate = toYmd(range[1]) || toYmd(today[1]);
     const orderNo = filters.value.orderNo?.trim() || undefined;
     const userIdOrAccount = filters.value.userIdOrAccount?.trim() || undefined;
-    const res = await getRewardHistory({
+    const isActivitySource = filters.value.benefitSource === '活动';
+    const selectedActivityId = filters.value.activityId;
+    const useClientActivityFilter = isActivitySource && selectedActivityId != null;
+    const activityTitle = useClientActivityFilter
+      ? activityTitleById(selectedActivityId as number)
+      : undefined;
+
+    const baseParams = {
       startDate,
       endDate,
       orderNo,
@@ -581,86 +776,78 @@ async function fetchData() {
       memberAccount: userIdOrAccount,
       benefitSource: filters.value.benefitSource || undefined,
       collectionMethod: filters.value.collectionMethod || undefined,
-      rewardType: filters.value.rewardType?.length ? filters.value.rewardType : undefined,
-      page: paginationPage.value,
-      pageSize: paginationPageSize.value,
-    });
-    // 兼容多种后端返回格式（含嵌套 data/list/records/result/rows）
-    const raw = (res && typeof res === 'object' && !Array.isArray(res)) ? (res as Record<string, unknown>) : null;
-    const inner = raw?.data && typeof raw.data === 'object' && !Array.isArray(raw.data) ? (raw.data as Record<string, unknown>) : null;
-    const rows: RewardHistoryItem[] = Array.isArray(raw?.data)
-      ? (raw.data as RewardHistoryItem[])
-      : Array.isArray(raw?.list)
-        ? (raw.list as RewardHistoryItem[])
-        : Array.isArray(raw?.records)
-          ? (raw.records as RewardHistoryItem[])
-          : Array.isArray(raw?.items)
-            ? (raw.items as RewardHistoryItem[])
-            : Array.isArray(raw?.result)
-              ? (raw.result as RewardHistoryItem[])
-              : Array.isArray(raw?.rows)
-                ? (raw.rows as RewardHistoryItem[])
-                : Array.isArray(inner?.list)
-                  ? (inner.list as RewardHistoryItem[])
-                  : Array.isArray(inner?.data)
-                    ? (inner.data as RewardHistoryItem[])
-                    : Array.isArray(inner?.records)
-                      ? (inner.records as RewardHistoryItem[])
-                      : Array.isArray(res)
-                      ? (res as RewardHistoryItem[])
-                      : [];
-    // 统一为 camelCase，兼容后端返回 snake_case（如 benefit_name → benefitName）
-    const fieldMap: Record<string, string> = {
-      order_no: 'orderNo',
-      acquisition_time: 'acquisitionTime',
-      benefit_name: 'benefitName',
-      member_currency: 'memberCurrency',
-      member_id: 'memberId',
-      member_account: 'memberAccount',
-  // 兼容后端上级代理字段（旧：upper_agent_*，新：upline*）
-      upper_agent_account: 'upperAgentAccount',
-      upper_agent_user_id: 'upperAgentUserID',
-      upper_agent_id: 'upperAgentId',
-  uplineAccount: 'upperAgentAccount',
-  uplineUserID: 'upperAgentUserID',
-  uplineUserId: 'upperAgentId',
-      benefit_source: 'benefitSource',
-      source_type: 'sourceType',
-      collection_method: 'collectionMethod',
-      reward_type: 'rewardType',
-      granted_reward: 'grantedReward',
+      rewardType: filters.value.rewardType || undefined,
     };
-    const normalize = (row: Record<string, unknown>): RewardHistoryItem => {
-      const out: Record<string, unknown> = {};
-      for (const [k, v] of Object.entries(row)) {
-        const key = fieldMap[k] ?? k;
-        out[key] = v;
+
+    if (useClientActivityFilter) {
+      /** 不按活动请求接口，拉齐当前条件下全部页后在浏览器内筛选 */
+      const merged: RewardHistoryItem[] = [];
+      let page = 1;
+      while (page <= MAX_FETCH_PAGES) {
+        const res = await getRewardHistory({
+          ...baseParams,
+          page,
+          pageSize: FETCH_CHUNK_SIZE,
+        });
+        const batch = extractNormalizedRowsFromResponse(res);
+        merged.push(...batch);
+        if (batch.length < FETCH_CHUNK_SIZE) break;
+        page += 1;
       }
-      return out as RewardHistoryItem;
-    };
-    const normalizedRows = rows.map((r) => normalize(r as Record<string, unknown>));
-    const pagination = (raw?.pagination ?? inner?.pagination) as Record<string, unknown> | undefined;
-    const total =
-      typeof raw?.total === 'number' ? raw.total
-        : typeof inner?.total === 'number' ? inner.total
-          : typeof pagination?.total === 'number' ? (pagination.total as number)
-            : normalizedRows.length;
-    listData.value = normalizedRows;
-    totalCount.value = total;
-    // totalGrantedReward 来自接口 total_granted_reward / totalGrantedReward，否则用当前页合计
-    const apiTotal =
-      (typeof (raw?.totalGrantedReward ?? raw?.total_granted_reward) === 'number'
-        ? (raw?.totalGrantedReward ?? raw?.total_granted_reward) as number
-        : undefined) ??
-      (typeof (inner?.totalGrantedReward ?? inner?.total_granted_reward) === 'number'
-        ? (inner?.totalGrantedReward ?? inner?.total_granted_reward) as number
-        : undefined);
-    totalGrantedReward.value =
-      apiTotal ??
-      normalizedRows.reduce((sum, r) => sum + (Number(r.grantedReward) || 0), 0);
+      const filtered = merged.filter((r) =>
+        rowMatchesSelectedActivity(r, selectedActivityId as number, activityTitle),
+      );
+      clientSideFilteredRows.value = filtered;
+      totalCount.value = filtered.length;
+      totalGrantedReward.value = filtered.reduce(
+        (sum, r) => sum + (Number(r.grantedReward) || 0),
+        0,
+      );
+      applyClientSidePageSlice();
+    } else {
+      clientSideFilteredRows.value = null;
+      const res = await getRewardHistory({
+        ...baseParams,
+        page: paginationPage.value,
+        pageSize: paginationPageSize.value,
+      });
+      const normalizedRows = extractNormalizedRowsFromResponse(res);
+      const raw =
+        res && typeof res === 'object' && !Array.isArray(res)
+          ? (res as Record<string, unknown>)
+          : null;
+      const inner =
+        raw?.data && typeof raw.data === 'object' && !Array.isArray(raw.data)
+          ? (raw.data as Record<string, unknown>)
+          : null;
+      const pagination = (raw?.pagination ?? inner?.pagination) as
+        | Record<string, unknown>
+        | undefined;
+      const total =
+        typeof raw?.total === 'number'
+          ? raw.total
+          : typeof inner?.total === 'number'
+            ? inner.total
+            : typeof pagination?.total === 'number'
+              ? (pagination.total as number)
+              : normalizedRows.length;
+      listData.value = normalizedRows;
+      totalCount.value = total;
+      const apiTotal =
+        (typeof (raw?.totalGrantedReward ?? raw?.total_granted_reward) === 'number'
+          ? (raw?.totalGrantedReward ?? raw?.total_granted_reward) as number
+          : undefined) ??
+        (typeof (inner?.totalGrantedReward ?? inner?.total_granted_reward) === 'number'
+          ? (inner?.totalGrantedReward ?? inner?.total_granted_reward) as number
+          : undefined);
+      totalGrantedReward.value =
+        apiTotal ??
+        normalizedRows.reduce((sum, r) => sum + (Number(r.grantedReward) || 0), 0);
+    }
   } catch (e: any) {
     error.value = e?.message || '加载失败';
     listData.value = [];
+    clientSideFilteredRows.value = null;
     totalCount.value = 0;
     totalGrantedReward.value = 0;
   } finally {
@@ -675,21 +862,24 @@ function resetFilters() {
     orderNo: '',
     userIdOrAccount: '',
     benefitSource: null,
+    activityId: null,
     collectionMethod: null,
-    rewardType: [],
+    rewardType: null,
   };
   paginationPage.value = 1;
   fetchData();
 }
 
 async function handleExport() {
-  if (!listData.value?.length) {
+  const exportRows =
+    clientSideFilteredRows.value !== null ? clientSideFilteredRows.value : listData.value;
+  if (!exportRows?.length) {
     message.warning('没有数据可导出');
     return;
   }
   exporting.value = true;
   try {
-    await exportGridData(columns, listData.value, {
+    await exportGridData(columns, exportRows, {
       filename: `activity-reward-report-${Date.now()}`,
       sheetName: '优惠明细',
     });

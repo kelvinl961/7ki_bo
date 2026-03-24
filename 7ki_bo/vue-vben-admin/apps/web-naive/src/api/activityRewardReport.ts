@@ -7,8 +7,11 @@ export interface RewardHistoryParams {
   userId?: string;
   memberAccount?: string;
   benefitSource?: string;
+  /** 与 activity_name 一并传递，兼容不同后端 */
+  activityId?: number;
+  activityName?: string;
   collectionMethod?: string;
-  rewardType?: string[];
+  rewardType?: string;
   page?: number;
   pageSize?: number;
 }
@@ -67,7 +70,9 @@ export async function getRewardHistory(
     page_size: params.pageSize ?? 20,
   };
   if (params.benefitSource) query.benefit_source = params.benefitSource;
-  if (params.rewardType?.length) query.reward_type = params.rewardType;
+  if (params.activityId != null) query.activity_id = params.activityId;
+  if (params.activityName) query.activity_name = params.activityName;
+  if (params.rewardType) query.reward_type = params.rewardType;
   const response = await requestClient.get('/admin/reward-history', { params: query });
   return response as RewardHistoryListResponse;
 }

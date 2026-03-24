@@ -50,18 +50,7 @@
                   <n-select
                     v-model:value="filters.benefitSource"
                     :options="benefitSourceOptions"
-                    placeholder="多选"
-                    multiple
-                    clearable
-                    style="width: 100%"
-                  />
-                </n-form-item>
-              </n-gi>
-              <n-gi :span="6">
-                <n-form-item v-if="filters.benefitSource?.includes('活动')" label="活动名称">
-                  <n-input
-                    v-model:value="filters.activityName"
-                    placeholder="活动名称"
+                    placeholder="请选择优惠来源"
                     clearable
                     style="width: 100%"
                   />
@@ -303,8 +292,7 @@ const dateRange = ref<[number, number] | null>(getTodayRange());
 const filters = ref({
   orderNo: '',
   userIdOrAccount: '',
-  benefitSource: [] as string[],
-  activityName: '',
+  benefitSource: null as string | null,
   collectionMethod: null as string | null,
   rewardType: [] as string[],
 });
@@ -591,10 +579,7 @@ async function fetchData() {
       orderNo,
       userId: userIdOrAccount,
       memberAccount: userIdOrAccount,
-      benefitSource: filters.value.benefitSource?.length ? filters.value.benefitSource : undefined,
-      activityName: filters.value.benefitSource?.includes('活动') && filters.value.activityName?.trim()
-        ? filters.value.activityName.trim()
-        : undefined,
+      benefitSource: filters.value.benefitSource || undefined,
       collectionMethod: filters.value.collectionMethod || undefined,
       rewardType: filters.value.rewardType?.length ? filters.value.rewardType : undefined,
       page: paginationPage.value,
@@ -689,8 +674,7 @@ function resetFilters() {
   filters.value = {
     orderNo: '',
     userIdOrAccount: '',
-    benefitSource: [],
-    activityName: '',
+    benefitSource: null,
     collectionMethod: null,
     rewardType: [],
   };

@@ -6,8 +6,7 @@ export interface RewardHistoryParams {
   orderNo?: string;
   userId?: string;
   memberAccount?: string;
-  benefitSource?: string[];
-  activityName?: string;
+  benefitSource?: string;
   collectionMethod?: string;
   rewardType?: string[];
   page?: number;
@@ -62,13 +61,12 @@ export async function getRewardHistory(
     order_no: params.orderNo,
     user_id: params.userId,
     member_account: params.memberAccount,
-    activity_name: params.activityName,
     collection_method: params.collectionMethod,
     page: params.page ?? 1,
     pageSize: params.pageSize ?? 20,
     page_size: params.pageSize ?? 20,
   };
-  if (params.benefitSource?.length) query.benefit_source = params.benefitSource;
+  if (params.benefitSource) query.benefit_source = params.benefitSource;
   if (params.rewardType?.length) query.reward_type = params.rewardType;
   const response = await requestClient.get('/admin/reward-history', { params: query });
   return response as RewardHistoryListResponse;

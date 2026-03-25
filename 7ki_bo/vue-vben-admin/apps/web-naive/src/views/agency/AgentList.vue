@@ -369,7 +369,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, h, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { Page } from '@vben/common-ui';
 import {
   getNowInTimezone,
@@ -422,6 +422,7 @@ import { notification } from '#/adapter/naive';
 
 const message = useMessage();
 const router = useRouter();
+const route = useRoute();
 
 // 表单引用
 const formRef = ref();
@@ -1257,6 +1258,18 @@ function genAgentId(): string {
 
 // 初始化
 onMounted(() => {
+  const q = route.query;
+  const qs = q.agentDateStart as string | undefined;
+  const qe = q.agentDateEnd as string | undefined;
+  if (qs && qe) {
+    const s = Number(qs);
+    const e = Number(qe);
+    if (!Number.isNaN(s) && !Number.isNaN(e)) {
+      searchForm.startDate = s;
+      searchForm.endDate = e;
+    }
+  }
+
   // 📅 Set default today date range in UTC-3 (America/Sao_Paulo) timezone
   // Only set if not already set (preserve user's selection)
   if (!searchForm.startDate && !searchForm.endDate) {

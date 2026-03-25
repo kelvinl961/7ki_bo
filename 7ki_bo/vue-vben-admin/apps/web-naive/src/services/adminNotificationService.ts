@@ -298,12 +298,7 @@ export class AdminNotificationService {
   private static initAudioContext(): void {
     if (!this.notificationAudio && typeof window !== 'undefined') {
       try {
-        // 🎯 Use local audio file from backend/public/sounds/
-        // Backend serves static files at /public route (see backend/src/index.ts)
-        const apiUrl =
-          import.meta.env.VITE_GLOB_API_URL || 'http://localhost:5888/api';
-        const baseUrl = apiUrl.replace('/api', ''); // Remove /api to get base URL
-        const audioUrl = `${baseUrl}/public/sounds/withdrawal-notification.mp3`;
+        const audioUrl = `${import.meta.env.BASE_URL}sounds/withdrawal-notification.mp3`;
         this.notificationAudio = new Audio(audioUrl);
         this.notificationAudio.volume = 0.7; // 70% volume
         this.notificationAudio.preload = 'auto'; // Preload the audio

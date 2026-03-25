@@ -41,6 +41,9 @@ export interface WithdrawListParams {
   sortOrder?: 'asc' | 'desc';
   startDate?: string;
   endDate?: string;
+  /** 与运营报表「未充值/已充值出款」口径一致 */
+  fundingFilter?: 'unfunded' | 'funded';
+  currency?: string;
   thirdPartyPayment?: string;
   status?: string;
   withdrawMethod?: string;

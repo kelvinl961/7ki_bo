@@ -7,7 +7,7 @@
           <n-form :label-width="100" label-placement="left">
             <n-grid :cols="24" :x-gap="12" :y-gap="12">
               <n-gi :span="24">
-                <n-form-item label="开始日期 - 结束日期">
+                <n-form-item label="">
                   <n-space align="center" :size="12">
                     <n-radio-group v-model:value="timeGranularity" @update:value="onTimeGranularityChange">
                       <n-radio-button value="day">日</n-radio-button>
@@ -17,6 +17,7 @@
                     <n-date-picker
                       v-model:value="dateRange"
                       type="datetimerange"
+                      :timezone="REPORT_TIMEZONE"
                       clearable
                       placeholder="选择开始和结束日期时间"
                       format="yyyy-MM-dd HH:mm:ss"
@@ -245,9 +246,21 @@ import {
 import { useMessage } from 'naive-ui';
 import { Page } from '@vben/common-ui';
 import { getActivityList, type Activity } from '#/api/activity';
-import { getRewardHistory, getRewardHistoryByOrderNo } from '#/api/activityRewardReport';
+import {
+  getRewardHistory,
+  getRewardHistoryByOrderNo,
+  type RewardHistoryParams,
+} from '#/api/activityRewardReport';
 import { exportGridData } from '#/utils/exportUtils';
 import type { RewardHistoryItem } from '#/api/activityRewardReport';
+import {
+  convertTimezoneToUTC,
+  formatDateTimeInTimezone,
+  getNowInTimezone,
+} from '#/utils/timezoneUtils';
+
+/** 本页筛选与接口日期均按巴西圣保罗日历日（与后端 ACTIVE_TIMEZONES 一致） */
+const REPORT_TIMEZONE = 'America/Sao_Paulo';
 
 const UserDetailModal = defineAsyncComponent(
   () => import('#/components/user/UserDetailModal.vue'),
@@ -269,34 +282,78 @@ const showRewardDetailModal = ref(false);
 const rewardDetail = ref<RewardHistoryItem | null>(null);
 const loadingRewardDetail = ref(false);
 
-/** 今天 00:00:00 和 23:59:59.999（本地） */
+function addCalendarDaysInTz(
+  year: number,
+  month: number,
+  day: number,
+  deltaDays: number,
+  tz: string,
+): { year: number; month: number; day: number } {
+  const anchor = convertTimezoneToUTC(year, month, day, 12, 0, 0, tz).getTime();
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date(anchor + deltaDays * 86_400_000));
+  const y = Number(parts.find((p) => p.type === 'year')?.value);
+  const m = Number(parts.find((p) => p.type === 'month')?.value);
+  const d = Number(parts.find((p) => p.type === 'day')?.value);
+  return { year: y, month: m, day: d };
+}
+
+/** 圣保罗「今天」00:00:00 ~ 23:59:59 */
 function getTodayRange(): [number, number] {
-  const now = new Date();
-  const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0).getTime();
-  const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999).getTime();
-  return [start, end];
+  const tz = REPORT_TIMEZONE;
+  const tzNow = getNowInTimezone(tz);
+  const start = convertTimezoneToUTC(tzNow.year, tzNow.month, tzNow.day, 0, 0, 0, tz);
+  const end = convertTimezoneToUTC(tzNow.year, tzNow.month, tzNow.day, 23, 59, 59, tz);
+  return [start.getTime(), end.getTime()];
 }
 
-/** 本周一 00:00:00 至周日 23:59:59.999 */
+/** 圣保罗当周：周一 00:00:00 ~ 周日 23:59:59 */
 function getWeekRange(): [number, number] {
-  const now = new Date();
-  const day = now.getDay();
-  const diffToMonday = day === 0 ? -6 : 1 - day;
-  const monday = new Date(now);
-  monday.setDate(now.getDate() + diffToMonday);
-  const sunday = new Date(monday);
-  sunday.setDate(monday.getDate() + 6);
-  const start = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate(), 0, 0, 0, 0).getTime();
-  const end = new Date(sunday.getFullYear(), sunday.getMonth(), sunday.getDate(), 23, 59, 59, 999).getTime();
-  return [start, end];
+  const tz = REPORT_TIMEZONE;
+  const { year, month, day } = getNowInTimezone(tz);
+  const noon = convertTimezoneToUTC(year, month, day, 12, 0, 0, tz);
+  const weekdayShort = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz,
+    weekday: 'short',
+  }).format(noon);
+  const dowMap: Record<string, number> = {
+    Sun: 0,
+    Mon: 1,
+    Tue: 2,
+    Wed: 3,
+    Thu: 4,
+    Fri: 5,
+    Sat: 6,
+  };
+  const dow = dowMap[weekdayShort] ?? 1;
+  const daysFromMonday = dow === 0 ? 6 : dow - 1;
+  let monY = year;
+  let monM = month;
+  let monD = day;
+  for (let i = 0; i < daysFromMonday; i++) {
+    const prev = addCalendarDaysInTz(monY, monM, monD, -1, tz);
+    monY = prev.year;
+    monM = prev.month;
+    monD = prev.day;
+  }
+  const sun = addCalendarDaysInTz(monY, monM, monD, 6, tz);
+  const start = convertTimezoneToUTC(monY, monM, monD, 0, 0, 0, tz);
+  const end = convertTimezoneToUTC(sun.year, sun.month, sun.day, 23, 59, 59, tz);
+  return [start.getTime(), end.getTime()];
 }
 
-/** 本月 1 日 00:00:00 至最后一日 23:59:59.999 */
+/** 圣保罗当月 1 日 ~ 末日 */
 function getMonthRange(): [number, number] {
-  const now = new Date();
-  const start = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0).getTime();
-  const end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999).getTime();
-  return [start, end];
+  const tz = REPORT_TIMEZONE;
+  const { year, month } = getNowInTimezone(tz);
+  const start = convertTimezoneToUTC(year, month, 1, 0, 0, 0, tz);
+  const lastDay = new Date(year, month, 0).getDate();
+  const end = convertTimezoneToUTC(year, month, lastDay, 23, 59, 59, tz);
+  return [start.getTime(), end.getTime()];
 }
 
 const timeGranularity = ref<'day' | 'week' | 'month'>('day');
@@ -343,14 +400,6 @@ const activitySelectOptions = computed(() => {
   out.sort((a, b) => a.label.localeCompare(b.label, 'zh-CN'));
   return out;
 });
-
-function activityTitleById(id: number | null): string | undefined {
-  if (id == null) return undefined;
-  const a = activityListForFilter.value.find((x) => x.id === id);
-  if (!a) return undefined;
-  const t = (a.config?.title ?? a.title ?? '').toString().trim();
-  return t || undefined;
-}
 
 async function loadActivitiesForRewardFilter() {
   if (activityListForFilter.value.length > 0) return;
@@ -422,9 +471,6 @@ function onTimeGranularityChange(value: 'day' | 'week' | 'month') {
 const paginationPage = ref(1);
 const paginationPageSize = ref(20);
 
-/** 选中活动时：接口不传活动条件，在此存全量过滤后的结果，翻页仅本地切片 */
-const clientSideFilteredRows = ref<RewardHistoryItem[] | null>(null);
-
 const FETCH_CHUNK_SIZE = 500;
 const MAX_FETCH_PAGES = 120;
 
@@ -442,33 +488,15 @@ const paginationReactive = computed(() => ({
   prefix: ({ itemCount }: { itemCount: number }) => `共 ${itemCount} 条记录`,
 }));
 
-function applyClientSidePageSlice() {
-  const all = clientSideFilteredRows.value;
-  if (!all?.length) {
-    listData.value = [];
-    return;
-  }
-  const start = (paginationPage.value - 1) * paginationPageSize.value;
-  listData.value = all.slice(start, start + paginationPageSize.value);
-}
-
 function handlePageChange(page: number) {
   paginationPage.value = page;
-  if (clientSideFilteredRows.value !== null) {
-    applyClientSidePageSlice();
-  } else {
-    fetchData();
-  }
+  void fetchData();
 }
 
 function handlePageSizeChange(pageSize: number) {
   paginationPageSize.value = pageSize;
   paginationPage.value = 1;
-  if (clientSideFilteredRows.value !== null) {
-    applyClientSidePageSlice();
-  } else {
-    fetchData();
-  }
+  void fetchData();
 }
 
 function runSearch() {
@@ -549,7 +577,9 @@ async function handleViewDetail(row: RewardHistoryItem) {
 function formatDateTime(iso: string | undefined): string {
   if (!iso) return '-';
   const d = new Date(iso);
-  return Number.isNaN(d.getTime()) ? iso : d.toLocaleString('zh-CN', { dateStyle: 'short', timeStyle: 'medium' });
+  return Number.isNaN(d.getTime())
+    ? iso
+    : formatDateTimeInTimezone(d, REPORT_TIMEZONE);
 }
 
 const columns: DataTableColumns<RewardHistoryItem> = [
@@ -733,121 +763,106 @@ function extractNormalizedRowsFromResponse(res: unknown): RewardHistoryItem[] {
   return rows.map((r) => normalizeRewardHistoryRow(r as Record<string, unknown>));
 }
 
-function rowMatchesSelectedActivity(
-  row: RewardHistoryItem,
-  selectedId: number,
-  title: string | undefined,
-): boolean {
-  const aid = row.activityId != null ? Number(row.activityId) : NaN;
-  if (!Number.isNaN(aid) && aid === selectedId) return true;
-  const t = (title ?? '').trim();
-  if (!t) return false;
-  const bn = (row.benefitName ?? '').toString().trim();
-  const an = (row.activityName ?? '').toString().trim();
-  return bn === t || an === t;
+/** 与列表/导出共用的查询条件（不含分页） */
+function buildRewardHistoryBaseParams(): RewardHistoryParams {
+  const range = dateRange.value?.length === 2 ? dateRange.value : getTodayRange();
+  const today = getTodayRange();
+  const toYmd = (ts: number) => {
+    const d = new Date(ts);
+    if (Number.isNaN(d.getTime())) return '';
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: REPORT_TIMEZONE,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(d);
+  };
+  const startDate = toYmd(range[0]) || toYmd(today[0]);
+  const endDate = toYmd(range[1]) || toYmd(today[1]);
+  const orderNo = filters.value.orderNo?.trim() || undefined;
+  const userIdOrAccount = filters.value.userIdOrAccount?.trim() || undefined;
+  const isActivitySource = filters.value.benefitSource === '活动';
+  const selectedActivityId = filters.value.activityId;
+
+  return {
+    startDate,
+    endDate,
+    orderNo,
+    userId: userIdOrAccount,
+    memberAccount: userIdOrAccount,
+    benefitSource: filters.value.benefitSource || undefined,
+    activityId:
+      isActivitySource && selectedActivityId != null ? selectedActivityId : undefined,
+    collectionMethod: filters.value.collectionMethod || undefined,
+    rewardType: filters.value.rewardType || undefined,
+  };
+}
+
+/** 导出时若当前页不足总条数，按页拉全量 */
+async function fetchAllRewardHistoryRowsForExport(): Promise<RewardHistoryItem[]> {
+  const baseParams = buildRewardHistoryBaseParams();
+  const merged: RewardHistoryItem[] = [];
+  let page = 1;
+  while (page <= MAX_FETCH_PAGES) {
+    const res = await getRewardHistory({
+      ...baseParams,
+      page,
+      pageSize: FETCH_CHUNK_SIZE,
+    });
+    const batch = extractNormalizedRowsFromResponse(res);
+    merged.push(...batch);
+    if (batch.length < FETCH_CHUNK_SIZE) break;
+    page += 1;
+  }
+  return merged;
 }
 
 async function fetchData() {
   loading.value = true;
   error.value = '';
   try {
-    const range = dateRange.value?.length === 2 ? dateRange.value : getTodayRange();
-    const today = getTodayRange();
-    const toYmd = (ts: number) => {
-      const d = new Date(ts);
-      return Number.isNaN(d.getTime()) ? '' : d.toISOString().slice(0, 10);
-    };
-    const startDate = toYmd(range[0]) || toYmd(today[0]);
-    const endDate = toYmd(range[1]) || toYmd(today[1]);
-    const orderNo = filters.value.orderNo?.trim() || undefined;
-    const userIdOrAccount = filters.value.userIdOrAccount?.trim() || undefined;
-    const isActivitySource = filters.value.benefitSource === '活动';
-    const selectedActivityId = filters.value.activityId;
-    const useClientActivityFilter = isActivitySource && selectedActivityId != null;
-    const activityTitle = useClientActivityFilter
-      ? activityTitleById(selectedActivityId as number)
-      : undefined;
+    const baseParams = buildRewardHistoryBaseParams();
 
-    const baseParams = {
-      startDate,
-      endDate,
-      orderNo,
-      userId: userIdOrAccount,
-      memberAccount: userIdOrAccount,
-      benefitSource: filters.value.benefitSource || undefined,
-      collectionMethod: filters.value.collectionMethod || undefined,
-      rewardType: filters.value.rewardType || undefined,
-    };
-
-    if (useClientActivityFilter) {
-      /** 不按活动请求接口，拉齐当前条件下全部页后在浏览器内筛选 */
-      const merged: RewardHistoryItem[] = [];
-      let page = 1;
-      while (page <= MAX_FETCH_PAGES) {
-        const res = await getRewardHistory({
-          ...baseParams,
-          page,
-          pageSize: FETCH_CHUNK_SIZE,
-        });
-        const batch = extractNormalizedRowsFromResponse(res);
-        merged.push(...batch);
-        if (batch.length < FETCH_CHUNK_SIZE) break;
-        page += 1;
-      }
-      const filtered = merged.filter((r) =>
-        rowMatchesSelectedActivity(r, selectedActivityId as number, activityTitle),
-      );
-      clientSideFilteredRows.value = filtered;
-      totalCount.value = filtered.length;
-      totalGrantedReward.value = filtered.reduce(
-        (sum, r) => sum + (Number(r.grantedReward) || 0),
-        0,
-      );
-      applyClientSidePageSlice();
-    } else {
-      clientSideFilteredRows.value = null;
-      const res = await getRewardHistory({
-        ...baseParams,
-        page: paginationPage.value,
-        pageSize: paginationPageSize.value,
-      });
-      const normalizedRows = extractNormalizedRowsFromResponse(res);
-      const raw =
-        res && typeof res === 'object' && !Array.isArray(res)
-          ? (res as Record<string, unknown>)
-          : null;
-      const inner =
-        raw?.data && typeof raw.data === 'object' && !Array.isArray(raw.data)
-          ? (raw.data as Record<string, unknown>)
-          : null;
-      const pagination = (raw?.pagination ?? inner?.pagination) as
-        | Record<string, unknown>
-        | undefined;
-      const total =
-        typeof raw?.total === 'number'
-          ? raw.total
-          : typeof inner?.total === 'number'
-            ? inner.total
-            : typeof pagination?.total === 'number'
-              ? (pagination.total as number)
-              : normalizedRows.length;
-      listData.value = normalizedRows;
-      totalCount.value = total;
-      const apiTotal =
-        (typeof (raw?.totalGrantedReward ?? raw?.total_granted_reward) === 'number'
-          ? (raw?.totalGrantedReward ?? raw?.total_granted_reward) as number
-          : undefined) ??
-        (typeof (inner?.totalGrantedReward ?? inner?.total_granted_reward) === 'number'
-          ? (inner?.totalGrantedReward ?? inner?.total_granted_reward) as number
-          : undefined);
-      totalGrantedReward.value =
-        apiTotal ??
-        normalizedRows.reduce((sum, r) => sum + (Number(r.grantedReward) || 0), 0);
-    }
+    const res = await getRewardHistory({
+      ...baseParams,
+      page: paginationPage.value,
+      pageSize: paginationPageSize.value,
+    });
+    const normalizedRows = extractNormalizedRowsFromResponse(res);
+    const raw =
+      res && typeof res === 'object' && !Array.isArray(res)
+        ? (res as Record<string, unknown>)
+        : null;
+    const inner =
+      raw?.data && typeof raw.data === 'object' && !Array.isArray(raw.data)
+        ? (raw.data as Record<string, unknown>)
+        : null;
+    const pagination = (raw?.pagination ?? inner?.pagination) as
+      | Record<string, unknown>
+      | undefined;
+    const total =
+      typeof raw?.total === 'number'
+        ? raw.total
+        : typeof inner?.total === 'number'
+          ? inner.total
+          : typeof pagination?.total === 'number'
+            ? (pagination.total as number)
+            : normalizedRows.length;
+    listData.value = normalizedRows;
+    totalCount.value = total;
+    const apiTotal =
+      (typeof (raw?.totalGrantedReward ?? raw?.total_granted_reward) === 'number'
+        ? (raw?.totalGrantedReward ?? raw?.total_granted_reward) as number
+        : undefined) ??
+      (typeof (inner?.totalGrantedReward ?? inner?.total_granted_reward) === 'number'
+        ? (inner?.totalGrantedReward ?? inner?.total_granted_reward) as number
+        : undefined);
+    totalGrantedReward.value =
+      apiTotal ??
+      normalizedRows.reduce((sum, r) => sum + (Number(r.grantedReward) || 0), 0);
   } catch (e: any) {
     error.value = e?.message || '加载失败';
     listData.value = [];
-    clientSideFilteredRows.value = null;
     totalCount.value = 0;
     totalGrantedReward.value = 0;
   } finally {
@@ -871,15 +886,17 @@ function resetFilters() {
 }
 
 async function handleExport() {
-  const exportRows =
-    clientSideFilteredRows.value !== null ? clientSideFilteredRows.value : listData.value;
-  if (!exportRows?.length) {
-    message.warning('没有数据可导出');
-    return;
-  }
   exporting.value = true;
   try {
-    await exportGridData(columns, exportRows, {
+    let rows = listData.value ?? [];
+    if (totalCount.value > rows.length) {
+      rows = await fetchAllRewardHistoryRowsForExport();
+    }
+    if (!rows.length) {
+      message.warning('没有数据可导出');
+      return;
+    }
+    await exportGridData(columns, rows, {
       filename: `activity-reward-report-${Date.now()}`,
       sheetName: '优惠明细',
     });

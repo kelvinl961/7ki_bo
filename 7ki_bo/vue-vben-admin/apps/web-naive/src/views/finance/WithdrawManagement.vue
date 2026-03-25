@@ -106,13 +106,7 @@
                     :shortcuts="dateShortcuts"
                     class="w-full"
                   />
-                  <n-text
-                    v-if="dateRangeLabel"
-                    depth="3"
-                    style="font-size: 12px"
-                  >
-                    📅 {{ dateRangeLabel }}
-                  </n-text>
+                 
                 </n-space>
               </n-form-item>
 
@@ -1270,6 +1264,7 @@ import {
   h,
   defineAsyncComponent,
 } from 'vue';
+import { useRoute } from 'vue-router';
 import { useAuthStore } from '#/store';
 import { requestClient } from '#/api/request';
 import {
@@ -1428,6 +1423,7 @@ interface BatchForm {
 // Refs
 const message = useMessage();
 const dialog = useDialog();
+const route = useRoute();
 const filterFormRef = ref<FormInst | null>(null);
 const withdrawalFormRef = ref<FormInst | null>(null);
 const noteFormRef = ref<FormInst | null>(null);
@@ -1436,6 +1432,39 @@ const tableRef = ref();
 
 // Data
 const activeTab = ref('risk-review');
+/** 日运营报表下钻：保持起止为精确 UTC 时间戳，避免再按本地日切到 23:59 */
+const exactWithdrawalRangeFromDrill = ref(false);
+const allWithdrawalsFundingFilter = ref<'unfunded' | 'funded' | null>(null);
+const allWithdrawalsCurrencyOverride = ref<string | null>(null);
+const skipNextDateRangeNormalize = ref(false);
+
+function applyWithdrawalListQueryFromRoute() {
+  const q = route.query;
+  if (String(q.tab) === 'all-withdrawals') {
+    activeTab.value = 'all-withdrawals';
+  }
+  const hasOpsRange = q.opsDateStart != null && q.opsDateEnd != null;
+  if (hasOpsRange) {
+    const s = Number(q.opsDateStart);
+    const e = Number(q.opsDateEnd);
+    if (!Number.isNaN(s) && !Number.isNaN(e)) {
+      skipNextDateRangeNormalize.value = true;
+      filterForm.value.dateRange = [s, e];
+      exactWithdrawalRangeFromDrill.value = true;
+    }
+    if (q.opsFunding === 'unfunded' || q.opsFunding === 'funded') {
+      allWithdrawalsFundingFilter.value = q.opsFunding;
+    } else {
+      allWithdrawalsFundingFilter.value = null;
+    }
+    if (typeof q.opsCurrency === 'string' && q.opsCurrency.trim()) {
+      allWithdrawalsCurrencyOverride.value = q.opsCurrency.trim();
+    } else {
+      allWithdrawalsCurrencyOverride.value = null;
+    }
+  }
+}
+
 const loading = ref(false);
 const modalLoading = ref(false);
 const tableData = ref<WithdrawOrder[]>([]);
@@ -1489,8 +1518,15 @@ const filterForm = ref<FilterForm>({
 watch(
   () => filterForm.value.dateRange,
   (newRange) => {
+    if (skipNextDateRangeNormalize.value) {
+      skipNextDateRangeNormalize.value = false;
+      return;
+    }
     if (newRange && newRange.length === 2) {
       const [start, end] = newRange;
+      exactWithdrawalRangeFromDrill.value = false;
+      allWithdrawalsFundingFilter.value = null;
+      allWithdrawalsCurrencyOverride.value = null;
 
       // Set start to 00:00:00
       const startDate = new Date(start);
@@ -2797,26 +2833,34 @@ const fetchData = async () => {
   console.log('🔄 [All Withdrawals] Starting data fetch...');
   loading.value = true;
   try {
+    const dr = filterForm.value.dateRange;
+    const endMs = dr?.[1];
     const params = {
       page: paginationReactive.value.page,
       pageSize: paginationReactive.value.pageSize,
       ...filterForm.value,
       search: searchQuery.value, // 🔍 FIX: Use auto-trimmed search
-      startDate: filterForm.value.dateRange?.[0]
-        ? new Date(filterForm.value.dateRange[0]).toISOString()
-        : undefined,
-      endDate: filterForm.value.dateRange?.[1]
-        ? (() => {
-            const endDate = new Date(filterForm.value.dateRange[1]);
-            endDate.setHours(23, 59, 59, 999);
-            return endDate.toISOString();
-          })()
-        : undefined,
+      startDate:
+        dr?.[0] != null ? new Date(dr[0]).toISOString() : undefined,
+      endDate:
+        endMs != null
+          ? exactWithdrawalRangeFromDrill.value
+            ? new Date(endMs).toISOString()
+            : (() => {
+                const endDate = new Date(endMs);
+                endDate.setHours(23, 59, 59, 999);
+                return endDate.toISOString();
+              })()
+          : undefined,
+      currency: allWithdrawalsCurrencyOverride.value || undefined,
+      fundingFilter: allWithdrawalsFundingFilter.value || undefined,
     };
 
     console.log('🔄 [All Withdrawals] API params:', params);
 
-    const rawResponse: any = await withdrawalApi.getList(params);
+    const rawResponse: any = await withdrawalApi.getList(
+      params as import('#/api/finance/withdrawal').WithdrawListParams,
+    );
 
     console.log('📥 API Response:', rawResponse);
     console.log(
@@ -3322,21 +3366,29 @@ const handleConfirmBatch = async () => {
 
 const handleExport = async () => {
   try {
+    const dr = filterForm.value.dateRange;
+    const endMs = dr?.[1];
     const params = {
       ...filterForm.value,
-      startDate: filterForm.value.dateRange?.[0]
-        ? new Date(filterForm.value.dateRange[0]).toISOString()
-        : undefined,
-      endDate: filterForm.value.dateRange?.[1]
-        ? (() => {
-            const endDate = new Date(filterForm.value.dateRange[1]);
-            endDate.setHours(23, 59, 59, 999);
-            return endDate.toISOString();
-          })()
-        : undefined,
+      startDate:
+        dr?.[0] != null ? new Date(dr[0]).toISOString() : undefined,
+      endDate:
+        endMs != null
+          ? exactWithdrawalRangeFromDrill.value
+            ? new Date(endMs).toISOString()
+            : (() => {
+                const endDate = new Date(endMs);
+                endDate.setHours(23, 59, 59, 999);
+                return endDate.toISOString();
+              })()
+          : undefined,
+      currency: allWithdrawalsCurrencyOverride.value || undefined,
+      fundingFilter: allWithdrawalsFundingFilter.value || undefined,
     };
 
-    const response = await withdrawalApi.exportData(params);
+    const response = await withdrawalApi.exportData(
+      params as import('#/api/finance/withdrawal').WithdrawListParams,
+    );
 
     if (response.success) {
       // Create download link
@@ -3657,12 +3709,7 @@ const previousCounts = ref({
 // Initialize notification audio
 const initAudioContext = () => {
   try {
-    // 🎯 Use local audio file from backend/public/sounds/
-    // Backend serves static files at /public route (see backend/src/index.ts)
-    const apiUrl =
-      import.meta.env.VITE_GLOB_API_URL || 'http://localhost:5888/api';
-    const baseUrl = apiUrl.replace('/api', ''); // Remove /api to get base URL
-    const audioUrl = `${baseUrl}/public/sounds/withdrawal-notification.mp3`;
+    const audioUrl = `${import.meta.env.BASE_URL}sounds/withdrawal-notification.mp3`;
 
     notificationAudio = new Audio(audioUrl);
     notificationAudio.volume = 0.7; // 70% volume
@@ -3950,6 +3997,7 @@ const loadMemberTiers = async () => {
 // Lifecycle
 onMounted(async () => {
   console.log('🚀 Component mounted, loading data...');
+  applyWithdrawalListQueryFromRoute();
   initializeColumnConfig();
 
   // Initialize audio context for notifications

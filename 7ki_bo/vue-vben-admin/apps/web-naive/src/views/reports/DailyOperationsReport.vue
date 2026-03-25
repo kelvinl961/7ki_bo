@@ -110,6 +110,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, h, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import {
   NCard,
   NForm,
@@ -136,6 +137,7 @@ import {
 } from '#/utils/timezoneUtils';
 
 const message = useMessage();
+const router = useRouter();
 
 // Reactive data
 const loading = ref(false);
@@ -631,7 +633,7 @@ const columns = computed<DataTableColumns>(() => {
           width: 100,
           sorter: true,
           render: (row: any) =>
-            renderNumericCell(row, 'newAgents', false, true), // isCount
+            renderNumericCell(row, 'newAgents', true, true), // isCount
         },
         {
           title: '注册',
@@ -726,6 +728,38 @@ const columns = computed<DataTableColumns>(() => {
           sorter: true,
           render: (row: any) =>
             renderNumericCell(row, 'withdrawalCount', false, true), // isCount
+        },
+        {
+          title: '未充值出款人数',
+          key: 'unfundedWithdrawUserCount',
+          width: 130,
+          sorter: true,
+          render: (row: any) =>
+            renderNumericCell(row, 'unfundedWithdrawUserCount', true, true),
+        },
+        {
+          title: '已充值出款人数',
+          key: 'fundedWithdrawUserCount',
+          width: 130,
+          sorter: true,
+          render: (row: any) =>
+            renderNumericCell(row, 'fundedWithdrawUserCount', true, true),
+        },
+        {
+          title: '未充值出款总额',
+          key: 'unfundedWithdrawAmount',
+          width: 130,
+          sorter: true,
+          render: (row: any) =>
+            renderNumericCell(row, 'unfundedWithdrawAmount', true),
+        },
+        {
+          title: '已充值出款总额',
+          key: 'fundedWithdrawAmount',
+          width: 130,
+          sorter: true,
+          render: (row: any) =>
+            renderNumericCell(row, 'fundedWithdrawAmount', true),
         },
         {
           title: '充提差额',
@@ -1185,10 +1219,99 @@ const columns = computed<DataTableColumns>(() => {
   return baseColumns;
 });
 
-// Handle cell click for drill-down functionality
+/** 报表行日期（YYYY-MM-DD）在 currentTimezone 下当天起止时间戳，用于下钻筛选 */
+function getRowTimezoneDayRangeMs(row: any): [number, number] | null {
+  if (!row || row.isTotal) return null;
+  const s = row.date;
+  if (!s || typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return null;
+  const parts = s.split('-').map((x) => parseInt(x, 10));
+  const y = parts[0]!;
+  const m = parts[1]!;
+  const d = parts[2]!;
+  const tz = currentTimezone.value;
+  const start = convertTimezoneToUTC(y, m, d, 0, 0, 0, tz);
+  const end = convertTimezoneToUTC(y, m, d, 23, 59, 59, tz);
+  return [start.getTime(), end.getTime()];
+}
+
+// Handle cell click for drill-down functionality（下钻使用与报表相同的 header 时区，默认巴西）
 const handleCellClick = (field: string, row: any) => {
-  console.log(`Clicked ${field} for date ${row.date}`);
-  // TODO: Implement drill-down navigation
+  const range = getRowTimezoneDayRangeMs(row);
+  if (!range) return;
+  const [startMs, endMs] = range;
+  const rowCurrency =
+    typeof row.currency === 'string' && row.currency ? row.currency : currency.value;
+
+  switch (field) {
+    case 'newAgents':
+      void router.push({
+        path: '/agency/agent-list',
+        query: {
+          agentDateStart: String(startMs),
+          agentDateEnd: String(endMs),
+        },
+      });
+      break;
+    case 'registrations':
+      void router.push({
+        path: '/user-management/all-members',
+        query: {
+          opsDrill: '1',
+          opsTimeType: 'registrationTime',
+          opsDateStart: String(startMs),
+          opsDateEnd: String(endMs),
+        },
+      });
+      break;
+    case 'firstDeposits':
+      void router.push({
+        path: '/user-management/all-members',
+        query: {
+          opsDrill: '1',
+          opsTimeType: 'firstDepositTime',
+          opsDateStart: String(startMs),
+          opsDateEnd: String(endMs),
+        },
+      });
+      break;
+    case 'totalWithdrawalAmount':
+      void router.push({
+        path: '/finance/withdraw-management',
+        query: {
+          tab: 'all-withdrawals',
+          opsDateStart: String(startMs),
+          opsDateEnd: String(endMs),
+          opsCurrency: rowCurrency,
+        },
+      });
+      break;
+    case 'unfundedWithdrawUserCount':
+      void router.push({
+        path: '/finance/withdraw-management',
+        query: {
+          tab: 'all-withdrawals',
+          opsDateStart: String(startMs),
+          opsDateEnd: String(endMs),
+          opsCurrency: rowCurrency,
+          opsFunding: 'unfunded',
+        },
+      });
+      break;
+    case 'fundedWithdrawUserCount':
+      void router.push({
+        path: '/finance/withdraw-management',
+        query: {
+          tab: 'all-withdrawals',
+          opsDateStart: String(startMs),
+          opsDateEnd: String(endMs),
+          opsCurrency: rowCurrency,
+          opsFunding: 'funded',
+        },
+      });
+      break;
+    default:
+      break;
+  }
 };
 
 // Handle time granularity change

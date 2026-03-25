@@ -35,6 +35,7 @@
             <!-- 日期范围选择器 -->
             <div class="flex flex-col">
               <TimezoneDatePicker
+                :key="`mbr-dr-${filterForm.dateRange?.[0] ?? 'x'}-${filterForm.dateRange?.[1] ?? 'x'}`"
                 v-model="filterForm.dateRange"
                 @update:modelValue="handleDateRangeChange"
               />
@@ -89,29 +90,15 @@
             />
           </div>
 
-          <!-- 搜索字段 (精准会员账号等) -->
-          <div class="flex flex-col">
-            <n-select
-              v-model:value="filterForm.searchField"
-              placeholder="精准会员账号"
-              clearable
-              filterable
-              style="width: 200px"
-              :options="allSearchFieldOptions"
-              @update:value="handleSearchFieldChange"
-            />
-          </div>
-
-          <!-- 搜索值 -->
-          <div class="flex flex-col">
-            <n-input
-              v-model:value="filterForm.searchValue"
-              :placeholder="`请输入${getCurrentSearchFieldLabel()}`"
-              clearable
-              style="width: 240px"
-              @keyup.enter="handleFilter"
-            />
-          </div>
+          <!-- 搜索字段 + 搜索值（共用组件，options 由本页传入） -->
+          <FieldSearchBar
+            v-model:field="filterForm.searchField"
+            v-model:value="filterForm.searchValue"
+            :options="allSearchFieldOptions"
+            select-placeholder="精准会员账号"
+            @field-changed="handleSearchFieldChange"
+            @search="handleFilter"
+          />
 
           <!-- 账号类型 -->
           <div class="flex flex-col">
@@ -256,7 +243,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, h } from 'vue';
+import { ref, reactive, onMounted, watch, nextTick, h } from 'vue';
 import { useRoute } from 'vue-router';
 import { Page } from '@vben/common-ui';
 import {
@@ -296,6 +283,9 @@ import {
   convertTimezoneToUTC,
   getDisplayTimezone,
 } from '#/utils/timezoneUtils';
+import FieldSearchBar, {
+  type FieldSearchBarOption,
+} from '#/components/filters/FieldSearchBar.vue';
 
 const message = useMessage();
 const route = useRoute();
@@ -361,7 +351,7 @@ const timeTypeOptions = [
 ];
 
 // Comprehensive search field options (matching screenshot)
-const allSearchFieldOptions = [
+const allSearchFieldOptions: FieldSearchBarOption[] = [
   // Account & Identity
   { label: '精准会员账号', value: 'exact_account', mode: 'exact' },
   { label: '模糊会员账号', value: 'fuzzy_account', mode: 'fuzzy' },
@@ -801,7 +791,6 @@ const handleDateRangeChange = (value: [number, number] | null) => {
 
 const handleSearchFieldChange = (value: string | null) => {
   if (value) {
-    // Set search mode based on selected field
     const selectedOption = allSearchFieldOptions.find(
       (opt) => opt.value === value,
     );
@@ -809,8 +798,6 @@ const handleSearchFieldChange = (value: string | null) => {
       filterForm.searchMode = selectedOption.mode as 'exact' | 'fuzzy';
     }
   }
-  // Clear search value when changing field
-  filterForm.searchValue = '';
 };
 
 // Handle search condition change - load options dynamically
@@ -909,14 +896,6 @@ const handleOnlineStatusClick = (statusValue: string) => {
   // Trigger filter immediately
   paginationReactive.page = 1;
   loadTableData();
-};
-
-const getCurrentSearchFieldLabel = () => {
-  if (!filterForm.searchField) return '搜索值';
-  const option = allSearchFieldOptions.find(
-    (opt) => opt.value === filterForm.searchField,
-  );
-  return option ? option.label : '搜索值';
 };
 
 const handleFilter = () => {
@@ -1292,6 +1271,53 @@ const loadTableData = async () => {
   }
 };
 
+/** 日运营报表下钻 query（需在 keep-alive 下用 watch 同步，不能仅靠 onMounted） */
+function hasValidOpsDrillQuery(): boolean {
+  const q = route.query;
+  if (
+    String(q.opsDrill) !== '1' ||
+    q.opsDateStart == null ||
+    q.opsDateEnd == null ||
+    q.opsTimeType == null
+  ) {
+    return false;
+  }
+  const s = Number(q.opsDateStart);
+  const e = Number(q.opsDateEnd);
+  return !Number.isNaN(s) && !Number.isNaN(e);
+}
+
+function applyOpsDrillFromRoute(): void {
+  if (!hasValidOpsDrillQuery()) return;
+  const q = route.query;
+  const s = Number(q.opsDateStart);
+  const e = Number(q.opsDateEnd);
+  filterForm.timeType = String(q.opsTimeType);
+  filterForm.dateQuickSelect = null;
+  filterForm.dateRange = [s, e];
+  filterForm.searchField = null;
+  filterForm.searchValue = '';
+  paginationReactive.page = 1;
+}
+
+watch(
+  () =>
+    [
+      route.query.opsDrill,
+      route.query.opsDateStart,
+      route.query.opsDateEnd,
+      route.query.opsTimeType,
+    ] as const,
+  () => {
+    if (!hasValidOpsDrillQuery()) return;
+    applyOpsDrillFromRoute();
+    nextTick(() => {
+      loadTableData();
+    });
+  },
+  { immediate: true },
+);
+
 // 生命周期
 onMounted(() => {
   // 🔧 Check for query parameters from navigation (e.g., from agent list page)
@@ -1356,6 +1382,11 @@ onMounted(() => {
     if (matchCount > 0) {
       message.info(`找到 ${matchCount} 个符合条件的会员`);
     }
+  }
+
+  // 运营报表下钻已在 watch(immediate) 里拉数，避免重复请求
+  if (hasValidOpsDrillQuery()) {
+    return;
   }
 
   // Auto-trigger search if query params were provided

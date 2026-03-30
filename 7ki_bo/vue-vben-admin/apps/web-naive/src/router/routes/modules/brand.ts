@@ -13,6 +13,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         meta: {
+          keepAlive: true,
           title: '品牌LOGO设置',
           fullPathKey: false, // 子 tab 切换不新开标签页，与游戏管理一致
         },
@@ -23,6 +24,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         meta: {
+          keepAlive: true,
           title: '品牌皮肤设置',
         },
         name: 'BrandSkinSetting',
@@ -32,6 +34,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         meta: {
+          keepAlive: true,
           title: '域名管理',
         },
         name: 'DomainManagement',
@@ -42,6 +45,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         meta: {
+          keepAlive: true,
           title: '消息设置',
         },
         name: 'SystemMessageSet',
@@ -52,6 +56,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         meta: {
+          keepAlive: true,
           title: '个性化配置',
         },
         name: 'LayoutDesign',

@@ -51,6 +51,13 @@ export interface RechargeListParams {
   agentMode?: null | string;
   serviceFilter?: null | string;
   search?: string;
+  /** 与会员列表等接口一致的按字段搜索（若后端支持） */
+  searchField?: string;
+  searchValue?: string;
+  searchMode?: 'exact' | 'fuzzy';
+  /** 与会员列表等接口一致的综合搜索条件（若后端支持） */
+  searchCondition?: string;
+  searchConditionValue?: string;
 }
 
 export interface RechargeListResponse {

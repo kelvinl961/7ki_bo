@@ -13,6 +13,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         meta: {
+          keepAlive: true,
           title: '运营统计',
         },
         name: 'OperationsStatistics',

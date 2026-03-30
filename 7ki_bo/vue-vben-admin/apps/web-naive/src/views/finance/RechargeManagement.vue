@@ -30,8 +30,8 @@
             </div>
           </div>
 
-          <!-- Second Row - Search and Status Filters -->
-          <div class="mb-4 flex flex-wrap items-center gap-4">
+          <!-- Second Row - Search and Status Filters（搜索条件与全部会员页一致） -->
+          <div class="mb-4 flex flex-wrap items-end gap-4">
             <n-select
               v-model:value="filterForm.status"
               placeholder="订单状态"
@@ -39,24 +39,38 @@
               clearable
               :options="statusOptions"
             />
-            <n-select
-              v-model:value="filterForm.vipLevel"
-              placeholder="会员VIP等级"
-              style="width: 140px"
-              clearable
-              :options="vipLevelOptions"
+            <div class="flex flex-col">
+              <n-select
+                v-model:value="filterForm.searchCondition"
+                placeholder="请选择搜索条件"
+                clearable
+                style="width: 200px"
+                :options="searchConditionOptions"
+                @update:value="handleSearchConditionChange"
+              />
+            </div>
+            <div v-if="filterForm.searchCondition" class="flex flex-col">
+              <n-select
+                v-model:value="filterForm.searchConditionValue"
+                :placeholder="`请选择${getSearchConditionLabel()}`"
+                clearable
+                filterable
+                style="width: 200px"
+                :options="searchConditionValueOptions"
+                :loading="loadingConditionOptions"
+              />
+            </div>
+            <FieldSearchBar
+              v-model:field="filterForm.searchField"
+              v-model:value="filterForm.searchValue"
+              :options="rechargeSearchFieldOptions"
+              select-placeholder="请选择搜索字段"
+              select-width="200px"
+              input-width="240px"
+              value-placeholder-fallback="搜索值"
+              @field-changed="handleRechargeSearchFieldChange"
+              @search="handleSearch"
             />
-            <n-input
-              v-model:value="filterForm.search"
-              placeholder="会员账号、用户名等信息"
-              style="width: 250px"
-              clearable
-              @keyup.enter="handleSearch"
-            >
-              <template #prefix>
-                <n-icon :component="SearchOutline" />
-              </template>
-            </n-input>
           </div>
 
           <!-- Third Row - Action Buttons -->
@@ -786,6 +800,9 @@ import {
   type RechargeStatsResponse,
 } from '#/api/finance/recharge-stats';
 import { searchUsersApi } from '#/api/core/user-management';
+import FieldSearchBar, {
+  type FieldSearchBarOption,
+} from '#/components/filters/FieldSearchBar.vue';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 import { defineAsyncComponent } from 'vue';
 const UserDetailModal = defineAsyncComponent(
@@ -849,16 +866,169 @@ const summary = ref<Summary>({
 
 // Filter form with default week filter to show more data
 const filterForm = ref({
-  search: '',
+  searchCondition: null as string | null,
+  searchConditionValue: null as string | null,
+  searchField: 'exact_account' as string | null,
+  searchValue: '',
+  searchMode: 'exact' as 'exact' | 'fuzzy',
   dateRange: null as [number, number] | null, // Fix type for date picker
   timeRange: 'week' as 'today' | 'week' | 'month' | '',
   status: null as string | null,
   rechargeMethod: null as string | null,
-  vipLevel: null as string | null,
   agentMode: null as string | null,
   thirdPartyPayment: null as string | null,
   serviceFilter: null as string | null,
 });
+
+/** 与 src/views/user-management/all-members 一致 */
+const searchConditionOptions = [
+  { label: '会员层级', value: 'memberLevel' },
+  { label: 'VIP等级', value: 'vipLevel' },
+  { label: '会员标签', value: 'memberTags' },
+  { label: '在线状态', value: 'onlineStatus' },
+  { label: '账号状态', value: 'accountStatus' },
+  { label: '登录记录', value: 'loginHistory' },
+];
+
+const onlineStatusOptions = [
+  { label: '当前在线', value: 'currently_online' },
+  { label: '大厅会员', value: 'lobby_member' },
+  { label: '自营游戏会员', value: 'self_operated_member' },
+  { label: '三方游戏会员', value: 'third_party_member' },
+  { label: '疑似机器人', value: 'suspected_bot' },
+  { label: '今日在线', value: 'today_online' },
+];
+
+const loadingConditionOptions = ref(false);
+const searchConditionValueOptions = ref<
+  Array<{ label: string; value: string }>
+>([]);
+
+const handleSearchConditionChange = async (value: string | null) => {
+  filterForm.value.searchConditionValue = null;
+  searchConditionValueOptions.value = [];
+
+  if (!value) return;
+
+  loadingConditionOptions.value = true;
+  try {
+    switch (value) {
+      case 'accountStatus': {
+        searchConditionValueOptions.value = [
+          { label: '正常', value: 'NORMAL' },
+          { label: '冻结', value: 'FROZEN' },
+          { label: '异常冻结', value: 'ABNORMAL_FREEZE' },
+          { label: '锁定', value: 'LOCKED' },
+          { label: '暂停', value: 'SUSPENDED' },
+          { label: '临时', value: 'TEMPORARY' },
+        ];
+        break;
+      }
+      case 'loginHistory': {
+        searchConditionValueOptions.value = [
+          { label: '今天登录', value: 'today' },
+          { label: '7天内登录', value: 'week' },
+          { label: '30天内登录', value: 'month' },
+          { label: '从未登录', value: 'never' },
+        ];
+        break;
+      }
+      case 'memberLevel': {
+        const { getActiveMemberTiersApi } = await import(
+          '#/api/core/memberTier'
+        );
+        const tiers = await getActiveMemberTiersApi();
+        searchConditionValueOptions.value = tiers.map((tier) => ({
+          label: tier.tierName,
+          value: tier.id.toString(),
+        }));
+        break;
+      }
+      case 'memberTags': {
+        searchConditionValueOptions.value = [
+          { label: '普通用户', value: 'normal' },
+          { label: 'VIP用户', value: 'vip' },
+          { label: '代理用户', value: 'agent' },
+        ];
+        break;
+      }
+      case 'onlineStatus': {
+        searchConditionValueOptions.value = onlineStatusOptions;
+        break;
+      }
+      case 'vipLevel': {
+        const { getVIPLevels } = await import('#/api/vip');
+        const vipResponse = await getVIPLevels({
+          pageSize: 100,
+          isActive: true,
+        });
+        const vipLevels = vipResponse.list || [];
+        searchConditionValueOptions.value = vipLevels.map((level) => ({
+          label: level.name,
+          value: level.id.toString(),
+        }));
+        break;
+      }
+    }
+  } catch (error) {
+    console.error('Error loading search condition options:', error);
+    message.error('加载选项失败');
+  } finally {
+    loadingConditionOptions.value = false;
+  }
+};
+
+const getSearchConditionLabel = () => {
+  const condition = searchConditionOptions.find(
+    (opt) => opt.value === filterForm.value.searchCondition,
+  );
+  return condition ? condition.label : '值';
+};
+
+const rechargeSearchFieldOptions: FieldSearchBarOption[] = [
+  { label: '精准会员账号', value: 'exact_account', mode: 'exact' },
+  { label: '模糊会员账号', value: 'fuzzy_account', mode: 'fuzzy' },
+  { label: '会员ID', value: 'userID', mode: 'exact' },
+  { label: '精准姓名', value: 'exact_name', mode: 'exact' },
+  { label: '模糊姓名', value: 'fuzzy_name', mode: 'fuzzy' },
+  { label: '订单号', value: 'order_id', mode: 'exact' },
+  { label: '三方订单号', value: 'third_party_order_no', mode: 'exact' },
+];
+
+function handleRechargeSearchFieldChange(field: string | null) {
+  if (!field) return;
+  const opt = rechargeSearchFieldOptions.find((o) => o.value === field);
+  if (opt?.mode) {
+    filterForm.value.searchMode = opt.mode;
+  }
+}
+
+function applySearchToParams(params: RechargeListParams) {
+  const v = filterForm.value.searchValue.trim();
+  if (!v) return;
+  if (filterForm.value.searchField) {
+    params.searchField = filterForm.value.searchField;
+    params.searchValue = v;
+    if (filterForm.value.searchField === 'exact_account') {
+      params.searchMode = 'exact';
+    } else if (filterForm.value.searchField === 'fuzzy_account') {
+      params.searchMode = 'fuzzy';
+    } else {
+      params.searchMode = filterForm.value.searchMode;
+    }
+  } else {
+    params.search = v;
+  }
+}
+
+function applySearchConditionToParams(params: RechargeListParams) {
+  if (filterForm.value.searchCondition) {
+    params.searchCondition = filterForm.value.searchCondition;
+    if (filterForm.value.searchConditionValue) {
+      params.searchConditionValue = filterForm.value.searchConditionValue;
+    }
+  }
+}
 
 // Statistics form - default to week to show more data
 const statsForm = ref({
@@ -1138,17 +1308,6 @@ const groupByOptions = [
   { label: '按日', value: 'day' },
   { label: '按周', value: 'week' },
   { label: '按月', value: 'month' },
-];
-
-// VIP level options with proper types
-const vipLevelOptions = [
-  { label: '全部VIP等级', value: '', type: 'option' },
-  { label: 'VIP0', value: 'VIP0', type: 'option' },
-  { label: 'VIP1', value: 'VIP1', type: 'option' },
-  { label: 'VIP2', value: 'VIP2', type: 'option' },
-  { label: 'VIP3', value: 'VIP3', type: 'option' },
-  { label: 'VIP4', value: 'VIP4', type: 'option' },
-  { label: 'VIP5', value: 'VIP5', type: 'option' },
 ];
 
 const formatDateTime = (dateString: string, format?: string): string => {
@@ -1843,13 +2002,13 @@ const fetchData = async () => {
     const params: RechargeListParams = {
       page: paginationConfig.value.page,
       pageSize: paginationConfig.value.pageSize,
-      search: filterForm.value.search || undefined,
       status: filterForm.value.status || undefined,
       rechargeMethod: filterForm.value.rechargeMethod || undefined,
-      vipLevel: filterForm.value.vipLevel || undefined,
       startDate,
       endDate,
     };
+    applySearchToParams(params);
+    applySearchConditionToParams(params);
 
     console.log('🔍 Fetching recharge data with params:', params);
 
@@ -2006,16 +2165,20 @@ const handleSearch = () => {
 
 const handleReset = () => {
   filterForm.value = {
-    search: '',
+    searchCondition: null,
+    searchConditionValue: null,
+    searchField: 'exact_account',
+    searchValue: '',
+    searchMode: 'exact',
     dateRange: null,
     timeRange: 'week', // Default to week to show more data
     status: null,
     rechargeMethod: null,
-    vipLevel: null,
     agentMode: null,
     thirdPartyPayment: null,
     serviceFilter: null,
   };
+  searchConditionValueOptions.value = [];
   paginationConfig.value.page = 1;
   fetchData();
 };
@@ -2087,10 +2250,8 @@ const handleExport = async () => {
 
     // Get all data for export (without pagination)
     const exportParams: RechargeListParams = {
-      search: filterForm.value.search || undefined,
       status: filterForm.value.status || undefined,
       rechargeMethod: filterForm.value.rechargeMethod || undefined,
-      vipLevel: filterForm.value.vipLevel || undefined,
       page: 1,
       pageSize: 10000, // Large number to get all data
       startDate: filterForm.value.dateRange?.[0]
@@ -2104,6 +2265,8 @@ const handleExport = async () => {
           })()
         : undefined,
     };
+    applySearchToParams(exportParams);
+    applySearchConditionToParams(exportParams);
 
     const response = await rechargeApi.getList(exportParams);
 
@@ -2569,9 +2732,13 @@ onMounted(() => {
   if (route.query.userId || route.query.userAccount) {
     // Apply user filter from query params
     if (route.query.userAccount) {
-      filterForm.value.search = route.query.userAccount as string;
+      filterForm.value.searchField = 'exact_account';
+      filterForm.value.searchValue = route.query.userAccount as string;
+      filterForm.value.searchMode = 'exact';
     } else if (route.query.userName) {
-      filterForm.value.search = route.query.userName as string;
+      filterForm.value.searchField = 'exact_name';
+      filterForm.value.searchValue = route.query.userName as string;
+      filterForm.value.searchMode = 'exact';
     }
 
     // Set default time range to show all user's recharges

@@ -13,6 +13,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         meta: {
+          keepAlive: true,
           title: '活动中心',
         },
         name: 'ActivityCenter',
@@ -22,6 +23,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         meta: {
+          keepAlive: true,
           title: '任务中心',
         },
         name: 'TaskCenter',
@@ -31,6 +33,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         meta: {
+          keepAlive: true,
           title: '用户活动',
         },
         name: 'UserActivityDashboard',
@@ -40,6 +43,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         meta: {
+          keepAlive: true,
           title: '优惠明细',
         },
         name: 'ActivityRewardReport',
@@ -57,6 +61,7 @@ const routes: RouteRecordRaw[] = [
         children: [
           {
             meta: {
+              keepAlive: true,
               title: 'VIP奖励设置',
             },
             name: 'VIPRewardSetting',
@@ -66,6 +71,7 @@ const routes: RouteRecordRaw[] = [
           },
           {
             meta: {
+              keepAlive: true,
               title: 'VIP奖励设置总览',
             },
             name: 'VIPRewardOverview',

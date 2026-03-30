@@ -18,6 +18,7 @@ const routes: RouteRecordRaw[] = [
         path: '', // @ts-ignore
         component: () => import('#/views/game-management/index.vue'),
         meta: {
+          keepAlive: true,
           title: '游戏平台管理',
           fullPathKey: false, // Use path as key instead of fullPath to prevent duplicates
         },
@@ -28,6 +29,7 @@ const routes: RouteRecordRaw[] = [
         component: () =>
           import('#/views/game-management/bet-records/index.vue'),
         meta: {
+          keepAlive: true,
           title: '投注记录',
         },
       },
@@ -37,6 +39,7 @@ const routes: RouteRecordRaw[] = [
         component: () =>
           import('#/views/game-management/game-statistics/index.vue'),
         meta: {
+          keepAlive: true,
           title: '游戏统计',
         },
       },

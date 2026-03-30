@@ -4,13 +4,33 @@ import { requestClient } from '#/api/request';
  * Set player RTP configuration
  */
 export interface SetPlayerRtpParams {
-  UserID: string;
+  userAccount?: string;
+  UserID?: string;
   Rtp: number;
   GameId: string;
+  rtpVendor?: string;
+  /** HG /api/v1/player/setRtp — RTP 类型 1–5 */
+  gamePattern?: number;
+  /** HG — 游戏类型 0–4（与商户 V2 一致，厂商支持时生效） */
+  gameType?: number;
   RemoveRTP?: number;
   BuyRTP?: number;
   PersonWinMaxMult?: number;
   PersonWinMaxScore?: number;
+  /** HG — person_win_max_rtp，默认由后端填 1000 */
+  PersonWinMaxRtp?: number;
+}
+
+export interface PlayerRtpVendorOption {
+  id: string;
+  label: string;
+}
+
+export async function getPlayerRtpVendorsApi(): Promise<PlayerRtpVendorOption[]> {
+  const res = await requestClient.get<PlayerRtpVendorOption[]>(
+    '/v1/player/rtp-vendors',
+  );
+  return Array.isArray(res) ? res : [];
 }
 
 export interface SetPlayerRtpResponse {
@@ -27,6 +47,18 @@ export async function setPlayerRtpApi(
   return await requestClient.post('/v1/player/setRtp', params);
 }
 
+/** HG 取消个人 RTP — 对应厂商 POST /api/v2/player/cancelRtp（AG 仍用 setRtp + Rtp=0） */
+export interface CancelHgPlayerRtpParams {
+  userids: string | string[];
+  gameid: string | string[];
+}
+
+export async function cancelHgPlayerRtpApi(
+  params: CancelHgPlayerRtpParams,
+): Promise<SetPlayerRtpResponse> {
+  return await requestClient.post('/v2/player/cancelRtp', params);
+}
+
 /**
  * Get player RTP history
  */
@@ -34,6 +66,7 @@ export interface GetPlayerRtpHistoryParams {
   page: number;
   pageSize: number;
   userId?: number;
+  userAccount?: string;
 }
 
 export interface PlayerRtpHistoryItem {
@@ -147,6 +180,23 @@ export interface ConditionalPlayerRtpRuleConditions {
 export interface ConditionalPlayerRtpRuleResult {
   rtp: number;
   games: string[];
+  /** AG | HG — drives auto-apply transport when set (first vendor; use with applyVendors). */
+  rtpVendor?: 'AG' | 'HG';
+  /** 1–2 vendors: auto-apply hits each (AG setRtp / HG setRtp or cancelRtp). */
+  applyVendors?: ('AG' | 'HG')[];
+  /**
+   * HG only: `cancelRtp` → auto-apply calls vendor /api/v2/player/cancelRtp（无需手动 BO）.
+   * Omit or `setRtp` → HG /api/v1/player/setRtp。
+   */
+  hgPlayerAction?: 'setRtp' | 'cancelRtp';
+  /** HG: 1–5 RTP 波动类型 */
+  gamePattern?: number;
+  /** HG: 0 拉霸/电子 1 Mini 2 视讯 3 捕鱼 4 彩票 */
+  gameType?: number;
+  /** 单局个人赢取最高倍数；空则后端/厂商默认 100 */
+  maxMultiple?: number;
+  /** 单局个人赢取最高钱数；空则默认 1000000 */
+  maxWinPoints?: number;
 }
 
 export interface ConditionalPlayerRtpRule {

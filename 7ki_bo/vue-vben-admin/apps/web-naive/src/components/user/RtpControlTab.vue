@@ -13,14 +13,117 @@
         label-width="150"
         require-mark-placement="right-hanging"
       >
+        <n-form-item label="第三方渠道" path="rtpVendor">
+          <n-select
+            v-model:value="formData.rtpVendor"
+            :options="vendorSelectOptions"
+            placeholder="选择对接厂商"
+            :disabled="vendorSelectOptions.length === 0"
+          />
+       
+        </n-form-item>
+
         <n-form-item label="RTP值" path="Rtp">
           <n-select
             v-model:value="formData.Rtp"
-            :options="rtpOptions"
+            :options="rtpSelectOptions"
             placeholder="选择RTP值"
             filterable
           />
-          <template #feedback> 当前运营商权限支持 0、10–97 的 RTP 值 </template>
+          <template #feedback>{{ rtpFeedback }}</template>
+        </n-form-item>
+
+       
+
+        <n-form-item v-if="isHg" label="RTP类型" path="gamePattern">
+          <n-select
+            v-model:value="formData.gamePattern"
+            :options="hgPatternOptions"
+            placeholder="game_pattern 1–5"
+            :disabled="hgSetRtpLocked"
+          />
+          <template v-if="hgSetRtpLocked" #feedback>
+            设置非 0 RTP 后必填（对应厂商 game_pattern）
+          </template>
+        </n-form-item>
+
+        <n-form-item v-if="isHg" label="游戏类型" path="gameType">
+          <n-select
+            v-model:value="formData.gameType"
+            :options="hgGameTypeOptions"
+            placeholder="0–4"
+            :disabled="hgSetRtpLocked"
+          />
+          <template v-if="hgSetRtpLocked" #feedback>
+            设置非 0 RTP 后必填（game_type）
+          </template>
+        </n-form-item>
+
+        <n-form-item v-if="isHg" label="单局最高倍数" path="maxMultiple">
+          <n-input-number
+            v-model:value="formData.maxMultiple"
+            :min="0"
+            :max="10000"
+            :precision="0"
+            clearable
+            placeholder="留空默认 100；非 0 时 1–10000"
+            class="w-full max-w-md"
+            :disabled="hgSetRtpLocked"
+          />
+        </n-form-item>
+
+        <n-form-item v-if="isHg" label="单局最高赢取" path="maxWinPoints">
+          <n-input-number
+            v-model:value="formData.maxWinPoints"
+            :min="0"
+            :max="100000000"
+            :precision="0"
+            clearable
+            placeholder="留空默认 1000000；非 0 时 1–100000000"
+            class="w-full max-w-md"
+            :disabled="hgSetRtpLocked"
+          />
+        </n-form-item>
+
+        <n-form-item v-if="isHg" label="解除RTP管控" path="removeRtp">
+          <n-select
+            v-model:value="formData.removeRtp"
+            :options="hgRemoveRtpOptions"
+            clearable
+            placeholder="不设置则不解控"
+            :disabled="hgSetRtpLocked"
+          />
+        </n-form-item>
+
+        <n-form-item v-if="isHg" label="RTP上限" path="personWinMaxRtp">
+          <n-input-number
+            v-model:value="formData.personWinMaxRtp"
+            :min="0"
+            :max="1000"
+            :precision="0"
+            clearable
+            placeholder="留空默认 1000；非 0 时 1–1000"
+            class="w-full max-w-md"
+            :disabled="hgSetRtpLocked"
+          />
+        </n-form-item>
+
+        <n-form-item v-if="isHg" label="游戏" path="GameId">
+          <n-select
+            v-model:value="formData.GameId"
+            multiple
+            filterable
+            remote
+            :options="gameOptions"
+            :loading="gamesLoading"
+            :remote-method="handleSearchGames"
+            placeholder="搜索并选择游戏，或 ALL"
+            clearable
+            max-tag-count="responsive"
+            @update:value="handleGameSelect"
+            @scroll="handleScroll"
+          />
+         
         </n-form-item>
 
         <n-form-item>
@@ -29,7 +132,7 @@
               type="primary"
               :loading="loading"
               @click="handleSubmit"
-              :disabled="!canSubmit"
+              :disabled="!canSubmit || vendorSelectOptions.length === 0"
             >
               设置RTP
             </n-button>
@@ -59,8 +162,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, h } from 'vue';
+import { ref, reactive, computed, onMounted, h, watch } from 'vue';
 import {
+  NAlert,
   NCard,
   NForm,
   NFormItem,
@@ -68,10 +172,17 @@ import {
   NButton,
   NDataTable,
   NTag,
+  NInputNumber,
   useMessage,
   type DataTableColumns,
 } from 'naive-ui';
-import { setPlayerRtpApi, getPlayerRtpHistoryApi } from '#/api/core/player-rtp';
+import {
+  getPlayerRtpHistoryApi,
+  getPlayerRtpVendorsApi,
+  searchGamesWithPagination,
+  setPlayerRtpApi,
+  type PlayerRtpVendorOption,
+} from '#/api/core/player-rtp';
 
 interface Props {
   userId: number;
@@ -84,9 +195,9 @@ const message = useMessage();
 const formRef = ref();
 const loading = ref(false);
 const historyLoading = ref(false);
+const rtpVendors = ref<PlayerRtpVendorOption[]>([]);
 
-// RTP options (Max 97 - Operator Permission Limit)
-const rtpOptions = [
+const agRtpSelectOptions = [
   { label: '0', value: 0 },
   { label: '10', value: 10 },
   { label: '20', value: 20 },
@@ -107,18 +218,298 @@ const rtpOptions = [
   { label: '97', value: 97 },
 ];
 
-// Form data
+const HG_RTP_WHITELIST = new Set([
+  10, 20, 30, 40, 50, 60, 70, 80, 85, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+  102, 105, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 220, 240, 260, 280, 300,
+  500, 750, 1000,
+]);
+
+const hgPatternOptions = [
+  { label: '1 波动型', value: 1 },
+  { label: '2 仿正型', value: 2 },
+  { label: '3 混合型', value: 3 },
+  { label: '4 稳定型', value: 4 },
+  { label: '5 高中奖率', value: 5 },
+];
+
+const hgGameTypeOptions = [
+  { label: '0 拉霸/电子游戏', value: 0 },
+  { label: '1 Mini游戏', value: 1 },
+  { label: '2 视讯游戏', value: 2 },
+  { label: '3 捕鱼游戏', value: 3 },
+  { label: '4 彩票游戏', value: 4 },
+];
+
+const hgRtpSelectOptions = [...HG_RTP_WHITELIST].sort((a, b) => a - b).map((v) => ({
+  label: String(v),
+  value: v,
+}));
+
+const hgRemoveRtpOptions = hgRtpSelectOptions;
+
 const formData = reactive({
+  rtpVendor: null as string | null,
   Rtp: null as number | null,
+  gamePattern: 1,
+  gameType: 0,
+  maxMultiple: null as number | null,
+  maxWinPoints: null as number | null,
+  removeRtp: null as number | null,
+  personWinMaxRtp: null as number | null,
+  GameId: ['ALL'] as string[],
 });
 
+const isHg = computed(() => formData.rtpVendor === 'hg');
+
+/** HG setRtp 专用项：RTP 为 0（取消）或未选时禁用，避免误以为「只有三栏」 */
+const hgSetRtpLocked = computed(
+  () => isHg.value && (formData.Rtp === null || formData.Rtp === 0),
+);
+
+const gamesLoading = ref(false);
+const gameOptions = ref<Array<{ label: string; value: string }>>([]);
+const currentPage = ref(1);
+const hasMoreGames = ref(true);
+const currentSearchQuery = ref('');
+
+const rtpSelectOptions = computed(() => {
+  if (formData.rtpVendor === 'hg') {
+    return [
+      { label: '0（取消 → cancelRtp）', value: 0 },
+      ...hgRtpSelectOptions,
+    ];
+  }
+  return agRtpSelectOptions;
+});
+
+const rtpFeedback = computed(() => {
+  if (formData.rtpVendor === 'hg') {
+    return formData.Rtp === 0
+      ? '取消：见下方蓝色说明，并填写「游戏」gameid'
+      : '设置：走 /api/v1/player/setRtp；下方 HG 参数已启用';
+  }
+  return 'AG / 默认渠道：0 表示取消；其它为 10–97';
+});
+
+watch(
+  () => formData.rtpVendor,
+  (v) => {
+    if (v !== 'hg') {
+      formData.GameId = ['ALL'];
+    }
+    const r = formData.Rtp;
+    if (r == null) return;
+    if (v === 'hg') {
+      if (r !== 0 && !HG_RTP_WHITELIST.has(r)) {
+        formData.Rtp = 94;
+      }
+    } else if (r !== 0 && (r < 10 || r > 97)) {
+      formData.Rtp = 94;
+    }
+    formRef.value?.restoreValidation();
+  },
+);
+
+watch(
+  () => formData.Rtp,
+  () => {
+    formRef.value?.restoreValidation();
+  },
+);
+
+const vendorSelectOptions = computed(() =>
+  rtpVendors.value.map((v) => ({ label: v.label, value: v.id })),
+);
+
+const loadInitialGames = async () => {
+  gamesLoading.value = true;
+  currentPage.value = 1;
+  try {
+    const result = await searchGamesWithPagination('', 1);
+    gameOptions.value = [
+      { label: 'ALL（全部slots游戏）', value: 'ALL' },
+      ...result.map((game: { gameName: string; gameId: string }) => ({
+        label: game.gameName,
+        value: String(game.gameId),
+      })),
+    ];
+  } catch (e) {
+    console.error('Failed to load games', e);
+  } finally {
+    gamesLoading.value = false;
+  }
+};
+
+const handleSearchGames = async (query: string) => {
+  if (!query || query.length < 2) {
+    await loadInitialGames();
+    return;
+  }
+  currentSearchQuery.value = query;
+  currentPage.value = 1;
+  hasMoreGames.value = true;
+  gamesLoading.value = true;
+  try {
+    const result = await searchGamesWithPagination(query, 1);
+    gameOptions.value = [
+      { label: 'ALL（全部slots游戏）', value: 'ALL' },
+      ...result.map((game: { gameName: string; gameId: string }) => ({
+        label: game.gameName,
+        value: String(game.gameId),
+      })),
+    ];
+    hasMoreGames.value = result.length >= 20;
+  } catch (e) {
+    console.error('Failed to search games', e);
+  } finally {
+    gamesLoading.value = false;
+  }
+};
+
+const loadMoreGames = async () => {
+  if (!hasMoreGames.value || gamesLoading.value) return;
+  gamesLoading.value = true;
+  try {
+    currentPage.value += 1;
+    const result = await searchGamesWithPagination(
+      currentSearchQuery.value,
+      currentPage.value,
+    );
+    if (!result?.length) {
+      hasMoreGames.value = false;
+      return;
+    }
+    const extra = result.map((game: { gameName: string; gameId: string }) => ({
+      label: game.gameName,
+      value: String(game.gameId),
+    }));
+    gameOptions.value = [...gameOptions.value, ...extra];
+    hasMoreGames.value = result.length >= 20;
+  } catch (e) {
+    console.error('Failed to load more games', e);
+  } finally {
+    gamesLoading.value = false;
+  }
+};
+
+const handleScroll = (e: Event) => {
+  const target = e.target as HTMLElement;
+  if (target.scrollTop + target.clientHeight >= target.scrollHeight - 5) {
+    loadMoreGames();
+  }
+};
+
+const handleGameSelect = (value: string[]) => {
+  if (value?.includes('ALL') && value.length > 1) {
+    if (value[value.length - 1] === 'ALL') {
+      formData.GameId = ['ALL'];
+    } else {
+      formData.GameId = value.filter((g) => g !== 'ALL');
+    }
+  }
+};
+
 // Form validation rules
-const rules = {
+const rules: Record<string, unknown> = {
+  rtpVendor: {
+    required: true,
+    message: '请选择第三方渠道',
+    trigger: 'change',
+  },
+  gamePattern: {
+    trigger: 'change',
+    validator: (_rule: unknown, value: number) => {
+      if (!isHg.value || formData.Rtp === null || formData.Rtp === 0) return true;
+      if (value == null || ![1, 2, 3, 4, 5].includes(value)) {
+        return new Error('请选择 game_pattern（1–5）');
+      }
+      return true;
+    },
+  },
+  gameType: {
+    trigger: 'change',
+    validator: (_rule: unknown, value: number) => {
+      if (!isHg.value || formData.Rtp === null || formData.Rtp === 0) return true;
+      if (value == null || ![0, 1, 2, 3, 4].includes(value)) {
+        return new Error('请选择 game_type（0–4）');
+      }
+      return true;
+    },
+  },
+  maxMultiple: {
+    trigger: ['blur', 'change'],
+    validator: (_rule: unknown, value: number | null) => {
+      if (!isHg.value || formData.Rtp === null || formData.Rtp === 0) return true;
+      if (value == null) return true;
+      const n = Math.round(Number(value));
+      if (n !== 0 && (n < 1 || n > 10_000)) {
+        return new Error('须为 0 或 1–10000');
+      }
+      return true;
+    },
+  },
+  maxWinPoints: {
+    trigger: ['blur', 'change'],
+    validator: (_rule: unknown, value: number | null) => {
+      if (!isHg.value || formData.Rtp === null || formData.Rtp === 0) return true;
+      if (value == null) return true;
+      const n = Math.round(Number(value));
+      if (n !== 0 && (n < 1 || n > 100_000_000)) {
+        return new Error('须为 0 或 1–100000000');
+      }
+      return true;
+    },
+  },
+  removeRtp: {
+    trigger: 'change',
+    validator: (_rule: unknown, value: number | null) => {
+      if (!isHg.value || formData.Rtp === null || formData.Rtp === 0) return true;
+      if (value == null) return true;
+      return HG_RTP_WHITELIST.has(value)
+        ? true
+        : new Error('remove_rtp 须在 HG 白名单内');
+    },
+  },
+  personWinMaxRtp: {
+    trigger: ['blur', 'change'],
+    validator: (_rule: unknown, value: number | null) => {
+      if (!isHg.value || formData.Rtp === null || formData.Rtp === 0) return true;
+      if (value == null) return true;
+      const n = Math.round(Number(value));
+      if (n !== 0 && (n < 1 || n > 1000)) {
+        return new Error('须为 0 或 1–1000');
+      }
+      return true;
+    },
+  },
   Rtp: {
     required: true,
     type: 'number',
     message: '请选择RTP值',
     trigger: 'change',
+    validator: (_rule: unknown, value: number) => {
+      if (value == null) return new Error('请选择RTP值');
+      if (isHg.value && value !== 0 && !HG_RTP_WHITELIST.has(value)) {
+        return new Error('当前 RTP 不在 HG 白名单内');
+      }
+      if (!isHg.value) {
+        if (value === 0) return true;
+        if (value >= 10 && value <= 97) return true;
+        return new Error('AG RTP 须为 0 或 10–97');
+      }
+      return true;
+    },
+  },
+  GameId: {
+    trigger: 'change',
+    validator: (_rule: unknown, value: string[]) => {
+      if (!isHg.value) return true;
+      if (!value?.length) return new Error('请选择游戏范围');
+      if (!value.includes('ALL') && value.length > 50) {
+        return new Error('单次最多 50 个 gameid');
+      }
+      return true;
+    },
   },
 };
 
@@ -157,6 +548,16 @@ const historyColumns: DataTableColumns<any> = [
     width: 200,
     ellipsis: {
       tooltip: true,
+    },
+  },
+  {
+    title: '渠道',
+    key: 'rtpVendor',
+    width: 120,
+    ellipsis: { tooltip: true },
+    render: (row) => {
+      const v = row.response?._metadata?.rtpVendor;
+      return v != null && v !== '' ? String(v) : '—';
     },
   },
   {
@@ -270,7 +671,18 @@ const historyColumns: DataTableColumns<any> = [
 
 // Computed
 const canSubmit = computed(() => {
-  return formData.Rtp !== null && props.userDetail?.account;
+  if (
+    formData.rtpVendor == null ||
+    formData.rtpVendor === '' ||
+    formData.Rtp === null ||
+    !props.userDetail?.account
+  ) {
+    return false;
+  }
+  if (formData.rtpVendor === 'hg') {
+    return formData.GameId.length > 0;
+  }
+  return true;
 });
 
 // Methods
@@ -286,24 +698,55 @@ const handleSubmit = async () => {
     await formRef.value.validate();
     loading.value = true;
 
-    const requestData: any = {
+    const gameIds = isHg.value
+      ? formData.GameId.includes('ALL')
+        ? 'ALL'
+        : formData.GameId.join(',')
+      : 'ALL';
+
+    const payload: {
+      userAccount: string;
+      Rtp: number;
+      GameId: string;
+      rtpVendor: string;
+      gamePattern?: number;
+      gameType?: number;
+      PersonWinMaxMult?: number;
+      PersonWinMaxScore?: number;
+      RemoveRTP?: number;
+      PersonWinMaxRtp?: number;
+    } = {
       userAccount: props.userDetail.account,
       Rtp: formData.Rtp!,
-      GameId: 'ALL',
+      GameId: gameIds,
+      rtpVendor: formData.rtpVendor!,
     };
 
-    // Call API
-    const result = await setPlayerRtpApi(requestData);
+    if (isHg.value && formData.Rtp !== 0) {
+      payload.gamePattern = formData.gamePattern;
+      payload.gameType = formData.gameType;
+      if (formData.maxMultiple != null) {
+        payload.PersonWinMaxMult = Math.round(formData.maxMultiple);
+      }
+      if (formData.maxWinPoints != null) {
+        payload.PersonWinMaxScore = Math.round(formData.maxWinPoints);
+      }
+      if (formData.removeRtp != null) {
+        payload.RemoveRTP = formData.removeRtp;
+      }
+      if (formData.personWinMaxRtp != null) {
+        payload.PersonWinMaxRtp = Math.round(formData.personWinMaxRtp);
+      }
+    }
+
+    const result = await setPlayerRtpApi(payload);
 
     message.success(
       `RTP设置成功！影响的玩家数: ${result.data?.PidList?.length || 0}`,
     );
 
-    // Reset to page 1 and reload history to show the new record at the top
     pagination.page = 1;
     await loadHistory();
-
-    // Don't reset form - keep the latest saved values displayed
   } catch (error: any) {
     message.error(`RTP设置失败: ${error?.message || '未知错误'}`);
     console.error('Set RTP error:', error);
@@ -314,6 +757,14 @@ const handleSubmit = async () => {
 
 const handleReset = () => {
   formData.Rtp = null;
+  formData.rtpVendor = rtpVendors.value[0]?.id ?? null;
+  formData.gamePattern = 1;
+  formData.gameType = 0;
+  formData.maxMultiple = null;
+  formData.maxWinPoints = null;
+  formData.removeRtp = null;
+  formData.personWinMaxRtp = null;
+  formData.GameId = ['ALL'];
   formRef.value?.restoreValidation();
 };
 
@@ -327,7 +778,7 @@ const loadHistory = async () => {
       page: pagination.page,
       pageSize: pagination.pageSize,
       userAccount: props.userDetail.account,
-    } as any);
+    });
 
     historyData.value = result.data || [];
     pagination.itemCount = result.total || 0; // Update total count for pagination
@@ -352,22 +803,95 @@ const loadLastConfig = async () => {
       page: 1,
       pageSize: 1,
       userAccount: props.userDetail.account,
-    } as any);
+    });
 
     if (result.data && result.data.length > 0) {
       const lastConfig = result.data[0];
       if (!lastConfig) return;
 
-      formData.Rtp = lastConfig.rtp || null;
+      formData.Rtp = lastConfig.rtp ?? null;
+      const metaV = lastConfig.response?._metadata?.rtpVendor;
+      if (
+        typeof metaV === 'string' &&
+        metaV &&
+        rtpVendors.value.some((x) => x.id === metaV)
+      ) {
+        formData.rtpVendor = metaV;
+      }
+
+      const req = lastConfig.response?.request as Record<string, unknown> | undefined;
+      if (formData.rtpVendor === 'hg') {
+        if (req && typeof req === 'object') {
+          if (req.game_pattern != null) {
+            formData.gamePattern = Number(req.game_pattern);
+          }
+          if (req.game_type != null) {
+            formData.gameType = Number(req.game_type);
+          }
+          if (req.gameid != null && String(req.gameid).trim() !== '') {
+            const s = String(req.gameid).trim();
+            formData.GameId =
+              s.toUpperCase() === 'ALL'
+                ? ['ALL']
+                : s.split(',').map((x) => x.trim()).filter(Boolean);
+          }
+          if (req.remove_rtp != null && req.remove_rtp !== '') {
+            formData.removeRtp = Number(req.remove_rtp);
+          }
+          if (req.person_win_max_rtp != null && req.person_win_max_rtp !== '') {
+            formData.personWinMaxRtp = Number(req.person_win_max_rtp);
+          }
+        }
+        if (
+          (!req?.gameid || String(req.gameid).trim() === '') &&
+          lastConfig.gameId
+        ) {
+          const s = String(lastConfig.gameId).trim();
+          formData.GameId =
+            s.toUpperCase() === 'ALL'
+              ? ['ALL']
+              : s.split(',').map((x) => x.trim()).filter(Boolean);
+        }
+        if (lastConfig.personWinMaxMult != null) {
+          formData.maxMultiple = lastConfig.personWinMaxMult;
+        }
+        if (lastConfig.personWinMaxScore != null) {
+          formData.maxWinPoints = lastConfig.personWinMaxScore;
+        }
+        if (lastConfig.removeRtp != null) {
+          formData.removeRtp = lastConfig.removeRtp;
+        }
+      }
     }
   } catch (error) {
     console.error('Failed to load last player RTP config:', error);
   }
 };
 
+const loadRtpVendors = async () => {
+  try {
+    rtpVendors.value = await getPlayerRtpVendorsApi();
+    if (rtpVendors.value.length === 0) {
+      message.warning(
+        '未配置可用 RTP 第三方渠道（AG / GAME_PROVIDER / PLAYER_RTP_EXTRA_VENDORS_JSON）',
+      );
+      formData.rtpVendor = null;
+      return;
+    }
+    if (formData.rtpVendor == null || formData.rtpVendor === '') {
+      formData.rtpVendor = rtpVendors.value[0]!.id;
+    }
+  } catch (error) {
+    console.error('Load RTP vendors error:', error);
+    message.error('加载 RTP 渠道列表失败');
+  }
+};
+
 // Initialize
 onMounted(async () => {
   if (props.userId) {
+    await loadRtpVendors();
+    await loadInitialGames();
     await loadLastConfig();
     loadHistory();
   }

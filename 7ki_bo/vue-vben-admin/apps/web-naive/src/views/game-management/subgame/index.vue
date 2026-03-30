@@ -139,6 +139,14 @@
                 <n-button type="success" @click="handleCreate">
                   新增游戏
                 </n-button>
+                <n-button
+                  secondary
+                  type="primary"
+                  :loading="exporting"
+                  @click="handleExportCsv"
+                >
+                  导出 CSV
+                </n-button>
               </div>
 
               <!-- 选择信息 -->
@@ -422,6 +430,7 @@ import {
   setGameTopApi,
   bulkDeleteGamesApi,
   type GameItem,
+  type GameListParams,
 } from '#/api/game/subgame';
 import {
   getGamePlatformListApi,
@@ -439,6 +448,7 @@ import { getImageUrlByEnvironment } from '../../../utils/imageUtils';
 // 响应式数据
 const message = useMessage();
 const loading = ref(false);
+const exporting = ref(false);
 const submitting = ref(false);
 const showModal = ref(false);
 const showImportDialog = ref(false);
@@ -1627,64 +1637,162 @@ const handlePageSizeChange = (pageSize: number) => {
   loadGameList();
 };
 
+/** GET /games 查询参数：列表与导出共用 */
+const buildGameListParams = (
+  overrides: Partial<Pick<GameListParams, 'page' | 'pageSize'>> = {},
+): GameListParams => {
+  const params: GameListParams = {
+    page: overrides.page ?? paginationReactive.page,
+    pageSize: overrides.pageSize ?? paginationReactive.pageSize,
+  };
+
+  if (filterForm.platformId) {
+    params.platformId = filterForm.platformId;
+  }
+  if (filterForm.vendor) {
+    params.vendor = filterForm.vendor;
+  }
+  if (filterForm.currency) {
+    params.currency = filterForm.currency;
+  }
+  if (filterForm.search?.trim()) {
+    params.search = filterForm.search.trim();
+  }
+  if (filterForm.gameType) {
+    const enumValues = getEnglishGameTypesForFiltering(filterForm.gameType);
+    if (enumValues?.length) {
+      params.gameType = enumValues.join(',');
+    }
+  }
+  if (filterForm.hotType === 'hot1') {
+    params.isHot1 = true;
+  } else if (filterForm.hotType === 'hot2') {
+    params.isHot2 = true;
+  } else if (filterForm.hotType === 'recommended') {
+    params.isRecommended = true;
+  }
+  if (filterForm.isEnabled === 'true') {
+    params.isEnabled = true;
+  } else if (filterForm.isEnabled === 'false') {
+    params.isEnabled = false;
+  }
+  return params;
+};
+
+const csvEscapeCell = (v: unknown) => {
+  const s = v == null ? '' : String(v);
+  if (/[",\n\r]/.test(s)) {
+    return `"${s.replace(/"/g, '""')}"`;
+  }
+  return s;
+};
+
+/** 按当前筛选条件导出全部子游戏为 CSV（分页拉取） */
+const handleExportCsv = async () => {
+  exporting.value = true;
+  try {
+    const chunkSize = 500;
+    const all: GameItem[] = [];
+    let page = 1;
+    let total = 0;
+
+    for (;;) {
+      const response = await getGameListApi({
+        ...buildGameListParams(),
+        page,
+        pageSize: chunkSize,
+      });
+      total = response.pagination?.total ?? 0;
+      const list = response.list ?? [];
+      all.push(...list);
+      if (list.length === 0 || all.length >= total) {
+        break;
+      }
+      page += 1;
+    }
+
+    const headers = [
+      'ID',
+      '平台名称',
+      '游戏厂商',
+      'GameID',
+      '显示ID',
+      '游戏名称(中文)',
+      '游戏名称(英文)',
+      '游戏类型',
+      '币种',
+      '启用',
+      '热门一',
+      '热门二',
+      '推荐',
+      '维护中',
+      '展示给主播',
+      '排序',
+      '备注',
+      '创建时间',
+      '更新时间',
+    ];
+
+    const rows = all.map((g) => [
+      g.id,
+      g.platform?.platformName ?? '',
+      g.thirdPartyData?.vendor ?? '',
+      g.gameId,
+      g.gameDisplayId ?? '',
+      g.gameName,
+      g.gameNameEn ?? '',
+      getChineseGameType(g.gameType),
+      g.currency,
+      g.isEnabled ? '是' : '否',
+      g.isHot1 ? '是' : '否',
+      g.isHot2 ? '是' : '否',
+      g.isRecommended ? '是' : '否',
+      g.isUnderMaintenance ? '是' : '否',
+      g.showToStreamer ? '是' : '否',
+      g.sortOrder,
+      g.remark ?? '',
+      formatDate(g.createdAt),
+      formatDate(g.updatedAt),
+    ]);
+
+    const body = [
+      headers.map(csvEscapeCell).join(','),
+      ...rows.map((r) => r.map(csvEscapeCell).join(',')),
+    ].join('\n');
+
+    const blob = new Blob([`\uFEFF${body}`], {
+      type: 'text/csv;charset=utf-8;',
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `子游戏导出_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.append(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+
+    notification.success({
+      content: `已导出 ${all.length} 条记录`,
+      duration: 3000,
+    });
+  } catch (e: any) {
+    console.error('Export CSV failed:', e);
+    notification.error({
+      content: e?.message || '导出失败',
+      duration: 3000,
+    });
+  } finally {
+    exporting.value = false;
+  }
+};
+
 // 加载游戏列表 - 性能优化版本
 const loadGameList = async () => {
   try {
     loading.value = true;
 
-    // 构建参数对象，只包含有值的筛选条件
-    const params: any = {
-      page: paginationReactive.page,
-      pageSize: paginationReactive.pageSize,
-    };
-
-    // 只添加有值的筛选条件到参数中
-    if (filterForm.platformId) {
-      params.platformId = filterForm.platformId;
-    }
-
-    if (filterForm.vendor) {
-      params.vendor = filterForm.vendor;
-      console.log('✅ Vendor parameter added to params:', filterForm.vendor);
-    } else {
-      console.log('❌ No vendor in filterForm, vendor param not added');
-    }
-
-    if (filterForm.currency) {
-      params.currency = filterForm.currency;
-    }
-
-    if (filterForm.search && filterForm.search.trim()) {
-      params.search = filterForm.search.trim();
-    }
-
-    // 处理游戏类型筛选 - 支持多语言映射
-    if (filterForm.gameType) {
-      const enumValues = getEnglishGameTypesForFiltering(filterForm.gameType);
-      if (enumValues && enumValues.length > 0) {
-        // 发送所有游戏类型作为逗号分隔的字符串，后端会处理多个类型
-        params.gameType = enumValues.join(',');
-        console.log(
-          `Sending game types for ${filterForm.gameType}: ${enumValues.join(', ')}`,
-        );
-      }
-    }
-
-    // 处理热门类型筛选
-    if (filterForm.hotType === 'hot1') {
-      params.isHot1 = true;
-    } else if (filterForm.hotType === 'hot2') {
-      params.isHot2 = true;
-    } else if (filterForm.hotType === 'recommended') {
-      params.isRecommended = true;
-    }
-
-    // 处理游戏状态筛选
-    if (filterForm.isEnabled === 'true') {
-      params.isEnabled = true;
-    } else if (filterForm.isEnabled === 'false') {
-      params.isEnabled = false;
-    }
+    const params = buildGameListParams();
 
     console.log('🚀 Calling API with vendor filter:', params.vendor || 'none');
 
@@ -1708,6 +1816,10 @@ const loadGameList = async () => {
 
     tableData.value = response.list || [];
     paginationReactive.total = response.pagination?.total || 0;
+    if (response.pagination) {
+      paginationReactive.page = response.pagination.current;
+      paginationReactive.pageSize = response.pagination.pageSize;
+    }
 
     // Debug platform filtering
     console.log('Platform debugging:');

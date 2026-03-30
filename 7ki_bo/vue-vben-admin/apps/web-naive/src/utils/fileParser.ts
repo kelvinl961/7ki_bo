@@ -96,6 +96,7 @@ export function validateGameData(data: string[][]): {
     'Game Name (英文)',
     '游戏类型',
     'GameID',
+    '显示ID',
     'Icon',
   ];
   const headers = data[0];
@@ -139,6 +140,7 @@ export function validateGameData(data: string[][]): {
     gameNameEn: headers.indexOf('Game Name (英文)'),
     gameType: headers.indexOf('游戏类型'),
     gameId: headers.indexOf('GameID'),
+    gameDisplayId: headers.indexOf('显示ID'),
     iconUrl: headers.indexOf('Icon'),
   };
 
@@ -160,6 +162,10 @@ export function validateGameData(data: string[][]): {
       gameNameEn: row[columnIndices.gameNameEn]?.trim() || '',
       gameType: row[columnIndices.gameType]?.trim() || '',
       gameId: row[columnIndices.gameId]?.trim() || '',
+      gameDisplayId:
+        columnIndices.gameDisplayId >= 0
+          ? row[columnIndices.gameDisplayId]?.trim() || ''
+          : '',
       iconUrl:
         columnIndices.iconUrl >= 0
           ? row[columnIndices.iconUrl]?.trim() || ''
@@ -228,6 +234,7 @@ export function generateTemplateData(): string[][] {
       'Game Name (英文)',
       '游戏类型',
       'GameID',
+      '显示ID',
       'Icon',
     ],
     [
@@ -236,6 +243,7 @@ export function generateTemplateData(): string[][] {
       'Aviator',
       '电子游戏',
       'spribe_01',
+      '1001',
       'https://example.com/icon1.png',
     ],
     [
@@ -244,6 +252,7 @@ export function generateTemplateData(): string[][] {
       'Blackjack',
       '电子游戏',
       'evolution_bj',
+      '1002',
       'https://example.com/icon2.png',
     ],
     [
@@ -252,6 +261,7 @@ export function generateTemplateData(): string[][] {
       'Roulette',
       '电子游戏',
       'evolution_roulette',
+      '1003',
       'https://example.com/icon3.png',
     ],
   ];

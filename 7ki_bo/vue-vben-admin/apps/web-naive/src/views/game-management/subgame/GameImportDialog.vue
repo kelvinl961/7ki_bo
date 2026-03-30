@@ -28,7 +28,7 @@
               <li>
                 必填列：Game Name (中文)、Game Name (英文)、游戏类型、GameID
               </li>
-              <li>可选列：Icon、备注</li>
+              <li>可选列：显示ID、Icon、备注</li>
               <li>支持大文件导入（无行数限制）</li>
               <li>大文件导入可能需要几分钟时间，请耐心等待</li>
               <li>Excel文件如果解析失败，请另存为CSV格式</li>
@@ -398,6 +398,7 @@ const previewColumns: DataTableColumns<ImportGameData> = [
   { title: '游戏名称(英文)', key: 'gameNameEn', width: 150 },
   { title: '游戏类型', key: 'gameType', width: 100 },
   { title: '游戏ID', key: 'gameId', width: 120 },
+  { title: '显示ID', key: 'gameDisplayId', width: 100 },
   {
     title: '图标链接',
     key: 'iconUrl',
@@ -600,6 +601,7 @@ const startImport = async () => {
         gameNameCn: game.gameNameCn,
         gameNameEn: game.gameNameEn,
         gameType: game.gameType,
+        gameDisplayId: game.gameDisplayId?.trim() || undefined,
         iconUrl: game.iconUrl,
         remark: game.remark,
       })),

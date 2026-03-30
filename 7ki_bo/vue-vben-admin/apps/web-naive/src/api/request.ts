@@ -50,6 +50,7 @@ function shouldSignWithHmac(fullPath: string, method?: string): boolean {
 
   // 🔒 Sensitive player RTP controls (role + HMAC)
   if (fullPath.startsWith('/api/v1/player/setRtp')) return true;
+  if (fullPath.startsWith('/api/v2/player/cancelRtp')) return true;
   if (fullPath.startsWith('/api/v1/player/conditional-rtp-config')) return true;
 
   if (fullPath.startsWith('/api/transactions/manual')) return true;
@@ -295,6 +296,13 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
             typeof data.data === 'object' &&
             data.data.changedRtpValue !== undefined &&
             data.data.message
+          ) {
+            return data;
+          }
+          // HG operator setRtp v2: { code: 0, data: { app_id } } — keep wrapper so callers see code === 0
+          if (
+            typeof config?.url === 'string' &&
+            config.url.includes('/v2/operator/setRtp')
           ) {
             return data;
           }

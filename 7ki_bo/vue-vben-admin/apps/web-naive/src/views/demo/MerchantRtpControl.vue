@@ -19,14 +19,89 @@
         label-width="auto"
         require-mark-placement="right-hanging"
       >
+        <n-form-item label="对接厂商" path="rtpVendor">
+          <n-select
+            v-model:value="formData.rtpVendor"
+            :options="vendorOptions"
+            placeholder="根据已启用的游戏平台加载"
+            :disabled="vendorOptions.length === 0"
+            @update:value="onVendorChange"
+          />
+          
+        </n-form-item>
+
+        
+
+        <n-form-item
+          v-if="formData.rtpVendor === 'HG'"
+          label="RTP类型"
+          path="gamePattern"
+        >
+          <n-select
+            v-model:value="formData.gamePattern"
+            :options="hgPatternOptions"
+            placeholder="game_pattern 1–5"
+          />
+        </n-form-item>
+
+        <n-form-item
+          v-if="formData.rtpVendor === 'HG'"
+          label="游戏类型 "
+          path="gameType"
+        >
+          <n-select
+            v-model:value="formData.gameType"
+            :options="hgGameTypeOptions"
+            placeholder="0–4"
+          />
+        </n-form-item>
+
+        <n-form-item
+          v-if="formData.rtpVendor === 'HG'"
+          label="单局最高倍数 "
+          path="maxMultiple"
+        >
+          <n-input-number
+            v-model:value="formData.maxMultiple"
+            :min="0"
+            :max="10000"
+            :precision="0"
+            clearable
+            placeholder="留空默认 100；非 0 时范围 1–10000"
+            class="w-full max-w-md"
+          />
+        </n-form-item>
+
+        <n-form-item
+          v-if="formData.rtpVendor === 'HG'"
+          label="单局最高赢取 "
+          path="maxWinPoints"
+        >
+          <n-input-number
+            v-model:value="formData.maxWinPoints"
+            :min="0"
+            :max="100000000"
+            :precision="0"
+            clearable
+            placeholder="留空默认 1000000；非 0 时范围 1–100000000"
+            class="w-full max-w-md"
+          />
+        </n-form-item>
+
         <n-form-item label="RTP值" path="Rtp">
           <n-select
             v-model:value="formData.Rtp"
-            :options="rtpOptions"
+            :options="rtpOptionsEffective"
             placeholder="选择RTP值"
             filterable
           />
-          <template #feedback> 注意：当前运营商权限支持 0、10–97 的 RTP 值 </template>
+          <template #feedback>
+            {{
+              formData.rtpVendor === 'HG'
+                ? 'HG 白名单档位；运营商权限不同可能仅支持 10–97 或 120–1000 等子集'
+                : '注意：AG 支持 0、10–97 的 RTP 值'
+            }}
+          </template>
         </n-form-item>
 
         <n-form-item label="游戏" path="GameId">
@@ -53,6 +128,7 @@
           <n-space>
             <n-button
               type="primary"
+              :disabled="!formData.rtpVendor || vendorOptions.length === 0"
               @click="handleSubmit"
               :loading="submitting"
             >
@@ -79,7 +155,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, h } from 'vue';
+import { ref, reactive, onMounted, h, computed, watch } from 'vue';
 import {
   NTag,
   NCard,
@@ -90,12 +166,22 @@ import {
   NSpace,
   NDataTable,
   NButton,
+  NInputNumber,
+  NText,
   useMessage,
   type FormInst,
   type DataTableColumns,
 } from 'naive-ui';
 import { requestClient } from '#/api/request';
 import { searchGamesWithPagination } from '#/api/core/player-rtp';
+import { getMerchantRtpVendorsApi } from '#/api/core/merchant-rtp';
+
+/** HG operator setRtp allowed RTP values (subset aligned with backend hgRtpSpec) */
+const HG_RTP_WHITELIST = new Set([
+  10, 20, 30, 40, 50, 60, 70, 80, 85, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
+  102, 105, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 220, 240, 260, 280, 300,
+  500, 750, 1000,
+]);
 
 // Message
 const message = useMessage();
@@ -112,8 +198,24 @@ const currentPage = ref(1);
 const hasMoreGames = ref(true);
 const currentSearchQuery = ref('');
 
+const vendorOptions = ref<Array<{ label: string; value: string }>>([]);
+/** Enabled platforms from API (isEnabled=true), for reference */
+const enabledPlatforms = ref<
+  Array<{
+    platformId: string;
+    platformName: string;
+    rtpIntegration: string;
+    apiConfigured: boolean;
+  }>
+>([]);
+
 // Form data
 const formData = reactive({
+  rtpVendor: null as string | null,
+  gamePattern: 1 as number,
+  gameType: 0 as number,
+  maxMultiple: null as number | null,
+  maxWinPoints: null as number | null,
   Rtp: null as number | null,
   GameId: ['ALL'] as string[],
 });
@@ -140,22 +242,114 @@ const rtpOptions = [
   { label: '97', value: 97 },
 ];
 
+const hgPatternOptions = [
+  { label: '1 波动型', value: 1 },
+  { label: '2 仿正型', value: 2 },
+  { label: '3 混合型', value: 3 },
+  { label: '4 稳定型', value: 4 },
+  { label: '5 高中奖率', value: 5 },
+];
+
+const hgGameTypeOptions = [
+  { label: '0 拉霸/电子游戏', value: 0 },
+  { label: '1 Mini游戏', value: 1 },
+  { label: '2 视讯游戏', value: 2 },
+  { label: '3 捕鱼游戏', value: 3 },
+  { label: '4 彩票游戏', value: 4 },
+];
+
+const hgRtpSelectOptions = [...HG_RTP_WHITELIST].sort((a, b) => a - b).map((v) => ({
+  label: String(v),
+  value: v,
+}));
+
+const rtpOptionsEffective = computed(() => {
+  if (formData.rtpVendor !== 'HG') return rtpOptions;
+  return hgRtpSelectOptions;
+});
+
+watch(
+  () => formData.rtpVendor,
+  (v) => {
+    if (v === 'HG' && formData.Rtp != null && !HG_RTP_WHITELIST.has(formData.Rtp)) {
+      formData.Rtp = null;
+    }
+  },
+);
+
+const onVendorChange = () => {
+  formRef.value?.restoreValidation();
+};
+
 // Form rules
 const rules = {
-  Rtp: {
+  rtpVendor: {
     required: true,
-    type: 'number',
-    message: '请选择RTP值',
+    message: '请选择对接厂商',
     trigger: 'change',
   },
-  GameId: {
-    required: true,
-    type: 'array',
-    message: '请选择游戏',
+  gamePattern: {
     trigger: 'change',
-    validator: (_rule: any, value: string[]) => {
+    validator: (_rule: unknown, value: number) => {
+      if (formData.rtpVendor !== 'HG') return true;
+      if (value == null || ![1, 2, 3, 4, 5].includes(value)) {
+        return new Error('请选择 game_pattern');
+      }
+      return true;
+    },
+  },
+  gameType: {
+    trigger: 'change',
+    validator: (_rule: unknown, value: number) => {
+      if (formData.rtpVendor !== 'HG') return true;
+      if (value == null || ![0, 1, 2, 3, 4].includes(value)) {
+        return new Error('请选择 game_type');
+      }
+      return true;
+    },
+  },
+  maxMultiple: {
+    trigger: ['blur', 'change'],
+    validator: (_rule: unknown, value: number | null) => {
+      if (formData.rtpVendor !== 'HG') return true;
+      if (value == null) return true;
+      const n = Math.round(Number(value));
+      if (n !== 0 && (n < 1 || n > 10_000)) {
+        return new Error('max_multiple 须为 0 或 1–10000');
+      }
+      return true;
+    },
+  },
+  maxWinPoints: {
+    trigger: ['blur', 'change'],
+    validator: (_rule: unknown, value: number | null) => {
+      if (formData.rtpVendor !== 'HG') return true;
+      if (value == null) return true;
+      const n = Math.round(Number(value));
+      if (n !== 0 && (n < 1 || n > 100_000_000)) {
+        return new Error('max_win_points 须为 0 或 1–100000000');
+      }
+      return true;
+    },
+  },
+  Rtp: {
+    trigger: 'change',
+    validator: (_rule: unknown, value: number | null) => {
+      if (value == null) return new Error('请选择RTP值');
+      if (formData.rtpVendor === 'HG' && !HG_RTP_WHITELIST.has(value)) {
+        return new Error('当前 RTP 不在 HG 白名单内');
+      }
+      return true;
+    },
+  },
+  GameId: {
+    trigger: 'change',
+    validator: (_rule: unknown, value: string[]) => {
       if (!value || value.length === 0) {
         return new Error('请至少选择一个游戏');
+      }
+      if (!value.includes('ALL') && value.length > 50) {
+        return new Error('批量调控单次最多 50 个游戏（gameid 逗号分隔）');
       }
       return true;
     },
@@ -279,15 +473,29 @@ const handleSubmit = async () => {
       ? formData.GameId.join(',')
       : formData.GameId;
 
-    const requestData: any = {
-      Rtp: formData.Rtp!,
-      GameId: gameIds,
-    };
+    let response: { code?: number; error?: string; data?: unknown };
 
-    const response = await requestClient.post(
-      '/v1/operator/setRtp',
-      requestData,
-    );
+    if (formData.rtpVendor === 'HG') {
+      const body: Record<string, unknown> = {
+        game_pattern: formData.gamePattern,
+        rtp: formData.Rtp!,
+        gameid: gameIds,
+        game_type: formData.gameType,
+      };
+      if (formData.maxMultiple != null) {
+        body.max_multiple = Math.round(formData.maxMultiple);
+      }
+      if (formData.maxWinPoints != null) {
+        body.max_win_points = Math.round(formData.maxWinPoints);
+      }
+      response = await requestClient.post('/v2/operator/setRtp', body);
+    } else {
+      const requestData: Record<string, unknown> = {
+        Rtp: formData.Rtp!,
+        GameId: gameIds,
+      };
+      response = await requestClient.post('/v1/operator/setRtp', requestData);
+    }
 
     console.log('🔍 Frontend received response:', response);
     console.log('🔍 Response code:', response?.code);
@@ -316,6 +524,11 @@ const handleSubmit = async () => {
 };
 
 const handleReset = () => {
+  formData.rtpVendor = vendorOptions.value[0]?.value ?? null;
+  formData.gamePattern = 1;
+  formData.gameType = 0;
+  formData.maxMultiple = null;
+  formData.maxWinPoints = null;
   formData.Rtp = null;
   formData.GameId = ['ALL'];
 };
@@ -342,6 +555,17 @@ const pagination = reactive({
 
 const historyColumns: DataTableColumns<any> = [
   { title: '时间', key: 'createdAt', width: 180, ellipsis: { tooltip: true } },
+  {
+    title: '厂商',
+    key: 'gamePattern',
+    width: 120,
+    ellipsis: { tooltip: true },
+    render: (row) => {
+      const gp = row.gamePattern;
+      if (typeof gp === 'string' && gp.startsWith('HG:')) return 'HG';
+      return 'AG';
+    },
+  },
   { title: 'RTP', key: 'rtp', width: 80, align: 'center' },
   { title: '游戏ID', key: 'gameId', width: 200, ellipsis: { tooltip: true } },
   {
@@ -450,7 +674,37 @@ const loadLastConfig = async () => {
         ? lastConfig.gameId.split(',')
         : ['ALL'];
 
+      const gp = lastConfig.gamePattern;
+      if (typeof gp === 'string' && gp.startsWith('HG:')) {
+        formData.rtpVendor = 'HG';
+        const pat = parseInt(gp.slice(3), 10);
+        if ([1, 2, 3, 4, 5].includes(pat)) {
+          formData.gamePattern = pat;
+        }
+        if (lastConfig.maxMultiple != null) {
+          formData.maxMultiple = Number(lastConfig.maxMultiple);
+        } else {
+          formData.maxMultiple = null;
+        }
+        if (lastConfig.maxWinPoints != null) {
+          formData.maxWinPoints = Number(lastConfig.maxWinPoints);
+        } else {
+          formData.maxWinPoints = null;
+        }
+        const req = lastConfig.response?.request;
+        if (req && typeof req.game_type === 'number') {
+          formData.gameType = req.game_type;
+        }
+      } else {
+        formData.rtpVendor = vendorOptions.value.some((v) => v.value === 'AG')
+          ? 'AG'
+          : (vendorOptions.value[0]?.value ?? null);
+        formData.maxMultiple = null;
+        formData.maxWinPoints = null;
+      }
+
       console.log('✅ Last merchant RTP config loaded into form:', {
+        rtpVendor: formData.rtpVendor,
         Rtp: formData.Rtp,
         GameId: formData.GameId,
       });
@@ -460,10 +714,35 @@ const loadLastConfig = async () => {
   }
 };
 
+const loadRtpVendors = async () => {
+  try {
+    const { vendors, platforms } = await getMerchantRtpVendorsApi();
+    enabledPlatforms.value = platforms.map((p) => ({
+      platformId: p.platformId,
+      platformName: p.platformName,
+      rtpIntegration: p.rtpIntegration,
+      apiConfigured: p.apiConfigured,
+    }));
+    vendorOptions.value = vendors.map((v) => ({ label: v.label, value: v.id }));
+    if (!formData.rtpVendor && vendorOptions.value.length > 0) {
+      formData.rtpVendor = vendorOptions.value[0]!.value;
+    }
+    if (vendorOptions.value.length === 0) {
+      message.warning(
+        '无可用商户 RTP 渠道：需存在 isEnabled=true 且 platformId 为 AG/AG_* 或 HG/HG_* 的平台，并已配置对应 API',
+      );
+    }
+  } catch (e) {
+    console.error('loadRtpVendors', e);
+    message.error('加载厂商列表失败');
+  }
+};
+
 // Initialize
 onMounted(async () => {
+  await loadRtpVendors();
   loadInitialGames();
-  await loadLastConfig(); // Load last saved config from API
+  await loadLastConfig();
   loadHistory();
 });
 </script>

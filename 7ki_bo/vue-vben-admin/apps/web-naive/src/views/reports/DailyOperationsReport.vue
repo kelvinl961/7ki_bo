@@ -768,6 +768,7 @@ const columns = computed<DataTableColumns>(() => {
           sorter: true,
           render: (row: any) => renderNumericCell(row, 'depositWithdrawalDiff'),
         },
+        /* hidden: 大R玩家
         {
           title: '大R玩家',
           key: 'bigRPlayers',
@@ -776,6 +777,7 @@ const columns = computed<DataTableColumns>(() => {
           render: (row: any) =>
             renderNumericCell(row, 'bigRPlayers', false, true), // isCount
         },
+        */
       ],
     },
 
@@ -897,6 +899,7 @@ const columns = computed<DataTableColumns>(() => {
           sorter: true,
           render: (row: any) => renderNumericCell(row, 'gameProfitLoss'),
         },
+        /* hidden: 预扣税
         {
           title: '预扣税',
           key: 'withholdingTax',
@@ -904,6 +907,7 @@ const columns = computed<DataTableColumns>(() => {
           sorter: true,
           render: (row: any) => renderNumericCell(row, 'withholdingTax'),
         },
+        */
         {
           title: '投充比',
           key: 'betDepositRatio',
@@ -986,6 +990,7 @@ const columns = computed<DataTableColumns>(() => {
           sorter: true,
           render: (row: any) => renderNumericCell(row, 'depositBonus'),
         },
+        /* hidden: 利息宝利息 / 公积金 / 盲盒抽奖 / 幸运转盘
         {
           title: '利息宝利息',
           key: 'interestTreasureInterest',
@@ -1015,6 +1020,7 @@ const columns = computed<DataTableColumns>(() => {
           sorter: true,
           render: (row: any) => renderNumericCell(row, 'luckyWheel'),
         },
+        */
       ],
     },
 
@@ -1030,6 +1036,7 @@ const columns = computed<DataTableColumns>(() => {
           sorter: true,
           render: (row: any) => renderNumericCell(row, 'accountBalance', true),
         },
+        /* hidden: 利息宝 / 奖励钱包
         {
           title: '利息宝',
           key: 'interestTreasure',
@@ -1045,6 +1052,7 @@ const columns = computed<DataTableColumns>(() => {
           sorter: true,
           render: (row: any) => renderNumericCell(row, 'rewardWallet'),
         },
+        */
         {
           title: '三方余额',
           key: 'thirdPartyBalance',
@@ -1063,6 +1071,7 @@ const columns = computed<DataTableColumns>(() => {
     },
 
     // No category columns (without header group)
+    /* hidden: 余额账变总计 / 三方转出入账变 / 利息宝转出入 / 银商充值
     {
       title: '余额账变总计',
       key: 'balanceChanges',
@@ -1091,6 +1100,7 @@ const columns = computed<DataTableColumns>(() => {
       sorter: true,
       render: (row: any) => renderNumericCell(row, 'silverMerchantRecharge'),
     },
+    */
     {
       title: '在线充值',
       key: 'onlineRecharge',
@@ -1098,6 +1108,7 @@ const columns = computed<DataTableColumns>(() => {
       sorter: true,
       render: (row: any) => renderNumericCell(row, 'onlineRecharge'),
     },
+    /* hidden: 转账充值 / 客服代充
     {
       title: '转账充值',
       key: 'transferRecharge',
@@ -1112,6 +1123,7 @@ const columns = computed<DataTableColumns>(() => {
       sorter: true,
       render: (row: any) => renderNumericCell(row, 'customerServiceRecharge'),
     },
+    */
     {
       title: '人工修正',
       key: 'manualAdjustment',
@@ -1133,6 +1145,7 @@ const columns = computed<DataTableColumns>(() => {
       sorter: true,
       render: (row: any) => renderNumericCell(row, 'manualDeductFunds'),
     },
+    /* hidden: 打赏
     {
       title: '打赏',
       key: 'tipping',
@@ -1140,6 +1153,7 @@ const columns = computed<DataTableColumns>(() => {
       sorter: true,
       render: (row: any) => renderNumericCell(row, 'tipping'),
     },
+    */
   ];
 
   // ✅ Filter out unused categories (club and credit loan) if they have no data

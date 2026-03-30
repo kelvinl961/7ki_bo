@@ -55,6 +55,7 @@ export interface GameListParams {
   platformId?: number;
   vendor?: string;
   currency?: string;
+  gameType?: string;
   isEnabled?: boolean;
   isHot1?: boolean;
   isHot2?: boolean;
@@ -188,6 +189,8 @@ export interface ImportGameData {
   gameNameEn: string;
   gameType: string;
   gameId: string;
+  /** 前台展示用 ID，对应库字段 gameDisplayId */
+  gameDisplayId?: string;
   iconUrl?: string;
   platformId?: number;
   currency?: string;

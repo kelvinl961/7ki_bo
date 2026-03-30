@@ -16,6 +16,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         meta: {
+          keepAlive: true,
           title: '所有会员',
         },
         name: 'AllMembers',
@@ -24,6 +25,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         meta: {
+          keepAlive: true,
           title: '会员层级管理',
         },
         name: 'MemberTierManagement',

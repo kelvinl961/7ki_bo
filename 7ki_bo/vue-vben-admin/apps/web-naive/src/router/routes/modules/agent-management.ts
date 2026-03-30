@@ -13,6 +13,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         meta: {
+          keepAlive: true,
           title: '所有代理',
         },
         name: 'AllAgents',
@@ -21,6 +22,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         meta: {
+          keepAlive: true,
           title: '佣金管理',
         },
         name: 'CommissionManagement',
@@ -30,6 +32,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         meta: {
+          keepAlive: true,
           title: '返水设置',
         },
         name: 'RebateSettings',
@@ -39,6 +42,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         meta: {
+          keepAlive: true,
           title: '代理模式',
         },
         name: 'AgentMode',

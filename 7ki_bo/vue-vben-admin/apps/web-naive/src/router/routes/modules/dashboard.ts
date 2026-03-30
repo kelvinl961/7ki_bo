@@ -7,6 +7,7 @@ const routes: RouteRecordRaw[] = [
   {
     meta: {
       icon: 'lucide:home',
+      keepAlive: true,
       order: -1,
       title: 'page.dashboard.home',
     },

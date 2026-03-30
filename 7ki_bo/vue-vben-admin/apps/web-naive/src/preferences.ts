@@ -14,4 +14,9 @@ export const overridesPreferences = defineOverridesPreferences({
     enableCheckUpdates: true, // Enable version update checking
     checkUpdatesInterval: 30, // Check for updates every 30 minutes (reduced from 1 minute to avoid false positives)
   },
+  /** 默认开启标签栏与页面 KeepAlive，切换标签保留列表筛选等状态 */
+  tabbar: {
+    enable: true,
+    keepAlive: true,
+  },
 });

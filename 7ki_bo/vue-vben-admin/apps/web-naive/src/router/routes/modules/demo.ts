@@ -13,6 +13,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         meta: {
+          keepAlive: true,
           title: '商户RTP调控',
         },
         name: 'MerchantRtpControl',
@@ -21,6 +22,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         meta: {
+          keepAlive: true,
           title: '条件RTP配置（演示）',
         },
         name: 'ConditionalRtpRuleBuilderDemo',

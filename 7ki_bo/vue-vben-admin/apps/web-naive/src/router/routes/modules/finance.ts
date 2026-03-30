@@ -16,6 +16,7 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         meta: {
+          keepAlive: true,
           title: '充值管理',
         },
         name: 'RechargeManagement',
@@ -24,6 +25,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         meta: {
+          keepAlive: true,
           title: '在线充值',
         },
         name: 'OnlineRecharge',
@@ -32,6 +34,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         meta: {
+          keepAlive: true,
           title: '提现管理',
         },
         name: 'WithdrawManagement',
@@ -40,6 +43,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         meta: {
+          keepAlive: true,
           title: '投注任务(稽核)',
         },
         name: 'WageringAudit',

@@ -9,6 +9,7 @@ import type {
 import { defineComponent, h } from 'vue';
 
 import {
+  applyDefaultKeepAlive,
   cloneDeep,
   generateMenus,
   generateRoutesByBackend,
@@ -26,7 +27,8 @@ async function generateAccessible(
 
   options.routes = cloneDeep(options.routes);
   // 生成路由
-  const accessibleRoutes = await generateRoutes(mode, options);
+  let accessibleRoutes = await generateRoutes(mode, options);
+  accessibleRoutes = applyDefaultKeepAlive(accessibleRoutes);
 
   const root = router.getRoutes().find((item) => item.path === '/');
 

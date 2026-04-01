@@ -85,6 +85,17 @@ function onValueUpdate(v: string) {
 </script>
 
 <style scoped>
+.field-search-bar {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.field-search-bar > div {
+  flex-shrink: 0;
+}
+
 .field-search-bar.contents {
   display: contents;
 }

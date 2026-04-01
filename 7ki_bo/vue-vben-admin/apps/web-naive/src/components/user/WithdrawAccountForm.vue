@@ -50,8 +50,16 @@
         />
       </n-form-item>
 
+      <n-form-item label="银行户名" path="bankHolderName">
+        <n-input
+          v-model:value="formData.bankHolderName"
+          placeholder="请输入银行账户持有人姓名"
+          clearable
+        />
+      </n-form-item>
+
       <!-- Bank specific fields -->
-      <template v-if="formData.methodType === 'BANK_TRANSFER'">
+      <template v-if="isBankAccountMethod">
         <n-form-item label="银行代码" path="bankCode">
           <n-input
             v-model:value="formData.bankCode"
@@ -64,14 +72,6 @@
           <n-input
             v-model:value="formData.bankName"
             placeholder="输入银行名称"
-            clearable
-          />
-        </n-form-item>
-
-        <n-form-item label="银行户名" path="bankHolderName">
-          <n-input
-            v-model:value="formData.bankHolderName"
-            placeholder="输入银行户名"
             clearable
           />
         </n-form-item>
@@ -205,6 +205,10 @@ const currentAccountTypeOptions = computed(() => {
   );
 });
 
+const isBankAccountMethod = computed(() =>
+  ['BANK_TRANSFER', 'TED', 'DOC'].includes(formData.methodType),
+);
+
 // Form rules
 const formRules: FormRules = {
   currency: {
@@ -229,8 +233,8 @@ const formRules: FormRules = {
   },
   bankName: {
     required: false,
-    validator: (rule, value) => {
-      if (formData.methodType === 'BANK_TRANSFER' && !value) {
+    validator: (_rule, value) => {
+      if (isBankAccountMethod.value && !String(value || '').trim()) {
         return new Error('银行转账时银行名称为必填项');
       }
       return true;
@@ -238,10 +242,10 @@ const formRules: FormRules = {
     trigger: 'blur',
   },
   bankHolderName: {
-    required: false,
-    validator: (rule, value) => {
-      if (formData.methodType === 'BANK_TRANSFER' && !value) {
-        return new Error('银行转账时银行户名为必填项');
+    required: true,
+    validator: (_rule, value) => {
+      if (!String(value || '').trim()) {
+        return new Error('请输入银行户名');
       }
       return true;
     },
@@ -308,6 +312,13 @@ const handleSubmit = async () => {
   if (!formRef.value) return;
 
   try {
+    const bankHolderName = formData.bankHolderName.trim();
+    const bankName = formData.bankName.trim();
+    if (!bankHolderName) {
+      message.error('请输入银行户名');
+      return;
+    }
+
     await formRef.value.validate();
     loading.value = true;
 
@@ -318,8 +329,8 @@ const handleSubmit = async () => {
         accountType: formData.accountType,
         accountValue: formData.accountValue,
         bankCode: formData.bankCode || undefined,
-        bankName: formData.bankName || undefined,
-        bankHolderName: formData.bankHolderName || undefined,
+        bankName: bankName || undefined,
+        bankHolderName,
         bankRouting: formData.bankRouting || undefined,
         backendNote: formData.backendNote || undefined,
       };
@@ -335,8 +346,8 @@ const handleSubmit = async () => {
         accountType: formData.accountType,
         accountValue: formData.accountValue,
         bankCode: formData.bankCode || undefined,
-        bankName: formData.bankName || undefined,
-        bankHolderName: formData.bankHolderName || undefined,
+        bankName: bankName || undefined,
+        bankHolderName,
         bankRouting: formData.bankRouting || undefined,
         backendNote: formData.backendNote || undefined,
       };

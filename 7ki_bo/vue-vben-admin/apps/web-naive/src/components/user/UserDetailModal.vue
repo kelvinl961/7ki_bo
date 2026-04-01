@@ -1946,7 +1946,24 @@ const transactionColumns: DataTableColumns<WalletTransaction> = [
     width: 150,
     fixed: 'left',
     render: (row) => {
-      return h('span', { class: 'text-xs font-mono' }, String(row.id));
+      const merchantOrderNo = row.metadata?.callbackData?.merchantOrderNo;
+      const hasMerchantOrderNo =
+        typeof merchantOrderNo === 'string' && merchantOrderNo.trim();
+      const displayOrderNo = hasMerchantOrderNo
+        ? merchantOrderNo
+        : String(row.id);
+      if (!hasMerchantOrderNo) {
+        return h('span', { class: 'text-xs font-mono' }, displayOrderNo);
+      }
+      return h(
+        'span',
+        {
+          class: 'text-xs font-mono text-blue-600 underline cursor-pointer',
+          title: '点击复制',
+          onClick: () => copyToClipboard(displayOrderNo),
+        },
+        displayOrderNo,
+      );
     },
   },
   {

@@ -64,9 +64,9 @@
         </div>
 
         <!-- Second Row: Search filters -->
-        <div class="flex flex-wrap items-end gap-4">
+        <div class="flex items-end gap-4 overflow-x-auto whitespace-nowrap pb-1">
           <!-- 搜索条件 (综合搜索字段选择器) -->
-          <div class="flex flex-col">
+          <div class="flex shrink-0 flex-col">
             <n-select
               v-model:value="filterForm.searchCondition"
               placeholder="请选择搜索条件"
@@ -78,7 +78,7 @@
           </div>
 
           <!-- 搜索条件值 (动态显示) -->
-          <div v-if="filterForm.searchCondition" class="flex flex-col">
+          <div v-if="filterForm.searchCondition" class="flex shrink-0 flex-col">
             <n-select
               v-model:value="filterForm.searchConditionValue"
               :placeholder="`请选择${getSearchConditionLabel()}`"
@@ -92,6 +92,7 @@
 
           <!-- 搜索字段 + 搜索值（共用组件，options 由本页传入） -->
           <FieldSearchBar
+            class="shrink-0"
             v-model:field="filterForm.searchField"
             v-model:value="filterForm.searchValue"
             :options="allSearchFieldOptions"
@@ -101,7 +102,7 @@
           />
 
           <!-- 账号类型 -->
-          <div class="flex flex-col">
+          <div class="flex shrink-0 flex-col">
             <n-select
               v-model:value="filterForm.accountType"
               placeholder="请选择账号类型"
@@ -112,7 +113,7 @@
           </div>
 
           <!-- 操作按钮 -->
-          <div class="flex flex-col">
+          <div class="flex shrink-0 flex-col">
             <div class="flex gap-2">
               <n-button type="primary" @click="handleFilter"> 搜索 </n-button>
               <n-button type="info" @click="showAdvancedSearch = true">
@@ -619,6 +620,16 @@ const columns: DataTableColumns<UserItem> = [
     width: 120,
     render(row) {
       return `BRL ${row.balance?.toFixed(2) || '0.00'}`;
+    },
+  },
+  {
+    title: '首存金额',
+    key: 'firstDepositAmount',
+    width: 120,
+    render(row) {
+      const amount = (row as UserItem & { firstDepositAmount?: number })
+        .firstDepositAmount;
+      return `BRL ${(amount ?? 0).toFixed(2)}`;
     },
   },
   {

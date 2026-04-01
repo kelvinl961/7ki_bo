@@ -205,17 +205,18 @@ export const TRANSACTION_PATTERN_HANDLERS: PatternHandler[] = [
 
   // Game session pattern: "PG game session entry" or "PG game session return"
   {
-    pattern: /^(\w+)\s+game\s+session\s+(entry|return)$/i,
+    pattern: /^(.+?)\s+game\s+session\s+(entry|return)$/i,
     handler: (match, metadata) => {
-      const provider = match[1];
+      const providerFromText = match[1];
       const action = match[2]?.toLowerCase() || '';
 
-      // Get game category from metadata
-      let gameCategory = '游戏'; // Default fallback
+      const provider =
+        metadata?.platformName || metadata?.gameProvider || providerFromText;
+
+      let gameCategory = '游戏';
       if (metadata?.gameCategory) {
-        const categoryUpper = metadata.gameCategory.toUpperCase();
-        gameCategory =
-          GAME_CATEGORY_MAPPINGS[categoryUpper] || metadata.gameCategory;
+        const categoryUpper = String(metadata.gameCategory).toUpperCase();
+        gameCategory = GAME_CATEGORY_MAPPINGS[categoryUpper] || metadata.gameCategory;
       }
 
       const gameInfo = `${provider}${gameCategory}`;

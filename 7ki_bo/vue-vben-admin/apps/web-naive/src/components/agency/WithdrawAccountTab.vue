@@ -165,6 +165,7 @@ import {
   NTag,
   useMessage,
   type DataTableColumns,
+  type FormInst,
 } from 'naive-ui';
 import {
   getAgentWithdrawalAccountsApi,
@@ -201,6 +202,7 @@ const submitting = ref(false);
 const showAccountModal = ref(false);
 const isEdit = ref(false);
 const currentAccountId = ref<number | null>(null);
+const formRef = ref<FormInst | null>(null);
 
 // Data from API
 const withdrawAccounts = ref<AgentWithdrawalAccount[]>([]);
@@ -257,6 +259,8 @@ const activeAccounts = computed(() =>
 const verifiedAccounts = computed(() =>
   withdrawAccounts.value.filter((account) => account.status === 'active'),
 );
+
+const isBankType = computed(() => accountForm.type === 'bank');
 
 const totalWithdrawAmount = computed(() => {
   // This would need to be calculated from actual withdrawal data
@@ -402,8 +406,16 @@ const rules = {
     trigger: 'blur',
   },
   name: {
-    required: true,
-    message: '请输入账号名称',
+    required: false,
+    validator: (_rule: unknown, value: string) => {
+      const normalized = String(value || '').trim();
+      if (!normalized) {
+        return new Error(
+          isBankType.value ? '请输入银行账户持有人姓名' : '请输入账号名称',
+        );
+      }
+      return true;
+    },
     trigger: 'blur',
   },
   number: {
@@ -461,19 +473,29 @@ const handleSubmitAccount = async () => {
   if (!props.agentId) return;
 
   try {
+    await formRef.value?.validate();
     submitting.value = true;
+    const submitPayload = {
+      ...accountForm,
+      name: accountForm.name.trim(),
+      number: accountForm.number.trim(),
+      bank: accountForm.bank.trim(),
+      alipayAccount: accountForm.alipayAccount.trim(),
+      wechatAccount: accountForm.wechatAccount.trim(),
+      remark: accountForm.remark.trim(),
+    };
 
     if (isEdit.value && currentAccountId.value) {
       // Update existing account
       await updateWithdrawalAccountApi(
         props.agentId,
         currentAccountId.value,
-        accountForm,
+        submitPayload,
       );
       message.success('账号更新成功');
     } else {
       // Add new account
-      await createWithdrawalAccountApi(props.agentId, accountForm);
+      await createWithdrawalAccountApi(props.agentId, submitPayload);
       message.success('账号添加成功');
     }
 

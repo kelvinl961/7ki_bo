@@ -8,20 +8,28 @@
             <n-grid :cols="24" :x-gap="12" :y-gap="12">
               <n-gi :span="24">
                 <n-form-item label="">
-                  <n-space align="center" :size="12">
-                    <n-radio-group v-model:value="timeGranularity" @update:value="onTimeGranularityChange">
-                      <n-radio-button value="day">日</n-radio-button>
-                      <n-radio-button value="week">周</n-radio-button>
-                      <n-radio-button value="month">月</n-radio-button>
+                  <n-space align="center" :size="12" wrap>
+                    <n-radio-group
+                      v-model:value="dateQuickPreset"
+                      class="reward-date-preset-group"
+                      size="small"
+                      @update:value="onRewardDatePresetChange"
+                    >
+                      <n-radio-button value="today">今日</n-radio-button>
+                      <n-radio-button value="yesterday">昨天</n-radio-button>
+                      <n-radio-button value="thisWeek">本周</n-radio-button>
+                      <n-radio-button value="lastWeek">上周</n-radio-button>
                     </n-radio-group>
                     <n-date-picker
                       v-model:value="dateRange"
-                      type="datetimerange"
+                      type="daterange"
                       :timezone="REPORT_TIMEZONE"
                       clearable
-                      placeholder="选择开始和结束日期时间"
-                      format="yyyy-MM-dd HH:mm:ss"
-                      style="width: 380px"
+                      :shortcuts="rewardDateShortcuts"
+                      placeholder="选择开始和结束日期"
+                      format="yyyy-MM-dd"
+                      style="width: 320px"
+                      @update:value="syncRewardDatePresetFromRange"
                     />
                   </n-space>
                 </n-form-item>
@@ -311,10 +319,13 @@ function getTodayRange(): [number, number] {
   return [start.getTime(), end.getTime()];
 }
 
-/** 圣保罗当周：周一 00:00:00 ~ 周日 23:59:59 */
-function getWeekRange(): [number, number] {
+/** 圣保罗日历：含该日的自然周之周一（周一至周日） */
+function getMondayOfWeekContaining(
+  year: number,
+  month: number,
+  day: number,
+): { year: number; month: number; day: number } {
   const tz = REPORT_TIMEZONE;
-  const { year, month, day } = getNowInTimezone(tz);
   const noon = convertTimezoneToUTC(year, month, day, 12, 0, 0, tz);
   const weekdayShort = new Intl.DateTimeFormat('en-US', {
     timeZone: tz,
@@ -340,24 +351,94 @@ function getWeekRange(): [number, number] {
     monM = prev.month;
     monD = prev.day;
   }
-  const sun = addCalendarDaysInTz(monY, monM, monD, 6, tz);
-  const start = convertTimezoneToUTC(monY, monM, monD, 0, 0, 0, tz);
+  return { year: monY, month: monM, day: monD };
+}
+
+/** 圣保罗「昨天」00:00:00 ~ 23:59:59 */
+function getYesterdayRange(): [number, number] {
+  const tz = REPORT_TIMEZONE;
+  const { year, month, day } = getNowInTimezone(tz);
+  const y = addCalendarDaysInTz(year, month, day, -1, tz);
+  const start = convertTimezoneToUTC(y.year, y.month, y.day, 0, 0, 0, tz);
+  const end = convertTimezoneToUTC(y.year, y.month, y.day, 23, 59, 59, tz);
+  return [start.getTime(), end.getTime()];
+}
+
+/** 圣保罗当周：周一 00:00:00 ~ 周日 23:59:59 */
+function getWeekRange(): [number, number] {
+  const tz = REPORT_TIMEZONE;
+  const { year, month, day } = getNowInTimezone(tz);
+  const mon = getMondayOfWeekContaining(year, month, day);
+  const sun = addCalendarDaysInTz(mon.year, mon.month, mon.day, 6, tz);
+  const start = convertTimezoneToUTC(mon.year, mon.month, mon.day, 0, 0, 0, tz);
   const end = convertTimezoneToUTC(sun.year, sun.month, sun.day, 23, 59, 59, tz);
   return [start.getTime(), end.getTime()];
 }
 
-/** 圣保罗当月 1 日 ~ 末日 */
-function getMonthRange(): [number, number] {
+/** 圣保罗上一自然周：上周一 00:00:00 ~ 上周日 23:59:59 */
+function getLastWeekRange(): [number, number] {
   const tz = REPORT_TIMEZONE;
-  const { year, month } = getNowInTimezone(tz);
-  const start = convertTimezoneToUTC(year, month, 1, 0, 0, 0, tz);
-  const lastDay = new Date(year, month, 0).getDate();
-  const end = convertTimezoneToUTC(year, month, lastDay, 23, 59, 59, tz);
+  const { year, month, day } = getNowInTimezone(tz);
+  const mon = getMondayOfWeekContaining(year, month, day);
+  const prevMon = addCalendarDaysInTz(mon.year, mon.month, mon.day, -7, tz);
+  const prevSun = addCalendarDaysInTz(prevMon.year, prevMon.month, prevMon.day, 6, tz);
+  const start = convertTimezoneToUTC(prevMon.year, prevMon.month, prevMon.day, 0, 0, 0, tz);
+  const end = convertTimezoneToUTC(prevSun.year, prevSun.month, prevSun.day, 23, 59, 59, tz);
   return [start.getTime(), end.getTime()];
 }
 
-const timeGranularity = ref<'day' | 'week' | 'month'>('day');
+const rewardDateShortcuts: Record<string, () => [number, number]> = {
+  今日: () => getTodayRange(),
+  昨天: () => getYesterdayRange(),
+  本周: () => getWeekRange(),
+  上周: () => getLastWeekRange(),
+};
+
+type RewardDatePreset = 'today' | 'yesterday' | 'thisWeek' | 'lastWeek';
+
+function tsToYmdInReportTz(ts: number): string {
+  const d = new Date(ts);
+  if (Number.isNaN(d.getTime())) return '';
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: REPORT_TIMEZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(d);
+}
+
 const dateRange = ref<[number, number] | null>(getTodayRange());
+const dateQuickPreset = ref<RewardDatePreset | null>('today');
+
+function syncRewardDatePresetFromRange(range: [number, number] | null) {
+  if (!range || range.length !== 2) {
+    dateQuickPreset.value = null;
+    return;
+  }
+  const startYmd = tsToYmdInReportTz(range[0]);
+  const endYmd = tsToYmdInReportTz(range[1]);
+  const candidates: Array<[RewardDatePreset, () => [number, number]]> = [
+    ['today', getTodayRange],
+    ['yesterday', getYesterdayRange],
+    ['thisWeek', getWeekRange],
+    ['lastWeek', getLastWeekRange],
+  ];
+  for (const [key, fn] of candidates) {
+    const [s, e] = fn();
+    if (startYmd === tsToYmdInReportTz(s) && endYmd === tsToYmdInReportTz(e)) {
+      dateQuickPreset.value = key;
+      return;
+    }
+  }
+  dateQuickPreset.value = null;
+}
+
+function onRewardDatePresetChange(v: RewardDatePreset | null) {
+  if (v === 'today') dateRange.value = getTodayRange();
+  else if (v === 'yesterday') dateRange.value = getYesterdayRange();
+  else if (v === 'thisWeek') dateRange.value = getWeekRange();
+  else if (v === 'lastWeek') dateRange.value = getLastWeekRange();
+}
 
 /** 筛选条件 */
 const filters = ref({
@@ -460,13 +541,6 @@ const rewardTypeOptions = [
   { label: '积分', value: '积分' },
   { label: '盲盒免费次数', value: '盲盒免费次数' },
 ];
-
-function onTimeGranularityChange(value: 'day' | 'week' | 'month') {
-  if (value === 'day') dateRange.value = getTodayRange();
-  else if (value === 'week') dateRange.value = getWeekRange();
-  else if (value === 'month') dateRange.value = getMonthRange();
-}
-
 
 const paginationPage = ref(1);
 const paginationPageSize = ref(20);
@@ -871,7 +945,7 @@ async function fetchData() {
 }
 
 function resetFilters() {
-  timeGranularity.value = 'day';
+  dateQuickPreset.value = 'today';
   dateRange.value = getTodayRange();
   filters.value = {
     orderNo: '',
@@ -913,6 +987,19 @@ onMounted(() => {
 <style scoped>
 .filter-section .n-form-item {
   margin-bottom: 12px;
+}
+
+/* 优惠明细：时间快捷项为圆角分段控件，四格均分宽度（与「日/周/月」样式一致） */
+.activity-reward-report .reward-date-preset-group {
+  display: inline-flex;
+  flex-wrap: nowrap;
+}
+.activity-reward-report .reward-date-preset-group :deep(.n-radio-button) {
+  flex: 1 1 0;
+  min-width: 3.25rem;
+  justify-content: center;
+  padding-left: 12px;
+  padding-right: 12px;
 }
 .activity-reward-report .table-wrapper {
   width: 100%;

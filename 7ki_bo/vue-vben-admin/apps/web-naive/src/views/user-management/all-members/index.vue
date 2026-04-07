@@ -404,11 +404,21 @@ const allSearchFieldOptions: FieldSearchBarOption[] = [
   { label: '注册域名', value: 'registration_domain', mode: 'exact' },
   { label: '注册来源', value: 'registration_source', mode: 'exact' },
   { label: '注册设备号', value: 'registration_device', mode: 'exact' },
+  {
+    label: '注册浏览器指纹',
+    value: 'registration_fingerprint',
+    mode: 'exact',
+  },
 
   // Last Login Information
   { label: '最后登录IP', value: 'last_login_ip', mode: 'exact' },
   { label: '最后登录域名', value: 'last_login_domain', mode: 'exact' },
   { label: '最后登录设备号', value: 'last_login_device', mode: 'exact' },
+  {
+    label: '最后登录指纹',
+    value: 'last_login_fingerprint',
+    mode: 'exact',
+  },
 ];
 
 // Search condition options (main categories)

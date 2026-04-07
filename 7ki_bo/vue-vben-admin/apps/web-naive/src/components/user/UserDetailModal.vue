@@ -841,7 +841,43 @@
                   </td>
                   <td class="label-cell">注册浏览器指纹</td>
                   <td class="value-cell">
-                    {{ userDetail.registrationFingerprint || '--' }}
+                    <div class="cell-content">
+                      <div class="content-left">
+                        <span
+                          v-if="userDetail.registrationFingerprint"
+                          class="cursor-pointer break-all text-blue-600 hover:underline"
+                          @click="handleFilterByRegistrationFingerprint"
+                        >
+                          {{ userDetail.registrationFingerprint }}
+                        </span>
+                        <span v-else>--</span>
+                        <span class="text-gray-500">
+                          同注册浏览器指纹人数(
+                          <span
+                            v-if="
+                              (userDetail.sameRegistrationFingerprintCount ??
+                                0) > 0 &&
+                              userDetail.registrationFingerprint
+                            "
+                            class="cursor-pointer font-semibold text-blue-600 hover:underline"
+                            @click.stop="
+                              handleFilterByRegistrationFingerprint
+                            "
+                          >
+                            {{
+                              userDetail.sameRegistrationFingerprintCount ?? 0
+                            }}
+                          </span>
+                          <span v-else>{{
+                            userDetail.sameRegistrationFingerprintCount ?? 0
+                          }}</span>
+                          )
+                        </span>
+                      </div>
+                      <div class="content-right">
+                        <n-button text size="tiny">批量处理</n-button>
+                      </div>
+                    </div>
                   </td>
                 </tr>
 
@@ -884,10 +920,25 @@
                           {{ userDetail.lastLoginIp }}
                         </span>
                         <span v-else>--</span>
-                        <span class="text-gray-500"
-                          >({{ userDetail.lastLoginLocation || '--' }}) 登录时间
-                          {{ formatDateTime(userDetail.lastLoginTime) }}</span
-                        >
+                        <span class="text-gray-500">
+                          ({{ userDetail.lastLoginLocation || '--' }}) 登录时间
+                          {{ formatDateTime(userDetail.lastLoginTime) }}
+                          同最后登录IP人数(
+                          <span
+                            v-if="
+                              (userDetail.sameLastLoginIpCount ?? 0) > 0 &&
+                              userDetail.lastLoginIp
+                            "
+                            class="cursor-pointer font-semibold text-blue-600 hover:underline"
+                            @click="handleFilterByLastLoginIp"
+                          >
+                            {{ userDetail.sameLastLoginIpCount ?? 0 }}
+                          </span>
+                          <span v-else>{{
+                            userDetail.sameLastLoginIpCount ?? 0
+                          }}</span>
+                          )
+                        </span>
                       </div>
                       <div class="content-right">
                         <n-button text type="info" size="tiny"
@@ -925,7 +976,23 @@
                         </span>
                         <span v-else>--</span>
                         <span class="text-gray-500">
-                          (设备号) 同登录设备数({{
+                          (设备号)
+                          <template
+                            v-if="
+                              userDetail.lastLoginDeviceInfo ||
+                              userDetail.lastLoginBrowserInfo
+                            "
+                          >
+                            ({{
+                              userDetail.lastLoginDeviceInfo
+                            }}{{
+                              userDetail.lastLoginDeviceInfo &&
+                              userDetail.lastLoginBrowserInfo
+                                ? ' - '
+                                : ''
+                            }}{{ userDetail.lastLoginBrowserInfo }})
+                          </template>
+                          同登录设备数({{
                             userDetail.sameLastLoginDeviceCount || 0
                           }})
                         </span>
@@ -939,7 +1006,43 @@
                     </div>
                   </td>
                   <td class="label-cell">最后登录指纹</td>
-                  <td class="value-cell">--</td>
+                  <td class="value-cell">
+                    <div class="cell-content">
+                      <div class="content-left">
+                        <span
+                          v-if="userDetail.lastLoginFingerprint"
+                          class="cursor-pointer break-all text-blue-600 hover:underline"
+                          @click="handleFilterByLastLoginFingerprint"
+                        >
+                          {{ userDetail.lastLoginFingerprint }}
+                        </span>
+                        <span v-else>--</span>
+                        <span class="text-gray-500">
+                          同最后登录指纹人数(
+                          <span
+                            v-if="
+                              (userDetail.sameLastLoginFingerprintCount ??
+                                0) > 0 &&
+                              userDetail.lastLoginFingerprint
+                            "
+                            class="cursor-pointer font-semibold text-blue-600 hover:underline"
+                            @click.stop="handleFilterByLastLoginFingerprint"
+                          >
+                            {{
+                              userDetail.sameLastLoginFingerprintCount ?? 0
+                            }}
+                          </span>
+                          <span v-else>{{
+                            userDetail.sameLastLoginFingerprintCount ?? 0
+                          }}</span>
+                          )
+                        </span>
+                      </div>
+                      <div class="content-right">
+                        <n-button text size="tiny">批量处理</n-button>
+                      </div>
+                    </div>
+                  </td>
                 </tr>
 
                 <!-- Row 18: 第三方绑定账号 & 注册方式 -->
@@ -3102,6 +3205,19 @@ const handleFilterByRegistrationSource = () => {
   });
 };
 
+const handleFilterByRegistrationFingerprint = () => {
+  if (!userDetail.value?.registrationFingerprint) return;
+
+  emit('update:visible', false);
+  router.push({
+    path: '/user-management/all-members',
+    query: {
+      searchField: 'registration_fingerprint',
+      searchValue: userDetail.value.registrationFingerprint,
+    },
+  });
+};
+
 // ✅ NEW: Handle filter by last login IP
 const handleFilterByLastLoginIp = () => {
   if (!userDetail.value || !userDetail.value.lastLoginIp) return;
@@ -3140,6 +3256,19 @@ const handleFilterByLastLoginDevice = () => {
     query: {
       searchField: 'last_login_device',
       searchValue: userDetail.value.lastLoginDeviceId,
+    },
+  });
+};
+
+const handleFilterByLastLoginFingerprint = () => {
+  if (!userDetail.value?.lastLoginFingerprint) return;
+
+  emit('update:visible', false);
+  router.push({
+    path: '/user-management/all-members',
+    query: {
+      searchField: 'last_login_fingerprint',
+      searchValue: userDetail.value.lastLoginFingerprint,
     },
   });
 };

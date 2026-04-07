@@ -141,6 +141,7 @@ export interface UserDetailInfo {
   registrationFingerprint: string;
   registrationSource: string;
   sameRegistrationDeviceCount?: number; // Number of users with same registration device
+  sameRegistrationFingerprintCount?: number;
 
   // Last Login Information
   lastLoginIp: string;
@@ -148,7 +149,11 @@ export interface UserDetailInfo {
   lastLoginTime: null | string;
   lastLoginDomain: string;
   lastLoginDeviceId: string;
+  lastLoginDeviceInfo?: string;
+  lastLoginBrowserInfo?: string;
   lastLoginFingerprint: string;
+  sameLastLoginIpCount?: number;
+  sameLastLoginFingerprintCount?: number;
 
   // Third-party Bindings
   thirdPartyBindings: string[]; // List of bound platforms
@@ -330,6 +335,8 @@ export async function getUserDetailApi(
       registrationFingerprint: userData.registrationFingerprint || '',
       registrationSource: userData.registrationSource || '',
       sameRegistrationDeviceCount: userData.sameRegistrationDeviceCount || 0,
+      sameRegistrationFingerprintCount:
+        userData.sameRegistrationFingerprintCount ?? 0,
 
       // Last Login Information - directly from backend
       lastLoginIp: userData.lastLoginIp || '',
@@ -337,7 +344,12 @@ export async function getUserDetailApi(
       lastLoginTime: userData.lastLoginTime || null,
       lastLoginDomain: userData.lastLoginDomain || '',
       lastLoginDeviceId: userData.lastLoginDeviceId || '',
+      lastLoginDeviceInfo: userData.lastLoginDeviceInfo || '',
+      lastLoginBrowserInfo: userData.lastLoginBrowserInfo || '',
       lastLoginFingerprint: userData.lastLoginFingerprint || '',
+      sameLastLoginIpCount: userData.sameLastLoginIpCount ?? 0,
+      sameLastLoginFingerprintCount:
+        userData.sameLastLoginFingerprintCount ?? 0,
 
       // Third-party Bindings - directly from backend
       thirdPartyBindings: userData.thirdPartyBindings || [],

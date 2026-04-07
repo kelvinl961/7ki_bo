@@ -1095,14 +1095,6 @@
                 </n-button>
               </div>
             </div>
-            <div class="info-item">
-              <span class="info-label">到账币种汇率</span>
-              <span class="info-value"
-                >{{ detailModalData.currency }} ({{
-                  detailModalData.exchangeRate || '0.05'
-                }})</span
-              >
-            </div>
           </div>
         </n-card>
 
@@ -1597,8 +1589,12 @@ const autoRefreshEnabled = ref(false);
 // Column configuration
 const columnConfigList = ref([
   { key: 'orderId', title: '订单号', visible: true, required: true },
-  { key: 'memberId', title: '会员ID', visible: true, required: false },
-  { key: 'memberAccount', title: '会员账号', visible: true, required: false },
+  {
+    key: 'memberId',
+    title: '会员ID / 会员账号 (VIP / 层级)',
+    visible: true,
+    required: false,
+  },
   {
     key: 'firstDepositStatus',
     title: '首充状态',
@@ -1607,7 +1603,6 @@ const columnConfigList = ref([
   },
   { key: 'memberInfo', title: '会员信息', visible: true, required: false },
   { key: 'memberName', title: '会员姓名', visible: false, required: false },
-  { key: 'vipLevel', title: 'VIP等级', visible: true, required: false },
   { key: 'appliedAt', title: '申请时间', visible: true, required: false },
   { key: 'withdrawAmount', title: '提现金额', visible: true, required: false },
   {
@@ -1618,9 +1613,9 @@ const columnConfigList = ref([
   },
   { key: 'counts', title: '充/提次数', visible: true, required: false },
   { key: 'withdrawChannel', title: '提现方式', visible: true, required: false },
+  { key: 'actions', title: '操作', visible: true, required: true },
   { key: 'status', title: '订单状态', visible: true, required: false },
   { key: 'notes', title: '备注', visible: false, required: false },
-  { key: 'actions', title: '操作', visible: true, required: true },
 ]);
 
 // Summary
@@ -1821,45 +1816,45 @@ const columns: DataTableColumns<WithdrawOrder> = [
           ),
       ]),
   },
-  // 2. 会员ID (VIP等级)
+  // 2. 会员ID / 会员账号 (VIP / 层级) — 上：ID+VIP，下：账号（电话）与层级
   {
-    title: '会员ID (VIP等级)',
+    title: '会员ID / 会员账号 (VIP / 层级)',
     key: 'memberId',
-    width: 130,
+    width: 200,
     render: (row) =>
-      h('div', { class: 'text-center space-y-1' }, [
+      h('div', { class: 'min-w-0 space-y-1 text-center' }, [
         h(
-          NButton,
-          {
-            text: true,
-            type: 'primary',
-            size: 'small',
-            class: 'font-mono font-medium',
-            onClick: () => showMemberDetail(row),
-          },
-          { default: () => row.displayMemberId || row.userID || row.memberId },
-        ), // Display 9-digit ID, but onClick passes internal ID
-        h(
-          NTag,
-          { size: 'small', type: 'info' },
-          { default: () => row.vipLevel || 'VIP0' },
+          'div',
+          { class: 'flex flex-wrap items-center justify-center gap-1' },
+          [
+            h(
+              NButton,
+              {
+                text: true,
+                type: 'primary',
+                size: 'small',
+                class: 'font-mono font-medium',
+                onClick: () => showMemberDetail(row),
+              },
+              {
+                default: () =>
+                  row.displayMemberId || row.userID || row.memberId,
+              },
+            ),
+            h(
+              NTag,
+              { size: 'small', type: 'info' },
+              { default: () => row.vipLevel || 'VIP0' },
+            ),
+          ],
         ),
-      ]),
-  },
-  // 3. 会员账号 (会员层级)
-  {
-    title: '会员账号 (会员层级)',
-    key: 'memberAccount',
-    width: 140,
-    render: (row) =>
-      h('div', { class: 'space-y-1' }, [
         h(
           NButton,
           {
             text: true,
             type: 'primary',
             size: 'small',
-            class: 'font-medium',
+            class: 'max-w-full whitespace-normal break-all font-medium',
             onClick: () => showMemberDetail(row),
           },
           { default: () => row.accountName },
@@ -1871,7 +1866,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
         ),
       ]),
   },
-  // 4. 申请时间 (操作时间) (完成时长)
+  // 3. 申请时间 (操作时间) (完成时长)
   {
     title: '申请时间 (操作时间) (完成时长)',
     key: 'appliedAt',
@@ -1894,7 +1889,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
         ),
       ]),
   },
-  // 5. 会员币种 (比例)
+  // 4. 会员币种 (比例)
   {
     title: '会员币种 (比例)',
     key: 'memberCurrency',
@@ -1909,7 +1904,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
         ),
       ]),
   },
-  // 6. 提现金额 (当前余额)
+  // 5. 提现金额 (当前余额)
   {
     title: '提现金额 (当前余额)',
     key: 'withdrawAmount',
@@ -1928,22 +1923,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
         ),
       ]),
   },
-  // 7. 到账币种汇率
-  {
-    title: '到账币种汇率',
-    key: 'arrivalCurrency',
-    width: 120,
-    render: (row) =>
-      h('div', { class: 'text-center space-y-1' }, [
-        h('div', { class: 'font-medium' }, row.currency || 'BRL'),
-        h(
-          'div',
-          { class: 'text-xs text-gray-500' },
-          `汇率: ${row.exchangeRate || '0.05'}`,
-        ),
-      ]),
-  },
-  // 8. 预计到帐 (手续费) (实际到账)
+  // 6. 预计到帐 (手续费) (实际到账)
   {
     title: '预计到帐 (手续费) (实际到账)',
     key: 'estimatedAmount',
@@ -1993,7 +1973,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
         ]),
       ]),
   },
-  // 9. 充 / 提次数 (累计充 / 提差额) (重复IP人数)
+  // 7. 充 / 提次数 (累计充 / 提差额) (重复IP人数)
   {
     title: '充 / 提次数 (累计充 / 提差额) (重复IP人数)',
     key: 'counts',
@@ -2027,7 +2007,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
       ]);
     },
   },
-  // 10. 收款方式 (收款人信息)
+  // 8. 收款方式 (收款人信息)
   {
     title: '收款方式 (收款人信息)',
     key: 'paymentMethod',
@@ -2178,7 +2158,33 @@ const columns: DataTableColumns<WithdrawOrder> = [
       ]);
     },
   },
-  // 11. 订单状态 (操作人)
+  // 9. 操作（位于订单状态 / 操作人之前）
+  {
+    title: '操作',
+    key: 'actions',
+    width: 120,
+    render: (row) => {
+      const actions = [];
+
+      // Only show 备注 button if the withdrawal is locked
+      if (row.isLocked) {
+        actions.push(
+          h(
+            NButton,
+            {
+              size: 'small',
+              type: 'info',
+              onClick: () => handleEditNote(row),
+            },
+            { default: () => '备注' },
+          ),
+        );
+      }
+
+      return h('div', { class: 'flex flex-wrap gap-1' }, actions);
+    },
+  },
+  // 10. 订单状态 (操作人)
   {
     title: '订单状态 (操作人)',
     key: 'status',
@@ -2265,7 +2271,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
       ]);
     },
   },
-  // 12. 前台备注
+  // 11. 前台备注
   {
     title: '前台备注',
     key: 'frontendNotes',
@@ -2279,7 +2285,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
       ]);
     },
   },
-  // 13. 后台备注
+  // 12. 后台备注
   {
     title: '后台备注',
     key: 'backendNotes',
@@ -2310,7 +2316,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
       ]);
     },
   },
-  // 14. 三方备注
+  // 13. 三方备注
   {
     title: '三方备注',
     key: 'thirdPartyNotes',
@@ -2340,7 +2346,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
       ]);
     },
   },
-  // 15. 三方代付 (代付次数)
+  // 14. 三方代付 (代付次数)
   {
     title: '三方代付 (代付次数)',
     key: 'thirdPartyPayment',
@@ -2367,33 +2373,6 @@ const columns: DataTableColumns<WithdrawOrder> = [
           `代付次数: ${row.withdrawCount || 1}`,
         ),
       ]);
-    },
-  },
-  // 15. 操作
-  {
-    title: '操作',
-    key: 'actions',
-    width: 120,
-    fixed: 'right',
-    render: (row) => {
-      const actions = [];
-
-      // Only show 备注 button if the withdrawal is locked
-      if (row.isLocked) {
-        actions.push(
-          h(
-            NButton,
-            {
-              size: 'small',
-              type: 'info',
-              onClick: () => handleEditNote(row),
-            },
-            { default: () => '备注' },
-          ),
-        );
-      }
-
-      return h('div', { class: 'flex flex-wrap gap-1' }, actions);
     },
   },
 ];
@@ -3436,7 +3415,7 @@ const resetColumnConfig = () => {
   columnConfigList.value.forEach((col) => {
     if (
       col.key === 'orderId' ||
-      col.key === 'memberAccount' ||
+      col.key === 'memberId' ||
       col.key === 'appliedAt' ||
       col.key === 'withdrawAmount' ||
       col.key === 'status' ||
@@ -3649,7 +3628,15 @@ const initializeColumnConfig = () => {
     if (savedConfig) {
       const visibleColumnKeys = JSON.parse(savedConfig);
       columnConfigList.value.forEach((col) => {
-        col.visible = visibleColumnKeys.includes(col.key);
+        let visible = visibleColumnKeys.includes(col.key);
+        if (
+          col.key === 'memberId' &&
+          !visible &&
+          visibleColumnKeys.includes('memberAccount')
+        ) {
+          visible = true;
+        }
+        col.visible = visible;
       });
       console.log('✅ Column configuration loaded from localStorage');
     }

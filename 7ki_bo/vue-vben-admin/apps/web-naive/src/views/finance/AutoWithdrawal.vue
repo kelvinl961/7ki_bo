@@ -774,30 +774,39 @@ const columns: DataTableColumns<AutoWithdrawalRecord> = [
       ),
   },
   {
-    title: '会员ID (VIP等级)',
+    title: '会员ID / 会员账号 (VIP / 层级)',
     key: 'memberInfo',
-    width: 100,
+    width: 200,
     render: (row) =>
-      h('div', { class: 'text-center' }, [
+      h('div', { class: 'min-w-0 space-y-1 text-center' }, [
         h(
           'div',
-          { class: 'text-blue-600 font-mono text-xs' },
-          row.userID || row.memberId,
+          { class: 'flex flex-wrap items-center justify-center gap-1' },
+          [
+            h(
+              'div',
+              { class: 'font-mono text-xs text-blue-600' },
+              row.userID || row.memberId,
+            ),
+            h(
+              NTag,
+              { size: 'small', type: 'info' },
+              { default: () => row.vipLevel || 'VIP0' },
+            ),
+          ],
         ),
-        h('div', { class: 'text-xs text-gray-500' }, row.vipLevel || 'VIP0'),
-      ]),
-  },
-  {
-    title: '会员账号 (会员层级)',
-    key: 'memberAccount',
-    width: 120,
-    render: (row) =>
-      h('div', [
-        h('div', { class: 'font-medium' }, row.memberName),
         h(
-          NTag,
-          { size: 'small', type: 'info' },
-          { default: () => row.vipLevel || 'VIP0' },
+          'div',
+          {
+            class:
+              'break-all text-sm font-medium text-blue-600',
+          },
+          row.memberName || row.memberAccount,
+        ),
+        h(
+          'div',
+          { class: 'text-xs text-gray-500' },
+          row.memberTierName || '默认层级',
         ),
       ]),
   },

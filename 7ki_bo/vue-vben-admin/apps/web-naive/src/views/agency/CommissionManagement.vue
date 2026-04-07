@@ -24,17 +24,27 @@
               flex-wrap: wrap;
             "
           >
+            <n-radio-group
+              v-model:value="pendingTabDates.state.preset"
+              class="commission-date-preset-group"
+              size="small"
+              @update:value="pendingTabDates.onPresetChange"
+            >
+              <n-radio-button value="today">今日</n-radio-button>
+              <n-radio-button value="yesterday">昨天</n-radio-button>
+              <n-radio-button value="thisWeek">本周</n-radio-button>
+              <n-radio-button value="lastWeek">上周</n-radio-button>
+            </n-radio-group>
             <n-date-picker
-              v-model:value="pendingFilters.startDate"
-              type="date"
-              placeholder="开始日期"
-              style="width: 200px"
-            />
-            <n-date-picker
-              v-model:value="pendingFilters.endDate"
-              type="date"
-              placeholder="结束日期"
-              style="width: 200px"
+              v-model:value="pendingTabDates.state.dateRange"
+              type="daterange"
+              :timezone="COMMISSION_REPORT_TIMEZONE"
+              clearable
+              :shortcuts="commissionDateShortcuts"
+              placeholder="选择开始和结束日期"
+              format="yyyy-MM-dd"
+              style="width: 320px"
+              @update:value="pendingTabDates.onRangeUpdate"
             />
             <n-input
               v-model:value="pendingFilters.agentAccount"
@@ -79,6 +89,7 @@
           </div>
 
           <n-data-table
+            remote
             :columns="pendingColumns"
             :data="pendingData"
             :loading="pendingLoading"
@@ -111,17 +122,27 @@
               flex-wrap: wrap;
             "
           >
+            <n-radio-group
+              v-model:value="readyTabDates.state.preset"
+              class="commission-date-preset-group"
+              size="small"
+              @update:value="readyTabDates.onPresetChange"
+            >
+              <n-radio-button value="today">今日</n-radio-button>
+              <n-radio-button value="yesterday">昨天</n-radio-button>
+              <n-radio-button value="thisWeek">本周</n-radio-button>
+              <n-radio-button value="lastWeek">上周</n-radio-button>
+            </n-radio-group>
             <n-date-picker
-              v-model:value="readyFilters.startDate"
-              type="date"
-              placeholder="开始日期"
-              style="width: 200px"
-            />
-            <n-date-picker
-              v-model:value="readyFilters.endDate"
-              type="date"
-              placeholder="结束日期"
-              style="width: 200px"
+              v-model:value="readyTabDates.state.dateRange"
+              type="daterange"
+              :timezone="COMMISSION_REPORT_TIMEZONE"
+              clearable
+              :shortcuts="commissionDateShortcuts"
+              placeholder="选择开始和结束日期"
+              format="yyyy-MM-dd"
+              style="width: 320px"
+              @update:value="readyTabDates.onRangeUpdate"
             />
             <n-input
               v-model:value="readyFilters.agentAccount"
@@ -143,6 +164,7 @@
           </div>
 
           <n-data-table
+            remote
             :columns="readyColumns"
             :data="readyData"
             :loading="readyLoading"
@@ -175,17 +197,27 @@
               flex-wrap: wrap;
             "
           >
+            <n-radio-group
+              v-model:value="withdrawnTabDates.state.preset"
+              class="commission-date-preset-group"
+              size="small"
+              @update:value="withdrawnTabDates.onPresetChange"
+            >
+              <n-radio-button value="today">今日</n-radio-button>
+              <n-radio-button value="yesterday">昨天</n-radio-button>
+              <n-radio-button value="thisWeek">本周</n-radio-button>
+              <n-radio-button value="lastWeek">上周</n-radio-button>
+            </n-radio-group>
             <n-date-picker
-              v-model:value="withdrawnFilters.startDate"
-              type="date"
-              placeholder="开始日期"
-              style="width: 200px"
-            />
-            <n-date-picker
-              v-model:value="withdrawnFilters.endDate"
-              type="date"
-              placeholder="结束日期"
-              style="width: 200px"
+              v-model:value="withdrawnTabDates.state.dateRange"
+              type="daterange"
+              :timezone="COMMISSION_REPORT_TIMEZONE"
+              clearable
+              :shortcuts="commissionDateShortcuts"
+              placeholder="选择开始和结束日期"
+              format="yyyy-MM-dd"
+              style="width: 320px"
+              @update:value="withdrawnTabDates.onRangeUpdate"
             />
             <n-input
               v-model:value="withdrawnFilters.agentAccount"
@@ -213,6 +245,7 @@
           </div>
 
           <n-data-table
+            remote
             :columns="withdrawnColumns"
             :data="withdrawnData"
             :loading="withdrawnLoading"
@@ -245,17 +278,27 @@
               flex-wrap: wrap;
             "
           >
+            <n-radio-group
+              v-model:value="rejectedTabDates.state.preset"
+              class="commission-date-preset-group"
+              size="small"
+              @update:value="rejectedTabDates.onPresetChange"
+            >
+              <n-radio-button value="today">今日</n-radio-button>
+              <n-radio-button value="yesterday">昨天</n-radio-button>
+              <n-radio-button value="thisWeek">本周</n-radio-button>
+              <n-radio-button value="lastWeek">上周</n-radio-button>
+            </n-radio-group>
             <n-date-picker
-              v-model:value="rejectedFilters.startDate"
-              type="date"
-              placeholder="开始日期"
-              style="width: 200px"
-            />
-            <n-date-picker
-              v-model:value="rejectedFilters.endDate"
-              type="date"
-              placeholder="结束日期"
-              style="width: 200px"
+              v-model:value="rejectedTabDates.state.dateRange"
+              type="daterange"
+              :timezone="COMMISSION_REPORT_TIMEZONE"
+              clearable
+              :shortcuts="commissionDateShortcuts"
+              placeholder="选择开始和结束日期"
+              format="yyyy-MM-dd"
+              style="width: 320px"
+              @update:value="rejectedTabDates.onRangeUpdate"
             />
             <n-input
               v-model:value="rejectedFilters.agentAccount"
@@ -268,6 +311,7 @@
           </div>
 
           <n-data-table
+            remote
             :columns="rejectedColumns"
             :data="rejectedData"
             :loading="rejectedLoading"
@@ -298,17 +342,27 @@
               flex-wrap: wrap;
             "
           >
+            <n-radio-group
+              v-model:value="claimedTabDates.state.preset"
+              class="commission-date-preset-group"
+              size="small"
+              @update:value="claimedTabDates.onPresetChange"
+            >
+              <n-radio-button value="today">今日</n-radio-button>
+              <n-radio-button value="yesterday">昨天</n-radio-button>
+              <n-radio-button value="thisWeek">本周</n-radio-button>
+              <n-radio-button value="lastWeek">上周</n-radio-button>
+            </n-radio-group>
             <n-date-picker
-              v-model:value="claimedFilters.startDate"
-              type="date"
-              placeholder="开始日期"
-              style="width: 200px"
-            />
-            <n-date-picker
-              v-model:value="claimedFilters.endDate"
-              type="date"
-              placeholder="结束日期"
-              style="width: 200px"
+              v-model:value="claimedTabDates.state.dateRange"
+              type="daterange"
+              :timezone="COMMISSION_REPORT_TIMEZONE"
+              clearable
+              :shortcuts="commissionDateShortcuts"
+              placeholder="选择开始和结束日期"
+              format="yyyy-MM-dd"
+              style="width: 320px"
+              @update:value="claimedTabDates.onRangeUpdate"
             />
             <n-input
               v-model:value="claimedFilters.agentAccount"
@@ -321,6 +375,7 @@
           </div>
 
           <n-data-table
+            remote
             :columns="claimedColumns"
             :data="claimedData"
             :loading="claimedLoading"
@@ -351,17 +406,27 @@
               flex-wrap: wrap;
             "
           >
+            <n-radio-group
+              v-model:value="allTabDates.state.preset"
+              class="commission-date-preset-group"
+              size="small"
+              @update:value="allTabDates.onPresetChange"
+            >
+              <n-radio-button value="today">今日</n-radio-button>
+              <n-radio-button value="yesterday">昨天</n-radio-button>
+              <n-radio-button value="thisWeek">本周</n-radio-button>
+              <n-radio-button value="lastWeek">上周</n-radio-button>
+            </n-radio-group>
             <n-date-picker
-              v-model:value="allFilters.startDate"
-              type="date"
-              placeholder="开始日期"
-              style="width: 200px"
-            />
-            <n-date-picker
-              v-model:value="allFilters.endDate"
-              type="date"
-              placeholder="结束日期"
-              style="width: 200px"
+              v-model:value="allTabDates.state.dateRange"
+              type="daterange"
+              :timezone="COMMISSION_REPORT_TIMEZONE"
+              clearable
+              :shortcuts="commissionDateShortcuts"
+              placeholder="选择开始和结束日期"
+              format="yyyy-MM-dd"
+              style="width: 320px"
+              @update:value="allTabDates.onRangeUpdate"
             />
             <n-input
               v-model:value="allFilters.agentAccount"
@@ -381,6 +446,7 @@
           </div>
 
           <n-data-table
+            remote
             :columns="allColumns"
             :data="allData"
             :loading="allLoading"
@@ -604,6 +670,8 @@ import {
   NButton,
   NDataTable,
   NDatePicker,
+  NRadioGroup,
+  NRadioButton,
   NInput,
   NSelect,
   NModal,
@@ -617,6 +685,10 @@ import {
   type DataTableColumns,
 } from 'naive-ui';
 import { requestClient } from '#/api/request';
+import { convertTimezoneToUTC, getNowInTimezone } from '#/utils/timezoneUtils';
+
+/** 与优惠明细等报表一致：按圣保罗日历日传参 */
+const COMMISSION_REPORT_TIMEZONE = 'America/Sao_Paulo';
 
 const message = useMessage();
 const dialog = useDialog();
@@ -736,33 +808,204 @@ const pendingPagination = reactive({
   pageSize: 10,
   itemCount: 0,
   showSizePicker: true,
+  showQuickJumper: true,
   pageSizes: [10, 20, 50, 100],
 });
 
-// Get today's start and end timestamps
-const getTodayRange = () => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const startOfDay = today.getTime();
+function addCalendarDaysInTz(
+  year: number,
+  month: number,
+  day: number,
+  deltaDays: number,
+  tz: string,
+): { year: number; month: number; day: number } {
+  const anchor = convertTimezoneToUTC(year, month, day, 12, 0, 0, tz).getTime();
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date(anchor + deltaDays * 86_400_000));
+  const y = Number(parts.find((p) => p.type === 'year')?.value);
+  const m = Number(parts.find((p) => p.type === 'month')?.value);
+  const d = Number(parts.find((p) => p.type === 'day')?.value);
+  return { year: y, month: m, day: d };
+}
 
-  const endOfDay = new Date(today);
-  endOfDay.setHours(23, 59, 59, 999);
+function getTodayRange(): [number, number] {
+  const tz = COMMISSION_REPORT_TIMEZONE;
+  const tzNow = getNowInTimezone(tz);
+  const start = convertTimezoneToUTC(tzNow.year, tzNow.month, tzNow.day, 0, 0, 0, tz);
+  const end = convertTimezoneToUTC(tzNow.year, tzNow.month, tzNow.day, 23, 59, 59, tz);
+  return [start.getTime(), end.getTime()];
+}
 
-  return {
-    start: startOfDay,
-    end: endOfDay.getTime(),
+function getMondayOfWeekContaining(
+  year: number,
+  month: number,
+  day: number,
+): { year: number; month: number; day: number } {
+  const tz = COMMISSION_REPORT_TIMEZONE;
+  const noon = convertTimezoneToUTC(year, month, day, 12, 0, 0, tz);
+  const weekdayShort = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz,
+    weekday: 'short',
+  }).format(noon);
+  const dowMap: Record<string, number> = {
+    Sun: 0,
+    Mon: 1,
+    Tue: 2,
+    Wed: 3,
+    Thu: 4,
+    Fri: 5,
+    Sat: 6,
   };
+  const dow = dowMap[weekdayShort] ?? 1;
+  const daysFromMonday = dow === 0 ? 6 : dow - 1;
+  let monY = year;
+  let monM = month;
+  let monD = day;
+  for (let i = 0; i < daysFromMonday; i++) {
+    const prev = addCalendarDaysInTz(monY, monM, monD, -1, tz);
+    monY = prev.year;
+    monM = prev.month;
+    monD = prev.day;
+  }
+  return { year: monY, month: monM, day: monD };
+}
+
+function getYesterdayRange(): [number, number] {
+  const tz = COMMISSION_REPORT_TIMEZONE;
+  const { year, month, day } = getNowInTimezone(tz);
+  const y = addCalendarDaysInTz(year, month, day, -1, tz);
+  const start = convertTimezoneToUTC(y.year, y.month, y.day, 0, 0, 0, tz);
+  const end = convertTimezoneToUTC(y.year, y.month, y.day, 23, 59, 59, tz);
+  return [start.getTime(), end.getTime()];
+}
+
+function getWeekRange(): [number, number] {
+  const tz = COMMISSION_REPORT_TIMEZONE;
+  const { year, month, day } = getNowInTimezone(tz);
+  const mon = getMondayOfWeekContaining(year, month, day);
+  const sun = addCalendarDaysInTz(mon.year, mon.month, mon.day, 6, tz);
+  const start = convertTimezoneToUTC(mon.year, mon.month, mon.day, 0, 0, 0, tz);
+  const end = convertTimezoneToUTC(sun.year, sun.month, sun.day, 23, 59, 59, tz);
+  return [start.getTime(), end.getTime()];
+}
+
+function getLastWeekRange(): [number, number] {
+  const tz = COMMISSION_REPORT_TIMEZONE;
+  const { year, month, day } = getNowInTimezone(tz);
+  const mon = getMondayOfWeekContaining(year, month, day);
+  const prevMon = addCalendarDaysInTz(mon.year, mon.month, mon.day, -7, tz);
+  const prevSun = addCalendarDaysInTz(prevMon.year, prevMon.month, prevMon.day, 6, tz);
+  const start = convertTimezoneToUTC(prevMon.year, prevMon.month, prevMon.day, 0, 0, 0, tz);
+  const end = convertTimezoneToUTC(prevSun.year, prevSun.month, prevSun.day, 23, 59, 59, tz);
+  return [start.getTime(), end.getTime()];
+}
+
+const commissionDateShortcuts: Record<string, () => [number, number]> = {
+  今日: () => getTodayRange(),
+  昨天: () => getYesterdayRange(),
+  本周: () => getWeekRange(),
+  上周: () => getLastWeekRange(),
 };
 
-const todayRange = getTodayRange();
+type CommissionDatePreset = 'today' | 'yesterday' | 'thisWeek' | 'lastWeek';
+
+function tsToYmdInCommissionTz(ts: number): string {
+  const d = new Date(ts);
+  if (Number.isNaN(d.getTime())) return '';
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: COMMISSION_REPORT_TIMEZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(d);
+}
+
+function bindCommissionTabDates(filters: {
+  startDate: number | null;
+  endDate: number | null;
+}) {
+  const t = getTodayRange();
+  filters.startDate = t[0];
+  filters.endDate = t[1];
+
+  const state = reactive({
+    dateRange: [t[0], t[1]] as [number, number] | null,
+    preset: 'today' as CommissionDatePreset | null,
+  });
+
+  function syncPresetFromRange(range: [number, number] | null) {
+    if (!range || range.length !== 2) {
+      state.preset = null;
+      return;
+    }
+    const startYmd = tsToYmdInCommissionTz(range[0]);
+    const endYmd = tsToYmdInCommissionTz(range[1]);
+    const candidates: Array<[CommissionDatePreset, () => [number, number]]> = [
+      ['today', getTodayRange],
+      ['yesterday', getYesterdayRange],
+      ['thisWeek', getWeekRange],
+      ['lastWeek', getLastWeekRange],
+    ];
+    for (const [key, fn] of candidates) {
+      const [s, e] = fn();
+      if (
+        startYmd === tsToYmdInCommissionTz(s) &&
+        endYmd === tsToYmdInCommissionTz(e)
+      ) {
+        state.preset = key;
+        return;
+      }
+    }
+    state.preset = null;
+  }
+
+  function onRangeUpdate(v: [number, number] | null) {
+    state.dateRange = v;
+    if (v) {
+      filters.startDate = v[0];
+      filters.endDate = v[1];
+    } else {
+      filters.startDate = null;
+      filters.endDate = null;
+    }
+    syncPresetFromRange(v);
+  }
+
+  function onPresetChange(v: CommissionDatePreset | null) {
+    if (v == null) return;
+    let tuple: [number, number];
+    if (v === 'today') tuple = getTodayRange();
+    else if (v === 'yesterday') tuple = getYesterdayRange();
+    else if (v === 'thisWeek') tuple = getWeekRange();
+    else tuple = getLastWeekRange();
+    state.dateRange = tuple;
+    filters.startDate = tuple[0];
+    filters.endDate = tuple[1];
+  }
+
+  function reset() {
+    state.preset = 'today';
+    const r = getTodayRange();
+    state.dateRange = r;
+    filters.startDate = r[0];
+    filters.endDate = r[1];
+  }
+
+  return { state, onRangeUpdate, onPresetChange, reset };
+}
 
 const pendingFilters = reactive({
-  startDate: todayRange.start as number | null,
-  endDate: todayRange.end as number | null,
+  startDate: null as number | null,
+  endDate: null as number | null,
   agentAccount: '',
   agentId: '',
   currency: null as string | null,
 });
+const pendingTabDates = bindCommissionTabDates(pendingFilters);
 
 const currentRecord = ref<any>(null);
 const approveModalVisible = ref(false);
@@ -910,6 +1153,30 @@ const pendingColumns: DataTableColumns<any> = [
   },
 ];
 
+/** 兼容 request 拦截器解包后的 { list, total } 与未解包的 { data: { list, total } } */
+function normalizeCommissionRecordsResponse(response: unknown): {
+  list: any[];
+  total: number;
+} {
+  const r = response as Record<string, unknown>;
+  const inner =
+    r?.data && typeof r.data === 'object' && !Array.isArray(r.data)
+      ? (r.data as Record<string, unknown>)
+      : r;
+  const list = inner?.list;
+  const totalRaw = inner?.total;
+  const n =
+    typeof totalRaw === 'number'
+      ? totalRaw
+      : typeof totalRaw === 'string'
+        ? Number(totalRaw)
+        : NaN;
+  return {
+    list: Array.isArray(list) ? list : [],
+    total: Number.isFinite(n) ? n : 0,
+  };
+}
+
 const fetchPendingData = async () => {
   pendingLoading.value = true;
   try {
@@ -922,8 +1189,9 @@ const fetchPendingData = async () => {
     const response = await requestClient.get('/commission-management/records', {
       params,
     });
-    pendingData.value = response.data.list || [];
-    pendingPagination.itemCount = response.data.total || 0;
+    const { list, total } = normalizeCommissionRecordsResponse(response);
+    pendingData.value = list;
+    pendingPagination.itemCount = total;
   } catch (error) {
     console.error('Failed to fetch pending data:', error);
     message.error('获取数据失败');
@@ -938,10 +1206,8 @@ const searchPending = () => {
 };
 
 const resetPendingFilters = () => {
-  const range = getTodayRange();
+  pendingTabDates.reset();
   Object.assign(pendingFilters, {
-    startDate: range.start,
-    endDate: range.end,
     agentAccount: '',
     agentId: '',
     currency: null,
@@ -1131,14 +1397,16 @@ const readyPagination = reactive({
   pageSize: 10,
   itemCount: 0,
   showSizePicker: true,
+  showQuickJumper: true,
   pageSizes: [10, 20, 50, 100],
 });
 
 const readyFilters = reactive({
-  startDate: todayRange.start as number | null,
-  endDate: todayRange.end as number | null,
+  startDate: null as number | null,
+  endDate: null as number | null,
   agentAccount: '',
 });
+const readyTabDates = bindCommissionTabDates(readyFilters);
 
 const readyColumns: DataTableColumns<any> = [
   {
@@ -1218,8 +1486,9 @@ const fetchReadyData = async () => {
     const response = await requestClient.get('/commission-management/records', {
       params,
     });
-    readyData.value = response.data.list || [];
-    readyPagination.itemCount = response.data.total || 0;
+    const { list, total } = normalizeCommissionRecordsResponse(response);
+    readyData.value = list;
+    readyPagination.itemCount = total;
   } catch (error) {
     console.error('Failed to fetch ready data:', error);
     message.error('获取数据失败');
@@ -1234,10 +1503,8 @@ const searchReady = () => {
 };
 
 const resetReadyFilters = () => {
-  const range = getTodayRange();
+  readyTabDates.reset();
   Object.assign(readyFilters, {
-    startDate: range.start,
-    endDate: range.end,
     agentAccount: '',
   });
   fetchReadyData();
@@ -1288,14 +1555,16 @@ const withdrawnPagination = reactive({
   pageSize: 10,
   itemCount: 0,
   showSizePicker: true,
+  showQuickJumper: true,
   pageSizes: [10, 20, 50, 100],
 });
 
 const withdrawnFilters = reactive({
-  startDate: todayRange.start as number | null,
-  endDate: todayRange.end as number | null,
+  startDate: null as number | null,
+  endDate: null as number | null,
   agentAccount: '',
 });
+const withdrawnTabDates = bindCommissionTabDates(withdrawnFilters);
 
 const withdrawnColumns: DataTableColumns<any> = [
   {
@@ -1371,8 +1640,9 @@ const fetchWithdrawnData = async () => {
     const response = await requestClient.get('/commission-management/records', {
       params,
     });
-    withdrawnData.value = response.data.list || [];
-    withdrawnPagination.itemCount = response.data.total || 0;
+    const { list, total } = normalizeCommissionRecordsResponse(response);
+    withdrawnData.value = list;
+    withdrawnPagination.itemCount = total;
   } catch (error) {
     console.error('Failed to fetch withdrawn data:', error);
     message.error('获取数据失败');
@@ -1387,10 +1657,8 @@ const searchWithdrawn = () => {
 };
 
 const resetWithdrawnFilters = () => {
-  const range = getTodayRange();
+  withdrawnTabDates.reset();
   Object.assign(withdrawnFilters, {
-    startDate: range.start,
-    endDate: range.end,
     agentAccount: '',
   });
   fetchWithdrawnData();
@@ -1467,14 +1735,16 @@ const rejectedPagination = reactive({
   pageSize: 10,
   itemCount: 0,
   showSizePicker: true,
+  showQuickJumper: true,
   pageSizes: [10, 20, 50, 100],
 });
 
 const rejectedFilters = reactive({
-  startDate: todayRange.start as number | null,
-  endDate: todayRange.end as number | null,
+  startDate: null as number | null,
+  endDate: null as number | null,
   agentAccount: '',
 });
+const rejectedTabDates = bindCommissionTabDates(rejectedFilters);
 
 const rejectedColumns: DataTableColumns<any> = [
   {
@@ -1527,8 +1797,9 @@ const fetchRejectedData = async () => {
     const response = await requestClient.get('/commission-management/records', {
       params,
     });
-    rejectedData.value = response.data.list || [];
-    rejectedPagination.itemCount = response.data.total || 0;
+    const { list, total } = normalizeCommissionRecordsResponse(response);
+    rejectedData.value = list;
+    rejectedPagination.itemCount = total;
   } catch (error) {
     console.error('Failed to fetch rejected data:', error);
     message.error('获取数据失败');
@@ -1543,10 +1814,8 @@ const searchRejected = () => {
 };
 
 const resetRejectedFilters = () => {
-  const range = getTodayRange();
+  rejectedTabDates.reset();
   Object.assign(rejectedFilters, {
-    startDate: range.start,
-    endDate: range.end,
     agentAccount: '',
   });
   fetchRejectedData();
@@ -1560,14 +1829,16 @@ const claimedPagination = reactive({
   pageSize: 10,
   itemCount: 0,
   showSizePicker: true,
+  showQuickJumper: true,
   pageSizes: [10, 20, 50, 100],
 });
 
 const claimedFilters = reactive({
-  startDate: todayRange.start as number | null,
-  endDate: todayRange.end as number | null,
+  startDate: null as number | null,
+  endDate: null as number | null,
   agentAccount: '',
 });
+const claimedTabDates = bindCommissionTabDates(claimedFilters);
 
 const claimedColumns: DataTableColumns<any> = [
   {
@@ -1612,8 +1883,9 @@ const fetchClaimedData = async () => {
     const response = await requestClient.get('/commission-management/records', {
       params,
     });
-    claimedData.value = response.data.list || [];
-    claimedPagination.itemCount = response.data.total || 0;
+    const { list, total } = normalizeCommissionRecordsResponse(response);
+    claimedData.value = list;
+    claimedPagination.itemCount = total;
   } catch (error) {
     console.error('Failed to fetch claimed data:', error);
     message.error('获取数据失败');
@@ -1628,10 +1900,8 @@ const searchClaimed = () => {
 };
 
 const resetClaimedFilters = () => {
-  const range = getTodayRange();
+  claimedTabDates.reset();
   Object.assign(claimedFilters, {
-    startDate: range.start,
-    endDate: range.end,
     agentAccount: '',
   });
   fetchClaimedData();
@@ -1645,15 +1915,17 @@ const allPagination = reactive({
   pageSize: 10,
   itemCount: 0,
   showSizePicker: true,
+  showQuickJumper: true,
   pageSizes: [10, 20, 50, 100],
 });
 
 const allFilters = reactive({
-  startDate: todayRange.start as number | null,
-  endDate: todayRange.end as number | null,
+  startDate: null as number | null,
+  endDate: null as number | null,
   agentAccount: '',
   status: null as string | null,
 });
+const allTabDates = bindCommissionTabDates(allFilters);
 
 const allColumns: DataTableColumns<any> = [
   {
@@ -1721,8 +1993,9 @@ const fetchAllData = async () => {
     const response = await requestClient.get('/commission-management/records', {
       params,
     });
-    allData.value = response.data.list || [];
-    allPagination.itemCount = response.data.total || 0;
+    const { list, total } = normalizeCommissionRecordsResponse(response);
+    allData.value = list;
+    allPagination.itemCount = total;
   } catch (error) {
     console.error('Failed to fetch all data:', error);
     message.error('获取数据失败');
@@ -1737,10 +2010,8 @@ const searchAll = () => {
 };
 
 const resetAllFilters = () => {
-  const range = getTodayRange();
+  allTabDates.reset();
   Object.assign(allFilters, {
-    startDate: range.start,
-    endDate: range.end,
     agentAccount: '',
     status: null,
   });
@@ -1792,5 +2063,17 @@ watch(activeTab, (newTab) => {
 <style scoped>
 .n-card {
   margin: 16px 0;
+}
+
+.commission-date-preset-group {
+  display: inline-flex;
+  flex-wrap: nowrap;
+}
+.commission-date-preset-group :deep(.n-radio-button) {
+  flex: 1 1 0;
+  min-width: 3.25rem;
+  justify-content: center;
+  padding-left: 12px;
+  padding-right: 12px;
 }
 </style>

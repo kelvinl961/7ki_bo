@@ -1355,48 +1355,50 @@ const columns: DataTableColumns<WithdrawalRecord> = [
           ),
       ]),
   },
-  // 2. 会员ID (VIP等级)
+  // 2. 会员ID / 会员账号 (VIP / 层级) — 上：ID+VIP，下：账号（电话）与层级
   {
-    title: '会员ID (VIP等级)',
+    title: '会员ID / 会员账号 (VIP / 层级)',
     key: 'memberId',
-    width: 130,
+    width: 200,
     render: (row) =>
-      h('div', { class: 'text-center space-y-1' }, [
+      h('div', { class: 'min-w-0 space-y-1 text-center' }, [
+        h(
+          'div',
+          { class: 'flex flex-wrap items-center justify-center gap-1' },
+          [
+            h(
+              NButton,
+              {
+                text: true,
+                type: 'primary',
+                size: 'small',
+                class: 'font-mono font-medium',
+                onClick: () => showMemberDetail(row),
+              },
+              {
+                default: () =>
+                  row.displayMemberId || row.userID || row.memberId,
+              },
+            ),
+            h(
+              NTag,
+              { size: 'small', type: 'info' },
+              { default: () => row.vipLevel || 'VIP0' },
+            ),
+          ],
+        ),
         h(
           NButton,
           {
             text: true,
             type: 'primary',
             size: 'small',
-            class: 'font-mono font-medium',
+            class: 'max-w-full whitespace-normal break-all font-medium',
             onClick: () => showMemberDetail(row),
           },
-          { default: () => row.displayMemberId || row.userID || row.memberId },
-        ),
-        h(
-          NTag,
-          { size: 'small', type: 'info' },
-          { default: () => row.vipLevel || 'VIP0' },
-        ),
-      ]),
-  },
-  // 3. 会员账号 (会员层级)
-  {
-    title: '会员账号 (会员层级)',
-    key: 'memberAccount',
-    width: 140,
-    render: (row) =>
-      h('div', { class: 'space-y-1' }, [
-        h(
-          NButton,
           {
-            text: true,
-            type: 'primary',
-            size: 'small',
-            class: 'font-medium',
-            onClick: () => showMemberDetail(row),
+            default: () => row.accountName || row.memberAccount,
           },
-          { default: () => row.accountName || row.memberAccount },
         ),
         h(
           'div',
@@ -1405,7 +1407,7 @@ const columns: DataTableColumns<WithdrawalRecord> = [
         ),
       ]),
   },
-  // 4. 申请时间 (操作时间) (完成时长)
+  // 3. 申请时间 (操作时间) (完成时长)
   {
     title: '申请时间 (操作时间) (完成时长)',
     key: 'appliedAt',
@@ -1432,7 +1434,7 @@ const columns: DataTableColumns<WithdrawalRecord> = [
         ),
       ]),
   },
-  // 5. 会员币种 (比例)
+  // 4. 会员币种 (比例)
   {
     title: '会员币种 (比例)',
     key: 'memberCurrency',
@@ -1451,7 +1453,7 @@ const columns: DataTableColumns<WithdrawalRecord> = [
         ),
       ]),
   },
-  // 6. 提现金额 (当前余额)
+  // 5. 提现金额 (当前余额)
   {
     title: '提现金额 (当前余额)',
     key: 'withdrawAmount',
@@ -1470,26 +1472,7 @@ const columns: DataTableColumns<WithdrawalRecord> = [
         ),
       ]),
   },
-  // 7. 到账币种汇率
-  {
-    title: '到账币种汇率',
-    key: 'arrivalCurrency',
-    width: 120,
-    render: (row) =>
-      h('div', { class: 'text-center space-y-1' }, [
-        h(
-          'div',
-          { class: 'font-medium' },
-          row.currency || row.expectedCurrency || 'BRL',
-        ),
-        h(
-          'div',
-          { class: 'text-xs text-gray-500' },
-          `汇率: ${row.exchangeRate || '0.05'}`,
-        ),
-      ]),
-  },
-  // 8. 预计到帐 (手续费) (实际到账)
+  // 6. 预计到帐 (手续费) (实际到账)
   {
     title: '预计到帐 (手续费) (实际到账)',
     key: 'estimatedAmount',
@@ -1544,7 +1527,7 @@ const columns: DataTableColumns<WithdrawalRecord> = [
         ]),
       ]),
   },
-  // 9. 充 / 提次数 (累计充 / 提差额) (重复IP人数)
+  // 7. 充 / 提次数 (累计充 / 提差额) (重复IP人数)
   {
     title: '充 / 提次数 (累计充 / 提差额) (重复IP人数)',
     key: 'counts',
@@ -1580,7 +1563,7 @@ const columns: DataTableColumns<WithdrawalRecord> = [
       ]);
     },
   },
-  // 10. 收款方式 (收款人信息) - ✅ ENHANCED: Same as "全部提现" tab
+  // 8. 收款方式 (收款人信息) - ✅ ENHANCED: Same as "全部提现" tab
   {
     title: '收款方式 (收款人信息)',
     key: 'paymentMethod',
@@ -1769,169 +1752,11 @@ const columns: DataTableColumns<WithdrawalRecord> = [
       ]);
     },
   },
-  // 11. 订单状态 (操作人)
-  {
-    title: '订单状态 (操作人)',
-    key: 'status',
-    width: 140,
-    render: (row) => {
-      const statusMap = {
-        unlocked: { type: 'default', text: '未锁定' },
-        pending: { type: 'warning', text: '待出款' },
-        reviewing: { type: 'info', text: '审核中' },
-        // Third-party paid / completed
-        paid: { type: 'success', text: '已出款' },
-        completed: { type: 'success', text: '已出款' },
-        success: { type: 'success', text: '已出款' },
-        // Admin approval (not third-party paid)
-        approved: { type: 'success', text: '已人工' },
-        processing: { type: 'info', text: '处理中' },
-        rejected: { type: 'error', text: '已拒绝' },
-        failed: { type: 'error', text: '失败' },
-        cancelled: { type: 'default', text: '已取消' },
-        canceled: { type: 'default', text: '已取消' },
-        risk_review: { type: 'warning', text: '风控审核' },
-      };
-      const statusKey = String(row.status ?? '').toLowerCase();
-      let status = statusMap[statusKey as keyof typeof statusMap] || {
-        type: 'default',
-        text: row.status,
-      };
-      // PAID = third-party paid, always show 「已出款」
-      if (statusKey === 'paid') {
-        status = { ...status, text: '已出款' };
-      }
-
-      // 人工出款：仅当确实为人工出款（没有三方订单号）才显示「已人工」。
-      // 如果已有 thirdPartyOrderNo，表示已走三方代付，应显示「已出款」。
-      const isManual =
-        (row.paymentGateway || row.thirdPartyProvider || '').toLowerCase() ===
-        'manual';
-      const hasThirdPartyOrderNo = !!(row as any).thirdPartyOrderNo;
-      if (
-        isManual &&
-        !hasThirdPartyOrderNo &&
-        ['completed', 'success'].includes(statusKey)
-      ) {
-        status = { ...status, text: '已人工' };
-      }
-
-      // 🎯 NEW: Operator name display logic
-      let operatorDisplay = '';
-      const systemHintText = [
-        (row as any).systemNotes,
-        (row as any).notes,
-        row.description,
-        (row as any).frontendNote,
-        (row as any).financeNote,
-        (row as any).metadata?.processType,
-      ]
-        .filter(Boolean)
-        .join(' ')
-        .toLowerCase();
-      const isSystemAuto =
-        (row as any).operator === 'system' ||
-        (row as any).metadata?.processType === 'auto_withdrawal' ||
-        /auto[_\s-]*approved/i.test(systemHintText) ||
-        /auto\s*withdrawal\s*processed/i.test(systemHintText);
-
-      if (isSystemAuto) {
-        operatorDisplay = '系统';
-      } else if (row.reviewer || row.operator) {
-        // If reviewer/operator exists, show it
-        operatorDisplay = row.reviewer || row.operator;
-      } else if (row.isLocked && row.lockedBy) {
-        // If locked, show who locked it
-        operatorDisplay = row.lockedBy;
-      } else if (row.isLocked === false || !row.lockedBy) {
-        // If not locked, show "未锁定"
-        operatorDisplay = '未锁定';
-      }
-
-      return h('div', { class: 'text-center space-y-1' }, [
-        h(
-          NTag,
-          { type: status.type as any, size: 'small' },
-          { default: () => status.text },
-        ),
-        operatorDisplay &&
-          h('div', { class: 'text-xs text-gray-500' }, operatorDisplay),
-      ]);
-    },
-  },
-  // 12. 前台备注
-  {
-    title: '前台备注',
-    key: 'frontendNotes',
-    width: 100,
-    render: () =>
-      h('div', { class: 'text-xs text-center' }, [
-        h('span', { class: 'text-gray-400' }, '-'),
-      ]),
-  },
-  // 13. 后台备注
-  {
-    title: '后台备注',
-    key: 'backendNotes',
-    width: 200,
-    render: (row) => {
-      // Only show backend notes if there's a third-party error
-      const backendNote =
-        row.backendNote || row.backendNotes || row.description;
-      const hasError =
-        row.status === 'failed' ||
-        row.status === 'rejected' ||
-        (backendNote &&
-          (backendNote.toLowerCase().includes('error') ||
-            backendNote.toLowerCase().includes('failed') ||
-            backendNote.toLowerCase().includes('错误') ||
-            backendNote.toLowerCase().includes('失败')));
-
-      return h('div', { class: 'text-xs' }, [
-        hasError && backendNote
-          ? h('div', { class: 'space-y-1' }, [
-              h('div', { class: 'text-red-500' }, '错误信息：'),
-              h('div', { class: 'text-red-600' }, backendNote),
-            ])
-          : h('span', { class: 'text-gray-400 text-center' }, '-'),
-      ]);
-    },
-  },
-  // 14. 三方代付 (代付次数)
-  {
-    title: '三方代付 (代付次数)',
-    key: 'thirdPartyPayment',
-    width: 160,
-    render: (row) => {
-      const gateway = row.paymentGateway || row.thirdPartyProvider || 'Pay4z';
-      let displayName = gateway;
-
-      // 🎯 NEW: Chinese translations for gateway names
-      if (gateway.toLowerCase() === 'manual') {
-        displayName = '人工出款';
-      } else if (
-        gateway.toLowerCase() === 'auto_system' ||
-        gateway === 'auto_system'
-      ) {
-        displayName = '免审出款';
-      }
-
-      return h('div', { class: 'text-center space-y-1' }, [
-        h('div', { class: 'font-medium text-xs' }, displayName),
-        h(
-          'div',
-          { class: 'text-xs text-gray-500' },
-          `代付次数: ${row.withdrawCount || row.withdrawalCount || 1}`,
-        ),
-      ]);
-    },
-  },
-  // 15. 操作 (Keep existing actions column)
+  // 9. 操作（位于订单状态 / 操作人之前，与全部提现一致）
   {
     title: '操作',
     key: 'actions',
     width: 200,
-    fixed: 'right',
     render: (row) => {
       const actions = [];
 
@@ -2056,6 +1881,163 @@ const columns: DataTableColumns<WithdrawalRecord> = [
       }
 
       return h('div', { class: 'flex gap-1 flex-wrap' }, actions);
+    },
+  },
+  // 10. 订单状态 (操作人)
+  {
+    title: '订单状态 (操作人)',
+    key: 'status',
+    width: 140,
+    render: (row) => {
+      const statusMap = {
+        unlocked: { type: 'default', text: '未锁定' },
+        pending: { type: 'warning', text: '待出款' },
+        reviewing: { type: 'info', text: '审核中' },
+        // Third-party paid / completed
+        paid: { type: 'success', text: '已出款' },
+        completed: { type: 'success', text: '已出款' },
+        success: { type: 'success', text: '已出款' },
+        // Admin approval (not third-party paid)
+        approved: { type: 'success', text: '已人工' },
+        processing: { type: 'info', text: '处理中' },
+        rejected: { type: 'error', text: '已拒绝' },
+        failed: { type: 'error', text: '失败' },
+        cancelled: { type: 'default', text: '已取消' },
+        canceled: { type: 'default', text: '已取消' },
+        risk_review: { type: 'warning', text: '风控审核' },
+      };
+      const statusKey = String(row.status ?? '').toLowerCase();
+      let status = statusMap[statusKey as keyof typeof statusMap] || {
+        type: 'default',
+        text: row.status,
+      };
+      // PAID = third-party paid, always show 「已出款」
+      if (statusKey === 'paid') {
+        status = { ...status, text: '已出款' };
+      }
+
+      // 人工出款：仅当确实为人工出款（没有三方订单号）才显示「已人工」。
+      // 如果已有 thirdPartyOrderNo，表示已走三方代付，应显示「已出款」。
+      const isManual =
+        (row.paymentGateway || row.thirdPartyProvider || '').toLowerCase() ===
+        'manual';
+      const hasThirdPartyOrderNo = !!(row as any).thirdPartyOrderNo;
+      if (
+        isManual &&
+        !hasThirdPartyOrderNo &&
+        ['completed', 'success'].includes(statusKey)
+      ) {
+        status = { ...status, text: '已人工' };
+      }
+
+      // 🎯 NEW: Operator name display logic
+      let operatorDisplay = '';
+      const systemHintText = [
+        (row as any).systemNotes,
+        (row as any).notes,
+        row.description,
+        (row as any).frontendNote,
+        (row as any).financeNote,
+        (row as any).metadata?.processType,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      const isSystemAuto =
+        (row as any).operator === 'system' ||
+        (row as any).metadata?.processType === 'auto_withdrawal' ||
+        /auto[_\s-]*approved/i.test(systemHintText) ||
+        /auto\s*withdrawal\s*processed/i.test(systemHintText);
+
+      if (isSystemAuto) {
+        operatorDisplay = '系统';
+      } else if (row.reviewer || row.operator) {
+        // If reviewer/operator exists, show it
+        operatorDisplay = row.reviewer || row.operator;
+      } else if (row.isLocked && row.lockedBy) {
+        // If locked, show who locked it
+        operatorDisplay = row.lockedBy;
+      } else if (row.isLocked === false || !row.lockedBy) {
+        // If not locked, show "未锁定"
+        operatorDisplay = '未锁定';
+      }
+
+      return h('div', { class: 'text-center space-y-1' }, [
+        h(
+          NTag,
+          { type: status.type as any, size: 'small' },
+          { default: () => status.text },
+        ),
+        operatorDisplay &&
+          h('div', { class: 'text-xs text-gray-500' }, operatorDisplay),
+      ]);
+    },
+  },
+  // 11. 前台备注
+  {
+    title: '前台备注',
+    key: 'frontendNotes',
+    width: 100,
+    render: () =>
+      h('div', { class: 'text-xs text-center' }, [
+        h('span', { class: 'text-gray-400' }, '-'),
+      ]),
+  },
+  // 12. 后台备注
+  {
+    title: '后台备注',
+    key: 'backendNotes',
+    width: 200,
+    render: (row) => {
+      // Only show backend notes if there's a third-party error
+      const backendNote =
+        row.backendNote || row.backendNotes || row.description;
+      const hasError =
+        row.status === 'failed' ||
+        row.status === 'rejected' ||
+        (backendNote &&
+          (backendNote.toLowerCase().includes('error') ||
+            backendNote.toLowerCase().includes('failed') ||
+            backendNote.toLowerCase().includes('错误') ||
+            backendNote.toLowerCase().includes('失败')));
+
+      return h('div', { class: 'text-xs' }, [
+        hasError && backendNote
+          ? h('div', { class: 'space-y-1' }, [
+              h('div', { class: 'text-red-500' }, '错误信息：'),
+              h('div', { class: 'text-red-600' }, backendNote),
+            ])
+          : h('span', { class: 'text-gray-400 text-center' }, '-'),
+      ]);
+    },
+  },
+  // 13. 三方代付 (代付次数)
+  {
+    title: '三方代付 (代付次数)',
+    key: 'thirdPartyPayment',
+    width: 160,
+    render: (row) => {
+      const gateway = row.paymentGateway || row.thirdPartyProvider || 'Pay4z';
+      let displayName = gateway;
+
+      // 🎯 NEW: Chinese translations for gateway names
+      if (gateway.toLowerCase() === 'manual') {
+        displayName = '人工出款';
+      } else if (
+        gateway.toLowerCase() === 'auto_system' ||
+        gateway === 'auto_system'
+      ) {
+        displayName = '免审出款';
+      }
+
+      return h('div', { class: 'text-center space-y-1' }, [
+        h('div', { class: 'font-medium text-xs' }, displayName),
+        h(
+          'div',
+          { class: 'text-xs text-gray-500' },
+          `代付次数: ${row.withdrawCount || row.withdrawalCount || 1}`,
+        ),
+      ]);
     },
   },
 ];

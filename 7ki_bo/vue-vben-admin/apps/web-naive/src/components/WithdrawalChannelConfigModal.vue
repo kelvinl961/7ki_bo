@@ -705,9 +705,9 @@ const removeFeeRow = (index: number) => {
   }
 };
 
-Object.assign(basicFormData, {
-  pixTypesMap: {
-    CPF: true,
+const defaultPixTypesMap = () =>
+  ({
+    CPF: false,
     PHONE: false,
     EMAIL: false,
     EVP: false,
@@ -716,18 +716,95 @@ Object.assign(basicFormData, {
     SVGS: false,
     CACC: false,
     TRAN: false,
+  }) as Record<string, boolean>;
+
+/**
+ * Read binding from GET /third-party-channels (binding / withdrawalMethodConfig / apiConfig.withdrawalMethodConfig).
+ */
+function pixBindingFromChannelRecord(record: any): {
+  pixTypesMap: Record<string, boolean>;
+  allowBindCount: number;
+  language: string;
+} {
+  const b =
+    record?.binding ||
+    record?.withdrawalMethodConfig ||
+    record?.apiConfig?.withdrawalMethodConfig ||
+    null;
+
+  const map = defaultPixTypesMap();
+  let allowBindCount = 4;
+  let language = 'zh-CN';
+
+  if (b && typeof b === 'object') {
+    const pat = (b as any).pixAllowedBindingTypes;
+    if (pat && typeof pat === 'object' && !Array.isArray(pat)) {
+      for (const k of Object.keys(map)) {
+        if (k in pat) map[k] = !!(pat as any)[k];
+      }
+    }
+    const apt = (b as any).allowedPixTypes;
+    if (Array.isArray(apt)) {
+      for (const k of apt) {
+        if (typeof k === 'string' && k in map) map[k] = true;
+      }
+    }
+    if ((b as any).pixAccountQuantityLimit != null) {
+      allowBindCount = Number((b as any).pixAccountQuantityLimit);
+    } else if ((b as any).maxPixAccounts != null) {
+      allowBindCount = Number((b as any).maxPixAccounts);
+    } else if ((b as any).allowBindCount != null) {
+      allowBindCount = Number((b as any).allowBindCount);
+    }
+    if ((b as any).language != null && String((b as any).language)) {
+      language = String((b as any).language);
+    } else if (
+      Array.isArray((b as any).supportedLanguages) &&
+      (b as any).supportedLanguages.length
+    ) {
+      language = String((b as any).supportedLanguages[0]);
+    }
+  }
+
+  return { pixTypesMap: map, allowBindCount, language };
+}
+
+Object.assign(basicFormData, {
+  pixTypesMap: {
+    ...defaultPixTypesMap(),
+    CPF: true,
   },
   allowBindCount: 4,
   language: 'zh-CN',
   badgeColor: 'red',
 });
 
-// Watch for edit data
+// When modal opens, editData may be set in the same tick after visible — watch both
 watch(
-  () => props.editData,
-  (newData) => {
-    if (newData && props.visible) {
+  [() => props.editData, () => props.visible],
+  ([newData, visible]) => {
+    if (newData && visible) {
       console.log('📝 Loading edit data:', newData);
+      const hasApiBinding = !!(
+        newData.binding ||
+        newData.withdrawalMethodConfig ||
+        newData.apiConfig?.withdrawalMethodConfig
+      );
+      const fromApi = pixBindingFromChannelRecord(newData);
+      const fallbackMap = {
+        ...defaultPixTypesMap(),
+        CPF: true,
+      };
+      const pixTypesMap = hasApiBinding
+        ? fromApi.pixTypesMap
+        : newData.pixTypesMap || fallbackMap;
+      const allowBindCount = hasApiBinding
+        ? fromApi.allowBindCount
+        : newData.allowBindCount ?? 4;
+      const language = hasApiBinding
+        ? fromApi.language
+        : newData.language || 'zh-CN';
+
       // Load data into forms
       Object.assign(basicFormData, {
         categoryType: newData.type || '',
@@ -740,19 +817,9 @@ watch(
         monitorCount: newData.monitorCount || 4,
         currency: newData.currency || 'BRL',
         arrivalStatus: newData.arrivalStatus || 'instant',
-        pixTypesMap: newData.pixTypesMap || {
-          CPF: true,
-          PHONE: false,
-          EMAIL: false,
-          EVP: false,
-          CNPJ: false,
-          SLRY: false,
-          SVGS: false,
-          CACC: false,
-          TRAN: false,
-        },
-        allowBindCount: newData.allowBindCount || 4,
-        language: newData.language || 'zh-CN',
+        pixTypesMap,
+        allowBindCount,
+        language,
         badgeColor: newData.badgeColor || 'red',
       });
 
@@ -828,8 +895,21 @@ const handleConfirm = async () => {
       pixTypes: Object.keys(basicFormData.pixTypesMap).filter(
         (k) => (basicFormData.pixTypesMap as any)[k],
       ),
+      allowedPixTypes: Object.keys(basicFormData.pixTypesMap).filter(
+        (k) => (basicFormData.pixTypesMap as any)[k],
+      ),
+      pixAllowedBindingTypes: Object.fromEntries(
+        pixTypeOptions.map(({ value: k }) => [
+          k,
+          !!(basicFormData.pixTypesMap as any)[k],
+        ]),
+      ),
+      pixAccountQuantityLimit: basicFormData.allowBindCount,
       allowBindCount: basicFormData.allowBindCount,
       language: basicFormData.language,
+      supportedLanguages: basicFormData.language
+        ? [basicFormData.language]
+        : [],
       badgeColor: basicFormData.badgeColor,
 
       // limits

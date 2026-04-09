@@ -792,7 +792,7 @@
                   </td>
                 </tr>
 
-                <!-- Row 14: 注册设备号 & 注册浏览器指纹 -->
+                <!-- Row 14: 注册设备号 & 注册客户端指纹 -->
                 <tr>
                   <td class="label-cell">注册设备号</td>
                   <td class="value-cell">
@@ -839,37 +839,47 @@
                       </div>
                     </div>
                   </td>
-                  <td class="label-cell">注册浏览器指纹</td>
+                  <td class="label-cell">注册客户端指纹</td>
                   <td class="value-cell">
                     <div class="cell-content">
                       <div class="content-left">
                         <span
-                          v-if="userDetail.registrationFingerprint"
+                          v-if="userDetail.registrationClientFingerprint"
                           class="cursor-pointer break-all text-blue-600 hover:underline"
-                          @click="handleFilterByRegistrationFingerprint"
+                          @click="
+                            filterMembersBySearchField(
+                              'registration_fingerprint',
+                              userDetail.registrationClientFingerprint,
+                            )
+                          "
                         >
-                          {{ userDetail.registrationFingerprint }}
+                          {{ userDetail.registrationClientFingerprint }}
                         </span>
-                        <span v-else>--</span>
+                        <span v-else class="text-gray-400">--</span>
                         <span class="text-gray-500">
-                          同注册浏览器指纹人数(
+                          同指纹(
                           <span
                             v-if="
-                              (userDetail.sameRegistrationFingerprintCount ??
+                              (userDetail.sameRegistrationClientFingerprintCount ??
                                 0) > 0 &&
-                              userDetail.registrationFingerprint
+                              userDetail.registrationClientFingerprint
                             "
-                            class="cursor-pointer font-semibold text-blue-600 hover:underline"
+                            class="cursor-pointer text-blue-600 hover:underline"
                             @click.stop="
-                              handleFilterByRegistrationFingerprint
+                              filterMembersBySearchField(
+                                'registration_fingerprint',
+                                userDetail.registrationClientFingerprint,
+                              )
                             "
                           >
                             {{
-                              userDetail.sameRegistrationFingerprintCount ?? 0
+                              userDetail.sameRegistrationClientFingerprintCount ??
+                              0
                             }}
                           </span>
                           <span v-else>{{
-                            userDetail.sameRegistrationFingerprintCount ?? 0
+                            userDetail.sameRegistrationClientFingerprintCount ??
+                            0
                           }}</span>
                           )
                         </span>
@@ -961,7 +971,7 @@
                   </td>
                 </tr>
 
-                <!-- Row 17: 最后登录设备号 & 最后登录指纹 -->
+                <!-- Row 17: 最后登录设备号 & 最后登录客户端指纹 -->
                 <tr>
                   <td class="label-cell">最后登录设备号</td>
                   <td class="value-cell">
@@ -1005,35 +1015,46 @@
                       </div>
                     </div>
                   </td>
-                  <td class="label-cell">最后登录指纹</td>
+                  <td class="label-cell">最后登录客户端指纹</td>
                   <td class="value-cell">
                     <div class="cell-content">
                       <div class="content-left">
                         <span
-                          v-if="userDetail.lastLoginFingerprint"
+                          v-if="userDetail.lastLoginClientFingerprint"
                           class="cursor-pointer break-all text-blue-600 hover:underline"
-                          @click="handleFilterByLastLoginFingerprint"
+                          @click="
+                            filterMembersBySearchField(
+                              'last_login_fingerprint',
+                              userDetail.lastLoginClientFingerprint,
+                            )
+                          "
                         >
-                          {{ userDetail.lastLoginFingerprint }}
+                          {{ userDetail.lastLoginClientFingerprint }}
                         </span>
-                        <span v-else>--</span>
+                        <span v-else class="text-gray-400">--</span>
                         <span class="text-gray-500">
-                          同最后登录指纹人数(
+                          同指纹(
                           <span
                             v-if="
-                              (userDetail.sameLastLoginFingerprintCount ??
+                              (userDetail.sameLastLoginClientFingerprintCount ??
                                 0) > 0 &&
-                              userDetail.lastLoginFingerprint
+                              userDetail.lastLoginClientFingerprint
                             "
-                            class="cursor-pointer font-semibold text-blue-600 hover:underline"
-                            @click.stop="handleFilterByLastLoginFingerprint"
+                            class="cursor-pointer text-blue-600 hover:underline"
+                            @click.stop="
+                              filterMembersBySearchField(
+                                'last_login_fingerprint',
+                                userDetail.lastLoginClientFingerprint,
+                              )
+                            "
                           >
                             {{
-                              userDetail.sameLastLoginFingerprintCount ?? 0
+                              userDetail.sameLastLoginClientFingerprintCount ??
+                              0
                             }}
                           </span>
                           <span v-else>{{
-                            userDetail.sameLastLoginFingerprintCount ?? 0
+                            userDetail.sameLastLoginClientFingerprintCount ?? 0
                           }}</span>
                           )
                         </span>
@@ -1735,6 +1756,26 @@ const emit = defineEmits<Emits>();
 
 const message = useMessage();
 const router = useRouter();
+
+type MemberListSearchField =
+  | 'last_login_fingerprint'
+  | 'last_login_user_agent'
+  | 'registration_fingerprint'
+  | 'registration_user_agent';
+
+/** Member list: client hash uses *_fingerprint; raw UA uses *_user_agent (API fields are separate). */
+function filterMembersBySearchField(
+  field: MemberListSearchField,
+  value: string | undefined | null,
+) {
+  const v = (value || '').trim();
+  if (!v) return;
+  emit('update:visible', false);
+  router.push({
+    path: '/user-management/all-members',
+    query: { searchField: field, searchValue: v },
+  });
+}
 
 // Reactive data
 const loading = ref(false);
@@ -3206,16 +3247,10 @@ const handleFilterByRegistrationSource = () => {
 };
 
 const handleFilterByRegistrationFingerprint = () => {
-  if (!userDetail.value?.registrationFingerprint) return;
-
-  emit('update:visible', false);
-  router.push({
-    path: '/user-management/all-members',
-    query: {
-      searchField: 'registration_fingerprint',
-      searchValue: userDetail.value.registrationFingerprint,
-    },
-  });
+  filterMembersBySearchField(
+    'registration_fingerprint',
+    userDetail.value?.registrationFingerprint,
+  );
 };
 
 // ✅ NEW: Handle filter by last login IP
@@ -3261,16 +3296,10 @@ const handleFilterByLastLoginDevice = () => {
 };
 
 const handleFilterByLastLoginFingerprint = () => {
-  if (!userDetail.value?.lastLoginFingerprint) return;
-
-  emit('update:visible', false);
-  router.push({
-    path: '/user-management/all-members',
-    query: {
-      searchField: 'last_login_fingerprint',
-      searchValue: userDetail.value.lastLoginFingerprint,
-    },
-  });
+  filterMembersBySearchField(
+    'last_login_fingerprint',
+    userDetail.value?.lastLoginFingerprint,
+  );
 };
 </script>
 

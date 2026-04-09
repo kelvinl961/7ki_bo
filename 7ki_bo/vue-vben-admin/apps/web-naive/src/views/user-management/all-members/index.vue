@@ -405,8 +405,13 @@ const allSearchFieldOptions: FieldSearchBarOption[] = [
   { label: '注册来源', value: 'registration_source', mode: 'exact' },
   { label: '注册设备号', value: 'registration_device', mode: 'exact' },
   {
-    label: '注册浏览器指纹',
+    label: '注册客户端指纹',
     value: 'registration_fingerprint',
+    mode: 'exact',
+  },
+  {
+    label: '注册User-Agent',
+    value: 'registration_user_agent',
     mode: 'exact',
   },
 
@@ -415,8 +420,13 @@ const allSearchFieldOptions: FieldSearchBarOption[] = [
   { label: '最后登录域名', value: 'last_login_domain', mode: 'exact' },
   { label: '最后登录设备号', value: 'last_login_device', mode: 'exact' },
   {
-    label: '最后登录指纹',
+    label: '最后登录客户端指纹',
     value: 'last_login_fingerprint',
+    mode: 'exact',
+  },
+  {
+    label: '最后登录User-Agent',
+    value: 'last_login_user_agent',
     mode: 'exact',
   },
 ];

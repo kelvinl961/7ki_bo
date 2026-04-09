@@ -228,6 +228,10 @@ const withdrawalSettingsApi = {
       callbackUrl: r.callbackUrl ?? '',
       status: r.status ?? 'active',
       arrivalStatus: r.arrivalStatus ?? 'instant',
+      // PIX / 提现绑定 — API hydrates from WithdrawalSetting or channel apiConfig
+      binding: r.binding ?? null,
+      withdrawalMethodConfig: r.withdrawalMethodConfig ?? r.binding ?? null,
+      apiConfig: r.apiConfig ?? null,
     }));
 
     return { success: true, data: { channels, total } } as ApiResponse<any>;

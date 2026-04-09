@@ -138,9 +138,16 @@ export interface UserDetailInfo {
   registrationDeviceId: string;
   registrationDeviceInfo?: string; // Parsed device info (e.g., "Android 12.0")
   registrationBrowserInfo?: string; // Parsed browser info (e.g., "Facebook v533.0.0.34.82")
+  /** Client-computed fingerprint hash (when app sends it); empty for legacy users until backfill */
+  registrationClientFingerprint?: string;
+  /** Raw HTTP User-Agent stored at registration (not the client hash) */
+  registrationUserAgent?: string;
+  /** Client fingerprint hash only (never User-Agent) */
   registrationFingerprint: string;
   registrationSource: string;
   sameRegistrationDeviceCount?: number; // Number of users with same registration device
+  sameRegistrationClientFingerprintCount?: number;
+  sameRegistrationUserAgentCount?: number;
   sameRegistrationFingerprintCount?: number;
 
   // Last Login Information
@@ -151,8 +158,13 @@ export interface UserDetailInfo {
   lastLoginDeviceId: string;
   lastLoginDeviceInfo?: string;
   lastLoginBrowserInfo?: string;
+  lastLoginClientFingerprint?: string;
+  lastLoginUserAgent?: string;
+  /** Last login log client fingerprint only (never User-Agent) */
   lastLoginFingerprint: string;
   sameLastLoginIpCount?: number;
+  sameLastLoginClientFingerprintCount?: number;
+  sameLastLoginUserAgentCount?: number;
   sameLastLoginFingerprintCount?: number;
 
   // Third-party Bindings
@@ -332,9 +344,16 @@ export async function getUserDetailApi(
       registrationDeviceId: userData.registrationDeviceId || '',
       registrationDeviceInfo: userData.registrationDeviceInfo || '',
       registrationBrowserInfo: userData.registrationBrowserInfo || '',
+      registrationClientFingerprint:
+        userData.registrationClientFingerprint || '',
+      registrationUserAgent: userData.registrationUserAgent || '',
       registrationFingerprint: userData.registrationFingerprint || '',
       registrationSource: userData.registrationSource || '',
       sameRegistrationDeviceCount: userData.sameRegistrationDeviceCount || 0,
+      sameRegistrationClientFingerprintCount:
+        userData.sameRegistrationClientFingerprintCount ?? 0,
+      sameRegistrationUserAgentCount:
+        userData.sameRegistrationUserAgentCount ?? 0,
       sameRegistrationFingerprintCount:
         userData.sameRegistrationFingerprintCount ?? 0,
 
@@ -346,8 +365,14 @@ export async function getUserDetailApi(
       lastLoginDeviceId: userData.lastLoginDeviceId || '',
       lastLoginDeviceInfo: userData.lastLoginDeviceInfo || '',
       lastLoginBrowserInfo: userData.lastLoginBrowserInfo || '',
+      lastLoginClientFingerprint: userData.lastLoginClientFingerprint || '',
+      lastLoginUserAgent: userData.lastLoginUserAgent || '',
       lastLoginFingerprint: userData.lastLoginFingerprint || '',
       sameLastLoginIpCount: userData.sameLastLoginIpCount ?? 0,
+      sameLastLoginClientFingerprintCount:
+        userData.sameLastLoginClientFingerprintCount ?? 0,
+      sameLastLoginUserAgentCount:
+        userData.sameLastLoginUserAgentCount ?? 0,
       sameLastLoginFingerprintCount:
         userData.sameLastLoginFingerprintCount ?? 0,
 

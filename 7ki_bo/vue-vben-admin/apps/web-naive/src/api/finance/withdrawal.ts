@@ -51,6 +51,10 @@ export interface WithdrawListParams {
   agentMode?: string;
   serviceFilter?: string;
   search?: string;
+  /** 会员展示 ID（userID） */
+  userId?: string;
+  /** 提现订单号 */
+  orderId?: string;
 }
 
 export interface WithdrawListResponse {

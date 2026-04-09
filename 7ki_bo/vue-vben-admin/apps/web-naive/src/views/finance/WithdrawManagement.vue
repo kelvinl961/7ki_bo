@@ -178,10 +178,28 @@
 
             <!-- Third row - Search and Actions -->
             <div class="flex flex-wrap items-end gap-4">
-              <n-form-item label="搜索" class="min-w-[300px] flex-1">
+              <n-form-item label="会员账号" class="min-w-[200px] flex-1">
                 <n-input
                   v-model:value="searchInput"
-                  placeholder="订单号/会员ID/会员账号"
+                  placeholder="会员账号或备注"
+                  clearable
+                  class="w-full"
+                  @keyup.enter="handleSearch"
+                />
+              </n-form-item>
+              <n-form-item label="会员ID" class="min-w-[160px]">
+                <n-input
+                  v-model:value="userIdInput"
+                  placeholder="请输入会员ID"
+                  clearable
+                  class="w-full"
+                  @keyup.enter="handleSearch"
+                />
+              </n-form-item>
+              <n-form-item label="订单号" class="min-w-[200px]">
+                <n-input
+                  v-model:value="orderIdInput"
+                  placeholder="请输入订单号"
                   clearable
                   class="w-full"
                   @keyup.enter="handleSearch"
@@ -1492,8 +1510,10 @@ let searchTimeout: NodeJS.Timeout | null = null;
 const memberTierOptions = ref<any[]>([]);
 
 // Form data
-// 🔍 FIX: Auto-trim search input
+// 🔍 FIX: Auto-trim search inputs
 const { value: searchInput, trimmed: searchQuery } = useTrimmedSearch('');
+const { value: userIdInput, trimmed: userIdQuery } = useTrimmedSearch('');
+const { value: orderIdInput, trimmed: orderIdQuery } = useTrimmedSearch('');
 
 const filterForm = ref<FilterForm>({
   dateRange: null, // ✅ FIX: No default date range for "全部提现" tab - show all withdrawals
@@ -2819,6 +2839,8 @@ const fetchData = async () => {
       pageSize: paginationReactive.value.pageSize,
       ...filterForm.value,
       search: searchQuery.value, // 🔍 FIX: Use auto-trimmed search
+      userId: userIdQuery.value || undefined,
+      orderId: orderIdQuery.value || undefined,
       startDate:
         dr?.[0] != null ? new Date(dr[0]).toISOString() : undefined,
       endDate:
@@ -3116,6 +3138,8 @@ const handleAdvancedSearch = () => {
 
 const handleResetFilters = () => {
   searchInput.value = ''; // 🔍 FIX: Reset search input
+  userIdInput.value = '';
+  orderIdInput.value = '';
   filterForm.value = {
     dateRange: null,
     thirdPartyPayment: null,

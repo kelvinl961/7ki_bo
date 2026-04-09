@@ -5,6 +5,10 @@ export interface RiskControlFilters {
   endDate?: string;
   memberId?: string;
   memberAccount?: string;
+  /** 会员展示 ID（userID） */
+  userId?: string;
+  /** 提现订单号 */
+  orderId?: string;
   applicationTime?: string;
   memberCurrency?: string;
   withdrawalAmount?: string;

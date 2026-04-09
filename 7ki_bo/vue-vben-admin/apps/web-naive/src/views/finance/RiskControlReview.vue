@@ -30,7 +30,7 @@
 
         <!-- Search Filters -->
         <div
-          class="filter-section mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6"
+          class="filter-section mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8"
         >
           <!-- Date Range -->
           <div class="filter-item">
@@ -47,11 +47,21 @@
             </n-form-item>
           </div>
 
-          <!-- Member ID -->
+          <div class="filter-item">
+            <n-form-item label="会员账号">
+              <n-input
+                v-model:value="filters.memberAccount"
+                placeholder="会员账号或备注，最多200个"
+                clearable
+                size="small"
+              />
+            </n-form-item>
+          </div>
+
           <div class="filter-item">
             <n-form-item label="会员ID">
               <n-input
-                v-model:value="filters.memberId"
+                v-model:value="filters.userId"
                 placeholder="请输入会员ID"
                 clearable
                 size="small"
@@ -59,12 +69,11 @@
             </n-form-item>
           </div>
 
-          <!-- Member Account -->
           <div class="filter-item">
-            <n-form-item label="会员账号">
+            <n-form-item label="订单号">
               <n-input
-                v-model:value="filters.memberAccount"
-                placeholder="请输入会员账号"
+                v-model:value="filters.orderId"
+                placeholder="请输入订单号"
                 clearable
                 size="small"
               />
@@ -1087,6 +1096,8 @@ const filters = reactive({
   dateRange: getTodayDateRange() as [number, number] | null, // Default to today
   memberId: '',
   memberAccount: '',
+  userId: '',
+  orderId: '',
   memberCurrency: '',
   withdrawalAmount: '',
   paymentMethod: '',
@@ -2721,6 +2732,8 @@ const fetchData = async () => {
 
     if (filters.memberId) params.memberId = filters.memberId;
     if (filters.memberAccount) params.memberAccount = filters.memberAccount;
+    if (filters.userId?.trim()) params.userId = filters.userId.trim();
+    if (filters.orderId?.trim()) params.orderId = filters.orderId.trim();
     if (filters.memberCurrency) params.memberCurrency = filters.memberCurrency;
     if (filters.withdrawalAmount)
       params.withdrawalAmount = filters.withdrawalAmount;
@@ -2835,6 +2848,8 @@ const resetFilters = () => {
     dateRange: getTodayDateRange(), // Reset to today
     memberId: '',
     memberAccount: '',
+    userId: '',
+    orderId: '',
     memberCurrency: '',
     withdrawalAmount: '',
     paymentMethod: '',

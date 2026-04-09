@@ -20,6 +20,10 @@ export interface FinanceWithdrawalFilters {
   startDate?: string;
   endDate?: string;
   memberAccount?: string;
+  /** 会员展示 ID（userID） */
+  userId?: string;
+  /** 提现订单号 */
+  orderId?: string;
   thirdPartyPayment?: string;
   amount?: string;
   withdrawalMethod?: string;

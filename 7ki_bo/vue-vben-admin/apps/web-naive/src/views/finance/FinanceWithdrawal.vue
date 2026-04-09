@@ -52,14 +52,36 @@
 
           <!-- Search Filters -->
           <div
-            class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6"
+            class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8"
           >
-            <!-- Member ID -->
+            <!-- Member account / ID / order -->
             <div class="filter-item">
               <n-form-item label="会员账号">
                 <n-input
                   v-model:value="filters.memberAccount"
                   placeholder="会员账号或备注内容搜索，最多200个"
+                  clearable
+                  size="small"
+                />
+              </n-form-item>
+            </div>
+
+            <div class="filter-item">
+              <n-form-item label="会员ID">
+                <n-input
+                  v-model:value="filters.userId"
+                  placeholder="请输入会员ID"
+                  clearable
+                  size="small"
+                />
+              </n-form-item>
+            </div>
+
+            <div class="filter-item">
+              <n-form-item label="订单号">
+                <n-input
+                  v-model:value="filters.orderId"
+                  placeholder="请输入订单号"
                   clearable
                   size="small"
                 />
@@ -2148,6 +2170,8 @@ const filters = reactive({
   timeRange: 'today',
   dateRange: getTodayDateRange() as [number, number] | null, // Default to today
   memberAccount: '',
+  userId: '',
+  orderId: '',
   thirdPartyPayment: '',
   amount: '',
   withdrawalMethod: '',
@@ -4757,6 +4781,8 @@ const fetchData = async () => {
     }
 
     if (filters.memberAccount) params.memberAccount = filters.memberAccount;
+    if (filters.userId?.trim()) params.userId = filters.userId.trim();
+    if (filters.orderId?.trim()) params.orderId = filters.orderId.trim();
     if (filters.thirdPartyPayment)
       params.thirdPartyPayment = filters.thirdPartyPayment;
     if (filters.amount) params.amount = filters.amount;
@@ -4849,6 +4875,8 @@ const clearFilters = () => {
     timeRange: 'today',
     dateRange: getTodayDateRange(), // Reset to today
     memberAccount: '',
+    userId: '',
+    orderId: '',
     thirdPartyPayment: '',
     amount: '',
     withdrawalMethod: '',

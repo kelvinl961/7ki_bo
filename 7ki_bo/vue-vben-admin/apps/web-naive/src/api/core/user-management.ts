@@ -86,6 +86,60 @@ export interface UserListResponse {
   message?: string;
 }
 
+/** Matches 7ki_api `FilterClause` / `MemberAdvancedSearchBody` */
+export type AdminFilterOp =
+  | 'eq'
+  | 'ne'
+  | 'gt'
+  | 'gte'
+  | 'lt'
+  | 'lte'
+  | 'in'
+  | 'notIn'
+  | 'like'
+  | 'between'
+  | 'and'
+  | 'or';
+
+export interface AdminFilterClause {
+  key?: string;
+  op: AdminFilterOp;
+  val?: unknown;
+  children?: AdminFilterClause[];
+}
+
+export interface MemberAdvancedListBody {
+  filter?: AdminFilterClause | AdminFilterClause[];
+  lastLoginAgeDays?: { minDays: number; maxDays: number };
+  financialNetDepositWithdrawDiff?: { min?: number; max?: number };
+  loginLogLast?: { browserFingerprint?: string; userAgent?: string };
+  topAgentAccounts?: string[];
+  depositIdleAgeDays?: { minDays: number; maxDays: number };
+  verificationMethods?: string[];
+}
+
+/**
+ * Advanced member search (POST) — same response shape as GET /users/
+ */
+export async function postUserListAdvancedSearchApi(
+  body: MemberAdvancedListBody & {
+    page?: number;
+    pageSize?: number;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+  },
+) {
+  const response = await requestClient.post<any>(
+    '/users/admin/advanced-search',
+    body,
+  );
+  console.log('🔍 [postUserListAdvancedSearchApi] Raw response:', response);
+  if (response.data) {
+    return response.data;
+  }
+  return response;
+}
+
 export interface ApiResponse<T> {
   code: number;
   data: T;

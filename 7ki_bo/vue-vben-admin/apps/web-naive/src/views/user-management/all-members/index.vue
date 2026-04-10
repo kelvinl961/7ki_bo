@@ -151,93 +151,10 @@
           @commission-click="handleCommissionClick"
         />
 
-        <!-- 高级搜索弹窗 -->
-        <n-modal
+        <MemberAdvancedSearchModal
           v-model:show="showAdvancedSearch"
-          preset="card"
-          title="高级搜索"
-          style="width: 700px"
-          :bordered="false"
-          :segmented="{ content: 'soft', footer: 'soft' }"
-        >
-          <div class="flex flex-col gap-4">
-            <div class="grid grid-cols-2 gap-4">
-              <!-- 最小余额 -->
-              <div class="flex flex-col">
-                <label class="mb-2 text-sm font-medium">最小余额</label>
-                <n-input
-                  v-model:value="advancedFilters.minBalance"
-                  placeholder="输入最小余额"
-                />
-              </div>
-              <!-- 最大余额 -->
-              <div class="flex flex-col">
-                <label class="mb-2 text-sm font-medium">最大余额</label>
-                <n-input
-                  v-model:value="advancedFilters.maxBalance"
-                  placeholder="输入最大余额"
-                />
-              </div>
-              <!-- 最小存款 -->
-              <div class="flex flex-col">
-                <label class="mb-2 text-sm font-medium">最小存款金额</label>
-                <n-input
-                  v-model:value="advancedFilters.minDeposit"
-                  placeholder="输入最小存款"
-                />
-              </div>
-              <!-- 最大存款 -->
-              <div class="flex flex-col">
-                <label class="mb-2 text-sm font-medium">最大存款金额</label>
-                <n-input
-                  v-model:value="advancedFilters.maxDeposit"
-                  placeholder="输入最大存款"
-                />
-              </div>
-              <!-- 最小提现 -->
-              <div class="flex flex-col">
-                <label class="mb-2 text-sm font-medium">最小提现金额</label>
-                <n-input
-                  v-model:value="advancedFilters.minWithdraw"
-                  placeholder="输入最小提现"
-                />
-              </div>
-              <!-- 最大提现 -->
-              <div class="flex flex-col">
-                <label class="mb-2 text-sm font-medium">最大提现金额</label>
-                <n-input
-                  v-model:value="advancedFilters.maxWithdraw"
-                  placeholder="输入最大提现"
-                />
-              </div>
-              <!-- 最小登录次数 -->
-              <div class="flex flex-col">
-                <label class="mb-2 text-sm font-medium">最小登录次数</label>
-                <n-input
-                  v-model:value="advancedFilters.minLoginCount"
-                  placeholder="输入最小登录次数"
-                />
-              </div>
-              <!-- 最大登录次数 -->
-              <div class="flex flex-col">
-                <label class="mb-2 text-sm font-medium">最大登录次数</label>
-                <n-input
-                  v-model:value="advancedFilters.maxLoginCount"
-                  placeholder="输入最大登录次数"
-                />
-              </div>
-            </div>
-          </div>
-          <template #footer>
-            <div class="flex justify-end gap-2">
-              <n-button @click="showAdvancedSearch = false"> 取消 </n-button>
-              <n-button @click="resetAdvancedFilters"> 重置 </n-button>
-              <n-button type="primary" @click="applyAdvancedFilters">
-                应用高级搜索
-              </n-button>
-            </div>
-          </template>
-        </n-modal>
+          @apply="onAdvancedSearchApply"
+        />
       </div>
     </div>
   </Page>
@@ -253,12 +170,13 @@ import {
   NSelect,
   NInput,
   NTag,
-  NModal,
   useMessage,
   type DataTableColumns,
 } from 'naive-ui';
 import {
   getUserListApi,
+  postUserListAdvancedSearchApi,
+  type MemberAdvancedListBody,
   type UserItem,
   type UserListParams,
 } from '#/api/core/user-management';
@@ -287,6 +205,7 @@ import {
 import FieldSearchBar, {
   type FieldSearchBarOption,
 } from '#/components/filters/FieldSearchBar.vue';
+import MemberAdvancedSearchModal from './MemberAdvancedSearchModal.vue';
 
 const message = useMessage();
 const route = useRoute();
@@ -332,17 +251,9 @@ const paginationReactive = reactive({
   total: 0,
 });
 
-// 高级搜索过滤条件
-const advancedFilters = reactive({
-  minBalance: '',
-  maxBalance: '',
-  minDeposit: '',
-  maxDeposit: '',
-  minWithdraw: '',
-  maxWithdraw: '',
-  minLoginCount: '',
-  maxLoginCount: '',
-});
+/** POST `/users/admin/advanced-search` 条件快照（分页时复用） */
+const advancedListPayload = ref<MemberAdvancedListBody | null>(null);
+const advancedListMode = ref(false);
 
 // 选项配置
 const timeTypeOptions = [
@@ -917,6 +828,8 @@ const getSearchConditionLabel = () => {
 
 // Handle online status quick filter click
 const handleOnlineStatusClick = (statusValue: string) => {
+  advancedListMode.value = false;
+  advancedListPayload.value = null;
   // Auto-select onlineStatus in search condition
   filterForm.searchCondition = 'onlineStatus';
   filterForm.searchConditionValue = statusValue;
@@ -930,11 +843,15 @@ const handleOnlineStatusClick = (statusValue: string) => {
 };
 
 const handleFilter = () => {
+  advancedListMode.value = false;
+  advancedListPayload.value = null;
   paginationReactive.page = 1;
   loadTableData();
 };
 
 const resetFilter = () => {
+  advancedListMode.value = false;
+  advancedListPayload.value = null;
   Object.assign(filterForm, {
     timeType: 'registrationTime',
     dateQuickSelect: null,
@@ -1032,6 +949,8 @@ const handleBulkDelete = async (selectedRows: UserItem[]) => {
 };
 
 const handleFilterByName = (name: string) => {
+  advancedListMode.value = false;
+  advancedListPayload.value = null;
   console.log('Filtering by name:', name);
   filterForm.searchField = 'exact_name';
   filterForm.searchValue = name;
@@ -1044,25 +963,14 @@ const handleCommissionClick = (amount: number) => {
   console.log('Commission amount clicked:', amount);
 };
 
-// Advanced search handlers
-const resetAdvancedFilters = () => {
-  Object.assign(advancedFilters, {
-    minBalance: '',
-    maxBalance: '',
-    minDeposit: '',
-    maxDeposit: '',
-    minWithdraw: '',
-    maxWithdraw: '',
-    minLoginCount: '',
-    maxLoginCount: '',
-  });
-};
-
-const applyAdvancedFilters = () => {
+function onAdvancedSearchApply(payload: MemberAdvancedListBody) {
+  advancedListPayload.value = { ...payload };
+  advancedListMode.value = true;
+  paginationReactive.page = 1;
   showAdvancedSearch.value = false;
-  handleFilter();
-  message.success('已应用高级搜索条件');
-};
+  loadTableData();
+  message.success('已使用高级搜索');
+}
 
 // 数据加载
 const loadTableData = async () => {
@@ -1070,6 +978,33 @@ const loadTableData = async () => {
   const startTime = Date.now();
 
   try {
+    if (advancedListMode.value && advancedListPayload.value) {
+      const body = {
+        ...advancedListPayload.value,
+        page: paginationReactive.page,
+        pageSize: paginationReactive.pageSize,
+        sortBy: 'createdAt',
+        sortOrder: 'desc' as const,
+      };
+      const raw = await postUserListAdvancedSearchApi(body);
+      const inner = (raw as { data?: { list: UserItem[]; pagination?: { total: number } } })
+        ?.data ?? raw;
+      const loadTime = Date.now() - startTime;
+      console.log(`⚡ Advanced search loaded in ${loadTime}ms`);
+      if (inner && Array.isArray((inner as { list?: UserItem[] }).list)) {
+        const d = inner as {
+          list: UserItem[];
+          pagination?: { total: number };
+        };
+        tableData.value = d.list;
+        paginationReactive.total = d.pagination?.total ?? 0;
+      } else {
+        tableData.value = [];
+        paginationReactive.total = 0;
+      }
+      return;
+    }
+
     const params: UserListParams = {
       page: paginationReactive.page,
       pageSize: paginationReactive.pageSize,
@@ -1266,20 +1201,6 @@ const loadTableData = async () => {
       params.search = filterForm.search;
     }
 
-    // Advanced filters - only balance (deposit/withdrawal skipped for performance)
-    if (advancedFilters.minBalance) {
-      params.minBalance = parseFloat(advancedFilters.minBalance);
-    }
-    if (advancedFilters.maxBalance) {
-      params.maxBalance = parseFloat(advancedFilters.maxBalance);
-    }
-    if (advancedFilters.minLoginCount) {
-      params.minLoginCount = parseInt(advancedFilters.minLoginCount);
-    }
-    if (advancedFilters.maxLoginCount) {
-      params.maxLoginCount = parseInt(advancedFilters.maxLoginCount);
-    }
-
     const data = await getUserListApi(params);
 
     const loadTime = Date.now() - startTime;
@@ -1323,6 +1244,8 @@ function applyOpsDrillFromRoute(): void {
   const q = route.query;
   const s = Number(q.opsDateStart);
   const e = Number(q.opsDateEnd);
+  advancedListMode.value = false;
+  advancedListPayload.value = null;
   filterForm.timeType = String(q.opsTimeType);
   filterForm.dateQuickSelect = null;
   filterForm.dateRange = [s, e];

@@ -133,7 +133,7 @@
           <n-card size="small" class="summary-card stat-card-orange">
             <div class="stat-content">
               <div class="stat-info">
-                <div class="stat-label">参与会员</div>
+                <div class="stat-label">会员</div>
                 <div class="stat-value">{{ summary.memberCount }}</div>
                 <div class="stat-unit">人</div>
               </div>
@@ -322,7 +322,7 @@
                 "
               >
                 {{
-                  formatCurrency(
+                  formatMemberProfitLoss(
                     filteredGameDetails.reduce(
                       (sum, game) => sum + game.profitLoss,
                       0,
@@ -581,11 +581,12 @@ const enhancedGameColumns = [
     align: 'right',
     sorter: true,
     render: (row: BetGameDetail) => {
-      const isProfit = row.profitLoss >= 0;
+      const pl = row.profitLoss;
+      const isProfit = pl >= 0;
       return h(
         'span',
         { class: `font-bold ${isProfit ? 'text-green-600' : 'text-red-600'}` },
-        `${isProfit ? '+' : ''}R$ ${formatCurrency(Math.abs(row.profitLoss))}`,
+        formatMemberProfitLoss(pl),
       );
     },
   },
@@ -743,6 +744,14 @@ const handleFilterChange = () => {
 const formatCurrency = (amount: number): string => {
   // Always show exact amount with 2 decimal places, no K/M abbreviations
   return amount.toFixed(2);
+};
+
+/** 会员视角盈亏：赢为 +，输为 - */
+const formatMemberProfitLoss = (amount: number): string => {
+  const abs = formatCurrency(Math.abs(amount));
+  if (amount > 0) return `+R$ ${abs}`;
+  if (amount < 0) return `-R$ ${abs}`;
+  return `R$ ${abs}`;
 };
 
 const updateFilterOptions = () => {

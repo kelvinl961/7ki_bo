@@ -24,6 +24,12 @@ export interface UserItem {
   lastLoginTime: string;
   totalDeposit: number;
   totalWithdraw: number;
+  /** 充值次数 */
+  totalDepositCount?: number;
+  /** 提现次数 */
+  totalWithdrawalCount?: number;
+  /** 首充金额 */
+  firstDepositAmount?: number;
   loginCount: number;
   deviceCount: number;
   realName: string;
@@ -31,6 +37,10 @@ export interface UserItem {
   phone: string;
   cpf: string;
   createdAt: string;
+  /** 登录方式（列表接口可选） */
+  loginMethod?: string;
+  /** 是否当前在线（列表接口可选） */
+  isOnline?: boolean;
   profile?: any;
 }
 

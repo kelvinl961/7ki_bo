@@ -22,6 +22,12 @@ export interface UserItem {
   registrationMethod: string;
   balance: number;
   lastLoginTime: string;
+  /** 最后登录 IP（列表接口可选） */
+  lastLoginIp?: string;
+  /** 最后登录地区（列表接口可选，如 Brazil/Paraíba） */
+  lastLoginRegion?: string;
+  /** 最后登录 IP 对应国家/地区（列表接口，如 Vietnam） */
+  ipCountry?: string;
   totalDeposit: number;
   totalWithdraw: number;
   /** 充值次数 */
@@ -39,6 +45,8 @@ export interface UserItem {
   createdAt: string;
   /** 登录方式（列表接口可选） */
   loginMethod?: string;
+  /** 操作系统（列表接口，用于登录方式列图标） */
+  operatingSystem?: string;
   /** 是否当前在线（列表接口可选） */
   isOnline?: boolean;
   profile?: any;

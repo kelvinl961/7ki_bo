@@ -177,6 +177,8 @@ import {
 import {
   LogoApple,
   LogoAndroid,
+  LogoWindows,
+  LogoTux,
   PersonCircleOutline,
 } from '@vicons/ionicons5';
 import {
@@ -408,8 +410,45 @@ function resolveIsOnline(row: UserItem): boolean {
   return false;
 }
 
-/** 根据 UA/OS 等推断展示 Apple / Android / 通用 */
-function inferLoginOsFamily(row: UserItem): 'ios' | 'android' | 'other' {
+/** 与 operatingSystem 字符串对应的图标分类 */
+type OsIconKind = 'apple' | 'android' | 'windows' | 'linux' | 'other';
+
+const OS_ICON_MAP: Record<
+  OsIconKind,
+  typeof LogoApple | typeof LogoAndroid | typeof LogoWindows | typeof LogoTux | typeof PersonCircleOutline
+> = {
+  apple: LogoApple,
+  android: LogoAndroid,
+  windows: LogoWindows,
+  linux: LogoTux,
+  other: PersonCircleOutline,
+};
+
+/**
+ * 根据接口字段 operatingSystem 解析图标（大小写不敏感）。
+ * 支持常见值：iOS、Android、Windows、Linux、macOS、HarmonyOS 等。
+ */
+function parseOperatingSystemIcon(osRaw?: string | null): OsIconKind {
+  if (osRaw == null || String(osRaw).trim() === '') return 'other';
+  const s = String(osRaw).trim().toLowerCase();
+
+  if (
+    /iphone|ipad|ipados|\bios\b|ios(?![a-z])|apple/.test(s) ||
+    /\bip(hone|ad)\b/.test(s)
+  ) {
+    return 'apple';
+  }
+  if (/mac|macos|darwin|osx\b|os\s*x/.test(s)) return 'apple';
+  if (/android|harmony|鸿蒙/.test(s)) return 'android';
+  if (/windows|win\d|microsoft|wpdesktop/.test(s)) return 'windows';
+  if (/linux|ubuntu|debian|fedora|centos|redhat|rhel|gentoo|arch/.test(s)) {
+    return 'linux';
+  }
+  return 'other';
+}
+
+/** operatingSystem 为空时，用 UA/profile 等兜底推断 */
+function inferOsIconFallback(row: UserItem): OsIconKind {
   const p = row.profile as Record<string, unknown> | undefined;
   const ext = row as UserItem & {
     lastLoginOs?: string;
@@ -430,28 +469,133 @@ function inferLoginOsFamily(row: UserItem): 'ios' | 'android' | 'other' {
     .filter((x) => x != null && String(x).trim() !== '')
     .join(' ')
     .toLowerCase();
-  if (/iphone|ipad|ipod|\bios\b|apple/i.test(raw)) return 'ios';
-  if (/android/.test(raw)) return 'android';
+  if (/iphone|ipad|ipod|\bios\b|apple/i.test(raw)) return 'apple';
+  if (/android|harmony|鸿蒙/.test(raw)) return 'android';
+  if (/windows|win\d/.test(raw)) return 'windows';
+  if (/linux|ubuntu/.test(raw)) return 'linux';
   return 'other';
+}
+
+function resolveLoginOsIconKind(row: UserItem): OsIconKind {
+  const fromApi = row.operatingSystem;
+  if (fromApi != null && String(fromApi).trim() !== '') {
+    return parseOperatingSystemIcon(fromApi);
+  }
+  return inferOsIconFallback(row);
+}
+
+/** 接口可能返回 manual，界面不展示该英文词 */
+function formatLoginMethodLabel(row: UserItem): string {
+  const raw =
+    row.loginMethod ||
+    row.registrationMethod ||
+    '账号登录';
+  let t = String(raw).trim();
+  if (!t) return '账号登录';
+  if (/^manual$/i.test(t)) return '账号登录';
+  t = t.replace(/\bmanual\b/gi, ' ').replace(/\s+/g, ' ').trim();
+  return t || '账号登录';
 }
 
 function renderLoginMethodCell(row: UserItem) {
   const online = resolveIsOnline(row);
-  const os = inferLoginOsFamily(row);
-  const label =
-    row.loginMethod ||
-    row.registrationMethod ||
-    '账号登录';
+  const kind = resolveLoginOsIconKind(row);
+  const IconComp = OS_ICON_MAP[kind];
+  const label = formatLoginMethodLabel(row);
   const iconColor = online ? '#18a058' : '#c0c4cc';
   const textClass = online ? 'text-slate-700' : 'text-slate-400';
-  const IconComp =
-    os === 'ios' ? LogoApple : os === 'android' ? LogoAndroid : PersonCircleOutline;
   return h(
     'div',
     { class: 'flex items-center justify-center gap-2' },
     [
       h(NIcon, { size: 18, color: iconColor, component: IconComp }),
       h('span', { class: `text-xs ${textClass}` }, label),
+    ],
+  );
+}
+
+/** 最后登录：仅按 lastLoginTime 排序；表头两行 */
+function lastLoginIpRegionTimeHeader() {
+  return () =>
+    h('div', { class: 'w-full min-w-[200px] max-w-[260px] py-1' }, [
+      h(
+        'div',
+        {
+          class:
+            'text-center text-[11px] font-medium leading-tight text-slate-700',
+        },
+        '最后登录IP/地区',
+      ),
+      h(
+        'div',
+        {
+          class:
+            'mt-1 flex items-center justify-center gap-1 text-[10px] leading-none text-slate-400',
+        },
+        [
+          h(
+            'span',
+            { class: 'text-slate-500' },
+            '最后登录时间',
+          ),
+          renderSortCaret('lastLoginTime'),
+        ],
+      ),
+    ]);
+}
+
+function getLastLoginIpRegionLine(row: UserItem): string {
+  const ext = row as UserItem & {
+    lastLoginIp?: string;
+    lastLoginRegion?: string;
+    ipCountry?: string;
+  };
+  const p = row.profile as Record<string, unknown> | undefined;
+  const ip =
+    ext.lastLoginIp ??
+    (p?.lastLoginIp as string | undefined) ??
+    (p?.last_login_ip as string | undefined) ??
+    '';
+  const region =
+    ext.lastLoginRegion ??
+    (p?.lastLoginRegion as string | undefined) ??
+    (p?.last_login_region as string | undefined) ??
+    '';
+  const country =
+    ext.ipCountry ??
+    (p?.ipCountry as string | undefined) ??
+    (p?.lastLoginCountry as string | undefined) ??
+    '';
+  const pieces = [String(ip).trim(), String(region).trim(), String(country).trim()].filter(
+    Boolean,
+  );
+  return pieces.length ? pieces.join(' ') : '-';
+}
+
+function renderLastLoginStackCell(ipRegionLine: string, timeLine: string) {
+  return h(
+    'div',
+    {
+      class:
+        'flex min-h-[36px] flex-col items-center justify-center gap-0.5 px-1 py-0.5 text-center',
+    },
+    [
+      h(
+        'span',
+        {
+          class:
+            'max-w-[240px] truncate text-[12px] leading-snug text-slate-700',
+          title: ipRegionLine !== '-' ? ipRegionLine : undefined,
+        },
+        ipRegionLine,
+      ),
+      h(
+        'span',
+        {
+          class: 'tabular-nums text-[11px] leading-none text-slate-500',
+        },
+        timeLine,
+      ),
     ],
   );
 }
@@ -877,12 +1021,16 @@ const columns = computed<DataTableColumns<UserItem>>(() => {
     },
   },
   {
-    title: singleLineSortHeader('最后登录日期时间', 'lastLoginTime'),
+    title: lastLoginIpRegionTimeHeader(),
     key: 'lastLoginDateTime',
-    width: 172,
+    width: 228,
     align: 'center',
     render(row) {
-      return row.lastLoginTime ? formatDateTime(row.lastLoginTime) : '-';
+      const top = getLastLoginIpRegionLine(row);
+      const bottom = row.lastLoginTime
+        ? formatDateTime(row.lastLoginTime)
+        : '-';
+      return renderLastLoginStackCell(top, bottom);
     },
   },
 

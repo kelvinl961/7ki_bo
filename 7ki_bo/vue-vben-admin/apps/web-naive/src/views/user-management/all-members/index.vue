@@ -130,6 +130,7 @@
           :columns="columns"
           :loading="loading"
           :pagination="paginationReactive"
+          :scroll-x="3200"
           selectable
           :selected-keys="checkedRowKeys"
           :row-key="(row: UserItem) => row.id"
@@ -244,7 +245,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch, nextTick, h } from 'vue';
+import { ref, reactive, computed, onMounted, watch, nextTick, h } from 'vue';
 import { useRoute } from 'vue-router';
 import { Page } from '@vben/common-ui';
 import {
@@ -254,9 +255,16 @@ import {
   NInput,
   NTag,
   NModal,
+  NIcon,
   useMessage,
   type DataTableColumns,
+  type DataTableSortState,
 } from 'naive-ui';
+import {
+  LogoApple,
+  LogoAndroid,
+  PersonCircleOutline,
+} from '@vicons/ionicons5';
 import {
   getUserListApi,
   type UserItem,
@@ -467,8 +475,202 @@ const formatDateTime = (dateString: string) => {
   return formatDateTimeInTimezone(dateString);
 };
 
-// 表格列配置
-const columns: DataTableColumns<UserItem> = [
+const sortState = ref<DataTableSortState | null>(null);
+
+function fmtMoneyTable(n: number): string {
+  return Math.abs(n).toLocaleString('zh-CN', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+function getDepositWithdrawDiff(row: UserItem): number {
+  return (Number(row.totalDeposit) || 0) - (Number(row.totalWithdraw) || 0);
+}
+
+function resolveIsOnline(row: UserItem): boolean {
+  if (typeof row.isOnline === 'boolean') return row.isOnline;
+  const p = row.profile as Record<string, unknown> | undefined;
+  if (p && typeof p.isOnline === 'boolean') return p.isOnline;
+  if (p && typeof p.online === 'boolean') return p.online as boolean;
+  return false;
+}
+
+/** 根据 UA/OS 等推断展示 Apple / Android / 通用 */
+function inferLoginOsFamily(row: UserItem): 'ios' | 'android' | 'other' {
+  const p = row.profile as Record<string, unknown> | undefined;
+  const ext = row as UserItem & {
+    lastLoginOs?: string;
+    lastLoginUserAgent?: string;
+    clientType?: string;
+  };
+  const raw = [
+    ext.lastLoginOs,
+    ext.lastLoginUserAgent,
+    ext.clientType,
+    ext.loginMethod,
+    row.registrationMethod,
+    p?.lastLoginOs,
+    p?.deviceOs,
+    p?.platform,
+    p?.userAgent,
+  ]
+    .filter((x) => x != null && String(x).trim() !== '')
+    .join(' ')
+    .toLowerCase();
+  if (/iphone|ipad|ipod|\bios\b|apple/i.test(raw)) return 'ios';
+  if (/android/.test(raw)) return 'android';
+  return 'other';
+}
+
+function renderLoginMethodCell(row: UserItem) {
+  const online = resolveIsOnline(row);
+  const os = inferLoginOsFamily(row);
+  const label =
+    row.loginMethod ||
+    row.registrationMethod ||
+    '账号登录';
+  const iconColor = online ? '#18a058' : '#c0c4cc';
+  const textClass = online ? 'text-slate-700' : 'text-slate-400';
+  const IconComp =
+    os === 'ios' ? LogoApple : os === 'android' ? LogoAndroid : PersonCircleOutline;
+  return h(
+    'div',
+    { class: 'flex items-center justify-center gap-2' },
+    [
+      h(NIcon, { size: 18, color: iconColor, component: IconComp }),
+      h('span', { class: `text-xs ${textClass}` }, label),
+    ],
+  );
+}
+
+function singleLineSortHeader(title: string, sortKey: string) {
+  return () =>
+    h(
+      'div',
+      { class: 'flex w-full items-center justify-center gap-1 px-1 text-xs' },
+      [
+        h('span', { class: 'font-medium text-slate-700' }, title),
+        renderSortCaret(sortKey),
+      ],
+    );
+}
+
+function renderSortCaret(sortKey: string) {
+  const active = sortState.value?.columnKey === sortKey;
+  const order = sortState.value?.order;
+  return h(
+    'span',
+    {
+      class:
+        'inline-flex cursor-pointer flex-col rounded px-0.5 py-px leading-none transition-colors hover:bg-slate-100',
+      style: 'font-size:10px;line-height:1;user-select:none',
+      onClick: (e: MouseEvent) => {
+        e.stopPropagation();
+        applyMemberListSort(sortKey);
+      },
+    },
+    [
+      h(
+        'span',
+        {
+          style: {
+            color: active && order === 'ascend' ? '#2080f0' : '#c9cdd4',
+          },
+        },
+        '▲',
+      ),
+      h(
+        'span',
+        {
+          style: {
+            color: active && order === 'descend' ? '#2080f0' : '#c9cdd4',
+          },
+        },
+        '▼',
+      ),
+    ],
+  );
+}
+
+function stackedSortHeader(
+  line1: string,
+  line2: string,
+  key1: string,
+  key2: string,
+) {
+  return () =>
+    h('div', { class: 'w-full max-w-[160px] py-1' }, [
+      h(
+        'div',
+        {
+          class:
+            'flex items-center justify-center gap-1 text-[11px] font-medium leading-none text-slate-700',
+        },
+        [h('span', { class: 'truncate' }, line1), renderSortCaret(key1)],
+      ),
+      h(
+        'div',
+        {
+          class:
+            'mt-1 flex items-center justify-center gap-1 text-[10px] leading-none text-slate-400',
+        },
+        [h('span', { class: 'truncate' }, line2), renderSortCaret(key2)],
+      ),
+    ]);
+}
+
+/** 财务双行单元格：主数字 + 次要说明，控制行高与对齐 */
+function renderFinanceStackCell(
+  primaryText: string,
+  secondaryText: string,
+  primaryClass: string,
+) {
+  return h(
+    'div',
+    {
+      class:
+        'flex min-h-[32px] flex-col items-center justify-center gap-px py-0.5 text-center',
+    },
+    [
+      h(
+        'span',
+        {
+          class: `tabular-nums text-[13px] font-medium leading-none ${primaryClass}`,
+        },
+        primaryText,
+      ),
+      h(
+        'span',
+        { class: 'tabular-nums text-[11px] leading-none text-slate-400' },
+        secondaryText,
+      ),
+    ],
+  );
+}
+
+function applyMemberListSort(columnKey: string) {
+  const cur = sortState.value;
+  if (cur?.columnKey === columnKey) {
+    if (cur.order === 'ascend') {
+      sortState.value = { columnKey, order: 'descend' };
+    } else if (cur.order === 'descend') {
+      sortState.value = null;
+    } else {
+      sortState.value = { columnKey, order: 'ascend' };
+    }
+  } else {
+    sortState.value = { columnKey, order: 'ascend' };
+  }
+  paginationReactive.page = 1;
+  void loadTableData();
+}
+
+// 表格列配置（依赖 sortState 以刷新表头排序高亮）
+const columns = computed<DataTableColumns<UserItem>>(() => {
+  void sortState.value?.columnKey;
+  void sortState.value?.order;
+  return [
   { type: 'selection' },
   {
     title: '用户ID',
@@ -515,14 +717,6 @@ const columns: DataTableColumns<UserItem> = [
     ellipsis: { tooltip: true },
   },
   {
-    title: '注册日期',
-    key: 'registrationTime',
-    width: 160,
-    render(row) {
-      return row.registrationTime ? formatDateTime(row.registrationTime) : '-';
-    },
-  },
-  {
     title: 'VIP等级',
     key: 'vipLevel',
     width: 100,
@@ -552,11 +746,86 @@ const columns: DataTableColumns<UserItem> = [
       return h(
         NTag,
         {
+          size: 'small',
+          round: true,
+          bordered: false,
           type: levelColorMap[row.memberLevel] || 'default',
         },
         {
           default: () => row.memberLevel || '默认层级',
         },
+      );
+    },
+  },
+  {
+    title: stackedSortHeader(
+      '总充值金额',
+      '充值次数',
+      'totalDeposit',
+      'totalDepositCount',
+    ),
+    key: 'totalDepositGroup',
+    width: 158,
+    align: 'center',
+    render(row) {
+      const amt = Number(row.totalDeposit) || 0;
+      const cnt = row.totalDepositCount ?? 0;
+      return renderFinanceStackCell(
+        fmtMoneyTable(amt),
+        `· ${cnt} 次`,
+        'text-rose-600',
+      );
+    },
+  },
+  {
+    title: stackedSortHeader(
+      '总提现金额',
+      '提现次数',
+      'totalWithdraw',
+      'totalWithdrawalCount',
+    ),
+    key: 'totalWithdrawGroup',
+    width: 158,
+    align: 'center',
+    render(row) {
+      const amt = Number(row.totalWithdraw) || 0;
+      const cnt = row.totalWithdrawalCount ?? 0;
+      return renderFinanceStackCell(
+        fmtMoneyTable(amt),
+        `· ${cnt} 次`,
+        'text-emerald-600',
+      );
+    },
+  },
+  {
+    title: stackedSortHeader(
+      '总充提差额',
+      '首充金额',
+      'depositWithdrawDiff',
+      'firstDepositAmount',
+    ),
+    key: 'depositWithdrawGroup',
+    width: 158,
+    align: 'center',
+    render(row) {
+      const diff = getDepositWithdrawDiff(row);
+      const diffClass =
+        diff > 0
+          ? 'text-rose-600'
+          : diff < 0
+            ? 'text-emerald-600'
+            : 'text-slate-600';
+      const diffText =
+        diff === 0
+          ? fmtMoneyTable(0)
+          : diff > 0
+            ? fmtMoneyTable(diff)
+            : `-${fmtMoneyTable(diff)}`;
+      const first = Number(row.firstDepositAmount) || 0;
+      return renderFinanceStackCell(
+        diffText,
+        `首充 ${fmtMoneyTable(first)}`,
+        diffClass,
       );
     },
   },
@@ -643,16 +912,6 @@ const columns: DataTableColumns<UserItem> = [
     },
   },
   {
-    title: '首存金额',
-    key: 'firstDepositAmount',
-    width: 120,
-    render(row) {
-      const amount = (row as UserItem & { firstDepositAmount?: number })
-        .firstDepositAmount;
-      return `BRL ${(amount ?? 0).toFixed(2)}`;
-    },
-  },
-  {
     title: '状态',
     key: 'accountStatus',
     width: 120,
@@ -687,6 +946,33 @@ const columns: DataTableColumns<UserItem> = [
       );
     },
   },
+  {
+    title: '登录方式',
+    key: 'loginMethodDisplay',
+    width: 140,
+    align: 'center',
+    render(row) {
+      return renderLoginMethodCell(row);
+    },
+  },
+  {
+    title: singleLineSortHeader('注册日期时间', 'registrationTime'),
+    key: 'registrationDateTime',
+    width: 172,
+    align: 'center',
+    render(row) {
+      return row.registrationTime ? formatDateTime(row.registrationTime) : '-';
+    },
+  },
+  {
+    title: singleLineSortHeader('最后登录日期时间', 'lastLoginTime'),
+    key: 'lastLoginDateTime',
+    width: 172,
+    align: 'center',
+    render(row) {
+      return row.lastLoginTime ? formatDateTime(row.lastLoginTime) : '-';
+    },
+  },
 
   {
     title: '操作',
@@ -716,6 +1002,7 @@ const columns: DataTableColumns<UserItem> = [
     },
   },
 ];
+});
 
 // 事件处理函数 - 使用环境变量中的时区
 const handleQuickDateSelect = (value: 'day' | 'week' | 'month' | null) => {
@@ -954,6 +1241,7 @@ const resetFilter = () => {
   });
   searchConditionValueOptions.value = [];
   paginationReactive.page = 1;
+  sortState.value = null;
   loadTableData();
 };
 
@@ -1065,7 +1353,7 @@ const applyAdvancedFilters = () => {
 };
 
 // 数据加载
-const loadTableData = async () => {
+async function loadTableData() {
   loading.value = true;
   const startTime = Date.now();
 
@@ -1074,6 +1362,11 @@ const loadTableData = async () => {
       page: paginationReactive.page,
       pageSize: paginationReactive.pageSize,
     };
+
+    if (sortState.value?.columnKey && sortState.value.order) {
+      params.sortBy = sortState.value.columnKey as string;
+      params.sortOrder = sortState.value.order === 'ascend' ? 'asc' : 'desc';
+    }
 
     // Time-based filters - Convert to UTC for backend
     if (filterForm.dateRange && filterForm.dateRange.length === 2) {
@@ -1300,7 +1593,7 @@ const loadTableData = async () => {
   } finally {
     loading.value = false;
   }
-};
+}
 
 /** 日运营报表下钻 query（需在 keep-alive 下用 watch 同步，不能仅靠 onMounted） */
 function hasValidOpsDrillQuery(): boolean {

@@ -53,6 +53,16 @@ const routes: RouteRecordRaw[] = [
       },
       {
         meta: {
+          keepAlive: true,
+          title: '公积金',
+        },
+        name: 'ProvidentFund',
+        path: '/preferentialActivitiesNew/provident-fund',
+        // @ts-ignore
+        component: () => import('#/views/activity/ProvidentFund.vue'),
+      },
+      {
+        meta: {
           icon: 'ic:outline-emoji-events',
           title: 'VIP奖励',
         },

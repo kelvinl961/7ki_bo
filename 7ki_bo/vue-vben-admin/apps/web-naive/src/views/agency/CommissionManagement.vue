@@ -699,7 +699,6 @@ const activeTab = ref('pending');
 // Currency options
 const currencyOptions = [
   { label: 'BRL', value: 'BRL' },
-  { label: 'CNY', value: 'CNY' },
   { label: 'ZMW', value: 'ZMW' },
   { label: 'USDT', value: 'USDT' },
 ];

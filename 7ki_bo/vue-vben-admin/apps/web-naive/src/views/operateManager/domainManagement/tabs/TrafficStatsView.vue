@@ -153,7 +153,7 @@ const columns: DataTableColumn<TrafficStats>[] = [
     },
   },
   {
-    title: '总费用(U)',
+    title: '总费用(BRL)',
     key: 'totalCost',
     width: 100,
     render(row: TrafficStats) {
@@ -178,7 +178,7 @@ const columns: DataTableColumn<TrafficStats>[] = [
     width: 100,
   },
   {
-    title: '节点费用(U)',
+    title: '节点费用(BRL)',
     key: 'nodeCost',
     width: 110,
     render(row: TrafficStats) {
@@ -241,7 +241,7 @@ const columns: DataTableColumn<TrafficStats>[] = [
     },
   },
   {
-    title: '超出费用(U)',
+    title: '超出费用(BRL)',
     key: 'excessCost',
     width: 120,
     render(row: TrafficStats) {
@@ -310,7 +310,7 @@ const columns: DataTableColumn<TrafficStats>[] = [
     },
   },
   {
-    title: '超出费用(U)',
+    title: '超出费用(BRL)',
     key: 'domainExcessCost',
     width: 120,
     render(row: TrafficStats) {

@@ -134,6 +134,17 @@ export interface MemberAdvancedListBody {
   topAgentAccounts?: string[];
   depositIdleAgeDays?: { minDays: number; maxDays: number };
   verificationMethods?: string[];
+  registrationMethods?: string[];
+  loginMethods?: string[];
+  onlineStatusFilters?: string[];
+  /** 注册时 User.userAgent 推断的操作系统（多选 OR），与 BO 高级搜索 value 一致 */
+  registrationDeviceOsFilters?: string[];
+  /** 注册时 User.userAgent 推断的客户端形态（多选 OR） */
+  registrationDeviceClientFilters?: string[];
+  /** 近期登录日志上的操作系统（多选 OR） */
+  lastLoginDeviceOsFilters?: string[];
+  /** 近期登录日志上的客户端形态（多选 OR） */
+  lastLoginDeviceClientFilters?: string[];
 }
 
 /**

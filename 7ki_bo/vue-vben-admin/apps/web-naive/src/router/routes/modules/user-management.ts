@@ -33,6 +33,18 @@ const routes: RouteRecordRaw[] = [
         component: () =>
           import('../../../views/usermanagerNEW/memberTier/index.vue'),
       },
+      {
+        meta: {
+          keepAlive: true,
+          title: '注册和验证',
+        },
+        name: 'RegistrationVerification',
+        path: '/user-management/registration-verification',
+        component: () =>
+          import(
+            '../../../views/user-management/registration-verification/index.vue'
+          ),
+      },
     ],
   },
 ];

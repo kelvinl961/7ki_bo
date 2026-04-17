@@ -264,7 +264,7 @@ const getSelectedRows = (): T[] => {
 const formatCurrency = (amount: number): string => {
   return new Intl.NumberFormat('zh-CN', {
     style: 'currency',
-    currency: 'CNY',
+    currency: 'BRL',
     minimumFractionDigits: 2,
   }).format(amount);
 };

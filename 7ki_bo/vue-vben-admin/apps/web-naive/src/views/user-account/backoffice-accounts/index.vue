@@ -189,23 +189,27 @@
             :disabled="editMode === 'edit'"
           />
         </n-form-item>
-        <n-form-item label="密码" path="password" v-if="editMode === 'add'">
+        <n-form-item label="密码" path="password">
           <n-input
             v-model:value="editForm.password"
             type="password"
-            placeholder="请输入密码"
+            :placeholder="
+              editMode === 'add' ? '请输入密码' : '留空则不修改密码'
+            "
             show-password-on="click"
           />
         </n-form-item>
         <n-form-item
-          label="确认密码"
+          :label="editMode === 'add' ? '确认密码' : '确认新密码'"
           path="confirmPassword"
-          v-if="editMode === 'add'"
+          v-if="editMode === 'add' || !!editForm.password"
         >
           <n-input
             v-model:value="editForm.confirmPassword"
             type="password"
-            placeholder="请再次输入密码"
+            :placeholder="
+              editMode === 'add' ? '请再次输入密码' : '请再次输入新密码'
+            "
             show-password-on="click"
           />
         </n-form-item>
@@ -309,19 +313,37 @@ const formRules: FormRules = {
     { min: 3, max: 20, message: '用户名长度在3-20个字符', trigger: 'blur' },
   ],
   password: [
-    { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, message: '密码长度至少6个字符', trigger: 'blur' },
+    {
+      validator: (_rule, value) => {
+        if (editMode.value === 'add' && !value) {
+          return new Error('请输入密码');
+        }
+        if (value && value.length < 6) {
+          return new Error('密码长度至少6个字符');
+        }
+        return true;
+      },
+      trigger: ['blur', 'input'],
+    },
   ],
   confirmPassword: [
-    { required: true, message: '请再次输入密码', trigger: 'blur' },
     {
-      validator: (rule, value) => {
+      validator: (_rule, value) => {
+        if (editMode.value === 'add' && !value) {
+          return new Error('请再次输入密码');
+        }
+        if (editMode.value === 'edit' && editForm.password && !value) {
+          return new Error('请再次输入新密码');
+        }
+        if (editMode.value === 'edit' && !editForm.password && !value) {
+          return true;
+        }
         if (value !== editForm.password) {
           return new Error('两次输入的密码不一致');
         }
         return true;
       },
-      trigger: 'blur',
+      trigger: ['blur', 'input'],
     },
   ],
   role: [{ required: true, message: '请选择角色', trigger: 'change' }],
@@ -575,6 +597,7 @@ const handleAddAccount = () => {
 };
 
 const handleEditAccount = (account: BackofficeAccount) => {
+  currentAccount.value = account;
   editMode.value = 'edit';
   Object.assign(editForm, {
     username: account.username,
@@ -603,11 +626,24 @@ const handleSubmitEdit = async () => {
     } else {
       // For edit mode, we need the current account ID
       if (currentAccount.value) {
-        await updateBackofficeAccountApi(currentAccount.value.id, {
+        const updatePayload: {
+          role: string;
+          isSuspended: boolean;
+          password?: string;
+        } = {
           role: editForm.role,
           isSuspended: editForm.isSuspended,
+        };
+        const newPassword = editForm.password.trim();
+        if (newPassword) {
+          updatePayload.password = newPassword;
+        }
+        await updateBackofficeAccountApi(currentAccount.value.id, {
+          ...updatePayload,
         });
-        message.success('账号更新成功');
+        message.success(
+          newPassword ? '账号和密码更新成功' : '账号更新成功',
+        );
       }
     }
 

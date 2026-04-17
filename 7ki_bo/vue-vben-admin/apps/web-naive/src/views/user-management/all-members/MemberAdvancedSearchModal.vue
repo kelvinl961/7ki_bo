@@ -15,7 +15,7 @@
         :model="form"
         :show-feedback="false"
         label-placement="left"
-        :label-width="136"
+        :label-width="160"
         size="small"
         class="adv-form"
       >
@@ -25,10 +25,10 @@
       <n-radio-group v-model:value="form.bulkKey" class="adv-bulk-radio-group">
         <div class="adv-bulk-radios">
           <n-radio value="member.account">会员账号</n-radio>
-          <n-radio value="member.id">会员ID</n-radio>
+          <n-radio value="member.user_id_string">会员ID</n-radio>
           <n-radio value="member.phone">手机号</n-radio>
           <n-radio value="inviter.account">邀请人账号</n-radio>
-          <n-radio value="inviter.id">邀请人ID</n-radio>
+          <n-radio value="inviter.user_id_string">邀请人ID</n-radio>
           <n-radio value="parent_agent_id">上级代理ID</n-radio>
           <n-radio value="inviter.account_parent">上级代理账号</n-radio>
           <n-radio value="agent.top_id_path">顶层代理ID</n-radio>
@@ -45,7 +45,12 @@
         size="small"
       />
 
-      <n-grid :cols="2" :x-gap="20" :y-gap="4" class="adv-grid">
+      <n-grid
+        :cols="2"
+        :x-gap="16"
+        :y-gap="SECTION_FORM_ROW_GAP"
+        class="adv-grid adv-grid--pane-tidy"
+      >
         <n-gi>
           <n-form-item label="姓名">
             <n-input
@@ -328,8 +333,13 @@
         class="adv-subtabs"
       >
         <n-tab-pane name="reg" tab="注册登录信息">
-          <n-grid :cols="2" :x-gap="20" :y-gap="4" class="adv-grid adv-grid--pane">
-            <n-gi span="2" class="adv-gi-range">
+          <n-grid
+            :cols="2"
+            :x-gap="16"
+            :y-gap="SECTION_FORM_ROW_GAP"
+            class="adv-grid adv-grid--pane adv-grid--pane-tidy adv-grid--reg-login"
+          >
+            <n-gi>
               <n-form-item label="注册时间">
                 <n-date-picker
                   v-model:value="form.regTimeRange"
@@ -360,7 +370,7 @@
             </n-gi>
             <n-gi>
               <n-form-item label="注册设备类型">
-                <div class="adv-twin-select adv-twin-select--multi">
+                <div class="adv-twin-select adv-twin-select--reg">
                   <n-select
                     :value="form.regDeviceOs"
                     multiple
@@ -369,7 +379,7 @@
                     :render-label="renderMultiLabel"
                     :render-tag="renderMultiFieldTag"
                     size="small"
-                    placeholder="系统"
+                    placeholder="全部操作系统"
                     :max-tag-count="1"
                     :options="optionsWithAll(deviceOsOptions)"
                     @update:value="(v) => {
@@ -389,7 +399,7 @@
                     :render-label="renderMultiLabel"
                     :render-tag="renderMultiFieldTag"
                     size="small"
-                    placeholder="方式"
+                    placeholder="全部注册方式"
                     :max-tag-count="1"
                     :options="optionsWithAll(deviceMethodOptions)"
                     @update:value="(v) => {
@@ -404,7 +414,7 @@
                 </div>
               </n-form-item>
             </n-gi>
-            <n-gi span="2" class="adv-gi-wide">
+            <n-gi>
               <n-form-item label="注册浏览器指纹">
                 <n-input
                   v-model:value="form.browserFingerprint"
@@ -413,7 +423,7 @@
                 />
               </n-form-item>
             </n-gi>
-            <n-gi span="2" class="adv-gi-range">
+            <n-gi>
               <n-form-item label="最后登录时间">
                 <n-date-picker
                   v-model:value="form.lastLoginRange"
@@ -448,7 +458,7 @@
             </n-gi>
             <n-gi>
               <n-form-item label="最后登录设备类型">
-                <div class="adv-twin-select adv-twin-select--multi">
+                <div class="adv-twin-select adv-twin-select--reg">
                   <n-select
                     :value="form.lastLoginDeviceOs"
                     multiple
@@ -457,7 +467,7 @@
                     :render-label="renderMultiLabel"
                     :render-tag="renderMultiFieldTag"
                     size="small"
-                    placeholder="系统"
+                    placeholder="全部操作系统"
                     :max-tag-count="1"
                     :options="optionsWithAll(deviceOsOptions)"
                     @update:value="(v) => {
@@ -477,7 +487,7 @@
                     :render-label="renderMultiLabel"
                     :render-tag="renderMultiFieldTag"
                     size="small"
-                    placeholder="方式"
+                    placeholder="全部注册方式"
                     :max-tag-count="1"
                     :options="optionsWithAll(deviceMethodOptions)"
                     @update:value="(v) => {
@@ -492,7 +502,7 @@
                 </div>
               </n-form-item>
             </n-gi>
-            <n-gi span="2" class="adv-gi-wide">
+            <n-gi>
               <n-form-item label="最后登录浏览器指纹">
                 <n-input
                   v-model:value="form.loginLogFingerprint"
@@ -506,27 +516,33 @@
                 label="未登录时间(天)"
                 :show-feedback="false"
               >
-                <div class="adv-range-inline">
+                <div class="adv-range-inline adv-range-inline--reg">
                   <n-input
                     v-model:value="form.daysIdleMinStr"
                     size="small"
-                    placeholder=""
+                    placeholder="最小值"
                   />
                   <span class="adv-range-sep">~</span>
                   <n-input
                     v-model:value="form.daysIdleMaxStr"
                     size="small"
-                    placeholder=""
+                    placeholder="最大值"
                   />
                 </div>
               </n-form-item>
             </n-gi>
+            <n-gi />
           </n-grid>
         </n-tab-pane>
 
         <n-tab-pane name="finance" tab="财务信息">
-          <n-grid :cols="2" :x-gap="20" :y-gap="4" class="adv-grid adv-grid--pane">
-            <n-gi span="2" class="adv-gi-range">
+          <n-grid
+            :cols="2"
+            :x-gap="16"
+            :y-gap="SECTION_FORM_ROW_GAP"
+            class="adv-grid adv-grid--pane adv-grid--pane-tidy adv-grid--reg-login"
+          >
+            <n-gi>
               <n-form-item label="首充时间">
                 <n-date-picker
                   v-model:value="form.firstDepositRange"
@@ -538,19 +554,29 @@
             </n-gi>
             <n-gi>
               <n-form-item label="首充金额">
-                <div class="adv-range-inline">
+                <div class="adv-range-inline adv-range-inline--reg">
                   <n-input
                     v-model:value="form.firstDepositAmtMin"
                     size="small"
-                    placeholder="最小"
+                    placeholder="最小值"
                   />
                   <span class="adv-range-sep">~</span>
                   <n-input
                     v-model:value="form.firstDepositAmtMax"
                     size="small"
-                    placeholder="最大"
+                    placeholder="最大值"
                   />
                 </div>
+              </n-form-item>
+            </n-gi>
+            <n-gi>
+              <n-form-item label="最后充值时间">
+                <n-date-picker
+                  v-model:value="form.lastDepositRange"
+                  type="datetimerange"
+                  clearable
+                  size="small"
+                />
               </n-form-item>
             </n-gi>
             <n-gi>
@@ -577,26 +603,7 @@
                 />
               </n-form-item>
             </n-gi>
-            <n-gi span="2" class="adv-gi-range">
-              <n-form-item label="最后充值时间">
-                <n-date-picker
-                  v-model:value="form.lastDepositRange"
-                  type="datetimerange"
-                  clearable
-                  size="small"
-                />
-              </n-form-item>
-            </n-gi>
             <n-gi>
-              <n-form-item label="累计充值金额">
-                <div class="adv-range-inline">
-                  <n-input v-model:value="form.totalDepMin" size="small" />
-                  <span class="adv-range-sep">~</span>
-                  <n-input v-model:value="form.totalDepMax" size="small" />
-                </div>
-              </n-form-item>
-            </n-gi>
-            <n-gi class="adv-gi-range">
               <n-form-item label="最后提现时间">
                 <n-date-picker
                   v-model:value="form.lastWithdrawRange"
@@ -607,11 +614,20 @@
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="提现总额">
-                <div class="adv-range-inline">
-                  <n-input v-model:value="form.totalWdMin" size="small" />
+              <n-form-item label="累计充值金额">
+                <div class="adv-range-inline adv-range-inline--reg">
+                  <n-input v-model:value="form.totalDepMin" size="small" placeholder="最小值" />
                   <span class="adv-range-sep">~</span>
-                  <n-input v-model:value="form.totalWdMax" size="small" />
+                  <n-input v-model:value="form.totalDepMax" size="small" placeholder="最大值" />
+                </div>
+              </n-form-item>
+            </n-gi>
+            <n-gi>
+              <n-form-item label="提现总额">
+                <div class="adv-range-inline adv-range-inline--reg">
+                  <n-input v-model:value="form.totalWdMin" size="small" placeholder="最小值" />
+                  <span class="adv-range-sep">~</span>
+                  <n-input v-model:value="form.totalWdMax" size="small" placeholder="最大值" />
                 </div>
               </n-form-item>
             </n-gi>
@@ -620,19 +636,19 @@
                 label="未充值时间(天)"
                 :show-feedback="false"
               >
-                <div class="adv-range-inline">
-                  <n-input v-model:value="form.noRechargeDaysMinStr" size="small" />
+                <div class="adv-range-inline adv-range-inline--reg">
+                  <n-input v-model:value="form.noRechargeDaysMinStr" size="small" placeholder="最小值" />
                   <span class="adv-range-sep">~</span>
-                  <n-input v-model:value="form.noRechargeDaysMaxStr" size="small" />
+                  <n-input v-model:value="form.noRechargeDaysMaxStr" size="small" placeholder="最大值" />
                 </div>
               </n-form-item>
             </n-gi>
             <n-gi>
               <n-form-item label="账号余额">
-                <div class="adv-range-inline">
-                  <n-input v-model:value="form.balanceMin" size="small" />
+                <div class="adv-range-inline adv-range-inline--reg">
+                  <n-input v-model:value="form.balanceMin" size="small" placeholder="最小值" />
                   <span class="adv-range-sep">~</span>
-                  <n-input v-model:value="form.balanceMax" size="small" />
+                  <n-input v-model:value="form.balanceMax" size="small" placeholder="最大值" />
                 </div>
               </n-form-item>
             </n-gi>
@@ -642,7 +658,6 @@
                   <n-select
                     v-model:value="form.depCountOp"
                     size="small"
-                    style="width: 96px"
                     :options="cmpOpOptions"
                   />
                   <n-input v-model:value="form.depCountVal" size="small" />
@@ -655,22 +670,23 @@
                   <n-select
                     v-model:value="form.wdCountOp"
                     size="small"
-                    style="width: 96px"
                     :options="cmpOpOptions"
                   />
                   <n-input v-model:value="form.wdCountVal" size="small" />
                 </div>
               </n-form-item>
             </n-gi>
-            <n-gi span="2" class="adv-gi-netdiff">
+            <n-gi />
+            <n-gi>
               <n-form-item label="总充提差额">
-                <div class="adv-range-inline">
-                  <n-input v-model:value="form.netDiffMin" size="small" />
+                <div class="adv-range-inline adv-range-inline--reg">
+                  <n-input v-model:value="form.netDiffMin" size="small" placeholder="最小值" />
                   <span class="adv-range-sep">~</span>
-                  <n-input v-model:value="form.netDiffMax" size="small" />
+                  <n-input v-model:value="form.netDiffMax" size="small" placeholder="最大值" />
                 </div>
               </n-form-item>
             </n-gi>
+            <n-gi />
           </n-grid>
         </n-tab-pane>
       </n-tabs>
@@ -717,6 +733,9 @@ const emit = defineEmits<{
 }>();
 
 const subTab = ref('reg');
+
+/** 会员基本信息 + 其他信息（两 tab）栅格行距（px），三处 n-grid 共用 */
+const SECTION_FORM_ROW_GAP = 15;
 
 const ALL = '__all__';
 
@@ -874,15 +893,36 @@ const regSourceOptions = [
 ];
 
 const regMethodOptions = [
-  { label: '网页', value: 'web' },
-  { label: 'H5', value: 'h5' },
-  { label: 'APP', value: 'app' },
+  { label: '账号注册', value: 'account_reg' },
+  { label: 'Facebook注册', value: 'facebook_reg' },
+  { label: 'Google注册', value: 'google_reg' },
+  { label: 'Line注册', value: 'line_reg' },
+  { label: '手机注册', value: 'phone_reg' },
+  { label: '邮箱注册', value: 'email_reg' },
+  { label: 'Telegram机器人注册', value: 'telegram_bot_reg' },
+  { label: 'Telegram注册', value: 'telegram_reg' },
+  { label: 'Zalo注册', value: 'zalo_reg' },
+  { label: 'Telegram游戏注册', value: 'telegram_game_reg' },
 ];
 
 const loginMethodOptions = [
-  { label: '账号密码', value: 'password' },
-  { label: '短信验证码', value: 'sms' },
-  { label: '第三方', value: 'oauth' },
+  { label: 'Facebook登录', value: 'facebook_login' },
+  { label: 'Google登录', value: 'google_login' },
+  { label: 'Line登录', value: 'line_login' },
+  { label: '账号登录', value: 'account_login' },
+  { label: '邮箱登录', value: 'email_login' },
+  { label: '手机登录', value: 'phone_login' },
+  { label: 'Telegram小程序登录', value: 'telegram_mini_login' },
+  { label: 'Telegram登录', value: 'telegram_login' },
+  { label: 'Zalo登录', value: 'zalo_login' },
+  { label: 'Telegram游戏登录', value: 'telegram_game_login' },
+  { label: '账号登录-PC代理', value: 'account_pc_proxy_login' },
+  { label: '手机登录-PC代理', value: 'phone_pc_proxy_login' },
+  { label: '邮箱登录-PC代理', value: 'email_pc_proxy_login' },
+  { label: '面容ID登录', value: 'face_id_login' },
+  { label: '指纹登录', value: 'fingerprint_login' },
+  { label: '生物识别登录', value: 'biometric_login' },
+  { label: '手势登录', value: 'gesture_login' },
 ];
 
 const accountTypeUiOptions = [
@@ -902,17 +942,24 @@ const onlineStatusUiOptions = [
   { label: '今日在线', value: 'today_online' },
 ];
 
+/** value 与 7ki_api memberAdvancedSearchService 中 token 一致 */
 const deviceOsOptions = [
-  { label: 'iOS', value: 'iOS' },
-  { label: 'Android', value: 'Android' },
-  { label: 'Windows', value: 'Windows' },
-  { label: 'macOS', value: 'macOS' },
+  { label: 'Windows', value: 'win' },
+  { label: 'Mac', value: 'mac' },
+  { label: 'Android', value: 'android' },
+  { label: 'iOS', value: 'ios' },
+  { label: '其他', value: 'os_other' },
 ];
 
 const deviceMethodOptions = [
-  { label: 'APP', value: 'APP' },
-  { label: 'H5', value: 'H5' },
-  { label: 'Web', value: 'Web' },
+  { label: '浏览器', value: 'client_browser' },
+  { label: 'PWA快捷APP', value: 'client_pwa' },
+  { label: '桌面快捷方式', value: 'client_desktop_shortcut' },
+  { label: '马甲包', value: 'client_vest' },
+  { label: 'iOS描述签', value: 'client_ios_profile' },
+  { label: '极速APP', value: 'client_speed_app' },
+  { label: '原生APP', value: 'client_native' },
+  { label: 'Telegram机器人', value: 'client_telegram' },
 ];
 
 const hasFirstDepositOptions = [
@@ -1003,10 +1050,12 @@ async function loadTierVipOptions() {
   try {
     const { getActiveMemberTiersApi } = await import('#/api/core/memberTier');
     const tiers = await getActiveMemberTiersApi();
-    memberTierOptions.value = tiers.map((t) => ({
-      label: t.tierName,
-      value: String(t.id),
-    }));
+    memberTierOptions.value = tiers
+      .map((t) => ({
+        label: t.tierName,
+        value: String(t.id),
+      }))
+      .sort((a, b) => parseInt(a.value, 10) - parseInt(b.value, 10));
   } catch {
     memberTierOptions.value = [];
   }
@@ -1188,23 +1237,6 @@ function pushNumBetween(
   }
 }
 
-function pushOrLikeGroup(
-  parts: AdminFilterClause[],
-  key: string,
-  values: string[],
-) {
-  const vs = values.map((s) => s.trim()).filter(Boolean);
-  if (!vs.length) return;
-  if (vs.length === 1) {
-    parts.push({ key, op: 'like', val: vs[0]! });
-    return;
-  }
-  parts.push({
-    op: 'or',
-    children: vs.map((val) => ({ key, op: 'like' as const, val })),
-  });
-}
-
 function bulkFilterKey(sel: string): string {
   if (sel === 'inviter.account_parent') return 'inviter.account';
   return sel;
@@ -1339,15 +1371,25 @@ function apply() {
   }
 
   const regMethodReals = optionRealValues(optionsWithAll(regMethodOptions));
-  if (!isNoOpMultiFilter(form.regMethods, regMethodReals)) {
-    const rawRm = stripAllToken(form.regMethods ?? []);
-    const regMethodToDeviceToken: Record<string, string> = {
-      web: 'Web',
-      h5: 'H5',
-      app: 'APP',
-    };
-    const mapped = rawRm.map((v) => regMethodToDeviceToken[v] ?? v);
-    pushOrLikeGroup(parts, 'member.registration_device', mapped);
+  if (
+    form.regMethods?.length &&
+    !isNoOpMultiFilter(form.regMethods, regMethodReals)
+  ) {
+    payload.registrationMethods = stripAllToken(form.regMethods);
+  }
+  const loginMethodReals = optionRealValues(optionsWithAll(loginMethodOptions));
+  if (
+    form.loginMethods?.length &&
+    !isNoOpMultiFilter(form.loginMethods, loginMethodReals)
+  ) {
+    payload.loginMethods = stripAllToken(form.loginMethods);
+  }
+  const onlineStatusReals = optionRealValues(optionsWithAll(onlineStatusUiOptions));
+  if (
+    form.onlineStatusUis?.length &&
+    !isNoOpMultiFilter(form.onlineStatusUis, onlineStatusReals)
+  ) {
+    payload.onlineStatusFilters = stripAllToken(form.onlineStatusUis);
   }
 
   const regR = tsRange(form.regTimeRange);
@@ -1362,17 +1404,11 @@ function apply() {
   const regOsReals = optionRealValues(optionsWithAll(deviceOsOptions));
   const regDmReals = optionRealValues(optionsWithAll(deviceMethodOptions));
   if (!isNoOpMultiFilter(form.regDeviceOs, regOsReals)) {
-    pushOrLikeGroup(
-      parts,
-      'member.registration_device',
-      stripAllToken(form.regDeviceOs ?? []),
-    );
+    payload.registrationDeviceOsFilters = stripAllToken(form.regDeviceOs ?? []);
   }
   if (!isNoOpMultiFilter(form.regDeviceMethod, regDmReals)) {
-    pushOrLikeGroup(
-      parts,
-      'member.registration_device',
-      stripAllToken(form.regDeviceMethod ?? []),
+    payload.registrationDeviceClientFilters = stripAllToken(
+      form.regDeviceMethod ?? [],
     );
   }
   pushStr(
@@ -1385,17 +1421,11 @@ function apply() {
   pushStr(parts, 'member.device_id', 'eq', form.lastLoginDeviceId);
 
   if (!isNoOpMultiFilter(form.lastLoginDeviceOs, regOsReals)) {
-    pushOrLikeGroup(
-      parts,
-      'member.registration_device',
-      stripAllToken(form.lastLoginDeviceOs ?? []),
-    );
+    payload.lastLoginDeviceOsFilters = stripAllToken(form.lastLoginDeviceOs ?? []);
   }
   if (!isNoOpMultiFilter(form.lastLoginDeviceMethod, regDmReals)) {
-    pushOrLikeGroup(
-      parts,
-      'member.registration_device',
-      stripAllToken(form.lastLoginDeviceMethod ?? []),
+    payload.lastLoginDeviceClientFilters = stripAllToken(
+      form.lastLoginDeviceMethod ?? [],
     );
   }
 
@@ -1551,7 +1581,7 @@ function apply() {
 
 .adv-bulk-radio-group {
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .adv-bulk-radios {
@@ -1570,7 +1600,7 @@ function apply() {
 }
 
 .adv-bulk-textarea {
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .adv-bulk-textarea :deep(.n-input__textarea-el) {
@@ -1584,20 +1614,102 @@ function apply() {
 }
 
 .adv-grid--pane {
-  padding-top: 12px;
+  padding-top: 6px;
 }
 
-/* Same-row label + field: keep inputs/selects short */
-.adv-grid :deep(.n-input),
-.adv-grid :deep(.n-select),
-.adv-grid :deep(.n-date-picker) {
-  width: 252px !important;
+/* 会员基本信息 + 其他信息：同一套 flex 行布局，避免仅 y-gap 相同但行高/内边距不一致 */
+.adv-grid--pane-tidy :deep(.n-form-item) {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.adv-grid--pane-tidy :deep(.n-form-item-label) {
+  width: 160px !important;
+  min-width: 160px !important;
+  max-width: 160px !important;
+  flex-shrink: 0;
+  justify-content: flex-end;
+  padding-right: 10px;
+  text-align: right;
+  line-height: 28px;
+  white-space: normal;
+  word-break: break-word;
+  overflow: visible;
+  align-self: flex-start;
+}
+
+.adv-grid--pane-tidy :deep(.n-form-item-blank) {
+  flex: 1;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.adv-grid--pane-tidy :deep(.n-input),
+.adv-grid--pane-tidy :deep(.n-input-wrapper),
+.adv-grid--pane-tidy :deep(.n-base-selection),
+.adv-grid--pane-tidy :deep(.n-select),
+.adv-grid--pane-tidy :deep(.n-date-picker) {
+  width: 100% !important;
   max-width: 100%;
   box-sizing: border-box;
 }
 
-.adv-gi-range :deep(.n-date-picker) {
-  width: min(520px, 100%) !important;
+.adv-grid--pane-tidy .adv-range-inline {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 8px;
+}
+
+.adv-grid--pane-tidy .adv-range-inline :deep(.n-input),
+.adv-grid--pane-tidy .adv-range-inline :deep(.n-input-wrapper) {
+  flex: 1 1 0%;
+  min-width: 48px;
+  width: auto !important;
+}
+
+.adv-grid--pane-tidy .adv-count-row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 8px;
+}
+
+.adv-grid--pane-tidy .adv-count-row :deep(.n-select) {
+  flex: 0 0 96px;
+  width: 96px !important;
+  min-width: 96px;
+}
+
+.adv-grid--pane-tidy .adv-count-row :deep(.n-input),
+.adv-grid--pane-tidy .adv-count-row :deep(.n-input-wrapper) {
+  flex: 1 1 0%;
+  min-width: 48px;
+  width: auto !important;
+}
+
+.adv-grid--reg-login .adv-twin-select--reg {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  align-items: flex-start;
+  overflow: visible;
+}
+
+/* Twin selects: never use width:0 — it collapses the trigger so the menu can't open visibly */
+.adv-grid--reg-login .adv-twin-select--reg :deep(.n-select) {
+  flex: 1 1 0%;
+  min-width: 100px;
+  width: auto !important;
+  max-width: none;
+}
+
+.adv-grid--reg-login .adv-twin-select--reg :deep(.n-base-selection) {
+  width: 100% !important;
+  min-width: 0;
 }
 
 .adv-gi-wide :deep(.n-input) {
@@ -1634,10 +1746,6 @@ function apply() {
   width: 132px !important;
   flex: none;
   min-width: 0;
-}
-
-.adv-gi-netdiff .adv-range-inline :deep(.n-input) {
-  width: 200px !important;
 }
 
 .adv-range-sep {
@@ -1678,7 +1786,7 @@ function apply() {
 }
 
 .adv-form :deep(.n-form-item) {
-  margin-bottom: 2px;
+  margin-bottom: 0;
 }
 
 .adv-form :deep(.n-form-item-blank) {

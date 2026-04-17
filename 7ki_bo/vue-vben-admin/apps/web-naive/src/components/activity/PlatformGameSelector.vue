@@ -495,7 +495,11 @@ const allPlatformsSelected = ref(false);
 
 // Computed Properties
 const showPlatformSelection = computed(() => {
-  return props.wageringPlatform === 'specific_platforms' && !props.disabled;
+  return (
+    (props.wageringPlatform === 'specific_platforms' ||
+      props.wageringPlatform === 'exclude_platforms') &&
+    !props.disabled
+  );
 });
 
 const filteredPlatforms = computed(() => {

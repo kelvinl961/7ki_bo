@@ -346,6 +346,9 @@
                   type="datetimerange"
                   clearable
                   size="small"
+                  format="yyyy-MM-dd HH:mm:ss"
+                  :default-time="['00:00:00', '23:59:59']"
+                  :shortcuts="datetimerangeShortcuts"
                 />
               </n-form-item>
             </n-gi>
@@ -549,6 +552,9 @@
                   type="datetimerange"
                   clearable
                   size="small"
+                  format="yyyy-MM-dd HH:mm:ss"
+                  :default-time="['00:00:00', '23:59:59']"
+                  :shortcuts="datetimerangeShortcuts"
                 />
               </n-form-item>
             </n-gi>
@@ -603,6 +609,19 @@
                 />
               </n-form-item>
             </n-gi>
+            <n-gi span="2" class="adv-gi-range">
+              <n-form-item label="最后充值时间">
+                <n-date-picker
+                  v-model:value="form.lastDepositRange"
+                  type="datetimerange"
+                  clearable
+                  size="small"
+                  format="yyyy-MM-dd HH:mm:ss"
+                  :default-time="['00:00:00', '23:59:59']"
+                  :shortcuts="datetimerangeShortcuts"
+                />
+              </n-form-item>
+            </n-gi>
             <n-gi>
               <n-form-item label="最后提现时间">
                 <n-date-picker
@@ -610,6 +629,9 @@
                   type="datetimerange"
                   clearable
                   size="small"
+                  format="yyyy-MM-dd HH:mm:ss"
+                  :default-time="['00:00:00', '23:59:59']"
+                  :shortcuts="datetimerangeShortcuts"
                 />
               </n-form-item>
             </n-gi>
@@ -1198,6 +1220,72 @@ function resetForm() {
   form.netDiffMin = '';
   form.netDiffMax = '';
 }
+
+function localDayStartEndMs(d: Date): [number, number] {
+  const start = new Date(
+    d.getFullYear(),
+    d.getMonth(),
+    d.getDate(),
+    0,
+    0,
+    0,
+    0,
+  );
+  const end = new Date(
+    d.getFullYear(),
+    d.getMonth(),
+    d.getDate(),
+    23,
+    59,
+    59,
+    0,
+  );
+  return [start.getTime(), end.getTime()];
+}
+
+const datetimerangeShortcuts: Record<string, () => [number, number]> = {
+  今天: () => localDayStartEndMs(new Date()),
+  昨天: () => {
+    const t = new Date();
+    t.setDate(t.getDate() - 1);
+    return localDayStartEndMs(t);
+  },
+  本周: () => {
+    const now = new Date();
+    const day = now.getDay();
+    const mondayOffset = day === 0 ? -6 : 1 - day;
+    const monday = new Date(now);
+    monday.setDate(now.getDate() + mondayOffset);
+    const start = new Date(
+      monday.getFullYear(),
+      monday.getMonth(),
+      monday.getDate(),
+      0,
+      0,
+      0,
+      0,
+    );
+    const end = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      23,
+      59,
+      59,
+      0,
+    );
+    return [start.getTime(), end.getTime()];
+  },
+  本月: () => {
+    const n = new Date();
+    const y = n.getFullYear();
+    const m = n.getMonth();
+    const lastDay = new Date(y, m + 1, 0).getDate();
+    const start = new Date(y, m, 1, 0, 0, 0, 0);
+    const end = new Date(y, m, lastDay, 23, 59, 59, 0);
+    return [start.getTime(), end.getTime()];
+  },
+};
 
 function tsRange(r: [number, number] | null): [string, string] | null {
   if (!r || r.length !== 2) return null;

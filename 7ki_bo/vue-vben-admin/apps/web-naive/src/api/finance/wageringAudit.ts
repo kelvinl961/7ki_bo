@@ -138,6 +138,35 @@ export async function getAuditStatusesApi(): Promise<string[]> {
   return requestClient.get<string[]>('/admin/wagering-audits/statuses');
 }
 
+export interface AutomaticReleaseSettings {
+  currency: string;
+  thresholdAmount: number;
+  min: number;
+  max: number;
+}
+
+/**
+ * Global automatic release threshold (e.g. BRL). 0 = disabled.
+ */
+export async function getAutomaticReleaseSettingsApi(
+  currency = 'BRL',
+): Promise<AutomaticReleaseSettings> {
+  return requestClient.get<AutomaticReleaseSettings>(
+    '/admin/wagering-audits/automatic-release-settings',
+    { params: { currency } },
+  );
+}
+
+export async function updateAutomaticReleaseSettingsApi(body: {
+  currency?: string;
+  thresholdAmount: number;
+}): Promise<{ currency: string; thresholdAmount: number; updatedAt: string }> {
+  return requestClient.put(
+    '/admin/wagering-audits/automatic-release-settings',
+    body,
+  );
+}
+
 /**
  * Get single wagering audit detail by id (optional; backend may extend with eligiblePlatforms etc.)
  */

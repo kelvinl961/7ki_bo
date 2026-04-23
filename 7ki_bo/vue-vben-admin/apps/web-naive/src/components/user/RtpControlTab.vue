@@ -259,7 +259,12 @@ const formData = reactive({
   GameId: ['ALL'] as string[],
 });
 
-const isHg = computed(() => formData.rtpVendor === 'hg');
+const isHg = computed(() => formData.rtpVendor?.toLowerCase() === 'hg');
+
+const getPreferredVendorId = (vendors: PlayerRtpVendorOption[]) =>
+  vendors.find((v) => v.id?.toLowerCase() === 'hg')?.id ??
+  vendors[0]?.id ??
+  null;
 
 /** HG setRtp 专用项：RTP 为 0（取消）或未选时禁用，避免误以为「只有三栏」 */
 const hgSetRtpLocked = computed(
@@ -288,7 +293,7 @@ const rtpFeedback = computed(() => {
       ? '取消：见下方蓝色说明，并填写「游戏」gameid'
       : '设置：走 /api/v1/player/setRtp；下方 HG 参数已启用';
   }
-  return 'AG / 默认渠道：0 表示取消；其它为 10–97';
+  return '默认渠道：0 表示取消；其它为 10–97';
 });
 
 watch(
@@ -318,7 +323,10 @@ watch(
 );
 
 const vendorSelectOptions = computed(() =>
-  rtpVendors.value.map((v) => ({ label: v.label, value: v.id })),
+  rtpVendors.value.map((v) => ({
+    label: 'HG 厂商',
+    value: v.id,
+  })),
 );
 
 const loadInitialGames = async () => {
@@ -757,7 +765,7 @@ const handleSubmit = async () => {
 
 const handleReset = () => {
   formData.Rtp = null;
-  formData.rtpVendor = rtpVendors.value[0]?.id ?? null;
+  formData.rtpVendor = getPreferredVendorId(rtpVendors.value);
   formData.gamePattern = 1;
   formData.gameType = 0;
   formData.maxMultiple = null;
@@ -870,16 +878,15 @@ const loadLastConfig = async () => {
 
 const loadRtpVendors = async () => {
   try {
-    rtpVendors.value = await getPlayerRtpVendorsApi();
+    const vendors = await getPlayerRtpVendorsApi();
+    rtpVendors.value = vendors.filter((v) => v.id?.toLowerCase() === 'hg');
     if (rtpVendors.value.length === 0) {
-      message.warning(
-        '未配置可用 RTP 第三方渠道（AG / GAME_PROVIDER / PLAYER_RTP_EXTRA_VENDORS_JSON）',
-      );
+      message.warning('未配置可用 HG RTP 渠道');
       formData.rtpVendor = null;
       return;
     }
     if (formData.rtpVendor == null || formData.rtpVendor === '') {
-      formData.rtpVendor = rtpVendors.value[0]!.id;
+      formData.rtpVendor = getPreferredVendorId(rtpVendors.value);
     }
   } catch (error) {
     console.error('Load RTP vendors error:', error);

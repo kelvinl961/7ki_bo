@@ -33,6 +33,28 @@ const routes: RouteRecordRaw[] = [
         component: () =>
           import('../../../views/operations/FeedbackManagement.vue'),
       },
+      {
+        meta: {
+          keepAlive: true,
+          title: '三方埋点',
+        },
+        name: 'ThirdPartyTracking',
+        path: '/operations/third-party-tracking',
+        // @ts-ignore
+        component: () =>
+          import('../../../views/operateManager/ThirdPartyTracking.vue'),
+      },
+      {
+        meta: {
+          keepAlive: true,
+          title: 'APP包管理',
+        },
+        name: 'AppPackageManagement',
+        path: '/operations/app-package-management',
+        // @ts-ignore
+        component: () =>
+          import('../../../views/operations/AppPackageManagement.vue'),
+      },
     ],
   },
 ];

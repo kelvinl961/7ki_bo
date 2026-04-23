@@ -138,6 +138,7 @@
                   </template>
                   导出
                 </n-button>
+                <n-button @click="openAutoReleaseModal"> 自动解除设置 </n-button>
               </div>
               <div class="text-sm text-gray-600">
                 共 {{ paginationReactive.total }} 条记录
@@ -236,6 +237,46 @@
       </n-tab-pane>
     </n-tabs>
 
+    <n-modal
+      v-model:show="showAutoReleaseModal"
+      preset="card"
+      title="自动解除设置"
+      style="width: 520px"
+      :mask-closable="false"
+    >
+      <div class="flex flex-col gap-4">
+        <n-form-item label="BRL会员额度" required>
+          <div class="flex w-full items-center gap-2">
+            <n-input-number
+              v-model:value="autoReleaseThreshold"
+              :min="0"
+              :max="999999.99"
+              :precision="2"
+              :show-button="false"
+              class="flex-1"
+              placeholder="0.00 – 999,999.99"
+            />
+            <span class="shrink-0 text-sm text-gray-600">BRL</span>
+          </div>
+        </n-form-item>
+        <p class="text-xs leading-relaxed text-red-500">
+          会员总余额（含利息宝等计息账户）低于该额度即视为亏光；再次上分将自动解除历史投注任务。填
+          0.00
+          关闭自动解除。建议低于各游戏最低准入额度。范围 0.00–999,999.99，最多两位小数。
+        </p>
+        <div class="flex justify-end gap-2">
+          <n-button @click="closeAutoReleaseModal">取消</n-button>
+          <n-button
+            type="primary"
+            :loading="autoReleaseSaving"
+            @click="handleSaveAutoRelease"
+          >
+            确认
+          </n-button>
+        </div>
+      </div>
+    </n-modal>
+
     <!-- User Detail Modal -->
     <UserDetailModal
       v-model:visible="showUserDetailModal"
@@ -294,7 +335,9 @@
                 <n-button text type="primary" size="tiny" @click="copyDetailValue(formatCurrency(currentDetailRow.remainingBetAmount))">复制</n-button>
               </span>
             </n-descriptions-item>
-            <n-descriptions-item label="自动解除额度">-</n-descriptions-item>
+            <n-descriptions-item label="自动解除额度">{{
+              displayAutoReleaseThreshold
+            }}</n-descriptions-item>
             <n-descriptions-item label="任务状态">{{ getStatusLabel(currentDetailRow.status) }}</n-descriptions-item>
             <n-descriptions-item label="操作人">-</n-descriptions-item>
             <n-descriptions-item label="操作时间">{{ formatDateTime(currentDetailRow.createdAt) }}</n-descriptions-item>
@@ -383,6 +426,8 @@ import {
   getAuditStatusesApi,
   cancelAuditApi,
   forceCompleteAuditApi,
+  getAutomaticReleaseSettingsApi,
+  updateAutomaticReleaseSettingsApi,
   type WageringAuditItem,
   type WageringAuditFilters,
 } from '#/api/finance/wageringAudit';
@@ -402,6 +447,10 @@ const showUserDetailModal = ref(false);
 const currentUserId = ref<number>(0);
 const showDetailModal = ref(false);
 const currentDetailRow = ref<WageringAuditItem | null>(null);
+const showAutoReleaseModal = ref(false);
+const autoReleaseSaving = ref(false);
+const autoReleaseThreshold = ref<number | null>(1);
+const displayAutoReleaseThreshold = ref('-');
 const detailGameSearch = ref('');
 const tableData = ref<WageringAuditItem[]>([]);
 const dateRange = ref<[number, number] | null>(null);
@@ -1287,6 +1336,53 @@ const formatDateTime = (dateStr: string): string => {
   });
 };
 
+const refreshAutomaticReleaseThreshold = async () => {
+  try {
+    const s = await getAutomaticReleaseSettingsApi('BRL');
+    displayAutoReleaseThreshold.value =
+      s.thresholdAmount === 0
+        ? '已关闭 (0.00)'
+        : `${s.thresholdAmount.toFixed(2)} BRL`;
+    autoReleaseThreshold.value = s.thresholdAmount;
+  } catch {
+    displayAutoReleaseThreshold.value = '-';
+  }
+};
+
+const openAutoReleaseModal = async () => {
+  await refreshAutomaticReleaseThreshold();
+  showAutoReleaseModal.value = true;
+};
+
+const closeAutoReleaseModal = () => {
+  showAutoReleaseModal.value = false;
+};
+
+const handleSaveAutoRelease = async () => {
+  if (
+    autoReleaseThreshold.value === null ||
+    Number.isNaN(autoReleaseThreshold.value)
+  ) {
+    message.warning('请输入有效额度');
+    return;
+  }
+  autoReleaseSaving.value = true;
+  try {
+    await updateAutomaticReleaseSettingsApi({
+      currency: 'BRL',
+      thresholdAmount: autoReleaseThreshold.value,
+    });
+    message.success('已保存');
+    showAutoReleaseModal.value = false;
+    await refreshAutomaticReleaseThreshold();
+  } catch (e: unknown) {
+    const err = e as { message?: string };
+    message.error(err?.message || '保存失败');
+  } finally {
+    autoReleaseSaving.value = false;
+  }
+};
+
 // Lifecycle
 onMounted(() => {
   // Initialize tab from URL
@@ -1312,6 +1408,7 @@ onMounted(() => {
 
   loadFilterOptions();
   loadData();
+  void refreshAutomaticReleaseThreshold();
 });
 </script>
 

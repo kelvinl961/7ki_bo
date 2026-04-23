@@ -1,48 +1,83 @@
 <template>
   <div class="provident-fund-page">
-    <Page title="公积金" description="可配置多条公积金规则，添加或编辑单条规则请在弹窗中完成">
+    <Page title="公积金" description="用户每次充值后获得对应比例的公积金奖励，需完成对应倍数的打码后才可取出领取；仅统计公积金开关开启后的充值。">
       <n-card>
-        <n-form
-          class="mb-4"
-          :show-feedback="false"
-          label-placement="left"
-          label-width="auto"
-        >
-          <n-grid :cols="24" :x-gap="16" :y-gap="12">
+        <n-tabs v-model:value="activeTab" type="line" class="mb-4">
+          <n-tab-pane name="details" tab="公积金明细" />
+          <n-tab-pane name="wagering" tab="投注要求" />
+          <n-tab-pane name="withdrawals" tab="取出记录" />
+        </n-tabs>
+
+        <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
+          <n-space align="center" wrap>
+            <span class="text-sm text-gray-600">公积金开关</span>
+            <n-switch
+              :value="pfEnabled"
+              :loading="switchLoading"
+              @update:value="onSwitch"
+            />
+            <n-text v-if="pfEnabledAt" depth="3" class="text-xs">
+              开启时间：{{ formatTs(pfEnabledAt) }}
+            </n-text>
+          </n-space>
+          <n-space>
+            <n-button type="primary" @click="showSettings = true">公积金设置</n-button>
+            <n-button v-if="activeTab === 'details'" secondary @click="exportDetails">
+              导出报表
+            </n-button>
+          </n-space>
+        </div>
+
+        <n-form class="mb-4" :show-feedback="false" label-placement="left" label-width="auto">
+          <n-grid :cols="24" :x-gap="12" :y-gap="8">
             <n-gi :span="6">
-              <n-form-item label="名称">
-                <n-input
-                  v-model:value="filters.keyword"
+              <n-form-item label="时间">
+                <n-space>
+                  <n-button size="small" @click="setQuickRange('day')">日</n-button>
+                  <n-button size="small" @click="setQuickRange('week')">周</n-button>
+                  <n-button size="small" @click="setQuickRange('month')">月</n-button>
+                </n-space>
+              </n-form-item>
+            </n-gi>
+            <n-gi :span="12">
+              <n-form-item label="范围">
+                <n-date-picker
+                  v-model:value="dateRange"
+                  type="datetimerange"
                   clearable
-                  placeholder="公积金名称关键词"
-                  @keyup.enter="applyFilters"
+                  style="width: 100%"
                 />
               </n-form-item>
             </n-gi>
-            <n-gi :span="5">
-              <n-form-item label="币种">
+            <n-gi :span="6">
+              <n-form-item label="会员账号">
+                <n-input v-model:value="filters.account" clearable placeholder="请输入会员账号" />
+              </n-form-item>
+            </n-gi>
+            <n-gi :span="6">
+              <n-form-item label="活动币种">
                 <n-select
                   v-model:value="filters.currency"
                   clearable
                   placeholder="全部"
-                  :options="currencyFilterOptions"
+                  :options="currencyOptions"
+                />
+              </n-form-item>
+            </n-gi>
+            <n-gi :span="6" v-if="activeTab === 'wagering'">
+              <n-form-item label="投注状态">
+                <n-select
+                  v-model:value="filters.status"
+                  clearable
+                  placeholder="全部"
+                  :options="statusOptions"
                 />
               </n-form-item>
             </n-gi>
             <n-gi :span="6">
-              <n-form-item label="打码平台">
-                <n-select
-                  v-model:value="filters.platform"
-                  clearable
-                  placeholder="全部"
-                  :options="platformFilterOptions"
-                />
-              </n-form-item>
-            </n-gi>
-            <n-gi :span="7">
               <n-form-item :show-label="false">
                 <n-space>
-                  <n-button type="primary" @click="applyFilters">搜索</n-button>
+                  <n-button type="primary" @click="reloadActive">搜索</n-button>
                   <n-button @click="resetFilters">重置</n-button>
                 </n-space>
               </n-form-item>
@@ -50,286 +85,372 @@
           </n-grid>
         </n-form>
 
-        <n-space justify="space-between" align="center" class="mb-4" wrap>
-          <n-text depth="3">
-            共 {{ filteredList.length }} 条
-            <span v-if="hasActiveFilters">（全部 {{ list.length }} 条）</span>
-          </n-text>
-          <n-button type="primary" @click="openCreate">添加</n-button>
-        </n-space>
-
         <n-data-table
-          :columns="columns"
-          :data="filteredList"
-          :scroll-x="tableScrollX"
+          :key="activeTab"
+          :columns="activeColumns"
+          :data="tableRows"
+          :loading="loading"
+          :scroll-x="1200"
           striped
           size="small"
-          :bordered="false"
-          :pagination="false"
-        >
-          <template #empty>
-            <n-empty :description="emptyDescription" />
-          </template>
-        </n-data-table>
+          remote
+          :pagination="pagination"
+          @update:page="onPage"
+          @update:page-size="onPageSize"
+        />
       </n-card>
 
       <ProvidentFundSettingModal
-        :key="modalInstanceKey"
-        v-model:show="showModal"
-        :mode="modalMode"
-        :initial-snapshot="editingSnapshot"
-        @saved="onSaved"
+        v-model:show="showSettings"
+        mode="edit"
+        title-text="公积金设置"
+        :initial-snapshot="settingsSnapshot ?? defaultProvidentFundSnapshot()"
+        @saved="onSettingsSaved"
       />
     </Page>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, h } from 'vue';
+import { ref, reactive, computed, watch, h } from 'vue';
 import {
   NCard,
+  NTabs,
+  NTabPane,
   NSpace,
   NButton,
   NText,
-  NDataTable,
-  NEmpty,
   NForm,
   NFormItem,
   NInput,
   NSelect,
   NGrid,
   NGi,
-  useDialog,
+  NDataTable,
+  NSwitch,
+  NDatePicker,
+  useMessage,
   type DataTableColumns,
 } from 'naive-ui';
 import { Page } from '@vben/common-ui';
 import ProvidentFundSettingModal from './components/ProvidentFundSettingModal.vue';
 import {
   type ProvidentFundFormSnapshot,
-  type ProvidentFundListItem,
-  cloneSnapshot,
+  defaultProvidentFundSnapshot,
+  normalizeProvidentFundSettings,
 } from './components/providentFundTypes';
+import {
+  exportProvidentFundDetailsCsvApi,
+  forceReleaseProvidentFundWageringApi,
+  getProvidentFundAdminConfigApi,
+  listProvidentFundDetailsApi,
+  listProvidentFundWageringApi,
+  listProvidentFundWithdrawalsApi,
+  putProvidentFundAdminSwitchApi,
+} from '#/api/core/provident-fund-admin';
 
-const dialog = useDialog();
+const message = useMessage();
+const activeTab = ref<'details' | 'wagering' | 'withdrawals'>('details');
+const pfEnabled = ref(false);
+const pfEnabledAt = ref<string | null>(null);
+const settingsSnapshot = ref<ProvidentFundFormSnapshot | null>(null);
+const switchLoading = ref(false);
+const showSettings = ref(false);
 
-const list = ref<ProvidentFundListItem[]>([]);
-
-/** 筛选：与列表字段对应，提交后写入 applied* 再过滤 */
+const dateRange = ref<[number, number] | null>(null);
 const filters = reactive({
-  keyword: '',
+  account: '',
   currency: null as string | null,
-  platform: null as ProvidentFundFormSnapshot['platformRestriction'] | null,
+  status: null as string | null,
 });
 
-const appliedKeyword = ref('');
-const appliedCurrency = ref<string | null>(null);
-const appliedPlatform = ref<
-  ProvidentFundFormSnapshot['platformRestriction'] | null
->(null);
+const currencyOptions = [{ label: 'BRL', value: 'BRL' }];
 
-const currencyFilterOptions = [
-  { label: 'BRL', value: 'BRL' },
-  { label: 'USD', value: 'USD' },
-  { label: 'EUR', value: 'EUR' },
-  { label: 'CNY', value: 'CNY' },
+const statusOptions = [
+  { label: '进行中', value: 'IN_PROGRESS' },
+  { label: '已完成', value: 'COMPLETED' },
 ];
 
-const platformFilterOptions = [
-  { label: '不限制', value: 'all_platforms' },
-  { label: '指定平台', value: 'specific_platforms' },
-  { label: '排除勾选', value: 'exclude_platforms' },
-];
-
-const hasActiveFilters = computed(
-  () =>
-    !!appliedKeyword.value.trim() ||
-    appliedCurrency.value != null ||
-    appliedPlatform.value != null,
-);
-
-const filteredList = computed(() => {
-  const kw = appliedKeyword.value.trim().toLowerCase();
-  const cur = appliedCurrency.value;
-  const plat = appliedPlatform.value;
-
-  return list.value.filter((row) => {
-    const snap = row.snapshot;
-    if (kw && !snap.displayName.toLowerCase().includes(kw)) {
-      return false;
-    }
-    if (cur && !snap.currencies.includes(cur)) {
-      return false;
-    }
-    if (plat && snap.platformRestriction !== plat) {
-      return false;
-    }
-    return true;
-  });
+const loading = ref(false);
+const tableRows = ref<any[]>([]);
+const pagination = reactive({
+  page: 1,
+  pageSize: 20,
+  itemCount: 0,
+  showSizePicker: true,
+  pageSizes: [10, 20, 50],
+  prefix: (info: any) => `共 ${info.itemCount} 条`,
 });
 
-const emptyDescription = computed(() =>
-  list.value.length === 0
-    ? '暂无数据，请点击「添加」创建公积金规则'
-    : '没有符合筛选条件的数据，请调整筛选项或点击「重置」',
-);
+function formatTs(iso: string | null) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? iso : d.toLocaleString('zh-CN');
+}
 
-function applyFilters() {
-  appliedKeyword.value = filters.keyword;
-  appliedCurrency.value = filters.currency;
-  appliedPlatform.value = filters.platform;
+function rangeParams() {
+  if (!dateRange.value) return {};
+  const [a, b] = dateRange.value;
+  return { from: new Date(a).toISOString(), to: new Date(b).toISOString() };
+}
+
+function setQuickRange(kind: 'day' | 'week' | 'month') {
+  const end = new Date();
+  const start = new Date(end);
+  if (kind === 'day') start.setHours(0, 0, 0, 0);
+  if (kind === 'week') start.setDate(start.getDate() - 7);
+  if (kind === 'month') start.setMonth(start.getMonth() - 1);
+  dateRange.value = [start.getTime(), end.getTime()];
+}
+
+async function loadConfig() {
+  const cfg = await getProvidentFundAdminConfigApi();
+  pfEnabled.value = cfg.enabled;
+  pfEnabledAt.value = cfg.enabledAt;
+  settingsSnapshot.value = normalizeProvidentFundSettings(
+    cfg.settings as Record<string, unknown>,
+  );
+}
+
+async function onSwitch(v: boolean) {
+  switchLoading.value = true;
+  try {
+    const r = await putProvidentFundAdminSwitchApi(v);
+    pfEnabled.value = r.enabled;
+    pfEnabledAt.value = r.enabledAt;
+    message.success(v ? '已开启公积金统计' : '已关闭公积金');
+  } catch {
+    message.error('开关更新失败');
+  } finally {
+    switchLoading.value = false;
+  }
 }
 
 function resetFilters() {
-  filters.keyword = '';
+  filters.account = '';
   filters.currency = null;
-  filters.platform = null;
-  appliedKeyword.value = '';
-  appliedCurrency.value = null;
-  appliedPlatform.value = null;
+  filters.status = null;
+  dateRange.value = null;
+  pagination.page = 1;
+  reloadActive();
 }
 
-const showModal = ref(false);
-const modalMode = ref<'create' | 'edit'>('create');
-const editingId = ref<string | null>(null);
-const editingSnapshot = ref<ProvidentFundFormSnapshot | null>(null);
-
-/** 避免编辑同一条时弹窗不刷新初始数据 */
-const modalInstanceKey = computed(
-  () => `${modalMode.value}-${editingId.value ?? 'new'}`,
-);
-
-const tableScrollX = 900;
-
-function formatTime(ts: number) {
-  return new Date(ts).toLocaleString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
-
-function platformLabel(
-  mode: ProvidentFundFormSnapshot['platformRestriction'],
-) {
-  if (mode === 'all_platforms') return '不限制';
-  if (mode === 'specific_platforms') return '指定平台';
-  return '排除勾选';
-}
-
-function openCreate() {
-  modalMode.value = 'create';
-  editingId.value = null;
-  editingSnapshot.value = null;
-  showModal.value = true;
-}
-
-function openEdit(row: ProvidentFundListItem) {
-  modalMode.value = 'edit';
-  editingId.value = row.id;
-  editingSnapshot.value = cloneSnapshot(row.snapshot);
-  showModal.value = true;
-}
-
-function confirmDelete(row: ProvidentFundListItem) {
-  dialog.warning({
-    title: '删除确认',
-    content: `确定删除「${row.snapshot.displayName}」吗？`,
-    positiveText: '删除',
-    negativeText: '取消',
-    onPositiveClick: () => {
-      list.value = list.value.filter((x) => x.id !== row.id);
-      return true;
-    },
-  });
-}
-
-function onSaved(snapshot: ProvidentFundFormSnapshot) {
-  const now = Date.now();
-  const snap = cloneSnapshot(snapshot);
-  if (editingId.value) {
-    const idx = list.value.findIndex((x) => x.id === editingId.value);
-    if (idx >= 0) {
-      list.value[idx] = {
-        ...list.value[idx],
-        snapshot: snap,
-        updatedAt: now,
-      };
+async function reloadActive() {
+  loading.value = true;
+  try {
+    const rp = rangeParams();
+    if (activeTab.value === 'details') {
+      const res = await listProvidentFundDetailsApi({
+        page: pagination.page,
+        pageSize: pagination.pageSize,
+        account: filters.account || undefined,
+        currency: filters.currency || undefined,
+        ...rp,
+      });
+      tableRows.value = res.list;
+      pagination.itemCount = res.pagination.total;
+    } else if (activeTab.value === 'wagering') {
+      const res = await listProvidentFundWageringApi({
+        page: pagination.page,
+        pageSize: pagination.pageSize,
+        account: filters.account || undefined,
+        currency: filters.currency || undefined,
+        status: filters.status || undefined,
+        ...rp,
+      });
+      tableRows.value = res.list;
+      pagination.itemCount = res.pagination.total;
+    } else {
+      const res = await listProvidentFundWithdrawalsApi({
+        page: pagination.page,
+        pageSize: pagination.pageSize,
+        account: filters.account || undefined,
+        currency: filters.currency || undefined,
+        ...rp,
+      });
+      tableRows.value = res.list;
+      pagination.itemCount = res.pagination.total;
     }
-  } else {
-    list.value.push({
-      id: crypto.randomUUID(),
-      snapshot: snap,
-      updatedAt: now,
-    });
+  } catch (e) {
+    console.error(e);
+    message.error('加载失败');
+  } finally {
+    loading.value = false;
   }
-  editingId.value = null;
-  editingSnapshot.value = null;
 }
 
-const columns: DataTableColumns<ProvidentFundListItem> = [
+function onPage(p: number) {
+  pagination.page = p;
+  reloadActive();
+}
+function onPageSize(s: number) {
+  pagination.pageSize = s;
+  pagination.page = 1;
+  reloadActive();
+}
+
+watch(activeTab, () => {
+  pagination.page = 1;
+  reloadActive();
+});
+
+async function exportDetails() {
+  try {
+    const blob = await exportProvidentFundDetailsCsvApi({
+      account: filters.account || undefined,
+      currency: filters.currency || undefined,
+      ...rangeParams(),
+    } as any);
+    const url = URL.createObjectURL(blob as Blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'provident-fund-details.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    message.success('导出已开始');
+  } catch {
+    message.error('导出失败');
+  }
+}
+
+async function onSettingsSaved() {
+  await loadConfig();
+}
+
+function resetCycleLabel(v: string) {
+  const m: Record<string, string> = {
+    none: '不限制',
+    monthly: '每月',
+    quarterly: '每季度',
+    semi_annual: '每半年',
+    annual: '每年',
+  };
+  return m[v] || v || '--';
+}
+
+const detailColumns: DataTableColumns<any> = [
   {
-    title: '公积金名称',
-    key: 'displayName',
-    width: 140,
-    ellipsis: { tooltip: true },
-    render: (row) => row.snapshot.displayName,
-  },
-  {
-    title: '适用币种',
-    key: 'currencies',
-    width: 160,
-    ellipsis: { tooltip: true },
-    render: (row) => row.snapshot.currencies.join('、') || '-',
-  },
-  {
-    title: '赠送比例',
-    key: 'giftRatio',
+    title: '会员ID',
+    key: 'userId',
     width: 100,
-    render: (row) => `${row.snapshot.giftRatioPercent}%`,
+    render: (row) =>
+      h('span', { style: 'color:#2080f0;cursor:pointer' }, String(row.userId)),
+  },
+  { title: '会员账号', key: 'memberAccount', width: 120, ellipsis: { tooltip: true } },
+  { title: '币种', key: 'currency', width: 80 },
+  { title: '充值金额', key: 'rechargeAmount', width: 100 },
+  { title: '赠送比例', key: 'giftRatioPercent', width: 90, render: (r) => `${r.giftRatioPercent}%` },
+  { title: '赠送前公积金', key: 'balanceBefore', width: 120 },
+  { title: '赠送公积金', key: 'giftAmount', width: 110 },
+  { title: '赠送后公积金', key: 'balanceAfter', width: 120 },
+  {
+    title: '已赠送/封顶次数',
+    key: 'times',
+    width: 130,
+    render: (r) =>
+      r.giftTimesCap != null ? `${r.giftTimesCurrent ?? ''}/${r.giftTimesCap}` : '--',
   },
   {
-    title: '打码平台',
-    key: 'platform',
-    width: 120,
-    render: (row) => platformLabel(row.snapshot.platformRestriction),
+    title: '公积金封顶',
+    key: 'cumulativeCap',
+    width: 110,
+    render: (r) => (r.cumulativeCap != null ? r.cumulativeCap : '--'),
   },
+  { title: '投注倍数', key: 'betMultiple', width: 90 },
+  { title: '新增投注量', key: 'newBetRequirement', width: 110 },
   {
     title: '更新时间',
-    key: 'updatedAt',
+    key: 'createdAt',
     width: 170,
-    render: (row) => formatTime(row.updatedAt),
+    render: (r) => formatTs(r.createdAt),
+  },
+];
+
+const wageringColumns: DataTableColumns<any> = [
+  {
+    title: '会员ID',
+    key: 'userId',
+    width: 90,
+    render: (row) => h('span', { style: 'color:#2080f0' }, String(row.userId)),
+  },
+  { title: '会员账号', key: 'memberAccount', width: 120, ellipsis: { tooltip: true } },
+  { title: '币种', key: 'currency', width: 70 },
+  { title: '重置周期', key: 'resetCycle', width: 100, render: (r) => resetCycleLabel(r.resetCycle) },
+  { title: '公积金奖金', key: 'bonusAmount', width: 110 },
+  { title: '总要求投注', key: 'totalRequiredBet', width: 110 },
+  { title: '已投注', key: 'wageredBet', width: 90 },
+  { title: '剩余投注', key: 'remainingBet', width: 90 },
+  {
+    title: '限制平台',
+    key: 'platformLabels',
+    width: 120,
+    ellipsis: { tooltip: true },
+    render: (r) => {
+      const v = r.platformLabels;
+      if (v == null) return '--';
+      if (Array.isArray(v)) return v.join('、') || '--';
+      return String(v);
+    },
+  },
+  {
+    title: '投注状态',
+    key: 'bettingStatus',
+    width: 100,
+    render: (r) =>
+      h(
+        'span',
+        { style: { color: r.bettingStatus === 'COMPLETED' ? '#18a058' : '#2080f0' } },
+        r.bettingStatus === 'COMPLETED' ? '已完成' : '进行中',
+      ),
   },
   {
     title: '操作',
     key: 'actions',
-    width: 140,
-    fixed: 'right',
-    render: (row) =>
+    width: 120,
+    render: (r) =>
       h(
-        NSpace,
-        { size: 'small' },
+        NButton,
         {
-          default: () => [
-            h(
-              NButton,
-              { size: 'small', onClick: () => openEdit(row) },
-              { default: () => '编辑' },
-            ),
-            h(
-              NButton,
-              {
-                size: 'small',
-                type: 'error',
-                secondary: true,
-                onClick: () => confirmDelete(row),
-              },
-              { default: () => '删除' },
-            ),
-          ],
+          size: 'small',
+          type: 'info',
+          text: true,
+          disabled: r.bettingStatus === 'COMPLETED',
+          onClick: () => doForce(r),
         },
+        { default: () => '强制解除' },
       ),
   },
+  {
+    title: '创建时间',
+    key: 'firstOccurrenceAt',
+    width: 170,
+    render: (r) => formatTs(r.firstOccurrenceAt),
+  },
 ];
+
+const withdrawalColumns: DataTableColumns<any> = [
+  { title: '会员ID', key: 'userId', width: 90 },
+  { title: '会员账号', key: 'memberAccount', width: 140, ellipsis: { tooltip: true } },
+  { title: '币种', key: 'currency', width: 80 },
+  { title: '取出金额', key: 'amount', width: 110 },
+  { title: '领取时间', key: 'claimedAt', width: 180, render: (r) => formatTs(r.claimedAt) },
+];
+
+const activeColumns = computed(() => {
+  if (activeTab.value === 'details') return detailColumns;
+  if (activeTab.value === 'wagering') return wageringColumns;
+  return withdrawalColumns;
+});
+
+async function doForce(row: any) {
+  try {
+    await forceReleaseProvidentFundWageringApi(row.id);
+    message.success('已强制解除');
+    reloadActive();
+  } catch {
+    message.error('操作失败');
+  }
+}
+
+loadConfig().then(() => reloadActive());
 </script>

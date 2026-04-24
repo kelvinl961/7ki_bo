@@ -51,64 +51,70 @@
 
         <!-- Filters -->
         <n-select
-          v-model:value="searchForm.label"
-          placeholder="标签标签"
-          style="width: 150px"
-          :options="labelOptions"
+          v-model:value="searchForm.keywordField"
+          placeholder="代理ID"
+          style="width: 140px"
+          :options="keywordFieldOptions"
+        />
+        <n-input
+          v-model:value="searchForm.keyword"
+          placeholder="支持模糊号、引用关键字"
+          style="width: 220px"
           clearable
         />
         <n-select
-          v-model:value="searchForm.registrationSource"
-          placeholder="父注册邀请金、可用余额"
-          style="width: 200px"
-          :options="registrationSourceOptions"
+          v-model:value="searchForm.metricField"
+          placeholder="累计佣金"
+          style="width: 140px"
+          :options="metricFieldOptions"
+          clearable
+        />
+        <n-input-number
+          v-model:value="searchForm.metricMin"
+          placeholder="最小值"
+          style="width: 120px"
+          :show-button="false"
+          clearable
+        />
+        <n-input-number
+          v-model:value="searchForm.metricMax"
+          placeholder="最大值"
+          style="width: 120px"
+          :show-button="false"
           clearable
         />
         <n-select
-          v-model:value="searchForm.totalInvites"
-          placeholder="累计邀请"
-          style="width: 150px"
-          :options="totalInvitesOptions"
-          clearable
-        />
-        <n-select
-          v-model:value="searchForm.profitLoss"
-          placeholder="盈亏问题"
-          style="width: 150px"
-          :options="profitLossOptions"
-          clearable
-        />
-        <n-select
-          v-model:value="searchForm.sortBy"
-          placeholder="金额排序用户式"
-          style="width: 150px"
-          :options="sortOptions"
+          v-model:value="searchForm.commissionMode"
+          placeholder="全部提佣方式"
+          style="width: 140px"
+          :options="commissionFilterOptions"
           clearable
         />
         <n-select
           v-model:value="searchForm.agentMethod"
-          placeholder="全部代理用方式"
+          placeholder="全部代理方式"
           style="width: 150px"
           :options="agentMethodOptions"
           clearable
         />
         <n-select
           v-model:value="searchForm.agentType"
-          placeholder="全部代理类型报"
+          placeholder="全部代理等级"
           style="width: 150px"
           :options="agentTypeOptions"
           clearable
         />
         <n-select
-          v-model:value="searchForm.superiorAgent"
-          placeholder="全部上线粤家"
+          v-model:value="searchForm.registrationSource"
+          placeholder="全部注册来源"
           style="width: 150px"
-          :options="superiorAgentOptions"
+          :options="registrationSourceOptions"
           clearable
         />
 
         <!-- Search button -->
         <n-button type="primary" @click="handleSearch">搜索</n-button>
+        <n-button @click="handleReset">清除筛选</n-button>
       </div>
 
       <!-- Action buttons -->
@@ -364,6 +370,11 @@
       :agent-id="selectedAgentId"
       @refresh="fetchData"
     />
+
+    <UserDetailModal
+      v-model:visible="userDetailModalVisible"
+      :user-id="selectedUserId"
+    />
   </Page>
 </template>
 
@@ -383,6 +394,7 @@ import {
   NInput,
   NButton,
   NSelect,
+  NInputNumber,
   NModal,
   NTag,
   NSpace,
@@ -407,6 +419,7 @@ import {
   type CreateAgentParams,
   type UpdateAgentParams,
 } from '#/api/agency/agent';
+import { getUserListApi } from '#/api/core/user-management';
 import { getMemberTiersApi, type MemberTier } from '#/api/core/memberTier';
 import { agentModeApi } from '#/api/agency/agent-mode';
 import {
@@ -417,6 +430,9 @@ import {
 import { defineAsyncComponent } from 'vue';
 const AgentDetailModal = defineAsyncComponent(
   () => import('#/components/agency/AgentDetailModal.vue'),
+);
+const UserDetailModal = defineAsyncComponent(
+  () => import('#/components/user/UserDetailModal.vue'),
 );
 import { notification } from '#/adapter/naive';
 
@@ -433,11 +449,14 @@ const submitting = ref(false);
 const modalVisible = ref(false);
 const isEdit = ref(false);
 const tableData = ref<AgentRecord[]>([]);
+const rawTableData = ref<AgentRecord[]>([]);
 const currentRecord = ref<AgentRecord | null>(null);
 
 // 代理详情弹窗
 const agentDetailModalVisible = ref(false);
 const selectedAgentId = ref<number>(0);
+const userDetailModalVisible = ref(false);
+const selectedUserId = ref<number>(0);
 
 // Member tiers for level dropdown
 const memberTiers = ref<MemberTier[]>([]);
@@ -458,10 +477,13 @@ const activeTab = ref('day');
 const searchForm = reactive({
   startDate: null as number | null,
   endDate: null as number | null,
-  label: null as string | null,
+  keywordField: 'agentId' as string,
+  keyword: '',
+  metricField: null as string | null,
+  metricMin: null as null | number,
+  metricMax: null as null | number,
+  commissionMode: null as string | null,
   registrationSource: null as string | null,
-  totalInvites: null as string | null,
-  profitLoss: null as string | null,
   sortBy: null as string | null,
   agentMethod: null as string | null,
   agentType: null as string | null,
@@ -557,9 +579,49 @@ const commissionModeOptions = [
 ];
 
 // Filter options for the new search form
-const labelOptions = [
-  { label: '默认标签', value: '默认标签' },
-  { label: 'VIP标签', value: 'VIP标签' },
+const metricFieldOptions = [
+  { label: '累计佣金', value: 'commissionTotal' },
+  { label: '累计领取', value: 'claimedCommission' },
+  { label: '未领取', value: 'unclaimedCommission' },
+  { label: '所属层数', value: 'hierarchyLevel' },
+];
+
+const commissionFilterOptions = [
+  { label: '全部提佣方式', value: null },
+  { label: '不限制（自由领取）', value: '不限制' },
+  { label: '按比例', value: '按比例' },
+  { label: '固定金额', value: '固定金额' },
+];
+
+const getRebateMetric = (
+  row: AgentRecord,
+  metric: 'claimedCommission' | 'totalCommission' | 'unclaimedCommission',
+) => {
+  const rebateData = rebateSummaries.value[row.id];
+  if (rebateData) {
+    return Number(rebateData[metric] || 0);
+  }
+
+  if (metric === 'totalCommission') return Number(row.commissionTotal || 0);
+  if (metric === 'claimedCommission') return Number(row.claimedCommission || 0);
+  return Number(row.unclaimedCommission || 0);
+};
+
+const metricValueGetters: Record<string, (row: AgentRecord) => number> = {
+  commissionTotal: (row) => getRebateMetric(row, 'totalCommission'),
+  claimedCommission: (row) => getRebateMetric(row, 'claimedCommission'),
+  unclaimedCommission: (row) => getRebateMetric(row, 'unclaimedCommission'),
+  hierarchyLevel: (row) => Number(row.hierarchyLevel || 0),
+};
+
+const keywordFieldOptions = [
+  { label: '代理ID', value: 'agentId' },
+  { label: '邀请码', value: 'referralCode' },
+  { label: '会员账号', value: 'username' },
+  { label: '上级代理ID', value: 'invitedById' },
+  { label: '上级代理账号', value: 'invitedByUsername' },
+  { label: '顶层代理ID', value: 'topAgentId' },
+  { label: '顶层代理账号', value: 'topAgentUsername' },
 ];
 
 const registrationSourceOptions = [
@@ -598,8 +660,6 @@ const agentTypeOptions = [
   { label: '二级代理', value: '2' },
 ];
 
-const superiorAgentOptions = [{ label: '全部上级', value: null }];
-
 // 表格列配置
 const columns: DataTableColumns<AgentRecord> = [
   {
@@ -613,10 +673,20 @@ const columns: DataTableColumns<AgentRecord> = [
     render: (row) => row.currency || 'BRL',
   },
   {
-    title: '代理ID',
-    key: 'agentId',
+    title: '用户ID',
+    key: 'userID',
     width: 100,
-    render: (row) => row.agentId || row.id,
+    render: (row) => {
+      const displayId = row.userID || row.agentId || String(row.id);
+      return h(
+        'span',
+        {
+          style: 'color: #2080f0; cursor: pointer;',
+          onClick: () => handleViewUserDetail(row),
+        },
+        displayId,
+      );
+    },
   },
   {
     title: '代理账号',
@@ -896,15 +966,15 @@ const pageSubtotal = computed(() => {
       0,
     ),
     commissionTotal: tableData.value.reduce(
-      (sum, row) => sum + Number(row.commissionTotal || 0),
+      (sum, row) => sum + getRebateMetric(row, 'totalCommission'),
       0,
     ),
     claimedCommission: tableData.value.reduce(
-      (sum, row) => sum + Number(row.claimedCommission || 0),
+      (sum, row) => sum + getRebateMetric(row, 'claimedCommission'),
       0,
     ),
     unclaimedCommission: tableData.value.reduce(
-      (sum, row) => sum + Number(row.unclaimedCommission || 0),
+      (sum, row) => sum + getRebateMetric(row, 'unclaimedCommission'),
       0,
     ),
   };
@@ -950,7 +1020,7 @@ const fetchData = async () => {
       pagination: response.pagination,
     });
 
-    tableData.value = response.list;
+    rawTableData.value = response.list;
     paginationReactive.total = response.pagination.total;
 
     // Update grand total from API summary
@@ -970,8 +1040,9 @@ const fetchData = async () => {
       total: paginationReactive.total,
     });
 
-    // Fetch rebate summaries to update commission displays
+    // Fetch rebate summaries first, then filter so "累计领取" uses API values
     await fetchRebateSummaries();
+    tableData.value = applyClientFilters(rawTableData.value);
   } catch (error) {
     console.error('获取代理列表失败:', error);
     notification.error({
@@ -1070,16 +1141,111 @@ const handleReset = () => {
   Object.assign(searchForm, {
     startDate: null,
     endDate: null,
-    label: null,
+    keywordField: 'agentId',
+    keyword: '',
+    metricField: null,
+    metricMin: null,
+    metricMax: null,
+    commissionMode: null,
     registrationSource: null,
-    totalInvites: null,
-    profitLoss: null,
     sortBy: null,
     agentMethod: null,
     agentType: null,
     superiorAgent: null,
   });
   fetchData();
+};
+
+const handleViewUserDetail = (record: AgentRecord) => {
+  void openUserDetailByAgentRecord(record);
+};
+
+const openUserDetailByAgentRecord = async (record: AgentRecord) => {
+  try {
+    const externalUserId = String(record.userID || '').trim();
+
+    if (externalUserId) {
+      const response = await getUserListApi({
+        page: 1,
+        pageSize: 1,
+        searchField: 'userID',
+        searchMode: 'exact',
+        searchValue: externalUserId,
+      });
+
+      const matchedUser = response?.list?.[0];
+      if (matchedUser?.id) {
+        selectedUserId.value = Number(matchedUser.id);
+        userDetailModalVisible.value = true;
+        return;
+      }
+    }
+
+    // Fallback: some environments may already return internal ID in row.id
+    selectedUserId.value = Number(record.id);
+    userDetailModalVisible.value = true;
+  } catch (error) {
+    console.error('打开用户详情失败:', error);
+    message.error('无法获取用户详情，请稍后重试');
+  }
+};
+
+const applyClientFilters = (rows: AgentRecord[]) => {
+  return rows.filter((row) => {
+    const keyword = searchForm.keyword.trim();
+    if (keyword) {
+      const keywordMatcher: Record<string, string> = {
+        agentId: String(row.userID || row.agentId || row.id || ''),
+        referralCode: String(row.referralCode || ''),
+        username: String(row.username || ''),
+        invitedById: String(row.invitedByCode || ''),
+        invitedByUsername: String(row.invitedByUsername || ''),
+        topAgentId: String(row.topAgentCode || ''),
+        topAgentUsername: String(row.topAgentUsername || ''),
+      };
+      const target = (keywordMatcher[searchForm.keywordField] || '').toLowerCase();
+      if (!target.includes(keyword.toLowerCase())) {
+        return false;
+      }
+    }
+
+    if (
+      searchForm.commissionMode &&
+      row.commissionMode !== searchForm.commissionMode
+    ) {
+      return false;
+    }
+
+    if (searchForm.agentMethod && row.mode !== searchForm.agentMethod) {
+      return false;
+    }
+
+    if (
+      searchForm.registrationSource &&
+      row.registrationSource !== searchForm.registrationSource
+    ) {
+      return false;
+    }
+
+    if (searchForm.metricField) {
+      const getter = metricValueGetters[searchForm.metricField];
+      const value = getter ? getter(row) : 0;
+      if (
+        searchForm.metricMin !== null &&
+        value < Number(searchForm.metricMin)
+      ) {
+        return false;
+      }
+      if (
+        searchForm.metricMax !== null &&
+        value > Number(searchForm.metricMax)
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  });
 };
 
 const handleCreate = () => {

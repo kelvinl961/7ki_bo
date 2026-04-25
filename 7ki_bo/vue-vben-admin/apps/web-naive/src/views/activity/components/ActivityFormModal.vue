@@ -2028,6 +2028,14 @@
                       />
                     </div>
 
+                    <!-- Whether to Allow Claiming Same Activity Type -->
+                    <div class="flex items-center justify-between">
+                      <label class="block text-sm font-medium text-gray-700">
+                        是否允许玩家领同样类型的活动
+                      </label>
+                      <n-switch v-model:value="allowClaimSamePromotionType" />
+                    </div>
+
                     <!-- Distribution Method -->
                     <div>
                       <label
@@ -4788,6 +4796,7 @@ const formData = reactive({
   promotionDownloadAppLogin: false,
   promotionSameIPLimit: '',
   promotionSameDeviceLimit: '',
+  promotionAllowSameTypeClaim: true,
   promotionRewardType: 'fixed_amount',
   promotionDisplayOnAgentPage: false,
   promotionDistributionMethod: 'expired_auto',
@@ -4874,6 +4883,22 @@ const formData = reactive({
   customJumpType: 'external_link',
   customOpenInNewWindow: 'true',
   customTargetUrl: '',
+});
+
+const allowClaimSamePromotionType = computed({
+  get: () => !formData.restrictions.includes('same_activity'),
+  set: (value: boolean) => {
+    formData.promotionAllowSameTypeClaim = value;
+    if (value) {
+      formData.restrictions = formData.restrictions.filter(
+        (item) => item !== 'same_activity',
+      );
+      return;
+    }
+    if (!formData.restrictions.includes('same_activity')) {
+      formData.restrictions.push('same_activity');
+    }
+  },
 });
 
 // Options data
@@ -5408,6 +5433,7 @@ const handleModalClose = () => {
     promotionDownloadAppLogin: false,
     promotionSameIPLimit: '',
     promotionSameDeviceLimit: '',
+    promotionAllowSameTypeClaim: true,
     promotionRewardType: 'fixed_amount',
     promotionDisplayOnAgentPage: false,
     promotionDistributionMethod: 'expired_auto',
@@ -5755,6 +5781,8 @@ const handleSubmit = async () => {
       promotionSameDeviceLimit: formData.promotionSameDeviceLimit
         ? parseInt(formData.promotionSameDeviceLimit)
         : undefined,
+      promotionAllowSameTypeClaim:
+        !formData.restrictions.includes('same_activity'),
       promotionRewardType: mapFrontendToBackendRewardType(
         formData.promotionRewardType,
       ),
@@ -7147,6 +7175,11 @@ watch(
         (newItem as any).config?.promotionSameIPLimit?.toString() || '';
       formData.promotionSameDeviceLimit =
         (newItem as any).config?.promotionSameDeviceLimit?.toString() || '';
+      formData.promotionAllowSameTypeClaim =
+        (newItem as any).config?.promotionAllowSameTypeClaim ??
+        !((newItem as any).config?.restrictions || []).includes(
+          'same_activity',
+        );
       formData.promotionRewardType =
         mapBackendToFrontendRewardType(
           (newItem as any).config?.promotionRewardType,
@@ -7171,6 +7204,15 @@ watch(
             rewardAmount: setting.rewardValue?.toString() || '',
           }),
         ) || formData.promotionRewardSettings;
+
+      // Keep backward compatibility by syncing the new switch with legacy restriction.
+      if (formData.promotionAllowSameTypeClaim) {
+        formData.restrictions = formData.restrictions.filter(
+          (item) => item !== 'same_activity',
+        );
+      } else if (!formData.restrictions.includes('same_activity')) {
+        formData.restrictions.push('same_activity');
+      }
 
       // Load restrictions and conditions
       formData.restrictions = (newItem as any).config?.restrictions || [];

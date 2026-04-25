@@ -5,7 +5,8 @@
         <template #default>
           <ul>
             <li>✅ First-Match：从上到下匹配到的第一条规则生效</li>
-            <li>✅ 支持条件：未入金 / 入金金额阈值、游戏范围</li>
+            <li>✅ 规则类型：仅入金 / 仅活动领奖（每条规则独立）</li>
+            <li>✅ 支持条件：未入金 / 入金金额阈值、可选「所选活动历史累计已领奖 &gt; 阈值」、游戏范围</li>
             <li>✅ 支持：保存/加载后端条件RTP配置（演示联动）</li>
             <li>
               ✅ HG 可选「取消 RTP」：规则里 <code>hgPlayerAction: cancelRtp</code>，注册/入金命中后自动调厂商
@@ -24,7 +25,18 @@
         label-width="auto"
         require-mark-placement="right-hanging"
       >
-        <n-form-item label="入金条件" path="depositCondition">
+        <n-form-item label="规则类型" path="ruleType">
+          <n-select
+            v-model:value="formData.ruleType"
+            :options="ruleTypeOptions"
+            placeholder="请选择规则类型"
+          />
+          <template #feedback>
+            每条规则只做一件事：要么仅入金，要么仅活动领奖累计。
+          </template>
+        </n-form-item>
+
+        <n-form-item v-if="formData.ruleType === 'DEPOSIT_ONLY'" label="入金条件" path="depositCondition">
           <n-select
             v-model:value="formData.depositCondition"
             :options="depositConditionOptions"
@@ -33,7 +45,7 @@
         </n-form-item>
 
         <n-form-item
-          v-if="formData.depositCondition === 'GTE_AMOUNT'"
+          v-if="formData.ruleType !== 'ACTIVITY_CLAIM_ONLY' && formData.depositCondition === 'GTE_AMOUNT'"
           label="累计入金金额 >= 阈值"
           path="depositMinAmount"
         >
@@ -44,6 +56,36 @@
             placeholder="例如 500"
             :precision="2"
           />
+        </n-form-item>
+
+        <n-form-item
+          v-if="formData.ruleType === 'ACTIVITY_CLAIM_ONLY'"
+          label="累计已领奖（所选活动）"
+          path="activityRewardRule"
+        >
+          <n-space vertical :size="8" class="w-full max-w-2xl">
+            <n-select
+              v-model:value="formData.activityIds"
+              multiple
+              filterable
+              :options="activityOptions"
+              :loading="activitiesLoading"
+              placeholder="可多选活动（与下方阈值同时设置才生效）"
+              max-tag-count="responsive"
+            />
+            <n-input-number
+              v-model:value="formData.activityRewardAmountGt"
+              :min="0"
+              :max="100000000"
+              :precision="2"
+              clearable
+              placeholder="用户在这些活动中「历史累计」已领奖总额须严格大于此金额"
+              class="w-full max-w-md"
+            />
+          </n-space>
+          <template #feedback>
+            按 promotion 库 <code>activity_rewards</code> 汇总：同一用户在所选活动下所有已发放记录金额相加（多活动则再相加）。领奖成功后会自动触发条件 RTP 重算。
+          </template>
         </n-form-item>
 
         <n-form-item label="对接厂商" path="applyVendors">
@@ -272,8 +314,10 @@ import {
   searchGamesWithPagination,
 } from '#/api/core/player-rtp';
 import { getMerchantRtpVendorsApi } from '#/api/core/merchant-rtp';
+import { getActivityList, type Activity } from '#/api/activity';
 
 type DepositConditionType = 'NO_DEPOSIT' | 'GTE_AMOUNT';
+type RuleType = 'DEPOSIT_ONLY' | 'ACTIVITY_CLAIM_ONLY';
 
 type RtpVendorId = 'AG' | 'HG';
 type HgPlayerAction = 'setRtp' | 'cancelRtp';
@@ -281,8 +325,12 @@ type HgPlayerAction = 'setRtp' | 'cancelRtp';
 type Rule = {
   id: string;
   enabled: boolean;
+  ruleType: RuleType;
   depositCondition: DepositConditionType;
   depositMinAmount?: number;
+  /** Optional: claimed activity reward sum for these activities must be > threshold */
+  activityIds?: string[];
+  activityRewardAmountGt?: number;
   /** 1–2 vendors applied in order when auto-eval runs */
   applyVendors: RtpVendorId[];
   /** HG only; AG 规则忽略 */
@@ -355,10 +403,34 @@ const depositConditionOptions = [
   { label: '未入金（累计入金=0）', value: 'NO_DEPOSIT' },
   { label: '入金金额 >= 阈值', value: 'GTE_AMOUNT' },
 ];
+const ruleTypeOptions = [
+  { label: '仅入金条件', value: 'DEPOSIT_ONLY' },
+  { label: '仅活动领奖条件', value: 'ACTIVITY_CLAIM_ONLY' },
+];
 
 const gamesLoading = ref(false);
 const gameOptions = ref<Array<{ label: string; value: string }>>([]);
 const currentPage = ref(1);
+
+const activitiesLoading = ref(false);
+const activityOptions = ref<Array<{ label: string; value: string }>>([]);
+
+const loadActivitiesForRtpRule = async () => {
+  activitiesLoading.value = true;
+  try {
+    const res = await getActivityList({ page: 1, pageSize: 500 });
+    const list = (res as { list?: Activity[] })?.list ?? [];
+    activityOptions.value = list.map((a) => ({
+      label: `${a.id} — ${a.title ?? a.locales?.[0]?.title ?? a.type}`,
+      value: String(a.id),
+    }));
+  } catch (e) {
+    console.error('loadActivitiesForRtpRule', e);
+    activityOptions.value = [];
+  } finally {
+    activitiesLoading.value = false;
+  }
+};
 
 const loadInitialGames = async () => {
   gamesLoading.value = true;
@@ -406,8 +478,11 @@ const formData = reactive({
   gameType: 0,
   maxMultiple: null as number | null,
   maxWinPoints: null as number | null,
+  ruleType: 'DEPOSIT_ONLY' as RuleType,
   depositCondition: 'NO_DEPOSIT' as DepositConditionType,
   depositMinAmount: 500,
+  activityIds: [] as string[],
+  activityRewardAmountGt: null as number | null,
   rtp: 94,
   games: [...defaultGames] as string[],
 });
@@ -455,6 +530,20 @@ watch(
 );
 
 watch(
+  () => formData.ruleType,
+  (t) => {
+    if (t === 'DEPOSIT_ONLY') {
+      formData.activityIds = [];
+      formData.activityRewardAmountGt = null;
+    } else if (t === 'ACTIVITY_CLAIM_ONLY') {
+      formData.depositCondition = 'GTE_AMOUNT';
+      formData.depositMinAmount = 0;
+    }
+    formRef.value?.restoreValidation();
+  },
+);
+
+watch(
   () => formData.hgPlayerAction,
   (a) => {
     if (a === 'cancelRtp') {
@@ -467,6 +556,11 @@ watch(
 );
 
 const rules: any = {
+  ruleType: {
+    required: true,
+    message: '请选择规则类型',
+    trigger: 'change',
+  },
   applyVendors: {
     required: true,
     type: 'array',
@@ -530,6 +624,27 @@ const rules: any = {
     type: 'number',
     message: '请输入入金阈值',
     trigger: 'change',
+  },
+  activityRewardRule: {
+    trigger: ['change', 'blur'],
+    validator: () => {
+      const ids = formData.activityIds ?? [];
+      const gt = formData.activityRewardAmountGt;
+      const hasActs = ids.length > 0;
+      const hasGt = gt != null && Number.isFinite(Number(gt));
+      if (formData.ruleType === 'DEPOSIT_ONLY') {
+        return !hasActs && !hasGt ? true : new Error('仅入金条件时，请清空活动领奖条件');
+      }
+      if (formData.ruleType === 'ACTIVITY_CLAIM_ONLY' && !hasActs && !hasGt) {
+        return new Error('请选择活动并设置领奖累计阈值');
+      }
+      if (!hasActs && !hasGt) return true;
+      if (hasActs && !hasGt) return new Error('填写了活动时请填写领奖累计阈值');
+      if (hasGt && !hasActs) return new Error('填写了阈值时请至少选择一个活动');
+      if (hasGt && Number(gt) < 0) return new Error('阈值须 >= 0');
+      if (ids.length > 50) return new Error('最多选择 50 个活动');
+      return true;
+    },
   },
   rtp: {
     required: true,
@@ -616,10 +731,17 @@ const buildPayload = (): ConditionalPlayerRtpConfigPayload => {
         enabled: r.enabled,
         priority: idx + 1,
         conditions: {
+          ruleType: r.ruleType,
           registrationDaysMax: 0,
           depositCondition: r.depositCondition,
           depositMinAmount:
             r.depositCondition === 'GTE_AMOUNT' ? r.depositMinAmount : undefined,
+          ...(r.activityIds?.length && r.activityRewardAmountGt != null
+            ? {
+                activityIds: [...r.activityIds],
+                activityRewardAmountGt: r.activityRewardAmountGt,
+              }
+            : {}),
         },
         result: {
           rtp: hasHg && r.hgPlayerAction === 'cancelRtp' ? 0 : r.rtp,
@@ -689,6 +811,19 @@ const handleLoadFromBackend = async () => {
         rule?.conditions?.depositCondition === 'GTE_AMOUNT'
           ? 'GTE_AMOUNT'
           : 'NO_DEPOSIT';
+      const hasActivityRuleBits =
+        Array.isArray(rule?.conditions?.activityIds) &&
+        rule.conditions.activityIds.length > 0 &&
+        rule?.conditions?.activityRewardAmountGt != null;
+      const ruleTypeRaw = String(rule?.conditions?.ruleType ?? '').toUpperCase();
+      const ruleType: RuleType =
+        ruleTypeRaw === 'ACTIVITY_CLAIM_ONLY'
+          ? 'ACTIVITY_CLAIM_ONLY'
+          : ruleTypeRaw === 'DEPOSIT_ONLY'
+            ? 'DEPOSIT_ONLY'
+            : hasActivityRuleBits
+              ? 'ACTIVITY_CLAIM_ONLY'
+              : 'DEPOSIT_ONLY';
       const applyVendors = normalizeApplyVendorsFromBackendResult(rule?.result);
       const hasHg = applyVendors.includes('HG');
       const hgPlayerAction: HgPlayerAction =
@@ -696,9 +831,18 @@ const handleLoadFromBackend = async () => {
       return {
         id: String(rule?.id ?? ''),
         enabled: Boolean(rule?.enabled),
+        ruleType,
         depositCondition,
         depositMinAmount:
           depositCondition === 'GTE_AMOUNT' ? rule?.conditions?.depositMinAmount : undefined,
+        activityIds: Array.isArray(rule?.conditions?.activityIds)
+          ? rule.conditions.activityIds.map((x: unknown) => String(x))
+          : undefined,
+        activityRewardAmountGt:
+          rule?.conditions?.activityRewardAmountGt != null &&
+          rule?.conditions?.activityRewardAmountGt !== ''
+            ? Number(rule.conditions.activityRewardAmountGt)
+            : undefined,
         applyVendors,
         hgPlayerAction: hasHg ? hgPlayerAction : undefined,
         gamePattern:
@@ -760,12 +904,17 @@ const signatureKey = (rule: Rule) => {
     rule.depositCondition === 'NO_DEPOSIT'
       ? '0'
       : String(rule.depositMinAmount ?? 0);
+  const typeKey = rule.ruleType;
   const vendorKey = [...rule.applyVendors].sort().join('+');
   const hgKey =
     rule.applyVendors.includes('HG')
       ? `${rule.hgPlayerAction ?? 'setRtp'}|${rule.gamePattern ?? ''}|${rule.gameType ?? ''}|${rule.maxMultiple ?? ''}|${rule.maxWinPoints ?? ''}`
       : '';
-  return `${vendorKey}|${rule.depositCondition}|${depKey}|${gamesKey}|${hgKey}`;
+  const actKey =
+    rule.activityIds?.length && rule.activityRewardAmountGt != null
+      ? `act:${[...rule.activityIds].sort().join(',')}|>${rule.activityRewardAmountGt}`
+      : '';
+  return `${vendorKey}|${typeKey}|${rule.depositCondition}|${depKey}|${gamesKey}|${hgKey}|${actKey}`;
 };
 
 const conflictRuleIds = computed<Set<string>>(() => {
@@ -798,10 +947,19 @@ const handleAddRule = async () => {
     const rule: Rule = {
       id: String(Date.now()) + Math.random().toString(16).slice(2),
       enabled: true,
+      ruleType: formData.ruleType,
       depositCondition: formData.depositCondition,
       depositMinAmount:
         formData.depositCondition === 'GTE_AMOUNT'
           ? formData.depositMinAmount
+          : undefined,
+      activityIds:
+        formData.activityIds?.length && formData.activityRewardAmountGt != null
+          ? [...formData.activityIds]
+          : undefined,
+      activityRewardAmountGt:
+        formData.activityIds?.length && formData.activityRewardAmountGt != null
+          ? Number(formData.activityRewardAmountGt)
           : undefined,
       applyVendors: [...formData.applyVendors],
       hgPlayerAction: hasHg ? formData.hgPlayerAction : undefined,
@@ -836,8 +994,11 @@ const handleResetForm = () => {
   formData.gameType = 0;
   formData.maxMultiple = null;
   formData.maxWinPoints = null;
+  formData.ruleType = 'DEPOSIT_ONLY';
   formData.depositCondition = 'NO_DEPOSIT';
   formData.depositMinAmount = 500;
+  formData.activityIds = [];
+  formData.activityRewardAmountGt = null;
   formData.rtp = 94;
   formData.games = [...defaultGames];
   message.info('已重置表单');
@@ -849,6 +1010,7 @@ const handleClearRules = () => {
 };
 
 const handleTemplateA = () => {
+  formData.ruleType = 'DEPOSIT_ONLY';
   formData.depositCondition = 'NO_DEPOSIT';
   formData.games = [...defaultGames];
   formData.rtp = 94;
@@ -856,6 +1018,7 @@ const handleTemplateA = () => {
 };
 
 const handleTemplateB = () => {
+  formData.ruleType = 'DEPOSIT_ONLY';
   formData.depositCondition = 'GTE_AMOUNT';
   formData.depositMinAmount = 500;
   formData.games = [...defaultGames];
@@ -874,12 +1037,28 @@ const ruleColumns: DataTableColumns<Rule> = [
     render: (_row, index) => index + 1,
   },
   {
-    title: '入金条件',
+    title: '规则类型',
+    key: 'ruleType',
+    width: 140,
+    render: (row) =>
+      row.ruleType === 'DEPOSIT_ONLY'
+        ? '仅入金'
+        : '仅活动领奖',
+  },
+  {
+    title: '入金 / 活动领奖',
     key: 'depositCondition',
-    width: 200,
+    width: 280,
     render: (row) => {
-      if (row.depositCondition === 'NO_DEPOSIT') return '未入金';
-      return `入金>=${row.depositMinAmount ?? 0}`;
+      const dep = row.ruleType === 'ACTIVITY_CLAIM_ONLY'
+        ? '—'
+        : row.depositCondition === 'NO_DEPOSIT'
+          ? '未入金'
+          : `入金>=${row.depositMinAmount ?? 0}`;
+      if (row.ruleType !== 'DEPOSIT_ONLY' && row.activityIds?.length && row.activityRewardAmountGt != null) {
+        return `${dep}；累计领奖>${row.activityRewardAmountGt}（${row.activityIds.length}个活动）`;
+      }
+      return dep;
     },
   },
   {
@@ -1011,6 +1190,7 @@ const loadRtpVendors = async () => {
 onMounted(async () => {
   await loadRtpVendors();
   await loadInitialGames();
+  await loadActivitiesForRtpRule();
   await handleLoadFromBackend();
 });
 </script>

@@ -170,11 +170,26 @@ export async function searchGamesWithPagination(
 // Conditional RTP config (demo)
 // =============================
 export type ConditionalPlayerDepositConditionType = 'NO_DEPOSIT' | 'GTE_AMOUNT';
+export type ConditionalPlayerRuleType = 'DEPOSIT_ONLY' | 'ACTIVITY_CLAIM_ONLY' | 'COMBINED';
 
 export interface ConditionalPlayerRtpRuleConditions {
+  /**
+   * Rule matching strategy:
+   * - DEPOSIT_ONLY: only evaluate deposit condition
+   * - ACTIVITY_CLAIM_ONLY: only evaluate activity claim amount condition
+   * - COMBINED: legacy mode (kept for backward compatibility; new UI no longer offers it)
+   */
+  ruleType?: ConditionalPlayerRuleType;
   registrationDaysMax?: number;
   depositCondition: ConditionalPlayerDepositConditionType;
   depositMinAmount?: number;
+  /**
+   * Optional (仅活动领奖规则): **lifetime accumulated** sum of `rewardAmount` in promotion
+   * `activity_rewards` for this user across the listed `activityIds` (per-activity SUM, then summed
+   * across activities). Match requires total **strictly greater** than `activityRewardAmountGt`.
+   */
+  activityIds?: string[];
+  activityRewardAmountGt?: number;
 }
 
 export interface ConditionalPlayerRtpRuleResult {

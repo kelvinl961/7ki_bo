@@ -1453,6 +1453,14 @@ function applyWithdrawalListQueryFromRoute() {
   if (String(q.tab) === 'all-withdrawals') {
     activeTab.value = 'all-withdrawals';
   }
+  if (typeof q.userAccount === 'string' && q.userAccount.trim()) {
+    searchInput.value = q.userAccount.trim();
+  } else if (typeof q.userName === 'string' && q.userName.trim()) {
+    searchInput.value = q.userName.trim();
+  }
+  if (typeof q.userId === 'string' && q.userId.trim()) {
+    userIdInput.value = q.userId.trim();
+  }
   const hasOpsRange = q.opsDateStart != null && q.opsDateEnd != null;
   if (hasOpsRange) {
     const s = Number(q.opsDateStart);

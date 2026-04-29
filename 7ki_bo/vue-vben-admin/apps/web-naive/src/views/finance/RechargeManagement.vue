@@ -2741,8 +2741,9 @@ onMounted(() => {
       filterForm.value.searchMode = 'exact';
     }
 
-    // Set default time range to show all user's recharges
-    filterForm.value.timeRange = 'month';
+    // Show all recharge history for the selected user
+    filterForm.value.timeRange = '';
+    filterForm.value.dateRange = null;
 
     // Trigger search with user filter
     fetchData();

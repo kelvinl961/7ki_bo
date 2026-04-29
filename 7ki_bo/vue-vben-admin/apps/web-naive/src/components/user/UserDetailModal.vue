@@ -3057,6 +3057,7 @@ const handleNavigateToRecharge = () => {
   router.push({
     path: '/finance/recharge-management',
     query: {
+      tab: 'all-recharges',
       userId: userDetail.value.id,
       userAccount: userDetail.value.account,
       userName: userDetail.value.realName || userDetail.value.account,
@@ -3072,6 +3073,7 @@ const handleNavigateToWithdrawal = () => {
   router.push({
     path: '/finance/withdraw-management',
     query: {
+      tab: 'all-withdrawals',
       userId: userDetail.value.id,
       userAccount: userDetail.value.account,
       userName: userDetail.value.realName || userDetail.value.account,

@@ -144,6 +144,18 @@
             </n-form-item>
 
             <template v-if="formData.h5FloatingEnabled">
+              <n-form-item label="客服系统">
+                <n-radio-group
+                  v-model:value="formData.h5ServiceSystem"
+                  :disabled="!isEditing"
+                >
+                  <n-space>
+                    <n-radio value="LIVECHAT">Livechat</n-radio>
+                    <n-radio value="OTHER_SYSTEM">其他系统</n-radio>
+                  </n-space>
+                </n-radio-group>
+              </n-form-item>
+
               <n-form-item label="展示方式">
                 <n-radio-group
                   v-model:value="formData.h5DisplayLocation"
@@ -156,7 +168,7 @@
                 </n-radio-group>
               </n-form-item>
 
-              <n-form-item label="内嵌代码">
+              <n-form-item v-if="formData.h5ServiceSystem !== 'OTHER_SYSTEM'" label="内嵌代码">
                 <n-space vertical class="w-full" :size="8">
                   <n-alert type="info" :show-icon="false">
                     填写LiveChat的内嵌代码；如果代码无法显示图标，请联系技术客服。
@@ -170,6 +182,42 @@
                   />
                 </n-space>
               </n-form-item>
+
+              <template v-else>
+                <n-form-item label="客服打开方式">
+                  <n-radio-group
+                    v-model:value="formData.h5OpenMethod"
+                    :disabled="!isEditing"
+                  >
+                    <n-space>
+                      <n-radio value="APP_INTERNAL">内嵌打开</n-radio>
+                      <n-radio value="EXTERNAL_BROWSER">外部浏览器</n-radio>
+                    </n-space>
+                  </n-radio-group>
+                </n-form-item>
+
+                <n-form-item label="客服图标">
+                  <n-space vertical class="w-full" :size="8">
+                    <n-alert type="info" :show-icon="false">
+                      请从媒体库选择或上传客服图标（建议 240px x 240px，png）
+                    </n-alert>
+                    <MediaLibrarySelector
+                      v-model="formData.h5IconUrl"
+                      category="icons"
+                      :accept-types="['image']"
+                      placeholder="选择客服图标"
+                    />
+                  </n-space>
+                </n-form-item>
+
+                <n-form-item label="客服链接">
+                  <n-input
+                    v-model:value="formData.h5LinkUrl"
+                    placeholder="请输入客服链接"
+                    :disabled="!isEditing"
+                  />
+                </n-form-item>
+              </template>
             </template>
           </n-form>
         </n-space>
@@ -286,7 +334,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, defineAsyncComponent } from 'vue';
 import {
   NCard,
   NSpace,
@@ -313,6 +361,9 @@ import {
 } from '#/api/operations/customerService';
 
 const message = useMessage();
+const MediaLibrarySelector = defineAsyncComponent(
+  () => import('#/components/MediaLibrarySelector.vue'),
+);
 
 // Loading states
 const loading = ref(false);
@@ -333,6 +384,10 @@ const formData = ref<OnlineCustomerServiceConfig>({
   h5FloatingEnabled: false,
   h5DisplayLocation: 'ALL_PAGES',
   h5EmbedCode: '',
+  h5ServiceSystem: 'LIVECHAT',
+  h5OpenMethod: 'APP_INTERNAL',
+  h5IconUrl: '',
+  h5LinkUrl: '',
   livechatEnabled: false,
   livechatBrandIds: [],
   livechatDisplayLocation: 'ALL_PAGES',
@@ -525,6 +580,15 @@ const cancelEdit = () => {
 const saveConfig = async () => {
   saving.value = true;
   try {
+    if (
+      formData.value.h5FloatingEnabled &&
+      formData.value.h5ServiceSystem === 'OTHER_SYSTEM' &&
+      !formData.value.h5LinkUrl?.trim()
+    ) {
+      message.warning('请选择其他系统时，客服链接不能为空');
+      return;
+    }
+
     // Extract language configs and service links
     formData.value.languageConfigs = serviceLinkList.value
       .filter((link) => link.language && link.serviceName)

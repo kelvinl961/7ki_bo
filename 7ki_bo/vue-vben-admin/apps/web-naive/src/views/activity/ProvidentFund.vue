@@ -182,6 +182,55 @@ const pagination = reactive({
   prefix: (info: any) => `共 ${info.itemCount} 条`,
 });
 
+function toFiniteNumber(v: unknown): number | null {
+  if (typeof v === 'number') return Number.isFinite(v) ? v : null;
+  if (typeof v === 'string' && v.trim() !== '') {
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  }
+  return null;
+}
+
+function applyServerPagination(meta: any, currentListLength: number) {
+  const current =
+    toFiniteNumber(meta?.current) ??
+    toFiniteNumber(meta?.page) ??
+    toFiniteNumber(meta?.pageNum);
+  if (current != null && current >= 1) {
+    pagination.page = Math.floor(current);
+  }
+
+  const size =
+    toFiniteNumber(meta?.pageSize) ??
+    toFiniteNumber(meta?.size) ??
+    toFiniteNumber(meta?.limit);
+  if (size != null && size >= 1) {
+    pagination.pageSize = Math.floor(size);
+  }
+
+  const total =
+    toFiniteNumber(meta?.total) ??
+    toFiniteNumber(meta?.totalCount) ??
+    toFiniteNumber(meta?.itemCount) ??
+    toFiniteNumber(meta?.count);
+  const totalPages = toFiniteNumber(meta?.totalPages);
+
+  if (total != null && total >= 0) {
+    pagination.itemCount = Math.floor(total);
+    return;
+  }
+
+  if (totalPages != null && totalPages >= 0) {
+    pagination.itemCount = Math.floor(totalPages) * pagination.pageSize;
+    return;
+  }
+
+  // Fallback for non-standard responses: keep pagination usable on first page.
+  if (pagination.page <= 1) {
+    pagination.itemCount = currentListLength;
+  }
+}
+
 function formatTs(iso: string | null) {
   if (!iso) return '';
   const d = new Date(iso);
@@ -248,7 +297,7 @@ async function reloadActive() {
         ...rp,
       });
       tableRows.value = res.list;
-      pagination.itemCount = res.pagination.total;
+      applyServerPagination(res.pagination, res.list?.length ?? 0);
     } else if (activeTab.value === 'wagering') {
       const res = await listProvidentFundWageringApi({
         page: pagination.page,
@@ -259,7 +308,7 @@ async function reloadActive() {
         ...rp,
       });
       tableRows.value = res.list;
-      pagination.itemCount = res.pagination.total;
+      applyServerPagination(res.pagination, res.list?.length ?? 0);
     } else {
       const res = await listProvidentFundWithdrawalsApi({
         page: pagination.page,
@@ -269,7 +318,7 @@ async function reloadActive() {
         ...rp,
       });
       tableRows.value = res.list;
-      pagination.itemCount = res.pagination.total;
+      applyServerPagination(res.pagination, res.list?.length ?? 0);
     }
   } catch (e) {
     console.error(e);

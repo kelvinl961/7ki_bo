@@ -3455,12 +3455,7 @@
                   </div>
 
                   <!-- Homepage Display -->
-                  <div class="flex items-center justify-between">
-                    <label class="block text-sm font-medium text-gray-700"
-                      >首页快捷入口</label
-                    >
-                    <n-switch v-model:value="formData.homepageDisplay" />
-                  </div>
+             
 
                   <!-- Participation Method -->
                   <div>

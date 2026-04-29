@@ -18,6 +18,10 @@ export interface OnlineCustomerServiceConfig {
   h5FloatingEnabled: boolean;
   h5DisplayLocation?: 'ALL_PAGES' | 'HOME_ONLY';
   h5EmbedCode?: string;
+  h5ServiceSystem?: 'LIVECHAT' | 'OTHER_SYSTEM';
+  h5OpenMethod?: 'APP_INTERNAL' | 'EXTERNAL_BROWSER';
+  h5IconUrl?: string;
+  h5LinkUrl?: string;
   livechatEnabled: boolean;
   livechatBrandIds?: string[];
   livechatDisplayLocation?: 'ALL_PAGES' | 'HOME_ONLY';

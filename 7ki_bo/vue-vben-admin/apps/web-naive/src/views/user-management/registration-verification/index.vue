@@ -1,293 +1,134 @@
 <template>
-  <Page auto-content-height title="注册和验证" description="">
-    <div class="registration-verification-layout flex min-h-[calc(100vh-140px)] flex-col bg-[#f5f7fa]">
-      <n-card :bordered="false" class="mb-3 rounded-lg shadow-sm" size="small">
-        <n-tabs v-model:value="topTab" type="line" size="medium">
-          <n-tab-pane name="login-register" tab="登录/注册配置">
-            <n-layout
-              has-sider
-              class="mt-3 rounded-lg bg-transparent"
-              style="min-height: 520px"
-            >
-              <n-layout-sider
-                bordered
-                :width="200"
-                content-style="padding: 12px 0; background: #fff"
-                class="rounded-l-lg shadow-sm"
-              >
-                <n-menu v-model:value="sideKey" :options="sideMenuOptions" />
-              </n-layout-sider>
-              <n-layout-content
-                content-style="padding: 0; background: transparent"
-                class="pl-3"
-              >
-                <n-spin :show="loading">
-                  <template v-if="sideKey === 'register-support' && rs">
-              <n-card :bordered="false" class="rounded-lg shadow-sm">
-                <template #header>
-                  <div class="text-base font-medium text-gray-800">
-                    注册支持方式
-                  </div>
-                </template>
-                <div class="mb-4 flex justify-end gap-2 border-b border-gray-100 pb-4">
-                  <n-button @click="onCancel">取消</n-button>
-                  <n-button type="primary" :loading="saving" @click="onSave">
-                    保存
-                  </n-button>
-                </div>
+  <Page auto-content-height title="注册和验证">
+    <div class="registration-verification-layout flex min-h-[calc(100vh-140px)] flex-col gap-4 bg-[#f5f7fa] p-2">
+      <n-spin :show="loading">
+        <section class="setting-card">
+          <div class="setting-card-header">
+            <div class="setting-card-title">注册支持方式</div>
+            <button class="action-btn" :disabled="savingRegister" @click="onSaveRegister">
+              {{ savingRegister ? '保存中...' : '修改' }}
+            </button>
+          </div>
 
-                <!-- 支持方式 -->
-                <div class="mb-6">
-                  <div class="mb-3 text-sm font-medium text-gray-700">支持方式</div>
-                  <n-space vertical :size="12">
-                    <div class="flex flex-wrap items-center gap-2">
-                      <n-checkbox v-model:checked="rs.channels.phone">
-                        手机号码
-                      </n-checkbox>
-                      <n-button
-                        text
-                        type="primary"
-                        size="tiny"
-                        @click="hintComingSoon('短信配置')"
-                      >
-                        (短信配置)
-                      </n-button>
-                    </div>
-                    <div class="flex flex-wrap items-center gap-2">
-                      <n-checkbox v-model:checked="rs.channels.email">
-                        邮箱
-                      </n-checkbox>
-                      <n-button
-                        text
-                        type="primary"
-                        size="tiny"
-                        @click="hintComingSoon('邮箱验证')"
-                      >
-                        (邮箱配置)
-                      </n-button>
-                    </div>
-                    <n-checkbox v-model:checked="rs.channels.memberAccount">
-                      会员账号
-                    </n-checkbox>
-                  </n-space>
-                  <div class="mt-4 max-w-md">
-                    <div class="mb-2 text-sm text-gray-600">默认注册方式</div>
-                    <n-select
-                      v-model:value="rs.defaultChannel"
-                      :options="defaultChannelSelectOptions"
-                      placeholder="选择默认方式"
-                    />
-                  </div>
-                </div>
+          <div class="setting-row">
+            <div class="setting-label">支持方式</div>
+            <div class="setting-content">
+              <div class="option-line">
+                <label class="check-label">
+                  <input v-model="registerSupport.phone" type="checkbox" />
+                  <span>手机号码</span>
+                </label>
+                <button class="text-link" @click="hintComingSoon('短信配置')">(短信配置)</button>
+              </div>
+              <div class="option-line">
+                <label class="check-label">
+                  <input v-model="registerSupport.email" type="checkbox" />
+                  <span>邮箱</span>
+                </label>
+                <button class="text-link" @click="hintComingSoon('邮箱验证')">(邮箱配置)</button>
+              </div>
+              <label class="check-label">
+                <input v-model="registerSupport.memberAccount" type="checkbox" />
+                <span>会员账号</span>
+              </label>
+            </div>
+          </div>
 
-                <!-- 手机号码注册 -->
-                <template v-if="rs.channels.phone">
-                  <n-divider title-placement="left">手机号码注册</n-divider>
-                  <div class="mb-4">
-                    <div class="mb-2 text-sm text-gray-600">
-                      手机号码支持的注册方式
-                    </div>
-                    <n-space vertical :size="8">
-                      <n-checkbox v-model:checked="rs.phone.allowPasswordRegister">
-                        密码注册
-                      </n-checkbox>
-                      <n-checkbox v-model:checked="rs.phone.allowSmsCodeRegister">
-                        短信验证码注册
-                      </n-checkbox>
-                    </n-space>
-                  </div>
-                  <div class="mb-4">
-                    <div class="mb-2 text-sm text-gray-600">
-                      手机注册是否强制验证
-                    </div>
-                    <n-radio-group v-model:value="rs.phone.smsVerification">
-                      <n-space vertical :size="8">
-                        <n-radio value="new_number_skip">
-                          不强制（新号码免验证）
-                        </n-radio>
-                        <n-radio value="required">必须通过短信验证</n-radio>
-                      </n-space>
-                    </n-radio-group>
-                  </div>
-                  <div class="mb-4">
-                    <div class="mb-2 text-sm text-gray-600">
-                      手机号码注册默认输入框
-                    </div>
-                    <n-radio-group v-model:value="rs.phone.defaultRegisterInput">
-                      <n-space vertical :size="8">
-                        <n-radio value="password">密码输入框</n-radio>
-                        <n-radio value="sms_code">短信验证码输入框</n-radio>
-                      </n-space>
-                    </n-radio-group>
-                  </div>
-                  <div class="mb-4">
-                    <div class="mb-2 text-sm text-gray-600">
-                      注册的手机号码输入框
-                    </div>
-                    <n-radio-group v-model:value="rs.phone.phoneFieldLayout">
-                      <n-space vertical :size="8">
-                        <n-radio value="merged">输入框合并任选其一</n-radio>
-                        <n-radio value="split_required">
-                          拆开独立展示且必填
-                        </n-radio>
-                      </n-space>
-                    </n-radio-group>
-                  </div>
-                  <div class="mb-2">
-                    <div class="mb-2 text-sm text-gray-600">
-                      手机注册第二步设置账号弹窗
-                    </div>
-                    <n-radio-group
-                      v-model:value="rs.phone.secondStepSetAccountModal"
-                    >
-                      <n-space vertical :size="8">
-                        <n-radio :value="true">
-                          开启（设置会员账号弹窗）
-                        </n-radio>
-                        <n-radio :value="false">关闭</n-radio>
-                      </n-space>
-                    </n-radio-group>
-                  </div>
-                </template>
+          <div class="setting-row no-border">
+            <div class="setting-label">默认注册方式</div>
+            <div class="setting-content">
+              <select v-model="registerSupport.defaultRegisterMethod" class="select-box">
+                <option v-for="item in registerDefaultOptions" :key="item.value" :value="item.value">
+                  {{ item.label }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </section>
 
-                <!-- 邮箱注册 -->
-                <template v-if="rs.channels.email">
-                  <n-divider title-placement="left">邮箱注册</n-divider>
-                  <div class="mb-4">
-                    <div class="mb-2 text-sm text-gray-600">
-                      邮箱支持的注册方式
-                    </div>
-                    <n-space vertical :size="8">
-                      <n-checkbox
-                        v-model:checked="rs.email.allowPasswordRegister"
-                      >
-                        密码注册
-                      </n-checkbox>
-                      <n-checkbox
-                        v-model:checked="rs.email.allowEmailCodeRegister"
-                      >
-                        邮箱验证码注册
-                      </n-checkbox>
-                    </n-space>
-                  </div>
-                  <div class="mb-4">
-                    <div class="mb-2 text-sm text-gray-600">
-                      邮箱注册是否强制验证
-                    </div>
-                    <n-radio-group v-model:value="rs.email.emailVerification">
-                      <n-space vertical :size="8">
-                        <n-radio value="new_email_skip">
-                          不强制（新邮箱免验证）
-                        </n-radio>
-                        <n-radio value="required">必须通过邮箱验证</n-radio>
-                      </n-space>
-                    </n-radio-group>
-                  </div>
-                  <div class="mb-4">
-                    <div class="mb-2 text-sm text-gray-600">
-                      邮箱注册默认输入框
-                    </div>
-                    <n-radio-group v-model:value="rs.email.defaultRegisterInput">
-                      <n-space vertical :size="8">
-                        <n-radio value="password">密码输入框</n-radio>
-                        <n-radio value="email_code">邮箱验证码输入框</n-radio>
-                      </n-space>
-                    </n-radio-group>
-                  </div>
-                  <div class="mb-4">
-                    <div class="mb-2 text-sm text-gray-600">注册的邮箱输入框</div>
-                    <n-radio-group v-model:value="rs.email.emailFieldLayout">
-                      <n-space vertical :size="8">
-                        <n-radio value="merged">输入框合并并任选其一</n-radio>
-                        <n-radio value="split_required">
-                          拆开独立展示且必填
-                        </n-radio>
-                      </n-space>
-                    </n-radio-group>
-                  </div>
-                  <div class="mb-2">
-                    <div class="mb-2 text-sm text-gray-600">
-                      邮箱注册第二步设置账号弹窗
-                    </div>
-                    <n-radio-group
-                      v-model:value="rs.email.secondStepSetAccountModal"
-                    >
-                      <n-space vertical :size="8">
-                        <n-radio :value="true">
-                          开启（设置会员账号弹窗）
-                        </n-radio>
-                        <n-radio :value="false">关闭</n-radio>
-                      </n-space>
-                    </n-radio-group>
-                  </div>
-                </template>
-              </n-card>
-                  </template>
+        <section class="setting-card mt-4">
+          <div class="setting-card-header">
+            <div class="setting-card-title">登录支持方式</div>
+            <button class="action-btn" :disabled="savingLogin" @click="onSaveLogin">
+              {{ savingLogin ? '保存中...' : '修改' }}
+            </button>
+          </div>
 
-                  <n-card
-                    v-else
-                    :bordered="false"
-                    class="flex min-h-[400px] items-center justify-center rounded-lg shadow-sm"
-                  >
-                    <n-empty description="该模块开发中，敬请期待" />
-                  </n-card>
-                </n-spin>
-              </n-layout-content>
-            </n-layout>
-          </n-tab-pane>
-          <n-tab-pane name="security" tab="安全中心配置">
-            <div class="mt-4 flex min-h-[360px] items-center justify-center">
-              <n-empty description="敬请期待" />
+          <div class="setting-row">
+            <div class="setting-label">支持方式</div>
+            <div class="setting-content">
+              <div class="option-line">
+                <label class="check-label">
+                  <input v-model="loginSupport.phone" type="checkbox" />
+                  <span>手机号码</span>
+                </label>
+                <button class="text-link" @click="hintComingSoon('短信配置')">(短信配置)</button>
+              </div>
+              <div class="option-line">
+                <label class="check-label">
+                  <input v-model="loginSupport.email" type="checkbox" />
+                  <span>邮箱</span>
+                </label>
+                <button class="text-link" @click="hintComingSoon('邮箱验证')">(绑定配置)</button>
+              </div>
+              <label class="check-label">
+                <input v-model="loginSupport.memberAccount" type="checkbox" />
+                <span>会员账号</span>
+              </label>
             </div>
-          </n-tab-pane>
-          <n-tab-pane name="third-bind" tab="绑定三方配置">
-            <div class="mt-4 flex min-h-[360px] items-center justify-center">
-              <n-empty description="敬请期待" />
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">默认登录方式</div>
+            <div class="setting-content">
+              <select v-model="defaultLoginMethod" class="select-box">
+                <option value="" disabled>请选择</option>
+                <option v-for="item in loginDefaultOptions" :key="item.value" :value="item.value">
+                  {{ item.label }}
+                </option>
+              </select>
             </div>
-          </n-tab-pane>
-          <n-tab-pane name="sms" tab="短信配置">
-            <div class="mt-4 flex min-h-[360px] items-center justify-center">
-              <n-empty description="敬请期待" />
+          </div>
+
+          <!--<div class="setting-row">
+            <div class="setting-label">登录密码强度要求</div>
+            <div class="setting-content inline-options">
+              <label class="radio-label">
+                <input v-model="loginPasswordStrength" type="radio" value="recommended" />
+                <span>强密码(推荐)</span>
+              </label>
+              <label class="radio-label">
+                <input v-model="loginPasswordStrength" type="radio" value="no_limit" />
+                <span>简易密码(允许数字)</span>
+              </label>
             </div>
-          </n-tab-pane>
-          <n-tab-pane name="email" tab="邮箱验证">
-            <div class="mt-4 flex min-h-[360px] items-center justify-center">
-              <n-empty description="敬请期待" />
+          </div>
+
+          <div class="setting-row no-border">
+            <div class="setting-label">强制修改登录或提现密码情形</div>
+            <div class="setting-content">
+              <label class="radio-label block-option">
+                <input v-model="forceChangePasswordWhenNotSelfSet" :value="true" type="radio" />
+                <span>重置、新增导入新密码后需要修改一次密码（推荐）</span>
+              </label>
+              <label class="radio-label block-option">
+                <input v-model="forceChangePasswordWhenNotSelfSet" :value="false" type="radio" />
+                <span>不强制修改(不安全)</span>
+              </label>
             </div>
-          </n-tab-pane>
-          <n-tab-pane name="kyc" tab="KYC验证配置">
-            <div class="mt-4 flex min-h-[360px] items-center justify-center">
-              <n-empty description="敬请期待" />
-            </div>
-          </n-tab-pane>
-          <n-tab-pane name="member-basic" tab="会员基本信息设置">
-            <div class="mt-4 flex min-h-[360px] items-center justify-center">
-              <n-empty description="敬请期待" />
-            </div>
-          </n-tab-pane>
-          <n-tab-pane name="risk" tab="防刷风控">
-            <div class="mt-4 flex min-h-[360px] items-center justify-center">
-              <n-empty description="敬请期待" />
-            </div>
-          </n-tab-pane>
-          <n-tab-pane name="ext-api" tab="外部注册API配置">
-            <div class="mt-4 flex min-h-[360px] items-center justify-center">
-              <n-empty description="敬请期待" />
-            </div>
-          </n-tab-pane>
-        </n-tabs>
-      </n-card>
+          </div>-->
+        </section>
+      </n-spin>
     </div>
   </Page>
 </template>
 
 <script setup lang="ts">
 import { Page } from '@vben/common-ui';
-import type { MenuOption } from 'naive-ui';
 import { useMessage } from 'naive-ui';
 import { computed, onMounted, ref, watch } from 'vue';
 
-import type { RegistrationSupportMethods } from '#/api/core/registration-verification';
+import type { RegistrationVerificationConfigPayload } from '#/api/core/registration-verification';
 import {
   fetchRegistrationVerificationConfig,
   saveRegistrationVerificationConfigApi,
@@ -295,9 +136,8 @@ import {
 
 const message = useMessage();
 const loading = ref(false);
-const saving = ref(false);
-const topTab = ref('login-register');
-const sideKey = ref('register-support');
+const savingRegister = ref(false);
+const savingLogin = ref(false);
 
 const meta = ref({
   scope: 'global',
@@ -305,58 +145,80 @@ const meta = ref({
   version: 0,
 });
 
-const rs = ref<RegistrationSupportMethods | null>(null);
+const config = ref<RegistrationVerificationConfigPayload | null>(null);
+const registerSupport = ref<RegistrationVerificationConfigPayload['publicPage']['registerSupport']>({
+  phone: true,
+  email: false,
+  memberAccount: true,
+  defaultRegisterMethod: 'member_account',
+});
+const loginSupport = ref<RegistrationVerificationConfigPayload['publicPage']['loginSupport']>({
+  phone: true,
+  email: false,
+  memberAccount: true,
+});
+const defaultLoginMethod = ref<'phone' | 'email' | 'member_account'>('member_account');
+const loginPasswordStrength = ref<'recommended' | 'no_limit'>('recommended');
+const forceChangePasswordWhenNotSelfSet = ref(true);
 
-const sideMenuOptions: MenuOption[] = [
-  { label: '免注册配置', key: 'guest' },
-  { label: '公共配置', key: 'public' },
-  { label: '注册支持方式', key: 'register-support' },
-  { label: '登录支持方式', key: 'login-support' },
-  { label: '注册页其他输入框配置', key: 'register-fields' },
-  { label: '展示样式', key: 'display-style' },
-  { label: '注册成功弹窗配置', key: 'register-success' },
-  { label: '用户协议配置', key: 'user-agreement' },
-];
-
-const defaultChannelSelectOptions = computed(() => {
-  const r = rs.value;
-  if (!r) return [];
-  const opts: { label: string; value: RegistrationSupportMethods['defaultChannel'] }[] = [];
-  if (r.channels.phone) opts.push({ label: '手机号码', value: 'phone' });
-  if (r.channels.email) opts.push({ label: '邮箱', value: 'email' });
-  if (r.channels.memberAccount) {
-    opts.push({ label: '会员账号', value: 'member_account' });
-  }
+const registerDefaultOptions = computed(() => {
+  const opts: Array<{ label: string; value: 'phone' | 'email' | 'member_account' }> = [];
+  if (registerSupport.value.phone) opts.push({ label: '手机号码', value: 'phone' });
+  if (registerSupport.value.email) opts.push({ label: '邮箱', value: 'email' });
+  if (registerSupport.value.memberAccount) opts.push({ label: '会员账号', value: 'member_account' });
   return opts;
 });
 
-function ensureDefaultChannelValid() {
-  const r = rs.value;
-  if (!r) return;
-  const allowed = defaultChannelSelectOptions.value.map((o) => o.value);
-  if (allowed.length === 0) return;
-  if (!allowed.includes(r.defaultChannel)) {
-    r.defaultChannel = allowed[0]!;
-  }
-}
+const loginDefaultOptions = computed(() => {
+  const opts: Array<{ label: string; value: 'phone' | 'email' | 'member_account' }> = [];
+  if (loginSupport.value.phone) opts.push({ label: '手机号码', value: 'phone' });
+  if (loginSupport.value.email) opts.push({ label: '邮箱', value: 'email' });
+  if (loginSupport.value.memberAccount) opts.push({ label: '会员账号', value: 'member_account' });
+  return opts;
+});
 
-watch(
-  () => rs.value?.channels,
-  () => ensureDefaultChannelValid(),
-  { deep: true },
-);
+function resolveLoginDefault(
+  preferred?: 'phone' | 'email' | 'member_account',
+): 'phone' | 'email' | 'member_account' {
+  const allowed = loginDefaultOptions.value.map((o) => o.value);
+  if (preferred && allowed.includes(preferred)) return preferred;
+  if (allowed.includes(defaultLoginMethod.value)) return defaultLoginMethod.value;
+  if (allowed.includes('member_account')) return 'member_account';
+  if (allowed.includes('phone')) return 'phone';
+  if (allowed.includes('email')) return 'email';
+  return 'member_account';
+}
 
 function hintComingSoon(name: string) {
   message.info(`「${name}」请从对应顶栏菜单进入（开发中可在此接入路由）`);
 }
 
-function applyRegistrationSupportFromConfig(
-  data: import('#/api/core/registration-verification').RegistrationVerificationConfigPayload,
-) {
-  rs.value = JSON.parse(
-    JSON.stringify(data.registrationSupportMethods),
-  ) as RegistrationSupportMethods;
-  ensureDefaultChannelValid();
+function ensureSelectValueValid() {
+  const registerAllowed = registerDefaultOptions.value.map((o) => o.value);
+  if (registerAllowed.length > 0 && !registerAllowed.includes(registerSupport.value.defaultRegisterMethod)) {
+    registerSupport.value.defaultRegisterMethod = registerAllowed[0]!;
+  }
+  const loginAllowed = loginDefaultOptions.value.map((o) => o.value);
+  if (loginAllowed.length > 0 && !loginAllowed.includes(defaultLoginMethod.value)) {
+    defaultLoginMethod.value = loginAllowed[0]!;
+  }
+}
+
+function applyFromConfig(data: RegistrationVerificationConfigPayload) {
+  config.value = JSON.parse(JSON.stringify(data)) as RegistrationVerificationConfigPayload;
+  registerSupport.value = {
+    phone: data.registrationSupportMethods.channels.phone,
+    email: data.registrationSupportMethods.channels.email,
+    memberAccount: data.registrationSupportMethods.channels.memberAccount,
+    defaultRegisterMethod: data.registrationSupportMethods.defaultChannel,
+  };
+  loginSupport.value = JSON.parse(JSON.stringify(data.publicPage.loginSupport));
+  defaultLoginMethod.value = resolveLoginDefault(
+    data.publicPage.loginSupport.defaultLoginMethod,
+  );
+  loginPasswordStrength.value = data.publicPage.loginPasswordStrength;
+  forceChangePasswordWhenNotSelfSet.value = data.publicPage.forceChangePasswordWhenNotSelfSet;
+  ensureSelectValueValid();
 }
 
 async function load() {
@@ -368,7 +230,7 @@ async function load() {
       scopeValue: d.scopeValue,
       version: d.version,
     };
-    applyRegistrationSupportFromConfig(d.config);
+    applyFromConfig(d.config);
   } catch (e) {
     message.error((e as Error).message);
   } finally {
@@ -376,29 +238,66 @@ async function load() {
   }
 }
 
-async function onCancel() {
-  await load();
-  message.success('已恢复为服务器配置');
-}
+watch(
+  () => registerSupport.value,
+  () => ensureSelectValueValid(),
+  { deep: true },
+);
+watch(
+  () => loginSupport.value,
+  () => ensureSelectValueValid(),
+  { deep: true },
+);
 
-async function onSave() {
-  if (!rs.value) return;
-  ensureDefaultChannelValid();
-  saving.value = true;
+async function onSaveRegister() {
+  if (!config.value) return;
+  ensureSelectValueValid();
+  savingRegister.value = true;
   try {
-    const payload: RegistrationSupportMethods = JSON.parse(JSON.stringify(rs.value));
+    const nextConfig = JSON.parse(JSON.stringify(config.value)) as RegistrationVerificationConfigPayload;
+    nextConfig.publicPage.registerSupport = JSON.parse(JSON.stringify(registerSupport.value));
+    nextConfig.publicPage.loginSupport.defaultLoginMethod = defaultLoginMethod.value;
+    nextConfig.registrationSupportMethods.channels.phone = registerSupport.value.phone;
+    nextConfig.registrationSupportMethods.channels.email = registerSupport.value.email;
+    nextConfig.registrationSupportMethods.channels.memberAccount = registerSupport.value.memberAccount;
+    nextConfig.registrationSupportMethods.defaultChannel = registerSupport.value.defaultRegisterMethod;
     const d = await saveRegistrationVerificationConfigApi({
       scope: meta.value.scope,
       scopeValue: meta.value.scopeValue,
-      config: { registrationSupportMethods: payload },
+      config: nextConfig as unknown as Record<string, unknown>,
     });
     meta.value.version = d.version;
-    applyRegistrationSupportFromConfig(d.config);
-    message.success('保存成功');
+    applyFromConfig(d.config);
+    message.success('注册支持方式已保存');
   } catch (e) {
     message.error((e as Error).message);
   } finally {
-    saving.value = false;
+    savingRegister.value = false;
+  }
+}
+
+async function onSaveLogin() {
+  if (!config.value) return;
+  ensureSelectValueValid();
+  savingLogin.value = true;
+  try {
+    const nextConfig = JSON.parse(JSON.stringify(config.value)) as RegistrationVerificationConfigPayload;
+    nextConfig.publicPage.loginSupport = JSON.parse(JSON.stringify(loginSupport.value));
+    nextConfig.publicPage.loginSupport.defaultLoginMethod = defaultLoginMethod.value;
+    nextConfig.publicPage.loginPasswordStrength = loginPasswordStrength.value;
+    nextConfig.publicPage.forceChangePasswordWhenNotSelfSet = forceChangePasswordWhenNotSelfSet.value;
+    const d = await saveRegistrationVerificationConfigApi({
+      scope: meta.value.scope,
+      scopeValue: meta.value.scopeValue,
+      config: nextConfig as unknown as Record<string, unknown>,
+    });
+    meta.value.version = d.version;
+    applyFromConfig(d.config);
+    message.success('登录支持方式已保存');
+  } catch (e) {
+    message.error((e as Error).message);
+  } finally {
+    savingLogin.value = false;
   }
 }
 
@@ -406,3 +305,106 @@ onMounted(() => {
   load();
 });
 </script>
+
+<style scoped>
+.setting-card {
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.setting-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.setting-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.action-btn {
+  min-width: 50px;
+  height: 30px;
+  border: 0;
+  border-radius: 4px;
+  background: #1890ff;
+  color: #fff;
+  cursor: pointer;
+}
+
+.action-btn:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+.setting-row {
+  display: flex;
+  gap: 18px;
+  padding: 14px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.setting-row.no-border {
+  border-bottom: none;
+}
+
+.setting-label {
+  width: 100px;
+  flex-shrink: 0;
+  color: #111827;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.setting-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: #111827;
+}
+
+.option-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.check-label,
+.radio-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.text-link {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #1890ff;
+  cursor: pointer;
+}
+
+.select-box {
+  min-width: 220px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.inline-options {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.block-option {
+  display: flex;
+}
+</style>

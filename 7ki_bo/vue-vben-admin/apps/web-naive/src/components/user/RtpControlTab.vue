@@ -155,6 +155,7 @@
         :pagination="pagination"
         :bordered="false"
         size="small"
+        :scroll-x="1120"
         remote
       />
     </n-card>
@@ -164,7 +165,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, h, watch } from 'vue';
 import {
-  NAlert,
   NCard,
   NForm,
   NFormItem,
@@ -219,9 +219,7 @@ const agRtpSelectOptions = [
 ];
 
 const HG_RTP_WHITELIST = new Set([
-  10, 20, 30, 40, 50, 60, 70, 80, 85, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
-  102, 105, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 220, 240, 260, 280, 300,
-  500, 750, 1000,
+  10, 20, 30, 40, 50, 60, 70, 80, 85, 90, 91, 92, 93, 94, 95, 96, 97,
 ]);
 
 const hgPatternOptions = [
@@ -231,6 +229,13 @@ const hgPatternOptions = [
   { label: '4 稳定型', value: 4 },
   { label: '5 高中奖率', value: 5 },
 ];
+const HG_PATTERN_LABEL_MAP: Record<number, string> = {
+  1: '1 波动型',
+  2: '2 仿正型',
+  3: '3 混合型',
+  4: '4 稳定型',
+  5: '5 高中奖率',
+};
 
 const hgGameTypeOptions = [
   { label: '0 拉霸/电子游戏', value: 0 },
@@ -418,7 +423,7 @@ const handleGameSelect = (value: string[]) => {
 };
 
 // Form validation rules
-const rules: Record<string, unknown> = {
+const rules: any = {
   rtpVendor: {
     required: true,
     message: '请选择第三方渠道',
@@ -540,12 +545,67 @@ const pagination = reactive({
   },
 });
 
+const getConditional = (row: any) => row?.response?._metadata?.conditionalRtp;
+const getMatchedRule = (row: any) => getConditional(row)?.matchedRule;
+
+const RULE_TYPE_LABELS: Record<string, string> = {
+  DEPOSIT_ONLY: '仅存款',
+  ACTIVITY_CLAIM_ONLY: '仅活动领取',
+  COMBINED: '组合条件',
+};
+
+const TRIGGER_REASON_LABELS: Record<string, string> = {
+  deposit: '存款触发',
+  registration: '注册触发',
+  activity_claim: '活动领取触发',
+};
+
+const DEPOSIT_CONDITION_LABELS: Record<string, string> = {
+  NO_DEPOSIT: '未存款',
+  GTE_AMOUNT: '存款大于等于',
+};
+
+const renderTypeSummary = (row: any) => {
+  const c = getConditional(row);
+  const r = getMatchedRule(row);
+  const actionText =
+    row?.rtp === 0 ||
+    String(row?.response?.action || '').toLowerCase().includes('cancelrtp')
+      ? '取消个人RTP'
+      : '个人RTP设置';
+  if (!c && !r) return '—';
+  const ruleType = r?.ruleType
+    ? (RULE_TYPE_LABELS[String(r.ruleType)] ?? String(r.ruleType))
+    : '—';
+  const trigger = c?.triggerReason
+    ? (TRIGGER_REASON_LABELS[String(c.triggerReason)] ??
+      String(c.triggerReason))
+    : '—';
+  const depositCond = r?.depositCondition
+    ? (DEPOSIT_CONDITION_LABELS[String(r.depositCondition)] ??
+      String(r.depositCondition))
+    : '';
+  const depositMin =
+    r?.depositMinAmount !== undefined && r?.depositMinAmount !== null
+      ? String(r.depositMinAmount)
+      : '';
+  const parts = [
+    `操作:${actionText}`,
+    `类型:${ruleType}`,
+    `触发:${trigger}`,
+    depositCond
+      ? `存款条件:${depositCond}${depositMin ? `(${depositMin})` : ''}`
+      : '',
+  ].filter(Boolean);
+  return parts.join('\n');
+};
+
 // History table columns
 const historyColumns: DataTableColumns<any> = [
   {
     title: '设置时间',
     key: 'createdAt',
-    width: 180,
+    width: 100,
     render: (row) => {
       return h('span', new Date(row.createdAt).toLocaleString('zh-CN'));
     },
@@ -553,7 +613,7 @@ const historyColumns: DataTableColumns<any> = [
   {
     title: '玩家ID',
     key: 'userIds',
-    width: 200,
+    width: 80,
     ellipsis: {
       tooltip: true,
     },
@@ -561,17 +621,37 @@ const historyColumns: DataTableColumns<any> = [
   {
     title: '渠道',
     key: 'rtpVendor',
-    width: 120,
+    width:50,
     ellipsis: { tooltip: true },
     render: (row) => {
-      const v = row.response?._metadata?.rtpVendor;
-      return v != null && v !== '' ? String(v) : '—';
+      const v =
+        row.response?._metadata?.rtpVendor ||
+        row.response?._metadata?.conditionalRtp?.matchedRule?.applyVendors?.[0];
+      return v != null && v !== '' ? String(v).toLowerCase() : '—';
     },
+  },
+  {
+    title: '类型(明细)',
+    key: 'conditionalType',
+    width: 80,
+    render: (row) =>
+      h(
+        'div',
+        {
+          style: {
+            whiteSpace: 'pre-line',
+            wordBreak: 'break-word',
+            lineHeight: '1.4',
+            fontSize: '12px',
+          },
+        },
+        renderTypeSummary(row),
+      ),
   },
   {
     title: 'RTP值',
     key: 'rtp',
-    width: 80,
+    width: 30,
     align: 'center',
     render: (row) => {
       return h(
@@ -582,47 +662,27 @@ const historyColumns: DataTableColumns<any> = [
     },
   },
   {
-    title: '游戏ID',
-    key: 'gameId',
-    width: 120,
-    ellipsis: {
-      tooltip: true,
-    },
-  },
-  {
-    title: '解除RTP',
-    key: 'removeRtp',
-    width: 80,
+    title: 'RTP类型',
+    key: 'rtpPattern',
+    width: 50,
     align: 'center',
     render: (row) => {
-      return row.removeRtp
-        ? h(
-            NTag,
-            { type: 'warning', size: 'small' },
-            { default: () => row.removeRtp },
-          )
-        : '-';
-    },
-  },
-  {
-    title: '购买RTP',
-    key: 'buyRtp',
-    width: 80,
-    align: 'center',
-    render: (row) => {
-      return row.buyRtp
-        ? h(
-            NTag,
-            { type: 'success', size: 'small' },
-            { default: () => row.buyRtp },
-          )
-        : '-';
+      const req = row?.response?.request as Record<string, unknown> | undefined;
+      const patternRaw =
+        req?.game_pattern ??
+        req?.gamePattern ??
+        row?.response?._metadata?.conditionalRtp?.matchedRule?.gamePattern;
+      if (patternRaw === null || patternRaw === undefined || patternRaw === '') {
+        return '—';
+      }
+      const patternNum = Number(patternRaw);
+      return HG_PATTERN_LABEL_MAP[patternNum] ?? String(patternRaw);
     },
   },
   {
     title: '最大赢钱倍数',
     key: 'personWinMaxMult',
-    width: 120,
+    width: 50,
     align: 'center',
     render: (row) => {
       return row.personWinMaxMult !== null && row.personWinMaxMult !== undefined
@@ -633,7 +693,7 @@ const historyColumns: DataTableColumns<any> = [
   {
     title: '最大赢钱数',
     key: 'personWinMaxScore',
-    width: 120,
+    width: 50,
     align: 'center',
     render: (row) => {
       return row.personWinMaxScore !== null &&
@@ -645,15 +705,18 @@ const historyColumns: DataTableColumns<any> = [
   {
     title: '操作人',
     key: 'operator',
-    width: 120,
+    width: 56,
+    ellipsis: { tooltip: true },
     render: (row) => {
-      return row.operator || '-';
+      const operator = row.operator == null ? '' : String(row.operator).trim();
+      if (/^System(?:\([^)]*\))?$/i.test(operator)) return '系统';
+      return operator || '-';
     },
   },
   {
     title: '状态',
     key: 'status',
-    width: 100,
+    width: 50,
     align: 'center',
     render: (row) => {
       const statusMap: Record<
@@ -814,7 +877,7 @@ const loadLastConfig = async () => {
     });
 
     if (result.data && result.data.length > 0) {
-      const lastConfig = result.data[0];
+      const lastConfig: any = result.data[0];
       if (!lastConfig) return;
 
       formData.Rtp = lastConfig.rtp ?? null;

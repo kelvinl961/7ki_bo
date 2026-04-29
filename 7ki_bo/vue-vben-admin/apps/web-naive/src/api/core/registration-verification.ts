@@ -45,6 +45,7 @@ export interface RegistrationVerificationConfigPayload {
       phone: boolean;
       email: boolean;
       memberAccount: boolean;
+      defaultLoginMethod?: 'phone' | 'email' | 'member_account';
     };
     mergedInputHint: string;
     phoneRegister: {

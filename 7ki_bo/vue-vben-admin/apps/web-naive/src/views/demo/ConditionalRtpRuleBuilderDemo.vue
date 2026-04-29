@@ -1032,14 +1032,14 @@ const ruleColumns: DataTableColumns<Rule> = [
   {
     title: '优先级',
     key: 'priority',
-    width: 100,
+    width: 84,
     align: 'center',
     render: (_row, index) => index + 1,
   },
   {
     title: '规则类型',
     key: 'ruleType',
-    width: 140,
+    width: 104,
     render: (row) =>
       row.ruleType === 'DEPOSIT_ONLY'
         ? '仅入金'
@@ -1048,7 +1048,7 @@ const ruleColumns: DataTableColumns<Rule> = [
   {
     title: '入金 / 活动领奖',
     key: 'depositCondition',
-    width: 280,
+    width: 240,
     render: (row) => {
       const dep = row.ruleType === 'ACTIVITY_CLAIM_ONLY'
         ? '—'
@@ -1064,14 +1064,14 @@ const ruleColumns: DataTableColumns<Rule> = [
   {
     title: '厂商',
     key: 'applyVendors',
-    width: 72,
+    width: 64,
     align: 'center',
     render: (row) => row.applyVendors.join('+'),
   },
   {
     title: 'HG 参数',
     key: 'hgMeta',
-    width: 168,
+    width: 150,
     ellipsis: { tooltip: true },
     render: (row) => {
       if (!row.applyVendors.includes('HG')) return '—';
@@ -1085,7 +1085,7 @@ const ruleColumns: DataTableColumns<Rule> = [
   {
     title: 'RTP',
     key: 'rtp',
-    width: 100,
+    width: 84,
     align: 'center',
     render: (row) => {
       const conflict = conflictRuleIds.value.has(row.id);
@@ -1106,20 +1106,20 @@ const ruleColumns: DataTableColumns<Rule> = [
   {
     title: '游戏',
     key: 'games',
-    width: 220,
+    width: 180,
     render: (row) => (row.games.includes('ALL') ? 'ALL' : row.games.join(',')),
   },
   {
     title: '启用',
     key: 'enabled',
-    width: 90,
+    width: 72,
     align: 'center',
     render: (row) => (row.enabled ? '是' : '否'),
   },
   {
     title: '操作',
     key: 'actions',
-    width: 320,
+    width: 260,
     render: (_row, index) => {
       const row = rulesList.value[index];
       if (!row) return null;

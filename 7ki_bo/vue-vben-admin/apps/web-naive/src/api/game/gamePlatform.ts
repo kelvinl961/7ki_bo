@@ -14,6 +14,7 @@ export interface GamePlatformRecord {
   subGameCount: number;
   minEntryAmount: number;
   imageUrl?: string;
+  imageHorizontalUrl?: string;
   iosJumpType: string;
   androidJumpType: string;
   sortOrder: number;
@@ -56,6 +57,7 @@ export interface CreateGamePlatformParams {
   subGameCount?: number;
   minEntryAmount?: number;
   imageUrl?: string;
+  imageHorizontalUrl?: string;
   iosJumpType?: string;
   androidJumpType?: string;
   sortOrder?: number;

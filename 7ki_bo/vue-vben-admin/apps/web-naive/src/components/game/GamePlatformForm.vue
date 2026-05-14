@@ -129,6 +129,63 @@
       </div>
     </n-form-item>
 
+    <n-form-item label="横版宣传图URL" path="imageHorizontalUrl">
+      <div class="w-full">
+        <n-upload
+          v-model:file-list="imageHorizontalFileList"
+          action="/upload"
+          :headers="uploadHeaders"
+          :max="1"
+          list-type="image-card"
+          accept="image/*"
+          @change="handleHorizontalImageUploadChange"
+          @finish="handleHorizontalImageUploadFinish"
+          @error="handleUploadError"
+        >
+          <n-upload-trigger #="{ handleClick }" abstract>
+            <div
+              v-if="!formData.imageHorizontalUrl"
+              class="upload-trigger upload-trigger-horizontal"
+              @click="handleClick"
+            >
+              <n-icon size="32" :depth="3">
+                <CloudUploadOutline />
+              </n-icon>
+              <div class="upload-text">上传横版宣传图</div>
+            </div>
+          </n-upload-trigger>
+        </n-upload>
+
+        <div
+          v-if="formData.imageHorizontalUrl && !imageHorizontalFileList.length"
+          class="image-preview"
+        >
+          <n-image
+            :src="formData.imageHorizontalUrl"
+            :alt="`${formData.platformName}-horizontal`"
+            width="220"
+            height="100"
+            object-fit="cover"
+            class="preview-image"
+          />
+          <div class="image-actions">
+            <n-button size="small" @click="handleReplaceHorizontalImage">
+              替换
+            </n-button>
+            <n-button size="small" type="error" @click="handleRemoveHorizontalImage">
+              删除
+            </n-button>
+          </div>
+        </div>
+
+        <n-input
+          v-model:value="formData.imageHorizontalUrl"
+          placeholder="或输入横版宣传图 URL"
+          style="margin-top: 8px"
+        />
+      </div>
+    </n-form-item>
+
     <n-divider>状态设置</n-divider>
 
     <n-grid :cols="2" :x-gap="24">
@@ -213,6 +270,7 @@ const emit = defineEmits<Emits>();
 // 响应式数据
 const formRef = ref();
 const imageFileList = ref<UploadFileInfo[]>([]);
+const imageHorizontalFileList = ref<UploadFileInfo[]>([]);
 
 // 表单数据
 const formData = reactive<CreateGamePlatformParams>({
@@ -228,6 +286,7 @@ const formData = reactive<CreateGamePlatformParams>({
   subGameCount: 0,
   minEntryAmount: 0,
   imageUrl: '',
+  imageHorizontalUrl: '',
   iosJumpType: '内嵌',
   androidJumpType: '内嵌',
   sortOrder: 0,
@@ -275,6 +334,9 @@ const formRules: FormRules = {
     { max: 10, message: '币种不能超过10个字符', trigger: 'blur' },
   ],
   imageUrl: [{ type: 'url', message: '请输入有效的图片URL', trigger: 'blur' }],
+  imageHorizontalUrl: [
+    { type: 'url', message: '请输入有效的横版图片URL', trigger: 'blur' },
+  ],
 };
 
 // 初始化表单数据
@@ -294,6 +356,7 @@ const initFormData = () => {
       subGameCount: Number(props.initialData.subGameCount) || 0,
       minEntryAmount: Number(props.initialData.minEntryAmount) || 0,
       imageUrl: props.initialData.imageUrl || '',
+      imageHorizontalUrl: props.initialData.imageHorizontalUrl || '',
       iosJumpType: props.initialData.iosJumpType,
       androidJumpType: props.initialData.androidJumpType,
       sortOrder: Number(props.initialData.sortOrder) || 0,
@@ -305,6 +368,12 @@ const initFormData = () => {
 // 上传处理函数
 const handleImageUploadChange = (options: { fileList: UploadFileInfo[] }) => {
   imageFileList.value = options.fileList;
+};
+
+const handleHorizontalImageUploadChange = (options: {
+  fileList: UploadFileInfo[];
+}) => {
+  imageHorizontalFileList.value = options.fileList;
 };
 
 const handleImageUploadFinish = ({
@@ -319,6 +388,22 @@ const handleImageUploadFinish = ({
     if (response.success) {
       formData.imageUrl = response.data.url;
       notification.success({ content: '宣传图上传成功', duration: 3000 });
+    }
+  }
+};
+
+const handleHorizontalImageUploadFinish = ({
+  file,
+  event,
+}: {
+  file: UploadFileInfo;
+  event?: ProgressEvent;
+}) => {
+  if (event?.target) {
+    const response = JSON.parse((event.target as XMLHttpRequest).response);
+    if (response.success) {
+      formData.imageHorizontalUrl = response.data.url;
+      notification.success({ content: '横版宣传图上传成功', duration: 3000 });
     }
   }
 };
@@ -338,6 +423,16 @@ const handleRemoveImage = () => {
   imageFileList.value = [];
 };
 
+const handleReplaceHorizontalImage = () => {
+  formData.imageHorizontalUrl = '';
+  imageHorizontalFileList.value = [];
+};
+
+const handleRemoveHorizontalImage = () => {
+  formData.imageHorizontalUrl = '';
+  imageHorizontalFileList.value = [];
+};
+
 // 提交表单
 const handleSubmit = async () => {
   try {
@@ -352,6 +447,7 @@ const handleSubmit = async () => {
 const resetForm = () => {
   formRef.value?.restoreValidation();
   imageFileList.value = [];
+  imageHorizontalFileList.value = [];
   initFormData();
 };
 
@@ -395,6 +491,10 @@ defineExpose({
   margin-top: 8px;
   color: #666;
   font-size: 14px;
+}
+
+.upload-trigger-horizontal {
+  width: 220px;
 }
 
 .image-preview {

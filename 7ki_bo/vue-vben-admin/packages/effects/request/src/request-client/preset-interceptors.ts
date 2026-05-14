@@ -73,6 +73,16 @@ export const authenticateResponseInterceptor = ({
         throw error;
       }
 
+      // Login/register etc.: 401 means wrong credentials — do not refresh token or full-page re-login
+      const url = String(config?.url ?? '');
+      const isUnauthenticatedAuthEntry =
+        url.includes('/auth/admin/login') ||
+        url.includes('/auth/login') ||
+        url.includes('/auth/register');
+      if (isUnauthenticatedAuthEntry) {
+        throw error;
+      }
+
       // 判断是否启用了 refreshToken 功能
       // 如果没有启用或者已经是重试请求了，直接跳转到重新登录
       if (!enableRefreshToken || config.__isRetryRequest) {

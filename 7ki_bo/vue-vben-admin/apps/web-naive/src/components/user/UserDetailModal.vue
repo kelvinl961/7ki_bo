@@ -826,6 +826,20 @@
                             userDetail.sameRegistrationDeviceCount || 0
                           }})
                         </span>
+                        <div
+                          v-if="
+                            formatDeviceTelemetrySeven(
+                              userDetail.registrationDeviceTelemetry,
+                            )
+                          "
+                          class="mt-1 whitespace-pre-wrap break-all text-xs leading-snug text-gray-700"
+                        >
+                          {{
+                            formatDeviceTelemetrySeven(
+                              userDetail.registrationDeviceTelemetry,
+                            )
+                          }}
+                        </div>
                       </div>
                       <div class="content-right">
                         <n-button
@@ -1006,6 +1020,33 @@
                             userDetail.sameLastLoginDeviceCount || 0
                           }})
                         </span>
+                        <div
+                          v-if="
+                            formatDeviceTelemetrySeven(
+                              userDetail.lastLoginDeviceTelemetry,
+                              { hideWhenObjectMissing: true },
+                            )
+                          "
+                          class="mt-1 whitespace-pre-wrap break-all text-xs leading-snug text-gray-700"
+                        >
+                          {{
+                            formatDeviceTelemetrySeven(
+                              userDetail.lastLoginDeviceTelemetry,
+                              { hideWhenObjectMissing: true },
+                            )
+                          }}
+                        </div>
+                        <div
+                          v-else-if="
+                            !userDetail.lastLoginDeviceId &&
+                            (userDetail.lastLoginUserAgent ||
+                              userDetail.lastLoginBrowserInfo)
+                          "
+                          class="mt-1 block text-xs leading-snug text-amber-800"
+                        >
+                          末次登录未上报设备号；时区/屏幕/语言依赖请求头，请确认 CORS 放行
+                          device-id、x-client-timezone、x-viewport。
+                        </div>
                       </div>
                       <div class="content-right">
                         <n-button text type="info" size="tiny"
@@ -1720,6 +1761,7 @@ import {
   type UserDetailInfo,
   type WalletTransaction,
   type WalletTransactionSummary,
+  type DeviceTelemetrySeven,
 } from '#/api/core/user-detail';
 import {
   getActiveMemberTiersApi,
@@ -1775,6 +1817,30 @@ function filterMembersBySearchField(
     path: '/user-management/all-members',
     query: { searchField: field, searchValue: v },
   });
+}
+
+/** Seven telemetry lines (no IP / location). Always prints all keys; missing values show --. */
+function formatDeviceTelemetrySeven(
+  t: DeviceTelemetrySeven | null | undefined,
+  options?: { hideWhenObjectMissing?: boolean },
+): string {
+  if (!t || typeof t !== 'object') {
+    if (options?.hideWhenObjectMissing) return '';
+    t = {};
+  }
+  const val = (key: keyof DeviceTelemetrySeven): string => {
+    const v = t![key];
+    return v != null && String(v).trim() ? String(v).trim() : '--';
+  };
+  return [
+    `User-Agent：${val('userAgent')}`,
+    `设备类型：${val('deviceFormFactor')}`,
+    `系统 OS：${val('systemOs')}`,
+    `浏览器语言：${val('browserLanguage')}`,
+    `时区：${val('timezone')}`,
+    `屏幕尺寸：${val('screenSize')}`,
+    `浏览器版本：${val('browserVersion')}`,
+  ].join('\n');
 }
 
 // Reactive data

@@ -546,6 +546,47 @@ const renderNumericCell = (
   );
 };
 
+const toNumber = (value: unknown): number => {
+  if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
+  if (typeof value === 'string' && value.trim() !== '') {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+  return 0;
+};
+
+const getFirstDepositPerCapita = (row: any): number => {
+  // Prefer backend-calculated values when present.
+  if (row?.firstDepositPerCapita !== undefined && row?.firstDepositPerCapita !== null) {
+    return toNumber(row.firstDepositPerCapita);
+  }
+  if (
+    row?.firstDepositAvgAmount !== undefined &&
+    row?.firstDepositAvgAmount !== null
+  ) {
+    return toNumber(row.firstDepositAvgAmount);
+  }
+
+  const firstDepositAmount = toNumber(row?.firstDepositAmount);
+  const firstDepositCount = toNumber(row?.firstDeposits);
+
+  // Exclude manual-approved first deposits when backend provides dedicated fields.
+  const manualFirstDepositAmount =
+    toNumber(row?.manualFirstDepositAmount) +
+    toNumber(row?.manualApprovedFirstDepositAmount) +
+    toNumber(row?.manualApproveFirstDepositAmount);
+  const manualFirstDepositCount =
+    toNumber(row?.manualFirstDepositCount) +
+    toNumber(row?.manualApprovedFirstDepositCount) +
+    toNumber(row?.manualApproveFirstDepositCount);
+
+  const adjustedAmount = Math.max(0, firstDepositAmount - manualFirstDepositAmount);
+  const adjustedCount = Math.max(0, firstDepositCount - manualFirstDepositCount);
+
+  if (adjustedCount <= 0) return 0;
+  return adjustedAmount / adjustedCount;
+};
+
 // Helper function to check if a column category has any non-zero data
 const hasDataForCategory = (keys: string[]): boolean => {
   if (!tableData.value || tableData.value.length === 0) return false;
@@ -672,6 +713,16 @@ const columns = computed<DataTableColumns>(() => {
           width: 120,
           sorter: true,
           render: (row: any) => renderNumericCell(row, 'firstDepositAmount'),
+        },
+        {
+          title: '首冲人均金额',
+          key: 'firstDepositPerCapita',
+          width: 130,
+          sorter: true,
+          render: (row: any) => {
+            const value = getFirstDepositPerCapita(row);
+            return h('span', {}, value.toFixed(2));
+          },
         },
         {
           title: '充值总额',

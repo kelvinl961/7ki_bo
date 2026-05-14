@@ -24,6 +24,40 @@ export const useAuthStore = defineStore('auth', () => {
    * Asynchronously handle the login process
    * @param params 登录表单数据
    */
+  /** Map common English API errors to current locale (e.g. zh-CN). */
+  function normalizeLoginApiMessage(raw: string): string {
+    const t = raw.trim();
+    if (!t) {
+      return $t('authentication.passwordErrorTip');
+    }
+    const lower = t.toLowerCase();
+    if (
+      lower === 'invalid credentials' ||
+      lower.includes('invalid credentials')
+    ) {
+      return $t('authentication.invalidCredentials');
+    }
+    return t;
+  }
+
+  function getLoginErrorDescription(error: unknown): string {
+    const e = error as Record<string, any>;
+    const data = e?.response?.data;
+    if (typeof data === 'string' && data.trim()) {
+      return normalizeLoginApiMessage(data);
+    }
+    if (data && typeof data === 'object') {
+      const msg = data.message ?? data.error ?? data.msg;
+      if (msg != null && String(msg).trim()) {
+        return normalizeLoginApiMessage(String(msg).trim());
+      }
+    }
+    if (e?.message && typeof e.message === 'string' && e.message !== 'Network Error') {
+      return normalizeLoginApiMessage(e.message);
+    }
+    return $t('authentication.passwordErrorTip');
+  }
+
   async function authLogin(
     params: Recordable<any>,
     onSuccess?: () => Promise<void> | void,
@@ -92,7 +126,28 @@ export const useAuthStore = defineStore('auth', () => {
             duration: 3000,
           });
         }
+      } else {
+        const body = response as Record<string, any>;
+        const rawHint =
+          body?.message ||
+          body?.error ||
+          (body?.success === false ? body?.message : '') ||
+          '';
+        const hint = rawHint
+          ? normalizeLoginApiMessage(String(rawHint))
+          : $t('authentication.passwordErrorTip');
+        notification.error({
+          content: $t('authentication.loginFailed'),
+          description: hint,
+          duration: 5000,
+        });
       }
+    } catch (error: unknown) {
+      notification.error({
+        content: $t('authentication.loginFailed'),
+        description: getLoginErrorDescription(error),
+        duration: 5000,
+      });
     } finally {
       loginLoading.value = false;
     }

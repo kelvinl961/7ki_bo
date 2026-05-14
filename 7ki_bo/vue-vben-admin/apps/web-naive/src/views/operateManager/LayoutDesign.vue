@@ -1,522 +1,150 @@
 <template>
   <div class="h-full bg-gray-50 p-6">
-    <!-- Page Header -->
-    <div class="mb-6">
-      <h1 class="mb-2 text-2xl font-semibold text-gray-900">个性化配置</h1>
-      <p class="text-gray-600">自定义您的应用外观和布局设置</p>
+    <div class="mb-4">
+      <h1 class="mb-2 text-2xl font-semibold text-gray-900">版式个性化</h1>
+      <p class="text-sm text-gray-600">
+        当前阶段仅配置「我的页面样式」。保存后资源约 10 分钟生效。其余版式项（Banner、弹窗、Lobby
+        等）已在接口与数据结构预留，后续开放界面即可扩展。
+      </p>
+    </div>
+
+    <n-alert type="info" class="mb-4" :bordered="false">
+      点击「修改」选择我的页样式后，可使用「生成预览」参考效果（嵌入站点若受限请以客户端为准）。
+    </n-alert>
+
+    <!-- 必须与品牌皮肤同一 brandCode，否则之前会加载「全局最新一条」版式，保存写到错误行 -->
+    <div
+      v-if="brandSkinSelectOptions.length > 0"
+      class="mb-4 flex flex-wrap items-center gap-3 rounded-lg border bg-white p-4 shadow-sm"
+    >
+      <span class="text-sm font-medium text-gray-700">当前品牌</span>
+      <n-select
+        v-model:value="selectedBrandCode"
+        class="min-w-[280px]"
+        :options="brandSkinSelectOptions"
+        placeholder="请选择品牌"
+        @update:value="handleBrandCodeChange"
+      />
+      <span class="text-xs text-gray-500">
+        版式配置按品牌维度读写；路由可加 ?brandCode=xxx 预选。
+      </span>
     </div>
 
     <!-- Main Content -->
     <div class="flex min-h-[calc(100vh-140px)] gap-6">
       <!-- Left Panel - Configuration -->
       <div class="flex-1 rounded-lg border bg-white shadow-sm">
-        <n-tabs v-model:value="activeTab" type="line">
-          <!-- Tab 1: 版本个性化 -->
-          <n-tab-pane name="version" tab="版本个性化">
             <div class="space-y-8 p-6">
-              <!-- Current Skin Style -->
-              <div class="mb-8 flex items-center justify-between">
-                <div>
-                  <h3 class="text-lg font-medium text-gray-900">
-                    显示当前皮肤样式名称
-                  </h3>
-                  <p class="mt-1 font-medium text-blue-600">
-                    {{ currentSkinName }}
+              <div
+                class="mb-6 flex flex-wrap items-start justify-between gap-4 border-b border-gray-200 pb-4"
+              >
+                <div class="min-w-0 flex-1 space-y-2">
+                  <p class="text-sm text-gray-600">
+                    <span class="font-medium text-gray-800">品牌名称(ID)：</span>
+                    <span>{{ brandNameIdDisplay }}</span>
                   </p>
-                  <div class="mt-2 space-y-1">
-                    <p class="text-sm text-gray-600">
-                      <span class="font-medium">皮肤样式:</span>
-                      {{ brandSkinInfo?.skinStyle || '未设置' }}
-                    </p>
-                    <p class="text-sm text-gray-600">
-                      <span class="font-medium">皮肤颜色:</span>
-                      {{ brandSkinInfo?.colorName || '未设置' }}
-                    </p>
-                  </div>
+                  <p class="text-sm text-gray-600">
+                    <span class="font-medium text-gray-800">皮肤样式：</span>
+                    <span>{{ skinTemplateStyleDisplay }}</span>
+                  </p>
+                  <p class="text-xs text-gray-500">
+                    当前版式标识：{{ layoutSkinKey }}
+                  </p>
                 </div>
-                <n-button
-                  v-if="!isEditMode"
-                  type="primary"
-                  @click="enterEditMode"
-                  >修改</n-button
-                >
+                <div class="ml-auto shrink-0 self-start pt-0.5">
+                  <n-button
+                    v-if="!isEditMode"
+                    type="primary"
+                    size="large"
+                    strong
+                    class="min-w-[5.5rem] shadow-sm"
+                    @click="enterEditMode"
+                  >
+                    修改
+                  </n-button>
+                  <n-button
+                    v-else
+                    size="large"
+                    quaternary
+                    @click="cancelEdit"
+                  >
+                    退出编辑
+                  </n-button>
+                </div>
               </div>
 
-              <!-- Banner Style Section -->
+              <!-- 顶部导航广告图开关 -->
               <div class="rounded-lg border bg-gray-50 p-6">
-                <h4 class="text-md mb-4 font-medium text-gray-900">
-                  Banner样式
-                  <span v-if="!isEditMode">通用Banner</span>
-                  <span v-if="isEditMode" class="ml-2 text-blue-500">✓</span>
-                </h4>
-
-                <!-- View Mode -->
+                <h4 class="text-md mb-3 font-medium text-gray-900">广告图</h4>
+                <p class="mb-4 text-sm text-gray-600">
+                  控制大厅顶部导航广告图区域是否展示（关闭后客户端隐藏该区域）。
+                </p>
                 <div
                   v-if="!isEditMode"
-                  class="rounded-lg border-2 border-dashed border-gray-300 bg-white p-8 text-center"
+                  class="text-sm font-medium text-gray-800"
                 >
-                  <div
-                    class="mb-4 flex h-32 w-full items-center justify-center rounded-lg bg-gradient-to-r from-blue-500 to-purple-600"
-                  >
-                    <span class="font-medium text-white">Banner样式图</span>
-                  </div>
-                  <p class="text-sm text-gray-500">通用Banner预览</p>
+                  {{ layoutConfig.topNavAdEnabled ? '已开启' : '已关闭' }}
                 </div>
-
-                <!-- Edit Mode -->
-                <div v-if="isEditMode" class="space-y-4">
-                  <n-radio-group v-model:value="layoutConfig.bannerStyle">
-                    <div class="grid grid-cols-4 gap-4">
-                      <div class="text-center">
-                        <n-radio value="common" class="mb-2">
-                          <div
-                            class="h-16 w-20 rounded border-2 bg-blue-500"
-                            :class="
-                              layoutConfig.bannerStyle === 'common'
-                                ? 'border-blue-500'
-                                : 'border-gray-300'
-                            "
-                          >
-                            <div class="p-1 text-xs text-white">Banner样式</div>
-                          </div>
-                        </n-radio>
-                        <p class="text-xs">通用Banner</p>
-                      </div>
-                      <div class="text-center">
-                        <n-radio value="small" class="mb-2">
-                          <div
-                            class="h-12 w-20 rounded border-2 bg-blue-400"
-                            :class="
-                              layoutConfig.bannerStyle === 'small'
-                                ? 'border-blue-500'
-                                : 'border-gray-300'
-                            "
-                          ></div>
-                        </n-radio>
-                        <p class="text-xs">小Banner</p>
-                      </div>
-                      <div class="text-center">
-                        <n-radio value="scroll" class="mb-2">
-                          <div
-                            class="h-16 w-20 rounded border-2 bg-blue-600"
-                            :class="
-                              layoutConfig.bannerStyle === 'scroll'
-                                ? 'border-blue-500'
-                                : 'border-gray-300'
-                            "
-                          ></div>
-                        </n-radio>
-                        <p class="text-xs">滚播Banner</p>
-                      </div>
-                      <div class="text-center">
-                        <n-radio value="large" class="mb-2">
-                          <div
-                            class="h-20 w-20 rounded border-2 bg-blue-700"
-                            :class="
-                              layoutConfig.bannerStyle === 'large'
-                                ? 'border-blue-500'
-                                : 'border-gray-300'
-                            "
-                          ></div>
-                        </n-radio>
-                        <p class="text-xs">大Banner</p>
-                      </div>
-                    </div>
-                  </n-radio-group>
+                <div v-else class="flex items-center gap-3">
+                  <n-switch v-model:value="layoutConfig.topNavAdEnabled" />
+                  <span class="text-sm text-gray-600">{{
+                    layoutConfig.topNavAdEnabled ? '开启' : '关闭'
+                  }}</span>
                 </div>
               </div>
 
-              <!-- My Page Style Section -->
+              <!-- My Page Style Section（其余 layout 字段仍随保存提交） -->
               <div class="rounded-lg border bg-gray-50 p-6">
                 <h4 class="text-md mb-4 font-medium text-gray-900">
                   我的页面样式
-                  <span v-if="!isEditMode">样式1</span>
+                  <span v-if="!isEditMode">{{ myPageStyleDisplayName }}</span>
                   <span v-if="isEditMode" class="ml-2 text-blue-500">✓</span>
                 </h4>
 
                 <!-- View Mode -->
                 <div v-if="!isEditMode" class="rounded-lg border bg-white p-4">
                   <div
-                    class="relative mx-auto h-80 w-40 overflow-hidden rounded-lg border-2 border-gray-300 bg-gray-100"
+                    class="relative mx-auto max-w-[220px] overflow-hidden rounded-lg border-2 border-gray-300 bg-gray-100"
                   >
-                    <!-- Mobile Screen Preview -->
-                    <div
-                      class="absolute left-0 top-0 h-8 w-full bg-gradient-to-r from-blue-500 to-purple-600"
-                    ></div>
-                    <div class="space-y-2 p-3 pt-8">
-                      <div class="mb-2 h-3 rounded bg-gray-300"></div>
-                      <div class="grid grid-cols-3 gap-1">
-                        <div class="h-8 rounded bg-blue-200"></div>
-                        <div class="h-8 rounded bg-green-200"></div>
-                        <div class="h-8 rounded bg-red-200"></div>
-                      </div>
-                      <div class="mt-4 space-y-1">
-                        <div class="h-2 rounded bg-gray-200"></div>
-                        <div class="h-2 w-3/4 rounded bg-gray-200"></div>
-                      </div>
-                    </div>
+                    <img
+                      :src="currentMyPageTemplateUrl"
+                      alt="我的页面模板预览"
+                      class="h-auto w-full object-cover object-top"
+                    />
                   </div>
                   <p class="mt-2 text-center text-sm text-gray-500">
-                    我的页面预览
+                    {{ myPageStyleDisplayName }}
                   </p>
                 </div>
 
                 <!-- Edit Mode -->
                 <div v-if="isEditMode" class="space-y-4">
                   <n-radio-group v-model:value="layoutConfig.myPageStyle">
-                    <div class="grid grid-cols-5 gap-3">
-                      <div v-for="i in 5" :key="i" class="text-center">
-                        <n-radio :value="`style${i}`" class="mb-2">
-                          <div
-                            class="relative h-28 w-16 overflow-hidden rounded border-2 bg-white"
-                            :class="
-                              layoutConfig.myPageStyle === `style${i}`
-                                ? 'border-blue-500 bg-blue-50'
-                                : 'border-gray-300'
-                            "
-                          >
-                            <div
-                              class="absolute top-0 h-3 w-full"
-                              :class="`bg-gradient-to-r ${i === 1 ? 'from-blue-500 to-purple-600' : i === 2 ? 'from-green-500 to-blue-500' : i === 3 ? 'from-red-500 to-pink-500' : i === 4 ? 'from-yellow-500 to-orange-500' : 'from-purple-500 to-indigo-500'}`"
-                            ></div>
-                            <div class="space-y-1 p-1 pt-3">
-                              <div class="h-1 rounded bg-gray-300"></div>
-                              <div class="grid grid-cols-3 gap-px">
-                                <div class="h-2 rounded bg-gray-200"></div>
-                                <div class="h-2 rounded bg-gray-200"></div>
-                                <div class="h-2 rounded bg-gray-200"></div>
-                              </div>
-                              <div class="space-y-px">
-                                <div class="h-px bg-gray-200"></div>
-                                <div class="h-px w-3/4 bg-gray-200"></div>
-                              </div>
-                            </div>
-                          </div>
-                        </n-radio>
-                        <p class="text-xs">样式{{ i }}</p>
-                      </div>
-                    </div>
-                  </n-radio-group>
-                </div>
-              </div>
-
-              <!-- Self-operated Promotion Toggle -->
-              <div class="rounded-lg border bg-gray-50 p-6">
-                <div class="mb-4 flex items-center justify-between">
-                  <h4 class="text-md font-medium text-gray-900">
-                    是否开启自营宣传
-                  </h4>
-                  <n-switch
-                    v-model:value="selfPromotionEnabled"
-                    @update:value="handleSelfPromotionToggle"
-                  >
-                    <template #checked>开启</template>
-                    <template #unchecked>关闭</template>
-                  </n-switch>
-                </div>
-
-                <!-- Self-promotion Banner Preview (when enabled) -->
-                <div
-                  v-if="selfPromotionEnabled"
-                  class="mt-4 rounded-lg border bg-white p-4"
-                >
-                  <div
-                    class="flex h-24 items-center justify-center rounded-lg bg-gradient-to-r from-green-400 to-blue-500"
-                  >
-                    <span class="font-medium text-white">自营Banner预览</span>
-                  </div>
-                  <p class="mt-2 text-center text-sm text-gray-500">
-                    自营宣传横幅
-                  </p>
-                </div>
-              </div>
-
-              <!-- Game Card Icons Section -->
-              <div class="rounded-lg border bg-gray-50 p-6">
-                <h4 class="text-md mb-4 font-medium text-gray-900">
-                  游戏卡片图标
-                  <span v-if="!isEditMode">欧规版</span>
-                  <span v-if="isEditMode" class="ml-2 text-blue-500">✓</span>
-                </h4>
-
-                <!-- View Mode -->
-                <div v-if="!isEditMode" class="rounded-lg border bg-white p-4">
-                  <div class="flex items-center justify-center">
-                    <div
-                      class="flex h-20 w-20 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg"
-                    >
-                      <span class="text-sm font-bold text-white">PG</span>
-                    </div>
-                  </div>
-                  <p class="mt-2 text-center text-sm text-gray-500">
-                    示例游戏图标
-                  </p>
-                </div>
-
-                <!-- Edit Mode -->
-                <div v-if="isEditMode" class="space-y-4">
-                  <n-radio-group v-model:value="layoutConfig.gameCardIcon">
-                    <div class="grid grid-cols-2 gap-4">
-                      <div class="text-center">
-                        <n-radio value="european" class="mb-2">
-                          <div
-                            class="rounded border-2 bg-white p-4"
-                            :class="
-                              layoutConfig.gameCardIcon === 'european'
-                                ? 'border-blue-500 bg-blue-50'
-                                : 'border-gray-300'
-                            "
-                          >
-                            <div
-                              class="mx-auto flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-pink-500"
-                            >
-                              <span class="font-bold text-white">WG</span>
-                            </div>
-                          </div>
-                        </n-radio>
-                        <p class="text-xs">欧风版</p>
-                      </div>
-                      <div class="text-center">
-                        <n-radio value="classic" class="mb-2">
-                          <div
-                            class="rounded border-2 bg-white p-4"
-                            :class="
-                              layoutConfig.gameCardIcon === 'classic'
-                                ? 'border-blue-500 bg-blue-50'
-                                : 'border-gray-300'
-                            "
-                          >
-                            <div
-                              class="mx-auto flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-red-500 to-orange-500"
-                            >
-                              <span class="font-bold text-white">WG</span>
-                            </div>
-                          </div>
-                        </n-radio>
-                        <p class="text-xs">经典版</p>
-                      </div>
-                    </div>
-                  </n-radio-group>
-                </div>
-              </div>
-
-              <!-- Popup Style Section -->
-              <div class="rounded-lg border bg-gray-50 p-6">
-                <h4 class="text-md mb-4 font-medium text-gray-900">
-                  弹窗样式
-                  <span v-if="!isEditMode">样式2</span>
-                  <span v-if="isEditMode" class="ml-2 text-blue-500">✓</span>
-                </h4>
-
-                <!-- View Mode -->
-                <div v-if="!isEditMode" class="rounded-lg border bg-white p-4">
-                  <div
-                    class="relative flex h-40 w-full items-center justify-center rounded-lg border-2 border-blue-300 bg-gradient-to-br from-blue-100 to-blue-200"
-                  >
-                    <div
-                      class="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-gray-400"
-                    >
-                      <span class="text-xs text-white">×</span>
-                    </div>
-                    <div class="text-center">
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                       <div
-                        class="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-blue-500"
+                        v-for="opt in MY_PAGE_STYLE_OPTIONS"
+                        :key="opt.value"
+                        class="text-center"
                       >
-                        <span class="text-white">!</span>
-                      </div>
-                      <p class="text-sm text-gray-600">弹窗样式预览</p>
-                    </div>
-                  </div>
-                  <p class="mt-2 text-center text-sm text-gray-500">
-                    弹窗布局样式
-                  </p>
-                </div>
-
-                <!-- Edit Mode -->
-                <div v-if="isEditMode" class="space-y-4">
-                  <n-radio-group v-model:value="layoutConfig.popupStyle">
-                    <div class="grid grid-cols-4 gap-3">
-                      <div v-for="i in 4" :key="i" class="text-center">
-                        <n-radio :value="`style${i}`" class="mb-2">
+                        <n-radio :value="opt.value" class="mb-2 w-full">
                           <div
-                            class="relative h-16 w-20 rounded border-2 bg-white"
+                            class="overflow-hidden rounded-lg border-2 bg-white"
                             :class="
-                              layoutConfig.popupStyle === `style${i}`
-                                ? 'border-blue-500 bg-blue-50'
+                              layoutConfig.myPageStyle === opt.value
+                                ? 'border-blue-500 ring-2 ring-blue-200'
                                 : 'border-gray-300'
                             "
                           >
-                            <div
-                              class="absolute right-1 top-1 h-2 w-2 rounded-full bg-gray-400"
-                            ></div>
-                            <div
-                              class="flex h-full items-center justify-center"
-                            >
-                              <div
-                                class="mx-auto h-4 w-4 rounded-full"
-                                :class="
-                                  i === 1
-                                    ? 'bg-blue-500'
-                                    : i === 2
-                                      ? 'bg-green-500'
-                                      : i === 3
-                                        ? 'bg-red-500'
-                                        : 'bg-purple-500'
-                                "
-                              ></div>
-                            </div>
+                            <img
+                              :src="MY_PAGE_STYLE_TEMPLATE_IMAGE[opt.value]"
+                              :alt="opt.label"
+                              class="max-h-80 w-full object-cover object-top"
+                            />
                           </div>
                         </n-radio>
-                        <p class="text-xs">样式{{ i }}</p>
-                      </div>
-                    </div>
-                  </n-radio-group>
-                </div>
-              </div>
-
-              <!-- Page Turn Style Section -->
-              <div class="rounded-lg border bg-gray-50 p-6">
-                <h4 class="text-md mb-4 font-medium text-gray-900">
-                  翻页样式
-                  <span v-if="!isEditMode">手动加载</span>
-                  <span v-if="isEditMode" class="ml-2 text-blue-500">✓</span>
-                </h4>
-
-                <!-- View Mode -->
-                <div v-if="!isEditMode" class="rounded-lg border bg-white p-4">
-                  <div class="space-y-2 text-center">
-                    <p class="text-sm text-gray-600">正在加载...</p>
-                    <p class="text-xs text-gray-500">
-                      请于浏览器上滑动中控12楼
-                    </p>
-                    <div class="mt-4 border-t pt-2">
-                      <p
-                        class="flex items-center justify-center gap-1 text-sm text-blue-600"
-                      >
-                        加载更多
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Edit Mode -->
-                <div v-if="isEditMode" class="space-y-4">
-                  <n-radio-group v-model:value="layoutConfig.pageStyle">
-                    <div class="grid grid-cols-2 gap-4">
-                      <div class="text-center">
-                        <n-radio value="auto" class="mb-2">
-                          <div
-                            class="rounded border-2 bg-white p-4"
-                            :class="
-                              layoutConfig.pageStyle === 'auto'
-                                ? 'border-blue-500 bg-blue-50'
-                                : 'border-gray-300'
-                            "
-                          >
-                            <div class="space-y-1 text-center">
-                              <div class="text-xs text-gray-600">
-                                自动加载中...
-                              </div>
-                              <div
-                                class="mx-auto h-1 w-4 animate-pulse rounded bg-blue-500"
-                              ></div>
-                            </div>
-                          </div>
-                        </n-radio>
-                        <p class="text-xs">自动加载</p>
-                      </div>
-                      <div class="text-center">
-                        <n-radio value="manual" class="mb-2">
-                          <div
-                            class="rounded border-2 bg-white p-4"
-                            :class="
-                              layoutConfig.pageStyle === 'manual'
-                                ? 'border-blue-500 bg-blue-50'
-                                : 'border-gray-300'
-                            "
-                          >
-                            <div class="space-y-1 text-center">
-                              <div class="text-xs text-blue-600">手动翻页</div>
-                            </div>
-                          </div>
-                        </n-radio>
-                        <p class="text-xs">手动翻页</p>
-                      </div>
-                    </div>
-                  </n-radio-group>
-                </div>
-              </div>
-
-              <!-- Lobby Button Style Section -->
-              <div class="rounded-lg border bg-gray-50 p-6">
-                <h4 class="text-md mb-4 font-medium text-gray-900">
-                  Lobby按钮样式
-                  <span v-if="!isEditMode">样式1</span>
-                  <span v-if="isEditMode" class="ml-2 text-blue-500">✓</span>
-                </h4>
-
-                <!-- View Mode -->
-                <div v-if="!isEditMode" class="rounded-lg border bg-white p-4">
-                  <div class="flex items-center justify-center">
-                    <div class="text-center">
-                      <div
-                        class="mb-2 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg"
-                      >
-                        <span class="text-lg text-white">🏠</span>
-                      </div>
-                      <p class="text-sm font-medium text-gray-700">首页</p>
-                    </div>
-                  </div>
-                  <p class="mt-2 text-center text-sm text-gray-500">
-                    Lobby按钮预览
-                  </p>
-                </div>
-
-                <!-- Edit Mode -->
-                <div v-if="isEditMode" class="space-y-4">
-                  <n-radio-group v-model:value="layoutConfig.lobbyButtonStyle">
-                    <div
-                      class="grid max-h-60 grid-cols-5 gap-2 overflow-y-auto"
-                    >
-                      <div v-for="i in 10" :key="i" class="text-center">
-                        <n-radio :value="`style${i}`" class="mb-2">
-                          <div
-                            class="rounded border-2 bg-white p-2"
-                            :class="
-                              layoutConfig.lobbyButtonStyle === `style${i}`
-                                ? 'border-blue-500 bg-blue-50'
-                                : 'border-gray-300'
-                            "
-                          >
-                            <div
-                              class="mx-auto mb-1 flex h-12 w-12 items-center justify-center rounded-full text-xs text-white"
-                              :class="
-                                i === 1
-                                  ? 'bg-blue-500'
-                                  : i === 2
-                                    ? 'bg-gray-500'
-                                    : i === 3
-                                      ? 'bg-gray-600'
-                                      : i === 4
-                                        ? 'bg-black'
-                                        : i === 5
-                                          ? 'bg-gray-400'
-                                          : i === 6
-                                            ? 'bg-gray-700'
-                                            : i === 7
-                                              ? 'bg-yellow-500'
-                                              : i === 8
-                                                ? 'bg-black'
-                                                : i === 9
-                                                  ? 'bg-blue-600'
-                                                  : 'bg-gray-800'
-                              "
-                            >
-                              🏠
-                            </div>
-                          </div>
-                        </n-radio>
-                        <p class="text-xs">样式{{ i }}</p>
+                        <p class="mt-1 text-xs font-medium text-gray-700">
+                          {{ opt.label }}
+                        </p>
                       </div>
                     </div>
                   </n-radio-group>
@@ -526,163 +154,28 @@
               <!-- Edit Mode Action Buttons -->
               <div
                 v-if="isEditMode"
-                class="flex justify-center space-x-4 border-t pt-6"
+                class="flex flex-wrap justify-center gap-3 border-t pt-6"
               >
-                <n-button @click="cancelEdit" size="large">取消</n-button>
-                <n-button
-                  type="primary"
-                  @click="
-                    () => {
-                      console.log('🔘 Save button clicked!');
-                      saveConfig();
-                    }
-                  "
-                  size="large"
-                  >保存</n-button
-                >
+                <n-button size="large" @click="cancelEdit">取消</n-button>
+                <n-button size="large" type="warning" @click="generatePreview">
+                  生成预览
+                </n-button>
+                <n-button type="primary" size="large" @click="saveConfig">
+                  保存
+                </n-button>
               </div>
             </div>
-          </n-tab-pane>
-
-          <!-- Tab 2: 按钮配置 -->
-          <n-tab-pane name="buttons" tab="按钮配置">
-            <div class="space-y-6 p-6">
-              <!-- Header with Edit Button -->
-              <div class="mb-6 flex items-center justify-between">
-                <div>
-                  <h3 class="text-lg font-medium text-gray-900">底部导航</h3>
-                  <p class="text-sm text-gray-600">配置底部导航按钮</p>
-                </div>
-                <div class="flex space-x-3">
-                  <n-button
-                    v-if="!isButtonEditMode"
-                    @click="showIconUploadModal = true"
-                    >上传图标</n-button
-                  >
-                  <n-button
-                    v-if="!isButtonEditMode"
-                    type="primary"
-                    @click="enterButtonEditMode"
-                    >修改</n-button
-                  >
-                </div>
-              </div>
-
-              <!-- Button Configuration Sections -->
-              <div v-if="isButtonEditMode" class="space-y-8">
-                <!-- 登录前 Section -->
-                <div class="rounded-lg border bg-gray-50 p-6">
-                  <h4 class="text-md mb-4 font-medium text-gray-900">登入前</h4>
-                  <div class="grid grid-cols-5 place-items-center gap-4">
-                    <div
-                      v-for="(button, index) in buttonConfig.beforeLogin"
-                      :key="index"
-                      class="text-center"
-                    >
-                      <div
-                        class="flex h-16 w-16 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-white transition-colors hover:border-blue-400"
-                        @click="openIconSelector('beforeLogin', index)"
-                      >
-                        <div v-if="button.icon" class="text-center">
-                          <img
-                            v-if="getIconImageUrl(button)"
-                            :src="getIconImageUrl(button)"
-                            :alt="button.label"
-                            class="mx-auto mb-1 h-8 w-8 object-contain"
-                          />
-                          <div v-else class="mb-1 text-2xl">
-                            {{ getIconDisplay(button.icon) }}
-                          </div>
-                          <div class="text-xs text-gray-600">
-                            {{ button.label }}
-                          </div>
-                        </div>
-                        <div v-else class="text-2xl text-gray-400">+</div>
-                      </div>
-                      <p class="mt-2 text-xs text-gray-500">
-                        按钮{{ index + 1 }}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- 登录后 Section -->
-                <div class="rounded-lg border bg-gray-50 p-6">
-                  <h4 class="text-md mb-4 font-medium text-gray-900">登入后</h4>
-                  <div class="grid grid-cols-5 place-items-center gap-4">
-                    <div
-                      v-for="(button, index) in buttonConfig.afterLogin"
-                      :key="index"
-                      class="text-center"
-                    >
-                      <div
-                        class="flex h-16 w-16 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-white transition-colors hover:border-blue-400"
-                        @click="openIconSelector('afterLogin', index)"
-                      >
-                        <div v-if="button.icon" class="text-center">
-                          <img
-                            v-if="getIconImageUrl(button)"
-                            :src="getIconImageUrl(button)"
-                            :alt="button.label"
-                            class="mx-auto mb-1 h-8 w-8 object-contain"
-                          />
-                          <div v-else class="mb-1 text-2xl">
-                            {{ getIconDisplay(button.icon) }}
-                          </div>
-                          <div class="text-xs text-gray-600">
-                            {{ button.label }}
-                          </div>
-                        </div>
-                        <div v-else class="text-2xl text-gray-400">+</div>
-                      </div>
-                      <p class="mt-2 text-xs text-gray-500">
-                        按钮{{ index + 1 }}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Validation Error -->
-                <div
-                  v-if="showValidationError"
-                  class="text-center text-sm text-red-500"
-                >
-                  请设置完整按钮再做模板配置
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="flex justify-center space-x-4 border-t pt-6">
-                  <n-button @click="cancelButtonEdit" size="large"
-                    >取消</n-button
-                  >
-                  <n-button @click="generatePreview" size="large"
-                    >生成预览</n-button
-                  >
-                  <n-button
-                    type="primary"
-                    @click="saveButtonConfig"
-                    size="large"
-                    >保存</n-button
-                  >
-                </div>
-              </div>
-
-              <!-- View Mode Display -->
-              <div v-if="!isButtonEditMode" class="space-y-8">
-                <div class="rounded-lg bg-gray-50 py-12 text-center">
-                  <p class="text-gray-500">点击"修改"按钮开始配置底部导航</p>
-                </div>
-              </div>
-            </div>
-          </n-tab-pane>
-        </n-tabs>
       </div>
 
       <!-- Right Panel - Mobile Preview -->
       <div class="w-100 rounded-lg border bg-white p-4 shadow-sm">
-        <h3 class="mb-4 text-center text-lg font-medium text-gray-900">
-          实时预览
-        </h3>
+        <div class="mb-4 flex flex-col items-center gap-2">
+          <h3 class="text-center text-lg font-medium text-gray-900">预览</h3>
+          <n-button type="warning" @click="generatePreview">生成预览</n-button>
+          <p class="text-center text-xs text-gray-500">
+            预览仅供参考，不代表实际大厅效果；保存后约 10 分钟生效。
+          </p>
+        </div>
 
         <!-- Mobile Frame -->
         <div
@@ -949,12 +442,14 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * 阶段一：仅「我的页面样式」提供编辑 UI。
+ * `layoutConfig` 与保存请求仍携带完整字段（默认值或接口回填），便于后端落库与后续开放更多项。
+ */
 import { ref, reactive, computed, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import {
-  NTabs,
-  NTabPane,
   NButton,
-  NSwitch,
   NModal,
   NForm,
   NFormItem,
@@ -963,23 +458,39 @@ import {
   NRadio,
   NRadioGroup,
   NUpload,
+  NAlert,
+  NSwitch,
+  NSelect,
   useMessage,
 } from 'naive-ui';
-import { LayoutDesignApi, PublicLayoutApi } from '../../api/layout-design';
-import type {
-  LayoutConfig,
-  ButtonConfig,
-  AvailableIcon,
-  BrandSkinConfig,
+import {
+  LayoutDesignApi,
+  PublicLayoutApi,
+  MY_PAGE_STYLE_TEMPLATE_IMAGE,
 } from '../../api/layout-design';
+import type { MyPageStyleId } from '../../api/layout-design';
+import { getBrandSkinLangConfigs, getLayoutStyleLabel } from '../../api/skinLang';
 import { useSkinColorOptions } from '../../composables/useColorTheme';
+
+const MY_PAGE_STYLE_OPTIONS: { value: MyPageStyleId; label: string }[] = [
+  { value: 'profile_v1', label: 'profile_v1' },
+  { value: 'profile_v7', label: 'profile_v7' },
+];
+
+function normalizeMyPageStyle(raw: string | undefined | null): MyPageStyleId {
+  return raw === 'profile_v7' ? 'profile_v7' : 'profile_v1';
+}
 
 // Composables
 const message = useMessage();
+const route = useRoute();
+
+/** 与「品牌皮肤」列表对齐，用于筛选 layout_config.brandCode */
+const brandSkinSelectOptions = ref<{ label: string; value: string }[]>([]);
+const selectedBrandCode = ref<string | null>(null);
 const { getSkinColorLabel } = useSkinColorOptions();
 
 // Reactive data
-const activeTab = ref('version');
 const currentSkinName = ref('欧规美规-Rollex样式');
 const selfPromotionEnabled = ref(false);
 const showEditModal = ref(false);
@@ -1009,16 +520,70 @@ const uploadForm = reactive({
 
 // Layout configuration values
 const layoutConfig = reactive({
-  bannerStyle: 'common',
-  myPageStyle: 'style1',
-  gameCardIcon: 'european',
-  popupStyle: 'style2',
-  pageStyle: 'manual',
+  bannerStyle: 'common' as
+    | 'common'
+    | 'small'
+    | 'scroll'
+    | 'medium'
+    | 'large',
+  myPageStyle: 'profile_v1' as MyPageStyleId,
+  gameCardIcon: 'european' as 'european' | 'classic',
+  platformCardStyle: 'classic',
+  popupStyle: 'style2' as 'style1' | 'style2' | 'style3' | 'style4',
+  pageStyle: 'manual' as 'manual' | 'auto',
+  badgeRecommendStyle: 'badge1',
+  badgeNewStyle: 'badge1',
+  badgeHotStyle: 'badge1',
   lobbyButtonStyle: 'style1',
+  scrollSensitivity: 'medium' as
+    | 'slow'
+    | 'slower'
+    | 'medium'
+    | 'faster'
+    | 'fast',
+  homeLayoutStyle: 'default',
+  sideMenuStyle: 'default',
+  noWalletGuideEnabled: false,
+  topNavAdEnabled: true,
 });
+
+/** 切换品牌且无历史版式行时重置表单，避免沿用上一品牌的草稿 */
+function resetLayoutDraftForNewBrand() {
+  Object.assign(layoutConfig, {
+    bannerStyle: 'common',
+    myPageStyle: 'profile_v1',
+    gameCardIcon: 'european',
+    platformCardStyle: 'classic',
+    popupStyle: 'style2',
+    pageStyle: 'manual',
+    badgeRecommendStyle: 'badge1',
+    badgeNewStyle: 'badge1',
+    badgeHotStyle: 'badge1',
+    lobbyButtonStyle: 'style1',
+    scrollSensitivity: 'medium',
+    homeLayoutStyle: 'default',
+    sideMenuStyle: 'default',
+    noWalletGuideEnabled: false,
+    topNavAdEnabled: true,
+  });
+  currentSkinName.value = '欧规美规-Rollex样式';
+  selfPromotionEnabled.value = false;
+  buttonConfig.beforeLogin = Array.from({ length: 5 }, () => ({
+    icon: '',
+    label: '',
+  }));
+  buttonConfig.afterLogin = Array.from({ length: 5 }, () => ({
+    icon: '',
+    label: '',
+  }));
+}
 
 // Add layoutConfigId to track the current configuration
 const layoutConfigId = ref<number | null>(null);
+/** 当前版式配置关联的品牌编号，用于拉取 brandSkin */
+const layoutBrandCode = ref<string | undefined>(undefined);
+
+type LayoutButtonSlot = { icon: string; label: string; imageUrl?: string };
 
 // Button configuration values
 const buttonConfig = reactive({
@@ -1028,14 +593,14 @@ const buttonConfig = reactive({
     { icon: '', label: '' },
     { icon: '', label: '' },
     { icon: '', label: '' },
-  ],
+  ] as LayoutButtonSlot[],
   afterLogin: [
     { icon: '', label: '' },
     { icon: '', label: '' },
     { icon: '', label: '' },
     { icon: '', label: '' },
     { icon: '', label: '' },
-  ],
+  ] as LayoutButtonSlot[],
 });
 
 // Available icons list (will be loaded from API)
@@ -1058,12 +623,50 @@ const originalButtonConfig = ref({});
 // Preview URL (can be set to actual preview endpoint when available)
 const previewUrl = ref('https://sevenki.118br.com/');
 
-// Brand skin information
+// Brand skin information（含 skinTemplate 用于版式能力判断）
 const brandSkinInfo = ref<{
+  brandName?: string;
+  brandCode?: string;
   skinStyle: string;
   skinColor: string;
   colorName: string;
+  skinTemplate: string;
 } | null>(null);
+
+const layoutSkinKey = computed(() => {
+  const t = brandSkinInfo.value?.skinTemplate?.trim() || '';
+  if (/^comprehensive_v\d+/i.test(t)) return t;
+  const s = brandSkinInfo.value?.skinStyle?.trim() || '';
+  if (/^comprehensive_v/i.test(s)) return s;
+  return t || s || 'comprehensive_v1';
+});
+
+/** 版式模板中文名（如 comprehensive_v1 → 综合版1）+ 配色名 */
+const skinTemplateStyleDisplay = computed(() => {
+  const info = brandSkinInfo.value;
+  if (!info) return '未设置';
+  const templateLabel = getLayoutStyleLabel(info.skinStyle, info.skinTemplate);
+  const color = info.colorName?.trim();
+  if (!templateLabel || templateLabel === '-' || templateLabel === '未设置') {
+    return color && color !== '未知颜色' ? color : '未设置';
+  }
+  if (color && color !== '未知颜色') {
+    return `${templateLabel} · ${color}`;
+  }
+  return templateLabel;
+});
+
+/** 品牌皮肤中的名称与编号；无皮肤数据时回退版式配置里的 skinName */
+const brandNameIdDisplay = computed(() => {
+  const bs = brandSkinInfo.value;
+  if (bs?.brandName?.trim() || bs?.brandCode?.trim()) {
+    const name = bs.brandName?.trim();
+    const code = bs.brandCode?.trim();
+    if (name && code) return `${name}（${code}）`;
+    return name || code || '—';
+  }
+  return currentSkinName.value;
+});
 
 // Methods
 const editSkinName = () => {
@@ -1105,14 +708,6 @@ const saveConfig = async () => {
     console.error('❌ Error saving config:', error);
     message.error('保存失败，请重试');
   }
-};
-
-const handleSelfPromotionToggle = (value: boolean) => {
-  selfPromotionEnabled.value = value;
-  message.info(`自营宣传已${value ? '开启' : '关闭'}`);
-
-  // Update preview when toggle changes
-  updatePreview();
 };
 
 const handleIframeLoad = () => {
@@ -1234,7 +829,12 @@ const validateButtonConfig = () => {
 
 const generatePreview = () => {
   updatePreview();
-  message.success('预览已更新');
+  const base = previewUrl.value;
+  if (previewIframe.value && base) {
+    const sep = base.includes('?') ? '&' : '?';
+    previewIframe.value.src = `${base}${sep}_pv=${Date.now()}`;
+  }
+  message.success('已刷新预览（若目标站限制嵌入，请以实际客户端为准）');
 };
 
 const saveButtonConfig = async () => {
@@ -1279,7 +879,7 @@ const handleFileChange = (data: any) => {
     const file = data.fileList[0].file;
     console.log('Selected file:', file);
 
-    if (file && (file instanceof File || file instanceof Blob)) {
+    if (file instanceof File) {
       uploadForm.file = file;
 
       // Create preview
@@ -1379,26 +979,80 @@ const loadAvailableIcons = async () => {
   }
 };
 
-// Load brand skin configuration
-const loadBrandSkinConfig = async () => {
+async function loadBrandSkinScope() {
   try {
-    console.log('🎨 Loading brand skin configuration...');
+    const resp = await getBrandSkinLangConfigs({ page: 1, pageSize: 100 });
+    let rows: any[] = [];
+    if (resp && typeof resp === 'object') {
+      if (
+        'data' in resp &&
+        resp.data &&
+        Array.isArray((resp as { data: unknown }).data)
+      ) {
+        rows = (resp as { data: any[] }).data;
+      } else if (Array.isArray(resp)) {
+        rows = resp as any[];
+      }
+    }
+    brandSkinSelectOptions.value = rows
+      .map((r) => ({
+        label: `${r.brandName ?? '—'}（${r.brandCode ?? r.brandId ?? ''}）`,
+        value: String(r.brandCode ?? '').trim(),
+      }))
+      .filter((o) => o.value.length > 0);
 
-    // Get layout theme which includes brand skin config
-    const response = await PublicLayoutApi.getLayoutTheme();
+    const q = route.query.brandCode;
+    const fromQuery =
+      typeof q === 'string'
+        ? q.trim()
+        : Array.isArray(q)
+          ? String(q[0] ?? '').trim()
+          : '';
+
+    if (
+      fromQuery &&
+      brandSkinSelectOptions.value.some((o) => o.value === fromQuery)
+    ) {
+      selectedBrandCode.value = fromQuery;
+    } else if (brandSkinSelectOptions.value.length > 0) {
+      selectedBrandCode.value = brandSkinSelectOptions.value[0]?.value ?? null;
+    } else {
+      selectedBrandCode.value = null;
+    }
+  } catch (error) {
+    console.error('Failed to load brand list for layout scope:', error);
+    brandSkinSelectOptions.value = [];
+    selectedBrandCode.value = null;
+  }
+}
+
+async function handleBrandCodeChange() {
+  await loadExistingConfig();
+  await loadBrandSkinConfig(selectedBrandCode.value ?? undefined);
+}
+
+// Load brand skin configuration（需传当前版式关联的 brandCode，否则服务端不返回 brandSkin）
+const loadBrandSkinConfig = async (brandCode?: string) => {
+  try {
+    const code = (brandCode ?? layoutBrandCode.value)?.trim();
+    console.log('🎨 Loading brand skin configuration...', code || '(no brandCode)');
+
+    const response = await PublicLayoutApi.getLayoutTheme(code);
 
     if (response.success && response.data?.brandSkin) {
       const brandSkin = response.data.brandSkin;
 
       console.log('🎨 Found brand skin config:', brandSkin);
 
-      // Get the color name using the color ID
       const colorName = getSkinColorLabel(brandSkin.skinColor) || '未知颜色';
 
       brandSkinInfo.value = {
+        brandName: brandSkin.brandName,
+        brandCode: brandSkin.brandCode,
         skinStyle: brandSkin.skinStyle || '未设置',
         skinColor: brandSkin.skinColor || '未设置',
-        colorName: colorName,
+        colorName,
+        skinTemplate: brandSkin.skinTemplate || '',
       };
 
       console.log('✅ Brand skin info loaded:', brandSkinInfo.value);
@@ -1417,12 +1071,18 @@ const loadExistingConfig = async () => {
   try {
     console.log('🔍 Loading existing layout configuration...');
 
-    // Get the first (and should be only) layout configuration
-    const response = await LayoutDesignApi.getLayoutConfigs();
+    const bc = selectedBrandCode.value?.trim();
+    const response = await LayoutDesignApi.getLayoutConfigs(
+      bc ? { brandCode: bc, limit: 10, page: 1 } : { limit: 10, page: 1 },
+    );
 
     if (response.success && response.data?.configs?.length > 0) {
-      const existingConfig = response.data.configs[0]; // Get the first/main config
+      const existingConfig = response.data.configs[0];
+      if (!existingConfig) {
+        return;
+      }
       layoutConfigId.value = existingConfig.id;
+      layoutBrandCode.value = existingConfig.brandCode?.trim() || undefined;
 
       console.log(' Found existing config:', existingConfig);
 
@@ -1433,11 +1093,20 @@ const loadExistingConfig = async () => {
       // Update layout configuration
       Object.assign(layoutConfig, {
         bannerStyle: existingConfig.bannerStyle || 'common',
-        myPageStyle: existingConfig.myPageStyle || 'style1',
+        myPageStyle: normalizeMyPageStyle(existingConfig.myPageStyle),
         gameCardIcon: existingConfig.gameCardIcon || 'european',
+        platformCardStyle: existingConfig.platformCardStyle || 'classic',
         popupStyle: existingConfig.popupStyle || 'style2',
         pageStyle: existingConfig.pageStyle || 'manual',
+        badgeRecommendStyle: existingConfig.badgeRecommendStyle || 'badge1',
+        badgeNewStyle: existingConfig.badgeNewStyle || 'badge1',
+        badgeHotStyle: existingConfig.badgeHotStyle || 'badge1',
         lobbyButtonStyle: existingConfig.lobbyButtonStyle || 'style1',
+        scrollSensitivity: existingConfig.scrollSensitivity || 'medium',
+        homeLayoutStyle: existingConfig.homeLayoutStyle || 'default',
+        sideMenuStyle: existingConfig.sideMenuStyle || 'default',
+        noWalletGuideEnabled: existingConfig.noWalletGuideEnabled ?? false,
+        topNavAdEnabled: existingConfig.topNavAdEnabled ?? true,
       });
 
       // Update button configuration if available
@@ -1509,8 +1178,13 @@ const loadExistingConfig = async () => {
 
       console.log('✅ Layout configuration loaded successfully');
     } else {
+      layoutBrandCode.value = bc || undefined;
+      layoutConfigId.value = null;
+      if (bc) {
+        resetLayoutDraftForNewBrand();
+      }
       console.log(
-        'ℹ️ No existing configuration found, will create new one on first save',
+        'ℹ️ No existing configuration found for this brand, will create new one on first save',
       );
     }
   } catch (error) {
@@ -1523,16 +1197,31 @@ const saveLayoutConfig = async () => {
   try {
     console.log('📝 saveLayoutConfig - preparing data...');
 
+    const bc =
+      selectedBrandCode.value?.trim() ||
+      layoutBrandCode.value?.trim() ||
+      undefined;
+
     const requestData = {
       layoutConfig: {
         skinName: currentSkinName.value,
         bannerStyle: layoutConfig.bannerStyle,
         myPageStyle: layoutConfig.myPageStyle,
         gameCardIcon: layoutConfig.gameCardIcon,
+        platformCardStyle: layoutConfig.platformCardStyle,
         popupStyle: layoutConfig.popupStyle,
         pageStyle: layoutConfig.pageStyle,
+        badgeRecommendStyle: layoutConfig.badgeRecommendStyle,
+        badgeNewStyle: layoutConfig.badgeNewStyle,
+        badgeHotStyle: layoutConfig.badgeHotStyle,
         lobbyButtonStyle: layoutConfig.lobbyButtonStyle,
+        scrollSensitivity: layoutConfig.scrollSensitivity,
+        homeLayoutStyle: layoutConfig.homeLayoutStyle,
+        sideMenuStyle: layoutConfig.sideMenuStyle,
+        noWalletGuideEnabled: layoutConfig.noWalletGuideEnabled,
+        topNavAdEnabled: layoutConfig.topNavAdEnabled,
         selfPromotionEnabled: selfPromotionEnabled.value,
+        ...(bc ? { brandCode: bc } : {}),
       },
       buttonConfig: {
         beforeLogin: buttonConfig.beforeLogin,
@@ -1543,21 +1232,35 @@ const saveLayoutConfig = async () => {
     console.log('📤 Sending request data:', requestData);
     console.log('🆔 Current layout config ID:', layoutConfigId.value);
 
+    let resolvedId = layoutConfigId.value;
+    // 页面状态丢失 id 时仍应按品牌走 PUT；服务端 POST 也已支持按 brandCode upsert
+    if (!resolvedId && bc) {
+      try {
+        const listRes = await LayoutDesignApi.getLayoutConfigs({
+          brandCode: bc,
+          limit: 5,
+          page: 1,
+        });
+        const firstId = listRes.success ? listRes.data?.configs?.[0]?.id : undefined;
+        if (firstId != null) {
+          resolvedId = firstId;
+          layoutConfigId.value = firstId;
+          console.log('🔗 Resolved layout config id from API:', resolvedId);
+        }
+      } catch (e) {
+        console.warn('Could not prefetch layout id by brand:', e);
+      }
+    }
+
     let response;
 
-    if (layoutConfigId.value) {
-      // Update existing configuration
+    if (resolvedId) {
       console.log('🔄 Updating existing layout configuration...');
-      response = await LayoutDesignApi.updateLayoutConfig(
-        layoutConfigId.value,
-        requestData,
-      );
+      response = await LayoutDesignApi.updateLayoutConfig(resolvedId, requestData);
     } else {
-      // Create new configuration (first time only)
       console.log('🆕 Creating new layout configuration...');
       response = await LayoutDesignApi.createLayoutConfig(requestData);
 
-      // Store the new ID for future updates
       if (response.success && response.data?.id) {
         layoutConfigId.value = response.data.id;
         console.log('💾 Stored new layout config ID:', layoutConfigId.value);
@@ -1571,6 +1274,8 @@ const saveLayoutConfig = async () => {
       message.success('布局配置保存成功');
       isEditMode.value = false;
       isButtonEditMode.value = false;
+      await loadExistingConfig();
+      await loadBrandSkinConfig(selectedBrandCode.value ?? bc);
     } else {
       console.error('❌ Save failed - response not successful:', response);
       message.error('保存失败：' + (response.message || '未知错误'));
@@ -1584,63 +1289,23 @@ const saveLayoutConfig = async () => {
 // Initialize data on component mount
 onMounted(async () => {
   console.log('🚀 LayoutDesign component mounted');
-  await Promise.all([
-    loadAvailableIcons(),
-    loadExistingConfig(),
-    loadBrandSkinConfig(), // Load brand skin config on mount
-  ]);
+  await loadBrandSkinScope();
+  await Promise.all([loadAvailableIcons(), loadExistingConfig()]);
+  await loadBrandSkinConfig(selectedBrandCode.value ?? undefined);
   console.log(' All configuration data loaded, ready for user interaction');
 });
 
-// Computed properties
-const previewSettings = computed(() => ({
-  skinName: currentSkinName.value,
-  selfPromotion: selfPromotionEnabled.value,
-  buttonConfig: buttonConfig,
-  // Add other style settings as needed
-}));
-
-// Add computed properties for display names
-const bannerStyleDisplayName = computed(() => {
-  const styleMap: Record<string, string> = {
-    common: '通用Banner',
-    small: '小Banner',
-    scroll: '滚动Banner',
-    large: '大Banner',
-  };
-  return styleMap[layoutConfig.bannerStyle] || layoutConfig.bannerStyle;
-});
+const currentMyPageTemplateUrl = computed(
+  () => MY_PAGE_STYLE_TEMPLATE_IMAGE[layoutConfig.myPageStyle],
+);
 
 const myPageStyleDisplayName = computed(() => {
-  const styleNumber = layoutConfig.myPageStyle.replace('style', '');
-  return `样式${styleNumber}`;
+  const opt = MY_PAGE_STYLE_OPTIONS.find(
+    (o) => o.value === layoutConfig.myPageStyle,
+  );
+  return opt?.label ?? layoutConfig.myPageStyle;
 });
 
-const gameCardIconDisplayName = computed(() => {
-  const iconMap: Record<string, string> = {
-    european: '欧规版',
-    classic: '经典版',
-  };
-  return iconMap[layoutConfig.gameCardIcon] || layoutConfig.gameCardIcon;
-});
-
-const popupStyleDisplayName = computed(() => {
-  const styleNumber = layoutConfig.popupStyle.replace('style', '');
-  return `样式${styleNumber}`;
-});
-
-const pageStyleDisplayName = computed(() => {
-  const styleMap: Record<string, string> = {
-    auto: '自动加载',
-    manual: '手动加载',
-  };
-  return styleMap[layoutConfig.pageStyle] || layoutConfig.pageStyle;
-});
-
-const lobbyButtonStyleDisplayName = computed(() => {
-  const styleNumber = layoutConfig.lobbyButtonStyle.replace('style', '');
-  return `样式${styleNumber}`;
-});
 </script>
 
 <style scoped>

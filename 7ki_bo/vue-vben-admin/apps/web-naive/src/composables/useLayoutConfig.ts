@@ -63,13 +63,16 @@ export function useLayoutConfig(brandCode?: string) {
     () => layoutTheme.value?.bannerStyle || 'common',
   );
   const myPageStyle = computed(
-    () => layoutTheme.value?.myPageStyle || 'style1',
+    () => layoutTheme.value?.myPageStyle || 'profile_v1',
   );
   const gameCardIcon = computed(
     () => layoutTheme.value?.gameCardIcon || 'european',
   );
   const selfPromotionEnabled = computed(
     () => layoutTheme.value?.selfPromotionEnabled || false,
+  );
+  const topNavAdEnabled = computed(
+    () => layoutTheme.value?.topNavAdEnabled ?? true,
   );
 
   const beforeLoginButtons = computed(() => {
@@ -182,7 +185,7 @@ export function useLayoutConfig(brandCode?: string) {
     return {
       style,
       className: `my-page-${style}`,
-      layout: style.includes('1') ? 'grid' : 'list',
+      layout: style === 'profile_v7' ? 'activities' : 'vip-card',
     };
   });
 
@@ -202,6 +205,7 @@ export function useLayoutConfig(brandCode?: string) {
     myPageStyle,
     gameCardIcon,
     selfPromotionEnabled,
+    topNavAdEnabled,
     beforeLoginButtons,
     afterLoginButtons,
     bannerConfig,

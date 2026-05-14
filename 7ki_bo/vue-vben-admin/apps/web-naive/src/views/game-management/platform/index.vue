@@ -209,6 +209,16 @@
           />
         </n-form-item>
 
+        <n-form-item label="平台横版图片">
+          <MediaLibrarySelector
+            v-model="formData.imageHorizontalUrl"
+            category="platforms"
+            :accept-types="['image']"
+            placeholder="从媒体库选择或上传平台横版图片"
+            @file-selected="handleHorizontalImageSelected"
+          />
+        </n-form-item>
+
         <n-form-item label="备注" path="remark">
           <n-input
             v-model:value="formData.remark"
@@ -346,6 +356,7 @@ const formData = reactive({
   sortOrder: 0,
   logoUrl: '',
   imageUrl: '',
+  imageHorizontalUrl: '',
   remark: '',
 });
 
@@ -688,6 +699,7 @@ const handleEdit = (record: GamePlatformItem) => {
       ? parseInt(record.sortOrder)
       : record.sortOrder;
   formData.imageUrl = record.imageUrl || '';
+  formData.imageHorizontalUrl = record.imageHorizontalUrl || '';
   formData.logoUrl = record.logoUrl || '';
   formData.remark = record.remark || '';
 
@@ -768,6 +780,12 @@ const handleImageSelected = (file: any) => {
   }
 };
 
+const handleHorizontalImageSelected = (file: any) => {
+  if (file) {
+    formData.imageHorizontalUrl = file.url;
+  }
+};
+
 // Handle logo selected from MediaLibrarySelector
 const handleLogoSelected = (file: any) => {
   if (file) {
@@ -819,6 +837,7 @@ const handleSubmit = async () => {
       sortOrder: formData.sortOrder,
       logoUrl: formData.logoUrl || '',
       imageUrl: formData.imageUrl || '',
+      imageHorizontalUrl: formData.imageHorizontalUrl || '',
       remark: formData.remark || undefined,
     };
 
@@ -869,6 +888,7 @@ const resetForm = () => {
   formData.minEntryAmount = 0;
   formData.sortOrder = 0;
   formData.imageUrl = '';
+  formData.imageHorizontalUrl = '';
   formData.logoUrl = '';
   formData.remark = '';
 

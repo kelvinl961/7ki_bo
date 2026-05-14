@@ -27,12 +27,15 @@
                 <n-input v-model:value="formModel.brandId" readonly />
               </n-form-item>
 
-              <n-form-item label="品牌编号" path="brandCode">
-                <n-input v-model:value="formModel.brandCode" readonly />
-              </n-form-item>
-
               <n-form-item label="品牌名称" path="brandName">
-                <n-text>{{ formModel.brandName }}</n-text>
+                <n-input
+                  v-if="!detailMode"
+                  v-model:value="formModel.brandName"
+                  placeholder="输入品牌名称"
+                  maxlength="128"
+                  show-count
+                />
+                <n-text v-else>{{ formModel.brandName }}</n-text>
               </n-form-item>
             </div>
 
@@ -47,11 +50,19 @@
                 </n-radio-group>
               </n-form-item>
 
-              <n-form-item label="品牌皮肤" path="skinStyle">
+              <n-form-item label="模板底色" path="gameColor">
+                <n-radio-group v-model:value="formModel.gameColor" :disabled="detailMode">
+                  <n-radio value="有底色">有底色</n-radio>
+                  <n-radio value="无底色">无底色</n-radio>
+                </n-radio-group>
+              </n-form-item>
+
+              <n-form-item label="版式风格" path="skinStyle">
                 <n-select
                   v-model:value="formModel.skinStyle"
-                  :options="skinStyleOptions"
-                  placeholder="选择皮肤风格"
+                  :options="layoutStyleSelectOptions"
+                  placeholder="选择版式风格"
+                  filterable
                   :disabled="detailMode"
                 />
               </n-form-item>
@@ -60,13 +71,6 @@
             <!-- Brand Icons Section -->
             <div class="form-section">
               <h4 class="section-title">品牌图标</h4>
-
-              <n-form-item label="玩法颜色" path="gameColor">
-                <n-radio-group v-model:value="formModel.gameColor" :disabled="detailMode">
-                  <n-radio value="有底色">有底色</n-radio>
-                  <n-radio value="无底色">无底色</n-radio>
-                </n-radio-group>
-              </n-form-item>
 
               <n-form-item label="皮肤颜色" path="skinColor">
                 <n-radio-group
@@ -84,6 +88,119 @@
                     />
                   </div>
                 </n-radio-group>
+              </n-form-item>
+            </div>
+
+            <!-- 大厅背景（紧跟品牌图标） -->
+            <div class="form-section">
+              <h4 class="section-title">大厅背景</h4>
+
+              <n-form-item label="大厅背景" path="lobbyBackgroundSource">
+                <n-radio-group
+                  v-model:value="formModel.lobbyBackgroundSource"
+                  :disabled="detailMode"
+                >
+                  <n-radio value="system">系统配置</n-radio>
+                  <n-radio value="custom_image">自定义图片背景</n-radio>
+                  <n-radio value="skin_default">皮肤默认</n-radio>
+                </n-radio-group>
+              </n-form-item>
+
+              <n-form-item
+                v-if="formModel.lobbyBackgroundSource === 'custom_image'"
+                label="背景图地址"
+                path="lobbyCustomImageUrl"
+              >
+                <n-input
+                  v-model:value="formModel.lobbyCustomImageUrl"
+                  placeholder="请输入图片 URL"
+                  :readonly="detailMode"
+                />
+              </n-form-item>
+
+              <n-form-item label="底纹背景色" path="patternBackgroundColor">
+                <n-color-picker
+                  v-model:value="formModel.patternBackgroundColor"
+                  :modes="['hex']"
+                  :show-alpha="false"
+                  :disabled="detailMode"
+                />
+              </n-form-item>
+
+              <n-form-item label="底纹样式" path="lobbyPatternUrl">
+                <div class="lobby-pattern-tabs-root">
+                <n-tabs
+                  v-model:value="formModel.lobbyPatternTab"
+                  class="lobby-pattern-tabs"
+                  type="line"
+                  :disabled="detailMode"
+                >
+                  <n-tab-pane name="light" tab="白色底纹">
+                    <div class="lobby-pattern-panel">
+                      <div class="lobby-pattern-grid">
+                        <button
+                          v-for="(p, idx) in lobbyWhitePatternTiles"
+                          :key="p.url || `light-none-${idx}`"
+                          type="button"
+                          class="lobby-pattern-cell"
+                          :class="[
+                            {
+                              'is-active':
+                                formModel.lobbyPatternTab === 'light' &&
+                                formModel.lobbyPatternUrl === p.url,
+                            },
+                            !p.url ? 'lobby-pattern-cell--none' : '',
+                          ]"
+                          :title="p.title"
+                          :disabled="detailMode"
+                          @click="selectLobbyPattern('light', p.url)"
+                        >
+                          <img
+                            v-if="p.url"
+                            :src="p.url"
+                            class="lobby-pattern-img"
+                            alt=""
+                            loading="lazy"
+                          />
+                          <span v-else class="lobby-pattern-none-label">无底纹</span>
+                        </button>
+                      </div>
+                    </div>
+                  </n-tab-pane>
+                  <n-tab-pane name="dark" tab="深色底纹">
+                    <div class="lobby-pattern-panel">
+                      <div class="lobby-pattern-grid">
+                      <button
+                        v-for="(p, idx) in lobbyBlackPatternTiles"
+                        :key="p.url || `none-${idx}`"
+                        type="button"
+                        class="lobby-pattern-cell"
+                        :class="[
+                          {
+                            'is-active':
+                              formModel.lobbyPatternTab === 'dark' &&
+                              formModel.lobbyPatternUrl === p.url,
+                          },
+                          !p.url ? 'lobby-pattern-cell--none' : '',
+                        ]"
+                        :title="p.title"
+                        :disabled="detailMode"
+                        @click="selectLobbyPattern('dark', p.url)"
+                      >
+                        <img
+                          v-if="p.url"
+                          :src="p.url"
+                          class="lobby-pattern-img"
+                          alt=""
+                          loading="lazy"
+                        />
+                        <span v-else class="lobby-pattern-none-label">无底纹</span>
+                      </button>
+                      </div>
+                    </div>
+                  </n-tab-pane>
+                </n-tabs>
+                </div>
               </n-form-item>
             </div>
 
@@ -115,36 +232,48 @@
               </div>
             </div>
 
-            <!-- Additional Settings -->
-            <div class="form-section">
-              <h4 class="section-title">其他设置</h4>
+            <!-- 生效时间（放在语言设置之后，时间说明在底部） -->
+            <div class="form-section effective-time-section">
+              <h4 class="section-title">生效时间</h4>
+              <p class="effective-time-intro">
+                选择本次皮肤配置何时生效；若选自定义时间，请在下方选择具体日期与时间。
+              </p>
 
-              <n-form-item label="请求认证模式" path="authMode">
-                <n-select
-                  v-model:value="formModel.authMode"
-                  :options="authModeOptions"
-                  placeholder="选择认证模式"
+              <n-form-item label="生效方式" path="effectiveTimeMode">
+                <n-radio-group
+                  v-model:value="formModel.effectiveTimeMode"
+                  :disabled="detailMode"
+                >
+                  <n-radio value="custom">自定义时间</n-radio>
+                  <n-radio value="immediate">立即生效</n-radio>
+                </n-radio-group>
+              </n-form-item>
+
+              <n-form-item
+                v-if="formModel.effectiveTimeMode === 'custom'"
+                label="计划时间"
+                path="effectiveAtTs"
+              >
+                <n-date-picker
+                  v-model:value="formModel.effectiveAtTs"
+                  type="datetime"
+                  clearable
+                  style="width: 100%"
+                  placeholder="点击选择日期与时间"
                   :disabled="detailMode"
                 />
               </n-form-item>
 
-              <n-form-item label="APP配置" path="appSetting">
-                <n-input
-                  v-model:value="formModel.appSetting"
-                  placeholder="输入APP配置"
-                  :readonly="detailMode"
-                />
-              </n-form-item>
-
-              <n-form-item label="备注信息" path="backendRemark">
-                <n-input
-                  v-model:value="formModel.backendRemark"
-                  type="textarea"
-                  :rows="3"
-                  placeholder="输入备注信息"
-                  :readonly="detailMode"
-                />
-              </n-form-item>
+              <div class="last-skin-change-hint">
+                <n-text depth="3">
+                  上一次更换皮肤时间为
+                  {{
+                    formModel.lastSkinChangeAt
+                      ? formatDate(formModel.lastSkinChangeAt)
+                      : '暂无记录'
+                  }}
+                </n-text>
+              </div>
             </div>
 
             <!-- Timestamps -->
@@ -189,9 +318,7 @@
               <div
                 v-else
                 class="image-container"
-                :style="{
-                  background: getSkinColorRGB(formModel.skinColor || '15'),
-                }"
+                :style="previewImageContainerStyle"
               >
                 <img
                   :src="previewImageUrl"
@@ -206,7 +333,7 @@
             <div class="preview-info">
               <div class="preview-meta">
                 <n-tag size="small" type="success">{{
-                  formModel.skinTemplate
+                  formModel.skinStyle
                 }}</n-tag>
                 <n-tag size="small" type="warning">{{
                   formModel.gameColor
@@ -256,6 +383,8 @@ import {
   NTabPane,
   NSpin,
   NIcon,
+  NDatePicker,
+  NColorPicker,
   type FormInst,
   type FormRules,
 } from 'naive-ui';
@@ -266,10 +395,25 @@ import {
 } from '#/composables/useSkinPreview';
 import { getColorPaletteById, getDefaultBackgroundImage } from '../../../utils/colorUtils';
 import { notification } from '#/adapter/naive';
-import type {
-  BrandSkinLangConfig,
-  BrandSkinLangCreateRequest,
+import {
+  LAYOUT_STYLE_OPTIONS,
+  isLayoutStyleValue,
+  normalizeSkinStyleForForm,
+  type BrandSkinLangConfig,
+  type BrandSkinLangCreateRequest,
 } from '#/api/skinLang';
+import {
+  LOBBY_BLACK_PATTERN_TILES,
+  LOBBY_WHITE_PATTERN_TILES,
+  inferLobbyPatternTabFromUrl,
+  resolveLobbyPatternUrlFromRecord,
+} from '#/constants/lobbyPatterns';
+
+function generateBrandId(): string {
+  const c = globalThis.crypto;
+  if (c?.randomUUID) return c.randomUUID();
+  return `brand-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+}
 
 interface Props {
   show: boolean;
@@ -305,6 +449,11 @@ const formModel = reactive<
     skinColor?: string;
     skinColorRgb?: string;
     skinColorHex?: string;
+    brandIcon?: string;
+    /** 仅展示，提交时不回写服务端时间字段 */
+    lastSkinChangeAt?: string | null;
+    /** 自定义生效时间（时间戳，仅表单；提交转 effectiveTime ISO） */
+    effectiveAtTs?: number | null;
   }
 >({
   brandId: '',
@@ -313,26 +462,39 @@ const formModel = reactive<
   brandType: '主站点',
   channelType: '通用',
   templateType: 'main-site',
-  skinStyle: '欧风风',
+  skinStyle: 'comprehensive_v1',
   gameColor: '有底色',
   skinColor: '15',
   skinColorRgb: 'rgb(5, 65, 70)',
   skinColorHex: '#054146', // Default hex
   skinTemplate: 'rolex',
+  effectiveTimeMode: 'custom',
+  effectiveAtTs: null,
+  lastSkinChangeAt: null,
+  lobbyBackgroundSource: 'system',
+  lobbyCustomImageUrl: '',
+  patternBackgroundColor: '#1a1a1a',
+  lobbyPatternTab: 'dark',
+  lobbyPatternUrl: '',
   clientLanguages: {
     desktop: ['zh-CN'],
     h5: ['zh-CN'],
     ios: ['zh-CN'],
     android: ['zh-CN'],
   },
-  authMode: '系统默认认证',
-  appSetting: '标准',
-  backendRemark: '',
   brandIcon: 'rolex',
   operator: '当前用户',
   updatedAt: new Date().toISOString(),
   backgroundImage: '',
 });
+
+const lobbyBlackPatternTiles = LOBBY_BLACK_PATTERN_TILES;
+const lobbyWhitePatternTiles = LOBBY_WHITE_PATTERN_TILES;
+
+function selectLobbyPattern(tab: 'light' | 'dark', url: string) {
+  formModel.lobbyPatternTab = tab;
+  formModel.lobbyPatternUrl = url;
+}
 
 // Preview setup - mobile only
 const previewConfig = reactive({
@@ -356,13 +518,85 @@ const {
   handleImageLoad,
 } = useSkinPreview(previewConfig);
 
-// Options
-const skinStyleOptions = [
-  { label: '欧风风', value: '欧风风' },
-  { label: '现代风', value: '现代风' },
-  { label: '经典风', value: '经典风' },
-  { label: '简约风', value: '简约风' },
-];
+/** 将底纹背景色叠在皮肤色上（半透明），两者都可见 */
+function patternColorWashCss(colorInput: string, alpha = 0.62): string {
+  const raw = colorInput.trim();
+  const rgbMatch = raw.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
+  if (rgbMatch) {
+    return `rgba(${rgbMatch[1]}, ${rgbMatch[2]}, ${rgbMatch[3]}, ${alpha})`;
+  }
+  let h = raw.replace('#', '').trim();
+  if (h.length === 3) {
+    h = [...h].map((c) => c + c).join('');
+  }
+  if (!/^[0-9a-fA-F]{6}$/u.test(h)) {
+    return `rgba(26, 26, 26, ${alpha})`;
+  }
+  const r = Number.parseInt(h.slice(0, 2), 16);
+  const g = Number.parseInt(h.slice(2, 4), 16);
+  const b = Number.parseInt(h.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+/** 预览：底层皮肤色 → 半透明底纹背景色 → 最上为自定义图 / 平铺底纹 / 皮肤背景图 */
+const previewImageContainerStyle = computed(() => {
+  const skinTint = getSkinColorRGB(formModel.skinColor || '15');
+  const lobbyUrl =
+    formModel.lobbyBackgroundSource === 'custom_image'
+      ? formModel.lobbyCustomImageUrl?.trim()
+      : '';
+  const skinBgUrl = formModel.backgroundImage?.trim() || '';
+  const patternColor =
+    formModel.patternBackgroundColor?.trim() || '#1a1a1a';
+  const patternUrl = formModel.lobbyPatternUrl?.trim() || '';
+  const wash = `linear-gradient(${patternColorWashCss(patternColor)}, ${patternColorWashCss(patternColor)})`;
+
+  if (lobbyUrl) {
+    return {
+      backgroundColor: skinTint,
+      backgroundImage: `url(${lobbyUrl}), ${wash}`,
+      backgroundSize: 'cover, 100% 100%',
+      backgroundPosition: 'center, 0 0',
+      backgroundRepeat: 'no-repeat, no-repeat',
+    };
+  }
+
+  if (patternUrl) {
+    return {
+      backgroundColor: skinTint,
+      backgroundImage: `url(${patternUrl}), ${wash}`,
+      backgroundRepeat: 'repeat, no-repeat',
+      backgroundSize: '44px 44px, 100% 100%',
+      backgroundPosition: '0 0, 0 0',
+    };
+  }
+
+  if (skinBgUrl) {
+    return {
+      backgroundColor: skinTint,
+      backgroundImage: `url(${skinBgUrl}), ${wash}`,
+      backgroundSize: 'cover, 100% 100%',
+      backgroundPosition: 'center, 0 0',
+      backgroundRepeat: 'no-repeat, no-repeat',
+    };
+  }
+
+  return {
+    backgroundColor: skinTint,
+    backgroundImage: wash,
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: '100% 100%',
+  };
+});
+
+/** 版式风格下拉：含当前值（兼容旧数据中的自定义 skinStyle） */
+const layoutStyleSelectOptions = computed(() => {
+  const v = formModel.skinStyle;
+  if (!v || LAYOUT_STYLE_OPTIONS.some((o) => o.value === v)) {
+    return LAYOUT_STYLE_OPTIONS;
+  }
+  return [{ label: `${v}（历史）`, value: v }, ...LAYOUT_STYLE_OPTIONS];
+});
 
 const templateOptions = [
   {
@@ -437,13 +671,6 @@ const availableLanguages = [
   { value: 'vi-VN', label: '越南语' },
 ];
 
-const authModeOptions = [
-  { label: '系统默认认证', value: '系统默认认证' },
-  { label: '双重认证', value: '双重认证' },
-  { label: '生物识别认证', value: '生物识别认证' },
-  { label: '短信验证', value: '短信验证' },
-];
-
 // Skin color options from the HTML source
 const skinColorOptions = [
   { value: '15', label: 'Bvlgari蓝黑' },
@@ -498,14 +725,35 @@ const skinColorOptions = [
 // Form validation rules
 const formRules: FormRules = {
   brandId: [{ required: true, message: '品牌ID不能为空' }],
-  brandCode: [{ required: true, message: '品牌编号不能为空' }],
   brandName: [{ required: true, message: '品牌名称不能为空' }],
   templateType: [{ required: true, message: '请选择模板类型' }],
-  skinStyle: [{ required: true, message: '请选择品牌皮肤' }],
+  skinStyle: [{ required: true, message: '请选择版式风格' }],
   skinTemplate: [{ required: true, message: '请选择模板' }],
-  gameColor: [{ required: true, message: '请选择玩法颜色' }],
+  gameColor: [{ required: true, message: '请选择模板底色' }],
   skinColor: [{ required: true, message: '请选择皮肤颜色' }],
-  authMode: [{ required: true, message: '请选择认证模式' }],
+  effectiveTimeMode: [{ required: true, message: '请选择生效方式' }],
+  effectiveAtTs: [
+    {
+      validator: (_rule, value: number | null | undefined) => {
+        if (formModel.effectiveTimeMode !== 'custom') return true;
+        return value != null && !Number.isNaN(value);
+      },
+      message: '自定义生效须选择计划时间',
+      trigger: ['change', 'blur'],
+    },
+  ],
+  lobbyBackgroundSource: [{ required: true, message: '请选择大厅背景' }],
+  lobbyCustomImageUrl: [
+    {
+      validator: () => {
+        if (formModel.lobbyBackgroundSource !== 'custom_image') return true;
+        return !!(formModel.lobbyCustomImageUrl && formModel.lobbyCustomImageUrl.trim());
+      },
+      message: '请填写背景图地址',
+      trigger: ['input', 'blur'],
+    },
+  ],
+  patternBackgroundColor: [{ required: true, message: '请选择底纹背景色' }],
 };
 
 // Computed
@@ -545,21 +793,41 @@ watch(
   },
 );
 
+watch(
+  () => formModel.effectiveTimeMode,
+  (mode) => {
+    if (mode === 'immediate') {
+      formModel.effectiveAtTs = null;
+    }
+  },
+);
+
 // Watch for editing item changes
 watch(
   () => props.editingItem,
   (newItem) => {
     if (newItem) {
+      const layoutKey = normalizeSkinStyleForForm(
+        newItem.skinStyle,
+        newItem.skinTemplate,
+      );
+      const apiTpl = (newItem.skinTemplate ?? '').trim();
+      const luxurySkinTemplate = isLayoutStyleValue(apiTpl)
+        ? 'rolex'
+        : apiTpl || 'rolex';
       Object.assign(formModel, {
         ...newItem,
-        templateType: 'main-site',
+        templateType: newItem.templateType ?? 'main-site',
+        brandCode: newItem.brandCode ?? '',
+        skinStyle: layoutKey,
+        skinTemplate: luxurySkinTemplate,
         clientLanguages: {
           desktop: newItem.clientLanguages || ['zh-CN'],
           h5: newItem.clientLanguages || ['zh-CN'],
           ios: newItem.clientLanguages || ['zh-CN'],
           android: newItem.clientLanguages || ['zh-CN'],
         },
-        brandIcon: newItem.skinTemplate || 'rolex',
+        brandIcon: luxurySkinTemplate,
         skinColor: newItem.skinColor || '15',
         skinColorRgb:
           newItem.skinColorRgb ||
@@ -571,31 +839,55 @@ watch(
           newItem.backgroundImage ??
           getDefaultBackgroundImage(newItem.skinColor || '') ??
           '',
+        effectiveTimeMode: newItem.effectiveTimeMode ?? 'custom',
+        effectiveAtTs: (() => {
+          const raw = newItem.effectiveTime;
+          if (!raw) return null;
+          const t = new Date(raw).getTime();
+          return Number.isNaN(t) ? null : t;
+        })(),
+        lastSkinChangeAt: newItem.lastSkinChangeAt ?? null,
+        lobbyBackgroundSource: newItem.lobbyBackgroundSource ?? 'system',
+        lobbyCustomImageUrl: newItem.lobbyCustomImageUrl ?? '',
+        patternBackgroundColor: newItem.patternBackgroundColor ?? '#1a1a1a',
+        ...(() => {
+          const lobbyPatternUrl = resolveLobbyPatternUrlFromRecord(newItem);
+          const tab =
+            inferLobbyPatternTabFromUrl(lobbyPatternUrl) ??
+            newItem.lobbyPatternTab ??
+            'dark';
+          return { lobbyPatternTab: tab, lobbyPatternUrl };
+        })(),
       });
     } else {
       // Reset form for new item
       Object.assign(formModel, {
-        brandId: 'BR' + Date.now().toString().slice(-6),
-        brandCode: 'BRAND' + Date.now().toString().slice(-6),
+        brandId: generateBrandId(),
+        brandCode: '',
         brandName: '新品牌',
         brandType: '主站点',
         channelType: '通用',
         templateType: 'main-site',
-        skinStyle: '欧风风',
+        skinStyle: 'comprehensive_v1',
         gameColor: '有底色',
         skinColor: '15',
         skinColorRgb: 'rgb(5, 65, 70)',
         skinColorHex: '#054146', // Default hex
         skinTemplate: 'rolex',
+        effectiveTimeMode: 'custom',
+        effectiveAtTs: null,
+        lastSkinChangeAt: null,
+        lobbyBackgroundSource: 'system',
+        lobbyCustomImageUrl: '',
+        patternBackgroundColor: '#1a1a1a',
+        lobbyPatternTab: 'dark',
+        lobbyPatternUrl: '',
         clientLanguages: {
           desktop: ['zh-CN'],
           h5: ['zh-CN'],
           ios: ['zh-CN'],
           android: ['zh-CN'],
         },
-        authMode: '系统默认认证',
-        appSetting: '标准',
-        backendRemark: '',
         brandIcon: 'rolex',
         operator: '当前用户',
         updatedAt: new Date().toISOString(),
@@ -628,7 +920,7 @@ const getSkinColorLabel = (value: string) => {
 };
 
 // Methods
-const formatDate = (date: string | undefined) => {
+const formatDate = (date: string | undefined | null) => {
   if (!date) return '-';
   return new Date(date).toLocaleString('zh-CN');
 };
@@ -655,17 +947,31 @@ const handleSubmit = async () => {
 
     const submitData: BrandSkinLangCreateRequest = {
       brandId: formModel.brandId,
-      brandCode: formModel.brandCode,
+      brandCode: formModel.brandCode?.trim() || '',
       brandName: formModel.brandName,
       brandType: formModel.brandType,
       channelType: formModel.channelType,
       skinStyle: formModel.skinStyle,
       gameColor: formModel.gameColor,
-      skinTemplate: formModel.skinTemplate,
+      /** 客户端大厅版式读 skinTemplate；与版式风格一致 */
+      skinTemplate: formModel.skinStyle,
+      templateType: formModel.templateType,
+      effectiveTimeMode: formModel.effectiveTimeMode,
+      effectiveTime:
+        formModel.effectiveTimeMode === 'immediate' || formModel.effectiveAtTs == null
+          ? null
+          : new Date(formModel.effectiveAtTs).toISOString(),
+      lobbyBackgroundSource: formModel.lobbyBackgroundSource,
+      lobbyCustomImageUrl:
+        formModel.lobbyBackgroundSource === 'custom_image'
+          ? formModel.lobbyCustomImageUrl?.trim() || ''
+          : '',
+      patternBackgroundColor: formModel.patternBackgroundColor,
+      lobbyPatternTab: formModel.lobbyPatternTab,
+      lobbyPatternUrl: formModel.lobbyPatternUrl?.trim() || '',
       clientLanguages: uniqueLanguages,
-      authMode: formModel.authMode,
-      appSetting: formModel.appSetting,
-      backendRemark: formModel.backendRemark,
+      authMode: '',
+      appSetting: '',
       operator: formModel.operator,
       skinColor: formModel.skinColor,
       skinColorRgb: formModel.skinColorRgb,
@@ -956,17 +1262,6 @@ const handleClose = () => {
   border-radius: 8px;
 }
 
-position: absolute;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-opacity: 0.6;
-mix-blend-mode: multiply;
-background-blend-mode: overlay;
-border-radius: 8px;
-pointer-events: none;
-
 .preview-info {
   width: 100%;
 }
@@ -1037,5 +1332,118 @@ pointer-events: none;
   flex-direction: column;
   border-left: 1px solid #e0e0e0;
   padding-left: 24px;
+}
+
+.effective-time-section .effective-time-intro {
+  margin: 0 0 14px 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--n-text-color-3);
+}
+
+.last-skin-change-hint {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--n-border-color);
+}
+
+.lobby-pattern-tabs-root {
+  width: 100%;
+  min-width: 0;
+}
+
+.lobby-pattern-tabs {
+  width: 100%;
+}
+
+.lobby-pattern-tabs :deep(.n-tab-pane) {
+  width: 100%;
+}
+
+/* 灰底托盘：横向铺满表单项，不再挤在左侧一条 */
+.lobby-pattern-panel {
+  width: 100%;
+  max-width: 100%;
+  margin-top: 4px;
+  padding: 8px 10px;
+  box-sizing: border-box;
+  /* 略加深 + !important：避免暗色主题或 Naive 表单把背景“冲掉”看不见 */
+  background-color: #d0d0d0 !important;
+  border: 1px solid #a8a8a8 !important;
+  border-radius: 6px;
+}
+
+.lobby-pattern-panel--empty {
+  width: 100%;
+  padding: 8px 10px;
+}
+
+/* 能摆几列摆几列：随表单宽度变宽，格子仍 44px */
+.lobby-pattern-grid {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(auto-fill, 44px);
+  grid-auto-rows: 44px;
+  justify-content: start;
+  gap: 5px;
+  max-height: min(420px, 52vh);
+  min-height: 220px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.lobby-pattern-cell {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border: 1px solid #b8b8b8;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 0;
+  /* 透明 AVIF 的衬底：图案透明处会露出这块灰，而不是“没颜色” */
+  background-color: #a8a8a8;
+  background-clip: padding-box;
+  overflow: hidden;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
+}
+
+.lobby-pattern-cell--none {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+}
+
+.lobby-pattern-cell:hover:not(:disabled) {
+  border-color: #2080f0;
+}
+
+.lobby-pattern-cell.is-active {
+  border: 2px solid #2080f0;
+  box-shadow: 0 0 0 1px rgba(32, 128, 240, 0.35);
+  z-index: 1;
+}
+
+.lobby-pattern-cell:disabled {
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
+.lobby-pattern-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  vertical-align: top;
+  background-color: #a8a8a8;
+}
+
+.lobby-pattern-none-label {
+  font-size: 10px;
+  line-height: 1.15;
+  text-align: center;
+  color: #555;
+  padding: 2px;
 }
 </style>

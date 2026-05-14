@@ -404,6 +404,7 @@ export function getTransactionTypeTagType(
       'recharge',
       'task_reward',
       'vip_reward',
+      'provident_fund',
     ].includes(normalizedType)
   ) {
     return 'success';
@@ -496,6 +497,7 @@ export function isCreditType(type: string): boolean {
     'bet_win',
     'transfer_in',
     'game_transfer_in',
+    'provident_fund',
   ];
 
   return creditTypes.includes(normalizedType);

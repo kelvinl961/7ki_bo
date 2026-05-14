@@ -248,15 +248,16 @@
               />
             </div>
 
-            <!-- 皮肤风格筛选 -->
+            <!-- 版式风格筛选 -->
             <div class="flex flex-col">
-              <label class="mb-2 text-sm font-medium">皮肤风格</label>
+              <label class="mb-2 text-sm font-medium">版式风格</label>
               <n-select
                 v-model:value="skinLangFilters.skinStyle"
-                placeholder="选择皮肤风格"
+                placeholder="选择版式风格"
                 clearable
-                style="width: 140px"
-                :options="skinStyleOptions"
+                filterable
+                style="width: 180px"
+                :options="layoutStyleFilterOptions"
                 @update:value="handleSkinLangFilter"
               />
             </div>
@@ -632,9 +633,11 @@ import {
   createBrandSkinLangConfig,
   updateBrandSkinLangConfig,
   deleteBrandSkinLangConfig,
+  getLayoutStyleLabel,
+  LAYOUT_STYLE_OPTIONS,
   type BrandSkinLangConfig,
   type BrandSkinLangFilters,
-  type BrandSkinLangCreateRequest
+  type BrandSkinLangCreateRequest,
 } from '#/api/skinLang';
 import {
   NBreadcrumb,
@@ -886,11 +889,8 @@ const channelTypeOptions = [
   { label: '桌面端', value: '桌面端' },
 ];
 
-const skinStyleOptions = [
-  { label: '欧风风', value: '欧风风' },
-  { label: '现代风', value: '现代风' },
-  { label: '经典风', value: '经典风' },
-];
+/** 皮肤语言 tab：版式风格筛选项（与编辑弹窗一致） */
+const layoutStyleFilterOptions = LAYOUT_STYLE_OPTIONS;
 
 // Form rules
 const formRules: FormRules = {
@@ -1135,14 +1135,6 @@ const skinLangColumns: DataTableColumns<BrandSkinLangConfig> = [
     },
   },
   {
-    title: '品牌编号',
-    key: 'brandCode',
-    width: 120,
-    render(row) {
-      return h('span', { style: { fontFamily: 'monospace' } }, row.brandCode);
-    },
-  },
-  {
     title: '品牌名称',
     key: 'brandName',
     width: 140,
@@ -1173,18 +1165,18 @@ const skinLangColumns: DataTableColumns<BrandSkinLangConfig> = [
     },
   },
   {
-    title: '皮肤风格',
+    title: '版式风格',
     key: 'skinStyle',
-    width: 100,
+    width: 120,
     render(row) {
       return h(NTag, {
         type: 'warning',
         size: 'small'
-      }, { default: () => row.skinStyle });
+      }, { default: () => getLayoutStyleLabel(row.skinStyle, row.skinTemplate) });
     },
   },
   {
-    title: '玩法颜色',
+    title: '模板底色',
     key: 'gameColor',
     width: 100,
     render(row) {
@@ -1260,22 +1252,6 @@ const skinLangColumns: DataTableColumns<BrandSkinLangConfig> = [
     },
   },
   {
-    title: '请求认证模式',
-    key: 'authMode',
-    width: 140,
-    render(row) {
-      return h('span', { class: 'text-sm' }, row.authMode);
-    },
-  },
-  {
-    title: 'APP配置',
-    key: 'appSetting',
-    width: 100,
-    render(row) {
-      return h('span', row.appSetting);
-    },
-  },
-  {
     title: '创建时间',
     key: 'createdAt',
     width: 160,
@@ -1299,17 +1275,6 @@ const skinLangColumns: DataTableColumns<BrandSkinLangConfig> = [
     sorter: true,
     render(row) {
       return h('span', { class: 'text-sm' }, formatDate(row.updatedAt));
-    },
-  },
-  {
-    title: '后台备注',
-    key: 'backendRemark',
-    width: 150,
-    ellipsis: {
-      tooltip: true,
-    },
-    render(row) {
-      return h('span', { class: 'text-sm text-gray-600' }, row.backendRemark || '-');
     },
   },
   {

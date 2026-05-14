@@ -14,6 +14,15 @@ export const overridesPreferences = defineOverridesPreferences({
     enableCheckUpdates: true, // Enable version update checking
     checkUpdatesInterval: 30, // Check for updates every 30 minutes (reduced from 1 minute to avoid false positives)
   },
+  /** 隐藏侧栏 / 顶栏 Logo 与应用名区域 */
+  logo: {
+    enable: false,
+    source: '',
+  },
+  /** 关闭页脚与登录页版权条（去掉 Vben 等默认文案） */
+  copyright: {
+    enable: false,
+  },
   /** 默认开启标签栏与页面 KeepAlive，切换标签保留列表筛选等状态 */
   tabbar: {
     enable: true,

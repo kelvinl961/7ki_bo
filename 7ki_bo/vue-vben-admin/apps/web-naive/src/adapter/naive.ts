@@ -19,7 +19,14 @@ export const { dialog, loadingBar, message, modal, notification } =
     {
       configProviderProps: themeProviderProps,
       loadingBarProviderProps: themeOverridesProviderProps,
-      messageProviderProps: themeOverridesProviderProps,
-      notificationProviderProps: themeOverridesProviderProps,
+      messageProviderProps: computed(() => ({
+        ...themeOverridesProviderProps.value,
+        placement: 'top' as const,
+      })),
+      // 顶部水平居中（相对整屏），避免提示挤在右上角
+      notificationProviderProps: computed(() => ({
+        ...themeOverridesProviderProps.value,
+        placement: 'top' as const,
+      })),
     },
   );

@@ -1,5 +1,16 @@
 import { requestClient } from '#/api/request';
 
+/** Seven fields shown in BO member detail (no IP / geo). */
+export interface DeviceTelemetrySeven {
+  userAgent?: string;
+  deviceFormFactor?: string;
+  systemOs?: string;
+  browserLanguage?: string;
+  timezone?: string;
+  screenSize?: string;
+  browserVersion?: string;
+}
+
 export interface UserDetailInfo {
   // Basic Information
   id: number;
@@ -149,6 +160,8 @@ export interface UserDetailInfo {
   sameRegistrationClientFingerprintCount?: number;
   sameRegistrationUserAgentCount?: number;
   sameRegistrationFingerprintCount?: number;
+  /** 注册：UA、设备类型(手机/平板/电脑)、系统、语言、时区、屏、浏览器版本（无 IP） */
+  registrationDeviceTelemetry?: DeviceTelemetrySeven | null;
 
   // Last Login Information
   lastLoginIp: string;
@@ -166,6 +179,8 @@ export interface UserDetailInfo {
   sameLastLoginClientFingerprintCount?: number;
   sameLastLoginUserAgentCount?: number;
   sameLastLoginFingerprintCount?: number;
+  /** 末次登录：同上（Accept-Language / 时区 / 屏来自请求与日志列） */
+  lastLoginDeviceTelemetry?: DeviceTelemetrySeven | null;
 
   // Third-party Bindings
   thirdPartyBindings: string[]; // List of bound platforms
@@ -239,8 +254,16 @@ export async function getUserDetailApi(
       },
     });
 
-    // Handle the response format: {success: true, data: {...}}
-    const userData = response.data || response;
+    // Handle { success, data } or flat body
+    const root = (response as { data?: unknown }).data ?? response;
+    const userData =
+      root &&
+      typeof root === 'object' &&
+      'data' in (root as object) &&
+      (root as { data?: unknown }).data != null &&
+      typeof (root as { data: unknown }).data === 'object'
+        ? (root as { data: Record<string, unknown> }).data
+        : (root as Record<string, unknown>);
 
     console.log('📦 Raw user data from API:', {
       id: userData?.id,
@@ -356,6 +379,8 @@ export async function getUserDetailApi(
         userData.sameRegistrationUserAgentCount ?? 0,
       sameRegistrationFingerprintCount:
         userData.sameRegistrationFingerprintCount ?? 0,
+      registrationDeviceTelemetry:
+        userData.registrationDeviceTelemetry ?? null,
 
       // Last Login Information - directly from backend
       lastLoginIp: userData.lastLoginIp || '',
@@ -375,6 +400,7 @@ export async function getUserDetailApi(
         userData.sameLastLoginUserAgentCount ?? 0,
       sameLastLoginFingerprintCount:
         userData.sameLastLoginFingerprintCount ?? 0,
+      lastLoginDeviceTelemetry: userData.lastLoginDeviceTelemetry ?? null,
 
       // Third-party Bindings - directly from backend
       thirdPartyBindings: userData.thirdPartyBindings || [],

@@ -15,6 +15,7 @@ export interface GamePlatformItem {
   subGameCount: number;
   minEntryAmount: number;
   imageUrl: null | string;
+  imageHorizontalUrl?: null | string;
   logoUrl: null | string;
   remark: null | string;
   sortOrder: number;
@@ -56,6 +57,7 @@ export interface CreateGamePlatformParams {
   streamerVisible?: boolean;
   minEntryAmount?: number;
   imageUrl?: string;
+  imageHorizontalUrl?: string;
   logoUrl?: string;
   remark?: string;
   sortOrder?: number;
@@ -72,6 +74,7 @@ export interface UpdateGamePlatformParams {
   streamerVisible?: boolean;
   minEntryAmount?: number;
   imageUrl?: string;
+  imageHorizontalUrl?: string;
   logoUrl?: string;
   remark?: string;
   sortOrder?: number;

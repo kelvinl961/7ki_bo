@@ -98,7 +98,7 @@
           <template #feedback>
             {{
               formData.rtpVendor === 'HG'
-                ? 'HG 白名单档位；运营商权限不同可能仅支持 10–97 或 120–1000 等子集'
+                ? 'HG：可选 RTP 与白名单一致，最高 97'
                 : '注意：AG 支持 0、10–97 的 RTP 值'
             }}
           </template>
@@ -167,7 +167,6 @@ import {
   NDataTable,
   NButton,
   NInputNumber,
-  NText,
   useMessage,
   type FormInst,
   type DataTableColumns,
@@ -176,11 +175,9 @@ import { requestClient } from '#/api/request';
 import { searchGamesWithPagination } from '#/api/core/player-rtp';
 import { getMerchantRtpVendorsApi } from '#/api/core/merchant-rtp';
 
-/** HG operator setRtp allowed RTP values (subset aligned with backend hgRtpSpec) */
+/** HG operator setRtp — UI capped at 97 (operator limit); must stay in sync with allowed submit values */
 const HG_RTP_WHITELIST = new Set([
-  10, 20, 30, 40, 50, 60, 70, 80, 85, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100,
-  102, 105, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 220, 240, 260, 280, 300,
-  500, 750, 1000,
+  10, 20, 30, 40, 50, 60, 70, 80, 85, 90, 91, 92, 93, 94, 95, 96, 97,
 ]);
 
 // Message
@@ -553,20 +550,70 @@ const pagination = reactive({
   },
 });
 
+const HG_PATTERN_LABEL_MAP: Record<number, string> = {
+  1: '1 波动型',
+  2: '2 仿正型',
+  3: '3 混合型',
+  4: '4 稳定型',
+  5: '5 高中奖率',
+};
+
+function resolveHistoryType(row: any) {
+  const gp = row?.gamePattern;
+  if (typeof gp === 'string' && gp.toUpperCase().startsWith('HG:')) return 'HG';
+  return 'AG';
+}
+
+function resolveHistoryPattern(row: any) {
+  const gp = row?.gamePattern;
+  if (typeof gp === 'string' && gp.toUpperCase().startsWith('HG:')) {
+    const raw = Number(gp.split(':')[1]);
+    return HG_PATTERN_LABEL_MAP[raw] ?? String(raw);
+  }
+  const req = row?.response?.request as Record<string, unknown> | undefined;
+  const raw = req?.game_pattern ?? req?.gamePattern;
+  if (raw === null || raw === undefined || raw === '') return '—';
+  const num = Number(raw);
+  return HG_PATTERN_LABEL_MAP[num] ?? String(raw);
+}
+
 const historyColumns: DataTableColumns<any> = [
   { title: '时间', key: 'createdAt', width: 180, ellipsis: { tooltip: true } },
   {
-    title: '厂商',
-    key: 'gamePattern',
-    width: 120,
+    title: '类型',
+    key: 'type',
+    width: 90,
     ellipsis: { tooltip: true },
-    render: (row) => {
-      const gp = row.gamePattern;
-      if (typeof gp === 'string' && gp.startsWith('HG:')) return 'HG';
-      return 'AG';
-    },
+    render: (row) => resolveHistoryType(row),
   },
   { title: 'RTP', key: 'rtp', width: 80, align: 'center' },
+  {
+    title: 'RTP类型',
+    key: 'rtpPattern',
+    width: 120,
+    ellipsis: { tooltip: true },
+    render: (row) => resolveHistoryPattern(row),
+  },
+  {
+    title: '单局最高倍数',
+    key: 'maxMultiple',
+    width: 130,
+    align: 'center',
+    render: (row) =>
+      row.maxMultiple !== null && row.maxMultiple !== undefined
+        ? row.maxMultiple
+        : '—',
+  },
+  {
+    title: '单局最高赢取',
+    key: 'maxWinPoints',
+    width: 130,
+    align: 'center',
+    render: (row) =>
+      row.maxWinPoints !== null && row.maxWinPoints !== undefined
+        ? row.maxWinPoints
+        : '—',
+  },
   { title: '游戏ID', key: 'gameId', width: 200, ellipsis: { tooltip: true } },
   {
     title: '状态',
@@ -701,6 +748,16 @@ const loadLastConfig = async () => {
           : (vendorOptions.value[0]?.value ?? null);
         formData.maxMultiple = null;
         formData.maxWinPoints = null;
+      }
+
+      if (formData.Rtp != null) {
+        const allowed =
+          formData.rtpVendor === 'HG'
+            ? HG_RTP_WHITELIST
+            : new Set(rtpOptions.map((o) => o.value));
+        if (!allowed.has(formData.Rtp)) {
+          formData.Rtp = null;
+        }
       }
 
       console.log('✅ Last merchant RTP config loaded into form:', {

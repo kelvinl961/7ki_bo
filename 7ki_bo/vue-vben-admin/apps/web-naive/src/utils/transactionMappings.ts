@@ -45,6 +45,9 @@ export const TRANSACTION_TYPE_MAPPINGS: Record<string, string> = {
   rebate: '返水',
   commission: '佣金',
 
+  // Provident fund (公积金)
+  provident_fund: '公积金',
+
   // Manual operations
   manual_credit: '人工加款',
   manual_debit: '人工扣款',
@@ -156,6 +159,10 @@ export const TRANSACTION_SUBCATEGORY_MAPPINGS: Record<string, string> = {
   manual_debit: '手动扣款',
   manual_deduct: '手动扣款',
   manual_recharge: '手动充值', // ✅ NEW: Manual recharge (admin approved deposits)
+
+  // Provident fund (公积金)
+  provident_fund: '公积金',
+  provident_reward: '公积金奖励',
 
   // Commission
   claimed: '代理佣金', // ✅ FIX: Translate "claimed" to Chinese for commission transactions

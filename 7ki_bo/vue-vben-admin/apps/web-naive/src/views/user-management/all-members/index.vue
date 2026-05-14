@@ -218,6 +218,17 @@ import MemberAdvancedSearchModal from './MemberAdvancedSearchModal.vue';
 const message = useMessage();
 const route = useRoute();
 
+async function copyMemberCellToClipboard(text: string | number | null | undefined, okMsg: string) {
+  const t = text === null || text === undefined ? '' : String(text).trim();
+  if (!t) return;
+  try {
+    await navigator.clipboard.writeText(t);
+    message.success(okMsg);
+  } catch {
+    message.error('复制失败，请手动选择文本复制');
+  }
+}
+
 // 响应式数据
 const loading = ref(false);
 const showDetailModal = ref(false);
@@ -900,9 +911,10 @@ const columns = computed<DataTableColumns<UserItem>>(() => {
           {
             style: 'color: #2080f0; cursor: pointer;',
             class: 'hover:underline',
+            title: '点击复制顶层代理账号',
             onClick: (e: Event) => {
               e.stopPropagation();
-              message.info(`顶层代理: ${row.topAgentAccount}`);
+              void copyMemberCellToClipboard(row.topAgentAccount, '已复制顶层代理账号，可直接粘贴');
             },
           },
           row.topAgentAccount,
@@ -912,9 +924,10 @@ const columns = computed<DataTableColumns<UserItem>>(() => {
           {
             style: 'color: #2080f0; cursor: pointer; font-size: 12px;',
             class: 'hover:underline',
+            title: '点击复制顶层代理ID',
             onClick: (e: Event) => {
               e.stopPropagation();
-              message.info(`ID: ${row.topAgentUserID}`);
+              void copyMemberCellToClipboard(row.topAgentUserID, '已复制顶层代理ID，可直接粘贴');
             },
           },
           `(${row.topAgentUserID})`,
@@ -937,9 +950,10 @@ const columns = computed<DataTableColumns<UserItem>>(() => {
           {
             style: 'color: #2080f0; cursor: pointer;',
             class: 'hover:underline',
+            title: '点击复制上级代理账号',
             onClick: (e: Event) => {
               e.stopPropagation();
-              message.info(`上级代理: ${row.upperAgentAccount}`);
+              void copyMemberCellToClipboard(row.upperAgentAccount, '已复制上级代理账号，可直接粘贴');
             },
           },
           row.upperAgentAccount,
@@ -949,9 +963,10 @@ const columns = computed<DataTableColumns<UserItem>>(() => {
           {
             style: 'color: #2080f0; cursor: pointer; font-size: 12px;',
             class: 'hover:underline',
+            title: '点击复制上级代理ID',
             onClick: (e: Event) => {
               e.stopPropagation();
-              message.info(`ID: ${row.upperAgentUserID}`);
+              void copyMemberCellToClipboard(row.upperAgentUserID, '已复制上级代理ID，可直接粘贴');
             },
           },
           `(${row.upperAgentUserID})`,

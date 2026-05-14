@@ -123,7 +123,7 @@
           :row-key="(row: RechargeOrder) => row.orderId"
           striped
           size="small"
-          :scroll-x="3000"
+          :scroll-x="rechargeOrdersScrollX"
           @update:selected-keys="checkedRowKeys = $event"
           @update:page="handlePageChange"
           @update:page-size="handlePageSizeChange"
@@ -2450,7 +2450,7 @@ import {
   nextTick,
 } from 'vue';
 import AdminNotificationService from '../../services/adminNotificationService';
-import { useAccessStore } from '@vben/stores';
+import { useAccessStore, useUserStore } from '@vben/stores';
 import {
   NCard,
   NTabs,
@@ -2651,6 +2651,7 @@ interface ThirdPartyChannel {
 const message = useMessage();
 const dialog = useDialog();
 const accessStore = useAccessStore();
+const userStore = useUserStore();
 const activeTab = ref('all-orders');
 const loading = ref(false);
 // 🚀 NEW: Simplified auto-refresh state (SmartAutoRefresh handles all timer logic)
@@ -7749,83 +7750,91 @@ let eventSource: EventSource | null = null;
 
 // Column configuration
 const showColumnConfig = ref(false);
-const COLUMN_CONFIG_KEY = 'recharge-order-columns-config';
+const COLUMN_CONFIG_BASE_KEY = 'recharge-order-columns-config';
+const DEFAULT_VISIBLE_COLUMN_KEYS = [
+  'orderId',
+  'memberAccount',
+  'firstDepositStatus',
+  'vipLevel',
+  'memberTier',
+  'exchangeRate',
+  'currency',
+  'orderAmount',
+  'bonusAmount',
+  'fees',
+  'totalCredited',
+  'thirdPartyPayment',
+  'channelName',
+  'channelFeeRate',
+  'status',
+  'createdAt',
+  'updatedAt',
+];
+const columnConfigList = ref<{ key: string; title: string; visible: boolean }[]>(
+  [],
+);
 
-// Define all available columns with their default visibility (完整的39列配置)
-const columnConfigList = ref([
-  // 🔥 基础信息列
-  { key: 'orderId', title: '订单号', visible: true },
-  { key: 'memberAccount', title: '会员账号', visible: true },
-  { key: 'firstDepositStatus', title: '首充状态', visible: true },
-  { key: 'memberName', title: '会员姓名', visible: false },
-  { key: 'memberId', title: '会员ID', visible: false },
-  { key: 'vipLevel', title: 'VIP等级', visible: true },
+const getCurrentColumnConfigKey = () => {
+  const userInfo = userStore.userInfo as any;
+  const currentUserKey =
+    userInfo?.username || userInfo?.userId || userInfo?.id?.toString() || 'admin';
+  return `${COLUMN_CONFIG_BASE_KEY}:${currentUserKey}`;
+};
 
-  // 🔥 用户要求的关键列 - 金额相关
-  { key: 'exchangeRate', title: '汇率', visible: true },
-  { key: 'currency', title: '会员币种', visible: true },
-  { key: 'rechargeAmount', title: '订单金额', visible: true },
-  { key: 'bonusAmount', title: '赠送金额', visible: true },
-  { key: 'feeAmount', title: '手续费', visible: true },
-  { key: 'totalCreditAmount', title: '总上分金额', visible: true },
-  { key: 'actualAmount', title: '实际金额', visible: false },
-  { key: 'platformFee', title: '平台手续费', visible: false },
-  { key: 'discountAmount', title: '优惠金额', visible: false },
+const buildColumnConfigFromTableColumns = (
+  savedConfig?: { key?: string; visible?: boolean }[],
+) => {
+  const tableColumnConfig = columns
+    .filter((col) => col.type !== 'selection' && col.key && col.key !== 'actions')
+    .map((col) => {
+      const key = String(col.key);
+      return {
+        key,
+        title: typeof col.title === 'string' ? col.title : key,
+        visible: DEFAULT_VISIBLE_COLUMN_KEYS.includes(key),
+      };
+    });
 
-  // 🔥 用户要求的关键列 - 支付和通道
-  { key: 'thirdPartyPayment', title: '第三方支付', visible: true },
-  { key: 'channelName', title: '通道名称', visible: true },
-  { key: 'channelFeeRate', title: '通道费率', visible: true },
-  { key: 'status', title: '订单状态', visible: true },
+  if (!savedConfig?.length) {
+    columnConfigList.value = tableColumnConfig;
+    return;
+  }
 
-  // 🔥 币种和汇率
-  { key: 'channelCurrency', title: '通道币种', visible: false },
-  { key: 'channelAmount', title: '通道金额', visible: false },
-  { key: 'conversionRatio', title: '转换比例', visible: false },
+  const defaultMap = new Map(tableColumnConfig.map((item) => [item.key, item]));
+  const validSaved = savedConfig.filter((item) => item?.key && defaultMap.has(item.key));
+  const savedKeys = validSaved.map((item) => String(item.key));
+  const fallbackKeys = tableColumnConfig
+    .map((item) => item.key)
+    .filter((key) => !savedKeys.includes(key));
+  const mergedOrder = [...savedKeys, ...fallbackKeys];
+  const savedVisibleMap = new Map(
+    validSaved.map((item) => [String(item.key), Boolean(item.visible)]),
+  );
 
-  // 技术信息
-  { key: 'channelCode', title: '通道代码', visible: false },
-  { key: 'merchantId', title: '商户ID', visible: false },
-  { key: 'orderType', title: '订单类型', visible: false },
-
-  // 时间信息
-  { key: 'submitTime', title: '提交时间', visible: true },
-  { key: 'paymentTime', title: '支付时间', visible: false },
-  { key: 'completeTime', title: '完成时间', visible: false },
-  { key: 'notifyTime', title: '通知时间', visible: false },
-  { key: 'createdAt', title: '创建时间', visible: true },
-  { key: 'updatedAt', title: '更新时间', visible: true },
-
-  // 余额信息
-  { key: 'balanceBefore', title: '充值前余额', visible: false },
-  { key: 'balanceAfter', title: '充值后余额', visible: false },
-
-  // 用户相关
-  { key: 'user.balance', title: '用户余额', visible: false },
-  { key: 'user.email', title: '用户邮箱', visible: false },
-  { key: 'user.currency', title: '用户币种', visible: false },
-  { key: 'user.vipLevel.name', title: 'VIP等级名称', visible: false },
-  { key: 'user.memberTier.tierName', title: '会员层级', visible: true },
-
-  // 其他
-  { key: 'categoryId', title: '分类ID', visible: false },
-]);
+  columnConfigList.value = mergedOrder
+    .map((key) => {
+      const defaultItem = defaultMap.get(key);
+      if (!defaultItem) return null;
+      return {
+        ...defaultItem,
+        visible: savedVisibleMap.has(key)
+          ? Boolean(savedVisibleMap.get(key))
+          : defaultItem.visible,
+      };
+    })
+    .filter(Boolean) as { key: string; title: string; visible: boolean }[];
+};
 
 // Load column configuration from database
 const loadColumnConfig = async () => {
+  buildColumnConfigFromTableColumns();
   try {
-    const response = await requestClient.get(
-      `/backoffice/preferences/${COLUMN_CONFIG_KEY}`,
-    );
-
-    if (response && response.preferenceValue) {
-      const savedConfig = response.preferenceValue;
-      columnConfigList.value.forEach((col) => {
-        const savedCol = savedConfig.find((s: any) => s.key === col.key);
-        if (savedCol) {
-          col.visible = savedCol.visible;
-        }
-      });
+    const configKey = getCurrentColumnConfigKey();
+    const response = await requestClient.get(`/backoffice/preferences/${configKey}`);
+    // requestClient returns { success, data, message } for backoffice APIs — preference fields live on `data`
+    const preferenceValue = (response as any)?.data?.preferenceValue ?? (response as any)?.preferenceValue;
+    if (Array.isArray(preferenceValue)) {
+      buildColumnConfigFromTableColumns(preferenceValue);
       console.log('✅ Column configuration loaded from database');
     }
   } catch (error) {
@@ -7837,8 +7846,12 @@ const loadColumnConfig = async () => {
 // Save column configuration to database
 const saveColumnConfig = async () => {
   try {
-    await requestClient.put(`/backoffice/preferences/${COLUMN_CONFIG_KEY}`, {
-      preferenceValue: columnConfigList.value,
+    const configKey = getCurrentColumnConfigKey();
+    await requestClient.put(`/backoffice/preferences/${configKey}`, {
+      preferenceValue: columnConfigList.value.map(({ key, visible }) => ({
+        key,
+        visible,
+      })),
     });
     message.success('列配置已保存');
     showColumnConfig.value = false;
@@ -7852,61 +7865,19 @@ const saveColumnConfig = async () => {
 // Reset column configuration to default
 const resetColumnConfig = async () => {
   try {
-    // Reset to smart defaults (important columns visible, others hidden)
-    const defaultVisible = [
-      'orderId',
-      'memberAccount',
-      'firstDepositStatus',
-      'vipLevel',
-      'exchangeRate',
-      'currency',
-      'rechargeAmount',
-      'bonusAmount',
-      'feeAmount',
-      'totalCreditAmount',
-      'thirdPartyPayment',
-      'channelName',
-      'channelFeeRate',
-      'status',
-      'submitTime',
-      'createdAt',
-      'updatedAt',
-      'user.memberTier.tierName',
-    ];
-
     columnConfigList.value.forEach((col) => {
-      col.visible = defaultVisible.includes(col.key);
+      col.visible = DEFAULT_VISIBLE_COLUMN_KEYS.includes(col.key);
     });
 
     // Delete from database
-    await requestClient.delete(`/backoffice/preferences/${COLUMN_CONFIG_KEY}`);
+    const configKey = getCurrentColumnConfigKey();
+    await requestClient.delete(`/backoffice/preferences/${configKey}`);
     message.success('列配置已重置为默认显示');
     console.log('✅ Column configuration reset to smart defaults');
   } catch (error) {
     // Even if delete fails, reset locally to smart defaults
-    const defaultVisible = [
-      'orderId',
-      'memberAccount',
-      'firstDepositStatus',
-      'vipLevel',
-      'exchangeRate',
-      'currency',
-      'rechargeAmount',
-      'bonusAmount',
-      'feeAmount',
-      'totalCreditAmount',
-      'thirdPartyPayment',
-      'channelName',
-      'channelFeeRate',
-      'status',
-      'submitTime',
-      'createdAt',
-      'updatedAt',
-      'user.memberTier.tierName',
-    ];
-
     columnConfigList.value.forEach((col) => {
-      col.visible = defaultVisible.includes(col.key);
+      col.visible = DEFAULT_VISIBLE_COLUMN_KEYS.includes(col.key);
     });
 
     message.success('列配置已重置为默认显示');
@@ -7924,6 +7895,30 @@ const visibleColumns = computed(() => {
     return config ? config.visible : true;
   });
   return baseColumns;
+});
+
+const RECHARGE_COL_WIDTH_FALLBACK = 100;
+
+function rechargeColumnWidthForScroll(col: Record<string, unknown>): number {
+  const raw = col.width ?? col.minWidth;
+  if (typeof raw === 'number' && Number.isFinite(raw) && raw > 0) {
+    return raw;
+  }
+  if (typeof raw === 'string') {
+    const n = Number.parseInt(raw.replace(/\D/g, '') || '0', 10);
+    if (Number.isFinite(n) && n > 0) return n;
+  }
+  return RECHARGE_COL_WIDTH_FALLBACK;
+}
+
+/** Min table width follows visible columns so hiding columns does not stretch gaps across a fixed 3000px */
+const rechargeOrdersScrollX = computed(() => {
+  const cols = visibleColumns.value as unknown as Record<string, unknown>[];
+  let sum = 0;
+  for (const col of cols) {
+    sum += rechargeColumnWidthForScroll(col);
+  }
+  return Math.max(sum + 32, 480);
 });
 
 const setupRealTimeUpdates = () => {

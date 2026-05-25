@@ -973,6 +973,7 @@ async function handleExport() {
     await exportGridData(columns, rows, {
       filename: `activity-reward-report-${Date.now()}`,
       sheetName: '优惠明细',
+      message,
     });
   } finally {
     exporting.value = false;

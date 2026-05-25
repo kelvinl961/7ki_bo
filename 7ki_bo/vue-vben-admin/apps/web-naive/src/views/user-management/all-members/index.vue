@@ -54,7 +54,7 @@
               </template>
               导入
             </n-button>
-            <n-button @click="handleExport">
+            <n-button :loading="exporting" @click="handleExport">
               <template #icon>
                 <span>↑</span>
               </template>
@@ -214,8 +214,10 @@ import FieldSearchBar, {
   type FieldSearchBarOption,
 } from '#/components/filters/FieldSearchBar.vue';
 import MemberAdvancedSearchModal from './MemberAdvancedSearchModal.vue';
+import { exportWithMapping } from '#/utils/exportUtils';
 
 const message = useMessage();
+const EXPORT_MAX_ROWS = 50_000;
 const route = useRoute();
 
 async function copyMemberCellToClipboard(text: string | number | null | undefined, okMsg: string) {
@@ -231,6 +233,7 @@ async function copyMemberCellToClipboard(text: string | number | null | undefine
 
 // 响应式数据
 const loading = ref(false);
+const exporting = ref(false);
 const showDetailModal = ref(false);
 const showAdvancedSearch = ref(false);
 const checkedRowKeys = ref<(string | number)[]>([]);
@@ -1321,16 +1324,270 @@ const handleImport = () => {
   // TODO: Open import dialog
 };
 
+const MEMBER_EXPORT_COLUMN_MAP: Record<string, string> = {
+  userID: '用户ID',
+  memberAccount: '账号',
+  realName: '真实姓名',
+  vipLevel: 'VIP等级',
+  memberLevel: '会员层级',
+  totalDeposit: '总充值金额',
+  totalDepositCount: '充值次数',
+  totalWithdraw: '总提现金额',
+  totalWithdrawalCount: '提现次数',
+  depositWithdrawDiff: '总充提差额',
+  firstDepositAmount: '首充金额',
+  topAgentAccount: '顶层代理账号',
+  topAgentUserID: '顶层代理ID',
+  upperAgentAccount: '上级代理账号',
+  upperAgentUserID: '上级代理ID',
+  balance: '账户余额',
+  accountStatus: '状态',
+  registrationTime: '注册时间',
+  lastLoginIp: '最后登录IP',
+  lastLoginTime: '最后登录时间',
+};
+
+const ACCOUNT_STATUS_EXPORT_LABELS: Record<string, string> = {
+  NORMAL: '正常',
+  MANUAL_FREEZE: '手动冻结',
+  ABNORMAL_FREEZE: '异常冻结',
+  PROHIBIT_BONUS: '禁止领取优惠',
+  PROHIBIT_WITHDRAWAL: '禁止提现',
+  PROHIBIT_GAME_ENTRY: '禁止进入游戏',
+  BLACKLIST: '黑名单',
+  MARGINAL: '边退',
+};
+
+function mapUserItemForExport(row: UserItem) {
+  const diff = getDepositWithdrawDiff(row);
+  return {
+    userID: row.userID || String(row.id),
+    memberAccount: row.memberAccount || '',
+    realName: row.realName || '',
+    vipLevel: row.vipLevel || 'VIP0',
+    memberLevel: row.memberLevel || '默认层级',
+    totalDeposit: Number(row.totalDeposit) || 0,
+    totalDepositCount: row.totalDepositCount ?? 0,
+    totalWithdraw: Number(row.totalWithdraw) || 0,
+    totalWithdrawalCount: row.totalWithdrawalCount ?? 0,
+    depositWithdrawDiff: diff,
+    firstDepositAmount: Number(row.firstDepositAmount) || 0,
+    topAgentAccount: row.topAgentAccount || '',
+    topAgentUserID: row.topAgentUserID || '',
+    upperAgentAccount: row.upperAgentAccount || '',
+    upperAgentUserID: row.upperAgentUserID || '',
+    balance: Number(row.balance) || 0,
+    accountStatus:
+      ACCOUNT_STATUS_EXPORT_LABELS[row.accountStatus || 'NORMAL'] ||
+      row.accountStatus ||
+      '',
+    registrationTime: row.registrationTime
+      ? formatDateTime(row.registrationTime)
+      : '',
+    lastLoginIp: row.lastLoginIp || getLastLoginIpRegionLine(row).split(' ')[0] || '',
+    lastLoginTime: row.lastLoginTime ? formatDateTime(row.lastLoginTime) : '',
+  };
+}
+
+function applyFiltersToUserListParams(params: UserListParams) {
+  if (sortState.value?.columnKey && sortState.value.order) {
+    params.sortBy = sortState.value.columnKey as string;
+    params.sortOrder = sortState.value.order === 'ascend' ? 'asc' : 'desc';
+  }
+
+  if (filterForm.dateRange && filterForm.dateRange.length === 2) {
+    const [startTimestamp, endTimestamp] = filterForm.dateRange;
+    const tz = getDisplayTimezone();
+    const startDate = new Date(startTimestamp);
+    const endDate = new Date(endTimestamp);
+
+    if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
+      const startTzStr = new Intl.DateTimeFormat('en-US', {
+        timeZone: tz,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+      }).format(startDate);
+
+      const endTzStr = new Intl.DateTimeFormat('en-US', {
+        timeZone: tz,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+      }).format(endDate);
+
+      const [startDatePart, startTimePart] = startTzStr.split(', ');
+      const [endDatePart, endTimePart] = endTzStr.split(', ');
+
+      if (startDatePart && startTimePart && endDatePart && endTimePart) {
+        const [startM, startD, startY] = startDatePart.split('/');
+        const [startH, startMin, startSec] = startTimePart.split(':');
+        const [endM, endD, endY] = endDatePart.split('/');
+        const [endH, endMin, endSec] = endTimePart.split(':');
+
+        if (
+          startM &&
+          startD &&
+          startY &&
+          startH &&
+          startMin &&
+          endM &&
+          endD &&
+          endY &&
+          endH &&
+          endMin
+        ) {
+          const startUTC = convertTimezoneToUTC(
+            parseInt(startY),
+            parseInt(startM),
+            parseInt(startD),
+            parseInt(startH),
+            parseInt(startMin),
+            parseInt(startSec || '0'),
+            tz,
+          );
+          const endUTC = convertTimezoneToUTC(
+            parseInt(endY),
+            parseInt(endM),
+            parseInt(endD),
+            parseInt(endH),
+            parseInt(endMin),
+            parseInt(endSec || '59'),
+            tz,
+          );
+
+          if (!isNaN(startUTC.getTime()) && !isNaN(endUTC.getTime())) {
+            params.startDate = startUTC.toISOString();
+            params.endDate = endUTC.toISOString();
+          } else {
+            params.startDate = startDate.toISOString();
+            params.endDate = endDate.toISOString();
+          }
+        } else {
+          params.startDate = startDate.toISOString();
+          params.endDate = endDate.toISOString();
+        }
+      } else {
+        params.startDate = startDate.toISOString();
+        params.endDate = endDate.toISOString();
+      }
+    }
+    params.timeType = filterForm.timeType;
+  }
+
+  if (filterForm.searchCondition) {
+    params.searchCondition = filterForm.searchCondition;
+    if (filterForm.searchConditionValue) {
+      params.searchConditionValue = filterForm.searchConditionValue;
+    }
+  }
+
+  if (filterForm.searchField && filterForm.searchValue) {
+    params.searchField = filterForm.searchField;
+    params.searchValue = filterForm.searchValue;
+    if (filterForm.searchField === 'exact_account') {
+      params.searchMode = 'exact';
+    } else if (filterForm.searchField === 'fuzzy_account') {
+      params.searchMode = 'fuzzy';
+    } else {
+      params.searchMode = filterForm.searchMode;
+    }
+  }
+
+  if (filterForm.accountType && filterForm.accountType !== '') {
+    if (filterForm.accountType === 'telegram') {
+      params.searchField = 'registration_domain';
+      params.searchValue = 'telegram';
+      params.searchMode = 'exact';
+    } else {
+      params.accountType = filterForm.accountType;
+    }
+  }
+
+  if (filterForm.accountStatus) {
+    params.accountStatus = filterForm.accountStatus;
+  }
+  if (filterForm.memberLevel) {
+    params.memberLevel = filterForm.memberLevel;
+  }
+  if (filterForm.vipLevel) {
+    params.vipLevel = filterForm.vipLevel;
+  }
+  if (filterForm.search) {
+    params.search = filterForm.search;
+  }
+}
+
+function buildUserListParams(
+  overrides: Partial<UserListParams> = {},
+): UserListParams {
+  const params: UserListParams = {
+    page: paginationReactive.page,
+    pageSize: paginationReactive.pageSize,
+    ...overrides,
+  };
+  applyFiltersToUserListParams(params);
+  return params;
+}
+
+async function fetchUserListForExport(): Promise<UserItem[]> {
+  const exportPageSize = Math.min(
+    Math.max(paginationReactive.total, 1),
+    EXPORT_MAX_ROWS,
+  );
+
+  if (advancedListMode.value && advancedListPayload.value) {
+    const body = {
+      ...advancedListPayload.value,
+      page: 1,
+      pageSize: exportPageSize,
+      sortBy: sortState.value?.columnKey || 'createdAt',
+      sortOrder: (sortState.value?.order === 'ascend' ? 'asc' : 'desc') as
+        | 'asc'
+        | 'desc',
+    };
+    const raw = await postUserListAdvancedSearchApi(body);
+    const inner =
+      (raw as { data?: { list: UserItem[] } })?.data ?? raw;
+    return (inner as { list?: UserItem[] })?.list ?? [];
+  }
+
+  const data = await getUserListApi(
+    buildUserListParams({ page: 1, pageSize: exportPageSize }),
+  );
+  return data?.list ?? [];
+}
+
 const handleExport = async () => {
+  if (exporting.value) return;
+  exporting.value = true;
+  const loadingMsg = message.loading('正在导出数据...', { duration: 0 });
   try {
-    message.info('正在导出数据...');
-    // TODO: Implement export functionality
-    // This should export the current filtered results to Excel/CSV
-    console.log('Exporting with current filters:', filterForm);
-    message.success('导出成功！');
+    const list = await fetchUserListForExport();
+    if (!list.length) {
+      message.warning('没有可导出的数据');
+      return;
+    }
+    const rows = list.map(mapUserItemForExport);
+    const filename = `所有会员_${new Date().toISOString().slice(0, 10)}`;
+    await exportWithMapping(rows, MEMBER_EXPORT_COLUMN_MAP, filename, {
+      format: 'csv',
+      message,
+    });
   } catch (error) {
     message.error('导出失败');
     console.error('Export error:', error);
+  } finally {
+    exporting.value = false;
+    loadingMsg.destroy();
   }
 };
 
@@ -1420,208 +1677,7 @@ async function loadTableData() {
       return;
     }
 
-    const params: UserListParams = {
-      page: paginationReactive.page,
-      pageSize: paginationReactive.pageSize,
-    };
-
-    if (sortState.value?.columnKey && sortState.value.order) {
-      params.sortBy = sortState.value.columnKey as string;
-      params.sortOrder = sortState.value.order === 'ascend' ? 'asc' : 'desc';
-    }
-
-    // Time-based filters - Convert to UTC for backend
-    if (filterForm.dateRange && filterForm.dateRange.length === 2) {
-      const [startTimestamp, endTimestamp] = filterForm.dateRange;
-      const tz = getDisplayTimezone();
-
-      const startDate = new Date(startTimestamp);
-      const endDate = new Date(endTimestamp);
-
-      // Validate dates
-      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-        console.error('❌ Invalid date timestamps in dateRange:', {
-          startTimestamp,
-          endTimestamp,
-        });
-      } else {
-        // Get what these timestamps represent in São Paulo timezone
-        // This tells us what the user actually selected (interpreted as São Paulo time)
-        const startTzStr = new Intl.DateTimeFormat('en-US', {
-          timeZone: tz,
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false,
-        }).format(startDate);
-
-        const endTzStr = new Intl.DateTimeFormat('en-US', {
-          timeZone: tz,
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false,
-        }).format(endDate);
-
-        // Parse: "12/08/2025, 00:00:00"
-        const [startDatePart, startTimePart] = startTzStr.split(', ');
-        const [endDatePart, endTimePart] = endTzStr.split(', ');
-
-        if (startDatePart && startTimePart && endDatePart && endTimePart) {
-          const [startM, startD, startY] = startDatePart.split('/');
-          const [startH, startMin, startSec] = startTimePart.split(':');
-          const [endM, endD, endY] = endDatePart.split('/');
-          const [endH, endMin, endSec] = endTimePart.split(':');
-
-          if (
-            startM &&
-            startD &&
-            startY &&
-            startH &&
-            startMin &&
-            endM &&
-            endD &&
-            endY &&
-            endH &&
-            endMin
-          ) {
-            // Convert São Paulo time components to UTC
-            const startUTC = convertTimezoneToUTC(
-              parseInt(startY),
-              parseInt(startM),
-              parseInt(startD),
-              parseInt(startH),
-              parseInt(startMin),
-              parseInt(startSec || '0'),
-              tz,
-            );
-            const endUTC = convertTimezoneToUTC(
-              parseInt(endY),
-              parseInt(endM),
-              parseInt(endD),
-              parseInt(endH),
-              parseInt(endMin),
-              parseInt(endSec || '59'),
-              tz,
-            );
-
-            // Validate and send to backend
-            if (isNaN(startUTC.getTime()) || isNaN(endUTC.getTime())) {
-              console.error('❌ Invalid UTC dates after conversion');
-              params.startDate = startDate.toISOString();
-              params.endDate = endDate.toISOString();
-            } else {
-              params.startDate = startUTC.toISOString();
-              params.endDate = endUTC.toISOString();
-
-              // Verify the conversion is correct
-              const verifyStartSP = new Intl.DateTimeFormat('en-US', {
-                timeZone: tz,
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false,
-              }).format(startUTC);
-
-              const verifyEndSP = new Intl.DateTimeFormat('en-US', {
-                timeZone: tz,
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false,
-              }).format(endUTC);
-
-              console.log('✅ Date filter applied:', {
-                timezone: tz,
-                userSelected: { start: startTzStr, end: endTzStr },
-                sentToBackend: {
-                  start: startUTC.toISOString(),
-                  end: endUTC.toISOString(),
-                },
-                verification: { start: verifyStartSP, end: verifyEndSP },
-              });
-            }
-          } else {
-            console.error('❌ Failed to parse date components');
-            params.startDate = startDate.toISOString();
-            params.endDate = endDate.toISOString();
-          }
-        } else {
-          console.error('❌ Failed to parse timezone date strings');
-          params.startDate = startDate.toISOString();
-          params.endDate = endDate.toISOString();
-        }
-      }
-      params.timeType = filterForm.timeType;
-    }
-
-    // Search condition (category-based filter)
-    if (filterForm.searchCondition) {
-      params.searchCondition = filterForm.searchCondition;
-      if (filterForm.searchConditionValue) {
-        params.searchConditionValue = filterForm.searchConditionValue;
-      }
-    }
-
-    // Comprehensive search field - ensure exact_account uses exact, fuzzy_account uses contains
-    if (filterForm.searchField && filterForm.searchValue) {
-      params.searchField = filterForm.searchField;
-      params.searchValue = filterForm.searchValue;
-
-      // Set search mode: exact_account = exact, fuzzy_account = fuzzy
-      if (filterForm.searchField === 'exact_account') {
-        params.searchMode = 'exact';
-      } else if (filterForm.searchField === 'fuzzy_account') {
-        params.searchMode = 'fuzzy';
-      } else {
-        params.searchMode = filterForm.searchMode;
-      }
-    }
-
-    // Account type (TG会员 = filter by 注册域名 telegram, not accountType)
-    if (filterForm.accountType && filterForm.accountType !== '') {
-      if (filterForm.accountType === 'telegram') {
-        params.searchField = 'registration_domain';
-        params.searchValue = 'telegram';
-        params.searchMode = 'exact';
-      } else {
-        params.accountType = filterForm.accountType;
-      }
-    }
-
-    // Account status
-    if (filterForm.accountStatus) {
-      params.accountStatus = filterForm.accountStatus;
-    }
-
-    // Member level
-    if (filterForm.memberLevel) {
-      params.memberLevel = filterForm.memberLevel;
-    }
-
-    // VIP level
-    if (filterForm.vipLevel) {
-      params.vipLevel = filterForm.vipLevel;
-    }
-
-    // Legacy search (fallback)
-    if (filterForm.search) {
-      params.search = filterForm.search;
-    }
-
-    const data = await getUserListApi(params);
+    const data = await getUserListApi(buildUserListParams());
 
     const loadTime = Date.now() - startTime;
     console.log(`⚡ Data loaded in ${loadTime}ms`);

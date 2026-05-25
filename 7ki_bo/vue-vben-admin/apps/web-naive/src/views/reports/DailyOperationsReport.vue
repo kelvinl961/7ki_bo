@@ -1650,6 +1650,7 @@ const exportToExcel = async () => {
       filename,
       sheetName: '日运营报表',
       format: 'xlsx',
+      message,
     });
   } catch (err) {
     console.error('Export error:', err);

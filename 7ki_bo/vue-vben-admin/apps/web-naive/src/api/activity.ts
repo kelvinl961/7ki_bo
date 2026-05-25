@@ -393,6 +393,69 @@ export async function getActivityPerformanceData(
 }
 
 // ===================================
+// DISTRIBUTE REWARDS
+// ===================================
+
+export interface DistributeMember {
+  identifier: string;
+  rewardAmount?: number;
+  auditMultiplier?: number;
+  frontendNote?: string;
+  backendNote?: string;
+  doubleRewardMultiplier?: number;
+  doubleAuditMultiplier?: number;
+}
+
+export interface DistributeRewardsInput {
+  members: DistributeMember[];
+  accountType: 'account' | 'userID';
+  rewardAmount: number;
+  auditMultiplier: number;
+  platformScope: 'all' | 'include' | 'exclude';
+  selectedPlatforms?: string[];
+  doubleReward?: boolean;
+  frontendNote?: string;
+  backendNote?: string;
+  skipOnError?: boolean;
+}
+
+export interface DistributeRewardsResult {
+  identifier: string;
+  success: boolean;
+  rewardId?: string;
+  amount?: number;
+  error?: string;
+}
+
+export interface DistributeRewardsResponse {
+  results: DistributeRewardsResult[];
+  successCount: number;
+  failCount: number;
+  total: number;
+}
+
+/**
+ * Distribute rewards to members for an activity (派发奖励)
+ */
+export async function distributeActivityRewards(
+  activityId: number,
+  input: DistributeRewardsInput,
+): Promise<DistributeRewardsResponse> {
+  const res = await requestClient.post<{ data: DistributeRewardsResponse }>(
+    `/activities/${activityId}/distribute-rewards`,
+    input,
+  );
+  return (res as any)?.data ?? res;
+}
+
+/**
+ * Download CSV template for batch reward distribution
+ */
+export function getDistributeRewardsTemplateUrl(activityId: number): string {
+  return `/api/activities/${activityId}/distribute-rewards/template`;
+}
+
+// ===================================
 // CONSTANTS
 // ===================================
 

@@ -8,6 +8,8 @@ export interface LoginDevice {
   operatingSystem: string;
   osVersion: string;
   platform: string;
+  deviceBrand?: string | null;
+  deviceModel?: string | null;
   firstSeen: string;
   lastSeen: string;
   loginCount: number;
@@ -26,6 +28,13 @@ export interface LoginLog {
   ip: string;
   userAgent: string;
   createdAt: string;
+  /** When API extends login-log payload */
+  acceptLanguage?: string | null;
+  clientTimezone?: string | null;
+  screenWidth?: number | null;
+  screenHeight?: number | null;
+  deviceBrand?: string | null;
+  deviceModel?: string | null;
 }
 
 export interface LoginLogsResponse {

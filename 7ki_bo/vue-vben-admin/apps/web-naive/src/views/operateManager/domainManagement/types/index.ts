@@ -17,6 +17,7 @@ export type DomainStatus =
   | 'VERIFICATION_PENDING';
 
 export type DomainUseType =
+  | 'ADMIN'
   | 'APP_HALL'
   | 'APP_UPDATE'
   | 'BACKEND_API'
@@ -94,8 +95,10 @@ export interface Domain {
   sslCertificate?: any;
   certificateType: number;
 
-  // Metadata
+  // White-label site binding
+  siteId?: string;
   siteCode?: string;
+  isPlatformHost?: boolean;
   appId?: string;
   defaultDnsNode: number;
   dnsNodeId?: number;

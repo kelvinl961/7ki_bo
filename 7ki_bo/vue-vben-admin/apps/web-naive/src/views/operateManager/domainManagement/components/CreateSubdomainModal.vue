@@ -14,6 +14,15 @@
       label-width="120"
       require-mark-placement="left"
     >
+      <n-form-item v-if="showSitePicker" label="所属站点" required>
+        <n-select
+          v-model:value="selectedSiteCode"
+          :options="siteOptions"
+          placeholder="选择站点"
+          filterable
+        />
+      </n-form-item>
+
       <!-- Select CDN Node -->
       <n-form-item label="选择节点" path="cdnProvider" required>
         <n-space :size="12">
@@ -288,7 +297,6 @@
         <n-button @click="handleCancel">取消</n-button>
         <n-button
           type="primary"
-          :loading="submitting"
           :disabled="!formData.cdnProvider || !formData.domainName"
           @click="handleConfirm"
         >
@@ -321,12 +329,15 @@ import {
   NRadioGroup,
   NRadio,
   NDivider,
+  NSelect,
   useMessage,
   type FormInst,
   type FormRules,
 } from 'naive-ui';
 import { CheckmarkCircleOutline } from '@vicons/ionicons5';
 import { domainApi } from '../api/domainApi';
+import { useSiteDomainBinding } from '#/composables/useSiteDomainBinding';
+import { useDomainCreateSubmit } from '../composables/useDomainCreateSubmit';
 
 const props = defineProps<{
   show: boolean;
@@ -341,6 +352,13 @@ const emit = defineEmits<{
 }>();
 
 const message = useMessage();
+const { submitInBackground } = useDomainCreateSubmit();
+const {
+  showSitePicker,
+  selectedSiteCode,
+  siteOptions,
+  domainSitePayload,
+} = useSiteDomainBinding();
 
 const showModal = computed({
   get: () => props.show,
@@ -441,8 +459,6 @@ const removeActiveDomain = (index: number) => {
   }
 };
 
-const submitting = ref(false);
-
 // Form rules
 const rules: FormRules = {
   cdnProvider: [{ required: true, message: '请选择节点', trigger: 'change' }],
@@ -461,7 +477,10 @@ const handleConfirm = async () => {
   try {
     await formRef.value?.validate();
 
-    submitting.value = true;
+    if (showSitePicker.value && (!selectedSiteCode.value || selectedSiteCode.value === 'all')) {
+      message.warning('请先选择所属站点');
+      return;
+    }
 
     // Construct active domains from the list
     let hasRootDomain = false;
@@ -487,6 +506,7 @@ const handleConfirm = async () => {
 
     // Prepare domain creation data
     const domainData: any = {
+      ...domainSitePayload(),
       domainName: formData.domainName,
       cdnProvider: formData.cdnProvider,
       useType: useType.value,
@@ -500,56 +520,23 @@ const handleConfirm = async () => {
       blockedDevice: formData.blockedDevice,
     };
 
-    const response: any = await domainApi.createDomain(domainData);
-
-    console.log('🔍 Full response:', response);
-
-    // Check if operation was successful AND subdomains were actually created
-    // Handle both wrapped and unwrapped response structures
-    const code = response.code ?? response.data?.code ?? 0;
-    const result = response.data || response;
-    const subdomains = result.data?.subdomains || result.subdomains || [];
-    const errors = result.data?.errors || result.errors || [];
-
-    console.log('📊 Parsed data:', { code, subdomains, errors });
-
-    // Check if user only entered "@" (root domain)
     const onlyRootDomain = activeDomainList.value.every((item) => {
       const prefix = item.prefix.trim();
       return !prefix || prefix === '@' || prefix === '根域名';
     });
 
-    if (code === 0 && subdomains.length > 0) {
-      // Success: subdomains were created
-      if (errors.length > 0) {
-        // Partial success
-        message.warning(
-          `成功创建 ${subdomains.length} 个子域名，${errors.length} 个失败：${errors.join('; ')}`,
-        );
-      } else {
-        // Full success
-        message.success(`成功创建 ${subdomains.length} 个子域名！`);
-      }
-      emit('success');
-      handleCancel();
-    } else if (code === 0 && subdomains.length === 0 && onlyRootDomain) {
-      // User only entered "@" and it already exists (parent domain)
-      message.warning(
-        `主域名 ${formData.domainName} 已存在。DNS配置未更新，请在Cloudflare中手动检查。`,
-      );
-      handleCancel();
-    } else if (code === 0 && subdomains.length === 1 && onlyRootDomain) {
-      // DNS was successfully updated for root domain
-      message.success(`✅ 主域名 ${formData.domainName} 的DNS记录已更新！`);
-      emit('success');
-      handleCancel();
-    } else if (errors.length > 0) {
-      // All failed with specific errors
-      message.error(`创建失败：${errors.join('; ')}`);
-    } else {
-      // Generic failure
-      message.error(response.message || response.data?.message || '创建失败');
-    }
+    const submittedCount = activeDomains.split(',').filter(Boolean).length;
+
+    emit('success');
+    handleCancel();
+
+    submitInBackground({
+      domainData,
+      submittedCount,
+      useType: useType.value,
+      cdnProvider: formData.cdnProvider,
+      onlyRootDomain,
+    });
   } catch (error: any) {
     console.error('Create subdomain error:', error);
 
@@ -558,8 +545,6 @@ const handleConfirm = async () => {
     } else {
       message.error(error.message || '创建失败，请重试');
     }
-  } finally {
-    submitting.value = false;
   }
 };
 

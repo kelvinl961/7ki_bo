@@ -1,9 +1,13 @@
 import { requestClient } from '#/api/request';
 
+export type BoAccountScope = 'PLATFORM' | 'SITE' | 'MERCHANT';
+
 export interface BackofficeAccount {
   id: number;
   username: string;
   role: string;
+  accountScope?: BoAccountScope;
+  merchantId?: string | null;
   status: string;
   isSuspended: boolean;
   createdDate: string;
@@ -20,6 +24,8 @@ export interface BackofficeAccountListParams {
   status?: number;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
+  /** Platform super-admin: platform | site (uses header site scope when site) */
+  listScope?: 'platform' | 'site';
 }
 
 export interface BackofficeAccountListResponse {
@@ -37,6 +43,9 @@ export interface CreateBackofficeAccountParams {
   password: string;
   role: string;
   status?: number;
+  accountScope?: BoAccountScope;
+  siteId?: string;
+  merchantId?: string;
 }
 
 export interface UpdateBackofficeAccountParams {

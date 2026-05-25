@@ -3,6 +3,7 @@ import type { RouteRecordRaw } from 'vue-router';
 const routes: RouteRecordRaw[] = [
   {
     meta: {
+      authority: ['SUPER_ADMIN'],
       icon: 'ic:baseline-store',
       keepAlive: true,
       order: 360,

@@ -19,8 +19,8 @@ import { useIdleTimeout } from '#/composables/useIdleTimeout';
 import { useDialog } from 'naive-ui';
 import TimezoneDisplay from '#/components/timezone/TimezoneDisplay.vue';
 import { useSmartPolling } from '#/composables/useSmartPolling';
-import { getMerchantScopeOptionsApi } from '#/api/core/merchants';
-import { getMerchantScope, setMerchantScope } from '#/utils/merchantScope';
+import { getSiteScopeOptionsApi } from '#/api/core/sites';
+import { getSiteScope, setSiteScope } from '#/utils/siteScope';
 
 // Real-time notifications state
 // Real-time notifications state
@@ -184,32 +184,32 @@ const authStore = useAuthStore();
 const accessStore = useAccessStore();
 const { destroyWatermark, updateWatermark } = useWatermark();
 const dialog = useDialog();
-const merchantScope = ref(getMerchantScope());
-const merchantScopeOptions = ref<Array<{ label: string; value: string }>>([
-  { label: '全部商户', value: 'all' },
+const siteScope = ref(getSiteScope());
+const siteScopeOptions = ref<Array<{ label: string; value: string }>>([
+  { label: '全部站点', value: 'all' },
 ]);
 const currentRole = computed(() => {
   const roles = (userStore.userInfo as any)?.roles || [];
   return String(roles?.[0] || '').toUpperCase();
 });
-const showMerchantScopeSelector = computed(() =>
-  ['SUPER_ADMIN', 'ADMIN', 'FINANCE'].includes(currentRole.value),
+const showSiteScopeSelector = computed(
+  () => currentRole.value === 'SUPER_ADMIN',
 );
 
-async function loadMerchantScopeOptions() {
-  if (!showMerchantScopeSelector.value) return;
+async function loadSiteScopeOptions() {
+  if (!showSiteScopeSelector.value) return;
   try {
-    const resp: any = await getMerchantScopeOptionsApi();
-    const items = resp?.data || [];
-    merchantScopeOptions.value = [
-      { label: '全部商户', value: 'all' },
+    const resp: any = await getSiteScopeOptionsApi();
+    const items = resp?.data?.data ?? resp?.data ?? [];
+    siteScopeOptions.value = [
+      { label: '全部站点', value: 'all' },
       ...items.map((item: any) => ({
-        label: item.label || `${item.name} (${item.merchantId})`,
-        value: item.value || item.merchantId,
+        label: item.label || `${item.displayName} (${item.siteCode})`,
+        value: item.value || item.siteCode,
       })),
     ];
   } catch (error) {
-    console.warn('Failed to load merchant scope options:', error);
+    console.warn('Failed to load site scope options:', error);
   }
 }
 
@@ -617,7 +617,7 @@ onMounted(async () => {
   // Fetch initial data (useSmartPolling will handle periodic updates)
   await fetchOnlineUsersCount();
   await fetchNotificationCounts();
-  await loadMerchantScopeOptions();
+  await loadSiteScopeOptions();
 
   // Note: useSmartPolling automatically starts polling on mount
   // No need to manually start - it's already running
@@ -641,8 +641,8 @@ onMounted(async () => {
   document.addEventListener('click', handleClickOutside);
 });
 
-watch(merchantScope, (value) => {
-  setMerchantScope(value || 'all');
+watch(siteScope, (value) => {
+  setSiteScope(value || 'all');
 });
 
 // Cleanup on unmount - register BEFORE any await statements
@@ -712,12 +712,12 @@ watch(
     <template #header-online-users>
       <div class="flex-center mr-2 h-full gap-2">
         <n-select
-          v-if="showMerchantScopeSelector"
-          v-model:value="merchantScope"
-          :options="merchantScopeOptions"
+          v-if="showSiteScopeSelector"
+          v-model:value="siteScope"
+          :options="siteScopeOptions"
           size="small"
           class="w-56"
-          placeholder="选择商户范围"
+          placeholder="选择站点范围"
         />
         <!-- Timezone Display -->
         <TimezoneDisplay />

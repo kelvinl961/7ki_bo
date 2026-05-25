@@ -16,6 +16,7 @@ const routes: RouteRecordRaw[] = [
         component: () =>
           import('#/views/user-account/backoffice-accounts/index.vue'),
         meta: {
+          authority: ['SUPER_ADMIN', 'SITE_ADMIN', 'ADMIN'],
           icon: 'ic:baseline-account-circle',
           keepAlive: true,
           title: '后台账号',

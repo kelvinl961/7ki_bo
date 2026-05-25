@@ -13,8 +13,20 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         meta: {
+          authority: ['SUPER_ADMIN'],
           keepAlive: true,
-          title: '站点管理',
+          title: '站点配置',
+        },
+        name: 'SiteConfig',
+        path: '/system/site-config',
+        component: () =>
+          import('#/views/site-management/site-config/index.vue'),
+      },
+      {
+        meta: {
+          authority: ['SUPER_ADMIN', 'ADMIN', 'FINANCE', 'SITE_ADMIN'],
+          keepAlive: true,
+          title: '站点账单',
         },
         name: 'SiteManagement',
         path: '/system/site-management',

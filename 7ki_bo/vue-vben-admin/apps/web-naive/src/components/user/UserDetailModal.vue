@@ -429,14 +429,31 @@
                   </td>
                   <td class="label-cell">注册域名</td>
                   <td class="value-cell">
-                    <span
-                      v-if="userDetail.registrationDomain"
-                      class="cursor-pointer text-blue-600 hover:underline"
-                      @click="handleFilterByRegistrationDomain"
-                    >
-                      {{ userDetail.registrationDomain }}
+                    <span class="inline-flex flex-wrap items-baseline gap-x-1">
+                      <span
+                        v-if="userDetail.registrationDomain"
+                        class="cursor-pointer text-blue-600 hover:underline"
+                        @click="handleFilterByRegistrationDomain"
+                      >
+                        {{ userDetail.registrationDomain }}
+                      </span>
+                      <span v-else>--</span>
+                      <span
+                        v-if="
+                          userDetail.registrationLandingUrl ||
+                          userDetail.registrationDomain
+                        "
+                        class="break-all text-xs text-gray-500"
+                      >
+                        (注册地址:
+                        {{
+                          userDetail.registrationLandingUrl ||
+                          (userDetail.registrationDomain
+                            ? `https://${userDetail.registrationDomain}`
+                            : '--')
+                        }})
+                      </span>
                     </span>
-                    <span v-else>--</span>
                   </td>
                 </tr>
 
@@ -834,6 +851,7 @@
                           "
                           class="mt-1 whitespace-pre-wrap break-all text-xs leading-snug text-gray-700"
                         >
+                         
                           {{
                             formatDeviceTelemetrySeven(
                               userDetail.registrationDeviceTelemetry,
@@ -905,10 +923,10 @@
                   </td>
                 </tr>
 
-                <!-- Row 15: 注册来源 & 注册域名详情 -->
+                <!-- Row 15: 注册来源 -->
                 <tr>
                   <td class="label-cell">注册来源</td>
-                  <td class="value-cell">
+                  <td class="value-cell" colspan="3">
                     <span
                       v-if="userDetail.registrationSource"
                       class="cursor-pointer text-blue-600 hover:underline"
@@ -916,17 +934,7 @@
                     >
                       {{ userDetail.registrationSource }}
                     </span>
-                    <span v-else>推广注册</span>
-                  </td>
-                  <td class="label-cell" colspan="2">
-                    <div class="mt-1 text-xs text-gray-500">
-                      (注册地址:
-                      {{
-                        userDetail.registrationDomain
-                          ? `https://${userDetail.registrationDomain}`
-                          : '--'
-                      }})
-                    </div>
+                    <span v-else>--</span>
                   </td>
                 </tr>
 
@@ -1029,6 +1037,7 @@
                           "
                           class="mt-1 whitespace-pre-wrap break-all text-xs leading-snug text-gray-700"
                         >
+                         
                           {{
                             formatDeviceTelemetrySeven(
                               userDetail.lastLoginDeviceTelemetry,
@@ -1044,8 +1053,9 @@
                           "
                           class="mt-1 block text-xs leading-snug text-amber-800"
                         >
-                          末次登录未上报设备号；时区/屏幕/语言依赖请求头，请确认 CORS 放行
-                          device-id、x-client-timezone、x-viewport。
+                          末次登录未上报设备号；屏幕/语言依赖请求头，请确认 CORS 放行
+                          device-id、x-viewport（或
+                          x-viewport-width/height）、x-screen-width/height、x-device-brand、x-device-model。
                         </div>
                       </div>
                       <div class="content-right">
@@ -1819,7 +1829,7 @@ function filterMembersBySearchField(
   });
 }
 
-/** Seven telemetry lines (no IP / location). Always prints all keys; missing values show --. */
+/** Environment snapshot (no IP / geo). OEM lines appear only when API sends brand/model. */
 function formatDeviceTelemetrySeven(
   t: DeviceTelemetrySeven | null | undefined,
   options?: { hideWhenObjectMissing?: boolean },
@@ -1832,15 +1842,33 @@ function formatDeviceTelemetrySeven(
     const v = t![key];
     return v != null && String(v).trim() ? String(v).trim() : '--';
   };
-  return [
+  const hasOem =
+    (t.deviceBrand != null && String(t.deviceBrand).trim() !== '') ||
+    (t.deviceModel != null && String(t.deviceModel).trim() !== '');
+
+  const lines = [
     `User-Agent：${val('userAgent')}`,
     `设备类型：${val('deviceFormFactor')}`,
+  ];
+  if (hasOem) {
+    const brandLine =
+      t.deviceBrand != null && String(t.deviceBrand).trim() !== ''
+        ? `设备品牌：${val('deviceBrand')}`
+        : null;
+    const modelLine =
+      t.deviceModel != null && String(t.deviceModel).trim() !== ''
+        ? `设备型号：${val('deviceModel')}`
+        : null;
+    if (brandLine) lines.push(brandLine);
+    if (modelLine) lines.push(modelLine);
+  }
+  lines.push(
     `系统 OS：${val('systemOs')}`,
     `浏览器语言：${val('browserLanguage')}`,
-    `时区：${val('timezone')}`,
     `屏幕尺寸：${val('screenSize')}`,
     `浏览器版本：${val('browserVersion')}`,
-  ].join('\n');
+  );
+  return lines.join('\n');
 }
 
 // Reactive data

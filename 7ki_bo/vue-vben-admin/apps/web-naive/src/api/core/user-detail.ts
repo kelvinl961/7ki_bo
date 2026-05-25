@@ -1,9 +1,12 @@
 import { requestClient } from '#/api/request';
 
-/** Seven fields shown in BO member detail (no IP / geo). */
+/** Environment snapshot for member detail (no IP / geo). OEM lines show only when the API sends them. */
 export interface DeviceTelemetrySeven {
   userAgent?: string;
   deviceFormFactor?: string;
+  /** From login log when client / UA enrichment sends them */
+  deviceBrand?: string;
+  deviceModel?: string;
   systemOs?: string;
   browserLanguage?: string;
   timezone?: string;
@@ -146,6 +149,8 @@ export interface UserDetailInfo {
   // Registration Information
   registrationIp: string;
   registrationDomain: string;
+  /** Full URL with query (e.g. ?dl=) when captured at signup */
+  registrationLandingUrl?: string;
   registrationDeviceId: string;
   registrationDeviceInfo?: string; // Parsed device info (e.g., "Android 12.0")
   registrationBrowserInfo?: string; // Parsed browser info (e.g., "Facebook v533.0.0.34.82")
@@ -364,6 +369,7 @@ export async function getUserDetailApi(
       // Registration Information - directly from backend
       registrationIp: userData.registrationIp || '',
       registrationDomain: userData.registrationDomain || '',
+      registrationLandingUrl: userData.registrationLandingUrl || '',
       registrationDeviceId: userData.registrationDeviceId || '',
       registrationDeviceInfo: userData.registrationDeviceInfo || '',
       registrationBrowserInfo: userData.registrationBrowserInfo || '',

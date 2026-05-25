@@ -11,7 +11,7 @@ import { resetAllStores, useAccessStore } from '@vben/stores';
 import { message } from '#/adapter/naive';
 import { getDeviceId } from '#/utils/deviceId';
 import { indexedDBCache } from '#/utils/indexedDBCache';
-// import { getMerchantScope } from '#/utils/merchantScope';
+import { getSiteScope } from '#/utils/siteScope';
 
 import { refreshTokenApi } from './core';
 
@@ -188,8 +188,10 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
 
       // 📱 Add device-id header for device tracking
       config.headers['device-id'] = getDeviceId();
-      // White-label merchant scope (re-enable when backend expects X-Merchant-Scope)
-      // config.headers['x-merchant-scope'] = getMerchantScope();
+      const siteScope = getSiteScope();
+      if (siteScope && siteScope !== 'all') {
+        config.headers['x-site-scope'] = siteScope;
+      }
 
       // HMAC signing for protected finance/admin endpoints
       try {

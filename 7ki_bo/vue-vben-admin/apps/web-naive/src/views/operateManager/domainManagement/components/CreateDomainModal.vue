@@ -26,6 +26,15 @@
           label-placement="top"
           size="medium"
         >
+          <n-form-item v-if="showSitePicker" label="所属站点" required>
+            <n-select
+              v-model:value="selectedSiteCode"
+              :options="siteOptions"
+              placeholder="请选择具体站点（不可使用「全部站点」）"
+              filterable
+            />
+          </n-form-item>
+
           <!-- Activated CDN Nodes -->
           <n-form-item>
             <template #label>
@@ -267,7 +276,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import {
   useMessage,
   NButton,
@@ -283,9 +292,11 @@ import {
   NTooltip,
   NModal,
   NScrollbar,
+  NSelect,
 } from 'naive-ui';
 import { ChevronDown, ChevronUp } from '@vicons/ionicons5';
 import { domainApi } from '../api/domainApi';
+import { useSiteDomainBinding } from '#/composables/useSiteDomainBinding';
 
 const props = defineProps<{
   show: boolean;
@@ -298,9 +309,25 @@ const emit = defineEmits<{
 }>();
 
 const message = useMessage();
+const {
+  showSitePicker,
+  selectedSiteCode,
+  siteOptions,
+  domainSitePayload,
+  prepareForDomainCreate,
+  validateSiteSelectedForCreate,
+  siteRequiredMessage,
+  loadSiteOptions,
+} = useSiteDomainBinding();
 const showModal = computed({
   get: () => props.show,
   set: (val) => emit('update:show', val),
+});
+
+watch(showModal, async (open) => {
+  if (!open) return;
+  await loadSiteOptions();
+  prepareForDomainCreate();
 });
 
 const formRef = ref();
@@ -447,6 +474,11 @@ const handleSubmit = async () => {
       return;
     }
 
+    if (!validateSiteSelectedForCreate()) {
+      message.warning(siteRequiredMessage);
+      return;
+    }
+
     if (!validateDomains()) {
       return;
     }
@@ -465,6 +497,7 @@ const handleSubmit = async () => {
     const results = await Promise.allSettled(
       domains.map(async (domain) => {
         const response: any = await domainApi.createDomain({
+          ...domainSitePayload(),
           domainName: domain.trim(),
           cdnProvider: formData.value.cdnProvider,
           cdnPlatformName:

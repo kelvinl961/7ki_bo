@@ -8,6 +8,16 @@
       </n-breadcrumb>
     </div>
 
+    <n-card v-if="isPlatformSuperAdmin" class="mb-4">
+      <n-tabs v-model:value="listScope" type="line" @update:value="handleListScopeChange">
+        <n-tab-pane name="platform" tab="平台账号" />
+        <n-tab-pane name="site" tab="站点账号" />
+      </n-tabs>
+      <n-alert v-if="listScope === 'site'" type="info" class="mt-2" :show-icon="false">
+        站点账号列表受顶部「站点范围」选择器影响；未选择站点时列表为空。
+      </n-alert>
+    </n-card>
+
     <!-- 筛选器区域 -->
     <n-card class="mb-4">
       <div class="flex flex-wrap items-end gap-4">
@@ -213,6 +223,27 @@
             show-password-on="click"
           />
         </n-form-item>
+        <n-form-item
+          v-if="editMode === 'add' && isPlatformSuperAdmin"
+          label="账号类型"
+        >
+          <n-select
+            v-model:value="editForm.accountScope"
+            :options="accountScopeOptions"
+            @update:value="onAccountScopeChange"
+          />
+        </n-form-item>
+        <n-form-item
+          v-if="editMode === 'add' && isPlatformSuperAdmin && editForm.accountScope === 'SITE'"
+          label="所属站点"
+        >
+          <n-select
+            v-model:value="editForm.siteId"
+            placeholder="选择站点"
+            filterable
+            :options="siteOptions"
+          />
+        </n-form-item>
         <n-form-item label="角色" path="role">
           <n-select
             v-model:value="editForm.role"
@@ -243,7 +274,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, h, defineAsyncComponent } from 'vue';
+import { ref, reactive, onMounted, h, defineAsyncComponent, computed } from 'vue';
+import { useUserStore } from '@vben/stores';
+import { listSitesApi } from '#/api/core/sites';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 const SmartDataGrid = defineAsyncComponent(
   () => import('../../../components/smart/SmartDataGrid/index.vue'),
@@ -263,6 +296,9 @@ import {
   NBreadcrumbItem,
   NForm,
   NFormItem,
+  NTabs,
+  NTabPane,
+  NAlert,
   useMessage,
   type DataTableColumns,
   type FormInst,
@@ -276,9 +312,21 @@ import {
   toggleAccountStatusApi,
   type BackofficeAccount,
   type BackofficeAccountListParams,
+  type BoAccountScope,
 } from '#/api/core/user-account';
 
 const message = useMessage();
+const userStore = useUserStore();
+
+const currentRole = computed(() => {
+  const roles = (userStore.userInfo as any)?.roles || [];
+  return String(roles?.[0] || '').toUpperCase();
+});
+const isPlatformSuperAdmin = computed(() => currentRole.value === 'SUPER_ADMIN');
+const isSiteAdmin = computed(() => currentRole.value === 'SITE_ADMIN');
+
+const listScope = ref<'platform' | 'site'>('platform');
+const siteOptions = ref<Array<{ label: string; value: string }>>([]);
 
 // 响应式数据
 const loading = ref(false);
@@ -303,6 +351,8 @@ const editForm = reactive({
   password: '',
   confirmPassword: '',
   role: 'STAFF',
+  accountScope: 'SITE' as BoAccountScope,
+  siteId: null as string | null,
   isSuspended: false,
 });
 
@@ -356,13 +406,55 @@ const paginationReactive = reactive({
   total: 0,
 });
 
-// 选项配置
-const roleOptions = [
-  { label: '超级管理员', value: 'SUPER_ADMIN' },
-  { label: '管理员', value: 'ADMIN' },
-  { label: '员工', value: 'STAFF' },
-  { label: '客服', value: 'CUSTOMER_SERVICE' },
+const accountScopeOptions = [
+  { label: '平台账号（不可被品牌/商户看到）', value: 'PLATFORM' },
+  { label: '站点账号（品牌后台）', value: 'SITE' },
 ];
+
+const roleOptions = computed(() => {
+  if (isSiteAdmin.value || (!isPlatformSuperAdmin.value && editForm.accountScope === 'SITE')) {
+    return [
+      { label: '站点管理员', value: 'SITE_ADMIN' },
+      { label: '员工', value: 'STAFF' },
+      { label: '客服', value: 'SUPPORT' },
+    ];
+  }
+  if (editForm.accountScope === 'PLATFORM') {
+    return [
+      { label: '超级管理员', value: 'SUPER_ADMIN' },
+      { label: '平台管理员', value: 'ADMIN' },
+      { label: '财务', value: 'FINANCE' },
+    ];
+  }
+  return [
+    { label: '站点管理员', value: 'SITE_ADMIN' },
+    { label: '员工', value: 'STAFF' },
+    { label: '客服', value: 'SUPPORT' },
+  ];
+});
+
+function onAccountScopeChange(scope: BoAccountScope) {
+  if (scope === 'PLATFORM') {
+    editForm.role = 'ADMIN';
+    editForm.siteId = null;
+  } else {
+    editForm.role = 'SITE_ADMIN';
+  }
+}
+
+async function loadSiteOptions() {
+  if (!isPlatformSuperAdmin.value) return;
+  try {
+    const resp: any = await listSitesApi();
+    const items = resp?.data?.data ?? resp?.data ?? [];
+    siteOptions.value = items.map((s: any) => ({
+      label: `${s.displayName} (${s.siteCode})`,
+      value: s.id,
+    }));
+  } catch {
+    siteOptions.value = [];
+  }
+}
 
 const statusOptions = [
   { label: '正常', value: 1 },
@@ -403,8 +495,11 @@ const getRoleType = (
   > = {
     SUPER_ADMIN: 'error',
     ADMIN: 'warning',
+    FINANCE: 'warning',
+    SITE_ADMIN: 'success',
     STAFF: 'info',
-    CUSTOMER_SERVICE: 'success',
+    SUPPORT: 'success',
+    MERCHANT: 'default',
   };
   return roleMap[role] || 'default';
 };
@@ -412,9 +507,12 @@ const getRoleType = (
 const getRoleLabel = (role: string) => {
   const roleMap: Record<string, string> = {
     SUPER_ADMIN: '超级管理员',
-    ADMIN: '管理员',
+    ADMIN: '平台管理员',
+    FINANCE: '财务',
+    SITE_ADMIN: '站点管理员',
     STAFF: '员工',
-    CUSTOMER_SERVICE: '客服',
+    SUPPORT: '客服',
+    MERCHANT: '商户',
   };
   return roleMap[role] || role;
 };
@@ -586,14 +684,23 @@ const handleViewDetail = (account: BackofficeAccount) => {
 
 const handleAddAccount = () => {
   editMode.value = 'add';
+  const defaultScope: BoAccountScope =
+    isPlatformSuperAdmin.value && listScope.value === 'platform' ? 'PLATFORM' : 'SITE';
   Object.assign(editForm, {
     username: '',
     password: '',
     confirmPassword: '',
-    role: 'STAFF',
+    role: defaultScope === 'PLATFORM' ? 'ADMIN' : 'SITE_ADMIN',
+    accountScope: defaultScope,
+    siteId: null,
     isSuspended: false,
   });
   showEditModal.value = true;
+};
+
+const handleListScopeChange = () => {
+  paginationReactive.page = 1;
+  loadTableData();
 };
 
 const handleEditAccount = (account: BackofficeAccount) => {
@@ -621,6 +728,8 @@ const handleSubmitEdit = async () => {
         password: editForm.password,
         role: editForm.role,
         status: editForm.isSuspended ? 0 : 1,
+        accountScope: isPlatformSuperAdmin.value ? editForm.accountScope : 'SITE',
+        siteId: editForm.siteId || undefined,
       });
       message.success('账号创建成功');
     } else {
@@ -724,6 +833,7 @@ const loadTableData = async () => {
       status: filterForm.status || undefined,
       sortBy: 'createdDate',
       sortOrder: 'desc',
+      listScope: isPlatformSuperAdmin.value ? listScope.value : 'site',
     };
 
     const response = await getBackofficeAccountsApi(params);
@@ -738,7 +848,11 @@ const loadTableData = async () => {
 };
 
 // 生命周期
-onMounted(() => {
+onMounted(async () => {
+  await loadSiteOptions();
+  if (isSiteAdmin.value) {
+    listScope.value = 'site';
+  }
   loadTableData();
 });
 </script>

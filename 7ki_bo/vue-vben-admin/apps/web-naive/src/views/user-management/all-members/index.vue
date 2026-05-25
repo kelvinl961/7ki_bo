@@ -1580,6 +1580,7 @@ const handleExport = async () => {
     const filename = `所有会员_${new Date().toISOString().slice(0, 10)}`;
     await exportWithMapping(rows, MEMBER_EXPORT_COLUMN_MAP, filename, {
       format: 'csv',
+      message,
     });
   } catch (error) {
     message.error('导出失败');

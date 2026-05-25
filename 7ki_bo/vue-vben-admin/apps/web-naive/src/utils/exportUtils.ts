@@ -3,9 +3,7 @@
  * Reusable export functions for grid data across all pages
  */
 
-import type { DataTableColumns } from 'naive-ui';
-
-import { useMessage } from 'naive-ui';
+import type { DataTableColumns, MessageApiInst } from 'naive-ui';
 
 /**
  * Column definition for export (simplified from Naive UI's complex structure)
@@ -29,6 +27,8 @@ export interface ExportOptions {
   format?: 'csv' | 'json' | 'xlsx'; // Export format (default: xlsx)
   dateFormat?: string; // Date format for date columns
   currencySymbol?: string; // Currency symbol (default: none)
+  /** Naive UI message API from useMessage() in the calling component */
+  message?: MessageApiInst;
 }
 
 /**
@@ -204,16 +204,16 @@ export async function exportGridData(
   data: any[],
   options: ExportOptions = {},
 ): Promise<void> {
-  const message = useMessage();
+  const { message } = options;
 
   // Validate inputs
   if (!data || data.length === 0) {
-    message.warning('没有数据可导出');
+    message?.warning('没有数据可导出');
     return;
   }
 
   if (!columns || columns.length === 0) {
-    message.warning('没有列定义');
+    message?.warning('没有列定义');
     return;
   }
 
@@ -265,12 +265,15 @@ export async function exportGridData(
       // No default
     }
 
-    message.success(`导出成功！共 ${data.length} 条记录`);
+    message?.success(`导出成功！共 ${data.length} 条记录`);
   } catch (error) {
     console.error('Export error:', error);
-    message.error(
-      `导出失败: ${error instanceof Error ? error.message : '未知错误'}`,
-    );
+    const errorText = `导出失败: ${error instanceof Error ? error.message : '未知错误'}`;
+    if (message) {
+      message.error(errorText);
+    } else {
+      throw error;
+    }
   }
 }
 

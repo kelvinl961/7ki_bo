@@ -134,6 +134,13 @@
       v-model:show="showRecordModal"
       :activity-id="recordActivityId"
     />
+
+    <!-- 派发奖励弹窗 -->
+    <DistributeRewardModal
+      v-model:show="showDistributeModal"
+      :activity="distributeActivity"
+      @success="handleFormSuccess"
+    />
   </div>
 </template>
 
@@ -192,6 +199,9 @@ const ActivityDetailModal = defineAsyncComponent(
 const ActivityRecordModal = defineAsyncComponent(
   () => import('./ActivityRecordModal.vue'),
 );
+const DistributeRewardModal = defineAsyncComponent(
+  () => import('./DistributeRewardModal.vue'),
+);
 
 const message = useMessage();
 const dialog = useDialog();
@@ -201,9 +211,11 @@ const loading = ref(false);
 const showFormModal = ref(false);
 const showDetailModal = ref(false);
 const showRecordModal = ref(false);
+const showDistributeModal = ref(false);
 const editingItem = ref<Activity | null>(null);
 const detailActivity = ref<Activity | null>(null);
 const recordActivityId = ref<number>(0);
+const distributeActivity = ref<Activity | null>(null);
 const checkedRowKeys = ref<(string | number)[]>([]);
 const tableData = ref<Activity[]>([]);
 const tableRef = ref();
@@ -524,7 +536,7 @@ const columns = computed<DataTableColumns<Activity>>(() => [
   {
     title: '操作',
     key: 'actions',
-    width: 200,
+    width: 280,
     fixed: 'right',
     render: (row) =>
       h(
@@ -581,6 +593,23 @@ const columns = computed<DataTableColumns<Activity>>(() => [
                     { default: () => '记录' },
                   ),
                 default: () => '浏览记录',
+              },
+            ),
+            h(
+              NTooltip,
+              {},
+              {
+                trigger: () =>
+                  h(
+                    NButton,
+                    {
+                      size: 'small',
+                      type: 'success',
+                      onClick: () => handleDistributeReward(row),
+                    },
+                    { default: () => '派发奖励' },
+                  ),
+                default: () => '手动派发奖励给指定会员',
               },
             ),
             h(
@@ -751,6 +780,11 @@ const handleView = (item: Activity) => {
 const handleViewRecords = (item: Activity) => {
   recordActivityId.value = item.id;
   showRecordModal.value = true;
+};
+
+const handleDistributeReward = (item: Activity) => {
+  distributeActivity.value = item;
+  showDistributeModal.value = true;
 };
 
 const handleDelete = async (item: Activity) => {

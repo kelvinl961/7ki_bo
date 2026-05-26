@@ -7,6 +7,7 @@ import {
   type BrandColorConfig,
   BRAND_COLOR_TEMPLATES,
   BACKEND_SKIN_ID_BY_TEMPLATE_SLUG,
+  TEMPLATE_SLUG_BY_BACKEND_SKIN_ID,
   buildSkinColorOptions,
 } from '../constants/brandColorTemplates';
 
@@ -322,4 +323,21 @@ export function generateColorPreviewStyles(
     '--preview-secondary': palette.secondary,
     '--preview-accent': palette.accent,
   };
+}
+
+const DEFAULT_BACKGROUND_IMAGE_BY_TEMPLATE_SLUG: Record<string, string> = {};
+
+export function getDefaultBackgroundImage(
+  skinColorId: string,
+): string | undefined {
+  const id = String(skinColorId ?? '').trim();
+  if (!id) return undefined;
+
+  const byId = DEFAULT_BACKGROUND_IMAGE_BY_TEMPLATE_SLUG[id];
+  if (byId) return byId;
+
+  const slug = TEMPLATE_SLUG_BY_BACKEND_SKIN_ID[id];
+  if (!slug) return undefined;
+
+  return DEFAULT_BACKGROUND_IMAGE_BY_TEMPLATE_SLUG[slug];
 }

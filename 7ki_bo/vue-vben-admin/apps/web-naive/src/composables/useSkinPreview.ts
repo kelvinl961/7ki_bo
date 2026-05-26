@@ -1,6 +1,9 @@
 import { computed, ref, watch } from 'vue';
 
-import { getColorPaletteById } from '../utils/colorUtils';
+import {
+  getColorPaletteById,
+  TEMPLATE_SLUG_BY_BACKEND_SKIN_ID,
+} from '../utils/colorUtils';
 
 export interface SkinPreviewConfig {
   template: string;
@@ -79,56 +82,8 @@ const COLOR_MAPPING: Record<string, string> = {
   无底色: 'light',
 };
 
-// Skin color mapping for URL generation (maps skin color IDs to URL parameters)
-const SKIN_COLOR_MAPPING: Record<string, string> = {
-  '15': 'bvlgari-blue-black',
-  '1687419125085335554': 'tomford-green',
-  '1687419804829954050': 'ferrari-black-yellow',
-  '1687423728032313346': 'armani-black-red',
-  '1687424061300416513': 'corum-blue',
-  '1687424270198022145': 'aston-martin-purple',
-  '1692485205460766722': 'roger-dubuis-black-gold',
-  '1692485850558005250': 'porsche-yellow-green',
-  '1692486746230812674': 'cartier-red',
-  '1692488006900928514': 'estee-lauder-blue',
-  '1692488483161190401': 'burgundy-red',
-  '1692488808662204418': 'iwc-blue',
-  '1692489196854333442': 'gucci-green-gold',
-  '1692489501242617857': 'burberry-brown',
-  '1692489827560214530': 'lamer-green',
-  '1692490140235583490': 'ebay-purple',
-  '1697159683483983873': 'dior-klein-blue',
-  '1697159980803305474': 'chivas-regal-blue',
-  '1697160139817517057': 'furla-blue',
-  '1697160330594295810': 'bottega-veneta-gray',
-  '1697160465763233793': 'embraer-blue',
-  '1697160834305101825': 'bordeaux-red',
-  '1697160986273185793': 'breguet-gray',
-  '1697161119648129025': 'hermes-orange',
-  '1697161307920756738': 'bvlgari-brown',
-  '1697161596809916417': 'hermes-brown-orange',
-  '1697161777339891714': 'elsa-schiaparelli-pink',
-  '1697161995892490242': 'lancome-peach',
-  '1697162642566025217': 'lacoste-green',
-  '1697162790520283138': 'versace-yellow',
-  '1697163109007503361': 'bvlgari-brown-alt',
-  '1697163285008887809': 'prada-black',
-  '1697163805310021633': 'victoria-secret-red',
-  '1697163938916524034': 'anna-sui-purple',
-  '1697164125656219650': 'facebook-blue',
-  '1697164281092911105': 'facebook-green',
-  '1697164409843445761': 'twitter-blue',
-  '1697164886393913346': 'usdt-green',
-  '1697165024871976962': 'sk2-red',
-  '1697165145999220737': 'patek-philippe-brown',
-  '1697165288065609730': 'microsoft-red',
-  '1697165446718234626': '3ce-red',
-  '1697165616248053761': 'louis-vuitton-brown',
-  '1697165753468780546': 'bottega-veneta-green',
-  '1822080907778543618': 'rolex-green',
-  '1822084756339769345': 'guerlain-purple',
-  '1924287844941955073': 'gucci-black',
-};
+/** Skin color backend ID → template slug (aligned with client DEV_BRAND_COLOR_TEMPLATES). */
+const SKIN_COLOR_MAPPING: Record<string, string> = TEMPLATE_SLUG_BY_BACKEND_SKIN_ID;
 
 // Skin color ID to RGB mapping for background overlay
 const SKIN_COLOR_RGB_MAPPING: Record<string, string> = {

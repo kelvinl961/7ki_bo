@@ -3,6 +3,22 @@
  * Generates secondary and accent colors from primary colors
  */
 
+import {
+  type BrandColorConfig,
+  BRAND_COLOR_TEMPLATES,
+  BACKEND_SKIN_ID_BY_TEMPLATE_SLUG,
+  buildSkinColorOptions,
+} from '../constants/brandColorTemplates';
+
+export {
+  BRAND_COLOR_TEMPLATES,
+  BACKEND_SKIN_ID_BY_TEMPLATE_SLUG,
+  TEMPLATE_SLUG_BY_BACKEND_SKIN_ID,
+  getBrandColorTemplateByBackendId,
+  getBrandColorTemplateBySlug,
+} from '../constants/brandColorTemplates';
+export type { BrandColorConfig, BrandColorTemplate } from '../constants/brandColorTemplates';
+
 export interface ColorPalette {
   primary: string;
   secondary: string;
@@ -29,640 +45,51 @@ export interface ColorClasses {
   buttonColor: string;
 }
 
-/**
- * Complete color palettes for each brand - manually adjusted
- */
-export const brandColorPalettes: Record<string, ColorPalette> = {
-  // Bvlgari蓝黑
-  '15': {
-    primary: '#0e131b',
-    secondary: '#151d29',
-    tertiary: '#182434',
-    accent: '#111923',
-    textPrimary: '#FFFFFF',
-    textSecondary: '#005DFE',
-    textAccent: '#0284C7',
-    buttonColor: '#005dfe',
-    borderColor: '#374151',
-  },
-  // Tom Ford绿
-  '1687419125085335554': {
-    primary: '#18747e',
-    secondary: '#054146',
-    tertiary: '#182434',
-    accent: '#05484e',
-    textPrimary: '#054146',
-    textSecondary: '#6B7280',
-    textAccent: '#059669',
-    buttonColor: '#06D0DF',
-    borderColor: '#374151',
-  },
-  // Ferrari黄
-  '1687419804829954050': {
-    primary: '#1C1C1C',
-    secondary: '#1C1C1C',
-    tertiary: '#000000',
-    accent: '#FBBF24',
-    textPrimary: '#000000',
-    textSecondary: '#feb705',
-    textAccent: '#D97706',
-    buttonColor: '#feb705',
-    borderColor: '#374151',
-  },
-  // Armani红
-  '1687423728032313346': {
-    primary: '#DC2626',
-    secondary: '#6B7280',
-    tertiary: '#182434',
-    accent: '#EF4444',
-    textPrimary: '#1F2937',
-    textSecondary: '#6B7280',
-    textAccent: '#B91C1C',
-    buttonColor: '#DC2626',
-    borderColor: '#374151',
-  },
-  // Corum蓝
-  '1687424061300416513': {
-    primary: '#3B82F6',
-    secondary: '#64748B',
-    tertiary: '#182434',
-    accent: '#60A5FA',
-    textPrimary: '#1E293B',
-    textSecondary: '#64748B',
-    textAccent: '#2563EB',
-    buttonColor: '#3B82F6',
-    borderColor: '#374151',
-  },
-  // Aston Martin紫
-  '1687424270198022145': {
-    primary: '#8B5CF6',
-    secondary: '#6B7280',
-    tertiary: '#182434',
-    accent: '#A78BFA',
-    textPrimary: '#1F2937',
-    textSecondary: '#6B7280',
-    textAccent: '#7C3AED',
-    buttonColor: '#8B5CF6',
-    borderColor: '#374151',
-  },
-  // Roger Dubuis黑金
-  '1692485205460766722': {
-    primary: '#F59E0B',
-    secondary: '#374151',
-    tertiary: '#182434',
-    accent: '#FBBF24',
-    textPrimary: '#111827',
-    textSecondary: '#6B7280',
-    textAccent: '#D97706',
-    buttonColor: '#F59E0B',
-    borderColor: '#374151',
-  },
-  // Porsche黄绿
-  '1692485850558005250': {
-    primary: '#84CC16',
-    secondary: '#6B7280',
-    tertiary: '#182434',
-    accent: '#A3E635',
-    textPrimary: '#1F2937',
-    textSecondary: '#6B7280',
-    textAccent: '#65A30D',
-    buttonColor: '#84CC16',
-    borderColor: '#374151',
-  },
-  // Cartier红
-  '1692486746230812674': {
-    primary: '#EF4444',
-    secondary: '#6B7280',
-    tertiary: '#182434',
-    accent: '#F87171',
-    textPrimary: '#1F2937',
-    textSecondary: '#6B7280',
-    textAccent: '#DC2626',
-    buttonColor: '#EF4444',
-    borderColor: '#374151',
-  },
-  // Estee Lauder蓝
-  '1692488006900928514': {
-    primary: '#06B6D4',
-    secondary: '#64748B',
-    tertiary: '#182434',
-    accent: '#22D3EE',
-    textPrimary: '#1E293B',
-    textSecondary: '#64748B',
-    textAccent: '#0891B2',
-    buttonColor: '#06B6D4',
-    borderColor: '#374151',
-  },
-  // Burgundy红
-  '1692488483161190401': {
-    primary: '#7C2D12',
-    secondary: '#78716C',
-    tertiary: '#182434',
-    accent: '#A16207',
-    textPrimary: '#1C1917',
-    textSecondary: '#78716C',
-    textAccent: '#92400E',
-    buttonColor: '#7C2D12',
-    borderColor: '#374151',
-  },
-  // IWC蓝
-  '1692488808662204418': {
-    primary: '#1E40AF',
-    secondary: '#64748B',
-    tertiary: '#182434',
-    accent: '#3B82F6',
-    textPrimary: '#1E293B',
-    textSecondary: '#64748B',
-    textAccent: '#1D4ED8',
-    buttonColor: '#1E40AF',
-    borderColor: '#374151',
-  },
-  // Gucci绿金
-  '1692489196854333442': {
-    primary: '#059669',
-    secondary: '#6B7280',
-    tertiary: '#182434',
-    accent: '#10B981',
-    textPrimary: '#1F2937',
-    textSecondary: '#6B7280',
-    textAccent: '#047857',
-    buttonColor: '#059669',
-    borderColor: '#374151',
-  },
-  // Burberry褐
-  '1692489501242617857': {
-    primary: '#92400E',
-    secondary: '#78716C',
-    tertiary: '#182434',
-    accent: '#C2410C',
-    textPrimary: '#1C1917',
-    textSecondary: '#78716C',
-    textAccent: '#A16207',
-    buttonColor: '#92400E',
-    borderColor: '#374151',
-  },
-  // La Mer 绿
-  '1692489827560214530': {
-    primary: '#047857',
-    secondary: '#6B7280',
-    tertiary: '#182434',
-    accent: '#059669',
-    textPrimary: '#1F2937',
-    textSecondary: '#6B7280',
-    textAccent: '#065F46',
-    buttonColor: '#047857',
-    borderColor: '#374151',
-  },
-  // Ebay紫
-  '1692490140235583490': {
-    primary: '#7C3AED',
-    secondary: '#6B7280',
-    tertiary: '#182434',
-    accent: '#8B5CF6',
-    textPrimary: '#1F2937',
-    textSecondary: '#6B7280',
-    textAccent: '#6D28D9',
-    buttonColor: '#7C3AED',
-    borderColor: '#374151',
-  },
-  // Dior克莱因蓝
-  '1697159683483983873': {
-    primary: '#1E40AF',
-    secondary: '#64748B',
-    tertiary: '#182434',
-    accent: '#3B82F6',
-    textPrimary: '#1E293B',
-    textSecondary: '#64748B',
-    textAccent: '#1D4ED8',
-    buttonColor: '#1E40AF',
-    borderColor: '#374151',
-  },
-  // Chivas Regal邦迪蓝
-  '1697159980803305474': {
-    primary: '#1E3A8A',
-    secondary: '#64748B',
-    tertiary: '#182434',
-    accent: '#2563EB',
-    textPrimary: '#1E293B',
-    textSecondary: '#64748B',
-    textAccent: '#1D4ED8',
-    buttonColor: '#1E3A8A',
-    borderColor: '#374151',
-  },
-  // Furla蓝
-  '1697160139817517057': {
-    primary: '#3B82F6',
-    secondary: '#64748B',
-    tertiary: '#182434',
-    accent: '#60A5FA',
-    textPrimary: '#1E293B',
-    textSecondary: '#64748B',
-    textAccent: '#2563EB',
-    buttonColor: '#3B82F6',
-    borderColor: '#374151',
-  },
-  // Bottega Veneta莫兰迪灰
-  '1697160330594295810': {
-    primary: '#6B7280',
-    secondary: '#9CA3AF',
-    tertiary: '#182434',
-    accent: '#374151',
-    textPrimary: '#111827',
-    textSecondary: '#6B7280',
-    textAccent: '#4B5563',
-    buttonColor: '#6B7280',
-    borderColor: '#374151',
-  },
-  // Embraer蓝
-  '1697160465763233793': {
-    primary: '#1E40AF',
-    secondary: '#64748B',
-    tertiary: '#182434',
-    accent: '#3B82F6',
-    textPrimary: '#1E293B',
-    textSecondary: '#64748B',
-    textAccent: '#1D4ED8',
-    buttonColor: '#1E40AF',
-    borderColor: '#374151',
-  },
-  // Bordeaux红
-  '1697160834305101825': {
-    primary: '#7C2D12',
-    secondary: '#78716C',
-    tertiary: '#182434',
-    accent: '#A16207',
-    textPrimary: '#1C1917',
-    textSecondary: '#78716C',
-    textAccent: '#92400E',
-    buttonColor: '#7C2D12',
-    borderColor: '#374151',
-  },
-  // Breguet灰
-  '1697160986273185793': {
-    primary: '#6B7280',
-    secondary: '#9CA3AF',
-    tertiary: '#182434',
-    accent: '#374151',
-    textPrimary: '#111827',
-    textSecondary: '#6B7280',
-    textAccent: '#4B5563',
-    buttonColor: '#6B7280',
-    borderColor: '#374151',
-  },
-  // Hermes橙
-  '1697161119648129025': {
-    primary: '#EA580C',
-    secondary: '#78716C',
-    tertiary: '#182434',
-    accent: '#F97316',
-    textPrimary: '#1C1917',
-    textSecondary: '#78716C',
-    textAccent: '#C2410C',
-    buttonColor: '#EA580C',
-    borderColor: '#374151',
-  },
-  // BVLGARI褐
-  '1697161307920756738': {
-    primary: '#92400E',
-    secondary: '#78716C',
-    tertiary: '#182434',
-    accent: '#C2410C',
-    textPrimary: '#1C1917',
-    textSecondary: '#78716C',
-    textAccent: '#A16207',
-    buttonColor: '#92400E',
-    borderColor: '#374151',
-  },
-  // Hermes棕橙
-  '1697161596809916417': {
-    primary: '#C2410C',
-    secondary: '#78716C',
-    tertiary: '#182434',
-    accent: '#EA580C',
-    textPrimary: '#1C1917',
-    textSecondary: '#78716C',
-    textAccent: '#A16207',
-    buttonColor: '#C2410C',
-    borderColor: '#374151',
-  },
-  // Elsa Schiaparelli粉
-  '1697161777339891714': {
-    primary: '#e06f8b',
-    secondary: '#C15473',
-    tertiary: '#b94b6b',
-    accent: '#F472B6',
-    textPrimary: '#C15473',
-    textSecondary: '#ffe7b8',
-    textAccent: '#DB2777',
-    buttonColor: '#ffe7b8',
-    borderColor: '#f8e0e2',
-  },
-  // Lancome水蜜桃色
-  '1697161995892490242': {
-    primary: '#F97316',
-    secondary: '#78716C',
-    tertiary: '#182434',
-    accent: '#FB923C',
-    textPrimary: '#1C1917',
-    textSecondary: '#78716C',
-    textAccent: '#EA580C',
-    buttonColor: '#F97316',
-    borderColor: '#374151',
-  },
-  // Lacoste绿
-  '1697162642566025217': {
-    primary: '#16A34A',
-    secondary: '#6B7280',
-    tertiary: '#182434',
-    accent: '#22C55E',
-    textPrimary: '#1F2937',
-    textSecondary: '#6B7280',
-    textAccent: '#15803D',
-    buttonColor: '#16A34A',
-    borderColor: '#374151',
-  },
-  // Versace黄
-  '1697162790520283138': {
-    primary: '#EAB308',
-    secondary: '#78716C',
-    tertiary: '#182434',
-    accent: '#FDE047',
-    textPrimary: '#1C1917',
-    textSecondary: '#78716C',
-    textAccent: '#CA8A04',
-    buttonColor: '#EAB308',
-    borderColor: '#374151',
-  },
-  // Bvlgari棕
-  '1697163109007503361': {
-    primary: '#A16207',
-    secondary: '#78716C',
-    tertiary: '#182434',
-    accent: '#D97706',
-    textPrimary: '#1C1917',
-    textSecondary: '#78716C',
-    textAccent: '#92400E',
-    buttonColor: '#A16207',
-    borderColor: '#374151',
-  },
-  // Prada黑
-  '1697163285008887809': {
-    primary: '#111827',
-    secondary: '#374151',
-    tertiary: '#182434',
-    accent: '#6B7280',
-    textPrimary: '#F9FAFB',
-    textSecondary: '#D1D5DB',
-    textAccent: '#9CA3AF',
-    buttonColor: '#111827',
-    borderColor: '#374151',
-  },
-  // Victoria Secret红
-  '1697163805310021633': {
-    primary: '#DC2626',
-    secondary: '#6B7280',
-    tertiary: '#182434',
-    accent: '#EF4444',
-    textPrimary: '#1F2937',
-    textSecondary: '#6B7280',
-    textAccent: '#B91C1C',
-    buttonColor: '#DC2626',
-    borderColor: '#374151',
-  },
-  // Anna Sui紫
-  '1697163938916524034': {
-    primary: '#7C3AED',
-    secondary: '#6B7280',
-    tertiary: '#182434',
-    accent: '#8B5CF6',
-    textPrimary: '#1F2937',
-    textSecondary: '#6B7280',
-    textAccent: '#6D28D9',
-    buttonColor: '#7C3AED',
-    borderColor: '#374151',
-  },
-  // Facebook蓝
-  '1697164125656219650': {
-    primary: '#1877F2',
-    secondary: '#64748B',
-    tertiary: '#182434',
-    accent: '#42A5F5',
-    textPrimary: '#1E293B',
-    textSecondary: '#64748B',
-    textAccent: '#1565C0',
-    buttonColor: '#1877F2',
-    borderColor: '#374151',
-  },
-  // Facebook绿
-  '1697164281092911105': {
-    primary: '#42B883',
-    secondary: '#6B7280',
-    tertiary: '#182434',
-    accent: '#66BB6A',
-    textPrimary: '#1F2937',
-    textSecondary: '#6B7280',
-    textAccent: '#388E3C',
-    buttonColor: '#42B883',
-    borderColor: '#374151',
-  },
-  // Twitter蓝
-  '1697164409843445761': {
-    primary: '#1DA1F2',
-    secondary: '#64748B',
-    tertiary: '#182434',
-    accent: '#42A5F5',
-    textPrimary: '#1E293B',
-    textSecondary: '#64748B',
-    textAccent: '#1976D2',
-    buttonColor: '#1DA1F2',
-    borderColor: '#374151',
-  },
-  // USDT绿
-  '1697164886393913346': {
-    primary: '#26A17B',
-    secondary: '#6B7280',
-    tertiary: '#182434',
-    accent: '#4CAF50',
-    textPrimary: '#1F2937',
-    textSecondary: '#6B7280',
-    textAccent: '#2E7D32',
-    buttonColor: '#26A17B',
-    borderColor: '#374151',
-  },
-  // SK-II红
-  '1697165024871976962': {
-    primary: '#DC2626',
-    secondary: '#6B7280',
-    tertiary: '#182434',
-    accent: '#EF4444',
-    textPrimary: '#1F2937',
-    textSecondary: '#6B7280',
-    textAccent: '#B91C1C',
-    buttonColor: '#DC2626',
-    borderColor: '#374151',
-  },
-  // Patek Philippe浅棕
-  '1697165145999220737': {
-    primary: '#92400E',
-    secondary: '#78716C',
-    tertiary: '#182434',
-    accent: '#C2410C',
-    textPrimary: '#1C1917',
-    textSecondary: '#78716C',
-    textAccent: '#A16207',
-    buttonColor: '#92400E',
-    borderColor: '#374151',
-  },
-  // Microsoft红
-  '1697165288065609730': {
-    primary: '#DC2626',
-    secondary: '#6B7280',
-    tertiary: '#182434',
-    accent: '#EF4444',
-    textPrimary: '#1F2937',
-    textSecondary: '#6B7280',
-    textAccent: '#B91C1C',
-    buttonColor: '#DC2626',
-    borderColor: '#374151',
-  },
-  // 3CE提香红
-  '1697165446718234626': {
-    primary: '#DC2626',
-    secondary: '#6B7280',
-    tertiary: '#182434',
-    accent: '#EF4444',
-    textPrimary: '#1F2937',
-    textSecondary: '#6B7280',
-    textAccent: '#B91C1C',
-    buttonColor: '#DC2626',
-    borderColor: '#374151',
-  },
-  // Louis Vuitton棕
-  '1697165616248053761': {
-    primary: '#92400E',
-    secondary: '#78716C',
-    tertiary: '#182434',
-    accent: '#C2410C',
-    textPrimary: '#1C1917',
-    textSecondary: '#78716C',
-    textAccent: '#A16207',
-    buttonColor: '#92400E',
-    borderColor: '#374151',
-  },
-  // Bottega Veneta绿
-  '1697165753468780546': {
-    primary: '#059669',
-    secondary: '#6B7280',
-    tertiary: '#182434',
-    accent: '#10B981',
-    textPrimary: '#1F2937',
-    textSecondary: '#6B7280',
-    textAccent: '#047857',
-    buttonColor: '#059669',
-    borderColor: '#374151',
-  },
-  // Rolex绿
-  '1822080907778543618': {
-    primary: '#161616',
-    secondary: '#000000',
-    tertiary: '#1e1e1e',
-    accent: '#22C55E',
-    textPrimary: '#ffffff',
-    textSecondary: '#78df2c',
-    textAccent: '#000000',
-    buttonColor: '#78df2c',
-    borderColor: '#374151',
-  },
-  // Guerlain紫
-  '1822084756339769345': {
-    primary: '#8B5CF6',
-    secondary: '#6B7280',
-    tertiary: '#182434',
-    accent: '#A78BFA',
-    textPrimary: '#1F2937',
-    textSecondary: '#6B7280',
-    textAccent: '#7C3AED',
-    buttonColor: '#8B5CF6',
-    borderColor: '#374151',
-  },
-  // Gucci黑
-  '1924287844941955073': {
-    primary: '#111827',
-    secondary: '#374151',
-    tertiary: '#182434',
-    accent: '#6B7280',
-    textPrimary: '#F9FAFB',
-    textSecondary: '#D1D5DB',
-    textAccent: '#9CA3AF',
-    buttonColor: '#111827',
-    borderColor: '#374151',
-  },
-};
-
-export const ROLEX_GREEN_SKIN_ID = '1822080907778543618';
-
-export const defaultBackgroundImageBySkinId: Record<string, string> = {
-  [ROLEX_GREEN_SKIN_ID]:
-    'https://mainbucket000-broker-prod.s3.sa-east-1.amazonaws.com/siteadmin/skin/lobby_asset/2-1-89/common/common/bg_pattern_tile.avif',
-};
-
-export function getDefaultBackgroundImage(skinColorId: string): string | undefined {
-  const url = defaultBackgroundImageBySkinId[skinColorId];
-  return url && url.trim() ? url : undefined;
+/** Backend skin color ID + label (derived from `BRAND_COLOR_TEMPLATES`). */
+export interface SkinColorOption {
+  value: string;
+  label: string;
 }
+
+export const SKIN_COLOR_OPTIONS: SkinColorOption[] = buildSkinColorOptions();
+
+export function colorConfigToPalette(colors: BrandColorConfig): ColorPalette {
+  return {
+    primary: colors.primary,
+    secondary: colors.secondary,
+    tertiary: colors.tertiary,
+    accent: colors.accent,
+    textPrimary: colors.textPrimary,
+    textSecondary: colors.textSecondary,
+    textAccent: colors.textAccent,
+    buttonColor: colors.buttonColor,
+    borderColor: colors.quaternary,
+  };
+}
+
+function buildBrandColorPalettes(): Record<string, ColorPalette> {
+  const palettes: Record<string, ColorPalette> = {};
+  for (const template of BRAND_COLOR_TEMPLATES) {
+    const backendId = BACKEND_SKIN_ID_BY_TEMPLATE_SLUG[template.id];
+    if (backendId) {
+      palettes[backendId] = colorConfigToPalette(template.colors);
+    }
+  }
+  return palettes;
+}
+
+/**
+ * Complete color palettes per backend skin ID (from brand color templates).
+ */
+export const brandColorPalettes: Record<string, ColorPalette> =
+  buildBrandColorPalettes();
 
 /**
  * Brand color definitions with their base colors (kept for backward compatibility)
  */
-export const brandColorMap: Record<string, string> = {
-  '15': '#0e131b', // Bvlgari蓝黑
-  '1687419125085335554': '#10B981', // Tom Ford绿
-  '1687419804829954050': '#F59E0B', // Ferrari黄
-  '1687423728032313346': '#DC2626', // Armani红
-  '1687424061300416513': '#3B82F6', // Corum蓝
-  '1687424270198022145': '#8B5CF6', // Aston Martin紫
-  '1692485205460766722': '#F59E0B', // Roger Dubuis黑金
-  '1692485850558005250': '#84CC16', // Porsche黄绿
-  '1692486746230812674': '#EF4444', // Cartier红
-  '1692488006900928514': '#06B6D4', // Estee Lauder蓝
-  '1692488483161190401': '#7C2D12', // Burgundy红
-  '1692488808662204418': '#1E40AF', // IWC蓝
-  '1692489196854333442': '#059669', // Gucci绿金
-  '1692489501242617857': '#92400E', // Burberry褐
-  '1692489827560214530': '#047857', // La Mer 绿
-  '1692490140235583490': '#7C3AED', // Ebay紫
-  '1697159683483983873': '#1E40AF', // Dior克莱因蓝
-  '1697159980803305474': '#1E3A8A', // Chivas Regal邦迪蓝
-  '1697160139817517057': '#3B82F6', // Furla蓝
-  '1697160330594295810': '#6B7280', // Bottega Veneta莫兰迪灰
-  '1697160465763233793': '#1E40AF', // Embraer蓝
-  '1697160834305101825': '#7C2D12', // Bordeaux红
-  '1697160986273185793': '#6B7280', // Breguet灰
-  '1697161119648129025': '#EA580C', // Hermes橙
-  '1697161307920756738': '#92400E', // BVLGARI褐
-  '1697161596809916417': '#C2410C', // Hermes棕橙
-  '1697161777339891714': '#EC4899', // Elsa Schiaparelli粉
-  '1697161995892490242': '#F97316', // Lancome水蜜桃色
-  '1697162642566025217': '#16A34A', // Lacoste绿
-  '1697162790520283138': '#EAB308', // Versace黄
-  '1697163109007503361': '#A16207', // Bvlgari棕
-  '1697163285008887809': '#111827', // Prada黑
-  '1697163805310021633': '#DC2626', // Victoria Secret红
-  '1697163938916524034': '#7C3AED', // Anna Sui紫
-  '1697164125656219650': '#1877F2', // Facebook蓝
-  '1697164281092911105': '#42B883', // Facebook绿
-  '1697164409843445761': '#1DA1F2', // Twitter蓝
-  '1697164886393913346': '#26A17B', // USDT绿
-  '1697165024871976962': '#DC2626', // SK-II红
-  '1697165145999220737': '#92400E', // Patek Philippe浅棕
-  '1697165288065609730': '#DC2626', // Microsoft红
-  '1697165446718234626': '#DC2626', // 3CE提香红
-  '1697165616248053761': '#92400E', // Louis Vuitton棕
-  '1697165753468780546': '#059669', // Bottega Veneta绿
-  '1822080907778543618': '#16A34A', // Rolex绿
-  '1822084756339769345': '#8B5CF6', // Guerlain紫
-  '1924287844941955073': '#111827', // Gucci黑
-};
+export const brandColorMap: Record<string, string> = Object.fromEntries(
+  Object.entries(brandColorPalettes).map(([id, palette]) => [id, palette.primary]),
+);
 
 /**
  * Convert hex color to HSL
@@ -869,57 +296,7 @@ export function applyColorTheme(content: string, skinColorId: string): string {
  * Get brand color information by skin color ID
  */
 export function getBrandColorInfo(skinColorId: string) {
-  const skinColorOptions = [
-    { value: '15', label: 'Bvlgari蓝黑' },
-    { value: '1687419125085335554', label: 'Tom Ford绿' },
-    { value: '1687419804829954050', label: 'Ferrari黑黄' },
-    { value: '1687423728032313346', label: 'Armani黑红' },
-    { value: '1687424061300416513', label: 'Corum蓝' },
-    { value: '1687424270198022145', label: 'Aston Martin紫' },
-    { value: '1692485205460766722', label: 'Roger Dubuis黑金' },
-    { value: '1692485850558005250', label: 'Porsche黄绿' },
-    { value: '1692486746230812674', label: 'Cartier红' },
-    { value: '1692488006900928514', label: 'Estee Lauder蓝' },
-    { value: '1692488483161190401', label: 'Burgundy红' },
-    { value: '1692488808662204418', label: 'IWC蓝' },
-    { value: '1692489196854333442', label: 'Gucci绿金' },
-    { value: '1692489501242617857', label: 'Burberry褐' },
-    { value: '1692489827560214530', label: 'La Mer 绿' },
-    { value: '1692490140235583490', label: 'Ebay紫' },
-    { value: '1697159683483983873', label: 'Dior克莱因蓝' },
-    { value: '1697159980803305474', label: 'Chivas Regal邦迪蓝' },
-    { value: '1697160139817517057', label: 'Furla蓝' },
-    { value: '1697160330594295810', label: 'Bottega Veneta莫兰迪灰' },
-    { value: '1697160465763233793', label: 'Embraer蓝' },
-    { value: '1697160834305101825', label: 'Bordeaux红' },
-    { value: '1697160986273185793', label: 'Breguet灰' },
-    { value: '1697161119648129025', label: 'Hermes橙' },
-    { value: '1697161307920756738', label: 'BVLGARI褐' },
-    { value: '1697161596809916417', label: 'Hermes棕橙' },
-    { value: '1697161777339891714', label: 'Elsa Schiaparelli粉' },
-    { value: '1697161995892490242', label: 'Lancome水蜜桃色' },
-    { value: '1697162642566025217', label: 'Lacoste绿' },
-    { value: '1697162790520283138', label: 'Versace黄' },
-    { value: '1697163109007503361', label: 'Bvlgari棕' },
-    { value: '1697163285008887809', label: 'Prada黑' },
-    { value: '1697163805310021633', label: 'Victoria Secret红' },
-    { value: '1697163938916524034', label: 'Anna Sui紫' },
-    { value: '1697164125656219650', label: 'Facebook蓝' },
-    { value: '1697164281092911105', label: 'Facebook绿' },
-    { value: '1697164409843445761', label: 'Twitter蓝' },
-    { value: '1697164886393913346', label: 'USDT绿' },
-    { value: '1697165024871976962', label: 'SK-II红' },
-    { value: '1697165145999220737', label: 'Patek Philippe浅棕' },
-    { value: '1697165288065609730', label: 'Microsoft红' },
-    { value: '1697165446718234626', label: '3CE提香红' },
-    { value: '1697165616248053761', label: 'Louis Vuitton棕' },
-    { value: '1697165753468780546', label: 'Bottega Veneta绿' },
-    { value: '1822080907778543618', label: 'Rolex绿' },
-    { value: '1822084756339769345', label: 'Guerlain紫' },
-    { value: '1924287844941955073', label: 'Gucci黑' },
-  ];
-
-  const colorInfo = skinColorOptions.find(
+  const colorInfo = SKIN_COLOR_OPTIONS.find(
     (option) => option.value === skinColorId,
   );
   const palette = getColorPaletteById(skinColorId);

@@ -218,14 +218,32 @@
 
         <div class="flex flex-col gap-2">
           <div class="flex gap-2">
-            <n-button type="primary" :loading="saving" @click="handleSave">
-              保存配置
+            <n-button type="primary" :loading="saving || syncing" @click="handleSave">
+              保存并同步 API
             </n-button>
             <n-button @click="handleReset">重置</n-button>
           </div>
           <p class="text-xs text-gray-500">
-            保存后，用户端前端需请求 <code class="rounded bg-gray-100 px-1">GET /brand-skin-config</code> 并应用主题（如注入 CSS 变量），界面才会更新。
+            本地开发（代理至
+            <a
+              href="https://277br.pangu6688.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-primary"
+            >277br</a>）选择皮肤预设会自动
+            <code class="rounded bg-gray-100 px-1">PUT /brand-skin-lang/:id</code>；
+            用户端通过
+            <code class="rounded bg-gray-100 px-1">GET /layout-design/public/theme</code>
+            拉取主题。
           </p>
+          <n-alert
+            v-if="!brandSkinLangRecord"
+            type="warning"
+            :show-icon="true"
+            class="mt-2"
+          >
+            未加载到品牌皮肤语言配置，请先在「品牌Logo设置」创建一条记录后再同步颜色。
+          </n-alert>
         </div>
       </div>
 
@@ -562,6 +580,13 @@ import {
   getBrandSkinConfigApi,
   saveBrandSkinConfigApi,
 } from '#/api/brand/brandSkin';
+import type { BrandSkinLangConfig } from '#/api/skinLang';
+import {
+  loadPrimaryBrandSkinLangRecord,
+  mapRecordToFormColors,
+  syncBrandSkinLangColors,
+  type BrandSkinFormColors,
+} from '#/api/brand/brandSkinSync';
 import { getImageUrlByEnvironment } from '#/utils/imageUtils';
 
 const MediaLibrarySelector = defineAsyncComponent(
@@ -571,6 +596,13 @@ const MediaLibrarySelector = defineAsyncComponent(
 const message = useMessage();
 const formRef = ref<FormInst | null>(null);
 const saving = ref(false);
+const syncing = ref(false);
+/** 277br 上实际生效的品牌皮肤记录（brand-skin-lang） */
+const brandSkinLangRecord = ref<BrandSkinLangConfig | null>(null);
+
+/** 开发环境选择预设后自动 PUT（可在 .env 设 VITE_BRAND_SKIN_AUTO_SAVE=false 关闭） */
+const autoSaveOnTemplatePick =
+  import.meta.env.DEV && import.meta.env.VITE_BRAND_SKIN_AUTO_SAVE !== 'false';
 
 /** 预览区展示的子游戏列表（来自子游戏管理接口，最多 6 个） */
 const previewGames = ref<GameItem[]>([]);
@@ -609,19 +641,20 @@ interface FormModel {
   backendRemark: string;
 }
 
-/** 默认使用 Bvlgari蓝黑 '15' 色板 */
+/** 默认使用 Bvlgari蓝黑 '15' 色板（与 BRAND_COLOR_TEMPLATES 一致） */
+const defaultBvlgariPalette = getColorPaletteById('15');
 const defaultFormData: FormModel = {
   skinColorId: '15',
-  primaryColor: '#0e131b',
-  secondaryColor: '#151d29',
-  tertiaryColor: '#182434',
-  accentColor: '#111923',
-  textPrimaryColor: '#FFFFFF',
-  textSecondaryColor: '#005DFE',
-  textAccentColor: '#0284C7',
-  buttonColor: '#005dfe',
+  primaryColor: defaultBvlgariPalette.primary,
+  secondaryColor: defaultBvlgariPalette.secondary,
+  tertiaryColor: defaultBvlgariPalette.tertiary,
+  accentColor: defaultBvlgariPalette.accent,
+  textPrimaryColor: defaultBvlgariPalette.textPrimary,
+  textSecondaryColor: defaultBvlgariPalette.textSecondary,
+  textAccentColor: defaultBvlgariPalette.textAccent,
+  buttonColor: defaultBvlgariPalette.buttonColor,
   lobbyBackgroundType: 'system_default',
-  lobbyBackgroundColor: '#0e131b',
+  lobbyBackgroundColor: defaultBvlgariPalette.primary,
   lobbyBackgroundImageUrl: '',
   effectiveStartTime: null,
   effectiveEndTime: null,
@@ -764,8 +797,7 @@ function getPreviewGameImageUrl(iconUrl: string | null | undefined): string {
   return getImageUrlByEnvironment(iconUrl) || '';
 }
 
-function onSkinColorChange(skinColorId: string | null) {
-  if (!skinColorId) return;
+function applyPaletteToForm(skinColorId: string): ColorPalette {
   const palette = getColorPaletteById(skinColorId);
   formData.value.primaryColor = palette.primary;
   formData.value.secondaryColor = palette.secondary;
@@ -775,6 +807,70 @@ function onSkinColorChange(skinColorId: string | null) {
   formData.value.textSecondaryColor = palette.textSecondary;
   formData.value.textAccentColor = palette.textAccent;
   formData.value.buttonColor = palette.buttonColor;
+  formData.value.lobbyBackgroundColor = palette.primary;
+  return palette;
+}
+
+function buildFormSnapshot(): BrandSkinFormColors {
+  return {
+    skinColorId: formData.value.skinColorId,
+    primaryColor: formData.value.primaryColor,
+    secondaryColor: formData.value.secondaryColor,
+    tertiaryColor: formData.value.tertiaryColor,
+    accentColor: formData.value.accentColor,
+    textPrimaryColor: formData.value.textPrimaryColor,
+    textSecondaryColor: formData.value.textSecondaryColor,
+    textAccentColor: formData.value.textAccentColor,
+    buttonColor: formData.value.buttonColor,
+    lobbyBackgroundType: formData.value.lobbyBackgroundType,
+    lobbyBackgroundColor: formData.value.lobbyBackgroundColor,
+    lobbyBackgroundImageUrl: formData.value.lobbyBackgroundImageUrl,
+    brandId: formData.value.brandId,
+    brandCode: formData.value.brandCode,
+    brandName: formData.value.brandName,
+    clientLanguages: flattenClientLanguages(formData.value.clientLanguages),
+    authMode: formData.value.authMode,
+    appSetting: formData.value.appSetting,
+    backendRemark: formData.value.backendRemark,
+  };
+}
+
+async function syncColorsToBrandSkinLangApi(
+  successMessage = '颜色已同步至 API，刷新 277br 站点即可看到新主题',
+) {
+  const record = brandSkinLangRecord.value;
+  if (!record?.id) {
+    message.warning('未找到 brand-skin-lang 配置，无法同步到 277br');
+    return false;
+  }
+  const skinColorId = formData.value.skinColorId || record.skinColor || '15';
+  const palette = getColorPaletteById(skinColorId);
+  syncing.value = true;
+  try {
+    await syncBrandSkinLangColors(
+      record.id,
+      record,
+      buildFormSnapshot(),
+      palette,
+    );
+    message.success(successMessage);
+    return true;
+  } catch {
+    message.error('同步失败，请确认已登录且代理指向 277br（VITE_DEV_API_PROXY_TARGET）');
+    return false;
+  } finally {
+    syncing.value = false;
+  }
+}
+
+async function onSkinColorChange(skinColorId: string | null) {
+  if (!skinColorId) return;
+  applyPaletteToForm(skinColorId);
+  if (autoSaveOnTemplatePick) {
+    await syncColorsToBrandSkinLangApi(
+      `已应用「${getSkinColorLabel(skinColorId)}」并同步至 277br API`,
+    );
+  }
 }
 
 function formatTime(timestamp: number | null): string {
@@ -798,32 +894,37 @@ function handleSave() {
     if (err) return;
     saving.value = true;
     try {
-      await saveBrandSkinConfigApi({
-        skinColorId: formData.value.skinColorId,
-        primaryColor: formData.value.primaryColor,
-        secondaryColor: formData.value.secondaryColor,
-        tertiaryColor: formData.value.tertiaryColor,
-        accentColor: formData.value.accentColor,
-        textPrimaryColor: formData.value.textPrimaryColor,
-        textSecondaryColor: formData.value.textSecondaryColor,
-        textAccentColor: formData.value.textAccentColor,
-        buttonColor: formData.value.buttonColor,
-        lobbyBackgroundType: formData.value.lobbyBackgroundType,
-        lobbyBackgroundColor: formData.value.lobbyBackgroundColor,
-        lobbyBackgroundImageUrl: formData.value.lobbyBackgroundImageUrl,
-        effectiveStartTime: formData.value.effectiveStartTime,
-        effectiveEndTime: formData.value.effectiveEndTime,
-        brandId: formData.value.brandId || undefined,
-        brandCode: formData.value.brandCode || undefined,
-        brandName: formData.value.brandName || undefined,
-        clientLanguages: flattenClientLanguages(formData.value.clientLanguages),
-        authMode: formData.value.authMode || undefined,
-        appSetting: formData.value.appSetting || undefined,
-        backendRemark: formData.value.backendRemark || undefined,
-      });
-      message.success('配置已保存，前端在请求并应用品牌皮肤配置后会更新展示');
-    } catch (e) {
-      message.error('保存失败，请确认后端已提供 /brand-skin-config 接口');
+      if (brandSkinLangRecord.value?.id) {
+        const ok = await syncColorsToBrandSkinLangApi();
+        if (!ok) return;
+      } else {
+        await saveBrandSkinConfigApi({
+          skinColorId: formData.value.skinColorId,
+          primaryColor: formData.value.primaryColor,
+          secondaryColor: formData.value.secondaryColor,
+          tertiaryColor: formData.value.tertiaryColor,
+          accentColor: formData.value.accentColor,
+          textPrimaryColor: formData.value.textPrimaryColor,
+          textSecondaryColor: formData.value.textSecondaryColor,
+          textAccentColor: formData.value.textAccentColor,
+          buttonColor: formData.value.buttonColor,
+          lobbyBackgroundType: formData.value.lobbyBackgroundType,
+          lobbyBackgroundColor: formData.value.lobbyBackgroundColor,
+          lobbyBackgroundImageUrl: formData.value.lobbyBackgroundImageUrl,
+          effectiveStartTime: formData.value.effectiveStartTime,
+          effectiveEndTime: formData.value.effectiveEndTime,
+          brandId: formData.value.brandId || undefined,
+          brandCode: formData.value.brandCode || undefined,
+          brandName: formData.value.brandName || undefined,
+          clientLanguages: flattenClientLanguages(formData.value.clientLanguages),
+          authMode: formData.value.authMode || undefined,
+          appSetting: formData.value.appSetting || undefined,
+          backendRemark: formData.value.backendRemark || undefined,
+        });
+        message.success('配置已保存（/brand-skin-config）');
+      }
+    } catch {
+      message.error('保存失败');
     } finally {
       saving.value = false;
     }
@@ -856,6 +957,53 @@ function normalizeClientLanguages(
 }
 
 onMounted(async () => {
+  try {
+    const langRecord = await loadPrimaryBrandSkinLangRecord();
+    if (langRecord) {
+      brandSkinLangRecord.value = langRecord;
+      const mapped = mapRecordToFormColors(langRecord);
+      if (mapped.skinColorId) formData.value.skinColorId = mapped.skinColorId;
+      if (mapped.primaryColor) formData.value.primaryColor = mapped.primaryColor;
+      if (mapped.secondaryColor) formData.value.secondaryColor = mapped.secondaryColor;
+      if (mapped.tertiaryColor) formData.value.tertiaryColor = mapped.tertiaryColor;
+      if (mapped.accentColor) formData.value.accentColor = mapped.accentColor;
+      if (mapped.textPrimaryColor) formData.value.textPrimaryColor = mapped.textPrimaryColor;
+      if (mapped.textSecondaryColor) {
+        formData.value.textSecondaryColor = mapped.textSecondaryColor;
+      }
+      if (mapped.textAccentColor) formData.value.textAccentColor = mapped.textAccentColor;
+      if (mapped.buttonColor) formData.value.buttonColor = mapped.buttonColor;
+      if (mapped.lobbyBackgroundType) {
+        formData.value.lobbyBackgroundType = mapped.lobbyBackgroundType;
+      }
+      if (mapped.lobbyBackgroundColor) {
+        formData.value.lobbyBackgroundColor = mapped.lobbyBackgroundColor;
+      }
+      if (mapped.lobbyBackgroundImageUrl) {
+        formData.value.lobbyBackgroundImageUrl = mapped.lobbyBackgroundImageUrl;
+      }
+      if (mapped.brandId) formData.value.brandId = mapped.brandId;
+      if (mapped.brandCode) formData.value.brandCode = mapped.brandCode;
+      if (mapped.brandName) formData.value.brandName = mapped.brandName;
+      if (mapped.authMode != null) formData.value.authMode = mapped.authMode;
+      if (mapped.appSetting != null) formData.value.appSetting = mapped.appSetting;
+      if (mapped.backendRemark != null) {
+        formData.value.backendRemark = mapped.backendRemark;
+      }
+      if (mapped.clientLanguages?.length) {
+        const langs = mapped.clientLanguages;
+        formData.value.clientLanguages = {
+          desktop: [...langs],
+          h5: [...langs],
+          ios: [...langs],
+          android: [...langs],
+        };
+      }
+    }
+  } catch {
+    // 未登录或接口失败时继续尝试 brand-skin-config
+  }
+
   try {
     const saved = await getBrandSkinConfigApi();
     if (saved) {

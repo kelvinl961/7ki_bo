@@ -1,11 +1,15 @@
 import { defineConfig } from '@vben/vite-config';
 import type { ConfigEnv } from 'vite';
+import { loadEnv } from 'vite';
 import { resolve } from 'path';
 
 export default defineConfig(async (config?: ConfigEnv) => {
   const isBuild = config?.command === 'build';
-  // 开发环境下使用本地后端，生产环境下使用相对路径 /api 禁用 Preflight
-  const apiTarget = 'http://localhost:5000';
+  const mode = config?.mode ?? 'development';
+  const env = loadEnv(mode, process.cwd(), '');
+  // 开发：.env.development 的 VITE_DEV_API_PROXY_TARGET（如 https://277br.pangu6688.com）
+  const apiTarget =
+    env.VITE_DEV_API_PROXY_TARGET?.trim() || 'http://localhost:5000';
     
   return {
     application: {

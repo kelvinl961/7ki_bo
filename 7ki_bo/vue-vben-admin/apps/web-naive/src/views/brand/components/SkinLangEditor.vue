@@ -85,6 +85,54 @@
                   </div>
                 </n-radio-group>
               </n-form-item>
+
+              <div class="quick-color-block">
+                <div class="quick-color-title">快捷改色</div>
+                <div class="quick-color-grid">
+                <n-form-item label="主色" path="primaryColor">
+                  <n-color-picker
+                    v-model:value="formModel.primaryColor"
+                    :show-alpha="false"
+                    :disabled="detailMode"
+                  />
+                </n-form-item>
+                <n-form-item label="强调色" path="accentColor">
+                  <n-color-picker
+                    v-model:value="formModel.accentColor"
+                    :show-alpha="false"
+                    :disabled="detailMode"
+                  />
+                </n-form-item>
+                <n-form-item label="按钮色" path="buttonColor">
+                  <n-color-picker
+                    v-model:value="formModel.buttonColor"
+                    :show-alpha="false"
+                    :disabled="detailMode"
+                  />
+                </n-form-item>
+                <n-form-item label="主文字" path="textPrimary">
+                  <n-color-picker
+                    v-model:value="formModel.textPrimary"
+                    :show-alpha="false"
+                    :disabled="detailMode"
+                  />
+                </n-form-item>
+                <n-form-item label="次文字" path="textSecondary">
+                  <n-color-picker
+                    v-model:value="formModel.textSecondary"
+                    :show-alpha="false"
+                    :disabled="detailMode"
+                  />
+                </n-form-item>
+                <n-form-item label="点缀文字" path="textAccent">
+                  <n-color-picker
+                    v-model:value="formModel.textAccent"
+                    :show-alpha="false"
+                    :disabled="detailMode"
+                  />
+                </n-form-item>
+                </div>
+              </div>
             </div>
 
             <!-- Language Settings -->
@@ -245,6 +293,7 @@ import {
   NFormItem,
   NInput,
   NSelect,
+  NColorPicker,
   NRadio,
   NRadioGroup,
   NCheckbox,
@@ -336,6 +385,15 @@ const formModel = reactive<
   operator: '当前用户',
   updatedAt: new Date().toISOString(),
   backgroundImage: '',
+  primaryColor: '#0a1628',
+  secondaryColor: '#111f35',
+  tertiaryColor: '#162a45',
+  accentColor: '#2b6cb0',
+  borderColor: '#1e3a5f',
+  textPrimary: '#ffffff',
+  textSecondary: '#63b3ed',
+  textAccent: '#90cdf4',
+  buttonColor: '#3182ce',
 });
 
 // Preview setup - mobile only
@@ -481,8 +539,18 @@ watch(
   (newSkinColor) => {
     if (newSkinColor) {
       const colorValues = getSkinColorValues(newSkinColor);
+      const palette = getColorPaletteById(newSkinColor);
       formModel.skinColorRgb = colorValues.rgb;
       formModel.skinColorHex = colorValues.hex;
+      formModel.primaryColor = palette.primary;
+      formModel.secondaryColor = palette.secondary;
+      formModel.tertiaryColor = palette.tertiary;
+      formModel.accentColor = palette.accent;
+      formModel.borderColor = palette.borderColor;
+      formModel.textPrimary = palette.textPrimary;
+      formModel.textSecondary = palette.textSecondary;
+      formModel.textAccent = palette.textAccent;
+      formModel.buttonColor = palette.buttonColor;
     }
   },
   { immediate: true },
@@ -505,6 +573,7 @@ watch(
   () => props.editingItem,
   (newItem) => {
     if (newItem) {
+      const palette = getColorPaletteById(newItem.skinColor || '15');
       Object.assign(formModel, {
         ...newItem,
         templateType: 'main-site',
@@ -522,12 +591,22 @@ watch(
         skinColorHex:
           newItem.skinColorHex ||
           getSkinColorValues(newItem.skinColor || '15').hex,
+        primaryColor: newItem.primaryColor ?? palette.primary,
+        secondaryColor: newItem.secondaryColor ?? palette.secondary,
+        tertiaryColor: newItem.tertiaryColor ?? palette.tertiary,
+        accentColor: newItem.accentColor ?? palette.accent,
+        borderColor: newItem.borderColor ?? palette.borderColor,
+        textPrimary: newItem.textPrimary ?? palette.textPrimary,
+        textSecondary: newItem.textSecondary ?? palette.textSecondary,
+        textAccent: newItem.textAccent ?? palette.textAccent,
+        buttonColor: newItem.buttonColor ?? palette.buttonColor,
         backgroundImage:
           newItem.backgroundImage ??
           getDefaultBackgroundImage(newItem.skinColor || '') ??
           '',
       });
     } else {
+      const palette = getColorPaletteById('15');
       // Reset form for new item
       Object.assign(formModel, {
         brandId: 'BR' + Date.now().toString().slice(-6),
@@ -555,6 +634,15 @@ watch(
         operator: '当前用户',
         updatedAt: new Date().toISOString(),
         backgroundImage: '',
+        primaryColor: palette.primary,
+        secondaryColor: palette.secondary,
+        tertiaryColor: palette.tertiary,
+        accentColor: palette.accent,
+        borderColor: palette.borderColor,
+        textPrimary: palette.textPrimary,
+        textSecondary: palette.textSecondary,
+        textAccent: palette.textAccent,
+        buttonColor: palette.buttonColor,
       });
     }
   },
@@ -604,7 +692,7 @@ const handleSubmit = async () => {
     ];
     const uniqueLanguages = [...new Set(allLanguages)];
 
-    // Derive full color palette for the selected skin color
+    // Use manual edited colors first; fallback to selected skin palette
     const palette = getColorPaletteById(formModel.skinColor || '15');
     const generatedAt = new Date().toISOString();
 
@@ -626,24 +714,24 @@ const handleSubmit = async () => {
       skinColorRgb: formModel.skinColorRgb,
       skinColorHex: formModel.skinColorHex,
       // Persist full theme palette so layout/config APIs can reuse it
-      primaryColor: palette.primary,
-      secondaryColor: palette.secondary,
-      tertiaryColor: palette.tertiary,
-      accentColor: palette.accent,
-      borderColor: palette.borderColor,
+      primaryColor: formModel.primaryColor || palette.primary,
+      secondaryColor: formModel.secondaryColor || palette.secondary,
+      tertiaryColor: formModel.tertiaryColor || palette.tertiary,
+      accentColor: formModel.accentColor || palette.accent,
+      borderColor: formModel.borderColor || palette.borderColor,
       colorPalette: {
-        primary: palette.primary,
-        secondary: palette.secondary,
-        tertiary: palette.tertiary,
-        accent: palette.accent,
-        borderColor: palette.borderColor,
+        primary: formModel.primaryColor || palette.primary,
+        secondary: formModel.secondaryColor || palette.secondary,
+        tertiary: formModel.tertiaryColor || palette.tertiary,
+        accent: formModel.accentColor || palette.accent,
+        borderColor: formModel.borderColor || palette.borderColor,
         generated: true,
         generatedAt,
       },
-      textPrimary: palette.textPrimary,
-      textSecondary: palette.textSecondary,
-      textAccent: palette.textAccent,
-      buttonColor: palette.buttonColor,
+      textPrimary: formModel.textPrimary || palette.textPrimary,
+      textSecondary: formModel.textSecondary || palette.textSecondary,
+      textAccent: formModel.textAccent || palette.textAccent,
+      buttonColor: formModel.buttonColor || palette.buttonColor,
       // Persist background image (use default for Rolex绿 when empty)
       backgroundImage:
         formModel.backgroundImage ||
@@ -830,6 +918,26 @@ const handleClose = () => {
   margin: 0 0 12px 0;
   font-size: 14px;
   font-weight: 600;
+  color: #666;
+}
+
+.quick-color-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 16px;
+}
+
+.quick-color-block {
+  margin-top: 12px;
+  border: 1px solid #f0f0f0;
+  border-radius: 6px;
+  padding: 10px 12px 0;
+  background-color: #fafafa;
+}
+
+.quick-color-title {
+  margin-bottom: 6px;
+  font-size: 13px;
   color: #666;
 }
 

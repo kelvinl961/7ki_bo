@@ -306,6 +306,10 @@
             </n-card>
           </template>
         </SmartDataGrid>
+
+        <n-alert type="info" class="mt-3">
+          在这里点击每行「修改」后，可直接在弹窗内修改主色、强调色、按钮色、主文字、次文字、点缀文字。
+        </n-alert>
       </n-tab-pane>
     </n-tabs>
 
@@ -644,6 +648,7 @@ import {
   NBreadcrumbItem,
   NButton,
   NCard,
+  NAlert,
   NDataTable,
   NEmpty,
   NForm,

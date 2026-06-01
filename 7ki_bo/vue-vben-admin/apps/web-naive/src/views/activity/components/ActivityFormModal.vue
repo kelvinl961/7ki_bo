@@ -3680,12 +3680,12 @@
 
                   <!-- Member Participation -->
                   <div>
-                    <div class="mb-3 flex items-center gap-4">
+                    <div class="mb-3 flex flex-wrap items-center gap-2">
                       <span class="text-sm font-medium text-gray-700"
                         >参与会员:</span
                       >
                       <n-button
-                        v-for="level in memberLevels"
+                        v-for="level in memberLevelButtons"
                         :key="level.value"
                         :type="
                           formData.memberLevel === level.value
@@ -3693,40 +3693,46 @@
                             : 'default'
                         "
                         size="small"
+                        :disabled="memberTiersLoading"
                         @click="formData.memberLevel = level.value"
                         class="text-xs"
                       >
                         {{ level.label }}
                       </n-button>
                     </div>
-                    <n-checkbox-group v-model:value="formData.memberTags">
-                      <div class="grid grid-cols-4 gap-2">
-                        <n-checkbox value="default">默认等级</n-checkbox>
-                        <n-checkbox value="user">备用等级</n-checkbox>
-                        <n-checkbox value="five_yuan">五元玩家</n-checkbox>
-                        <n-checkbox value="ten_yuan">十元玩家</n-checkbox>
-                        <n-checkbox value="thirty_yuan">三十元玩家</n-checkbox>
-                        <n-checkbox value="fifty_yuan">五十元玩家</n-checkbox>
-                        <n-checkbox value="hundred_yuan">一百元玩家</n-checkbox>
-                        <n-checkbox value="three_hundred"
-                          >三百元玩家</n-checkbox
-                        >
-                        <n-checkbox value="three_thousand"
-                          >三千元玩家</n-checkbox
-                        >
-                        <n-checkbox value="five_thousand"
-                          >五千元玩家</n-checkbox
-                        >
-                        <n-checkbox value="ten_thousand">十万元玩家</n-checkbox>
-                        <n-checkbox value="hundred_thousand"
-                          >百万土豪</n-checkbox
-                        >
-                        <n-checkbox value="suspicion">可疑玩家</n-checkbox>
-                        <n-checkbox value="high_win">高胜率</n-checkbox>
-                        <n-checkbox value="test_user">测试专用</n-checkbox>
-                        <n-checkbox value="manual_add">手动出款</n-checkbox>
-                      </div>
-                    </n-checkbox-group>
+                    <div
+                      v-if="memberTiersLoading"
+                      class="text-sm text-gray-500"
+                    >
+                      加载会员层级中...
+                    </div>
+                    <div
+                      v-else-if="memberTierOptions.length === 0"
+                      class="text-sm text-gray-500"
+                    >
+                      暂无可用会员层级，请先在会员层级管理配置
+                    </div>
+                    <template v-else>
+                      <n-checkbox
+                        class="mb-2"
+                        :checked="allMemberTiersSelected"
+                        :indeterminate="memberTagsIndeterminate"
+                        @update:checked="onToggleAllMemberTiers"
+                      >
+                        全选
+                      </n-checkbox>
+                      <n-checkbox-group v-model:value="formData.memberTags">
+                        <div class="grid grid-cols-4 gap-2">
+                          <n-checkbox
+                            v-for="opt in memberTierOptions"
+                            :key="opt.id"
+                            :value="opt.id"
+                          >
+                            {{ opt.label }}
+                          </n-checkbox>
+                        </div>
+                      </n-checkbox-group>
+                    </template>
                   </div>
 
                   <!-- Platform Restrictions -->
@@ -4343,6 +4349,11 @@ import { useAppConfig } from '@vben/hooks';
 import { useAccessStore } from '@vben/stores';
 import { createActivity, updateActivityV2 } from '#/api/activity';
 import type { Activity, CreateActivityInput } from '#/api/activity';
+import { useActiveMemberTiers } from '#/composables/useActiveMemberTiers';
+import {
+  memberGroupsFromTierIds,
+  resolveMemberTierIdsFromConfig,
+} from '#/utils/activityMemberTier';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking modal load
 import { defineAsyncComponent } from 'vue';
 const MediaLibrarySelector = defineAsyncComponent(
@@ -4976,23 +4987,44 @@ const activityIcons = [
   { id: 'custom', label: '自定义' },
 ];
 
-const memberLevels = [
+const {
+  tierOptions: memberTierOptions,
+  allTierIds: allMemberTierIds,
+  loading: memberTiersLoading,
+  load: loadMemberTierOptions,
+} = useActiveMemberTiers();
+
+const memberLevelButtons = computed(() => [
   { label: '全部层级', value: 'all' },
-  { label: '备用层级', value: 'backup' },
-  { label: '五元玩家', value: 'five_yuan' },
-  { label: '十元玩家', value: 'ten_yuan' },
-  { label: '三千玩家', value: 'three_thousand' },
-  { label: '五千玩家', value: 'five_thousand' },
-  { label: '一万玩家', value: 'ten_thousand' },
-  { label: '三万玩家', value: 'thirty_thousand' },
-  { label: '五万玩家', value: 'fifty_thousand' },
-  { label: '十万玩家', value: 'hundred_thousand' },
-  { label: '百万土豪', value: 'millionaire' },
-  { label: '刷子玩家', value: 'brush' },
-  { label: '其他恶性...', value: 'other_bad' },
-  { label: '死半用户', value: 'dead_user' },
-  { label: '測试专用...', value: 'test_user' },
-];
+  ...memberTierOptions.value.map((tier) => ({
+    label: tier.label,
+    value: tier.id,
+  })),
+]);
+
+const allMemberTiersSelected = computed(
+  () =>
+    allMemberTierIds.value.length > 0 &&
+    allMemberTierIds.value.every((id) => formData.memberTags.includes(id)),
+);
+
+const memberTagsIndeterminate = computed(
+  () =>
+    formData.memberTags.length > 0 &&
+    !allMemberTiersSelected.value,
+);
+
+function onToggleAllMemberTiers(checked: boolean) {
+  formData.memberTags = checked ? [...allMemberTierIds.value] : [];
+}
+
+function applyMemberTierSelectionFromConfig(config: Record<string, unknown>) {
+  formData.memberLevel = String(config.memberScope || 'all');
+  formData.memberTags = resolveMemberTierIdsFromConfig(
+    config,
+    memberTierOptions.value,
+  );
+}
 
 const languages = [
   { code: 'zh-CN', name: '简体中文' },
@@ -5746,6 +5778,7 @@ const handleSubmit = async () => {
       // Restrictions & Conditions
       restrictions: formData.restrictions,
       memberTags: formData.memberTags,
+      memberGroups: memberGroupsFromTierIds(formData.memberTags),
       platformRestriction: formData.platformRestriction,
       withdrawalRestriction: formData.withdrawalRestriction,
       specifyChannel: formData.specifyChannel,
@@ -6989,14 +7022,16 @@ const newbiePromotionTypeOptions = [
 // Watch for modal show/hide to reset form
 watch(
   () => props.show,
-  (newShow) => {
+  async (newShow) => {
     if (!newShow) {
-      // Reset form when modal is closed
       resetFormData();
-    } else if (newShow && props.editingItem) {
-      // If modal opens with editing item, ensure data is loaded
-      // This handles the case where editingItem is set before show becomes true
-      console.log('🔍 Modal opened with editing item, triggering data load');
+      return;
+    }
+
+    await loadMemberTierOptions();
+
+    if (props.editingItem?.config) {
+      applyMemberTierSelectionFromConfig(props.editingItem.config);
     }
   },
 );
@@ -7211,8 +7246,7 @@ watch(
 
       // Load restrictions and conditions
       formData.restrictions = (newItem as any).config?.restrictions || [];
-      formData.memberLevel = (newItem as any).config?.memberScope || 'all';
-      formData.memberTags = (newItem as any).config?.memberTags || [];
+      applyMemberTierSelectionFromConfig((newItem as any).config || {});
       formData.platformRestriction =
         (newItem as any).config?.platformRestriction || 'no_limit';
       formData.withdrawalRestriction =

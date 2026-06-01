@@ -139,6 +139,8 @@ import {
   ACTIVITY_CATEGORIES,
   CURRENCY_OPTIONS,
 } from '#/api/activity';
+import { useActiveMemberTiers } from '#/composables/useActiveMemberTiers';
+import { formatActivityMemberParticipation } from '#/utils/activityMemberTier';
 // ✅ PERFORMANCE FIX: Lazy load modal components - they only load when modals are opened
 const ActivityDetailModal = defineAsyncComponent(
   () => import('./ActivityDetailModal.vue'),
@@ -148,6 +150,9 @@ const ActivityRecordModal = defineAsyncComponent(
 );
 
 const message = useMessage();
+
+const { tierOptions: memberTierOptions, load: loadMemberTierOptions } =
+  useActiveMemberTiers();
 
 // 响应式数据
 const loading = ref(false);
@@ -246,69 +251,10 @@ const columns = computed<DataTableColumns<Activity>>(() => [
     key: 'memberScope',
     width: 120,
     render: (row) => {
-      // ✅ Map member scope values to Chinese labels (same as ActivityList)
-      const memberScopeMap: Record<string, string> = {
-        all: '全部会员',
-        five_yuan: '五元玩家',
-        ten_yuan: '十元玩家',
-        thirty_yuan: '三十元玩家',
-        fifty_yuan: '五十元玩家',
-        hundred_yuan: '一百元玩家',
-        three_hundred: '三百元玩家',
-        three_thousand: '三千元玩家',
-        five_thousand: '五千元玩家',
-        ten_thousand: '十万元玩家',
-        hundred_thousand: '百万土豪',
-        default: '默认等级',
-        user: '备用等级',
-        suspicion: '可疑玩家',
-        high_win: '高胜率',
-        test_user: '测试专用',
-        manual_add: '手动出款',
-        全部会员: '全部会员', // Already in Chinese
-        VIP会员: 'VIP会员',
-        新用户: '新用户',
-        老用户: '老用户',
+      const config = (row as any).config || {
+        memberScope: row.memberScope,
       };
-
-      const memberScope = row.memberScope;
-
-      // Handle empty/null/undefined
-      if (!memberScope) {
-        return '全部会员';
-      }
-
-      // Handle string values
-      if (typeof memberScope === 'string') {
-        // Check if it's already in Chinese
-        if (memberScopeMap[memberScope]) {
-          return memberScopeMap[memberScope];
-        }
-
-        // Handle comma-separated values (multiple tags)
-        if (memberScope.includes(',')) {
-          const tags = memberScope.split(',').map((tag) => tag.trim());
-          const translatedTags = tags.map((tag) => memberScopeMap[tag] || tag);
-          return translatedTags.join(', ');
-        }
-
-        // Return as-is if not found in map
-        return memberScope;
-      }
-
-      // Handle arrays
-      if (Array.isArray(memberScope)) {
-        if (memberScope.length === 0) {
-          return '全部会员';
-        }
-        const translatedTags = memberScope.map(
-          (tag) => memberScopeMap[tag] || tag,
-        );
-        return translatedTags.join(', ');
-      }
-
-      // Fallback
-      return '全部会员';
+      return formatActivityMemberParticipation(config, memberTierOptions.value);
     },
   },
   {
@@ -572,6 +518,7 @@ const handleSorterChange = (sorter: any) => {
 
 // 初始化
 onMounted(() => {
+  loadMemberTierOptions();
   fetchActivityList();
 });
 </script>

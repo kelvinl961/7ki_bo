@@ -89,7 +89,7 @@
             </n-descriptions-item>
 
             <n-descriptions-item label="参与会员">
-              {{ getMemberScopeText(mappedActivity.memberScope) }}
+              {{ memberParticipationText }}
             </n-descriptions-item>
 
             <n-descriptions-item label="赠送金额">
@@ -373,7 +373,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import {
   NModal,
   NTabs,
@@ -400,6 +400,8 @@ import {
   CheckmarkCircleOutline,
 } from '@vicons/ionicons5';
 import type { Activity } from '#/api/activity';
+import { useActiveMemberTiers } from '#/composables/useActiveMemberTiers';
+import { formatActivityMemberParticipation } from '#/utils/activityMemberTier';
 
 // Props & Emits
 interface Props {
@@ -417,6 +419,19 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<Emits>();
+
+const { tierOptions: memberTierOptions, load: loadMemberTierOptions } =
+  useActiveMemberTiers();
+
+watch(
+  () => props.show,
+  (open) => {
+    if (open) {
+      loadMemberTierOptions();
+    }
+  },
+  { immediate: true },
+);
 
 // 响应式数据
 const modalShow = computed({
@@ -481,6 +496,16 @@ const mappedActivity = computed(() => {
       config.lastModifiedBy ||
       '系统',
   };
+});
+
+const memberParticipationText = computed(() => {
+  if (!props.activity) return '全部会员';
+
+  const config = props.activity.config || {
+    memberScope: props.activity.memberScope,
+  };
+
+  return formatActivityMemberParticipation(config, memberTierOptions.value);
 });
 
 // 工具函数
@@ -649,59 +674,6 @@ const getTypeText = (type: string) => {
     custom: '自定义',
   };
   return typeMap[type] || type || '未知类型';
-};
-
-// ✅ Map member scope to Chinese
-const getMemberScopeText = (memberScope: string | string[] | undefined) => {
-  const memberScopeMap: Record<string, string> = {
-    all: '全部会员',
-    five_yuan: '五元玩家',
-    ten_yuan: '十元玩家',
-    thirty_yuan: '三十元玩家',
-    fifty_yuan: '五十元玩家',
-    hundred_yuan: '一百元玩家',
-    three_hundred: '三百元玩家',
-    three_thousand: '三千元玩家',
-    five_thousand: '五千元玩家',
-    ten_thousand: '十万元玩家',
-    hundred_thousand: '百万土豪',
-    default: '默认等级',
-    user: '备用等级',
-    suspicion: '可疑玩家',
-    high_win: '高胜率',
-    test_user: '测试专用',
-    manual_add: '手动出款',
-    全部会员: '全部会员',
-    VIP会员: 'VIP会员',
-    新用户: '新用户',
-    老用户: '老用户',
-  };
-
-  if (!memberScope) {
-    return '全部会员';
-  }
-
-  if (typeof memberScope === 'string') {
-    if (memberScopeMap[memberScope]) {
-      return memberScopeMap[memberScope];
-    }
-    if (memberScope.includes(',')) {
-      const tags = memberScope.split(',').map((tag) => tag.trim());
-      const translatedTags = tags.map((tag) => memberScopeMap[tag] || tag);
-      return translatedTags.join(', ');
-    }
-    return memberScope;
-  }
-
-  if (Array.isArray(memberScope)) {
-    if (memberScope.length === 0) {
-      return '全部会员';
-    }
-    const translatedTags = memberScope.map((tag) => memberScopeMap[tag] || tag);
-    return translatedTags.join(', ');
-  }
-
-  return '全部会员';
 };
 
 // ✅ Map platform to Chinese

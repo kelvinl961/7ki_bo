@@ -204,8 +204,10 @@ async function loadMerchantScopeOptions() {
     merchantScopeOptions.value = [
       { label: '全部商户', value: 'all' },
       ...items.map((item: any) => ({
-        label: item.label || `${item.name} (${item.merchantId})`,
-        value: item.value || item.merchantId,
+        label:
+          item.label ||
+          `${item.name || item.displayName || 'Unknown'} (${item.merchantId || item.siteCode || item.value || '-'})`,
+        value: item.value || item.merchantId || item.siteCode,
       })),
     ];
   } catch (error) {

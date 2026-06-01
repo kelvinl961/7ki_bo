@@ -64,6 +64,10 @@ export interface WithdrawalSettings {
   afterSuccessfulWithdrawRetryMessage?: string;
   /** 成功充值后最多可绑定提现账号数（0=不启用本项） */
   maxWithdrawalAccountsAfterDeposit?: number;
+  /** 启用提现邮箱域名黑名单（PIX EMAIL 绑定） */
+  enableWithdrawalEmailDomainRestriction?: boolean;
+  /** 禁止绑定的邮箱域名，如 yahoo.com */
+  blockedWithdrawalEmailDomains?: string[];
 
   // === DIGITAL CURRENCY ===
   // Member Currency

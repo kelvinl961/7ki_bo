@@ -617,8 +617,9 @@ async function handleSubmit() {
           frontendNote: r.frontendNote,
           backendNote: r.backendNote,
         };
-        if (r.doubleRewardMultiplier) {
-          m.doubleRewardMultiplier = parseFloat(r.doubleRewardMultiplier);
+        const parsedDoubleRewardMultiplier = parseFloat(r.doubleRewardMultiplier);
+        if (!Number.isNaN(parsedDoubleRewardMultiplier) && parsedDoubleRewardMultiplier > 0) {
+          m.doubleRewardMultiplier = parsedDoubleRewardMultiplier;
           m.doubleAuditMultiplier = parseFloat(r.doubleAuditMultiplier) || 1;
         }
         return m;

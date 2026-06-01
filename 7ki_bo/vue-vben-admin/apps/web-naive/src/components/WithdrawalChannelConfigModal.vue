@@ -33,13 +33,22 @@
         >
           <n-grid :cols="2" :x-gap="24">
             <n-form-item-gi label="允许绑定PIX类型" path="pixTypes">
-              <n-space>
-                <n-checkbox
-                  v-for="t in pixTypeOptions"
-                  :key="t.value"
-                  v-model:checked="basicFormData.pixTypesMap[t.value]"
-                  >{{ t.label }}</n-checkbox
+              <n-space vertical>
+                <n-space>
+                  <n-checkbox
+                    v-for="t in pixTypeOptions"
+                    :key="t.value"
+                    v-model:checked="basicFormData.pixTypesMap[t.value]"
+                    >{{ t.label }}</n-checkbox
+                  >
+                </n-space>
+                <n-text
+                  v-if="basicFormData.pixTypesMap.EMAIL"
+                  depth="3"
+                  style="font-size: 12px"
                 >
+                  EMAIL 绑定的域名限制请在「提现设置 → 业务规则 → 账号限制 → 提现邮箱域名限制」中配置。
+                </n-text>
               </n-space>
             </n-form-item-gi>
             <n-form-item-gi label="允许绑定PIX账号数量" path="allowBindCount">
@@ -481,6 +490,7 @@ import {
   NRadio,
   NInput,
   NSwitch,
+  NText,
   useMessage,
   type FormInst,
   type FormRules,

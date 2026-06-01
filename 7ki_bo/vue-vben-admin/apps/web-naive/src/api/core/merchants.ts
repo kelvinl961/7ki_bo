@@ -13,7 +13,15 @@ export interface MerchantItem {
 }
 
 export async function getMerchantScopeOptionsApi() {
-  return requestClient.get('/merchants/scope-options');
+  try {
+    return await requestClient.get('/merchants/scope-options');
+  } catch (error: any) {
+    // Some environments expose site-based scope endpoint only.
+    if (error?.response?.status === 404) {
+      return requestClient.get('/sites/scope-options');
+    }
+    throw error;
+  }
 }
 
 export async function getMerchantsApi(params?: Record<string, any>) {

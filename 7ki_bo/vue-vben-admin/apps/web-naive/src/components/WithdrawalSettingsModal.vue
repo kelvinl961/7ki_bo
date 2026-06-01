@@ -584,6 +584,26 @@
                     说明: 不勾选表示不限制
                   </n-text>
                 </n-form-item>
+
+                <n-form-item
+                  label="提现邮箱域名限制"
+                  path="blockedWithdrawalEmailDomains"
+                >
+                  <n-space vertical style="width: 100%">
+                    <n-checkbox
+                      v-model:checked="formData.enableWithdrawalEmailDomainRestriction"
+                    >
+                      启用邮箱域名黑名单（仅作用于 EMAIL 类型提现账号绑定）
+                    </n-checkbox>
+                    <n-input
+                      v-model:value="blockedDomainsText"
+                      type="textarea"
+                      placeholder="每行一个域名，例如：&#10;yahoo.com&#10;hotmail.com"
+                      :autosize="{ minRows: 3, maxRows: 8 }"
+                      :disabled="!formData.enableWithdrawalEmailDomainRestriction"
+                    />
+                  </n-space>
+                </n-form-item>
               </div>
             </n-form>
           </div>
@@ -809,7 +829,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch } from 'vue';
+import { ref, reactive, watch, computed } from 'vue';
 import {
   NModal,
   NTabs,
@@ -888,6 +908,8 @@ interface WithdrawalSettings {
   showCompleteLimits: boolean;
   /** 已成功充值用户最多可绑定提现账号数（0=不启用） */
   maxWithdrawalAccountsAfterDeposit: number;
+  enableWithdrawalEmailDomainRestriction: boolean;
+  blockedWithdrawalEmailDomains: string[];
   blacklistLevel: string;
   allowedDigitalCurrencies: Record<string, boolean>;
   firstWithdrawalRules: Array<{
@@ -1014,6 +1036,8 @@ const defaultFormData: WithdrawalSettings = {
   reviewNotificationEnabled: true,
   showCompleteLimits: false,
   maxWithdrawalAccountsAfterDeposit: 0,
+  enableWithdrawalEmailDomainRestriction: false,
+  blockedWithdrawalEmailDomains: [] as string[],
   blacklistLevel: '',
   allowedDigitalCurrencies: {
     USDT_TRC20: false,
@@ -1033,6 +1057,37 @@ const defaultFormData: WithdrawalSettings = {
 };
 
 const formData = reactive<WithdrawalSettings>({ ...defaultFormData });
+
+function normalizeDomainList(raw: unknown): string[] {
+  if (!raw) return [];
+  if (Array.isArray(raw)) {
+    return [
+      ...new Set(
+        raw
+          .map((item) =>
+            String(item)
+              .trim()
+              .toLowerCase()
+              .replace(/^@+/, ''),
+          )
+          .filter(Boolean),
+      ),
+    ];
+  }
+  if (typeof raw === 'string') {
+    return normalizeDomainList(raw.split(/[\n,;]+/));
+  }
+  return [];
+}
+
+const blockedDomainsText = computed({
+  get: () => (formData.blockedWithdrawalEmailDomains || []).join('\n'),
+  set: (value: string) => {
+    formData.blockedWithdrawalEmailDomains = normalizeDomainList(
+      value.split(/[\n,;]+/),
+    );
+  },
+});
 
 // Drag and drop state
 const isDragging = ref(false);
@@ -1135,6 +1190,12 @@ function applyServerDataToForm(raw: Record<string, any> | null | undefined) {
     restrictFirstDepositAccount: Boolean(d.restrictFirstDepositAccount),
     restrictFirstWithdrawalAccount: Boolean(d.restrictFirstWithdrawalAccount),
     restrictBankCardBinding: Boolean(d.restrictBankCardBinding),
+    enableWithdrawalEmailDomainRestriction: Boolean(
+      d.enableWithdrawalEmailDomainRestriction,
+    ),
+    blockedWithdrawalEmailDomains: normalizeDomainList(
+      d.blockedWithdrawalEmailDomains,
+    ),
   });
 }
 

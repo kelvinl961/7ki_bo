@@ -204,8 +204,10 @@ async function loadSiteScopeOptions() {
     siteScopeOptions.value = [
       { label: '全部站点', value: 'all' },
       ...items.map((item: any) => ({
-        label: item.label || `${item.displayName} (${item.siteCode})`,
-        value: item.value || item.siteCode,
+        label:
+          item.label ||
+          `${item.displayName || item.name || 'Unknown'} (${item.siteCode || item.merchantId || item.value || '-'})`,
+        value: item.value || item.siteCode || item.merchantId,
       })),
     ];
   } catch (error) {

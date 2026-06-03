@@ -634,6 +634,7 @@ import {
   updateBrandSkinLangConfig,
   deleteBrandSkinLangConfig,
   getLayoutStyleLabel,
+  getSkinTemplateDisplayLabel,
   LAYOUT_STYLE_OPTIONS,
   type BrandSkinLangConfig,
   type BrandSkinLangFilters,
@@ -1232,7 +1233,11 @@ const skinLangColumns: DataTableColumns<BrandSkinLangConfig> = [
     key: 'skinTemplate',
     width: 120,
     render(row) {
-      return h('span', { class: 'font-medium' }, row.skinTemplate);
+      return h(
+        'span',
+        { class: 'font-medium' },
+        getSkinTemplateDisplayLabel(row.skinTemplate, row.skinStyle),
+      );
     },
   },
   {

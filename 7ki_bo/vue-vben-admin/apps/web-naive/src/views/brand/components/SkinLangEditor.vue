@@ -333,7 +333,7 @@
             <div class="preview-info">
               <div class="preview-meta">
                 <n-tag size="small" type="success">{{
-                  formModel.skinStyle
+                  getLayoutStyleLabel(formModel.skinStyle, formModel.skinTemplate)
                 }}</n-tag>
                 <n-tag size="small" type="warning">{{
                   formModel.gameColor
@@ -399,6 +399,10 @@ import {
   LAYOUT_STYLE_OPTIONS,
   isLayoutStyleValue,
   normalizeSkinStyleForForm,
+  resolveBrandIconForPreview,
+  resolveSkinTemplateForForm,
+  resolveSkinTemplateForSave,
+  getLayoutStyleLabel,
   type BrandSkinLangConfig,
   type BrandSkinLangCreateRequest,
 } from '#/api/skinLang';
@@ -499,7 +503,9 @@ function selectLobbyPattern(tab: 'light' | 'dark', url: string) {
 // Preview setup - mobile only
 const previewConfig = reactive({
   template: computed(() => formModel.skinTemplate),
-  brandIcon: computed(() => formModel.brandIcon),
+  brandIcon: computed(() =>
+    resolveBrandIconForPreview(formModel.brandIcon || formModel.skinTemplate),
+  ),
   gameColor: computed(() => formModel.gameColor),
   skinColor: computed(() => formModel.skinColor || '15'),
   language: computed(() => formModel.clientLanguages.desktop[0] || 'zh-CN'),
@@ -898,6 +904,15 @@ watch(
   { immediate: true },
 );
 
+watch(
+  () => formModel.skinStyle,
+  (style) => {
+    if (isLayoutStyleValue(style)) {
+      formModel.skinTemplate = style;
+    }
+  },
+);
+
 // Watch for form changes to update preview
 watch(
   () => [
@@ -953,8 +968,10 @@ const handleSubmit = async () => {
       channelType: formModel.channelType,
       skinStyle: formModel.skinStyle,
       gameColor: formModel.gameColor,
-      /** 客户端大厅版式读 skinTemplate；与版式风格一致 */
-      skinTemplate: formModel.skinStyle,
+      skinTemplate: resolveSkinTemplateForSave(
+        formModel.skinStyle,
+        formModel.skinTemplate,
+      ),
       templateType: formModel.templateType,
       effectiveTimeMode: formModel.effectiveTimeMode,
       effectiveTime:

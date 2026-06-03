@@ -26,7 +26,6 @@
     "#/*": "./src/*"
   },
   "dependencies": {
-    "@tinymce/tinymce-vue": "^6.3.0",
     "@vben/access": "workspace:*",
     "@vben/common-ui": "workspace:*",
     "@vben/constants": "workspace:*",
@@ -46,7 +45,6 @@
     "dayjs": "catalog:",
     "naive-ui": "catalog:",
     "pinia": "catalog:",
-    "tinymce": "^8.0.1",
     "vue": "catalog:",
     "vue-router": "catalog:",
     "xe-utils": "^3.7.9",

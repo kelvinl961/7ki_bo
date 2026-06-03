@@ -84,21 +84,34 @@
 
         <!-- Data Table -->
         <div
-          v-else-if="tableData && tableData.length > 0"
+          v-else-if="reportData.length > 0 || totalData"
           class="table-wrapper"
         >
           <n-data-table
             :columns="columns"
-            :data="tableData"
+            :data="tableBodyData"
             :loading="loading"
-            :pagination="paginationConfig"
+            :pagination="false"
             :bordered="true"
             :scroll-x="scrollXWidth"
+            :max-height="opsTableMaxHeight"
+            :summary="operationsTableSummary"
             size="small"
-            :row-class-name="getRowClassName"
             class="operations-report-table"
-            style="width: 100%; min-width: max-content"
           />
+          <div class="ops-table-pagination">
+            <n-pagination
+              size="small"
+              :page="paginationPage"
+              :page-size="paginationPageSize"
+              :item-count="reportData.length"
+              :page-sizes="[20, 40, 50, 100]"
+              show-size-picker
+              :prefix="paginationPrefix"
+              @update:page="onPaginationPageChange"
+              @update:page-size="onPaginationPageSizeChange"
+            />
+          </div>
         </div>
 
         <!-- Empty State -->
@@ -110,7 +123,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, h, watch } from 'vue';
-import { useRouter } from 'vue-router';
 import {
   NCard,
   NForm,
@@ -125,7 +137,9 @@ import {
   NRadioGroup,
   NRadioButton,
   NSpace,
+  NPagination,
   type DataTableColumns,
+  type DataTableCreateSummary,
 } from 'naive-ui';
 import { useMessage } from 'naive-ui';
 import { getDailyOperationsReport } from '#/api/operationsStatistics';
@@ -137,7 +151,6 @@ import {
 } from '#/utils/timezoneUtils';
 
 const message = useMessage();
-const router = useRouter();
 
 // Reactive data
 const loading = ref(false);
@@ -148,24 +161,62 @@ const totalData = ref<any>(null);
 
 // Pagination state
 const paginationPage = ref(1);
-const paginationPageSize = ref(20);
+const paginationPageSize = ref(40);
 
-// Computed: combine reportData and totalData, with pagination
-const tableData = computed(() => {
+// Paginated body rows only (总计 via table :summary)
+const tableBodyData = computed(() => {
   if (!reportData.value || reportData.value.length === 0) return [];
 
-  // Apply pagination to reportData (exclude total row from pagination)
   const startIndex = (paginationPage.value - 1) * paginationPageSize.value;
   const endIndex = startIndex + paginationPageSize.value;
-  const paginatedData = reportData.value.slice(startIndex, endIndex);
-
-  // Append total row at the end (always show total)
-  if (totalData.value) {
-    return [...paginatedData, { ...(totalData.value as any), isTotal: true }];
-  }
-
-  return paginatedData;
+  return reportData.value.slice(startIndex, endIndex);
 });
+
+/** Full dataset + 总计 for Excel export */
+const exportTableData = computed(() => {
+  const rows = [...reportData.value];
+  if (totalData.value) {
+    rows.push({
+      ...(totalData.value as any),
+      isTotal: true,
+      date: totalData.value.date || '总计',
+    });
+  }
+  return rows;
+});
+
+/** ~7 data rows + header + 总计 summary inside one table scroll area */
+const OPS_TABLE_VISIBLE_DATA_ROWS = 7;
+const OPS_TABLE_HEADER_PX = 76;
+const OPS_TABLE_ROW_PX = 34;
+const OPS_TABLE_SUMMARY_ROW_PX = 36;
+
+const opsTableMaxHeight = computed(
+  () =>
+    OPS_TABLE_HEADER_PX +
+    OPS_TABLE_VISIBLE_DATA_ROWS * OPS_TABLE_ROW_PX +
+    OPS_TABLE_SUMMARY_ROW_PX,
+);
+
+const paginationPrefix = (info: { itemCount?: number }) =>
+  `共 ${info.itemCount ?? 0} 条`;
+
+function scrollOpsTableToTop() {
+  const scrollEl = document.querySelector(
+    '.operations-report-table .n-scrollbar-container',
+  ) as HTMLElement | null;
+  scrollEl?.scrollTo({ top: 0 });
+}
+
+function onPaginationPageChange(page: number) {
+  paginationPage.value = page;
+  scrollOpsTableToTop();
+}
+
+function onPaginationPageSizeChange(pageSize: number) {
+  paginationPageSize.value = pageSize;
+  paginationPage.value = 1;
+}
 
 // Form data
 const timeGranularity = ref('day');
@@ -199,28 +250,6 @@ const currencyOptions = [
   { label: 'USD', value: 'USD' },
   { label: 'EUR', value: 'EUR' },
 ];
-
-// Pagination config with reactive handlers
-const paginationConfig = computed(() => ({
-  page: paginationPage.value,
-  pageSize: paginationPageSize.value,
-  showSizePicker: true,
-  pageSizes: [10, 20, 50, 100],
-  itemCount: reportData.value?.length || 0,
-  prefix: (info: { itemCount?: number }) => `共 ${info.itemCount || 0} 条`,
-  onUpdatePage: (page: number) => {
-    paginationPage.value = page;
-    // Scroll to top of table when page changes
-    const tableElement = document.querySelector('.operations-report-table');
-    if (tableElement) {
-      tableElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  },
-  onUpdatePageSize: (pageSize: number) => {
-    paginationPageSize.value = pageSize;
-    paginationPage.value = 1; // Reset to first page when page size changes
-  },
-}));
 
 // Calculate dynamic scroll width based on columns
 const scrollXWidth = computed(() => {
@@ -502,9 +531,48 @@ const dateShortcuts = computed(() => {
   return {};
 });
 
-// Row class name for styling total row
-const getRowClassName = (row: any) => {
-  return row.isTotal ? 'total-row' : '';
+function walkLeafColumns(
+  cols: DataTableColumns,
+  visitor: (col: Record<string, any>) => void,
+) {
+  for (const col of cols as Record<string, any>[]) {
+    if (col.children?.length) {
+      walkLeafColumns(col.children, visitor);
+    } else {
+      visitor(col);
+    }
+  }
+}
+
+/** Bottom 总计 row — single table, no duplicate header */
+const operationsTableSummary: DataTableCreateSummary = () => {
+  const total = totalData.value;
+  if (!total) return {};
+
+  const summaryRow = {
+    ...(total as Record<string, any>),
+    isTotal: true,
+    date: '总计',
+  };
+  const summary: Record<string, { value: unknown }> = {};
+
+  walkLeafColumns(columns.value, (col) => {
+    const key = col.key as string;
+    if (!key) return;
+    if (key === 'date') {
+      summary[key] = {
+        value: h('span', { style: { fontWeight: 'bold' } }, '总计'),
+      };
+      return;
+    }
+    if (col.render) {
+      summary[key] = { value: col.render(summaryRow) };
+      return;
+    }
+    summary[key] = { value: summaryRow[key] ?? '' };
+  });
+
+  return summary;
 };
 
 // Helper function to render numeric cell
@@ -546,53 +614,11 @@ const renderNumericCell = (
   );
 };
 
-const toNumber = (value: unknown): number => {
-  if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
-  if (typeof value === 'string' && value.trim() !== '') {
-    const parsed = Number(value);
-    return Number.isFinite(parsed) ? parsed : 0;
-  }
-  return 0;
-};
-
-const getFirstDepositPerCapita = (row: any): number => {
-  // Prefer backend-calculated values when present.
-  if (row?.firstDepositPerCapita !== undefined && row?.firstDepositPerCapita !== null) {
-    return toNumber(row.firstDepositPerCapita);
-  }
-  if (
-    row?.firstDepositAvgAmount !== undefined &&
-    row?.firstDepositAvgAmount !== null
-  ) {
-    return toNumber(row.firstDepositAvgAmount);
-  }
-
-  const firstDepositAmount = toNumber(row?.firstDepositAmount);
-  const firstDepositCount = toNumber(row?.firstDeposits);
-
-  // Exclude manual-approved first deposits when backend provides dedicated fields.
-  const manualFirstDepositAmount =
-    toNumber(row?.manualFirstDepositAmount) +
-    toNumber(row?.manualApprovedFirstDepositAmount) +
-    toNumber(row?.manualApproveFirstDepositAmount);
-  const manualFirstDepositCount =
-    toNumber(row?.manualFirstDepositCount) +
-    toNumber(row?.manualApprovedFirstDepositCount) +
-    toNumber(row?.manualApproveFirstDepositCount);
-
-  const adjustedAmount = Math.max(0, firstDepositAmount - manualFirstDepositAmount);
-  const adjustedCount = Math.max(0, firstDepositCount - manualFirstDepositCount);
-
-  if (adjustedCount <= 0) return 0;
-  return adjustedAmount / adjustedCount;
-};
-
 // Helper function to check if a column category has any non-zero data
 const hasDataForCategory = (keys: string[]): boolean => {
-  if (!tableData.value || tableData.value.length === 0) return false;
+  if (!reportData.value || reportData.value.length === 0) return false;
 
-  // Check all rows (excluding total row) for any non-zero values
-  const dataRows = tableData.value.filter((row: any) => !row.isTotal);
+  const dataRows = reportData.value;
   if (dataRows.length === 0) return false;
 
   return keys.some((key) => {
@@ -674,7 +700,7 @@ const columns = computed<DataTableColumns>(() => {
           width: 100,
           sorter: true,
           render: (row: any) =>
-            renderNumericCell(row, 'newAgents', true, true), // isCount
+            renderNumericCell(row, 'newAgents', false, true), // isCount
         },
         {
           title: '注册',
@@ -713,16 +739,6 @@ const columns = computed<DataTableColumns>(() => {
           width: 120,
           sorter: true,
           render: (row: any) => renderNumericCell(row, 'firstDepositAmount'),
-        },
-        {
-          title: '首冲人均金额',
-          key: 'firstDepositPerCapita',
-          width: 130,
-          sorter: true,
-          render: (row: any) => {
-            const value = getFirstDepositPerCapita(row);
-            return h('span', {}, value.toFixed(2));
-          },
         },
         {
           title: '充值总额',
@@ -779,38 +795,6 @@ const columns = computed<DataTableColumns>(() => {
           sorter: true,
           render: (row: any) =>
             renderNumericCell(row, 'withdrawalCount', false, true), // isCount
-        },
-        {
-          title: '未充值出款人数',
-          key: 'unfundedWithdrawUserCount',
-          width: 130,
-          sorter: true,
-          render: (row: any) =>
-            renderNumericCell(row, 'unfundedWithdrawUserCount', true, true),
-        },
-        {
-          title: '已充值出款人数',
-          key: 'fundedWithdrawUserCount',
-          width: 130,
-          sorter: true,
-          render: (row: any) =>
-            renderNumericCell(row, 'fundedWithdrawUserCount', true, true),
-        },
-        {
-          title: '未充值出款总额',
-          key: 'unfundedWithdrawAmount',
-          width: 130,
-          sorter: true,
-          render: (row: any) =>
-            renderNumericCell(row, 'unfundedWithdrawAmount', true),
-        },
-        {
-          title: '已充值出款总额',
-          key: 'fundedWithdrawAmount',
-          width: 130,
-          sorter: true,
-          render: (row: any) =>
-            renderNumericCell(row, 'fundedWithdrawAmount', true),
         },
         {
           title: '充提差额',
@@ -1284,99 +1268,10 @@ const columns = computed<DataTableColumns>(() => {
   return baseColumns;
 });
 
-/** 报表行日期（YYYY-MM-DD）在 currentTimezone 下当天起止时间戳，用于下钻筛选 */
-function getRowTimezoneDayRangeMs(row: any): [number, number] | null {
-  if (!row || row.isTotal) return null;
-  const s = row.date;
-  if (!s || typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return null;
-  const parts = s.split('-').map((x) => parseInt(x, 10));
-  const y = parts[0]!;
-  const m = parts[1]!;
-  const d = parts[2]!;
-  const tz = currentTimezone.value;
-  const start = convertTimezoneToUTC(y, m, d, 0, 0, 0, tz);
-  const end = convertTimezoneToUTC(y, m, d, 23, 59, 59, tz);
-  return [start.getTime(), end.getTime()];
-}
-
-// Handle cell click for drill-down functionality（下钻使用与报表相同的 header 时区，默认巴西）
+// Handle cell click for drill-down functionality
 const handleCellClick = (field: string, row: any) => {
-  const range = getRowTimezoneDayRangeMs(row);
-  if (!range) return;
-  const [startMs, endMs] = range;
-  const rowCurrency =
-    typeof row.currency === 'string' && row.currency ? row.currency : currency.value;
-
-  switch (field) {
-    case 'newAgents':
-      void router.push({
-        path: '/agency/agent-list',
-        query: {
-          agentDateStart: String(startMs),
-          agentDateEnd: String(endMs),
-        },
-      });
-      break;
-    case 'registrations':
-      void router.push({
-        path: '/user-management/all-members',
-        query: {
-          opsDrill: '1',
-          opsTimeType: 'registrationTime',
-          opsDateStart: String(startMs),
-          opsDateEnd: String(endMs),
-        },
-      });
-      break;
-    case 'firstDeposits':
-      void router.push({
-        path: '/user-management/all-members',
-        query: {
-          opsDrill: '1',
-          opsTimeType: 'firstDepositTime',
-          opsDateStart: String(startMs),
-          opsDateEnd: String(endMs),
-        },
-      });
-      break;
-    case 'totalWithdrawalAmount':
-      void router.push({
-        path: '/finance/withdraw-management',
-        query: {
-          tab: 'all-withdrawals',
-          opsDateStart: String(startMs),
-          opsDateEnd: String(endMs),
-          opsCurrency: rowCurrency,
-        },
-      });
-      break;
-    case 'unfundedWithdrawUserCount':
-      void router.push({
-        path: '/finance/withdraw-management',
-        query: {
-          tab: 'all-withdrawals',
-          opsDateStart: String(startMs),
-          opsDateEnd: String(endMs),
-          opsCurrency: rowCurrency,
-          opsFunding: 'unfunded',
-        },
-      });
-      break;
-    case 'fundedWithdrawUserCount':
-      void router.push({
-        path: '/finance/withdraw-management',
-        query: {
-          tab: 'all-withdrawals',
-          opsDateStart: String(startMs),
-          opsDateEnd: String(endMs),
-          opsCurrency: rowCurrency,
-          opsFunding: 'funded',
-        },
-      });
-      break;
-    default:
-      break;
-  }
+  console.log(`Clicked ${field} for date ${row.date}`);
+  // TODO: Implement drill-down navigation
 };
 
 // Handle time granularity change
@@ -1628,7 +1523,7 @@ const exportToExcel = async () => {
     return;
   }
 
-  if (!tableData.value || tableData.value.length === 0) {
+  if (!exportTableData.value || exportTableData.value.length === 0) {
     message.warning('没有数据可导出，请先搜索数据');
     return;
   }
@@ -1646,11 +1541,10 @@ const exportToExcel = async () => {
     const filename = `日运营报表_${startDateStr}_至_${endDateStr}`;
 
     // Use the reusable export utility with table columns and data
-    await exportGridData(columns.value as any, tableData.value, {
+    await exportGridData(columns.value as any, exportTableData.value, {
       filename,
       sheetName: '日运营报表',
       format: 'xlsx',
-      message,
     });
   } catch (err) {
     console.error('Export error:', err);
@@ -1733,11 +1627,22 @@ onUnmounted(() => {
   justify-content: flex-end !important;
 }
 
-/* Total row styling */
-.operations-report-table :deep(.total-row .n-data-table-td) {
-  background-color: #fafafa !important;
+.ops-table-pagination {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 10px;
+}
+
+/* 总计行贴在表格滚动区底部（与 SiteBillDetailPanel 相同做法） */
+.operations-report-table
+  :deep(tr.n-data-table-tr--summary td.n-data-table-td) {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  background-color: #f5f5f5 !important;
   font-weight: bold;
-  border-top: 2px solid #d9d9d9;
+  border-top: 2px solid #bfbfbf;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
 }
 
 /* Clickable cells */
@@ -1761,56 +1666,9 @@ onUnmounted(() => {
   border: 1px solid #d9d9d9;
 }
 
-/* Fix scrollbar visibility and functionality */
 .table-wrapper {
   position: relative;
   width: 100%;
-  overflow-x: auto;
-  overflow-y: visible;
-  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-}
-
-/* Custom scrollbar styling for better visibility */
-.table-wrapper::-webkit-scrollbar {
-  height: 12px;
-  width: 12px;
-}
-
-.table-wrapper::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 6px;
-}
-
-.table-wrapper::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 6px;
-  border: 2px solid #f1f1f1;
-}
-
-.table-wrapper::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-/* Firefox scrollbar */
-.table-wrapper {
-  scrollbar-width: thin;
-  scrollbar-color: #888 #f1f1f1;
-}
-
-/* Ensure table can scroll horizontally and has proper width */
-.operations-report-table :deep(.n-data-table-wrapper) {
-  overflow-x: visible !important;
-  overflow-y: visible !important;
-}
-
-.operations-report-table :deep(.n-data-table-base-table) {
-  min-width: max-content;
-  width: 100%;
-}
-
-/* Ensure table container allows horizontal scroll */
-.operations-report-table {
-  min-width: max-content;
 }
 
 /* Responsive adjustments */

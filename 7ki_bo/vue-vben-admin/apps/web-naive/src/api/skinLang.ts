@@ -3,6 +3,7 @@ import { requestClient } from '#/api/request';
 /** 版式风格（存 skinStyle 字段，提交给后端为英文 key） */
 export const LAYOUT_STYLE_OPTIONS: { label: string; value: string }[] = [
   { label: '综合版1', value: 'comprehensive_v1' },
+  { label: '综合版1_1', value: 'comprehensive_v1_1' },
   { label: '综合版2', value: 'comprehensive_v2' },
   { label: '综合版3', value: 'comprehensive_v3' },
   { label: '综合版4', value: 'comprehensive_v4' },
@@ -73,6 +74,60 @@ export function getLayoutStyleLabel(
   const hit = LAYOUT_STYLE_OPTIONS.find((o) => o.value === key);
   if (hit) return hit.label;
   return value?.trim() || key || '-';
+}
+
+/** 皮肤模版列展示：版式 key 显示中文名，品牌模版 key 原样显示 */
+export function getSkinTemplateDisplayLabel(
+  skinTemplate: string | undefined | null,
+  skinStyle?: string | undefined | null,
+): string {
+  const tpl = (skinTemplate ?? '').trim();
+  if (tpl && LAYOUT_STYLE_VALUES.has(tpl)) {
+    return getLayoutStyleLabel(tpl, skinStyle);
+  }
+  if (!tpl && skinStyle) {
+    return getLayoutStyleLabel(skinStyle, skinTemplate);
+  }
+  return tpl || '-';
+}
+
+/**
+ * 读表单：skinTemplate 与 skinStyle 对齐为同一版式 key（含 comprehensive_v1_1）。
+ * 非版式 key（如 rolex）保留在 skinTemplate。
+ */
+export function resolveSkinTemplateForForm(
+  skinStyle: string | undefined | null,
+  skinTemplate: string | undefined | null,
+): string {
+  const tpl = (skinTemplate ?? '').trim();
+  const styleKey = normalizeSkinStyleForForm(skinStyle, skinTemplate);
+
+  if (tpl && LAYOUT_STYLE_VALUES.has(tpl)) return tpl;
+  if (styleKey && LAYOUT_STYLE_VALUES.has(styleKey)) return styleKey;
+  return tpl || styleKey || 'comprehensive_v1';
+}
+
+/** 提交：版式写入 skinStyle 时同步写入 skinTemplate */
+export function resolveSkinTemplateForSave(
+  skinStyle: string,
+  skinTemplate: string,
+): string {
+  const style = skinStyle.trim();
+  if (LAYOUT_STYLE_VALUES.has(style)) return style;
+
+  const tpl = skinTemplate.trim();
+  if (LAYOUT_STYLE_VALUES.has(tpl)) return tpl;
+
+  return tpl || style;
+}
+
+/** 预览用品牌图标：skinTemplate 为版式 key 时回退 rolex */
+export function resolveBrandIconForPreview(
+  skinTemplate: string | undefined | null,
+): string {
+  const tpl = (skinTemplate ?? '').trim();
+  if (tpl && !LAYOUT_STYLE_VALUES.has(tpl)) return tpl;
+  return 'rolex';
 }
 
 export interface BrandSkinLangConfig {

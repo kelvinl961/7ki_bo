@@ -4354,6 +4354,7 @@ import {
   memberGroupsFromTierIds,
   resolveMemberTierIdsFromConfig,
 } from '#/utils/activityMemberTier';
+
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking modal load
 import { defineAsyncComponent } from 'vue';
 const MediaLibrarySelector = defineAsyncComponent(
@@ -5543,6 +5544,13 @@ const handleCancel = () => {
   modalShow.value = false;
 };
 
+function toCustomOpenInNewWindowBoolean(
+  value: string | boolean | undefined,
+): boolean {
+  if (typeof value === 'boolean') return value;
+  return value === 'true';
+}
+
 // URL validation for custom target URL
 const isValidUrl = (url: string): boolean => {
   if (!url || !url.trim()) {
@@ -5754,8 +5762,9 @@ const handleSubmit = async () => {
               ? 'YES'
               : 'NO',
           willSaveOpenInNewWindow: formData.customJumpType
-            ? formData.customOpenInNewWindow === 'true' ||
-              formData.customOpenInNewWindow === true
+            ? toCustomOpenInNewWindowBoolean(formData.customOpenInNewWindow)
+              ? 'YES'
+              : 'NO'
             : 'NO',
         },
       );
@@ -5869,8 +5878,7 @@ const handleSubmit = async () => {
       // 🔒 FIX: Always save customOpenInNewWindow as boolean when jump_link data exists
       // This tells the web app whether to open in new tab or current tab
       customOpenInNewWindow: formData.customJumpType
-        ? formData.customOpenInNewWindow === 'true' ||
-          formData.customOpenInNewWindow === true
+        ? toCustomOpenInNewWindowBoolean(formData.customOpenInNewWindow)
         : undefined,
       customBuiltinPage:
         formData.customDisplayMethod === 'builtin_page' ? 'builtin' : undefined,
@@ -5894,9 +5902,9 @@ const handleSubmit = async () => {
             targetTaskId:
               formData.customJumpType === 'task' ? undefined : undefined, // TODO: Add task selection if needed
             // 🔒 FIX: Save openInNewWindow as boolean - this is used by web app to determine new tab vs current tab
-            openInNewWindow:
-              formData.customOpenInNewWindow === 'true' ||
-              formData.customOpenInNewWindow === true,
+            openInNewWindow: toCustomOpenInNewWindowBoolean(
+              formData.customOpenInNewWindow,
+            ),
           }
         : undefined,
 

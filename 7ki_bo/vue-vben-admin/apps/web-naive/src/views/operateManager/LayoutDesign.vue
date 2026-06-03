@@ -469,7 +469,12 @@ import {
   MY_PAGE_STYLE_TEMPLATE_IMAGE,
 } from '../../api/layout-design';
 import type { MyPageStyleId } from '../../api/layout-design';
-import { getBrandSkinLangConfigs, getLayoutStyleLabel } from '../../api/skinLang';
+import {
+  getBrandSkinLangConfigs,
+  getLayoutStyleLabel,
+  isLayoutStyleValue,
+  normalizeSkinStyleForForm,
+} from '../../api/skinLang';
 import { useSkinColorOptions } from '../../composables/useColorTheme';
 
 const MY_PAGE_STYLE_OPTIONS: { value: MyPageStyleId; label: string }[] = [
@@ -635,10 +640,10 @@ const brandSkinInfo = ref<{
 
 const layoutSkinKey = computed(() => {
   const t = brandSkinInfo.value?.skinTemplate?.trim() || '';
-  if (/^comprehensive_v\d+/i.test(t)) return t;
+  if (isLayoutStyleValue(t)) return t;
   const s = brandSkinInfo.value?.skinStyle?.trim() || '';
-  if (/^comprehensive_v/i.test(s)) return s;
-  return t || s || 'comprehensive_v1';
+  if (isLayoutStyleValue(s)) return s;
+  return normalizeSkinStyleForForm(s, t);
 });
 
 /** 版式模板中文名（如 comprehensive_v1 → 综合版1）+ 配色名 */

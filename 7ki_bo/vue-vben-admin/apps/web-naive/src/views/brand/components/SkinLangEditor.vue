@@ -51,7 +51,8 @@
                 <n-select
                   v-model:value="formModel.skinStyle"
                   :options="skinStyleOptions"
-                  placeholder="选择皮肤风格"
+                  placeholder="选择版式风格"
+                  filterable
                   :disabled="detailMode"
                 />
               </n-form-item>
@@ -206,7 +207,7 @@
             <div class="preview-info">
               <div class="preview-meta">
                 <n-tag size="small" type="success">{{
-                  formModel.skinTemplate
+                  getLayoutStyleLabel(formModel.skinStyle, formModel.skinTemplate)
                 }}</n-tag>
                 <n-tag size="small" type="warning">{{
                   formModel.gameColor
@@ -270,9 +271,16 @@ import {
   SKIN_COLOR_OPTIONS,
 } from '../../../utils/colorUtils';
 import { notification } from '#/adapter/naive';
-import type {
-  BrandSkinLangConfig,
-  BrandSkinLangCreateRequest,
+import {
+  LAYOUT_STYLE_OPTIONS,
+  isLayoutStyleValue,
+  normalizeSkinStyleForForm,
+  resolveBrandIconForPreview,
+  resolveSkinTemplateForForm,
+  resolveSkinTemplateForSave,
+  getLayoutStyleLabel,
+  type BrandSkinLangConfig,
+  type BrandSkinLangCreateRequest,
 } from '#/api/skinLang';
 
 interface Props {
@@ -317,12 +325,12 @@ const formModel = reactive<
   brandType: '主站点',
   channelType: '通用',
   templateType: 'main-site',
-  skinStyle: '欧风风',
+  skinStyle: 'comprehensive_v1',
   gameColor: '有底色',
   skinColor: '15',
   skinColorRgb: 'rgb(5, 65, 70)',
   skinColorHex: '#054146', // Default hex
-  skinTemplate: 'rolex',
+  skinTemplate: 'comprehensive_v1',
   clientLanguages: {
     desktop: ['zh-CN'],
     h5: ['zh-CN'],
@@ -341,7 +349,9 @@ const formModel = reactive<
 // Preview setup - mobile only
 const previewConfig = reactive({
   template: computed(() => formModel.skinTemplate),
-  brandIcon: computed(() => formModel.brandIcon),
+  brandIcon: computed(() =>
+    resolveBrandIconForPreview(formModel.brandIcon || formModel.skinTemplate),
+  ),
   gameColor: computed(() => formModel.gameColor),
   skinColor: computed(() => formModel.skinColor || '15'),
   language: computed(() => formModel.clientLanguages.desktop[0] || 'zh-CN'),
@@ -360,13 +370,8 @@ const {
   handleImageLoad,
 } = useSkinPreview(previewConfig);
 
-// Options
-const skinStyleOptions = [
-  { label: '欧风风', value: '欧风风' },
-  { label: '现代风', value: '现代风' },
-  { label: '经典风', value: '经典风' },
-  { label: '简约风', value: '简约风' },
-];
+// Options — same list as BrandLogoSetting filter / skinLang API
+const skinStyleOptions = LAYOUT_STYLE_OPTIONS;
 
 const templateOptions = [
   {
@@ -505,8 +510,18 @@ watch(
   () => props.editingItem,
   (newItem) => {
     if (newItem) {
+      const layoutStyle = normalizeSkinStyleForForm(
+        newItem.skinStyle,
+        newItem.skinTemplate,
+      );
+      const layoutTemplate = resolveSkinTemplateForForm(
+        newItem.skinStyle,
+        newItem.skinTemplate,
+      );
       Object.assign(formModel, {
         ...newItem,
+        skinStyle: layoutStyle,
+        skinTemplate: layoutTemplate,
         templateType: 'main-site',
         clientLanguages: {
           desktop: newItem.clientLanguages || ['zh-CN'],
@@ -514,7 +529,7 @@ watch(
           ios: newItem.clientLanguages || ['zh-CN'],
           android: newItem.clientLanguages || ['zh-CN'],
         },
-        brandIcon: newItem.skinTemplate || 'rolex',
+        brandIcon: resolveBrandIconForPreview(newItem.skinTemplate),
         skinColor: newItem.skinColor || '15',
         skinColorRgb:
           newItem.skinColorRgb ||
@@ -536,12 +551,12 @@ watch(
         brandType: '主站点',
         channelType: '通用',
         templateType: 'main-site',
-        skinStyle: '欧风风',
+        skinStyle: 'comprehensive_v1',
         gameColor: '有底色',
         skinColor: '15',
         skinColorRgb: 'rgb(5, 65, 70)',
         skinColorHex: '#054146', // Default hex
-        skinTemplate: 'rolex',
+        skinTemplate: 'comprehensive_v1',
         clientLanguages: {
           desktop: ['zh-CN'],
           h5: ['zh-CN'],
@@ -559,6 +574,15 @@ watch(
     }
   },
   { immediate: true },
+);
+
+watch(
+  () => formModel.skinStyle,
+  (style) => {
+    if (isLayoutStyleValue(style)) {
+      formModel.skinTemplate = style;
+    }
+  },
 );
 
 // Watch for form changes to update preview
@@ -616,7 +640,10 @@ const handleSubmit = async () => {
       channelType: formModel.channelType,
       skinStyle: formModel.skinStyle,
       gameColor: formModel.gameColor,
-      skinTemplate: formModel.skinTemplate,
+      skinTemplate: resolveSkinTemplateForSave(
+        formModel.skinStyle,
+        formModel.skinTemplate,
+      ),
       clientLanguages: uniqueLanguages,
       authMode: formModel.authMode,
       appSetting: formModel.appSetting,

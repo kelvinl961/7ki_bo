@@ -3354,6 +3354,24 @@
                         </n-radio-group>
                       </div>
 
+                      <!-- Built-in page rich content -->
+                      <div
+                        v-if="formData.customDisplayMethod === 'builtin_page'"
+                        class="mb-6"
+                      >
+                        <label
+                          class="mb-3 block text-sm font-medium text-gray-700"
+                        >
+                          页面内容 <span class="text-red-500">*</span>
+                        </label>
+                        <RichTextEditor
+                          v-model="formData.customPageContent"
+                          :max-length="50000"
+                          :height="420"
+                          placeholder="编辑内置页面内容，支持富文本、图片、文件链接、表格等"
+                        />
+                      </div>
+
                       <!-- Select Page (shown when jump_link is selected) -->
                       <div
                         v-if="formData.customDisplayMethod === 'jump_link'"
@@ -4212,21 +4230,47 @@
                     />
                   </div>
                   <n-input
+                    v-if="formData.ruleTemplate === 'custom'"
                     v-model:value="formData.rules"
                     type="textarea"
-                    placeholder="支持输入中文输入，按Enter键进行填写"
-                    :autosize="{ minRows: 10, maxRows: 20 }"
+                    placeholder="请输入活动规则说明（T&C）"
+                    :rows="14"
+                    :maxlength="10000"
+                    show-count
                   />
-                  <div class="text-right text-xs text-gray-500">
-                    {{ formData.rules?.length || 0 }}/10000
+                  <div
+                    v-else
+                    class="rounded-lg border border-gray-200 bg-gray-50 p-4"
+                  >
+                    <div class="mb-2 text-xs font-medium text-gray-500">
+                      系统默认规则说明
+                    </div>
+                    <pre
+                      class="m-0 whitespace-pre-wrap text-sm leading-relaxed text-gray-700"
+                    >{{ systemRulesPreview }}</pre>
                   </div>
                 </div>
               </div>
 
-              <!-- Right Column - Empty for now -->
+              <!-- Right Column - Rules preview -->
               <div class="w-80 border-l border-gray-200 pl-6">
-                <div class="text-center text-sm text-gray-400">
-                  规则预览区域
+                <div class="mb-2 text-sm font-medium text-gray-700">
+                  规则预览
+                </div>
+                <div
+                  v-if="formData.ruleTemplate === 'custom' && formData.rules"
+                  class="activity-rules-preview activity-rules-preview--system"
+                >
+                  {{ formData.rules }}
+                </div>
+                <div
+                  v-else-if="formData.ruleTemplate === 'system'"
+                  class="activity-rules-preview activity-rules-preview--system"
+                >
+                  {{ systemRulesPreview }}
+                </div>
+                <div v-else class="text-center text-sm text-gray-400">
+                  暂无规则内容
                 </div>
               </div>
             </div>
@@ -4347,6 +4391,9 @@ import type { Activity, CreateActivityInput } from '#/api/activity';
 import { defineAsyncComponent } from 'vue';
 const MediaLibrarySelector = defineAsyncComponent(
   () => import('#/components/MediaLibrarySelector.vue'),
+);
+const RichTextEditor = defineAsyncComponent(
+  () => import('#/components/common/RichTextEditor.vue'),
 );
 const PlatformGameSelector = defineAsyncComponent(
   () => import('#/components/activity/PlatformGameSelector.vue'),
@@ -4878,6 +4925,7 @@ const formData = reactive({
   customJumpType: 'external_link',
   customOpenInNewWindow: 'true',
   customTargetUrl: '',
+  customPageContent: '',
 });
 
 const allowClaimSamePromotionType = computed({
@@ -5004,6 +5052,18 @@ const ruleTemplateOptions = [
   { label: '自定义', value: 'custom' },
   { label: '系统自带', value: 'system' },
 ];
+
+const systemRulesPreview = computed(() => {
+  const typeLabel =
+    activityTypes.find((t) => t.value === formData.activityType)?.label ||
+    formData.activityType;
+  return `【${typeLabel}】活动规则由系统根据活动类型自动生成，前台将展示平台默认 T&C 说明。如需自定义，请选择「自定义」并编辑规则文本。`;
+});
+
+/** 提交时：系统自带不传自定义规则，自定义模板传 T&C 文本 */
+function resolveRulesForSubmit(): string {
+  return formData.ruleTemplate === 'custom' ? formData.rules || '' : '';
+}
 
 const rewardTypeOptions = [
   { label: '固定奖励', value: 'fixed' },
@@ -5504,6 +5564,7 @@ const handleModalClose = () => {
     customJumpType: 'external_link',
     customOpenInNewWindow: 'true', // Use string to match form input type
     customTargetUrl: '',
+    customPageContent: '',
   });
 };
 
@@ -5614,8 +5675,8 @@ const handleSaveDraft = async () => {
       endAt: formData.endTime ? new Date(formData.endTime).toISOString() : '',
       status: 'draft',
       displayOrder: 0,
-      description: formData.rules,
-      rules: formData.rules,
+      description: resolveRulesForSubmit(),
+      rules: resolveRulesForSubmit(),
     };
 
     // TODO: Call API to save activity
@@ -5700,6 +5761,18 @@ const handleSubmit = async () => {
           return;
         }
       }
+
+      if (formData.customDisplayMethod === 'builtin_page') {
+        const plainText = (formData.customPageContent || '')
+          .replace(/<[^>]+>/g, '')
+          .replace(/&nbsp;/g, ' ')
+          .trim();
+        if (!plainText) {
+          message.error('请编辑内置页面内容');
+          submitting.value = false;
+          return;
+        }
+      }
     }
 
     // Build config payload including Promotion fields
@@ -5734,7 +5807,7 @@ const handleSubmit = async () => {
       memberScope: formData.memberLevel,
       claimLimit: 0,
       platforms: formData.platforms,
-      description: formData.rules,
+      description: resolveRulesForSubmit(),
 
       // Audit settings
       auditRequired: formData.auditSettings.auditRequired,
@@ -5742,7 +5815,8 @@ const handleSubmit = async () => {
       // auditCompletionTimeHours removed - fixed to 24 hours
       auditManualReviewRequired:
         formData.auditSettings.auditManualReviewRequired,
-      rules: formData.rules,
+      rules: resolveRulesForSubmit(),
+      ruleTemplate: formData.ruleTemplate,
       // Restrictions & Conditions
       restrictions: formData.restrictions,
       memberTags: formData.memberTags,
@@ -5841,6 +5915,10 @@ const handleSubmit = async () => {
         : undefined,
       customBuiltinPage:
         formData.customDisplayMethod === 'builtin_page' ? 'builtin' : undefined,
+      customPageContent:
+        formData.customPageContent && formData.customPageContent.trim()
+          ? formData.customPageContent
+          : undefined,
       // Save customJumpConfig if jump_link data exists
       customJumpConfig: formData.customJumpType
         ? {
@@ -6300,12 +6378,12 @@ const handleSubmit = async () => {
           {
             locale: 'pt-BR',
             title: formData.title,
-            description: formData.rules,
+            description: resolveRulesForSubmit(),
           },
           {
             locale: 'zh-CN',
             title: formData.title,
-            description: formData.rules,
+            description: resolveRulesForSubmit(),
           },
         ],
       };
@@ -7048,6 +7126,11 @@ watch(
           (newItem as any).platforms ||
           [],
         rules: (newItem as any).config?.rules || (newItem as any).rules || '',
+        ruleTemplate:
+          (newItem as any).config?.ruleTemplate ||
+          ((newItem as any).config?.rules || (newItem as any).rules
+            ? 'custom'
+            : 'custom'),
         displayEnabled:
           (newItem as any).displayEnabled ??
           (newItem as any).config?.displayEnabled ??
@@ -7246,6 +7329,11 @@ watch(
       // Load custom display method (only if exists, otherwise keep default)
       if (customConfig.customDisplayMethod) {
         formData.customDisplayMethod = customConfig.customDisplayMethod;
+      }
+
+      if (activityType === 'custom') {
+        formData.customPageContent =
+          customConfig.customPageContent || customConfig.pageContent || '';
       }
 
       // Load custom jump type - ALWAYS load if it exists, even if displayMethod is builtin_page
@@ -7762,5 +7850,59 @@ const removeRedPacketDailyDistributionTime = (index: number) => {
 
 .activity-form-modal :deep(.n-switch) {
   @apply text-sm;
+}
+
+.activity-rules-preview {
+  max-height: 420px;
+  overflow-y: auto;
+  padding: 12px;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  font-size: 13px;
+  line-height: 1.65;
+  color: #374151;
+  word-break: break-word;
+}
+
+.activity-rules-preview--system {
+  background: #f9fafb;
+  white-space: pre-wrap;
+}
+
+.activity-rules-preview :deep(img) {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.activity-rules-preview :deep(table) {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0;
+}
+
+.activity-rules-preview :deep(table td),
+.activity-rules-preview :deep(table th) {
+  border: 1px solid #e5e7eb;
+  padding: 6px 8px;
+}
+
+.activity-rules-preview :deep(ul),
+.activity-rules-preview :deep(ol) {
+  padding-left: 1.25rem;
+  margin: 0.5rem 0;
+}
+
+.activity-rules-preview :deep(p) {
+  margin: 0.5rem 0;
+}
+
+.activity-rules-preview :deep(h1),
+.activity-rules-preview :deep(h2),
+.activity-rules-preview :deep(h3) {
+  margin: 0.75rem 0 0.5rem;
+  font-weight: 600;
+  color: #111827;
 }
 </style>

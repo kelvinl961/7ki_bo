@@ -258,6 +258,12 @@
             <div v-if="mappedActivity.rules">
               <h4 class="mb-2 font-semibold text-gray-800">活动规则</h4>
               <div
+                v-if="isRulesHtml(mappedActivity.rules)"
+                class="activity-detail-rules-html rounded-lg bg-yellow-50 p-3 text-sm text-gray-700"
+                v-html="mappedActivity.rules"
+              />
+              <div
+                v-else
                 class="whitespace-pre-line rounded-lg bg-yellow-50 p-3 text-sm text-gray-700"
               >
                 {{ mappedActivity.rules }}
@@ -417,6 +423,10 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<Emits>();
+
+function isRulesHtml(rules: string): boolean {
+  return /<\/?[a-z][\s\S]*>/i.test(rules);
+}
 
 // 响应式数据
 const modalShow = computed({
@@ -758,5 +768,21 @@ const handleClose = () => {
 
 :deep(.n-timeline-item-content) {
   color: #666;
+}
+
+.activity-detail-rules-html :deep(img) {
+  max-width: 100%;
+  height: auto;
+}
+
+.activity-detail-rules-html :deep(table) {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.activity-detail-rules-html :deep(td),
+.activity-detail-rules-html :deep(th) {
+  border: 1px solid #e5e7eb;
+  padding: 4px 8px;
 }
 </style>

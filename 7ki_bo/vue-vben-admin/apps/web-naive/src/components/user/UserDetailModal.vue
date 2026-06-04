@@ -1212,7 +1212,7 @@
             <!-- Filter Section - matching screenshot -->
             <n-card class="mb-4">
               <div class="flex flex-wrap items-end gap-3">
-                <div class="flex items-center gap-2">
+                <div class="flex flex-wrap items-center gap-2">
                   <n-button
                     size="small"
                     :type="
@@ -1240,22 +1240,10 @@
                   >
                     月
                   </n-button>
-                </div>
-                <div class="flex items-center gap-2">
-                  <n-date-picker
-                    v-model:value="startDate"
-                    type="datetime"
-                    placeholder="开始时间"
-                    style="width: 200px"
-                    format="yyyy-MM-dd HH:mm:ss"
-                  />
-                  <span>-</span>
-                  <n-date-picker
-                    v-model:value="endDate"
-                    type="datetime"
-                    placeholder="结束时间"
-                    style="width: 200px"
-                    format="yyyy-MM-dd HH:mm:ss"
+                  <TimezoneDatePicker
+                    v-model="transactionDateRange"
+                    width="400px"
+                    @update:modelValue="handleTransactionDateRangeChange"
                   />
                 </div>
                 <n-select
@@ -1776,6 +1764,7 @@ import UserAuditTrailTab from './UserAuditTrailTab.vue';
 import LoginDevicesTab from './LoginDevicesTab.vue';
 import RtpControlTab from './RtpControlTab.vue';
 import AssociationsTab from './AssociationsTab.vue';
+import TimezoneDatePicker from '#/components/common/TimezoneDatePicker.vue';
 
 interface Props {
   visible: boolean;
@@ -1892,8 +1881,7 @@ const transactionTypeFilter = ref('today');
 const transactionStatusFilter = ref('');
 const transactionCategoryFilter = ref('');
 const transactionSearchId = ref('');
-const startDate = ref<number | null>(null);
-const endDate = ref<number | null>(null);
+const transactionDateRange = ref<[number, number] | null>(null);
 
 // Category filter options - matching screenshot "账变大类"
 const categoryFilterOptions = [
@@ -2481,7 +2469,7 @@ watch(
       loadUserDetail(true);
       // Initialize date range and load transactions if on transactions tab
       if (activeTab.value === 'transactions') {
-        if (startDate.value === null && endDate.value === null) {
+        if (transactionDateRange.value === null) {
           setDateRangeFromFilter('today');
         } else {
           loadTransactionRecords();
@@ -2497,7 +2485,7 @@ watch(
   (newTab) => {
     if (newTab === 'transactions' && props.userId) {
       // Initialize date range if not set (switching to transactions tab)
-      if (startDate.value === null && endDate.value === null) {
+      if (transactionDateRange.value === null) {
         setDateRangeFromFilter('today'); // This will also load records
       } else {
         loadTransactionRecords(); // Just reload with existing date range
@@ -2856,11 +2844,15 @@ const loadTransactionRecords = async () => {
       pageSize: transactionPagination.pageSize,
       date: dateValue,
       category: 'all', // Show all categories of wallet transactions
-      startDate: startDate.value
-        ? new Date(startDate.value).toISOString().split('T')[0]
+      startDate: transactionDateRange.value?.[0]
+        ? new Date(transactionDateRange.value[0])
+            .toISOString()
+            .split('T')[0]
         : undefined,
-      endDate: endDate.value
-        ? new Date(endDate.value).toISOString().split('T')[0]
+      endDate: transactionDateRange.value?.[1]
+        ? new Date(transactionDateRange.value[1])
+            .toISOString()
+            .split('T')[0]
         : undefined,
       forceRefresh: true, // 🎯 Force refresh to bypass cache
     };
@@ -2952,8 +2944,10 @@ const setDateRangeFromFilter = (filterType: 'today' | 'week' | 'month') => {
         0,
         0,
       );
-      startDate.value = startOfToday.getTime();
-      endDate.value = endOfToday.getTime();
+      transactionDateRange.value = [
+        startOfToday.getTime(),
+        endOfToday.getTime(),
+      ];
       break;
 
     case 'week':
@@ -2961,8 +2955,7 @@ const setDateRangeFromFilter = (filterType: 'today' | 'week' | 'month') => {
       const weekAgo = new Date(now);
       weekAgo.setDate(weekAgo.getDate() - 7);
       weekAgo.setHours(0, 0, 0, 0);
-      startDate.value = weekAgo.getTime();
-      endDate.value = endOfToday.getTime();
+      transactionDateRange.value = [weekAgo.getTime(), endOfToday.getTime()];
       break;
 
     case 'month':
@@ -2970,8 +2963,7 @@ const setDateRangeFromFilter = (filterType: 'today' | 'week' | 'month') => {
       const monthAgo = new Date(now);
       monthAgo.setDate(monthAgo.getDate() - 30);
       monthAgo.setHours(0, 0, 0, 0);
-      startDate.value = monthAgo.getTime();
-      endDate.value = endOfToday.getTime();
+      transactionDateRange.value = [monthAgo.getTime(), endOfToday.getTime()];
       break;
   }
 
@@ -2980,16 +2972,19 @@ const setDateRangeFromFilter = (filterType: 'today' | 'week' | 'month') => {
   loadTransactionRecords();
 };
 
+const handleTransactionDateRangeChange = () => {
+  transactionTypeFilter.value = 'custom';
+};
+
 const handleResetTransactionFilter = () => {
   transactionTypeFilter.value = 'today'; // Reset to today (default)
   transactionStatusFilter.value = '';
   transactionCategoryFilter.value = '';
   transactionSearchId.value = '';
-  startDate.value = null;
-  endDate.value = null;
+  transactionDateRange.value = null;
   transactionPagination.page = 1;
   transactionPagination.pageCount = 1; // Reset page count
-  loadTransactionRecords();
+  setDateRangeFromFilter('today');
 };
 
 // Handle real name click to filter main grid

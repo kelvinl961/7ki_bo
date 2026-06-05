@@ -644,10 +644,22 @@ const fetchActivityList = async () => {
         endsAt = new Date(activity.endsAt);
       }
 
+      const localeTitle =
+        activity.locales?.find((l) => l.locale === 'zh-CN')?.title ||
+        activity.locales?.find((l) => l.locale === 'pt-BR')?.title ||
+        activity.locales?.[0]?.title;
+      const configTitle = activity.config?.title;
+      const resolvedTitle =
+        (localeTitle && localeTitle !== '未设置标题' ? localeTitle : null) ||
+        (configTitle && configTitle !== '未设置标题' ? configTitle : null) ||
+        localeTitle ||
+        configTitle ||
+        '未设置标题';
+
       return {
         ...activity,
-        // Extract fields from config
-        title: activity.config?.title || '未设置标题',
+        // Extract fields from config (title prefers locales over stale config.title)
+        title: resolvedTitle,
         memberScope: activity.config?.memberScope || '全部会员',
         claimLimit: activity.config?.claimLimit || 0,
         platforms: activity.config?.platforms || [],

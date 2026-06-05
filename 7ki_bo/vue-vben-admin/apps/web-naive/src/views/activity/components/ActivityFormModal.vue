@@ -5612,6 +5612,23 @@ function toCustomOpenInNewWindowBoolean(
   return value === 'true';
 }
 
+/** API may store title in locales; config.title can be stale placeholder. */
+function resolveActivityTitle(item: any): string {
+  const placeholder = '未设置标题';
+  const locales = item?.locales as
+    | Array<{ locale?: string; title?: string }>
+    | undefined;
+  const fromLocales =
+    locales?.find((l) => l.locale === 'zh-CN')?.title ||
+    locales?.find((l) => l.locale === 'pt-BR')?.title ||
+    locales?.[0]?.title;
+  const candidates = [fromLocales, item?.title, item?.config?.title];
+  for (const candidate of candidates) {
+    if (candidate && candidate !== placeholder) return candidate;
+  }
+  return fromLocales || item?.title || item?.config?.title || '';
+}
+
 // URL validation for custom target URL
 const isValidUrl = (url: string): boolean => {
   if (!url || !url.trim()) {
@@ -7170,7 +7187,7 @@ watch(
 
       // Populate form with editing item data (prefer values from config)
       Object.assign(formData, {
-        title: (newItem as any).config?.title || (newItem as any).title || '',
+        title: resolveActivityTitle(newItem),
         activityType: (newItem as any).type || 'recharge',
         category: (newItem as any).category,
         currency: (newItem as any).currency,
@@ -7421,27 +7438,36 @@ watch(
         customJumpConfig: customConfig.customJumpConfig,
       });
 
-      // Load custom display method (only if exists, otherwise keep default)
-      if (customConfig.customDisplayMethod) {
-        formData.customDisplayMethod = customConfig.customDisplayMethod;
+      // Load custom display method (root first, then config — matches API transformActivity)
+      const rootCustom = newItem as any;
+      if (rootCustom.customDisplayMethod || customConfig.customDisplayMethod) {
+        formData.customDisplayMethod =
+          rootCustom.customDisplayMethod || customConfig.customDisplayMethod;
       }
 
       if (activityType === 'custom') {
         formData.customPageContent =
-          customConfig.customPageContent || customConfig.pageContent || '';
+          rootCustom.customPageContent ||
+          customConfig.customPageContent ||
+          customConfig.pageContent ||
+          '';
       }
 
-      // Load custom jump type - ALWAYS load if it exists, even if displayMethod is builtin_page
-      // This ensures that if user previously selected jump_link, the value is preserved
+      // Load custom jump type - root first (API transformActivity hoists these out of config)
+      const rootJumpConfig =
+        rootCustom.customJumpConfig ?? customConfig.customJumpConfig;
       if (
+        rootCustom.customJumpType !== undefined &&
+        rootCustom.customJumpType !== null
+      ) {
+        formData.customJumpType = rootCustom.customJumpType;
+      } else if (
         customConfig.customJumpType !== undefined &&
         customConfig.customJumpType !== null
       ) {
         formData.customJumpType = customConfig.customJumpType;
-      }
-      // If customJumpType doesn't exist but customJumpConfig exists, try to infer from jumpMode
-      else if (customConfig.customJumpConfig?.jumpMode) {
-        const jumpMode = customConfig.customJumpConfig.jumpMode;
+      } else if (rootJumpConfig?.jumpMode) {
+        const jumpMode = rootJumpConfig.jumpMode;
         if (jumpMode === 'URL') {
           formData.customJumpType = 'external_link';
         } else if (jumpMode === 'ACTIVITY') {
@@ -7451,24 +7477,28 @@ watch(
         }
       }
 
-      // Load custom target URL - ALWAYS load if it exists, even if displayMethod is builtin_page
-      // This ensures that if user previously entered a URL, it's preserved
+      // Load custom target URL - root first, even when displayMethod is builtin_page
       if (
+        rootCustom.customTargetUrl !== undefined &&
+        rootCustom.customTargetUrl !== null &&
+        rootCustom.customTargetUrl !== ''
+      ) {
+        formData.customTargetUrl = rootCustom.customTargetUrl;
+      } else if (
         customConfig.customTargetUrl !== undefined &&
         customConfig.customTargetUrl !== null
       ) {
         formData.customTargetUrl = customConfig.customTargetUrl;
-      } else if (customConfig.customJumpConfig?.targetUrl) {
-        // Fallback to customJumpConfig.targetUrl
-        formData.customTargetUrl = customConfig.customJumpConfig.targetUrl;
+      } else if (rootJumpConfig?.targetUrl) {
+        formData.customTargetUrl = rootJumpConfig.targetUrl;
       } else {
         formData.customTargetUrl = '';
       }
 
-      // Handle customOpenInNewWindow - support both boolean and string values
-      // Also check customJumpConfig.openInNewWindow as fallback
-      // ALWAYS load if it exists, even if displayMethod is builtin_page
+      // Handle customOpenInNewWindow - root first, then config
       const openInNewWindowValue =
+        rootCustom.customOpenInNewWindow ??
+        rootJumpConfig?.openInNewWindow ??
         customConfig.customOpenInNewWindow ??
         customConfig.customJumpConfig?.openInNewWindow ??
         undefined;

@@ -95,7 +95,10 @@
               :name="cat.value"
               :tab="cat.label + (selectedCountByCategory(cat.value) > 0 ? `(${selectedCountByCategory(cat.value)})` : '')"
             >
-              <div class="platform-list">
+              <div v-if="platformsLoading" class="platform-loading">
+                加载平台中...
+              </div>
+              <div v-else class="platform-list">
                 <n-checkbox
                   :checked="isAllCategorySelected(cat.value)"
                   :indeterminate="isCategoryIndeterminate(cat.value)"
@@ -259,7 +262,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, h, onMounted } from 'vue';
+import { ref, reactive, computed, h, watch } from 'vue';
 import {
   NModal,
   NFormItem,
@@ -283,13 +286,18 @@ import {
   type UploadCustomRequestOptions,
   type UploadFileInfo,
 } from 'naive-ui';
-import { requestClient } from '#/api/request';
+import { getPlatformsWithGames } from '#/api/activity/platformSelection';
+import { getEnabledGamePlatforms } from '#/api/game/gamePlatform';
 import {
   distributeActivityRewards,
   type Activity,
   type DistributeMember,
   type DistributeRewardsResult,
 } from '#/api/activity';
+import {
+  PLATFORM_TAB_CATEGORIES,
+  normalizeGameTypeToTabCategory,
+} from '#/utils/platformGameTypeCategory';
 
 // ─── Props / Emits ─────────────────────────────────────────────────────────
 const props = defineProps<{
@@ -318,17 +326,10 @@ interface PlatformItem {
   subCount: number;
 }
 
-const platformCategories = [
-  { label: '棋牌', value: 'chess_cards' },
-  { label: '捕鱼', value: 'hunting' },
-  { label: '电子', value: 'slot' },
-  { label: '区块链', value: 'blockchain' },
-  { label: '真人', value: 'live' },
-  { label: '体育', value: 'sports' },
-  { label: '彩票', value: 'lottery' },
-];
+const platformCategories = PLATFORM_TAB_CATEGORIES;
 
 const allPlatforms = ref<PlatformItem[]>([]);
+const platformsLoading = ref(false);
 const activePlatformTab = ref('chess_cards');
 
 const getPlatformsByCategory = (cat: string): PlatformItem[] =>
@@ -367,22 +368,67 @@ const togglePlatform = (id: string, checked: boolean) => {
   }
 };
 
+function mapRowToPlatformItem(p: {
+  platformId?: string | number;
+  id?: string | number;
+  platformName?: string;
+  name?: string;
+  gameType?: string;
+  subGameCount?: number;
+}): PlatformItem {
+  const dbId = p.platformId ?? p.id;
+  return {
+    id: String(dbId),
+    name: p.platformName || p.name || String(dbId),
+    category: normalizeGameTypeToTabCategory(p.gameType),
+    subCount: p.subGameCount ?? 0,
+  };
+}
+
 async function fetchPlatforms() {
+  platformsLoading.value = true;
   try {
-    const res = await requestClient.get<any>('/game-platforms/enabled');
-    const list: any[] = Array.isArray(res) ? res : (res?.data ?? res?.list ?? []);
-    allPlatforms.value = list.map((p: any) => ({
-      id: String(p.platformId || p.id),
-      name: p.platformName || p.name || p.platformId,
-      category: p.gameType || 'other',
-      subCount: p.subGameCount ?? 0,
-    }));
-  } catch {
-    // fallback: no platforms available, platform picker is still functional
+    let items: PlatformItem[] = [];
+
+    try {
+      const res = await getPlatformsWithGames();
+      if (res?.success && Array.isArray(res.data) && res.data.length > 0) {
+        items = res.data.map((p) => mapRowToPlatformItem(p));
+      }
+    } catch (primaryErr) {
+      console.warn('[DistributeReward] platform-selection load failed, using fallback', primaryErr);
+    }
+
+    if (items.length === 0) {
+      const enabled = await getEnabledGamePlatforms();
+      const rows = Array.isArray(enabled) ? enabled : [];
+      items = rows.map((p) => mapRowToPlatformItem(p));
+    }
+
+    allPlatforms.value = items;
+
+    const firstTabWithPlatforms = platformCategories.find((cat) =>
+      items.some((p) => p.category === cat.value),
+    );
+    if (firstTabWithPlatforms) {
+      activePlatformTab.value = firstTabWithPlatforms.value;
+    }
+  } catch (err) {
+    console.error('[DistributeReward] Failed to load platforms:', err);
+    message.error('加载平台列表失败');
+    allPlatforms.value = [];
+  } finally {
+    platformsLoading.value = false;
   }
 }
 
-onMounted(fetchPlatforms);
+watch(
+  () => props.show,
+  (open) => {
+    if (open) void fetchPlatforms();
+  },
+  { immediate: true },
+);
 
 // ─── Form state ─────────────────────────────────────────────────────────────
 const defaultForm = () => ({
@@ -692,6 +738,13 @@ function resetForm() {
 
 .platform-picker-item :deep(.n-form-item-label) {
   display: none;
+}
+
+.platform-loading {
+  padding: 24px;
+  text-align: center;
+  color: #999;
+  font-size: 13px;
 }
 
 .platform-picker {

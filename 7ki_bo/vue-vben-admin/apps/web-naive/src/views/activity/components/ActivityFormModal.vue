@@ -6106,6 +6106,20 @@ const handleSubmit = async () => {
 
     console.log('🔍 Debug - ConfigPayload before submission:', configPayload);
 
+    // Promotion uses promotionWageringPlatform* — do not persist wagering-activity defaults into config
+    if (formData.activityType === 'promotion') {
+      delete configPayload.wageringPlatform;
+      delete configPayload.wageringPlatformConfig;
+      delete configPayload.wageringRewardSettings;
+      delete configPayload.wageringRewardExpiryDays;
+      console.log('🔍 Promotion platform save:', {
+        promotionWageringPlatform: configPayload.promotionWageringPlatform,
+        selectedPlatforms:
+          configPayload.promotionWageringPlatformConfig?.selectedPlatforms?.length ??
+          0,
+      });
+    }
+
     // Debug newbie bonus fields specifically
     if (formData.activityType === 'newbie') {
       console.log('🎁 Debug - Newbie Bonus specific fields in payload:', {
@@ -7200,13 +7214,52 @@ watch(
         ).config?.promotionAccumulatedRechargeCount?.toString() || '';
       formData.promotionAccumulatedWagering =
         (newItem as any).config?.promotionAccumulatedWagering?.toString() || '';
+      const promoConfig = (newItem as any).config || {};
+      const legacyWageringConfig = promoConfig.wageringPlatformConfig;
+      const savedPromotionConfig = promoConfig.promotionWageringPlatformConfig;
       formData.promotionWageringPlatform =
-        (newItem as any).config?.promotionWageringPlatform || 'all_platforms';
-      formData.promotionWageringPlatformConfig = (newItem as any).config
-        ?.promotionWageringPlatformConfig || {
-        selectedPlatforms: [],
-        platformIds: [],
+        promoConfig.promotionWageringPlatform ||
+        (promoConfig.wageringPlatform &&
+        promoConfig.wageringPlatform !== 'all_platforms'
+          ? promoConfig.wageringPlatform
+          : 'all_platforms');
+      const normalizePromotionPlatformConfig = (cfg: any) => {
+        if (!cfg?.selectedPlatforms?.length) {
+          return (
+            cfg ?? {
+              selectedPlatforms: [],
+              platformIds: [],
+            }
+          );
+        }
+        const selectedPlatforms = cfg.selectedPlatforms.map((p: any) => {
+          const raw = p?.platformId;
+          const platformId =
+            typeof raw === 'number'
+              ? raw
+              : parseInt(String(raw ?? '').trim(), 10);
+          return {
+            ...p,
+            platformId: Number.isNaN(platformId) ? raw : platformId,
+          };
+        });
+        return {
+          ...cfg,
+          selectedPlatforms,
+          platformIds: selectedPlatforms.map((p: any) => p.platformId),
+        };
       };
+      formData.promotionWageringPlatformConfig =
+        normalizePromotionPlatformConfig(
+          savedPromotionConfig?.selectedPlatforms?.length > 0
+            ? savedPromotionConfig
+            : legacyWageringConfig?.selectedPlatforms?.length > 0
+              ? legacyWageringConfig
+              : {
+                  selectedPlatforms: [],
+                  platformIds: [],
+                },
+        );
       formData.promotionDownloadAppLogin =
         (newItem as any).config?.promotionDownloadAppLogin ?? false;
       formData.promotionSameIPLimit =

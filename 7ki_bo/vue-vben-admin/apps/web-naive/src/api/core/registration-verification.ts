@@ -1,5 +1,14 @@
 import { requestClient } from '#/api/request';
 
+/** 注册端限制（防脚本批量注册） */
+export interface RegistrationPlatformRestrictions {
+  enabled: boolean;
+  allowPc: boolean;
+  allowApple: boolean;
+  allowAndroid: boolean;
+  allowOther: boolean;
+}
+
 /** 与后台「注册支持方式」表单一致 */
 export interface RegistrationSupportMethods {
   channels: {
@@ -27,6 +36,7 @@ export interface RegistrationSupportMethods {
 }
 
 export interface RegistrationVerificationConfigPayload {
+  registrationPlatformRestrictions?: RegistrationPlatformRestrictions;
   registrationSupportMethods: RegistrationSupportMethods;
   publicPage: {
     guestAutoAccount: {

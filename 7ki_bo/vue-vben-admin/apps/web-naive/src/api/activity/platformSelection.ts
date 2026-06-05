@@ -13,7 +13,8 @@ export interface GameItem {
 }
 
 export interface PlatformWithGames {
-  platformId: number;
+  /** Numeric DB id from API, often serialized as string */
+  platformId: number | string;
   platformName: string;
   gameType: string;
   isEnabled: boolean;
@@ -42,7 +43,7 @@ export interface SelectedGame {
 }
 
 export interface SelectedPlatform {
-  platformId: number;
+  platformId: number | string;
   platformName: string;
   gameSelection: 'all_games' | 'specific_games';
   selectedGames?: SelectedGame[];
@@ -54,7 +55,7 @@ export interface WageringPlatformConfig {
 }
 
 export interface ValidationResult {
-  platformId: number;
+  platformId: number | string;
   platformName?: string;
   valid: boolean;
   error?: string;

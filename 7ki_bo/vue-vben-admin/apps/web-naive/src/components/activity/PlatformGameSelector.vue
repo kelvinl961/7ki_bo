@@ -434,7 +434,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import {
   NButton,
   NSpin,
@@ -460,6 +460,7 @@ import {
   type SelectedPlatform,
   type GameItem,
 } from '#/api/activity/platformSelection';
+import { SITE_SCOPE_CHANGED_EVENT } from '#/utils/siteScope';
 
 // Props & Emits
 interface Props {
@@ -483,6 +484,14 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>();
 const message = useMessage();
+
+/** API list uses string ids; saved activity config often has numeric platformId. */
+const toPlatformDbId = (id: number | string | undefined | null): number => {
+  if (id === undefined || id === null) return 0;
+  if (typeof id === 'number' && Number.isInteger(id)) return id;
+  const parsed = parseInt(String(id).trim(), 10);
+  return Number.isNaN(parsed) ? 0 : parsed;
+};
 
 // Reactive Data
 const loading = ref(false);
@@ -519,7 +528,8 @@ const totalSelectedGames = computed(() => {
   return selectedPlatforms.value.reduce((total, platform) => {
     if (platform.gameSelection === 'all_games') {
       const platformData = platforms.value.find(
-        (p) => p.platformId === platform.platformId,
+        (p) =>
+          toPlatformDbId(p.platformId) === toPlatformDbId(platform.platformId),
       );
       return total + (platformData?.games.length || 0);
     } else {
@@ -555,35 +565,41 @@ const getGameTypeLabel = (type: string): string => {
 };
 
 // Helper Functions
-const isPlatformSelected = (platformId: number): boolean => {
-  return selectedPlatforms.value.some((p) => p.platformId === platformId);
+const isPlatformSelected = (platformId: number | string): boolean => {
+  const id = toPlatformDbId(platformId);
+  return selectedPlatforms.value.some(
+    (p) => toPlatformDbId(p.platformId) === id,
+  );
 };
 
 const getGameSelectionMode = (
-  platformId: number,
+  platformId: number | string,
 ): 'all_games' | 'specific_games' => {
+  const id = toPlatformDbId(platformId);
   const platform = selectedPlatforms.value.find(
-    (p) => p.platformId === platformId,
+    (p) => toPlatformDbId(p.platformId) === id,
   );
   return platform?.gameSelection || 'all_games';
 };
 
-const isGameSelected = (platformId: number, gameId: string): boolean => {
+const isGameSelected = (platformId: number | string, gameId: string): boolean => {
+  const id = toPlatformDbId(platformId);
   const platform = selectedPlatforms.value.find(
-    (p) => p.platformId === platformId,
+    (p) => toPlatformDbId(p.platformId) === id,
   );
   if (!platform || platform.gameSelection === 'all_games') return false;
   return platform.selectedGames?.some((g) => g.gameId === gameId) || false;
 };
 
-const getSelectedGamesCount = (platformId: number): number => {
+const getSelectedGamesCount = (platformId: number | string): number => {
+  const id = toPlatformDbId(platformId);
   const platform = selectedPlatforms.value.find(
-    (p) => p.platformId === platformId,
+    (p) => toPlatformDbId(p.platformId) === id,
   );
   if (!platform) return 0;
   if (platform.gameSelection === 'all_games') {
     const platformData = platforms.value.find(
-      (p) => p.platformId === platformId,
+      (p) => toPlatformDbId(p.platformId) === id,
     );
     return platformData?.games.length || 0;
   }
@@ -600,40 +616,75 @@ const getFilteredGames = (platform: PlatformWithGames): GameItem[] => {
   );
 };
 
+const dedupeSelectedPlatforms = (list: SelectedPlatform[]) => {
+  const seen = new Set<number>();
+  return list.filter((entry) => {
+    const id = toPlatformDbId(entry.platformId);
+    if (!id || seen.has(id)) {
+      return false;
+    }
+    seen.add(id);
+    return true;
+  });
+};
+
+const normalizeSelectedPlatform = (
+  entry: SelectedPlatform,
+): SelectedPlatform => {
+  const platformId = toPlatformDbId(entry.platformId);
+  const loaded = platforms.value.find(
+    (p) => toPlatformDbId(p.platformId) === platformId,
+  );
+  return {
+    ...entry,
+    platformId,
+    platformName: loaded?.platformName ?? entry.platformName,
+  };
+};
+
+const reconcileSelectedPlatforms = () => {
+  selectedPlatforms.value = dedupeSelectedPlatforms(
+    selectedPlatforms.value.map(normalizeSelectedPlatform),
+  );
+};
+
 // Platform Management
 const togglePlatform = (platform: PlatformWithGames, checked: boolean) => {
   if (checked) {
-    // Add platform
-    selectedPlatforms.value.push({
-      platformId: platform.platformId,
-      platformName: platform.platformName,
-      gameSelection: 'all_games',
-    });
-    expandedPlatforms.value.add(platform.platformId);
+    const id = toPlatformDbId(platform.platformId);
+    if (!isPlatformSelected(id)) {
+      selectedPlatforms.value.push({
+        platformId: id,
+        platformName: platform.platformName,
+        gameSelection: 'all_games',
+      });
+    }
+    expandedPlatforms.value.add(id);
   } else {
-    // Remove platform
+    const id = toPlatformDbId(platform.platformId);
     selectedPlatforms.value = selectedPlatforms.value.filter(
-      (p) => p.platformId !== platform.platformId,
+      (p) => toPlatformDbId(p.platformId) !== id,
     );
-    expandedPlatforms.value.delete(platform.platformId);
+    expandedPlatforms.value.delete(id);
   }
 
   emitUpdate();
 };
 
 const updateGameSelectionMode = (
-  platformId: number,
+  platformId: number | string,
   mode: 'all_games' | 'specific_games',
 ) => {
+  const id = toPlatformDbId(platformId);
   const platform = selectedPlatforms.value.find(
-    (p) => p.platformId === platformId,
+    (p) => toPlatformDbId(p.platformId) === id,
   );
   if (platform) {
     platform.gameSelection = mode;
     if (mode === 'specific_games') {
       platform.selectedGames = [];
-      if (!expandedPlatforms.value.has(platformId)) {
-        expandedPlatforms.value.add(platformId);
+      if (!expandedPlatforms.value.has(id)) {
+        expandedPlatforms.value.add(id);
       }
     } else {
       delete platform.selectedGames;
@@ -642,9 +693,14 @@ const updateGameSelectionMode = (
   }
 };
 
-const toggleGame = (platformId: number, game: GameItem, checked: boolean) => {
+const toggleGame = (
+  platformId: number | string,
+  game: GameItem,
+  checked: boolean,
+) => {
+  const id = toPlatformDbId(platformId);
   const platform = selectedPlatforms.value.find(
-    (p) => p.platformId === platformId,
+    (p) => toPlatformDbId(p.platformId) === id,
   );
   if (!platform) return;
 
@@ -666,11 +722,12 @@ const toggleGame = (platformId: number, game: GameItem, checked: boolean) => {
   emitUpdate();
 };
 
-const togglePlatformExpansion = (platformId: number) => {
-  if (expandedPlatforms.value.has(platformId)) {
-    expandedPlatforms.value.delete(platformId);
+const togglePlatformExpansion = (platformId: number | string) => {
+  const id = toPlatformDbId(platformId);
+  if (expandedPlatforms.value.has(id)) {
+    expandedPlatforms.value.delete(id);
   } else {
-    expandedPlatforms.value.add(platformId);
+    expandedPlatforms.value.add(id);
   }
 };
 
@@ -684,7 +741,7 @@ const selectAllPlatforms = () => {
   selectedPlatforms.value = platforms.value
     .filter((p) => p.isEnabled)
     .map((p) => ({
-      platformId: p.platformId,
+      platformId: toPlatformDbId(p.platformId),
       platformName: p.platformName,
       gameSelection: 'all_games' as const,
     }));
@@ -699,7 +756,7 @@ const clearSelection = () => {
 
 const expandAll = () => {
   selectedPlatforms.value.forEach((p) => {
-    expandedPlatforms.value.add(p.platformId);
+    expandedPlatforms.value.add(toPlatformDbId(p.platformId));
   });
 };
 
@@ -720,6 +777,7 @@ const loadPlatformsWithGames = async () => {
     platforms.value.forEach((platform) => {
       (platform as any).gameSearchTerm = '';
     });
+    reconcileSelectedPlatforms();
   } catch (error) {
     console.error('Failed to load platforms with games:', error);
     message.error('加载游戏平台数据失败');
@@ -757,6 +815,7 @@ const validateSelection = async () => {
 
 // Emit Updates
 const emitUpdate = () => {
+  selectedPlatforms.value = dedupeSelectedPlatforms(selectedPlatforms.value);
   emit('update:modelValue', [...selectedPlatforms.value]);
   validateSelection();
 };
@@ -765,7 +824,15 @@ const emitUpdate = () => {
 watch(
   () => props.modelValue,
   (newValue) => {
-    selectedPlatforms.value = [...newValue];
+    selectedPlatforms.value = dedupeSelectedPlatforms([...newValue]).map(
+      (entry) => ({
+        ...entry,
+        platformId: toPlatformDbId(entry.platformId),
+      }),
+    );
+    if (platforms.value.length > 0) {
+      reconcileSelectedPlatforms();
+    }
   },
   { deep: true },
 );
@@ -781,11 +848,22 @@ watch(
   },
 );
 
+function onSiteScopeChanged() {
+  if (showPlatformSelection.value) {
+    void loadPlatformsWithGames();
+  }
+}
+
 // Lifecycle
 onMounted(() => {
   if (showPlatformSelection.value) {
     loadPlatformsWithGames();
   }
+  window.addEventListener(SITE_SCOPE_CHANGED_EVENT, onSiteScopeChanged);
+});
+
+onUnmounted(() => {
+  window.removeEventListener(SITE_SCOPE_CHANGED_EVENT, onSiteScopeChanged);
 });
 </script>
 

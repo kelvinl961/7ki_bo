@@ -1,4 +1,14 @@
 import { requestClient } from '#/api/request';
+import { resolveConfigScopeParams } from '#/utils/siteScope';
+
+/** 注册端限制（防脚本批量注册） */
+export interface RegistrationPlatformRestrictions {
+  enabled: boolean;
+  allowPc: boolean;
+  allowApple: boolean;
+  allowAndroid: boolean;
+  allowOther: boolean;
+}
 
 /** 与后台「注册支持方式」表单一致 */
 export interface RegistrationSupportMethods {
@@ -27,6 +37,7 @@ export interface RegistrationSupportMethods {
 }
 
 export interface RegistrationVerificationConfigPayload {
+  registrationPlatformRestrictions?: RegistrationPlatformRestrictions;
   registrationSupportMethods: RegistrationSupportMethods;
   publicPage: {
     guestAutoAccount: {
@@ -132,9 +143,15 @@ export async function fetchRegistrationVerificationConfig(params?: {
   scope?: string;
   scopeValue?: string;
 }): Promise<NonNullable<RegistrationVerificationApiResponse['data']>> {
+  const scopeParams = resolveConfigScopeParams();
   const res = (await requestClient.get(
     '/user-management/registration-verification',
-    { params },
+    {
+      params: {
+        scope: params?.scope ?? scopeParams.scope,
+        scopeValue: params?.scopeValue ?? scopeParams.scopeValue,
+      },
+    },
   )) as RegistrationVerificationApiResponse;
   if (!res?.success || !res.data) {
     throw new Error(res?.message || '加载注册和验证配置失败');
@@ -148,9 +165,14 @@ export async function saveRegistrationVerificationConfigApi(body: {
   config: Partial<RegistrationVerificationConfigPayload> &
     Record<string, unknown>;
 }): Promise<NonNullable<RegistrationVerificationApiResponse['data']>> {
+  const scopeParams = resolveConfigScopeParams();
   const res = (await requestClient.put(
     '/user-management/registration-verification',
-    body,
+    {
+      ...body,
+      scope: body.scope ?? scopeParams.scope,
+      scopeValue: body.scopeValue ?? scopeParams.scopeValue,
+    },
   )) as RegistrationVerificationApiResponse;
   if (!res?.success || !res.data) {
     throw new Error(res?.message || '保存失败');

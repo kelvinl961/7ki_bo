@@ -3354,6 +3354,24 @@
                         </n-radio-group>
                       </div>
 
+                      <!-- Built-in page rich content -->
+                      <div
+                        v-if="formData.customDisplayMethod === 'builtin_page'"
+                        class="mb-6"
+                      >
+                        <label
+                          class="mb-3 block text-sm font-medium text-gray-700"
+                        >
+                          页面内容 <span class="text-red-500">*</span>
+                        </label>
+                        <RichTextEditor
+                          v-model="formData.customPageContent"
+                          :max-length="50000"
+                          :height="420"
+                          placeholder="编辑内置页面内容，支持富文本、图片、文件链接、表格等"
+                        />
+                      </div>
+
                       <!-- Select Page (shown when jump_link is selected) -->
                       <div
                         v-if="formData.customDisplayMethod === 'jump_link'"
@@ -4218,21 +4236,47 @@
                     />
                   </div>
                   <n-input
+                    v-if="formData.ruleTemplate === 'custom'"
                     v-model:value="formData.rules"
                     type="textarea"
-                    placeholder="支持输入中文输入，按Enter键进行填写"
-                    :autosize="{ minRows: 10, maxRows: 20 }"
+                    placeholder="请输入活动规则说明（T&C）"
+                    :rows="14"
+                    :maxlength="10000"
+                    show-count
                   />
-                  <div class="text-right text-xs text-gray-500">
-                    {{ formData.rules?.length || 0 }}/10000
+                  <div
+                    v-else
+                    class="rounded-lg border border-gray-200 bg-gray-50 p-4"
+                  >
+                    <div class="mb-2 text-xs font-medium text-gray-500">
+                      系统默认规则说明
+                    </div>
+                    <pre
+                      class="m-0 whitespace-pre-wrap text-sm leading-relaxed text-gray-700"
+                    >{{ systemRulesPreview }}</pre>
                   </div>
                 </div>
               </div>
 
-              <!-- Right Column - Empty for now -->
+              <!-- Right Column - Rules preview -->
               <div class="w-80 border-l border-gray-200 pl-6">
-                <div class="text-center text-sm text-gray-400">
-                  规则预览区域
+                <div class="mb-2 text-sm font-medium text-gray-700">
+                  规则预览
+                </div>
+                <div
+                  v-if="formData.ruleTemplate === 'custom' && formData.rules"
+                  class="activity-rules-preview activity-rules-preview--system"
+                >
+                  {{ formData.rules }}
+                </div>
+                <div
+                  v-else-if="formData.ruleTemplate === 'system'"
+                  class="activity-rules-preview activity-rules-preview--system"
+                >
+                  {{ systemRulesPreview }}
+                </div>
+                <div v-else class="text-center text-sm text-gray-400">
+                  暂无规则内容
                 </div>
               </div>
             </div>
@@ -4359,6 +4403,9 @@ import {
 import { defineAsyncComponent } from 'vue';
 const MediaLibrarySelector = defineAsyncComponent(
   () => import('#/components/MediaLibrarySelector.vue'),
+);
+const RichTextEditor = defineAsyncComponent(
+  () => import('#/components/common/RichTextEditor.vue'),
 );
 const PlatformGameSelector = defineAsyncComponent(
   () => import('#/components/activity/PlatformGameSelector.vue'),
@@ -4890,6 +4937,7 @@ const formData = reactive({
   customJumpType: 'external_link',
   customOpenInNewWindow: 'true',
   customTargetUrl: '',
+  customPageContent: '',
 });
 
 const allowClaimSamePromotionType = computed({
@@ -5037,6 +5085,18 @@ const ruleTemplateOptions = [
   { label: '自定义', value: 'custom' },
   { label: '系统自带', value: 'system' },
 ];
+
+const systemRulesPreview = computed(() => {
+  const typeLabel =
+    activityTypes.find((t) => t.value === formData.activityType)?.label ||
+    formData.activityType;
+  return `【${typeLabel}】活动规则由系统根据活动类型自动生成，前台将展示平台默认 T&C 说明。如需自定义，请选择「自定义」并编辑规则文本。`;
+});
+
+/** 提交时：系统自带不传自定义规则，自定义模板传 T&C 文本 */
+function resolveRulesForSubmit(): string {
+  return formData.ruleTemplate === 'custom' ? formData.rules || '' : '';
+}
 
 const rewardTypeOptions = [
   { label: '固定奖励', value: 'fixed' },
@@ -5537,6 +5597,7 @@ const handleModalClose = () => {
     customJumpType: 'external_link',
     customOpenInNewWindow: 'true', // Use string to match form input type
     customTargetUrl: '',
+    customPageContent: '',
   });
 };
 
@@ -5549,6 +5610,23 @@ function toCustomOpenInNewWindowBoolean(
 ): boolean {
   if (typeof value === 'boolean') return value;
   return value === 'true';
+}
+
+/** API may store title in locales; config.title can be stale placeholder. */
+function resolveActivityTitle(item: any): string {
+  const placeholder = '未设置标题';
+  const locales = item?.locales as
+    | Array<{ locale?: string; title?: string }>
+    | undefined;
+  const fromLocales =
+    locales?.find((l) => l.locale === 'zh-CN')?.title ||
+    locales?.find((l) => l.locale === 'pt-BR')?.title ||
+    locales?.[0]?.title;
+  const candidates = [fromLocales, item?.title, item?.config?.title];
+  for (const candidate of candidates) {
+    if (candidate && candidate !== placeholder) return candidate;
+  }
+  return fromLocales || item?.title || item?.config?.title || '';
 }
 
 // URL validation for custom target URL
@@ -5654,8 +5732,8 @@ const handleSaveDraft = async () => {
       endAt: formData.endTime ? new Date(formData.endTime).toISOString() : '',
       status: 'draft',
       displayOrder: 0,
-      description: formData.rules,
-      rules: formData.rules,
+      description: resolveRulesForSubmit(),
+      rules: resolveRulesForSubmit(),
     };
 
     // TODO: Call API to save activity
@@ -5740,6 +5818,18 @@ const handleSubmit = async () => {
           return;
         }
       }
+
+      if (formData.customDisplayMethod === 'builtin_page') {
+        const plainText = (formData.customPageContent || '')
+          .replace(/<[^>]+>/g, '')
+          .replace(/&nbsp;/g, ' ')
+          .trim();
+        if (!plainText) {
+          message.error('请编辑内置页面内容');
+          submitting.value = false;
+          return;
+        }
+      }
     }
 
     // Build config payload including Promotion fields
@@ -5775,7 +5865,7 @@ const handleSubmit = async () => {
       memberScope: formData.memberLevel,
       claimLimit: 0,
       platforms: formData.platforms,
-      description: formData.rules,
+      description: resolveRulesForSubmit(),
 
       // Audit settings
       auditRequired: formData.auditSettings.auditRequired,
@@ -5783,7 +5873,8 @@ const handleSubmit = async () => {
       // auditCompletionTimeHours removed - fixed to 24 hours
       auditManualReviewRequired:
         formData.auditSettings.auditManualReviewRequired,
-      rules: formData.rules,
+      rules: resolveRulesForSubmit(),
+      ruleTemplate: formData.ruleTemplate,
       // Restrictions & Conditions
       restrictions: formData.restrictions,
       memberTags: formData.memberTags,
@@ -5882,6 +5973,10 @@ const handleSubmit = async () => {
         : undefined,
       customBuiltinPage:
         formData.customDisplayMethod === 'builtin_page' ? 'builtin' : undefined,
+      customPageContent:
+        formData.customPageContent && formData.customPageContent.trim()
+          ? formData.customPageContent
+          : undefined,
       // Save customJumpConfig if jump_link data exists
       customJumpConfig: formData.customJumpType
         ? {
@@ -6105,6 +6200,20 @@ const handleSubmit = async () => {
     };
 
     console.log('🔍 Debug - ConfigPayload before submission:', configPayload);
+
+    // Promotion uses promotionWageringPlatform* — do not persist wagering-activity defaults into config
+    if (formData.activityType === 'promotion') {
+      delete configPayload.wageringPlatform;
+      delete configPayload.wageringPlatformConfig;
+      delete configPayload.wageringRewardSettings;
+      delete configPayload.wageringRewardExpiryDays;
+      console.log('🔍 Promotion platform save:', {
+        promotionWageringPlatform: configPayload.promotionWageringPlatform,
+        selectedPlatforms:
+          configPayload.promotionWageringPlatformConfig?.selectedPlatforms?.length ??
+          0,
+      });
+    }
 
     // Debug newbie bonus fields specifically
     if (formData.activityType === 'newbie') {
@@ -6341,12 +6450,12 @@ const handleSubmit = async () => {
           {
             locale: 'pt-BR',
             title: formData.title,
-            description: formData.rules,
+            description: resolveRulesForSubmit(),
           },
           {
             locale: 'zh-CN',
             title: formData.title,
-            description: formData.rules,
+            description: resolveRulesForSubmit(),
           },
         ],
       };
@@ -7078,7 +7187,7 @@ watch(
 
       // Populate form with editing item data (prefer values from config)
       Object.assign(formData, {
-        title: (newItem as any).config?.title || (newItem as any).title || '',
+        title: resolveActivityTitle(newItem),
         activityType: (newItem as any).type || 'recharge',
         category: (newItem as any).category,
         currency: (newItem as any).currency,
@@ -7091,6 +7200,11 @@ watch(
           (newItem as any).platforms ||
           [],
         rules: (newItem as any).config?.rules || (newItem as any).rules || '',
+        ruleTemplate:
+          (newItem as any).config?.ruleTemplate ||
+          ((newItem as any).config?.rules || (newItem as any).rules
+            ? 'custom'
+            : 'custom'),
         displayEnabled:
           (newItem as any).displayEnabled ??
           (newItem as any).config?.displayEnabled ??
@@ -7200,13 +7314,52 @@ watch(
         ).config?.promotionAccumulatedRechargeCount?.toString() || '';
       formData.promotionAccumulatedWagering =
         (newItem as any).config?.promotionAccumulatedWagering?.toString() || '';
+      const promoConfig = (newItem as any).config || {};
+      const legacyWageringConfig = promoConfig.wageringPlatformConfig;
+      const savedPromotionConfig = promoConfig.promotionWageringPlatformConfig;
       formData.promotionWageringPlatform =
-        (newItem as any).config?.promotionWageringPlatform || 'all_platforms';
-      formData.promotionWageringPlatformConfig = (newItem as any).config
-        ?.promotionWageringPlatformConfig || {
-        selectedPlatforms: [],
-        platformIds: [],
+        promoConfig.promotionWageringPlatform ||
+        (promoConfig.wageringPlatform &&
+        promoConfig.wageringPlatform !== 'all_platforms'
+          ? promoConfig.wageringPlatform
+          : 'all_platforms');
+      const normalizePromotionPlatformConfig = (cfg: any) => {
+        if (!cfg?.selectedPlatforms?.length) {
+          return (
+            cfg ?? {
+              selectedPlatforms: [],
+              platformIds: [],
+            }
+          );
+        }
+        const selectedPlatforms = cfg.selectedPlatforms.map((p: any) => {
+          const raw = p?.platformId;
+          const platformId =
+            typeof raw === 'number'
+              ? raw
+              : parseInt(String(raw ?? '').trim(), 10);
+          return {
+            ...p,
+            platformId: Number.isNaN(platformId) ? raw : platformId,
+          };
+        });
+        return {
+          ...cfg,
+          selectedPlatforms,
+          platformIds: selectedPlatforms.map((p: any) => p.platformId),
+        };
       };
+      formData.promotionWageringPlatformConfig =
+        normalizePromotionPlatformConfig(
+          savedPromotionConfig?.selectedPlatforms?.length > 0
+            ? savedPromotionConfig
+            : legacyWageringConfig?.selectedPlatforms?.length > 0
+              ? legacyWageringConfig
+              : {
+                  selectedPlatforms: [],
+                  platformIds: [],
+                },
+        );
       formData.promotionDownloadAppLogin =
         (newItem as any).config?.promotionDownloadAppLogin ?? false;
       formData.promotionSameIPLimit =
@@ -7285,22 +7438,36 @@ watch(
         customJumpConfig: customConfig.customJumpConfig,
       });
 
-      // Load custom display method (only if exists, otherwise keep default)
-      if (customConfig.customDisplayMethod) {
-        formData.customDisplayMethod = customConfig.customDisplayMethod;
+      // Load custom display method (root first, then config — matches API transformActivity)
+      const rootCustom = newItem as any;
+      if (rootCustom.customDisplayMethod || customConfig.customDisplayMethod) {
+        formData.customDisplayMethod =
+          rootCustom.customDisplayMethod || customConfig.customDisplayMethod;
       }
 
-      // Load custom jump type - ALWAYS load if it exists, even if displayMethod is builtin_page
-      // This ensures that if user previously selected jump_link, the value is preserved
+      if (activityType === 'custom') {
+        formData.customPageContent =
+          rootCustom.customPageContent ||
+          customConfig.customPageContent ||
+          customConfig.pageContent ||
+          '';
+      }
+
+      // Load custom jump type - root first (API transformActivity hoists these out of config)
+      const rootJumpConfig =
+        rootCustom.customJumpConfig ?? customConfig.customJumpConfig;
       if (
+        rootCustom.customJumpType !== undefined &&
+        rootCustom.customJumpType !== null
+      ) {
+        formData.customJumpType = rootCustom.customJumpType;
+      } else if (
         customConfig.customJumpType !== undefined &&
         customConfig.customJumpType !== null
       ) {
         formData.customJumpType = customConfig.customJumpType;
-      }
-      // If customJumpType doesn't exist but customJumpConfig exists, try to infer from jumpMode
-      else if (customConfig.customJumpConfig?.jumpMode) {
-        const jumpMode = customConfig.customJumpConfig.jumpMode;
+      } else if (rootJumpConfig?.jumpMode) {
+        const jumpMode = rootJumpConfig.jumpMode;
         if (jumpMode === 'URL') {
           formData.customJumpType = 'external_link';
         } else if (jumpMode === 'ACTIVITY') {
@@ -7310,24 +7477,28 @@ watch(
         }
       }
 
-      // Load custom target URL - ALWAYS load if it exists, even if displayMethod is builtin_page
-      // This ensures that if user previously entered a URL, it's preserved
+      // Load custom target URL - root first, even when displayMethod is builtin_page
       if (
+        rootCustom.customTargetUrl !== undefined &&
+        rootCustom.customTargetUrl !== null &&
+        rootCustom.customTargetUrl !== ''
+      ) {
+        formData.customTargetUrl = rootCustom.customTargetUrl;
+      } else if (
         customConfig.customTargetUrl !== undefined &&
         customConfig.customTargetUrl !== null
       ) {
         formData.customTargetUrl = customConfig.customTargetUrl;
-      } else if (customConfig.customJumpConfig?.targetUrl) {
-        // Fallback to customJumpConfig.targetUrl
-        formData.customTargetUrl = customConfig.customJumpConfig.targetUrl;
+      } else if (rootJumpConfig?.targetUrl) {
+        formData.customTargetUrl = rootJumpConfig.targetUrl;
       } else {
         formData.customTargetUrl = '';
       }
 
-      // Handle customOpenInNewWindow - support both boolean and string values
-      // Also check customJumpConfig.openInNewWindow as fallback
-      // ALWAYS load if it exists, even if displayMethod is builtin_page
+      // Handle customOpenInNewWindow - root first, then config
       const openInNewWindowValue =
+        rootCustom.customOpenInNewWindow ??
+        rootJumpConfig?.openInNewWindow ??
         customConfig.customOpenInNewWindow ??
         customConfig.customJumpConfig?.openInNewWindow ??
         undefined;
@@ -7804,5 +7975,59 @@ const removeRedPacketDailyDistributionTime = (index: number) => {
 
 .activity-form-modal :deep(.n-switch) {
   @apply text-sm;
+}
+
+.activity-rules-preview {
+  max-height: 420px;
+  overflow-y: auto;
+  padding: 12px;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  font-size: 13px;
+  line-height: 1.65;
+  color: #374151;
+  word-break: break-word;
+}
+
+.activity-rules-preview--system {
+  background: #f9fafb;
+  white-space: pre-wrap;
+}
+
+.activity-rules-preview :deep(img) {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.activity-rules-preview :deep(table) {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0;
+}
+
+.activity-rules-preview :deep(table td),
+.activity-rules-preview :deep(table th) {
+  border: 1px solid #e5e7eb;
+  padding: 6px 8px;
+}
+
+.activity-rules-preview :deep(ul),
+.activity-rules-preview :deep(ol) {
+  padding-left: 1.25rem;
+  margin: 0.5rem 0;
+}
+
+.activity-rules-preview :deep(p) {
+  margin: 0.5rem 0;
+}
+
+.activity-rules-preview :deep(h1),
+.activity-rules-preview :deep(h2),
+.activity-rules-preview :deep(h3) {
+  margin: 0.75rem 0 0.5rem;
+  font-weight: 600;
+  color: #111827;
 }
 </style>

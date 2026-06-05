@@ -4,10 +4,8 @@
     type="datetimerange"
     clearable
     :style="{ width: width }"
-    :start-placeholder="
-      startPlaceholder || `开始日期 (${getDisplayTimezone()})`
-    "
-    :end-placeholder="endPlaceholder || `结束日期 (${getDisplayTimezone()})`"
+    :start-placeholder="startPlaceholder || '开始日期'"
+    :end-placeholder="endPlaceholder || '结束日期'"
     format="yyyy-MM-dd HH:mm:ss"
     :shortcuts="dateShortcuts"
     @update:value="handleDateChange"

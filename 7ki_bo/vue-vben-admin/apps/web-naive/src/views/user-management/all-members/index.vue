@@ -162,7 +162,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch, nextTick, h } from 'vue';
+import {
+  ref,
+  reactive,
+  computed,
+  onMounted,
+  onActivated,
+  watch,
+  nextTick,
+  h,
+} from 'vue';
 import { useRoute } from 'vue-router';
 import { Page } from '@vben/common-ui';
 import {
@@ -240,12 +249,69 @@ const checkedRowKeys = ref<(string | number)[]>([]);
 const tableData = ref<UserItem[]>([]);
 const currentUserId = ref<number>(0);
 
+const ALL_MEMBERS_TIME_FILTER_KEY = 'vben:all-members:time-filter';
+
+type AllMembersTimeFilterSnapshot = {
+  timeType: string;
+  dateQuickSelect: 'day' | 'week' | 'month' | null;
+  dateRange: [number, number] | null;
+};
+
+let skipTimeFilterPersist = false;
+
+function loadSavedTimeFilter(): AllMembersTimeFilterSnapshot | null {
+  try {
+    const raw = sessionStorage.getItem(ALL_MEMBERS_TIME_FILTER_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as AllMembersTimeFilterSnapshot;
+    if (
+      parsed.dateRange &&
+      Array.isArray(parsed.dateRange) &&
+      parsed.dateRange.length === 2 &&
+      typeof parsed.dateRange[0] === 'number' &&
+      typeof parsed.dateRange[1] === 'number'
+    ) {
+      return parsed;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function persistTimeFilter(): void {
+  if (skipTimeFilterPersist) return;
+  try {
+    sessionStorage.setItem(
+      ALL_MEMBERS_TIME_FILTER_KEY,
+      JSON.stringify({
+        timeType: filterForm.timeType,
+        dateQuickSelect: filterForm.dateQuickSelect,
+        dateRange: filterForm.dateRange,
+      } satisfies AllMembersTimeFilterSnapshot),
+    );
+  } catch {
+    /* ignore quota errors */
+  }
+}
+
+function runWithoutTimeFilterPersist(fn: () => void): void {
+  skipTimeFilterPersist = true;
+  try {
+    fn();
+  } finally {
+    skipTimeFilterPersist = false;
+  }
+}
+
+const savedTimeFilter = loadSavedTimeFilter();
+
 // 筛选表单
 const filterForm = reactive({
   // Time-based filters
-  timeType: 'registrationTime' as string,
-  dateQuickSelect: null as 'day' | 'week' | 'month' | null,
-  dateRange: null as [number, number] | null,
+  timeType: savedTimeFilter?.timeType ?? 'registrationTime',
+  dateQuickSelect: savedTimeFilter?.dateQuickSelect ?? null,
+  dateRange: savedTimeFilter?.dateRange ?? null,
 
   // Search filters
   searchCondition: null as string | null, // Main search category
@@ -1158,9 +1224,11 @@ const handleQuickDateSelect = (value: 'day' | 'week' | 'month' | null) => {
       ).getTime(), // São Paulo is UTC-3
       new Date(Date.UTC(endYear, endMonth - 1, endDay, 2, 59, 59)).getTime(),
     ];
+    persistTimeFilter();
   } else {
     // Store UTC timestamps - these represent São Paulo time
     filterForm.dateRange = [startDateUTC.getTime(), endDateUTC.getTime()];
+    persistTimeFilter();
     console.log('📅 Quick date select:', {
       saoPaulo: {
         start: `${startYear}-${startMonth}-${startDay} 00:00:00`,
@@ -1174,9 +1242,17 @@ const handleQuickDateSelect = (value: 'day' | 'week' | 'month' | null) => {
   }
 };
 
+/** 默认选中「日」并填充今日日期范围（仅首次无历史设定时） */
+function applyDefaultDayFilter(): void {
+  filterForm.dateQuickSelect = 'day';
+  handleQuickDateSelect('day');
+  persistTimeFilter();
+}
+
 const handleDateRangeChange = (_value: [number, number] | null) => {
   // Clear quick select when manually changing date range
   filterForm.dateQuickSelect = null;
+  persistTimeFilter();
 
   // ✅ FIX: When user manually selects dates, the date picker creates Date objects
   // in browser local timezone. We need to interpret what the user selected as
@@ -1292,7 +1368,7 @@ const resetFilter = () => {
   advancedListPayload.value = null;
   Object.assign(filterForm, {
     timeType: 'registrationTime',
-    dateQuickSelect: null,
+    dateQuickSelect: 'day',
     dateRange: null,
     searchCondition: null,
     searchConditionValue: null,
@@ -1310,6 +1386,7 @@ const resetFilter = () => {
   searchConditionValueOptions.value = [];
   paginationReactive.page = 1;
   sortState.value = null;
+  applyDefaultDayFilter();
   loadTableData();
 };
 
@@ -1720,14 +1797,16 @@ function applyOpsDrillFromRoute(): void {
   const q = route.query;
   const s = Number(q.opsDateStart);
   const e = Number(q.opsDateEnd);
-  advancedListMode.value = false;
-  advancedListPayload.value = null;
-  filterForm.timeType = String(q.opsTimeType);
-  filterForm.dateQuickSelect = null;
-  filterForm.dateRange = [s, e];
-  filterForm.searchField = null;
-  filterForm.searchValue = '';
-  paginationReactive.page = 1;
+  runWithoutTimeFilterPersist(() => {
+    advancedListMode.value = false;
+    advancedListPayload.value = null;
+    filterForm.timeType = String(q.opsTimeType);
+    filterForm.dateQuickSelect = null;
+    filterForm.dateRange = [s, e];
+    filterForm.searchField = null;
+    filterForm.searchValue = '';
+    paginationReactive.page = 1;
+  });
 }
 
 watch(
@@ -1761,23 +1840,20 @@ onMounted(() => {
       searchField: filterForm.searchField,
       searchValue: filterForm.searchValue,
     });
+  }
 
-    // ✅ FIX: When coming from agent list (via 直属数 click), don't set date filter
-    // Show all downlines without date restriction
-    // Only set date filter if explicitly provided in query AND not from agent list
-    if (
-      query.dateQuickSelect === 'day' &&
-      !query.searchField?.includes('upper_agent')
-    ) {
-      filterForm.dateQuickSelect = 'day';
-      handleQuickDateSelect('day');
-    }
-  } else {
-    // Set default today date if dateQuickSelect is provided (for other navigation cases)
-    if (query.dateQuickSelect === 'day') {
-      filterForm.dateQuickSelect = 'day';
-      handleQuickDateSelect('day');
-    }
+  // 直属会员下钻：不限制注册日期
+  if (
+    query.searchField &&
+    String(query.searchField).includes('upper_agent')
+  ) {
+    runWithoutTimeFilterPersist(() => {
+      filterForm.dateQuickSelect = null;
+      filterForm.dateRange = null;
+    });
+  } else if (!hasValidOpsDrillQuery() && !filterForm.dateRange) {
+    // 仅首次进入且无已保存/已修改的日期设定时，默认「日」
+    applyDefaultDayFilter();
   }
 
   // ✅ NEW: Handle special filter types (same_password, same_withdrawal_pin, etc.)
@@ -1833,5 +1909,33 @@ onMounted(() => {
   } else {
     loadTableData();
   }
+});
+
+watch(() => filterForm.timeType, () => {
+  persistTimeFilter();
+});
+
+/** keep-alive 返回时：若内存被路由下钻清空，从 session 恢复用户之前的日期设定 */
+onActivated(() => {
+  const query = route.query;
+  if (hasValidOpsDrillQuery()) return;
+  if (
+    query.searchField &&
+    String(query.searchField).includes('upper_agent')
+  ) {
+    return;
+  }
+  if (query.searchField && query.searchValue) return;
+  if (query.filterType) return;
+  if (filterForm.dateRange) return;
+
+  const saved = loadSavedTimeFilter();
+  if (!saved?.dateRange) return;
+
+  runWithoutTimeFilterPersist(() => {
+    filterForm.timeType = saved.timeType;
+    filterForm.dateQuickSelect = saved.dateQuickSelect;
+    filterForm.dateRange = saved.dateRange;
+  });
 });
 </script>

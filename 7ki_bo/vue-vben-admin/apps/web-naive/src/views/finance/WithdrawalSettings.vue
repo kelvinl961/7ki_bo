@@ -2742,6 +2742,7 @@ import {
 import { withdrawalSettingsApi } from '#/api/finance/withdrawalSettings';
 import { withdrawalConfigApi } from '#/api/system/systemConfig';
 import { getMemberTiersApi } from '#/api/core/memberTier';
+import { sortMemberTiersForDisplay } from '#/utils/memberTierSort';
 const WithdrawalChannelConfigModal = defineAsyncComponent(
   () => import('../../components/WithdrawalChannelConfigModal.vue'),
 );
@@ -4020,7 +4021,7 @@ const loadMemberTiers = async () => {
     const response = await getMemberTiersApi({ isActive: true });
 
     if (response && response.list) {
-      memberTiers.value = response.list;
+      memberTiers.value = sortMemberTiersForDisplay(response.list);
       console.log('✅ Member tiers loaded:', memberTiers.value.length);
     } else {
       console.log('ℹ️ No member tiers found');

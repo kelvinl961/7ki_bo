@@ -421,6 +421,7 @@ import {
 } from '#/api/agency/agent';
 import { getUserListApi } from '#/api/core/user-management';
 import { getMemberTiersApi, type MemberTier } from '#/api/core/memberTier';
+import { sortMemberTiersForDisplay } from '#/utils/memberTierSort';
 import { agentModeApi } from '#/api/agency/agent-mode';
 import {
   getAgentRebateSummariesApi,
@@ -1061,7 +1062,7 @@ const fetchMemberTiers = async () => {
       isActive: true,
       pageSize: 100, // Get all active tiers
     });
-    memberTiers.value = response.list;
+    memberTiers.value = sortMemberTiersForDisplay(response.list);
   } catch (error) {
     console.error('获取会员层级失败:', error);
     notification.error({

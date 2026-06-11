@@ -1354,6 +1354,7 @@ import { financeWithdrawalApi } from '#/api/finance/financeWithdrawal';
 import { rePaymentApi } from '#/api/finance/rePayment';
 import { searchUsersApi } from '#/api/core/user-management';
 import { getMemberTiersApi } from '#/api/core/memberTier';
+import { sortMemberTiersForDisplay } from '#/utils/memberTierSort';
 import { getGamePlatformListApi } from '#/api/game/platform';
 import { formatCurrency, formatDateTime } from '#/utils/format';
 
@@ -3997,11 +3998,13 @@ const loadMemberTiers = async () => {
     console.log(' Member tiers response:', response);
 
     if (response && response.list && response.list.length > 0) {
-      memberTierOptions.value = response.list.map((tier: any) => ({
+      memberTierOptions.value = sortMemberTiersForDisplay(response.list).map(
+        (tier: any) => ({
         label: tier.tierName,
         value: tier.tierCode,
         tier: tier,
-      }));
+      }),
+      );
       console.log('✅ Loaded member tier options:', memberTierOptions.value);
     } else {
       console.warn('⚠️ No member tiers found');

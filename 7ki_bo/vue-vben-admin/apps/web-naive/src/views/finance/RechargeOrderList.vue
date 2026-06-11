@@ -2568,6 +2568,7 @@ import {
 import { searchUsers } from '../../api/users/index';
 import thirdPartyChannelApi from '../../api/finance/third-party-channels';
 import { getMemberTiersApi } from '../../api/core/memberTier';
+import { sortMemberTiersForDisplay } from '#/utils/memberTierSort';
 import { requestClient } from '../../api/request';
 // Import timezone utilities
 import {
@@ -5137,12 +5138,14 @@ const loadMemberTiers = async () => {
     console.log(' Member tiers response:', response);
 
     if (response && response.list && response.list.length > 0) {
-      memberTierOptions.value = response.list.map((tier: any) => ({
+      memberTierOptions.value = sortMemberTiersForDisplay(response.list).map(
+        (tier: any) => ({
         label: tier.tierName,
         value: tier.tierCode,
         name: tier.tierName,
         description: tier.description,
-      }));
+      }),
+      );
       console.log('✅ Loaded member tier options:', memberTierOptions.value);
     } else {
       console.warn('⚠️ No member tiers found');

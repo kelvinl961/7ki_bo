@@ -196,7 +196,7 @@ export interface UserDetailInfo {
   // Security Stats (from separate API call)
   passwordMatchCount?: number; // 同登录密码人数
   sameWithdrawalPinCount?: number; // 同提现密码人数
-  sameAccountCount?: number; // 同账号人数
+  sameAccountCount?: number; // 同提现账号人数
   sameRegIpCount?: number; // 同注册IP人数
   sameRealNameCount?: number; // 同姓名人数
   sameRegistrationDeviceCount?: number; // 同注册设备人数
@@ -873,7 +873,8 @@ export interface UserSecurityStats {
   passwordMatchCount: number; // 同登录密码人数
   sameWithdrawalPinCount: number; // 同提现密码人数
   withdrawAccountCount: number; // 提现账号数量
-  sameAccountCount: number; // 同账号人数
+  sameAccountCount: number; // 同提现账号人数（兼容旧字段）
+  sameWithdrawalAccountCount?: number; // 同提现账号人数
   sameRegIpCount: number; // 同注册IP人数
   sameRealNameCount: number; // 同姓名人数
   sameRegistrationDeviceCount: number; // 同注册设备人数
@@ -885,6 +886,38 @@ export async function getUserSecurityStatsApi(
 ): Promise<UserSecurityStats> {
   const response = await requestClient.get(`/users/${userId}/security-stats`);
   return response.data || response;
+}
+
+/** Count members sharing any withdrawal account with the given user. */
+export async function getSameWithdrawalAccountCountApi(
+  userId: number,
+): Promise<number> {
+  try {
+    const response = await requestClient.get(`/users/${userId}/associations`, {
+      params: {
+        associationType: 'same_withdrawal_account',
+        page: 1,
+        pageSize: 1,
+      },
+    });
+
+    if (response && typeof response === 'object') {
+      if ('total' in response) {
+        return Number((response as { total: number }).total) || 0;
+      }
+      if (
+        'data' in response &&
+        (response as { data?: { total?: number } }).data?.total != null
+      ) {
+        return (
+          Number((response as { data: { total: number } }).data.total) || 0
+        );
+      }
+    }
+    return 0;
+  } catch {
+    return 0;
+  }
 }
 
 // ===================================

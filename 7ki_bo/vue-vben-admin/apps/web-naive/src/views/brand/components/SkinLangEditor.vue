@@ -136,6 +136,119 @@
               </div>
             </div>
 
+            <!-- 大厅背景（紧跟品牌图标） -->
+            <div class="form-section">
+              <h4 class="section-title">大厅背景</h4>
+
+              <n-form-item label="大厅背景" path="lobbyBackgroundSource">
+                <n-radio-group
+                  v-model:value="formModel.lobbyBackgroundSource"
+                  :disabled="detailMode"
+                >
+                  <n-radio value="system">系统配置</n-radio>
+                  <n-radio value="custom_image">自定义图片背景</n-radio>
+                  <n-radio value="skin_default">皮肤默认</n-radio>
+                </n-radio-group>
+              </n-form-item>
+
+              <n-form-item
+                v-if="formModel.lobbyBackgroundSource === 'custom_image'"
+                label="背景图地址"
+                path="lobbyCustomImageUrl"
+              >
+                <n-input
+                  v-model:value="formModel.lobbyCustomImageUrl"
+                  placeholder="请输入图片 URL"
+                  :readonly="detailMode"
+                />
+              </n-form-item>
+
+              <n-form-item label="底纹背景色" path="patternBackgroundColor">
+                <n-color-picker
+                  v-model:value="formModel.patternBackgroundColor"
+                  :modes="['hex']"
+                  :show-alpha="false"
+                  :disabled="detailMode"
+                />
+              </n-form-item>
+
+              <n-form-item label="底纹样式" path="lobbyPatternUrl">
+                <div class="lobby-pattern-tabs-root">
+                  <n-tabs
+                    v-model:value="formModel.lobbyPatternTab"
+                    class="lobby-pattern-tabs"
+                    type="line"
+                    :disabled="detailMode"
+                  >
+                    <n-tab-pane name="light" tab="白色底纹">
+                      <div class="lobby-pattern-panel">
+                        <div class="lobby-pattern-grid">
+                          <button
+                            v-for="(p, idx) in lobbyWhitePatternTiles"
+                            :key="p.url || `light-none-${idx}`"
+                            type="button"
+                            class="lobby-pattern-cell"
+                            :class="[
+                              {
+                                'is-active':
+                                  formModel.lobbyPatternTab === 'light' &&
+                                  formModel.lobbyPatternUrl === p.url,
+                              },
+                              !p.url ? 'lobby-pattern-cell--none' : '',
+                            ]"
+                            :title="p.title"
+                            :disabled="detailMode"
+                            @click="selectLobbyPattern('light', p.url)"
+                          >
+                            <img
+                              v-if="p.url"
+                              :src="p.url"
+                              class="lobby-pattern-img"
+                              alt=""
+                              loading="lazy"
+                            />
+                            <span v-else class="lobby-pattern-none-label">无底纹</span>
+                          </button>
+                        </div>
+                      </div>
+                    </n-tab-pane>
+                    <n-tab-pane name="dark" tab="深色底纹">
+                      <div class="lobby-pattern-panel">
+                        <div class="lobby-pattern-grid">
+                          <button
+                            v-for="(p, idx) in lobbyBlackPatternTiles"
+                            :key="p.url || `none-${idx}`"
+                            type="button"
+                            class="lobby-pattern-cell"
+                            :class="[
+                              {
+                                'is-active':
+                                  formModel.lobbyPatternTab === 'dark' &&
+                                  formModel.lobbyPatternUrl === p.url,
+                              },
+                              !p.url ? 'lobby-pattern-cell--none' : '',
+                            ]"
+                            :title="p.title"
+                            :disabled="detailMode"
+                            @click="selectLobbyPattern('dark', p.url)"
+                          >
+                            <img
+                              v-if="p.url"
+                              :src="p.url"
+                              class="lobby-pattern-img"
+                              alt=""
+                              loading="lazy"
+                            />
+                            <span v-else class="lobby-pattern-none-label">无底纹</span>
+                          </button>
+                        </div>
+                      </div>
+                    </n-tab-pane>
+                  </n-tabs>
+                </div>
+              </n-form-item>
+            </div>
+
             <!-- Language Settings -->
             <div class="form-section">
               <h4 class="section-title">语言设置</h4>
@@ -238,9 +351,7 @@
               <div
                 v-else
                 class="image-container"
-                :style="{
-                  background: getSkinColorRGB(formModel.skinColor || '15'),
-                }"
+                :style="previewImageContainerStyle"
               >
                 <img
                   :src="previewImageUrl"
@@ -331,6 +442,12 @@ import {
   type BrandSkinLangConfig,
   type BrandSkinLangCreateRequest,
 } from '#/api/skinLang';
+import {
+  LOBBY_BLACK_PATTERN_TILES,
+  LOBBY_WHITE_PATTERN_TILES,
+  inferLobbyPatternTabFromUrl,
+  resolveLobbyPatternUrlFromRecord,
+} from '#/constants/lobbyPatterns';
 
 interface Props {
   show: boolean;
@@ -393,6 +510,11 @@ const formModel = reactive<
   operator: '当前用户',
   updatedAt: new Date().toISOString(),
   backgroundImage: '',
+  lobbyBackgroundSource: 'system',
+  lobbyCustomImageUrl: '',
+  patternBackgroundColor: '#1a1a1a',
+  lobbyPatternTab: 'dark',
+  lobbyPatternUrl: '',
   primaryColor: '#0a1628',
   secondaryColor: '#111f35',
   tertiaryColor: '#162a45',
@@ -427,6 +549,85 @@ const {
   handleImageError,
   handleImageLoad,
 } = useSkinPreview(previewConfig);
+
+const lobbyBlackPatternTiles = LOBBY_BLACK_PATTERN_TILES;
+const lobbyWhitePatternTiles = LOBBY_WHITE_PATTERN_TILES;
+
+function selectLobbyPattern(tab: 'light' | 'dark', url: string) {
+  formModel.lobbyPatternTab = tab;
+  formModel.lobbyPatternUrl = url;
+}
+
+/** 将底纹背景色叠在皮肤色上（半透明），两者都可见 */
+function patternColorWashCss(colorInput: string, alpha = 0.62): string {
+  const raw = colorInput.trim();
+  const rgbMatch = raw.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
+  if (rgbMatch) {
+    return `rgba(${rgbMatch[1]}, ${rgbMatch[2]}, ${rgbMatch[3]}, ${alpha})`;
+  }
+  let h = raw.replace('#', '').trim();
+  if (h.length === 3) {
+    h = [...h].map((c) => c + c).join('');
+  }
+  if (!/^[0-9a-fA-F]{6}$/u.test(h)) {
+    return `rgba(26, 26, 26, ${alpha})`;
+  }
+  const r = Number.parseInt(h.slice(0, 2), 16);
+  const g = Number.parseInt(h.slice(2, 4), 16);
+  const b = Number.parseInt(h.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+/** 预览：底层皮肤色 → 半透明底纹背景色 → 最上为自定义图 / 平铺底纹 / 皮肤背景图 */
+const previewImageContainerStyle = computed(() => {
+  const skinTint = getSkinColorRGB(formModel.skinColor || '15');
+  const lobbyUrl =
+    formModel.lobbyBackgroundSource === 'custom_image'
+      ? formModel.lobbyCustomImageUrl?.trim()
+      : '';
+  const skinBgUrl = formModel.backgroundImage?.trim() || '';
+  const patternColor =
+    formModel.patternBackgroundColor?.trim() || '#1a1a1a';
+  const patternUrl = formModel.lobbyPatternUrl?.trim() || '';
+  const wash = `linear-gradient(${patternColorWashCss(patternColor)}, ${patternColorWashCss(patternColor)})`;
+
+  if (lobbyUrl) {
+    return {
+      backgroundColor: skinTint,
+      backgroundImage: `url(${lobbyUrl}), ${wash}`,
+      backgroundSize: 'cover, 100% 100%',
+      backgroundPosition: 'center, 0 0',
+      backgroundRepeat: 'no-repeat, no-repeat',
+    };
+  }
+
+  if (patternUrl) {
+    return {
+      backgroundColor: skinTint,
+      backgroundImage: `url(${patternUrl}), ${wash}`,
+      backgroundRepeat: 'repeat, no-repeat',
+      backgroundSize: '44px 44px, 100% 100%',
+      backgroundPosition: '0 0, 0 0',
+    };
+  }
+
+  if (skinBgUrl) {
+    return {
+      backgroundColor: skinTint,
+      backgroundImage: `url(${skinBgUrl}), ${wash}`,
+      backgroundSize: 'cover, 100% 100%',
+      backgroundPosition: 'center, 0 0',
+      backgroundRepeat: 'no-repeat, no-repeat',
+    };
+  }
+
+  return {
+    backgroundColor: skinTint,
+    backgroundImage: wash,
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: '100% 100%',
+  };
+});
 
 // Options — same list as BrandLogoSetting filter / skinLang API
 const skinStyleOptions = LAYOUT_STYLE_OPTIONS;
@@ -524,6 +725,18 @@ const formRules: FormRules = {
   gameColor: [{ required: true, message: '请选择玩法颜色' }],
   skinColor: [{ required: true, message: '请选择皮肤颜色' }],
   authMode: [{ required: true, message: '请选择认证模式' }],
+  lobbyBackgroundSource: [{ required: true, message: '请选择大厅背景' }],
+  lobbyCustomImageUrl: [
+    {
+      validator: () => {
+        if (formModel.lobbyBackgroundSource !== 'custom_image') return true;
+        return !!(formModel.lobbyCustomImageUrl && formModel.lobbyCustomImageUrl.trim());
+      },
+      message: '请填写背景图地址',
+      trigger: ['input', 'blur'],
+    },
+  ],
+  patternBackgroundColor: [{ required: true, message: '请选择底纹背景色' }],
 };
 
 // Computed
@@ -619,6 +832,17 @@ watch(
           newItem.backgroundImage ??
           getDefaultBackgroundImage(newItem.skinColor || '') ??
           '',
+        lobbyBackgroundSource: newItem.lobbyBackgroundSource ?? 'system',
+        lobbyCustomImageUrl: newItem.lobbyCustomImageUrl ?? '',
+        patternBackgroundColor: newItem.patternBackgroundColor ?? '#1a1a1a',
+        ...(() => {
+          const lobbyPatternUrl = resolveLobbyPatternUrlFromRecord(newItem);
+          const tab =
+            inferLobbyPatternTabFromUrl(lobbyPatternUrl) ??
+            newItem.lobbyPatternTab ??
+            'dark';
+          return { lobbyPatternTab: tab, lobbyPatternUrl };
+        })(),
       });
     } else {
       const palette = getColorPaletteById('15');
@@ -649,6 +873,11 @@ watch(
         operator: '当前用户',
         updatedAt: new Date().toISOString(),
         backgroundImage: '',
+        lobbyBackgroundSource: 'system',
+        lobbyCustomImageUrl: '',
+        patternBackgroundColor: '#1a1a1a',
+        lobbyPatternTab: 'dark',
+        lobbyPatternUrl: '',
         primaryColor: palette.primary,
         secondaryColor: palette.secondary,
         tertiaryColor: palette.tertiary,
@@ -737,6 +966,14 @@ const handleSubmit = async () => {
       appSetting: formModel.appSetting,
       backendRemark: formModel.backendRemark,
       operator: formModel.operator,
+      lobbyBackgroundSource: formModel.lobbyBackgroundSource,
+      lobbyCustomImageUrl:
+        formModel.lobbyBackgroundSource === 'custom_image'
+          ? formModel.lobbyCustomImageUrl?.trim() || ''
+          : '',
+      patternBackgroundColor: formModel.patternBackgroundColor,
+      lobbyPatternTab: formModel.lobbyPatternTab,
+      lobbyPatternUrl: formModel.lobbyPatternUrl?.trim() || '',
       skinColor: formModel.skinColor,
       skinColorRgb: formModel.skinColorRgb,
       skinColorHex: formModel.skinColorHex,
@@ -1119,6 +1356,97 @@ pointer-events: none;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.lobby-pattern-tabs-root {
+  width: 100%;
+  min-width: 0;
+}
+
+.lobby-pattern-tabs {
+  width: 100%;
+}
+
+.lobby-pattern-tabs :deep(.n-tab-pane) {
+  width: 100%;
+}
+
+.lobby-pattern-panel {
+  width: 100%;
+  max-width: 100%;
+  margin-top: 4px;
+  padding: 8px 10px;
+  box-sizing: border-box;
+  background-color: #d0d0d0 !important;
+  border: 1px solid #a8a8a8 !important;
+  border-radius: 6px;
+}
+
+.lobby-pattern-grid {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(auto-fill, 44px);
+  grid-auto-rows: 44px;
+  justify-content: start;
+  gap: 5px;
+  max-height: min(420px, 52vh);
+  min-height: 220px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.lobby-pattern-cell {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border: 1px solid #b8b8b8;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 0;
+  background-color: #a8a8a8;
+  background-clip: padding-box;
+  overflow: hidden;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
+}
+
+.lobby-pattern-cell--none {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+}
+
+.lobby-pattern-cell:hover:not(:disabled) {
+  border-color: #2080f0;
+}
+
+.lobby-pattern-cell.is-active {
+  border: 2px solid #2080f0;
+  box-shadow: 0 0 0 1px rgba(32, 128, 240, 0.35);
+  z-index: 1;
+}
+
+.lobby-pattern-cell:disabled {
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
+.lobby-pattern-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  vertical-align: top;
+  background-color: #a8a8a8;
+}
+
+.lobby-pattern-none-label {
+  font-size: 10px;
+  line-height: 1.15;
+  text-align: center;
+  color: #555;
+  padding: 2px;
 }
 
 .preview-panel {

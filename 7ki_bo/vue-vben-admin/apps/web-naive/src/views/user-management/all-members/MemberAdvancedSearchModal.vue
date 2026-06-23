@@ -1072,12 +1072,10 @@ async function loadTierVipOptions() {
   try {
     const { getActiveMemberTiersApi } = await import('#/api/core/memberTier');
     const tiers = await getActiveMemberTiersApi();
-    memberTierOptions.value = tiers
-      .map((t) => ({
-        label: t.tierName,
-        value: String(t.id),
-      }))
-      .sort((a, b) => parseInt(a.value, 10) - parseInt(b.value, 10));
+    memberTierOptions.value = tiers.map((t) => ({
+      label: t.tierName,
+      value: String(t.id),
+    }));
   } catch {
     memberTierOptions.value = [];
   }

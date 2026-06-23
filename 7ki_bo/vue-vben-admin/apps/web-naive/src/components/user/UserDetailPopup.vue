@@ -530,6 +530,7 @@ import {
 import { useAccessStore } from '@vben/stores';
 import { getUserByIdApi } from '#/api/core/user-management';
 import {
+  getSameWithdrawalAccountCountApi,
   getUserSecurityStatsApi,
   type UserSecurityStats,
 } from '#/api/core/user-detail';
@@ -1380,8 +1381,11 @@ const refreshUserData = async () => {
 
     // ✅ OPTIMIZATION: Fetch security statistics in background (non-blocking)
     // Don't await - let it load in background while popup is already visible
-    getUserSecurityStatsApi(props.user.id)
-      .then((securityStats) => {
+    Promise.all([
+      getUserSecurityStatsApi(props.user.id),
+      getSameWithdrawalAccountCountApi(props.user.id),
+    ])
+      .then(([securityStats, sameWithdrawalAccountCount]) => {
         console.log('📊 Security stats received:', securityStats);
 
         // Update user detail with real security stats
@@ -1392,7 +1396,10 @@ const refreshUserData = async () => {
             securityStats.sameWithdrawalPinCount;
           userDetail.value.withdrawAccountCount =
             securityStats.withdrawAccountCount;
-          userDetail.value.sameAccountCount = securityStats.sameAccountCount;
+          userDetail.value.sameAccountCount =
+            sameWithdrawalAccountCount ||
+            securityStats.sameWithdrawalAccountCount ||
+            securityStats.sameAccountCount;
           userDetail.value.sameRegIpCount = securityStats.sameRegIpCount;
           console.log('✅ Security stats updated in userDetail');
         }

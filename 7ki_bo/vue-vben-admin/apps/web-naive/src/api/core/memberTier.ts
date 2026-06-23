@@ -1,4 +1,5 @@
 import { requestClient } from '#/api/request';
+import { sortMemberTiersForDisplay } from '#/utils/memberTierSort';
 
 // ===================================
 // TYPESCRIPT INTERFACES
@@ -436,8 +437,9 @@ export async function getActiveMemberTiersApi(): Promise<MemberTier[]> {
       tiersList = [];
     }
 
-    console.log('✅ Extracted member tiers:', tiersList);
-    return tiersList;
+    const sortedTiers = sortMemberTiersForDisplay(tiersList);
+    console.log('✅ Extracted member tiers:', sortedTiers);
+    return sortedTiers;
   } catch (error) {
     console.error('❌ Error fetching member tiers:', error);
     return [];

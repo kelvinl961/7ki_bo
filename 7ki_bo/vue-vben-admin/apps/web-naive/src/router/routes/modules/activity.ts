@@ -63,6 +63,16 @@ const routes: RouteRecordRaw[] = [
       },
       {
         meta: {
+          keepAlive: true,
+          title: '幸运转盘',
+        },
+        name: 'LuckyWheel',
+        path: '/preferentialActivitiesNew/lucky-wheel',
+        // @ts-ignore
+        component: () => import('#/views/activity/LuckyWheel.vue'),
+      },
+      {
+        meta: {
           icon: 'ic:outline-emoji-events',
           title: 'VIP奖励',
         },

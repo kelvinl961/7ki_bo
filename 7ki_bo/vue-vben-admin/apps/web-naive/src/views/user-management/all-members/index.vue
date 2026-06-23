@@ -370,6 +370,9 @@ const allSearchFieldOptions: FieldSearchBarOption[] = [
     value: 'fuzzy_withdrawal_account',
     mode: 'fuzzy',
   },
+  { label: '同提现账号', value: 'same_withdrawal_account', mode: 'exact' },
+  { label: '同登录密码', value: 'same_login_password', mode: 'exact' },
+  { label: '同提现密码', value: 'same_withdrawal_pin', mode: 'exact' },
 
   // Contact Information
   { label: '手机号', value: 'phone', mode: 'exact' },

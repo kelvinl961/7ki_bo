@@ -1745,6 +1745,7 @@ import {
   getUserWalletTransactionsApi,
   updateUserPasswordApi,
   resetWithdrawalPinApi,
+  getSameWithdrawalAccountCountApi,
   getUserSecurityStatsApi,
   type UserDetailInfo,
   type WalletTransaction,
@@ -2537,8 +2538,11 @@ const loadUserDetail = async (forceRefresh = false) => {
 
     // ✅ OPTIMIZATION: Fetch security statistics in background (non-blocking)
     // Don't await - let it load in background while modal is already visible
-    getUserSecurityStatsApi(Number(props.userId))
-      .then((securityStats) => {
+    Promise.all([
+      getUserSecurityStatsApi(Number(props.userId)),
+      getSameWithdrawalAccountCountApi(Number(props.userId)),
+    ])
+      .then(([securityStats, sameWithdrawalAccountCount]) => {
         console.log('📊 Security stats received:', securityStats);
 
         // Update user detail with real security stats
@@ -2549,7 +2553,10 @@ const loadUserDetail = async (forceRefresh = false) => {
             securityStats.sameWithdrawalPinCount;
           userDetail.value.withdrawalAccountCount =
             securityStats.withdrawAccountCount;
-          userDetail.value.sameAccountCount = securityStats.sameAccountCount;
+          userDetail.value.sameAccountCount =
+            sameWithdrawalAccountCount ||
+            securityStats.sameWithdrawalAccountCount ||
+            securityStats.sameAccountCount;
           userDetail.value.sameRegIpCount = securityStats.sameRegIpCount;
           userDetail.value.sameRealNameCount = securityStats.sameRealNameCount;
           userDetail.value.sameRegistrationDeviceCount =
@@ -3204,20 +3211,12 @@ const handleFilterBySameWithdrawalPin = () => {
   });
 };
 
-// ✅ NEW: Handle filter by same withdrawal account
+// ✅ Handle filter by same withdrawal account — open associations tab
 const handleFilterBySameWithdrawalAccount = () => {
   if (!userDetail.value) return;
 
-  emit('update:visible', false);
-  router.push({
-    path: '/user-management/all-members',
-    query: {
-      searchField: 'same_withdrawal_account',
-      searchValue: String(userDetail.value.id), // Use current user ID as reference
-      filterType: 'same_withdrawal_account',
-      matchCount: userDetail.value.sameAccountCount || 0,
-    },
-  });
+  associationTypeFilter.value = 'same_withdrawal_account';
+  activeTab.value = 'associations';
 };
 
 // ✅ FIX: Handle filter by registration IP (click on IP itself)

@@ -1,19 +1,19 @@
 import { requestClient } from '#/api/request';
+import {
+  COMPREHENSIVE_HOME_TEMPLATE_IDS,
+  COMPREHENSIVE_HOME_TEMPLATE_LABELS,
+  type ComprehensiveHomeTemplateId,
+} from '#/constants/comprehensiveHomeTemplates';
+
+const COMPREHENSIVE_LAYOUT_STYLE_OPTIONS: { label: string; value: string }[] =
+  COMPREHENSIVE_HOME_TEMPLATE_IDS.map((value) => ({
+    value,
+    label: COMPREHENSIVE_HOME_TEMPLATE_LABELS[value as ComprehensiveHomeTemplateId],
+  }));
 
 /** 版式风格（存 skinStyle 字段，提交给后端为英文 key） */
 export const LAYOUT_STYLE_OPTIONS: { label: string; value: string }[] = [
-  { label: '综合版1', value: 'comprehensive_v1' },
-  { label: '综合版1_1', value: 'comprehensive_v1_1' },
-  { label: '综合版2', value: 'comprehensive_v2' },
-  { label: '综合版3', value: 'comprehensive_v3' },
-  { label: '综合版4', value: 'comprehensive_v4' },
-  { label: '综合版5', value: 'comprehensive_v5' },
-  { label: '综合版6', value: 'comprehensive_v6' },
-  { label: '综合版7', value: 'comprehensive_v7' },
-  { label: '综合版8', value: 'comprehensive_v8' },
-  { label: '综合版9', value: 'comprehensive_v9' },
-  { label: '综合版10', value: 'comprehensive_v10' },
-  { label: '综合版11', value: 'comprehensive_v11' },
+  ...COMPREHENSIVE_LAYOUT_STYLE_OPTIONS,
   { label: '电子版1', value: 'electronic_v1' },
   { label: '体育版1', value: 'sports_v1' },
   { label: '体育版2', value: 'sports_v2' },

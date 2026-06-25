@@ -2,8 +2,9 @@
   <n-modal
     v-model:show="visible"
     preset="dialog"
+    class="skin-lang-editor-modal"
     :title="computedModalTitle"
-    style="width: 1200px; height: 800px"
+    :style="modalStyle"
     @after-leave="handleClose"
   >
     <div class="skin-lang-editor">
@@ -326,41 +327,121 @@
           <div class="preview-header">
             <h4>预览</h4>
             <div class="preview-device-info">
-              <n-tag size="small" type="info">移动端预览</n-tag>
+              <n-tag v-if="useLiveClientPreview" size="small" type="success">
+                真实页面预览
+              </n-tag>
+              <n-tag v-else size="small" type="info">静态图预览</n-tag>
+              <n-text v-if="previewHostLabel" depth="3" class="preview-host-hint">
+                {{ previewHostLabel }}
+              </n-text>
+              <n-text v-if="useLiveClientPreview" depth="3" class="preview-host-hint">
+                设备：{{ livePreviewDeviceLabel }}
+              </n-text>
+              <n-text v-if="useLiveClientPreview" depth="3" class="preview-host-hint">
+                模板：{{ previewTemplateId }}
+              </n-text>
+              <div
+                v-if="isDev && useLiveClientPreview"
+                class="preview-origin-switch"
+              >
+                <n-text depth="3" class="preview-origin-switch-label">
+                  前台源
+                </n-text>
+                <n-button-group size="tiny">
+                  <n-button
+                    v-for="opt in devPreviewOriginOptions"
+                    :key="opt.id"
+                    :type="activeDevPreviewOrigin === opt.url ? 'primary' : 'default'"
+                    @click="switchDevPreviewOrigin(opt.url)"
+                  >
+                    {{ opt.label }}
+                  </n-button>
+                </n-button-group>
+              </div>
+              <n-button
+                v-if="useLiveClientPreview && livePreviewUrl"
+                size="tiny"
+                quaternary
+                type="primary"
+                tag="a"
+                :href="livePreviewUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                新窗口打开预览
+              </n-button>
             </div>
           </div>
 
           <div class="preview-container">
-            <div class="device-frame" :style="previewContainerStyle">
-              <div v-if="isLoading" class="preview-loading">
-                <n-spin />
-                <div>正在生成预览...</div>
-              </div>
+            <div class="device-frame-scaler" :style="livePreviewScalerStyle">
+            <div class="device-frame" :style="deviceFrameStyle">
+              <template v-if="useLiveClientPreview">
+                <div v-if="iframePreviewLoading" class="preview-loading">
+                  <n-spin />
+                  <div>正在加载真实预览...</div>
+                </div>
 
-              <div v-else-if="previewError" class="preview-error">
-                <n-icon size="24" color="#f56565">
-                  <svg viewBox="0 0 24 24">
-                    <path
-                      d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
-                    />
-                  </svg>
-                </n-icon>
-                <div>{{ previewError }}</div>
-              </div>
+                <div v-else-if="iframePreviewBlocked" class="preview-error preview-error--iframe">
+                  <div class="preview-error-title">无法在后台内嵌预览</div>
+                  <div class="preview-error-body">
+                    {{ iframePreviewBlockedHint }}
+                  </div>
+                  <n-button
+                    size="small"
+                    type="primary"
+                    tag="a"
+                    :href="livePreviewUrl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    新窗口打开 {{ previewHostShort }}
+                  </n-button>
+                </div>
 
-              <div
-                v-else
-                class="image-container"
-                :style="previewImageContainerStyle"
-              >
-                <img
-                  :src="previewImageUrl"
-                  alt="皮肤预览"
-                  class="image-preview"
-                  @load="handleImageLoad"
-                  @error="handleImageError"
+                <iframe
+                  v-show="!iframePreviewBlocked"
+                  ref="livePreviewIframeRef"
+                  :key="livePreviewIframeKey"
+                  :src="livePreviewUrl"
+                  class="preview-iframe"
+                  title="皮肤实时预览"
+                  @load="handleLivePreviewLoad"
                 />
-              </div>
+              </template>
+
+              <template v-else>
+                <div v-if="isLoading" class="preview-loading">
+                  <n-spin />
+                  <div>正在生成预览...</div>
+                </div>
+
+                <div v-else-if="previewError" class="preview-error">
+                  <n-icon size="24" color="#f56565">
+                    <svg viewBox="0 0 24 24">
+                      <path
+                        d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+                      />
+                    </svg>
+                  </n-icon>
+                  <div>{{ previewError }}</div>
+                </div>
+
+                <div
+                  v-else
+                  class="image-container"
+                  :style="previewImageContainerStyle"
+                >
+                  <img
+                    :src="previewImageUrl"
+                    alt="皮肤预览"
+                    class="image-preview"
+                    @load="handleImageLoad"
+                    @error="handleImageError"
+                  />
+                </div>
+              </template>
+            </div>
             </div>
 
             <div class="preview-info">
@@ -398,7 +479,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, watch, nextTick } from 'vue';
+import { ref, reactive, computed, watch, nextTick, onMounted, onUnmounted } from 'vue';
 import {
   NModal,
   NForm,
@@ -448,6 +529,17 @@ import {
   inferLobbyPatternTabFromUrl,
   resolveLobbyPatternUrlFromRecord,
 } from '#/constants/lobbyPatterns';
+import {
+  buildClientPreviewUrl,
+  CLIENT_PREVIEW_COLORS_MESSAGE,
+  CLIENT_PREVIEW_READY_MESSAGE,
+  getClientPreviewBaseUrl,
+  getClientPreviewHostLabel,
+  getDevClientPreviewOriginOptions,
+  isClientLivePreviewEnabled,
+  setDevClientPreviewOriginOverride,
+} from '#/utils/clientPreviewUrl';
+import { LIVE_PREVIEW_DEVICE } from '#/constants/livePreviewDevice';
 
 interface Props {
   show: boolean;
@@ -475,6 +567,11 @@ const visible = computed({
   get: () => props.show,
   set: (value) => emit('update:show', value),
 });
+
+const modalStyle = {
+  width: 'min(98vw, 1680px)',
+  maxWidth: '98vw',
+};
 
 // Form model
 const formModel = reactive<
@@ -549,6 +646,227 @@ const {
   handleImageError,
   handleImageLoad,
 } = useSkinPreview(previewConfig);
+
+const useLiveClientPreview = computed(() => isClientLivePreviewEnabled());
+
+const isDev = import.meta.env.DEV;
+const devPreviewOriginOptions = getDevClientPreviewOriginOptions();
+const previewOriginTick = ref(0);
+
+const activeDevPreviewOrigin = computed(() => {
+  previewOriginTick.value;
+  return getClientPreviewBaseUrl();
+});
+
+function switchDevPreviewOrigin(url: string) {
+  if (activeDevPreviewOrigin.value === url) return;
+  setDevClientPreviewOriginOverride(url);
+  previewOriginTick.value += 1;
+  refreshLivePreview();
+}
+
+const LIVE_PREVIEW_DEVICE_WIDTH = LIVE_PREVIEW_DEVICE.width;
+const LIVE_PREVIEW_DEVICE_HEIGHT = LIVE_PREVIEW_DEVICE.height;
+
+const livePreviewDeviceLabel = `${LIVE_PREVIEW_DEVICE.label} (${LIVE_PREVIEW_DEVICE_WIDTH}×${LIVE_PREVIEW_DEVICE_HEIGHT})`;
+
+const livePreviewViewportTick = ref(0);
+
+function bumpLivePreviewViewport() {
+  livePreviewViewportTick.value += 1;
+}
+
+onMounted(() => {
+  window.addEventListener('message', handlePreviewReadyMessage);
+  window.addEventListener('resize', bumpLivePreviewViewport);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('message', handlePreviewReadyMessage);
+  window.removeEventListener('resize', bumpLivePreviewViewport);
+  clearIframePreviewTimeout();
+  if (colorPreviewDebounceId !== undefined) {
+    clearTimeout(colorPreviewDebounceId);
+    colorPreviewDebounceId = undefined;
+  }
+});
+
+const livePreviewScale = computed(() => {
+  livePreviewViewportTick.value;
+  if (typeof window === 'undefined') return 1;
+  // Fit iPhone 13 Pro frame inside preview panel; prefer 1:1 when space allows
+  const maxW = Math.min(LIVE_PREVIEW_DEVICE_WIDTH, window.innerWidth * 0.42);
+  const maxH = Math.min(LIVE_PREVIEW_DEVICE_HEIGHT, window.innerHeight * 0.85);
+  return Math.min(
+    maxW / LIVE_PREVIEW_DEVICE_WIDTH,
+    maxH / LIVE_PREVIEW_DEVICE_HEIGHT,
+    1,
+  );
+});
+
+const livePreviewScalerStyle = computed(() => {
+  const scale = livePreviewScale.value;
+  return {
+    width: `${LIVE_PREVIEW_DEVICE_WIDTH * scale}px`,
+    height: `${LIVE_PREVIEW_DEVICE_HEIGHT * scale}px`,
+    flexShrink: 0,
+  };
+});
+
+const livePreviewFrameStyle = computed(() => ({
+  width: `${LIVE_PREVIEW_DEVICE_WIDTH}px`,
+  height: `${LIVE_PREVIEW_DEVICE_HEIGHT}px`,
+  transform: `scale(${livePreviewScale.value})`,
+  transformOrigin: 'top left',
+  border: '1px solid #e0e0e0',
+  borderRadius: '12px',
+  overflow: 'hidden',
+  backgroundColor: '#f5f5f5',
+}));
+
+const deviceFrameStyle = computed(() =>
+  useLiveClientPreview.value ? livePreviewFrameStyle.value : previewContainerStyle.value,
+);
+
+const previewHostLabel = computed(() => {
+  previewOriginTick.value;
+  const host = getClientPreviewHostLabel();
+  return host ? `前台：${host}` : '';
+});
+const livePreviewIframeKey = ref(0);
+const livePreviewIframeRef = ref<HTMLIFrameElement | null>(null);
+const iframePreviewLoading = ref(false);
+const iframePreviewReady = ref(false);
+const iframePreviewBlocked = ref(false);
+const livePreviewUrl = ref('');
+let iframePreviewTimeoutId: ReturnType<typeof setTimeout> | undefined;
+
+const previewTemplateId = computed(() =>
+  resolveSkinTemplateForForm(formModel.skinStyle, formModel.skinTemplate),
+);
+
+const previewHostShort = computed(() => getClientPreviewHostLabel().replace(/^前台：/, ''));
+
+const iframePreviewBlockedHint = computed(() => {
+  const host = previewHostShort.value || '前台域名';
+  return (
+    `${host} 拒绝被后台 iframe 嵌入。请在 Cloudflare「响应头转换规则」或 Nginx 设置 frame-ancestors，` +
+    `并确保没有 X-Frame-Options: SAMEORIGIN。` +
+    `正确示例：frame-ancestors 'self' http://localhost:5888 https://118br.com https://*.118br.com；` +
+    `勿写成 "https: //*.118br.com"（中间有空格会失效）。` +
+    `可用 curl -I https://${host}/ 检查线上 Content-Security-Policy。`
+  );
+});
+
+function postPreviewColorsToIframe() {
+  if (!useLiveClientPreview.value || iframePreviewBlocked.value) return;
+  const win = livePreviewIframeRef.value?.contentWindow;
+  if (!win) return;
+  win.postMessage(
+    {
+      type: CLIENT_PREVIEW_COLORS_MESSAGE,
+      colors: {
+        primaryColor: formModel.primaryColor,
+        accentColor: formModel.accentColor,
+        buttonColor: formModel.buttonColor,
+        textPrimary: formModel.textPrimary,
+        textSecondary: formModel.textSecondary,
+        textAccent: formModel.textAccent,
+      },
+    },
+    '*',
+  );
+}
+
+let colorPreviewDebounceId: ReturnType<typeof setTimeout> | undefined;
+
+function schedulePreviewColorSync() {
+  if (!useLiveClientPreview.value) return;
+  if (colorPreviewDebounceId !== undefined) {
+    clearTimeout(colorPreviewDebounceId);
+  }
+  colorPreviewDebounceId = setTimeout(() => {
+    colorPreviewDebounceId = undefined;
+    postPreviewColorsToIframe();
+  }, 120);
+}
+
+function syncLivePreviewUrl() {
+  if (!isClientLivePreviewEnabled()) {
+    livePreviewUrl.value = '';
+    return;
+  }
+  livePreviewUrl.value = buildClientPreviewUrl(
+    {
+      skinTemplate: previewTemplateId.value,
+      brandCode: formModel.brandCode,
+      primaryColor: formModel.primaryColor,
+      accentColor: formModel.accentColor,
+      buttonColor: formModel.buttonColor,
+      textPrimary: formModel.textPrimary,
+      textSecondary: formModel.textSecondary,
+      textAccent: formModel.textAccent,
+    },
+    Date.now(),
+  );
+}
+
+function clearIframePreviewTimeout() {
+  if (iframePreviewTimeoutId !== undefined) {
+    clearTimeout(iframePreviewTimeoutId);
+    iframePreviewTimeoutId = undefined;
+  }
+}
+
+function handlePreviewReadyMessage(event: MessageEvent) {
+  if (event.data?.type !== CLIENT_PREVIEW_READY_MESSAGE) return;
+  iframePreviewReady.value = true;
+  iframePreviewBlocked.value = false;
+  iframePreviewLoading.value = false;
+  clearIframePreviewTimeout();
+  postPreviewColorsToIframe();
+
+  const reportedTemplate = event.data?.template;
+  if (
+    reportedTemplate &&
+    reportedTemplate !== previewTemplateId.value
+  ) {
+    console.warn(
+      '[SkinLangEditor] Preview template mismatch:',
+      'expected',
+      previewTemplateId.value,
+      'got',
+      reportedTemplate,
+      '— redeploy 7ki client with latest adminPreview fix',
+    );
+  }
+}
+
+function handleLivePreviewLoad() {
+  iframePreviewLoading.value = false;
+  postPreviewColorsToIframe();
+  if (iframePreviewReady.value) {
+    iframePreviewBlocked.value = false;
+    return;
+  }
+  clearIframePreviewTimeout();
+  iframePreviewTimeoutId = setTimeout(() => {
+    if (!iframePreviewReady.value) {
+      iframePreviewBlocked.value = true;
+      iframePreviewLoading.value = false;
+    }
+  }, 10000);
+}
+
+function refreshLivePreview() {
+  if (!useLiveClientPreview.value) return;
+  iframePreviewLoading.value = true;
+  iframePreviewReady.value = false;
+  iframePreviewBlocked.value = false;
+  clearIframePreviewTimeout();
+  syncLivePreviewUrl();
+  livePreviewIframeKey.value += 1;
+}
 
 const lobbyBlackPatternTiles = LOBBY_BLACK_PATTERN_TILES;
 const lobbyWhitePatternTiles = LOBBY_WHITE_PATTERN_TILES;
@@ -899,22 +1217,49 @@ watch(
     if (isLayoutStyleValue(style)) {
       formModel.skinTemplate = style;
     }
+    refreshLivePreview();
   },
 );
 
-// Watch for form changes to update preview
+// Reload iframe when layout / brand identity changes
 watch(
   () => [
     formModel.skinTemplate,
+    formModel.skinStyle,
+    formModel.brandCode,
     formModel.brandIcon,
     formModel.gameColor,
     formModel.skinColor,
     formModel.clientLanguages.desktop,
   ],
   () => {
-    // Preview will automatically update via reactive previewConfig
+    refreshLivePreview();
   },
   { deep: true },
+);
+
+// Live color sync via postMessage (no iframe reload)
+watch(
+  () => [
+    formModel.primaryColor,
+    formModel.accentColor,
+    formModel.buttonColor,
+    formModel.textPrimary,
+    formModel.textSecondary,
+    formModel.textAccent,
+  ],
+  () => {
+    schedulePreviewColorSync();
+  },
+);
+
+watch(
+  () => visible.value,
+  (open) => {
+    if (open && useLiveClientPreview.value) {
+      refreshLivePreview();
+    }
+  },
 );
 
 // Helper function to get skin color label
@@ -1030,27 +1375,35 @@ const handleClose = () => {
 
 <style scoped>
 .skin-lang-editor {
-  height: 100%;
   display: flex;
   flex-direction: column;
+  min-height: 0;
+  max-height: calc(94vh - 120px);
 }
 
 .editor-content {
   display: flex;
-  height: 700px;
+  flex: 1;
+  min-height: 0;
+  max-height: calc(94vh - 120px);
   gap: 24px;
+  overflow: hidden;
 }
 
 .form-panel {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding-right: 12px;
 }
 
 .preview-panel {
-  width: 450px;
+  width: min(440px, 44vw);
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
   border-left: 1px solid #e0e0e0;
   padding-left: 24px;
 }
@@ -1223,6 +1576,29 @@ const handleClose = () => {
 
 .preview-device-info {
   margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.preview-host-hint {
+  font-size: 12px;
+  line-height: 1.4;
+  word-break: break-all;
+}
+
+.preview-origin-switch {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.preview-origin-switch-label {
+  font-size: 12px;
+  line-height: 1.4;
+  white-space: nowrap;
 }
 
 .preview-container {
@@ -1232,19 +1608,58 @@ const handleClose = () => {
   align-items: center;
 }
 
-.device-frame {
+.device-frame-scaler {
   position: relative;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.device-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
   background: #fff;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin-bottom: 16px;
   border-radius: 8px;
   overflow: hidden;
 }
 
-.preview-loading,
 .preview-error {
   position: absolute;
   inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  font-size: 14px;
+  color: #666;
+  padding: 16px;
+  text-align: center;
+}
+
+.preview-error--iframe {
+  z-index: 2;
+}
+
+.preview-error-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #c53030;
+}
+
+.preview-error-body {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #666;
+  max-width: 280px;
+}
+
+.preview-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1261,6 +1676,14 @@ const handleClose = () => {
   object-fit: contain;
   display: block;
   border-radius: 8px;
+}
+
+.preview-iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  background: #fff;
 }
 
 .image-container {
@@ -1309,8 +1732,36 @@ pointer-events: none;
   display: flex;
   gap: 8px;
   justify-content: flex-end;
+  flex-shrink: 0;
+  padding-top: 4px;
+}
+</style>
+
+<style>
+/* Keep dialog footer (取消 / 保存) visible — not scoped so it can target n-dialog */
+.skin-lang-editor-modal.n-dialog {
+  max-height: 96vh;
+  display: flex;
+  flex-direction: column;
 }
 
+.skin-lang-editor-modal .n-dialog__content {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.skin-lang-editor-modal .n-dialog__action {
+  flex-shrink: 0;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+  background: #fff;
+}
+</style>
+
+<style scoped>
 /* Scrollbar */
 .form-panel::-webkit-scrollbar {
   width: 6px;
@@ -1447,13 +1898,5 @@ pointer-events: none;
   text-align: center;
   color: #555;
   padding: 2px;
-}
-
-.preview-panel {
-  width: 300px;
-  display: flex;
-  flex-direction: column;
-  border-left: 1px solid #e0e0e0;
-  padding-left: 24px;
 }
 </style>

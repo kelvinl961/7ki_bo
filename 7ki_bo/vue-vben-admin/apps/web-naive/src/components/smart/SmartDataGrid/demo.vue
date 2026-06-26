@@ -52,7 +52,7 @@
                 <n-button size="small" @click="clearSelection"
                   >清空选择</n-button
                 >
-                <n-button size="small" @click="selectAll">全选</n-button>
+                <n-button size="small" @click="selectAll">{{ $t('common.selectAll') }}</n-button>
               </div>
             </div>
           </n-card>
@@ -128,6 +128,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, h } from 'vue';
 import { NButton, NTag, useMessage } from 'naive-ui';
 import SmartDataGrid from './index.vue';

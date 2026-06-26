@@ -3,22 +3,22 @@
     <!-- Page Header -->
     <div class="mb-6 flex items-center justify-between">
       <div>
-        <h1 class="mb-2 text-2xl font-semibold text-gray-900">媒体库管理</h1>
-        <p class="text-gray-600">统一管理所有上传的图片、视频和文档</p>
+        <h1 class="mb-2 text-2xl font-semibold text-gray-900">{{ $t('media.libraryTitle') }}</h1>
+        <p class="text-gray-600">{{ $t('media.libraryDesc') }}</p>
       </div>
       <div class="flex gap-3">
         <n-button type="primary" @click="showUploadModal = true">
-          上传文件
+          {{ $t('media.uploadFile') }}
         </n-button>
         <n-button type="success" @click="showBatchUploadModal = true">
-          批量上传
+          {{ $t('media.batchUpload') }}
         </n-button>
         <n-button
           type="error"
           :disabled="selectedFiles.length === 0"
           @click="handleBulkDelete"
         >
-          批量删除 ({{ selectedFiles.length }})
+          {{ $t('media.batchDeleteCount', [selectedFiles.length]) }}
         </n-button>
       </div>
     </div>
@@ -28,10 +28,10 @@
       <div class="flex flex-wrap items-end gap-4">
         <!-- Search -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">搜索</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('common.search') }}</label>
           <n-input
             v-model:value="filters.search"
-            placeholder="搜索文件名、描述..."
+            :placeholder="$t('media.searchFiles')"
             clearable
             style="width: 240px"
             @keyup.enter="loadMediaFiles"
@@ -40,10 +40,10 @@
 
         <!-- Category Filter -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">分类</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('media.category') }}</label>
           <n-select
             v-model:value="filters.category"
-            placeholder="选择分类"
+            :placeholder="$t('media.selectCategory')"
             :options="categoryOptions"
             clearable
             style="width: 150px"
@@ -52,10 +52,10 @@
 
         <!-- Type Filter -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">文件类型</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('media.fileType') }}</label>
           <n-select
             v-model:value="filters.type"
-            placeholder="选择类型"
+            :placeholder="$t('media.selectType')"
             :options="typeOptions"
             clearable
             style="width: 120px"
@@ -64,7 +64,7 @@
 
         <!-- Sort -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">排序</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('media.sort') }}</label>
           <n-select
             v-model:value="filters.sortBy"
             :options="sortOptions"
@@ -74,8 +74,8 @@
 
         <!-- Actions -->
         <div class="flex gap-2">
-          <n-button type="primary" @click="loadMediaFiles"> 搜索 </n-button>
-          <n-button @click="resetFilters"> 重置 </n-button>
+          <n-button type="primary" @click="loadMediaFiles"> {{ $t('common.search') }} </n-button>
+          <n-button @click="resetFilters"> {{ $t('common.reset') }} </n-button>
         </div>
       </div>
     </n-card>
@@ -170,16 +170,16 @@
             {{ file.description }}
           </div>
           <div class="file-stats">
-            <span>使用次数: {{ file.usageCount }}</span>
+            <span>{{ $t('media.usageCount', [file.usageCount]) }}</span>
             <span>{{ formatDate(file.createdAt) }}</span>
           </div>
         </div>
 
         <!-- Actions -->
         <div class="file-actions">
-          <n-button size="tiny" @click.stop="editFile(file)">编辑</n-button>
+          <n-button size="tiny" @click.stop="editFile(file)">{{ $t('common.edit') }}</n-button>
           <n-button size="tiny" type="error" @click.stop="deleteFile(file.id)"
-            >删除</n-button
+            >{{ $t('common.delete') }}</n-button
           >
         </div>
       </div>
@@ -191,25 +191,25 @@
       class="empty-state"
     >
       <div class="empty-icon">📁</div>
-      <h3>暂无文件</h3>
-      <p>点击上传文件开始使用媒体库</p>
+      <h3>{{ $t('media.noFiles') }}</h3>
+      <p>{{ $t('media.noFilesHint') }}</p>
       <n-button type="primary" @click="showUploadModal = true">
-        上传第一个文件
+        {{ $t('media.uploadFirst') }}
       </n-button>
     </div>
 
     <!-- Loading State -->
     <div v-else-if="loading" class="loading-state">
       <n-spin size="large" />
-      <p>加载中...</p>
+      <p>{{ $t('common.loading') }}</p>
     </div>
 
     <!-- Error State (if needed) -->
     <div v-else class="empty-state">
       <div class="empty-icon">⚠️</div>
-      <h3>无法加载文件</h3>
-      <p>请检查网络连接或刷新页面重试</p>
-      <n-button type="primary" @click="loadMediaFiles"> 重新加载 </n-button>
+      <h3>{{ $t('media.loadError') }}</h3>
+      <p>{{ $t('media.loadErrorHint') }}</p>
+      <n-button type="primary" @click="loadMediaFiles"> {{ $t('media.reload') }} </n-button>
     </div>
 
     <!-- Pagination -->
@@ -230,7 +230,7 @@
     <n-modal
       v-model:show="showUploadModal"
       preset="card"
-      title="上传文件"
+      :title="$t('media.uploadFile')"
       style="width: 600px"
     >
       <MediaUploadForm
@@ -243,7 +243,7 @@
     <n-modal
       v-model:show="showBatchUploadModal"
       preset="card"
-      title="批量上传文件"
+      :title="$t('media.batchUploadFiles')"
       style="width: 800px"
     >
       <MediaBatchUploadForm
@@ -256,7 +256,7 @@
     <n-modal
       v-model:show="showEditModal"
       preset="card"
-      title="编辑文件"
+      :title="$t('media.editFile')"
       style="width: 500px"
     >
       <MediaEditForm
@@ -269,6 +269,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 defineOptions({
   name: 'MediaLibraryIndex',
 });
@@ -346,19 +348,19 @@ const categoryOptions = computed(() => [
   })),
 ]);
 
-const typeOptions = [
-  { label: '图片', value: 'image' },
-  { label: '视频', value: 'video' },
-  { label: '音频', value: 'audio' },
-  { label: '文档', value: 'document' },
-];
+const typeOptions = computed(() => [
+  { label: $t('media.image'), value: 'image' },
+  { label: $t('media.video'), value: 'video' },
+  { label: $t('media.audio'), value: 'audio' },
+  { label: $t('media.document'), value: 'document' },
+]);
 
-const sortOptions = [
-  { label: '创建时间', value: 'createdAt' },
-  { label: '文件名', value: 'filename' },
-  { label: '文件大小', value: 'size' },
-  { label: '使用次数', value: 'usageCount' },
-];
+const sortOptions = computed(() => [
+  { label: $t('common.createTime'), value: 'createdAt' },
+  { label: $t('media.filename'), value: 'filename' },
+  { label: $t('media.fileSize'), value: 'size' },
+  { label: $t('media.usageTimesLabel'), value: 'usageCount' },
+]);
 
 // Methods
 const loadMediaFiles = async () => {
@@ -459,7 +461,7 @@ const loadMediaFiles = async () => {
     );
   } catch (error) {
     console.error('❌ Load media files error:', error);
-    message.error('加载文件失败');
+    message.error($t('media.loadFilesFailed'));
   } finally {
     loading.value = false;
   }
@@ -491,12 +493,12 @@ const editFile = (file: MediaFile) => {
 };
 
 const deleteFile = async (fileId: number) => {
-  const confirmed = window.confirm('确认删除这个文件吗？此操作不可恢复。');
+  const confirmed = window.confirm($t('media.confirmDeleteFile'));
   if (!confirmed) return;
 
   try {
     await deleteMediaFile(fileId);
-    message.success('删除成功');
+    message.success($t('common.deleteSuccess'));
     loadMediaFiles();
     // Remove from selection if selected
     const index = selectedFiles.value.indexOf(fileId);
@@ -505,24 +507,24 @@ const deleteFile = async (fileId: number) => {
     }
   } catch (error) {
     console.error('Delete file error:', error);
-    message.error('删除失败');
+    message.error($t('media.deleteFailed'));
   }
 };
 
 const handleBulkDelete = async () => {
   const confirmed = window.confirm(
-    `确认删除选中的 ${selectedFiles.value.length} 个文件吗？此操作不可恢复。`,
+    $t('media.confirmBatchDelete', [selectedFiles.value.length]),
   );
   if (!confirmed) return;
 
   try {
     await bulkDeleteMediaFiles(selectedFiles.value);
-    message.success('批量删除成功');
+    message.success($t('media.batchDeleteSuccess'));
     selectedFiles.value = [];
     loadMediaFiles();
   } catch (error) {
     console.error('Bulk delete error:', error);
-    message.error('批量删除失败');
+    message.error($t('media.batchDeleteFailed'));
   }
 };
 
@@ -564,16 +566,16 @@ const handleEditSuccess = () => {
 
 const getCategoryDisplayName = (category: string): string => {
   const categoryMap: Record<string, string> = {
-    backgrounds: '背景图',
-    banners: '横幅',
-    icons: '图标',
-    logos: '标志',
-    templates: '模板',
-    avatars: '头像',
-    documents: '文档',
-    videos: '视频',
-    audio: '音频',
-    other: '其他',
+    backgrounds: $t('media.catBackgrounds'),
+    banners: $t('media.catBanners'),
+    icons: $t('media.catIcons'),
+    logos: $t('media.catLogos'),
+    templates: $t('media.catTemplates'),
+    avatars: $t('media.catAvatars'),
+    documents: $t('media.catDocuments'),
+    videos: $t('media.catVideos'),
+    audio: $t('media.catAudio'),
+    other: $t('media.catOther'),
   };
   return categoryMap[category] || category;
 };

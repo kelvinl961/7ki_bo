@@ -5,7 +5,7 @@
       <n-space :size="12" align="center">
         <n-input
           v-model:value="filters.name"
-          placeholder="请输入证书名称"
+          :placeholder="$t('operations.certificate.filterName')"
           clearable
           style="width: 160px"
           size="small"
@@ -17,12 +17,12 @@
           clearable
           style="width: 280px"
           size="small"
-          placeholder="证书到期时间"
+          :placeholder="$t('operations.certificate.filterExpiry')"
         />
 
         <n-select
           v-model:value="filters.provider"
-          placeholder="供应商"
+          :placeholder="$t('operations.certificate.filterVendor')"
           clearable
           style="width: 130px"
           size="small"
@@ -31,7 +31,7 @@
 
         <n-select
           v-model:value="filters.type"
-          placeholder="证书类型"
+          :placeholder="$t('operations.certificate.filterType')"
           clearable
           style="width: 130px"
           size="small"
@@ -40,18 +40,16 @@
 
         <n-select
           v-model:value="filters.status"
-          placeholder="状态"
+          :placeholder="$t('common.status')"
           clearable
           style="width: 120px"
           size="small"
           :options="statusOptions"
         />
 
-        <n-button type="primary" size="small" @click="fetchCertificates">
-          搜索
-        </n-button>
+        <n-button type="primary" size="small" @click="fetchCertificates">{{ $t('common.search') }}</n-button>
 
-        <n-button size="small" @click="resetFilters"> 重置 </n-button>
+        <n-button size="small" @click="resetFilters"> {{ $t('common.reset') }} </n-button>
       </n-space>
     </n-card>
 
@@ -59,17 +57,11 @@
     <n-card size="small" style="margin-bottom: 16px">
       <n-space justify="space-between">
         <n-space>
-          <n-button type="primary" size="small" @click="showApplyModal = true">
-            申请免费证书
-          </n-button>
-          <n-button type="info" size="small" @click="showUploadModal = true">
-            上传证书
-          </n-button>
+          <n-button type="primary" size="small" @click="showApplyModal = true">{{ $t('operations.certificate.applyFree') }}</n-button>
+          <n-button type="info" size="small" @click="showUploadModal = true">{{ $t('operations.certificate.uploadCert') }}</n-button>
         </n-space>
         <n-space align="center">
-          <span style="font-size: 13px; color: #666">
-            共 {{ pagination.itemCount }} 条
-          </span>
+          <span style="font-size: 13px; color: #666">{{ $t('operations.domain.modal.recordsCount', [pagination.itemCount]) }}</span>
         </n-space>
       </n-space>
     </n-card>
@@ -91,7 +83,7 @@
     <n-modal
       v-model:show="showApplyModal"
       preset="card"
-      title="申请免费证书"
+      :title="$t('operations.certificate.applyTitle')"
       style="width: 600px"
       :bordered="false"
     >
@@ -103,55 +95,51 @@
         label-width="120"
         size="small"
       >
-        <n-form-item label="类型" path="type">
+        <n-form-item :label="$t('common.type')" path="type">
           <n-radio-group v-model:value="applyForm.type">
-            <n-radio value="single">单域名证书</n-radio>
+            <n-radio value="single">{{ $t('operations.certificate.singleDomain') }}</n-radio>
             <n-radio value="wildcard"
-              >多域名通配符证书 (仅支持顶级域名)</n-radio
+              >{{ $t('operations.certificate.wildcardDomain') }}</n-radio
             >
           </n-radio-group>
         </n-form-item>
 
-        <n-form-item label="验证方式" path="verificationMethod">
-          <n-text>添加TXT类型解析</n-text>
+        <n-form-item :label="$t('operations.certificate.verificationMethod')" path="verificationMethod">
+          <n-text>{{ $t('operations.certificate.addTxtRecord') }}</n-text>
         </n-form-item>
 
-        <n-form-item label="*域名" path="domains">
+        <n-form-item :label="$t('operations.certificate.domainsLabel')" path="domains">
           <n-input
             v-model:value="applyForm.domains"
             type="textarea"
-            placeholder="请输入域名,多个请换行,格式如下:&#10;www.123.com&#10;123.com"
+            :placeholder="$t('operations.certificate.domainsPlaceholder')"
             :rows="3"
             :status="applyForm.domains ? 'success' : 'error'"
           />
           <div
             v-if="!applyForm.domains"
             style="color: #d03050; font-size: 12px; margin-top: 4px"
-          >
-            格式不正确
-          </div>
+          >{{ $t('operations.certificate.invalidFormat') }}</div>
         </n-form-item>
 
         <n-alert type="info" style="margin-top: 16px" size="small">
           <div style="font-size: 13px">
-            <div>• 使用 Let's Encrypt 免费证书，有效期为90天，自动续期</div>
-            <div>• 通过 DNS-01 验证方式，自动在 Route53 添加 TXT 记录</div>
-            <div>• 域名必须先在域名管理中创建（AWS Route53）</div>
-            <div>• 证书验证通常需要 2-5 分钟</div>
+            <div>• {{ $t('operations.certificate.applyHint1') }}</div>
+            <div>• {{ $t('operations.certificate.applyHint2') }}</div>
+            <div>• {{ $t('operations.certificate.applyHint3') }}</div>
+            <div>• {{ $t('operations.certificate.applyHint4') }}</div>
           </div>
         </n-alert>
       </n-form>
 
       <template #footer>
         <n-space justify="end">
-          <n-button @click="showApplyModal = false">取消</n-button>
+          <n-button @click="showApplyModal = false">{{ $t('common.cancel') }}</n-button>
           <n-button
             type="primary"
             @click="handleApplyCertificate"
             :loading="applying"
-          >
-            申请
-          </n-button>
+          >{{ $t('operations.certificate.apply') }}</n-button>
         </n-space>
       </template>
     </n-modal>
@@ -160,7 +148,7 @@
     <n-modal
       v-model:show="showUploadModal"
       preset="card"
-      title="上传证书"
+      :title="$t('operations.certificate.uploadTitle')"
       style="width: 600px"
       :bordered="false"
     >
@@ -172,57 +160,55 @@
         label-width="120"
         size="small"
       >
-        <n-form-item label="证书名称" path="name">
+        <n-form-item :label="$t('operations.certificate.certName')" path="name">
           <n-input
             v-model:value="uploadForm.name"
-            placeholder="请输入证书名称"
+            :placeholder="$t('operations.certificate.filterName')"
           />
         </n-form-item>
 
-        <n-form-item label="域名" path="domain">
+        <n-form-item :label="$t('operations.certificate.boundDomain')" path="domain">
           <n-input
             v-model:value="uploadForm.domain"
-            placeholder="证书绑定的域名"
+            :placeholder="$t('operations.certificate.boundDomainPlaceholder')"
           />
         </n-form-item>
 
-        <n-form-item label="CRT文件内容" path="crtContent">
+        <n-form-item :label="$t('operations.certificate.crtContent')" path="crtContent">
           <n-input
             v-model:value="uploadForm.crtContent"
             type="textarea"
-            placeholder="请粘贴证书文件内容（.crt 或 .pem）"
+            :placeholder="$t('operations.certificate.crtPlaceholder')"
             :rows="6"
           />
         </n-form-item>
 
-        <n-form-item label="KEY文件内容" path="keyContent">
+        <n-form-item :label="$t('operations.certificate.keyContent')" path="keyContent">
           <n-input
             v-model:value="uploadForm.keyContent"
             type="textarea"
-            placeholder="请粘贴私钥文件内容（.key）"
+            :placeholder="$t('operations.certificate.keyPlaceholder')"
             :rows="6"
           />
         </n-form-item>
 
         <n-alert type="warning" style="margin-top: 16px" size="small">
           <div style="font-size: 13px">
-            <div>• 请确保证书和私钥文件匹配</div>
-            <div>• 私钥文件请妥善保管，不要泄露给他人</div>
-            <div>• 支持标准PEM格式的证书文件</div>
+            <div>• {{ $t('operations.certificate.uploadHint1') }}</div>
+            <div>• {{ $t('operations.certificate.uploadHint2') }}</div>
+            <div>• {{ $t('operations.certificate.uploadHint3') }}</div>
           </div>
         </n-alert>
       </n-form>
 
       <template #footer>
         <n-space justify="end">
-          <n-button @click="showUploadModal = false">取消</n-button>
+          <n-button @click="showUploadModal = false">{{ $t('common.cancel') }}</n-button>
           <n-button
             type="primary"
             @click="handleUploadCertificate"
             :loading="uploading"
-          >
-            上传
-          </n-button>
+          >{{ $t('common.upload') }}</n-button>
         </n-space>
       </template>
     </n-modal>
@@ -231,7 +217,7 @@
     <n-modal
       v-model:show="showDetailModal"
       preset="card"
-      title="证书详情"
+      :title="$t('operations.certificate.detailTitle')"
       style="width: 700px"
       :bordered="false"
     >
@@ -241,28 +227,28 @@
         bordered
         size="small"
       >
-        <n-descriptions-item label="证书ID">
+        <n-descriptions-item :label="$t('operations.certificate.certId')">
           {{ selectedCertificate.id }}
         </n-descriptions-item>
-        <n-descriptions-item label="证书名称">
+        <n-descriptions-item :label="$t('operations.certificate.certName')">
           {{ selectedCertificate.name }}
         </n-descriptions-item>
-        <n-descriptions-item label="供应商">
+        <n-descriptions-item :label="$t('operations.certificate.vendor')">
           {{ selectedCertificate.provider }}
         </n-descriptions-item>
-        <n-descriptions-item label="验证方式">
+        <n-descriptions-item :label="$t('operations.certificate.verificationMethod')">
           {{ selectedCertificate.verificationMethod }}
         </n-descriptions-item>
-        <n-descriptions-item label="证书类型">
+        <n-descriptions-item :label="$t('operations.certificate.certType')">
           {{ selectedCertificate.type }}
         </n-descriptions-item>
-        <n-descriptions-item label="状态">
+        <n-descriptions-item :label="$t('common.status')">
           {{ selectedCertificate.status }}
         </n-descriptions-item>
-        <n-descriptions-item label="通配符证书">
-          {{ selectedCertificate.isWildcard ? '是' : '否' }}
+        <n-descriptions-item :label="$t('operations.certificate.wildcardCert')">
+          {{ selectedCertificate.isWildcard ? $t('common.yes') : $t('common.no') }}
         </n-descriptions-item>
-        <n-descriptions-item label="签发日期">
+        <n-descriptions-item :label="$t('operations.certificate.issuedDate')">
           {{
             selectedCertificate.issuedAt
               ? new Date(selectedCertificate.issuedAt).toLocaleDateString(
@@ -271,7 +257,7 @@
               : '--'
           }}
         </n-descriptions-item>
-        <n-descriptions-item label="到期日期" :span="2">
+        <n-descriptions-item :label="$t('operations.certificate.expiryDate')" :span="2">
           {{
             selectedCertificate.expiresAt
               ? new Date(selectedCertificate.expiresAt).toLocaleDateString(
@@ -280,20 +266,20 @@
               : '--'
           }}
         </n-descriptions-item>
-        <n-descriptions-item label="绑定域名" :span="2">
+        <n-descriptions-item :label="$t('operations.certificate.bindTitle')" :span="2">
           {{ selectedCertificate.domains.join(', ') }}
         </n-descriptions-item>
-        <n-descriptions-item label="操作人">
+        <n-descriptions-item :label="$t('common.operator')">
           {{ selectedCertificate.operator }}
         </n-descriptions-item>
-        <n-descriptions-item label="操作时间">
+        <n-descriptions-item :label="$t('common.operationTime')">
           {{ new Date(selectedCertificate.updatedAt).toLocaleString('zh-CN') }}
         </n-descriptions-item>
       </n-descriptions>
 
       <template #footer>
         <n-space justify="end">
-          <n-button @click="showDetailModal = false">关闭</n-button>
+          <n-button @click="showDetailModal = false">{{ $t('common.close') }}</n-button>
         </n-space>
       </template>
     </n-modal>
@@ -301,6 +287,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, h, onMounted, computed } from 'vue';
 import {
   NCard,
@@ -398,34 +386,34 @@ const paginationConfig = computed(() => ({
 
 // Options
 const providerOptions = [
-  { label: '全部', value: '' },
+  { label: $t('operations.domain.status.all'), value: '' },
   { label: "Let's Encrypt", value: 'LETSENCRYPT' },
   { label: 'ZeroSSL', value: 'ZEROSSL' },
   { label: 'Cloudflare', value: 'CLOUDFLARE' },
-  { label: '阿里云', value: 'ALIYUN' },
-  { label: '腾讯云', value: 'TENCENT_CLOUD' },
-  { label: '自定义', value: 'CUSTOM' },
+  { label: $t('operations.certificate.providerAliyun'), value: 'ALIYUN' },
+  { label: $t('operations.certificate.providerTencent'), value: 'TENCENT_CLOUD' },
+  { label: $t('operations.certificate.providerCustom'), value: 'CUSTOM' },
 ];
 
 const typeOptions = [
-  { label: '全部', value: '' },
-  { label: '免费证书', value: 'FREE' },
-  { label: '付费证书', value: 'PAID' },
-  { label: '自上传', value: 'UPLOADED' },
+  { label: $t('operations.domain.status.all'), value: '' },
+  { label: $t('operations.certificate.freeCert'), value: 'FREE' },
+  { label: $t('operations.certificate.paidCert'), value: 'PAID' },
+  { label: $t('operations.certificate.uploadedCert'), value: 'UPLOADED' },
 ];
 
 const statusOptions = [
-  { label: '全部', value: '' },
-  { label: '正常', value: 'VALID' },
-  { label: '即将过期', value: 'EXPIRING_SOON' },
-  { label: '已过期', value: 'EXPIRED' },
-  { label: '待验证', value: 'PENDING_VALIDATION' },
+  { label: $t('operations.domain.status.all'), value: '' },
+  { label: $t('operations.certificate.validStatus'), value: 'VALID' },
+  { label: $t('operations.domain.status.expiringSoon'), value: 'EXPIRING_SOON' },
+  { label: $t('operations.domain.status.expired'), value: 'EXPIRED' },
+  { label: $t('operations.certificate.pendingValidation'), value: 'PENDING_VALIDATION' },
 ];
 
 const verificationMethodOptions = [
-  { label: 'DNS验证', value: 'DNS' },
-  { label: 'HTTP验证', value: 'HTTP' },
-  { label: '文件验证', value: 'FILE' },
+  { label: $t('operations.domain.verification.dns'), value: 'DNS' },
+  { label: $t('operations.domain.verification.http'), value: 'HTTP' },
+  { label: $t('operations.certificate.fileValidation'), value: 'FILE' },
 ];
 
 // Apply Form
@@ -436,7 +424,7 @@ const applyForm = reactive({
 });
 
 const applyRules: FormRules = {
-  domains: [{ required: true, message: '请输入域名', trigger: 'blur' }],
+  domains: [{ required: true, message: $t('common.pleaseEnterField', [$t('operations.certificate.validateDomain')]), trigger: 'blur' }],
 };
 
 // Upload Form
@@ -448,13 +436,13 @@ const uploadForm = reactive({
 });
 
 const uploadRules: FormRules = {
-  name: [{ required: true, message: '请输入证书名称', trigger: 'blur' }],
-  domain: [{ required: true, message: '请输入域名', trigger: 'blur' }],
+  name: [{ required: true, message: $t('common.pleaseEnterField', [$t('operations.certificate.validateCertName')]), trigger: 'blur' }],
+  domain: [{ required: true, message: $t('common.pleaseEnterField', [$t('operations.certificate.validateDomain')]), trigger: 'blur' }],
   crtContent: [
-    { required: true, message: '请输入CRT文件内容', trigger: 'blur' },
+    { required: true, message: $t('common.pleaseEnterField', [$t('operations.certificate.validateCrt')]), trigger: 'blur' },
   ],
   keyContent: [
-    { required: true, message: '请输入KEY文件内容', trigger: 'blur' },
+    { required: true, message: $t('common.pleaseEnterField', [$t('operations.certificate.validateKey')]), trigger: 'blur' },
   ],
 };
 
@@ -471,10 +459,10 @@ const getStatusType = (status: string) => {
 
 const getStatusText = (status: string) => {
   const map: Record<string, string> = {
-    VALID: '正常',
-    EXPIRING_SOON: '即将过期',
-    EXPIRED: '已过期',
-    PENDING_VALIDATION: '待验证',
+    VALID: $t('operations.certificate.validStatus'),
+    EXPIRING_SOON: $t('operations.domain.status.expiringSoon'),
+    EXPIRED: $t('operations.certificate.expired'),
+    PENDING_VALIDATION: $t('operations.certificate.pendingValidation'),
   };
   return map[status] || status;
 };
@@ -490,19 +478,19 @@ const getDaysUntilExpiry = (expiresAt: string) => {
 // Table Columns
 const columns: DataTableColumn<Certificate>[] = [
   {
-    title: '证书ID',
+    title: $t('operations.certificate.certId'),
     key: 'id',
     width: 80,
     fixed: 'left' as const,
   },
   {
-    title: '证书名称',
+    title: $t('operations.certificate.certName'),
     key: 'name',
     width: 180,
     ellipsis: { tooltip: true },
   },
   {
-    title: '供应商',
+    title: $t('operations.certificate.vendor'),
     key: 'provider',
     width: 120,
     render(row: Certificate) {
@@ -510,9 +498,9 @@ const columns: DataTableColumn<Certificate>[] = [
         LETSENCRYPT: "Let's Encrypt",
         ZEROSSL: 'ZeroSSL',
         CLOUDFLARE: 'Cloudflare',
-        ALIYUN: '阿里云',
-        TENCENT_CLOUD: '腾讯云',
-        CUSTOM: '自定义',
+        ALIYUN: $t('operations.certificate.providerAliyun'),
+        TENCENT_CLOUD: $t('operations.certificate.providerTencent'),
+        CUSTOM: $t('operations.certificate.providerCustom'),
       };
       return providerMap[row.provider] || row.provider;
     },
@@ -520,14 +508,14 @@ const columns: DataTableColumn<Certificate>[] = [
   {
     title: () =>
       h('div', {}, [
-        h('span', {}, '验证方式 '),
+        h('span', {}, $t('operations.certificate.verificationMethod') + ' '),
         h(
           NTooltip,
           {},
           {
             trigger: () =>
               h('span', { style: 'color: #2080f0; cursor: help;' }, 'ⓘ'),
-            default: () => '证书签发时使用的域名验证方式',
+            default: () => $t('operations.certificate.verificationTooltip'),
           },
         ),
       ]) as any,
@@ -535,15 +523,15 @@ const columns: DataTableColumn<Certificate>[] = [
     width: 120,
     render(row: Certificate) {
       const methodMap: Record<string, string> = {
-        DNS: 'DNS验证',
-        HTTP: 'HTTP验证',
-        FILE: '文件验证',
+        DNS: $t('operations.domain.verification.dns'),
+        HTTP: $t('operations.domain.verification.http'),
+        FILE: $t('operations.certificate.fileValidation'),
       };
       return methodMap[row.verificationMethod] || row.verificationMethod;
     },
   },
   {
-    title: 'CRT文件',
+    title: $t('operations.certificate.crtFile'),
     key: 'crtFile',
     width: 100,
     render(row: Certificate) {
@@ -556,13 +544,13 @@ const columns: DataTableColumn<Certificate>[] = [
               size: 'small',
               onClick: () => handleDownloadFile(row, 'crt'),
             },
-            { default: () => '下载' },
+            { default: () => $t('common.download') },
           )
         : '--';
     },
   },
   {
-    title: 'key文件',
+    title: $t('operations.certificate.keyFile'),
     key: 'keyFile',
     width: 100,
     render(row: Certificate) {
@@ -575,20 +563,20 @@ const columns: DataTableColumn<Certificate>[] = [
               size: 'small',
               onClick: () => handleDownloadFile(row, 'key'),
             },
-            { default: () => '下载' },
+            { default: () => $t('common.download') },
           )
         : '--';
     },
   },
   {
-    title: '类型',
+    title: $t('common.type'),
     key: 'type',
     width: 100,
     render(row: Certificate) {
       const typeMap: Record<string, { text: string; type: any }> = {
-        FREE: { text: '免费', type: 'success' },
-        PAID: { text: '付费', type: 'warning' },
-        UPLOADED: { text: '自上传', type: 'info' },
+        FREE: { text: $t('operations.certificate.free'), type: 'success' },
+        PAID: { text: $t('operations.certificate.paid'), type: 'warning' },
+        UPLOADED: { text: $t('operations.certificate.uploadedCert'), type: 'info' },
       };
       const type = typeMap[row.type] || { text: row.type, type: 'default' };
       return h(
@@ -599,7 +587,7 @@ const columns: DataTableColumn<Certificate>[] = [
     },
   },
   {
-    title: '证书状态',
+    title: $t('operations.certificate.certStatus'),
     key: 'status',
     width: 110,
     render(row: Certificate) {
@@ -616,15 +604,15 @@ const columns: DataTableColumn<Certificate>[] = [
     },
   },
   {
-    title: '是否通配符证书',
+    title: $t('operations.certificate.isWildcard'),
     key: 'isWildcard',
     width: 130,
     render(row: Certificate) {
-      return row.isWildcard ? '是' : '否';
+      return row.isWildcard ? $t('common.yes') : $t('common.no');
     },
   },
   {
-    title: '证书对应域名',
+    title: $t('operations.certificate.certDomains'),
     key: 'domains',
     width: 200,
     ellipsis: { tooltip: true },
@@ -633,7 +621,7 @@ const columns: DataTableColumn<Certificate>[] = [
     },
   },
   {
-    title: '到期时间',
+    title: $t('operations.certificate.expiryTime'),
     key: 'expiresAt',
     width: 150,
     render(row: Certificate) {
@@ -647,13 +635,13 @@ const columns: DataTableColumn<Certificate>[] = [
           {
             style: `font-size: 11px; color: ${color};`,
           },
-          days > 0 ? `还有${days}天` : '已过期',
+          days > 0 ? $t('operations.certificate.daysRemaining', [days]) : $t('operations.certificate.expired'),
         ),
       ]);
     },
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 200,
     fixed: 'right' as const,
@@ -670,7 +658,7 @@ const columns: DataTableColumn<Certificate>[] = [
               size: 'small',
               onClick: () => handleViewDetail(row),
             },
-            { default: () => '详情' },
+            { default: () => $t('common.detail') },
           ),
           row.status === 'EXPIRING_SOON' || row.status === 'EXPIRED'
             ? h(
@@ -681,7 +669,7 @@ const columns: DataTableColumn<Certificate>[] = [
                   size: 'small',
                   onClick: () => handleRenew(row),
                 },
-                { default: () => '续期' },
+                { default: () => $t('operations.certificate.renew') },
               )
             : null,
           h(
@@ -692,7 +680,7 @@ const columns: DataTableColumn<Certificate>[] = [
               size: 'small',
               onClick: () => handleBindDomain(row),
             },
-            { default: () => '绑定域名' },
+            { default: () => $t('operations.domain.action.bindDomain') },
           ),
           row.provider === 'AWS_ACM' && row.status === 'PENDING_VALIDATION'
             ? h(
@@ -703,7 +691,7 @@ const columns: DataTableColumn<Certificate>[] = [
                   size: 'small',
                   onClick: () => handleValidateDNS(row),
                 },
-                { default: () => '验证DNS' },
+                { default: () => $t('operations.certificate.validateDns') },
               )
             : null,
           row.provider === 'AWS_ACM' && row.status === 'ISSUED'
@@ -715,15 +703,15 @@ const columns: DataTableColumn<Certificate>[] = [
                   size: 'small',
                   onClick: () => handleConfigureNGINX(row),
                 },
-                { default: () => '配置HTTPS' },
+                { default: () => $t('operations.certificate.configureHttps') },
               )
             : null,
           h(
             NPopconfirm,
             {
               onPositiveClick: () => handleDelete(row),
-              positiveText: '确认删除',
-              negativeText: '取消',
+              positiveText: $t('operations.domain.modal.confirmDelete'),
+              negativeText: $t('common.cancel'),
               style: { width: '500px' },
             },
             {
@@ -735,12 +723,12 @@ const columns: DataTableColumn<Certificate>[] = [
                       style:
                         'font-weight: 600; margin-bottom: 8px; font-size: 16px;',
                     },
-                    '⚠️ 确认删除证书？',
+                    $t('operations.certificate.confirmDeleteCert'),
                   ),
                   h(
                     'div',
                     { style: 'color: #666;' },
-                    `证书域名: ${row.domains?.join(', ') || '未知'}`,
+                    $t('operations.certificate.certDomainLabel') + ': ' + (row.domains?.join(', ') || $t('operations.certificate.unknown')),
                   ),
                   h(
                     'div',
@@ -748,7 +736,7 @@ const columns: DataTableColumn<Certificate>[] = [
                       style:
                         'color: #ff4d4f; margin-top: 8px; font-size: 13px;',
                     },
-                    '删除后将无法恢复，请谨慎操作！',
+                    $t('operations.domain.modal.deleteIrreversible'),
                   ),
                 ]),
               trigger: () =>
@@ -759,7 +747,7 @@ const columns: DataTableColumn<Certificate>[] = [
                     type: 'error',
                     size: 'small',
                   },
-                  { default: () => '删除' },
+                  { default: () => $t('common.delete') },
                 ),
             },
           ),
@@ -768,12 +756,12 @@ const columns: DataTableColumn<Certificate>[] = [
     },
   },
   {
-    title: '操作人',
+    title: $t('common.operator'),
     key: 'operator',
     width: 100,
   },
   {
-    title: '操作时间',
+    title: $t('common.operationTime'),
     key: 'updatedAt',
     width: 160,
     render(row: Certificate) {
@@ -811,7 +799,7 @@ const fetchCertificates = async () => {
     }
   } catch (error: any) {
     console.error('Fetch certificates error:', error);
-    message.error('获取证书列表失败: ' + error.message);
+    message.error($t('operations.certificate.fetchFailed', [error.message || '']));
     certificates.value = [];
     pagination.itemCount = 0;
   } finally {
@@ -843,7 +831,7 @@ const handleApplyCertificate = async () => {
       .filter((d) => d.length > 0);
 
     if (domains.length === 0) {
-      message.error('请输入至少一个域名');
+      message.error($t('operations.certificate.enterOneDomain'));
       return;
     }
 
@@ -871,7 +859,7 @@ const handleApplyCertificate = async () => {
       domainLookupResult.data.list.length === 0
     ) {
       message.error(
-        `域名 ${mainDomain} 未在系统中找到，请先在域名管理中创建该域名`,
+        $t('operations.certificate.domainNotFound', [mainDomain]),
       );
       return;
     }
@@ -883,7 +871,7 @@ const handleApplyCertificate = async () => {
 
     if (!domainRecord) {
       message.error(
-        `域名 ${mainDomain} 未在系统中找到，请先在域名管理中创建该域名`,
+        $t('operations.certificate.domainNotFound', [mainDomain]),
       );
       return;
     }
@@ -908,7 +896,7 @@ const handleApplyCertificate = async () => {
 
     if (result.success) {
       message.success(
-        `✅ ${mainDomain} 证书已创建！状态：待验证。请在证书列表中查看详情和安装脚本。`,
+        $t('operations.certificate.applySuccess', [mainDomain]),
       );
       showApplyModal.value = false;
 
@@ -921,11 +909,11 @@ const handleApplyCertificate = async () => {
 
       fetchCertificates();
     } else {
-      message.error(result.message || '证书申请失败');
+      message.error(result.message || $t('operations.certificate.applyFailed'));
     }
   } catch (error: any) {
     console.error('Apply certificate error:', error);
-    message.error('证书申请失败: ' + error.message);
+    message.error($t('operations.certificate.applyFailedWith', [error.message || '']));
   } finally {
     applying.value = false;
   }
@@ -941,7 +929,7 @@ const handleUploadCertificate = async () => {
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    message.success('证书上传成功');
+    message.success($t('operations.certificate.uploadSuccess'));
     showUploadModal.value = false;
 
     // Reset form
@@ -955,7 +943,7 @@ const handleUploadCertificate = async () => {
     fetchCertificates();
   } catch (error: any) {
     console.error('Upload certificate error:', error);
-    message.error('证书上传失败');
+    message.error($t('operations.certificate.uploadFailed'));
   } finally {
     uploading.value = false;
   }
@@ -967,24 +955,24 @@ const handleViewDetail = (cert: Certificate) => {
 };
 
 const handleDownloadFile = (cert: Certificate, type: 'crt' | 'key') => {
-  message.info(`下载证书${type === 'crt' ? 'CRT' : 'KEY'}文件`);
+  message.info($t('operations.certificate.downloadCertFile', [type === 'crt' ? 'CRT' : 'KEY']));
   // Implement actual download logic
 };
 
 const handleRenew = (cert: Certificate) => {
-  message.info(`续期证书: ${cert.name}`);
+  message.info($t('operations.certificate.renewInfo', [cert.name]));
   // Implement renew logic
 };
 
 const handleBindDomain = (cert: Certificate) => {
-  message.info(`绑定域名到证书: ${cert.name}`);
+  message.info($t('operations.certificate.bindInfo', [cert.name]));
   // Implement bind domain logic
 };
 
 const handleConfigureNGINX = async (cert: Certificate) => {
   try {
     if (!cert.domainId) {
-      message.error('证书未绑定域名');
+      message.error($t('operations.certificate.notBoundDomain'));
       return;
     }
 
@@ -1013,17 +1001,17 @@ const handleConfigureNGINX = async (cert: Certificate) => {
       navigator.clipboard
         .writeText(commands)
         .then(() => {
-          message.info('NGINX配置命令已复制到剪贴板');
+          message.info($t('operations.certificate.nginxCopied'));
         })
         .catch(() => {
-          message.info('请查看控制台获取NGINX配置命令');
+          message.info($t('operations.certificate.nginxConsole'));
         });
     } else {
-      message.error(result.message || 'NGINX配置失败');
+      message.error(result.message || $t('operations.certificate.nginxFailed'));
     }
   } catch (error: any) {
     console.error('Configure NGINX error:', error);
-    message.error('NGINX配置失败: ' + error.message);
+    message.error($t('operations.certificate.nginxFailedWith', [error.message || '']));
   }
 };
 
@@ -1043,16 +1031,16 @@ const handleValidateDNS = async (cert: Certificate) => {
       message.success(result.message);
       if (result.validationRecord) {
         message.info(
-          `DNS记录: ${result.validationRecord.name} = ${result.validationRecord.value}`,
+          $t('operations.certificate.dnsRecord', [result.validationRecord.name, result.validationRecord.value]),
         );
       }
       fetchCertificates();
     } else {
-      message.error(result.message || 'DNS验证失败');
+      message.error(result.message || $t('operations.certificate.dnsValidateFailed'));
     }
   } catch (error: any) {
     console.error('Validate DNS error:', error);
-    message.error('DNS验证失败: ' + error.message);
+    message.error($t('operations.certificate.dnsValidateFailedWith', [error.message || '']));
   }
 };
 
@@ -1069,14 +1057,14 @@ const handleDelete = async (cert: Certificate) => {
     const result = await response.json();
 
     if (result.code === 0) {
-      message.success('证书删除成功');
+      message.success($t('operations.certificate.deleteSuccess'));
       fetchCertificates();
     } else {
-      message.error(result.message || '证书删除失败');
+      message.error(result.message || $t('operations.certificate.deleteFailed'));
     }
   } catch (error: any) {
     console.error('Delete certificate error:', error);
-    message.error('证书删除失败: ' + error.message);
+    message.error($t('operations.certificate.deleteFailedWith', [error.message || '']));
   }
 };
 

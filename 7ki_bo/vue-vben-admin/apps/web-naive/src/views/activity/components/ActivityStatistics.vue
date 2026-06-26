@@ -21,33 +21,33 @@
           </div>
         </n-form-item>
 
-        <n-form-item label="活动类型">
+        <n-form-item :label="$t('activity.activityList.k6d3b2')">
           <n-select
             v-model:value="filters.activityType"
             :options="activityTypeOptions"
-            placeholder="请选择活动类型"
+            :placeholder="$t('activity.statistics.k8bf7')"
             clearable
             style="width: 150px"
             @update:value="handleFilterChange"
           />
         </n-form-item>
 
-        <n-form-item label="状态">
+        <n-form-item :label="$t('activity.activityList.k72b6')">
           <n-select
             v-model:value="filters.status"
             :options="statusOptions"
-            placeholder="请选择状态"
+            :placeholder="$t('activity.statistics.k8bf72')"
             clearable
             style="width: 120px"
             @update:value="handleFilterChange"
           />
         </n-form-item>
 
-        <n-form-item label="币种">
+        <n-form-item :label="$t('activity.luckyWheel.k5e01')">
           <n-select
             v-model:value="filters.currency"
             :options="currencyOptions"
-            placeholder="请选择币种"
+            :placeholder="$t('activity.activityList.k8bf73')"
             clearable
             style="width: 100px"
             @update:value="handleFilterChange"
@@ -58,18 +58,14 @@
           <n-button type="primary" @click="loadData">
             <template #icon>
               <i class="i-ion:search-outline" />
-            </template>
-            搜索
-          </n-button>
+            </template>{{ $t('activity.rewardReport.k641c') }}</n-button>
         </n-form-item>
 
         <n-form-item>
           <n-button @click="handleExport" :loading="exporting">
             <template #icon>
               <i class="i-ion:download-outline" />
-            </template>
-            导出表格
-          </n-button>
+            </template>{{ $t('activity.statistics.k5bfc') }}</n-button>
         </n-form-item>
       </n-form>
     </n-card>
@@ -79,7 +75,7 @@
       <n-grid :cols="4" :x-gap="16">
         <n-gi>
           <n-card>
-            <n-statistic label="总活动数" :value="overview.totalActivities">
+            <n-statistic :label="$t('activity.statistics.k603b')" :value="overview.totalActivities">
               <template #prefix>
                 <i class="i-ion:calendar-outline text-primary" />
               </template>
@@ -88,7 +84,7 @@
         </n-gi>
         <n-gi>
           <n-card>
-            <n-statistic label="活跃活动" :value="overview.activeActivities">
+            <n-statistic :label="$t('activity.statistics.k6d3b')" :value="overview.activeActivities">
               <template #prefix>
                 <i class="i-ion:play-circle-outline text-success" />
               </template>
@@ -97,7 +93,7 @@
         </n-gi>
         <n-gi>
           <n-card>
-            <n-statistic label="总参与人数" :value="overview.totalParticipants">
+            <n-statistic :label="$t('activity.recordModal.k603b')" :value="overview.totalParticipants">
               <template #prefix>
                 <i class="i-ion:people-outline text-info" />
               </template>
@@ -107,7 +103,7 @@
         <n-gi>
           <n-card>
             <n-statistic
-              label="总奖励发放"
+              :label="$t('activity.statistics.k603b2')"
               :value="overview.totalRewardsDistributed"
               :precision="2"
             >
@@ -127,9 +123,9 @@
     <n-card class="statistics-table">
       <template #header>
         <div class="flex items-center justify-between">
-          <span class="text-lg font-semibold">活动统计明细</span>
+          <span class="text-lg font-semibold">{{ $t('activity.statistics.k6d3b2') }}</span>
           <n-tag :type="loading ? 'info' : 'success'">
-            {{ loading ? '加载中...' : `共 ${pagination.total} 条数据` }}
+            {{ loading ? '加载中...' : $t('activity.common.statisticsDataCount', [pagination.total]) }}
           </n-tag>
         </div>
       </template>
@@ -149,6 +145,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, onMounted, computed } from 'vue';
 import {
   NCard,
@@ -224,26 +222,26 @@ const pagination = ref({
 
 // Options
 const activityTypeOptions: SelectOption[] = [
-  { label: '打码', value: 'wagering' },
-  { label: '救援金', value: 'rescue' },
-  { label: '签到', value: 'checkin' },
-  { label: '推广', value: 'promotion' },
-  { label: '充值', value: 'recharge' },
-  { label: '幸运转盘', value: 'luckyspin' },
-  { label: '幸运注单', value: 'luckywager' },
-  { label: '红包', value: 'redpacket' },
-  { label: '投资', value: 'investment' },
-  { label: '代理', value: 'agent' },
-  { label: '集字', value: 'collect' },
-  { label: '竞猜', value: 'guessing' },
-  { label: '新人彩金', value: 'newbie' },
+  { label: $t('activity.detailModal.k6253'), value: 'wagering' },
+  { label: $t('activity.detailModal.k6551'), value: 'rescue' },
+  { label: $t('activity.detailModal.k7b7e'), value: 'checkin' },
+  { label: $t('activity.rewardReport.k63a8'), value: 'promotion' },
+  { label: $t('activity.detailModal.k5145'), value: 'recharge' },
+  { label: $t('activity.rewardReport.k5e78'), value: 'luckyspin' },
+  { label: $t('activity.detailModal.k5e78'), value: 'luckywager' },
+  { label: $t('activity.rewardReport.k7ea2'), value: 'redpacket' },
+  { label: $t('activity.detailModal.k6295'), value: 'investment' },
+  { label: $t('activity.detailModal.k4ee3'), value: 'agent' },
+  { label: $t('activity.detailModal.k96c6'), value: 'collect' },
+  { label: $t('activity.detailModal.k7ade'), value: 'guessing' },
+  { label: $t('activity.rewardReport.k65b02'), value: 'newbie' },
 ];
 
 const statusOptions: SelectOption[] = [
-  { label: '草稿', value: 'draft' },
-  { label: '活跃', value: 'active' },
-  { label: '暂停', value: 'paused' },
-  { label: '已归档', value: 'archived' },
+  { label: $t('activity.detailModal.k8349'), value: 'draft' },
+  { label: $t('activity.statistics.k6d3b3'), value: 'active' },
+  { label: $t('activity.activityList.k6682'), value: 'paused' },
+  { label: $t('activity.detailModal.k5df25'), value: 'archived' },
 ];
 
 const currencyOptions: SelectOption[] = [
@@ -255,13 +253,13 @@ const currencyOptions: SelectOption[] = [
 // Table columns
 const columns: DataTableColumns<ActivityStatistics> = [
   {
-    title: '活动ID',
+    title: $t('activity.rewardReport.k6d3b2'),
     key: 'activityId',
     width: 80,
     fixed: 'left',
   },
   {
-    title: '活动名称',
+    title: $t('activity.rewardReport.k6d3b'),
     key: 'activityName',
     width: 200,
     fixed: 'left',
@@ -270,13 +268,13 @@ const columns: DataTableColumns<ActivityStatistics> = [
     },
   },
   {
-    title: '会员币种',
+    title: $t('activity.rewardReport.k4f1a'),
     key: 'memberCurrency',
     width: 100,
     align: 'center',
   },
   {
-    title: '活动时间',
+    title: $t('activity.activityList.k6d3b3'),
     key: 'activityTime',
     width: 300,
     ellipsis: {
@@ -284,7 +282,7 @@ const columns: DataTableColumns<ActivityStatistics> = [
     },
   },
   {
-    title: '活动类型',
+    title: $t('activity.activityList.k6d3b2'),
     key: 'activityTypeLabel',
     width: 100,
     align: 'center',
@@ -297,7 +295,7 @@ const columns: DataTableColumns<ActivityStatistics> = [
     },
   },
   {
-    title: '已领取人数',
+    title: $t('activity.statistics.k5df2'),
     key: 'claimedUsers',
     width: 120,
     align: 'right',
@@ -310,7 +308,7 @@ const columns: DataTableColumns<ActivityStatistics> = [
     },
   },
   {
-    title: '领取次数',
+    title: $t('activity.formModal.k9886'),
     key: 'claimCount',
     width: 100,
     align: 'right',
@@ -323,7 +321,7 @@ const columns: DataTableColumns<ActivityStatistics> = [
     },
   },
   {
-    title: '可参与人数',
+    title: $t('activity.statistics.k53ef'),
     key: 'eligibleUsers',
     width: 120,
     align: 'right',
@@ -336,7 +334,7 @@ const columns: DataTableColumns<ActivityStatistics> = [
     },
   },
   {
-    title: '已领取金额',
+    title: $t('activity.statistics.k5df22'),
     key: 'claimedAmount',
     width: 120,
     align: 'right',
@@ -349,7 +347,7 @@ const columns: DataTableColumns<ActivityStatistics> = [
     },
   },
   {
-    title: '活动金额',
+    title: $t('activity.statistics.k6d3b4'),
     key: 'activityAmount',
     width: 120,
     align: 'right',
@@ -362,20 +360,20 @@ const columns: DataTableColumns<ActivityStatistics> = [
     },
   },
   {
-    title: '状态',
+    title: $t('activity.activityList.k72b6'),
     key: 'status',
     width: 100,
     align: 'center',
     render(row) {
       const statusMap: Record<string, { type: string; text: string }> = {
-        draft: { type: 'default', text: '草稿' },
-        active: { type: 'success', text: '活跃' },
-        paused: { type: 'warning', text: '暂停' },
-        archived: { type: 'error', text: '已归档' },
+        draft: { type: 'default', text: $t('activity.detailModal.k8349') },
+        active: { type: 'success', text: $t('activity.statistics.k6d3b3') },
+        paused: { type: 'warning', text: $t('activity.activityList.k6682') },
+        archived: { type: 'error', text: $t('activity.detailModal.k5df25') },
       };
       const statusInfo = statusMap[row.status] || {
         type: 'default',
-        text: '未知',
+        text: $t('activity.statistics.k672a'),
       };
       return h(
         NTag,
@@ -561,7 +559,7 @@ const loadData = async () => {
       error?.response?.data?.message ||
       error?.message ||
       '加载活动统计数据失败';
-    message.error(`加载活动统计数据失败: ${errorMessage}`);
+    message.error($t('activity.common.loadStatisticsFailed') + errorMessage);
   } finally {
     loading.value = false;
   }
@@ -604,10 +602,10 @@ const handleExport = async () => {
   try {
     const params = getQueryParams();
     await exportActivityStats(params);
-    message.success('导出成功');
+    message.success($t('activity.statistics.k5bfc2'));
   } catch (error) {
     console.error('Export error:', error);
-    message.error('导出失败');
+    message.error($t('activity.statistics.k5bfc3'));
   } finally {
     exporting.value = false;
   }

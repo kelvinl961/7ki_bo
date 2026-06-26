@@ -1,7 +1,7 @@
 <template>
   <n-modal
     v-model:show="showModal"
-    :title="editingItem ? '编辑通知' : '新增通知'"
+    :title="editingItem ? $t('operations.form.editNotification') : $t('operations.messageSettings.addNotification')"
     preset="dialog"
     style="width: 1000px"
     @after-leave="resetForm"
@@ -15,149 +15,139 @@
       class="mt-4"
     >
       <n-tabs v-model:value="activeTab" type="line" class="mb-4">
-        <n-tab-pane name="basic" tab="基本信息">
+        <n-tab-pane name="basic" :tab="$t('operations.form.tabBasic')">
           <div class="grid grid-cols-2 gap-4">
-            <n-form-item label="语言" path="language">
+            <n-form-item :label="$t('operations.messageSettings.language')" path="language">
               <n-select
                 v-model:value="formData.language"
-                placeholder="选择语言"
+                :placeholder="$t('operations.messageSettings.selectLanguage')"
                 :options="languageOptions"
               />
             </n-form-item>
 
-            <n-form-item label="币种" path="currency">
+            <n-form-item :label="$t('common.currency')" path="currency">
               <n-select
                 v-model:value="formData.currency"
-                placeholder="选择币种"
+                :placeholder="$t('operations.messageSettings.selectCurrency')"
                 :options="currencyOptions"
               />
             </n-form-item>
 
-            <n-form-item label="收件人类型" path="receiverType">
+            <n-form-item :label="$t('operations.messageSettings.receiverType')" path="receiverType">
               <n-select
                 v-model:value="formData.receiverType"
-                placeholder="选择收件人类型"
+                :placeholder="$t('operations.messageSettings.selectReceiverType')"
                 :options="receiverTypeOptions"
               />
             </n-form-item>
 
-            <n-form-item label="触发条件" path="triggerCondition">
+            <n-form-item :label="$t('operations.messageSettings.triggerCondition')" path="triggerCondition">
               <n-select
                 v-model:value="formData.triggerCondition"
-                placeholder="选择触发条件"
+                :placeholder="$t('operations.messageSettings.selectTrigger')"
                 :options="triggerConditionOptions"
               />
             </n-form-item>
 
-            <n-form-item label="状态" path="status">
+            <n-form-item :label="$t('common.status')" path="status">
               <n-select
                 v-model:value="formData.status"
-                placeholder="选择状态"
+                :placeholder="$t('operations.messageSettings.selectStatus')"
                 :options="statusOptions"
               />
             </n-form-item>
           </div>
 
-          <n-form-item label="标题" path="title">
+          <n-form-item :label="$t('operations.messageSettings.titleLabel')" path="title">
             <n-input
               v-model:value="formData.title"
-              placeholder="请输入通知标题"
+              :placeholder="$t('operations.form.notificationTitlePlaceholder')"
               clearable
             />
           </n-form-item>
 
-          <n-form-item label="内容" path="content">
+          <n-form-item :label="$t('operations.messageSettings.content')" path="content">
             <n-input
               v-model:value="formData.content"
               type="textarea"
-              placeholder="请输入通知内容"
+              :placeholder="$t('operations.form.notificationContentPlaceholder')"
               :rows="4"
               clearable
             />
           </n-form-item>
         </n-tab-pane>
 
-        <n-tab-pane name="schedule" tab="时间设置">
+        <n-tab-pane name="schedule" :tab="$t('operations.form.tabTime')">
           <div class="grid grid-cols-2 gap-4">
-            <n-form-item label="开始时间" path="startTime">
+            <n-form-item :label="$t('operations.messageSettings.startTime')" path="startTime">
               <n-date-picker
                 v-model:value="formData.startTime"
                 type="datetime"
-                placeholder="选择开始时间"
+                :placeholder="$t('operations.messageSettings.startTime')"
                 format="yyyy-MM-dd HH:mm:ss"
                 clearable
               />
             </n-form-item>
 
-            <n-form-item label="结束时间" path="endTime">
+            <n-form-item :label="$t('operations.messageSettings.endTime')" path="endTime">
               <n-date-picker
                 v-model:value="formData.endTime"
                 type="datetime"
-                placeholder="选择结束时间"
+                :placeholder="$t('operations.messageSettings.endTime')"
                 format="yyyy-MM-dd HH:mm:ss"
                 clearable
               />
             </n-form-item>
           </div>
 
-          <n-form-item label="是否立即发送">
+          <n-form-item :label="$t('operations.form.immediateSend')">
             <n-switch v-model:value="formData.sendImmediately" />
-            <span class="ml-2 text-sm text-gray-500">
-              开启后将立即发送通知，否则按时间段发送
-            </span>
+            <span class="ml-2 text-sm text-gray-500">{{ $t('operations.form.immediateSendHint') }}</span>
           </n-form-item>
         </n-tab-pane>
 
-        <n-tab-pane name="display" tab="显示设置">
+        <n-tab-pane name="display" :tab="$t('operations.form.tabDisplaySettings')">
           <div class="grid grid-cols-2 gap-4">
-            <n-form-item label="弹窗入口">
+            <n-form-item :label="$t('operations.messageSettings.popupEntrance')">
               <n-switch v-model:value="formData.popupEntrance" />
-              <span class="ml-2 text-sm text-gray-500">
-                开启后通知将以弹窗形式显示
-              </span>
+              <span class="ml-2 text-sm text-gray-500">{{ $t('operations.form.popupDisplayHint') }}</span>
             </n-form-item>
 
-            <n-form-item label="视频推送">
+            <n-form-item :label="$t('operations.messageSettings.videoPush')">
               <n-switch v-model:value="formData.videoPush" />
-              <span class="ml-2 text-sm text-gray-500">
-                开启后支持视频内容推送
-              </span>
+              <span class="ml-2 text-sm text-gray-500">{{ $t('operations.form.videoPushHint') }}</span>
             </n-form-item>
 
-            <n-form-item label="已读/发送">
+            <n-form-item :label="$t('operations.messageSettings.readOrSent')">
               <n-switch v-model:value="formData.readOrSent" />
-              <span class="ml-2 text-sm text-gray-500">
-                标记为已读或已发送状态
-              </span>
+              <span class="ml-2 text-sm text-gray-500">{{ $t('operations.form.readSentHint') }}</span>
             </n-form-item>
 
-            <n-form-item label="消息优先级">
+            <n-form-item :label="$t('operations.form.messagePriority')">
               <n-select
                 v-model:value="formData.priority"
-                placeholder="选择优先级"
+                :placeholder="$t('operations.form.displayPriority')"
                 :options="priorityOptions"
               />
             </n-form-item>
           </div>
 
-          <n-form-item label="消息图标（可选）">
+          <n-form-item :label="$t('operations.form.messageIcon')">
             <MediaLibrarySelector
               v-model="formData.icon"
               category="icons"
               :accept-types="['image']"
-              placeholder="从媒体库选择消息图标"
+              :placeholder="$t('operations.form.messageIconPlaceholder')"
               @file-selected="handleIconSelected"
             />
-            <div class="field-hint">
-              选择一个图标来增强消息的视觉效果（可选）
-            </div>
+            <div class="field-hint">{{ $t('operations.form.iconEnhanceHint') }}</div>
 
             <!-- 预览区域 -->
             <div v-if="formData.icon" class="mt-2">
               <div class="icon-preview">
                 <img
                   :src="getImageUrlByEnvironment(formData.icon)"
-                  alt="消息图标预览"
+                  :alt="$t('operations.form.messageIcon')"
                   class="icon-preview-image"
                 />
               </div>
@@ -165,49 +155,49 @@
           </n-form-item>
         </n-tab-pane>
 
-        <n-tab-pane name="advanced" tab="高级设置">
-          <n-form-item label="目标用户筛选">
+        <n-tab-pane name="advanced" :tab="$t('operations.form.tabAdvanced')">
+          <n-form-item :label="$t('operations.form.targetUserFilter')">
             <n-checkbox-group v-model:value="formData.targetUsers">
               <n-space>
-                <n-checkbox value="new_users">新用户</n-checkbox>
-                <n-checkbox value="vip_users">VIP用户</n-checkbox>
-                <n-checkbox value="active_users">活跃用户</n-checkbox>
-                <n-checkbox value="inactive_users">非活跃用户</n-checkbox>
-                <n-checkbox value="high_rollers">高额投注用户</n-checkbox>
+                <n-checkbox value="new_users">{{ $t('operations.form.filterNewUsers') }}</n-checkbox>
+                <n-checkbox value="vip_users">{{ $t('operations.form.filterVipUsers') }}</n-checkbox>
+                <n-checkbox value="active_users">{{ $t('operations.form.filterActiveUsers') }}</n-checkbox>
+                <n-checkbox value="inactive_users">{{ $t('operations.form.filterInactiveUsers') }}</n-checkbox>
+                <n-checkbox value="high_rollers">{{ $t('operations.form.filterHighRollers') }}</n-checkbox>
               </n-space>
             </n-checkbox-group>
           </n-form-item>
 
-          <n-form-item label="发送限制">
+          <n-form-item :label="$t('operations.form.sendLimit')">
             <div class="grid grid-cols-2 gap-4">
               <n-input-number
                 v-model:value="formData.maxSendCount"
-                placeholder="最大发送次数"
+                :placeholder="$t('operations.form.maxSendPlaceholder')"
                 :min="1"
                 :max="1000"
               />
               <n-input-number
                 v-model:value="formData.sendInterval"
-                placeholder="发送间隔(分钟)"
+                :placeholder="$t('operations.form.sendIntervalPlaceholder')"
                 :min="1"
                 :max="1440"
               />
             </div>
           </n-form-item>
 
-          <n-form-item label="跳转链接">
+          <n-form-item :label="$t('operations.form.redirectUrl')">
             <n-input
               v-model:value="formData.actionUrl"
-              placeholder="点击通知后跳转的链接"
+              :placeholder="$t('operations.form.jumpLinkPlaceholder')"
               clearable
             />
           </n-form-item>
 
-          <n-form-item label="后台备注">
+          <n-form-item :label="$t('operations.messageSettings.backendRemark')">
             <n-input
               v-model:value="formData.remark"
               type="textarea"
-              placeholder="请输入后台备注信息"
+              :placeholder="$t('operations.messageSettings.backendRemark')"
               :rows="3"
               clearable
             />
@@ -218,9 +208,9 @@
 
     <template #action>
       <div class="flex justify-end gap-2">
-        <n-button @click="handleCancel">取消</n-button>
+        <n-button @click="handleCancel">{{ $t('common.cancel') }}</n-button>
         <n-button type="primary" :loading="submitting" @click="handleSubmit">
-          {{ editingItem ? '更新' : '创建' }}
+          {{ editingItem ? $t('operations.form.update') : $t('operations.form.create') }}
         </n-button>
       </div>
     </template>
@@ -228,6 +218,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, watch } from 'vue';
 import type { FormInst, FormRules } from 'naive-ui';
 import {
@@ -332,11 +324,11 @@ const formData = reactive<OperationMessage>({
 
 // Options
 const languageOptions: SelectOption[] = [
-  { label: '中文', value: 'zh-CN' },
-  { label: '英文', value: 'en' },
-  { label: '葡语', value: 'pt' },
-  { label: '西班牙语', value: 'es' },
-  { label: '日语', value: 'ja' },
+  { label: $t('operations.messageSettings.option.langZh'), value: 'zh-CN' },
+  { label: $t('operations.messageSettings.option.langEn'), value: 'en' },
+  { label: $t('operations.messageSettings.option.langPt'), value: 'pt' },
+  { label: $t('operations.messageSettings.option.langEs'), value: 'es' },
+  { label: $t('operations.messageSettings.option.langJa'), value: 'ja' },
 ];
 
 const currencyOptions: SelectOption[] = [
@@ -348,66 +340,66 @@ const currencyOptions: SelectOption[] = [
 ];
 
 const receiverTypeOptions: SelectOption[] = [
-  { label: '全部用户', value: 'all' },
-  { label: 'VIP用户', value: 'vip' },
-  { label: '新用户', value: 'new' },
-  { label: '活跃用户', value: 'active' },
-  { label: '自定义', value: 'custom' },
+  { label: $t('operations.messageSettings.option.receiverAll'), value: 'all' },
+  { label: $t('operations.messageSettings.option.receiverVip'), value: 'vip' },
+  { label: $t('operations.messageSettings.option.receiverNew'), value: 'new' },
+  { label: $t('operations.messageSettings.option.receiverActive'), value: 'active' },
+  { label: $t('operations.messageSettings.option.receiverCustom'), value: 'custom' },
 ];
 
 const statusOptions: SelectOption[] = [
-  { label: '已启用', value: 'enabled' },
-  { label: '已停用', value: 'disabled' },
-  { label: '草稿', value: 'draft' },
+  { label: $t('operations.messageSettings.option.statusEnabled'), value: 'enabled' },
+  { label: $t('operations.messageSettings.option.statusDisabled'), value: 'disabled' },
+  { label: $t('operations.messageSettings.option.statusDraft'), value: 'draft' },
 ];
 
 const triggerConditionOptions: SelectOption[] = [
-  { label: '登录成功', value: 'login_success' },
-  { label: '充值成功', value: 'deposit_success' },
-  { label: '首次充值', value: 'first_deposit' },
-  { label: '投注成功', value: 'bet_success' },
-  { label: '定时发送', value: 'scheduled' },
-  { label: '手动触发', value: 'manual' },
+  { label: $t('operations.messageSettings.option.triggerLogin'), value: 'login_success' },
+  { label: $t('operations.messageSettings.option.triggerDeposit'), value: 'deposit_success' },
+  { label: $t('operations.messageSettings.option.triggerFirstDeposit'), value: 'first_deposit' },
+  { label: $t('operations.messageSettings.option.triggerBet'), value: 'bet_success' },
+  { label: $t('operations.messageSettings.option.triggerScheduled'), value: 'scheduled' },
+  { label: $t('operations.messageSettings.option.triggerManual'), value: 'manual' },
 ];
 
 const priorityOptions: SelectOption[] = [
-  { label: '低', value: 'low' },
-  { label: '普通', value: 'normal' },
-  { label: '高', value: 'high' },
-  { label: '紧急', value: 'urgent' },
+  { label: $t('operations.form.priorityLow'), value: 'low' },
+  { label: $t('operations.form.priorityNormal'), value: 'normal' },
+  { label: $t('operations.form.priorityHigh'), value: 'high' },
+  { label: $t('operations.form.priorityUrgent'), value: 'urgent' },
 ];
 
 // Form validation rules
 const formRules: FormRules = {
-  language: [{ required: true, message: '请选择语言', trigger: 'change' }],
-  currency: [{ required: true, message: '请选择币种', trigger: 'change' }],
+  language: [{ required: true, message: $t('common.pleaseSelect') + ' ' + $t('operations.language'), trigger: 'change' }],
+  currency: [{ required: true, message: $t('common.pleaseSelect') + ' ' + $t('common.currency'), trigger: 'change' }],
   receiverType: [
-    { required: true, message: '请选择收件人类型', trigger: 'change' },
+    { required: true, message: $t('common.pleaseSelect') + ' ' + $t('operations.messageSettings.receiverType'), trigger: 'change' },
   ],
   title: [
-    { required: true, message: '请输入标题', trigger: 'blur' },
+    { required: true, message: $t('common.pleaseEnterField', [$t('operations.messageSettings.titleLabel')]), trigger: 'blur' },
     {
       min: 2,
       max: 100,
-      message: '标题长度应在2-100个字符之间',
+      message: $t('operations.form.notificationTitleLength'),
       trigger: 'blur',
     },
   ],
   content: [
-    { required: true, message: '请输入内容', trigger: 'blur' },
+    { required: true, message: $t('common.pleaseEnterField', [$t('operations.messageSettings.content')]), trigger: 'blur' },
     {
       min: 10,
       max: 1000,
-      message: '内容长度应在10-1000个字符之间',
+      message: $t('operations.form.notificationContentLength'),
       trigger: 'blur',
     },
   ],
   triggerCondition: [
-    { required: true, message: '请选择触发条件', trigger: 'change' },
+    { required: true, message: $t('common.pleaseSelect') + ' ' + $t('operations.messageSettings.triggerCondition'), trigger: 'change' },
   ],
-  status: [{ required: true, message: '请选择状态', trigger: 'change' }],
-  startTime: [{ required: true, message: '请选择开始时间', trigger: 'change' }],
-  endTime: [{ required: true, message: '请选择结束时间', trigger: 'change' }],
+  status: [{ required: true, message: $t('common.pleaseSelect') + ' ' + $t('common.status'), trigger: 'change' }],
+  startTime: [{ required: true, message: $t('common.pleaseSelect') + ' ' + $t('common.startTime'), trigger: 'change' }],
+  endTime: [{ required: true, message: $t('common.pleaseSelect') + ' ' + $t('common.endTime'), trigger: 'change' }],
 };
 
 // Computed
@@ -465,7 +457,7 @@ const handleSubmit = async () => {
     }
 
     notification.success({
-      content: props.editingItem ? '更新成功' : '创建成功',
+      content: props.editingItem ? $t('operations.form.updateSuccess') : $t('operations.form.createSuccess'),
       duration: 3000,
     });
 
@@ -473,7 +465,7 @@ const handleSubmit = async () => {
   } catch (error) {
     console.error('Error submitting operation message:', error);
     notification.error({
-      content: '提交失败',
+      content: $t('operations.form.submitFailed'),
       duration: 3000,
     });
   } finally {

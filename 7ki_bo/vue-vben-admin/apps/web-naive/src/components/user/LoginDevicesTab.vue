@@ -1,12 +1,12 @@
 <template>
   <div class="login-devices-tab">
-    <n-card title="登录设备列表" class="mb-4">
+    <n-card :title="$t('user.loginDevices.deviceList')" class="mb-4">
       <div class="mb-3 flex items-center justify-between">
         <div class="text-sm text-gray-500">
-          共 {{ pagination.itemCount }} 台设备
+          {{ $t('user.loginDevices.deviceCount', [pagination.itemCount]) }}
         </div>
         <div class="flex gap-2">
-          <n-button size="small" @click="loadDevices">刷新</n-button>
+          <n-button size="small" @click="loadDevices">{{ $t('common.refresh') }}</n-button>
         </div>
       </div>
       <n-data-table
@@ -22,13 +22,13 @@
       />
     </n-card>
 
-    <n-card title="登录记录" class="mb-4">
+    <n-card :title="$t('user.loginDevices.loginRecords')" class="mb-4">
       <div class="mb-3 flex items-center justify-between">
         <div class="text-sm text-gray-500">
-          共 {{ logsPagination.itemCount }} 条记录
+          {{ $t('user.loginDevices.recordCount', [logsPagination.itemCount]) }}
         </div>
         <div class="flex gap-2">
-          <n-button size="small" @click="loadLogs">刷新</n-button>
+          <n-button size="small" @click="loadLogs">{{ $t('common.refresh') }}</n-button>
         </div>
       </div>
       <n-data-table
@@ -47,7 +47,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, h } from 'vue';
+import { $t } from '@vben/locales';
+
+import { ref, computed, onMounted, h } from 'vue';
 import { NCard, NButton, NDataTable, NTag } from 'naive-ui';
 import {
   getLoginDevices,
@@ -56,27 +58,18 @@ import {
   type LoginLog,
 } from '#/api/core/login-devices';
 
-// Helper function to safely format dates
 function formatDate(dateValue: string | Date | null | undefined): string {
   try {
     if (!dateValue) return '-';
     const date =
       typeof dateValue === 'string' ? new Date(dateValue) : dateValue;
     if (isNaN(date.getTime())) {
-      return '无效日期';
+      return $t('user.loginDevices.invalidDate');
     }
-    return date.toLocaleString('zh-CN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      timeZone: 'Asia/Shanghai',
-    });
+    return date.toLocaleString();
   } catch (error) {
     console.error('Error formatting date:', dateValue, error);
-    return '日期解析错误';
+    return $t('user.loginDevices.dateParseError');
   }
 }
 
@@ -105,49 +98,49 @@ const logsPagination = ref({
   pageSizes: [10, 20, 50],
 });
 
-const columns = [
+const columns = computed(() => [
   {
-    title: '客户端',
+    title: $t('user.loginDevices.client'),
     key: 'client',
     width: 140,
     render: (row: LoginDevice) => `${row.platform || ''}`,
   },
   {
-    title: '浏览器',
+    title: $t('user.loginDevices.browser'),
     key: 'browser',
     width: 160,
     render: (row: LoginDevice) =>
       `${row.browserName || ''} ${row.browserVersion || ''}`,
   },
   {
-    title: '操作系统',
+    title: $t('user.loginDevices.operatingSystem'),
     key: 'os',
     width: 180,
     render: (row: LoginDevice) =>
       `${row.operatingSystem || ''} ${row.osVersion || ''}`,
   },
-  { title: '设备品牌', key: 'deviceBrand', width: 120 },
-  { title: '设备型号', key: 'deviceModel', width: 140 },
+  { title: $t('user.loginDevices.deviceBrand'), key: 'deviceBrand', width: 120 },
+  { title: $t('user.loginDevices.deviceModel'), key: 'deviceModel', width: 140 },
   {
-    title: 'IP/区域',
+    title: $t('user.loginDevices.ipRegion'),
     key: 'ip',
     width: 260,
-    render: (row: any) => `${row.ip || ''} ${row.ipRegion || ''}`,
+    render: (row: LoginDevice) => `${row.ip || ''} ${row.ipRegion || ''}`,
   },
   {
-    title: '首次登录',
+    title: $t('user.loginDevices.firstLogin'),
     key: 'firstSeen',
     width: 180,
     render: (row: LoginDevice) => formatDate(row.firstSeen),
   },
   {
-    title: '最近登录',
+    title: $t('user.loginDevices.lastLogin'),
     key: 'lastSeen',
     width: 180,
     render: (row: LoginDevice) => formatDate(row.lastSeen),
   },
   {
-    title: '登录次数',
+    title: $t('user.loginDevices.loginCount'),
     key: 'loginCount',
     width: 100,
     render: (row: LoginDevice) =>
@@ -157,18 +150,18 @@ const columns = [
         { default: () => row.loginCount },
       ),
   },
-];
+]);
 
-const logsColumns = [
+const logsColumns = computed(() => [
   {
-    title: '时间',
+    title: $t('common.time'),
     key: 'createdAt',
     width: 180,
     render: (row: LoginLog) => formatDate(row.createdAt),
   },
   { title: 'IP', key: 'ip', width: 140 },
   { title: 'UA', key: 'userAgent', width: 500 },
-];
+]);
 
 async function loadDevices() {
   if (!props.userId) return;
@@ -179,19 +172,9 @@ async function loadDevices() {
       pagination.value.page,
       pagination.value.pageSize,
     );
-    console.log('🔍 Login devices API response:', res);
-    console.log('🔍 Response type:', typeof res);
-    console.log('🔍 Response keys:', Object.keys(res || {}));
 
     devices.value = res.list || [];
     pagination.value.itemCount = res.total || 0;
-
-    console.log('🔍 Updated pagination:', {
-      itemCount: pagination.value.itemCount,
-      page: pagination.value.page,
-      pageSize: pagination.value.pageSize,
-      totalPages: Math.ceil((res.total || 0) / pagination.value.pageSize),
-    });
   } finally {
     loading.value = false;
   }
@@ -206,19 +189,9 @@ async function loadLogs() {
       logsPagination.value.page,
       logsPagination.value.pageSize,
     );
-    console.log('🔍 Login logs API response:', res);
-    console.log('🔍 Response type:', typeof res);
-    console.log('🔍 Response keys:', Object.keys(res || {}));
 
     logs.value = res.list || [];
     logsPagination.value.itemCount = res.total || 0;
-
-    console.log('🔍 Updated logs pagination:', {
-      itemCount: logsPagination.value.itemCount,
-      page: logsPagination.value.page,
-      pageSize: logsPagination.value.pageSize,
-      totalPages: Math.ceil((res.total || 0) / logsPagination.value.pageSize),
-    });
   } finally {
     logsLoading.value = false;
   }

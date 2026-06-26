@@ -2,101 +2,100 @@
   <n-modal
     v-model:show="visible"
     preset="dialog"
-    title="接口导入子游戏"
+    :title="$t('game.apiImport.title')"
     style="width: 900px"
   >
     <div class="flex flex-col gap-4">
       <n-tabs v-model:value="activeTab" type="line" animated>
-        <n-tab-pane name="curl" tab="cURL 命令">
+        <n-tab-pane name="curl" :tab="$t('game.apiImport.curlTab')">
           <n-form label-placement="left" label-width="110">
             <n-form-item label="cURL">
               <n-input
                 v-model:value="curlText"
                 type="textarea"
                 :rows="8"
-                placeholder="粘贴从 Postman/浏览器复制的 cURL 命令"
+                :placeholder="$t('game.apiImport.pasteCurl')"
               />
             </n-form-item>
             <div class="flex gap-2">
               <n-button @click="handleParseCurl" :disabled="loading"
-                >解析 cURL</n-button
+                >{{ $t('game.apiImport.parseCurl') }}</n-button
               >
               <n-button
                 type="primary"
                 @click="handleTestCurl"
                 :loading="loading"
-                >解析并测试</n-button
+                >{{ $t('game.apiImport.parseAndTest') }}</n-button
               >
             </div>
             <div class="text-gray-500" style="margin-top: 8px">
-              支持 -X、-H/--header、-d/--data/--data-raw、--compressed
-              等常见参数。解析后会填充到“请求设置”。
+              {{ $t('game.apiImport.curlHint') }}
             </div>
           </n-form>
         </n-tab-pane>
-        <n-tab-pane name="request" tab="请求设置">
+        <n-tab-pane name="request" :tab="$t('game.apiImport.requestTab')">
           <n-form label-placement="left" label-width="110">
             <div class="grid grid-cols-2 gap-4">
-              <n-form-item label="HTTP 方法">
+              <n-form-item :label="$t('game.apiImport.httpMethod')">
                 <n-select
                   v-model:value="form.method"
                   :options="methodOptions"
                   style="width: 120px"
                 />
               </n-form-item>
-              <n-form-item label="平台">
+              <n-form-item :label="$t('game.apiImport.platform')">
                 <n-select
                   v-model:value="form.platformId"
                   :options="platformOptions"
-                  placeholder="选择平台"
+                  :placeholder="$t('game.subgame.selectPlatform')"
                 />
               </n-form-item>
             </div>
-            <n-form-item label="游戏厂商">
+            <n-form-item :label="$t('game.subgame.vendor')">
               <n-input
                 v-model:value="form.vendor"
-                placeholder="例如: PG Soft / CQ9 / JILI"
+                :placeholder="$t('game.apiImport.vendorPlaceholder')"
               />
             </n-form-item>
             <div class="grid grid-cols-2 gap-4">
-              <n-form-item label="基础域名">
+              <n-form-item :label="$t('game.apiImport.baseDomain')">
                 <n-input
                   v-model:value="form.baseUrl"
-                  placeholder="例如: https://apis.msh.best"
+                  :placeholder="$t('game.apiImport.baseDomainPlaceholder')"
                 />
               </n-form-item>
               <n-form-item label="Endpoint">
                 <n-input
                   v-model:value="form.endpoint"
-                  placeholder="例如: /ley/gamelist"
+                  :placeholder="$t('game.apiImport.endpointPlaceholder')"
                 />
               </n-form-item>
             </div>
-            <n-form-item label="接口地址">
+            <n-form-item :label="$t('game.apiImport.apiUrl')">
               <n-input
                 v-model:value="form.url"
-                placeholder="自动拼接: 基础域名 + Endpoint"
+                :placeholder="$t('game.apiImport.apiUrlPlaceholder')"
                 readonly
               />
             </n-form-item>
             <div class="grid grid-cols-2 gap-4">
-              <n-form-item label="币种">
+              <n-form-item :label="$t('common.currency')">
                 <n-select
                   v-model:value="form.currency"
                   :options="currencyOptions"
                   style="width: 160px"
                 />
               </n-form-item>
-              <n-form-item label="根数组路径">
+              <n-form-item :label="$t('game.apiImport.rootArrayPath')">
                 <n-input
                   v-model:value="form.rootPath"
-                  placeholder="响应中列表路径，如 data.list 或 results"
+                  :placeholder="$t('game.apiImport.rootArrayPlaceholder')"
                 />
               </n-form-item>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
-              <n-form-item label="请求头">
+              <n-form-item :label="$t('game.apiImport.requestHeaders')">
                 <n-dynamic-input
                   v-model:value="form.headers"
                   preset="pair"
@@ -104,7 +103,7 @@
                   value-placeholder="Value"
                 />
               </n-form-item>
-              <n-form-item label="查询参数">
+              <n-form-item :label="$t('game.apiImport.queryParams')">
                 <n-dynamic-input
                   v-model:value="form.query"
                   preset="pair"
@@ -116,39 +115,39 @@
 
             <n-form-item
               v-if="form.method === 'POST' || form.method === 'PUT'"
-              label="请求Body(JSON)"
+              :label="$t('game.apiImport.requestBody')"
             >
               <n-input
                 v-model:value="form.bodyText"
                 type="textarea"
                 :rows="6"
-                placeholder='例如: { "page": 1, "pageSize": 100 }'
+                :placeholder="$t('game.apiImport.requestBodyPlaceholder')"
               />
             </n-form-item>
 
             <div class="flex gap-2">
               <n-button type="primary" :loading="loading" @click="sendRequest"
-                >测试并解析</n-button
+                >{{ $t('game.apiImport.testAndParse') }}</n-button
               >
-              <n-button @click="resetAll" :disabled="loading">重置</n-button>
+              <n-button @click="resetAll" :disabled="loading">{{ $t('common.reset') }}</n-button>
             </div>
           </n-form>
         </n-tab-pane>
 
-        <n-tab-pane name="paste" tab="响应提取">
+        <n-tab-pane name="paste" :tab="$t('game.apiImport.responseTab')">
           <n-form label-placement="left" label-width="110">
-            <n-form-item label="根数组路径">
+            <n-form-item :label="$t('game.apiImport.rootArrayPath')">
               <n-input
                 v-model:value="form.rootPath"
-                placeholder="例如: data 或 results.items"
+                :placeholder="$t('game.apiImport.responsePathPlaceholder')"
               />
             </n-form-item>
-            <n-form-item label="响应原文">
+            <n-form-item :label="$t('game.apiImport.responseRaw')">
               <n-input
                 v-model:value="responseText"
                 type="textarea"
                 :rows="10"
-                placeholder="将第三方接口返回的响应原文粘贴到这里 (JSON 字符串或对象)"
+                :placeholder="$t('game.apiImport.responseRawPlaceholder')"
               />
             </n-form-item>
             <div class="flex gap-2">
@@ -156,7 +155,7 @@
                 type="primary"
                 :loading="loading"
                 @click="parsePastedResponse"
-                >解析响应</n-button
+                >{{ $t('game.apiImport.parseResponse') }}</n-button
               >
               <n-button
                 @click="
@@ -165,71 +164,71 @@
                   }
                 "
                 :disabled="loading"
-                >清空</n-button
+                >{{ $t('common.clear') }}</n-button
               >
             </div>
           </n-form>
         </n-tab-pane>
 
-        <n-tab-pane name="mapping" tab="字段映射与预览">
+        <n-tab-pane name="mapping" :tab="$t('game.apiImport.mappingTab')">
           <div v-if="sampleKeys.length === 0" class="text-gray-500">
-            请先完成“测试并解析”。
+            {{ $t('game.apiImport.completeTestFirst') }}
           </div>
           <div v-else class="flex flex-col gap-4">
             <div class="grid grid-cols-2 gap-4">
-              <n-form-item label="所属平台">
+              <n-form-item :label="$t('game.subgame.belongPlatform')">
                 <n-select
                   v-model:value="form.platformId"
                   :options="platformOptions"
-                  placeholder="选择平台"
+                  :placeholder="$t('game.subgame.selectPlatform')"
                 />
               </n-form-item>
-              <n-form-item label="游戏厂商">
+              <n-form-item :label="$t('game.subgame.vendor')">
                 <n-input
                   v-model:value="form.vendor"
-                  placeholder="例如: PG Soft / CQ9 / JILI"
+                  :placeholder="$t('game.apiImport.vendorPlaceholder')"
                 />
               </n-form-item>
             </div>
             <div class="grid grid-cols-2 gap-4">
-              <n-form-item label="游戏ID 字段">
+              <n-form-item :label="$t('game.apiImport.gameIdField')">
                 <n-select
                   v-model:value="mapping.gameId"
                   :options="pathOptions"
                   filterable
-                  placeholder="选择或输入路径"
+                  :placeholder="$t('game.apiImport.selectOrEnterPath')"
                 />
               </n-form-item>
-              <n-form-item label="中文名称 字段">
+              <n-form-item :label="$t('game.apiImport.gameNameZhField')">
                 <n-select
                   v-model:value="mapping.gameName"
                   :options="pathOptions"
                   filterable
                 />
               </n-form-item>
-              <n-form-item label="名称语言优先级">
+              <n-form-item :label="$t('game.apiImport.nameLangPriority')">
                 <n-select
                   v-model:value="nameKeyPriority"
                   multiple
                   :options="nameKeyOptions"
-                  placeholder="选择语言优先级（可多选拖动排序）"
+                  :placeholder="$t('game.apiImport.selectLangPriority')"
                 />
               </n-form-item>
-              <n-form-item label="英文名称 字段">
+              <n-form-item :label="$t('game.apiImport.gameNameEnField')">
                 <n-select
                   v-model:value="mapping.gameNameEn"
                   :options="pathOptions"
                   filterable
                 />
               </n-form-item>
-              <n-form-item label="游戏类型 字段">
+              <n-form-item :label="$t('game.apiImport.gameTypeField')">
                 <n-select
                   v-model:value="mapping.gameType"
                   :options="pathOptions"
                   filterable
                 />
               </n-form-item>
-              <n-form-item label="图标URL 字段">
+              <n-form-item :label="$t('game.apiImport.iconUrlField')">
                 <n-select
                   v-model:value="mapping.iconUrl"
                   :options="pathOptions"
@@ -239,7 +238,7 @@
             </div>
 
             <n-alert type="info" v-if="preview.length"
-              >共解析 {{ preview.length }} 条，最多显示 50 条预览。</n-alert
+              >{{ $t('game.apiImport.parsedCount', [preview.length]) }}</n-alert
             >
             <n-data-table
               :columns="previewColumns"
@@ -249,13 +248,13 @@
             />
 
             <div class="flex justify-end gap-2">
-              <n-button @click="visible = false">取消</n-button>
+              <n-button @click="visible = false">{{ $t('common.cancel') }}</n-button>
               <n-button
                 type="primary"
                 :disabled="!form.platformId || preview.length === 0"
                 :loading="importing"
                 @click="doImport"
-                >开始导入</n-button
+                >{{ $t('game.apiImport.startImport') }}</n-button
               >
             </div>
           </div>
@@ -266,6 +265,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, watchEffect, h } from 'vue';
 import {
   NModal,
@@ -493,12 +494,12 @@ function normalizeGameTypeToEnum(
 
 const preview = ref<Array<Record<string, any>>>([]);
 const previewColumns = computed<DataTableColumns<Record<string, any>>>(() => [
-  { title: '游戏ID', key: 'gameId', width: 140 },
-  { title: '中文名称', key: 'gameName', width: 200 },
-  { title: '英文名称', key: 'gameNameEn', width: 200 },
-  { title: '类型', key: 'gameType', width: 120 },
+  { title: $t('game.subgame.gameId'), key: 'gameId', width: 140 },
+  { title: $t('game.apiImport.previewGameNameZh'), key: 'gameName', width: 200 },
+  { title: $t('game.apiImport.previewGameNameEn'), key: 'gameNameEn', width: 200 },
+  { title: $t('game.betRecordsExtra2.type'), key: 'gameType', width: 120 },
   {
-    title: '图标',
+    title: $t('game.apiImport.previewIcon'),
     key: 'iconUrl',
     width: 160,
     render: (row) => {
@@ -682,13 +683,13 @@ function applyParsedToForm(parsed: {
 
 function handleParseCurl() {
   if (!curlText.value.trim()) {
-    notification.warning({ content: '请粘贴 cURL 命令' });
+    notification.warning({ content: $t('game.apiImport.pasteCurlRequired') });
     return;
   }
   const parsed = parseCurl(curlText.value);
   applyParsedToForm(parsed);
   activeTab.value = 'request';
-  notification.success({ content: '已解析到“请求设置”' });
+  notification.success({ content: $t('game.apiImport.curlParsed') });
 }
 
 async function handleTestCurl() {
@@ -699,7 +700,7 @@ async function handleTestCurl() {
 
 async function sendRequest() {
   if (!form.url) {
-    notification.warning({ content: '请输入接口地址' });
+    notification.warning({ content: $t('game.apiImport.enterApiUrlRequired') });
     return;
   }
   try {
@@ -736,7 +737,7 @@ async function sendRequest() {
     if (arr.length === 0) {
       sampleKeys.value = [];
       preview.value = [];
-      notification.warning({ content: '未找到可解析的数组，请检查根路径' });
+      notification.warning({ content: $t('game.apiImport.arrayNotFound') });
       return;
     }
 
@@ -747,10 +748,10 @@ async function sendRequest() {
     sampleKeys.value = Array.from(keys);
 
     buildPreview();
-    notification.success({ content: '解析成功，请到“字段映射与预览”确认数据' });
+    notification.success({ content: $t('game.apiImport.parseSuccessGoMapping') });
   } catch (e: any) {
     console.error(e);
-    notification.error({ content: e?.message || '请求失败' });
+    notification.error({ content: e?.message || $t('game.apiImport.requestFailed') });
   } finally {
     loading.value = false;
   }
@@ -770,7 +771,7 @@ function parsePastedResponse() {
     if (arr.length === 0) {
       sampleKeys.value = [];
       preview.value = [];
-      notification.warning({ content: '未找到可解析的数组，请检查根路径' });
+      notification.warning({ content: $t('game.apiImport.arrayNotFound') });
       return;
     }
     const first = arr[0] || {};
@@ -779,7 +780,7 @@ function parsePastedResponse() {
     sampleKeys.value = Array.from(keys);
     buildPreview();
     activeTab.value = 'mapping';
-    notification.success({ content: '解析成功，请到“字段映射与预览”确认数据' });
+    notification.success({ content: $t('game.apiImport.parseSuccessGoMapping') });
   } finally {
     loading.value = false;
   }
@@ -834,11 +835,11 @@ watchEffect(() => {
 
 async function doImport() {
   if (!form.platformId) {
-    notification.warning({ content: '请选择平台' });
+    notification.warning({ content: $t('game.apiImport.selectPlatformRequired') });
     return;
   }
   if (preview.value.length === 0) {
-    notification.warning({ content: '没有可导入的数据' });
+    notification.warning({ content: $t('game.apiImport.noDataToImport') });
     return;
   }
   try {
@@ -876,7 +877,7 @@ async function doImport() {
       }
     }
     notification.success({
-      content: `导入完成：成功 ${success} 条，失败 ${failed} 条`,
+      content: $t('game.apiImport.importCompleteSummary', [success, failed]),
     });
     emit('success');
     visible.value = false;

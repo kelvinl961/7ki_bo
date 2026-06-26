@@ -5,8 +5,8 @@
       <n-card :bordered="false" class="rounded-16px shadow-sm">
         <div class="mb-4 flex items-center justify-between">
           <div>
-            <h2 class="text-xl font-semibold text-gray-800">重新代付</h2>
-            <p class="mt-1 text-sm text-gray-600">回调异常订单(含重新代付)</p>
+            <h2 class="text-xl font-semibold text-gray-800">{{ $t('finance.rePayout') }}</h2>
+            <p class="mt-1 text-sm text-gray-600">{{ $t('finance.callbackAbnormalOrders') }}</p>
           </div>
           <div class="flex gap-3">
             <!-- 🚀 SmartAutoRefresh Component -->
@@ -25,16 +25,16 @@
           <!-- Time Filter -->
           <div class="mb-4 flex flex-wrap items-center gap-4">
             <div class="flex items-center gap-2">
-              <span class="text-sm font-medium text-gray-600">申请时间</span>
+              <span class="text-sm font-medium text-gray-600">{{ $t('finance.applicationTime') }}</span>
               <n-radio-group v-model:value="filters.timeRange" size="small">
-                <n-radio value="today">今天</n-radio>
-                <n-radio value="month">本月</n-radio>
+                <n-radio value="today">{{ $t('common.today') }}</n-radio>
+                <n-radio value="month">{{ $t('common.thisMonth') }}</n-radio>
               </n-radio-group>
               <n-date-picker
                 v-model:value="filters.dateRange"
                 type="datetimerange"
                 format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择时间范围"
+                placeholder:placeholder="$t('finance.selectTimeRange')"
                 clearable
                 size="small"
                 class="w-80"
@@ -48,10 +48,10 @@
           >
             <!-- Member Account -->
             <div class="filter-item">
-              <n-form-item label="会员账号">
+              <n-form-item :label="$t('finance.memberAccount2')">
                 <n-input
                   v-model:value="filters.memberAccount"
-                  placeholder="会员账号或备注内容搜索，最多200个"
+                  placeholder:placeholder="$t('finance.searchMemberAccountOrRemarkUpTo200')"
                   clearable
                   size="small"
                 />
@@ -60,10 +60,10 @@
 
             <!-- Third Party Payment -->
             <div class="filter-item">
-              <n-form-item label="三方代付">
+              <n-form-item :label="$t('finance.thirdPartyPayout')">
                 <n-select
                   v-model:value="filters.thirdPartyPayment"
-                  placeholder="三方代付"
+                  placeholder:placeholder="$t('finance.thirdPartyPayout')"
                   clearable
                   size="small"
                   :options="thirdPartyOptions"
@@ -73,10 +73,10 @@
 
             <!-- Amount -->
             <div class="filter-item">
-              <n-form-item label="金额大小">
+              <n-form-item :label="$t('finance.amountRange')">
                 <n-input
                   v-model:value="filters.amount"
-                  placeholder="金额"
+                  placeholder:placeholder="$t('common.amount')"
                   clearable
                   size="small"
                 />
@@ -85,10 +85,10 @@
 
             <!-- Callback Status -->
             <div class="filter-item">
-              <n-form-item label="回调状态">
+              <n-form-item :label="$t('finance.callbackStatus')">
                 <n-select
                   v-model:value="filters.callbackStatus"
-                  placeholder="回调状态"
+                  placeholder:placeholder="$t('finance.callbackStatus')"
                   clearable
                   size="small"
                   :options="callbackStatusOptions"
@@ -98,10 +98,10 @@
 
             <!-- Re-payment Type -->
             <div class="filter-item">
-              <n-form-item label="代付类型">
+              <n-form-item :label="$t('finance.payoutType')">
                 <n-select
                   v-model:value="filters.rePaymentType"
-                  placeholder="代付类型"
+                  placeholder:placeholder="$t('finance.payoutType')"
                   clearable
                   size="small"
                   :options="rePaymentTypeOptions"
@@ -116,15 +116,13 @@
               <n-button type="primary" @click="applyFilters" :loading="loading">
                 <template #icon>
                   <n-icon><SearchOutline /></n-icon>
-                </template>
-                搜索
-              </n-button>
-              <n-button @click="resetFilters"> 重置 </n-button>
-              <n-button @click="clearFilters"> 自己提定的 </n-button>
+                </template>{{ $t('common.search') }}</n-button>
+              <n-button @click="resetFilters">{{ $t('common.reset') }}</n-button>
+              <n-button @click="clearFilters">{{ $t('finance.kzy265') }}</n-button>
             </div>
             <div class="flex items-center gap-2 text-sm text-gray-600">
               已选择 {{ selectedIds.length }} 条数据
-              <n-tag type="warning" size="small">异常订单</n-tag>
+              <n-tag type="warning" size="small">{{ $t('finance.k80v9x') }}</n-tag>
             </div>
           </div>
         </div>
@@ -158,33 +156,29 @@
                 <n-button type="primary" @click="fetchData" :loading="loading">
                   <template #icon>
                     <n-icon><ReloadOutline /></n-icon>
-                  </template>
-                  刷新
-                </n-button>
+                  </template>{{ $t('common.refresh') }}</n-button>
                 <n-button type="info" @click="handleExportSearch">
                   <template #icon>
                     <n-icon><DownloadOutline /></n-icon>
-                  </template>
-                  导出搜索
-                </n-button>
+                  </template>{{ $t('finance.kbsp6s') }}</n-button>
               </div>
 
               <!-- 统计信息 -->
               <div class="flex gap-6 text-sm">
                 <span
-                  >异常订单总数:
+                  >{{ $t('finance.abnormalOrderTotal') }}:
                   <span class="font-semibold text-red-600">{{
                     paginationReactive.total
                   }}</span></span
                 >
                 <span
-                  >待重新代付:
+                  >{{ $t('finance.pendingRepayment') }}:
                   <span class="font-semibold text-orange-600">{{
                     statistics.pendingRepayment
                   }}</span></span
                 >
                 <span
-                  >重新代付成功:
+                  >{{ $t('finance.repaymentSuccess') }}:
                   <span class="font-semibold text-green-600">{{
                     statistics.repaymentSuccess
                   }}</span></span
@@ -193,11 +187,8 @@
 
               <!-- 选择信息 -->
               <div class="text-sm text-gray-600">
-                已选择 {{ selectedCount }} 条数据，共
-                {{ paginationReactive.total }} 条
-                <n-tag type="warning" size="small" class="ml-2">
-                  重新代付
-                </n-tag>
+                {{ $t('finance.selectedOfTotal', { selected: selectedCount, total: paginationReactive.total }) }}
+                <n-tag type="warning" size="small" class="ml-2">{{ $t('finance.rePayout') }}</n-tag>
               </div>
             </div>
 
@@ -216,9 +207,9 @@
               <!-- 选择控制 -->
               <div class="flex gap-2">
                 <n-button size="small" @click="clearSelection"
-                  >清空选择</n-button
+                  >{{ $t('finance.kxqos8') }}</n-button
                 >
-                <n-button size="small" @click="selectAll">全选</n-button>
+                <n-button size="small" @click="selectAll">{{ $t('common.selectAll') }}</n-button>
               </div>
             </div>
           </div>
@@ -231,19 +222,19 @@
       <n-card :bordered="false" class="rounded-16px shadow-sm">
         <div class="border-t p-4">
           <div class="flex items-center gap-4">
-            <span class="text-sm text-gray-600">全选当前页</span>
+            <span class="text-sm text-gray-600">{{ $t('finance.kq5y7t') }}</span>
             <n-select
               v-model:value="batchOperation"
-              placeholder="批量操作"
+              placeholder:placeholder="$t('finance.bulkActions')"
               size="small"
               class="w-40"
               :options="batchOperationOptions"
             />
             <span class="text-sm text-gray-600"
-              >已选择{{ selectedIds.length }}条数据</span
+              >{{ $t('finance.selectedRecords', { count: selectedIds.length }) }}</span
             >
             <span class="text-sm text-gray-600"
-              >共{{ paginationReactive.total }}条</span
+              >{{ $t('finance.totalRecordsCompact', { count: paginationReactive.total }) }}</span
             >
           </div>
         </div>
@@ -254,9 +245,9 @@
     <n-modal
       v-model:show="rePaymentModal.show"
       preset="dialog"
-      title="重新代付确认"
-      positive-text="确认代付"
-      negative-text="取消"
+      :title="$t('finance.rePayoutConfirm1')"
+      positive-text:positive-text="$t('finance.confirmPayout')"
+      negative-text:negative-text="$t('common.cancel')"
       @positive-click="handleRePayment"
     >
       <div class="space-y-4">
@@ -272,33 +263,33 @@
             class="mb-2 rounded border p-2"
           >
             <div class="text-sm">
-              <div><strong>订单号:</strong> {{ item.orderId }}</div>
-              <div><strong>会员:</strong> {{ item.memberAccount }}</div>
+              <div><strong>{{ $t('finance.orderNo') }}:</strong> {{ item.orderId }}</div>
+              <div><strong>{{ $t('finance.member') }}:</strong> {{ item.memberAccount }}</div>
               <div>
-                <strong>金额:</strong> {{ item.amount }} {{ item.currency }}
+                <strong>{{ $t('common.amount') }}:</strong> {{ item.amount }} {{ item.currency }}
               </div>
               <div>
-                <strong>异常原因:</strong>
+                <strong>{{ $t('finance.abnormalReason') }}:</strong>
                 {{ item.callbackError || '回调异常' }}
               </div>
             </div>
           </div>
         </div>
         <div>
-          <n-form-item label="代付通道" required>
+          <n-form-item :label="$t('finance.payoutChannel')" required>
             <n-select
               v-model:value="rePaymentModal.paymentChannel"
-              placeholder="请选择代付通道"
+              placeholder:placeholder="$t('finance.pleaseSelectPayoutChannel')"
               :options="paymentChannelOptions"
             />
           </n-form-item>
         </div>
         <div>
-          <n-form-item label="备注说明">
+          <n-form-item :label="$t('finance.remark3')">
             <n-input
               v-model:value="rePaymentModal.notes"
               type="textarea"
-              placeholder="请输入重新代付备注（可选）"
+              placeholder:placeholder="$t('finance.pleaseEnterRePayoutRemarkOptional')"
               :rows="3"
             />
           </n-form-item>
@@ -310,31 +301,31 @@
     <n-modal
       v-model:show="detailModal.show"
       preset="card"
-      title="异常订单详情"
+      :title="$t('finance.exceptionOrdersDetails')"
       size="large"
       :style="{ width: '80%', maxWidth: '1000px' }"
     >
       <div v-if="detailModal.data" class="space-y-6">
         <!-- Basic Info -->
         <div class="grid grid-cols-2 gap-6">
-          <n-card title="订单信息" size="small">
+          <n-card :title="$t('finance.orderInfo')" size="small">
             <div class="space-y-2 text-sm">
               <div class="flex justify-between">
-                <span class="text-gray-600">订单号:</span>
+                <span class="text-gray-600">{{ $t('finance.orderNo') }}:</span>
                 <span>{{ detailModal.data.orderId }}</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-gray-600">会员账号:</span>
+                <span class="text-gray-600">{{ $t('common.memberAccount') }}:</span>
                 <span>{{ detailModal.data.memberAccount }}</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-gray-600">申请时间:</span>
+                <span class="text-gray-600">{{ $t('finance.applyTime') }}:</span>
                 <span>{{
                   formatDateTime(detailModal.data.applicationTime)
                 }}</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-gray-600">订单状态:</span>
+                <span class="text-gray-600">{{ $t('common.orderStatus') }}:</span>
                 <n-tag :type="getStatusType(detailModal.data.status)">
                   {{ getStatusText(detailModal.data.status) }}
                 </n-tag>
@@ -342,10 +333,10 @@
             </div>
           </n-card>
 
-          <n-card title="异常信息" size="small">
+          <n-card :title="$t('finance.exceptionInfo')" size="small">
             <div class="space-y-2 text-sm">
               <div class="flex justify-between">
-                <span class="text-gray-600">回调状态:</span>
+                <span class="text-gray-600">{{ $t('finance.callbackStatus') }}:</span>
                 <n-tag
                   :type="getCallbackStatusType(detailModal.data.callbackStatus)"
                 >
@@ -353,17 +344,17 @@
                 </n-tag>
               </div>
               <div class="flex justify-between">
-                <span class="text-gray-600">异常原因:</span>
+                <span class="text-gray-600">{{ $t('finance.abnormalReason') }}:</span>
                 <span class="text-red-600">{{
                   detailModal.data.callbackError || '回调超时'
                 }}</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-gray-600">重试次数:</span>
+                <span class="text-gray-600">{{ $t('finance.retryCount') }}:</span>
                 <span>{{ detailModal.data.retryCount || 0 }}次</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-gray-600">最后重试:</span>
+                <span class="text-gray-600">{{ $t('finance.lastRetry') }}:</span>
                 <span>{{
                   formatDateTime(detailModal.data.lastRetryTime) || '-'
                 }}</span>
@@ -373,31 +364,31 @@
         </div>
 
         <!-- Payment Info -->
-        <n-card title="代付信息" size="small">
+        <n-card :title="$t('finance.payoutInfo')" size="small">
           <div class="grid grid-cols-2 gap-4 text-sm">
             <div class="flex justify-between">
-              <span class="text-gray-600">代付金额:</span>
+              <span class="text-gray-600">{{ $t('finance.payoutAmount') }}:</span>
               <span class="font-semibold text-green-600">
                 {{ detailModal.data.amount }} {{ detailModal.data.currency }}
               </span>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600">代付通道:</span>
+              <span class="text-gray-600">{{ $t('finance.payoutChannel') }}:</span>
               <span>{{ detailModal.data.paymentChannel }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600">第三方订单号:</span>
+              <span class="text-gray-600">{{ $t('finance.thirdPartyOrderNo') }}:</span>
               <span>{{ detailModal.data.thirdPartyOrderNo || '-' }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600">收款方式:</span>
+              <span class="text-gray-600">{{ $t('finance.receivingMethod') }}:</span>
               <span>{{ detailModal.data.paymentMethod }}</span>
             </div>
           </div>
         </n-card>
 
         <!-- Callback Logs -->
-        <n-card title="回调日志" size="small">
+        <n-card :title="$t('finance.callbackDay')" size="small">
           <div class="max-h-40 overflow-y-auto">
             <div
               v-for="(log, index) in detailModal.data.callbackLogs"
@@ -412,22 +403,18 @@
             <div
               v-if="!detailModal.data.callbackLogs?.length"
               class="py-4 text-center text-gray-500"
-            >
-              暂无回调日志
-            </div>
+            >{{ $t('finance.k1782445247884') }}</div>
           </div>
         </n-card>
 
         <!-- Actions -->
         <div class="flex justify-end gap-3">
-          <n-button @click="detailModal.show = false">关闭</n-button>
+          <n-button @click="detailModal.show = false">{{ $t('common.close') }}</n-button>
           <n-button
             type="warning"
             @click="showSingleRePaymentModal(detailModal.data)"
             v-if="canRePayment(detailModal.data.status)"
-          >
-            重新代付
-          </n-button>
+          >{{ $t('finance.rePayout') }}</n-button>
         </div>
       </div>
     </n-modal>
@@ -435,6 +422,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import {
   ref,
   reactive,
@@ -595,34 +584,34 @@ const detailModal = reactive({
 
 // Options
 const thirdPartyOptions = [
-  { label: 'PIX自动代付', value: 'PIX_AUTO' },
-  { label: '银行转账', value: 'BANK_TRANSFER' },
-  { label: '数字钱包', value: 'DIGITAL_WALLET' },
+  { label: $t('finance.pixAutoPayout'), value: 'PIX_AUTO' },
+  { label: $t('finance.bankTransfer'), value: 'BANK_TRANSFER' },
+  { label: $t('finance.digitalWallet'), value: 'DIGITAL_WALLET' },
 ];
 
 const callbackStatusOptions = [
-  { label: '回调异常', value: 'exception' },
-  { label: '回调超时', value: 'timeout' },
-  { label: '回调失败', value: 'failed' },
-  { label: '处理中', value: 'processing' },
+  { label: $t('finance.callbackException'), value: 'exception' },
+  { label: $t('finance.callback'), value: 'timeout' },
+  { label: $t('finance.callbackFailed'), value: 'failed' },
+  { label: $t('finance.processing'), value: 'processing' },
 ];
 
 const rePaymentTypeOptions = [
-  { label: '重新代付', value: 'repayment' },
-  { label: '手动处理', value: 'manual' },
-  { label: '系统重试', value: 'auto_retry' },
+  { label: $t('finance.rePayout'), value: 'repayment' },
+  { label: $t('finance.process'), value: 'manual' },
+  { label: $t('finance.systemRetry'), value: 'auto_retry' },
 ];
 
 const paymentChannelOptions = [
-  { label: 'PIX通道1', value: 'PIX_CHANNEL_1' },
-  { label: 'PIX通道2', value: 'PIX_CHANNEL_2' },
-  { label: '银行代付通道', value: 'BANK_CHANNEL' },
+  { label: $t('finance.pIXChannel1'), value: 'PIX_CHANNEL_1' },
+  { label: $t('finance.pIXChannel2'), value: 'PIX_CHANNEL_2' },
+  { label: $t('finance.bankPayoutChannel'), value: 'BANK_CHANNEL' },
 ];
 
 const batchOperationOptions = [
-  { label: '批量重新代付', value: 'batch_repayment' },
-  { label: '批量标记处理', value: 'batch_mark' },
-  { label: '批量导出', value: 'batch_export' },
+  { label: $t('finance.bulkRePayout'), value: 'batch_repayment' },
+  { label: $t('finance.bulkMarkProcess'), value: 'batch_mark' },
+  { label: $t('finance.bulkExport'), value: 'batch_export' },
 ];
 
 // Table columns based on screenshot
@@ -633,7 +622,7 @@ const columns: DataTableColumns<RePaymentRecord> = [
     width: 50,
   },
   {
-    title: '订单号',
+    title: $t('finance.orderNo'),
     key: 'orderId',
     width: 140,
     fixed: 'left',
@@ -649,7 +638,7 @@ const columns: DataTableColumns<RePaymentRecord> = [
       ),
   },
   {
-    title: '会员ID (VIP等级)',
+    title: $t('finance.memberIdVIPLevel'),
     key: 'memberInfo',
     width: 100,
     render: (row) =>
@@ -659,7 +648,7 @@ const columns: DataTableColumns<RePaymentRecord> = [
       ]),
   },
   {
-    title: '会员账号 (会员层级)',
+    title: $t('finance.memberAccountMemberTier'),
     key: 'memberAccount',
     width: 120,
     render: (row) =>
@@ -673,7 +662,7 @@ const columns: DataTableColumns<RePaymentRecord> = [
       ]),
   },
   {
-    title: '申请时间 (操作时间)',
+    title: $t('finance.applicationTimeActionsTime'),
     key: 'applicationTime',
     width: 150,
     render: (row) =>
@@ -683,7 +672,7 @@ const columns: DataTableColumns<RePaymentRecord> = [
       ]),
   },
   {
-    title: '会员币种 (比例)',
+    title: $t('finance.memberCurrencyRatio'),
     key: 'currency',
     width: 80,
     render: (row) =>
@@ -693,7 +682,7 @@ const columns: DataTableColumns<RePaymentRecord> = [
       ]),
   },
   {
-    title: '提现金额 到账币种',
+    title: $t('finance.withdrawalAmountReceivedCurrency'),
     key: 'amount',
     width: 110,
     render: (row) =>
@@ -707,7 +696,7 @@ const columns: DataTableColumns<RePaymentRecord> = [
       ]),
   },
   {
-    title: '预计到账 (手续费) 实际到账',
+    title: $t('finance.estimatedReceivedFeeActualReceived'),
     key: 'settlements',
     width: 130,
     render: (row) =>
@@ -717,7 +706,7 @@ const columns: DataTableColumns<RePaymentRecord> = [
       ]),
   },
   {
-    title: '充/提次数 (累计充/提金额) (重复IP人数)',
+    title: $t('finance.countCumulativeAmountIP'),
     key: 'statistics',
     width: 140,
     render: (row) =>
@@ -727,7 +716,7 @@ const columns: DataTableColumns<RePaymentRecord> = [
       ]),
   },
   {
-    title: '收款方式 (收款人信息)',
+    title: $t('finance.receivingMethodPayeeInfo'),
     key: 'paymentInfo',
     width: 140,
     render: (row) =>
@@ -753,7 +742,7 @@ const columns: DataTableColumns<RePaymentRecord> = [
       ]),
   },
   {
-    title: '订单状态 (操作人)',
+    title: $t('finance.orderStatusActions'),
     key: 'status',
     width: 110,
     render: (row) => {
@@ -787,13 +776,13 @@ const columns: DataTableColumns<RePaymentRecord> = [
     },
   },
   {
-    title: '前台备注',
+    title: $t('finance.frontendRemark'),
     key: 'frontendNotes',
     width: 80,
     render: () => h('div', { class: 'text-center text-gray-500' }, '回调异常'),
   },
   {
-    title: '后台备注',
+    title: $t('finance.backendRemark'),
     key: 'backendNotes',
     width: 100,
     render: (row) =>
@@ -804,7 +793,7 @@ const columns: DataTableColumns<RePaymentRecord> = [
       ),
   },
   {
-    title: '三方代付 (代付次数)',
+    title: $t('finance.thirdPartyPayoutPayoutCount'),
     key: 'thirdParty',
     width: 100,
     render: (row) => {
@@ -837,7 +826,7 @@ const columns: DataTableColumns<RePaymentRecord> = [
     },
   },
   {
-    title: '回调异常类型',
+    title: $t('finance.callbackException1'),
     key: 'callbackType',
     width: 100,
     render: (row) =>
@@ -853,7 +842,7 @@ const columns: DataTableColumns<RePaymentRecord> = [
       ]),
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 200,
     fixed: 'right',
@@ -877,7 +866,7 @@ const columns: DataTableColumns<RePaymentRecord> = [
             type: 'primary',
             onClick: () => showRePaymentModal(row),
           },
-          { default: () => '重新代付' },
+          { default: () => $t('finance.rePayout') },
         ),
         // Manual processing for unresolvable issues - Always available (enabled)
         h(
@@ -887,7 +876,7 @@ const columns: DataTableColumns<RePaymentRecord> = [
             type: 'warning',
             onClick: () => showManualProcessModal(row),
           },
-          { default: () => '人工出款' },
+          { default: () => $t('finance.manualPayout') },
         ),
         // Refresh status - Always available
         h(
@@ -897,7 +886,7 @@ const columns: DataTableColumns<RePaymentRecord> = [
             type: 'default',
             onClick: () => refreshOrderStatus(row),
           },
-          { default: () => '刷新状态' },
+          { default: () => $t('finance.refreshStatus') },
         ),
         // Notes - Always available
         h(
@@ -907,7 +896,7 @@ const columns: DataTableColumns<RePaymentRecord> = [
             type: 'info',
             onClick: () => showNotesModal(row),
           },
-          { default: () => '备注' },
+          { default: () => $t('common.remark') },
         ),
         // Reject - for unrecoverable failures - Always available (enabled)
         h(
@@ -917,7 +906,7 @@ const columns: DataTableColumns<RePaymentRecord> = [
             type: 'error',
             onClick: () => showRejectModal(row),
           },
-          { default: () => '拒绝' },
+          { default: () => $t('finance.text14') },
         ),
       ]),
   },
@@ -946,7 +935,7 @@ const lockOrder = async (row: RePaymentRecord) => {
     row.lockedAt = new Date().toISOString();
     message.success(`订单 ${row.orderId} 已锁定`);
   } catch (error) {
-    message.error('锁定失败');
+    message.error($t('finance.lockedFailed'));
   }
 };
 
@@ -957,23 +946,23 @@ const unlockOrder = async (row: RePaymentRecord) => {
     row.lockedAt = null;
     message.success(`订单 ${row.orderId} 已解锁`);
   } catch (error) {
-    message.error('解锁失败');
+    message.error($t('finance.unlockFailed'));
   }
 };
 
 const showRePaymentModal = (row: RePaymentRecord) => {
   dialog.info({
-    title: '重新代付确认',
+    title: $t('finance.rePayoutConfirm1'),
     content: `确认重新代付订单 ${row.orderId}？请选择三方代付商户进行重新出款。`,
-    positiveText: '确认重新代付',
-    negativeText: '取消',
+    positiveText: $t('finance.confirmRePayout1'),
+    negativeText: $t('common.cancel'),
     onPositiveClick: async () => {
       try {
         // TODO: Show third-party provider selection modal
         row.status = 'reprocessing';
-        message.success('重新代付处理中');
+        message.success($t('finance.rePayoutProcessing'));
       } catch (error) {
-        message.error('重新代付失败');
+        message.error($t('finance.rePayoutFailed'));
       }
     },
   });
@@ -981,16 +970,16 @@ const showRePaymentModal = (row: RePaymentRecord) => {
 
 const showManualProcessModal = (row: RePaymentRecord) => {
   dialog.warning({
-    title: '人工出款确认',
+    title: $t('finance.manualPayoutConfirm'),
     content: `确认人工出款订单 ${row.orderId}？此操作将把状态改为"已人工"，请谨慎操作！`,
-    positiveText: '确认人工出款',
-    negativeText: '取消',
+    positiveText: $t('finance.confirmManualPayout'),
+    negativeText: $t('common.cancel'),
     onPositiveClick: async () => {
       try {
         row.status = 'completed';
-        message.success('人工出款成功');
+        message.success($t('finance.manualPayoutSuccess'));
       } catch (error) {
-        message.error('人工出款失败');
+        message.error($t('finance.manualPayoutFailed'));
       }
     },
   });
@@ -1016,27 +1005,27 @@ const refreshOrderStatus = async (row: RePaymentRecord) => {
       message.warning(result);
     }
   } catch (error) {
-    message.error('刷新状态失败');
+    message.error($t('finance.refreshStatusFailed'));
   }
 };
 
 const showNotesModal = (row: RePaymentRecord) => {
   // TODO: Implement notes modal with frontend/backend notes
-  message.info('备注功能开发中');
+  message.info($t('finance.remarkFeatureInDevelopment'));
 };
 
 const showRejectModal = (row: RePaymentRecord) => {
   dialog.error({
-    title: '拒绝订单确认',
+    title: $t('finance.orderConfirm'),
     content: `确认拒绝订单 ${row.orderId}？拒绝后，冻结金额将从会员账户中扣除，请谨慎操作！`,
-    positiveText: '确认拒绝',
-    negativeText: '取消',
+    positiveText: $t('finance.confirm1'),
+    negativeText: $t('common.cancel'),
     onPositiveClick: async () => {
       try {
         row.status = 'rejected';
-        message.success('订单已拒绝');
+        message.success($t('finance.orderRejected'));
       } catch (error) {
-        message.error('拒绝失败');
+        message.error($t('finance.failed3'));
       }
     },
   });
@@ -1073,7 +1062,7 @@ const handleBulkRePayment = (_selectedRows: CallbackExceptionRecord[]) => {
 
 const handleExportSearch = () => {
   // TODO: Implement export search functionality
-  message.info('导出搜索功能开发中');
+  message.info($t('finance.exportSearchFeatureInDevelopment'));
 };
 
 // Methods
@@ -1125,13 +1114,13 @@ const fetchData = async () => {
       statistics.pendingRepayment = 0;
       statistics.repaymentSuccess = 0;
       statistics.repaymentFailed = 0;
-      message.error('获取数据失败，请稍后重试');
+      message.error($t('finance.failedToFetchDataPleaseLaterRetry'));
     }
   } catch (error) {
     console.error('Fetch data error:', error);
     tableData.value = [];
     paginationReactive.total = 0;
-    message.error('获取数据失败');
+    message.error($t('finance.failedToFetchData'));
   } finally {
     loading.value = false;
   }
@@ -1199,7 +1188,7 @@ const showSingleRePaymentModal = (row: RePaymentRecord) => {
 const handleRePayment = async () => {
   try {
     if (!rePaymentModal.paymentChannel) {
-      message.error('请选择代付通道');
+      message.error($t('finance.pleaseSelectPayoutChannel'));
       return;
     }
 
@@ -1215,7 +1204,7 @@ const handleRePayment = async () => {
         );
 
         if (response.success) {
-          message.success('成功发起重新代付');
+          message.success($t('finance.successRePayout'));
           rePaymentModal.show = false;
           selectedIds.value = [];
           fetchData();
@@ -1257,7 +1246,7 @@ const handleRePayment = async () => {
       }
     }
   } catch (error) {
-    message.error('重新代付失败');
+    message.error($t('finance.rePayoutFailed'));
   }
 };
 

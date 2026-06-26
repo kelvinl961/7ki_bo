@@ -1,14 +1,14 @@
 <template>
   <div class="bet-statistic-tab">
     <!-- Enhanced Query Section -->
-    <n-card title="查询条件" class="query-card mb-4">
+    <n-card :title="$t('user.betStatistic.queryConditions')" class="query-card mb-4">
       <div class="flex flex-wrap items-end gap-4">
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium text-gray-700">日期范围</label>
+          <label class="mb-2 text-sm font-medium text-gray-700">{{ $t('user.betStatistic.dateRange') }}</label>
           <n-date-picker
             v-model:value="dateRange"
             type="daterange"
-            placeholder="选择日期范围"
+            :placeholder="$t('user.betStatistic.selectDateRange')"
             style="width: 320px"
             :shortcuts="dateShortcuts"
             @update:value="handleDateRangeChange"
@@ -17,10 +17,10 @@
         </div>
 
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium text-gray-700">游戏平台</label>
+          <label class="mb-2 text-sm font-medium text-gray-700">{{ $t('user.betStatistic.gameProvider') }}</label>
           <n-select
             v-model:value="gameProviderFilter"
-            placeholder="选择游戏平台"
+            :placeholder="$t('user.betStatistic.selectGameProvider')"
             style="width: 150px"
             :options="gameProviderOptions"
             clearable
@@ -29,10 +29,10 @@
         </div>
 
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium text-gray-700">游戏类别</label>
+          <label class="mb-2 text-sm font-medium text-gray-700">{{ $t('user.betStatistic.gameCategory') }}</label>
           <n-select
             v-model:value="gameCategoryFilter"
-            placeholder="选择游戏类别"
+            :placeholder="$t('user.betStatistic.selectGameCategory')"
             style="width: 150px"
             :options="gameCategoryOptions"
             clearable
@@ -46,14 +46,14 @@
             @click="loadBetStatistics"
             :loading="loading"
             class="action-button"
-            >查询统计</n-button
+            >{{ $t('user.betStatistic.queryStats') }}</n-button
           >
-          <n-button @click="handleReset" class="action-button">重置</n-button>
+          <n-button @click="handleReset" class="action-button">{{ $t('common.reset') }}</n-button>
           <n-button
             @click="loadBetStatistics"
             :disabled="loading"
             class="action-button"
-            >刷新</n-button
+            >{{ $t('common.refresh') }}</n-button
           >
         </div>
       </div>
@@ -66,8 +66,8 @@
 
     <!-- No Data State -->
     <div v-else-if="!hasData" class="py-12 text-center text-gray-500">
-      <div class="text-lg font-medium">暂无投注数据</div>
-      <div class="mt-2 text-sm text-gray-400">请选择日期范围后重新查询</div>
+      <div class="text-lg font-medium">{{ $t('user.betStatistic.noBetData') }}</div>
+      <div class="mt-2 text-sm text-gray-400">{{ $t('user.betStatistic.selectDateToQuery') }}</div>
     </div>
 
     <!-- Data Content -->
@@ -75,8 +75,8 @@
       <!-- Enhanced Summary Cards -->
       <div class="mb-6">
         <div class="mb-4 flex items-center justify-between">
-          <h3 class="text-lg font-semibold text-gray-800">投注统计总览</h3>
-          <n-tag type="success" size="small">实时数据</n-tag>
+          <h3 class="text-lg font-semibold text-gray-800">{{ $t('user.betStatistic.statsOverview') }}</h3>
+          <n-tag type="success" size="small">{{ $t('user.betStatistic.realtimeData') }}</n-tag>
         </div>
 
         <div
@@ -86,9 +86,9 @@
           <n-card size="small" class="summary-card stat-card-blue">
             <div class="stat-content">
               <div class="stat-info">
-                <div class="stat-label">总注单量</div>
+                <div class="stat-label">{{ $t('user.betStatistic.totalBetCount') }}</div>
                 <div class="stat-value">{{ summary.totalBetCount }}</div>
-                <div class="stat-unit">笔</div>
+                <div class="stat-unit">{{ $t('user.betStatistic.betUnit') }}</div>
               </div>
             </div>
           </n-card>
@@ -97,7 +97,7 @@
           <n-card size="small" class="summary-card stat-card-green">
             <div class="stat-content">
               <div class="stat-info">
-                <div class="stat-label">总投注金额</div>
+                <div class="stat-label">{{ $t('user.betStatistic.totalBetAmount') }}</div>
                 <div class="stat-value">
                   {{ formatCurrency(summary.totalBetAmount) }}
                 </div>
@@ -110,7 +110,7 @@
           <n-card size="small" class="summary-card stat-card-purple">
             <div class="stat-content">
               <div class="stat-info">
-                <div class="stat-label">总有效投注</div>
+                <div class="stat-label">{{ $t('user.betStatistic.totalValidBet') }}</div>
                 <div class="stat-value">
                   {{ formatCurrency(summary.totalValidBetAmount) }}
                 </div>
@@ -118,7 +118,7 @@
               </div>
             </div>
             <div class="pb-2 pr-3 text-right text-xs text-gray-500">
-              有效率
+              {{ $t('user.betStatistic.validRate') }}
               {{
                 (
                   (summary.totalValidBetAmount /
@@ -133,9 +133,9 @@
           <n-card size="small" class="summary-card stat-card-orange">
             <div class="stat-content">
               <div class="stat-info">
-                <div class="stat-label">会员</div>
+                <div class="stat-label">{{ $t('common.member') }}</div>
                 <div class="stat-value">{{ summary.memberCount }}</div>
-                <div class="stat-unit">人</div>
+                <div class="stat-unit">{{ $t('user.betStatistic.peopleUnit') }}</div>
               </div>
             </div>
           </n-card>
@@ -144,9 +144,9 @@
           <n-card size="small" class="summary-card stat-card-indigo">
             <div class="stat-content">
               <div class="stat-info">
-                <div class="stat-label">占单量</div>
+                <div class="stat-label">{{ $t('user.betStatistic.subordinateBetCount') }}</div>
                 <div class="stat-value">{{ summary.subordinateBetCount }}</div>
-                <div class="stat-unit">笔</div>
+                <div class="stat-unit">{{ $t('user.betStatistic.betUnit') }}</div>
               </div>
             </div>
           </n-card>
@@ -163,7 +163,7 @@
           >
             <div class="stat-content">
               <div class="stat-info">
-                <div class="stat-label">获利比</div>
+                <div class="stat-label">{{ $t('user.betStatistic.profitRatio') }}</div>
                 <div class="stat-value">
                   {{ summary.profitRatio.toFixed(2) }}
                 </div>
@@ -178,8 +178,8 @@
       <n-card class="game-details-card mb-4">
         <template #header>
           <div class="flex items-center gap-2">
-            <span class="text-lg font-semibold">游戏投注明细</span>
-            <n-tag type="info" size="small">按平台分类</n-tag>
+            <span class="text-lg font-semibold">{{ $t('user.betStatistic.gameBetDetails') }}</span>
+            <n-tag type="info" size="small">{{ $t('user.betStatistic.byPlatform') }}</n-tag>
           </div>
         </template>
 
@@ -187,11 +187,11 @@
           <div class="flex items-center gap-3">
             <div class="flex items-center gap-2 text-sm text-gray-600">
               <span class="font-medium"
-                >共 {{ filteredGameDetails.length }} 个游戏</span
+                >{{ $t('user.betStatistic.gameCount', [filteredGameDetails.length]) }}</span
               >
               <span class="text-gray-400">|</span>
               <span
-                >总投注:
+                >{{ $t('user.betStatistic.totalBetLabel') }}:
                 {{
                   formatCurrency(
                     filteredGameDetails.reduce(
@@ -207,7 +207,7 @@
               type="primary"
               @click="loadBetStatistics"
               :disabled="loading"
-              >刷新</n-button
+              >{{ $t('common.refresh') }}</n-button
             >
           </div>
         </template>
@@ -219,7 +219,7 @@
         >
           <div class="flex flex-wrap items-center gap-4">
             <div class="flex items-center gap-2">
-              <span class="text-sm font-medium text-gray-700">快速筛选:</span>
+              <span class="text-sm font-medium text-gray-700">{{ $t('user.betStatistic.quickFilter') }}:</span>
               <n-button-group size="small">
                 <n-button
                   :type="
@@ -229,7 +229,7 @@
                   "
                   @click="clearTableFilters"
                 >
-                  全部
+                  {{ $t('common.all') }}
                 </n-button>
                 <n-button
                   v-for="provider in gameProviderOptions.slice(0, 3)"
@@ -252,7 +252,7 @@
             </div>
 
             <div class="flex items-center gap-2">
-              <span class="text-sm font-medium text-gray-700">排序:</span>
+              <span class="text-sm font-medium text-gray-700">{{ $t('user.betStatistic.sort') }}:</span>
               <n-select
                 v-model:value="sortBy"
                 size="small"
@@ -287,7 +287,7 @@
         >
           <div class="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
             <div class="flex justify-between">
-              <span class="text-gray-600">汇总投注:</span>
+              <span class="text-gray-600">{{ $t('user.betStatistic.summaryBet') }}:</span>
               <span class="font-semibold text-blue-600">{{
                 formatCurrency(
                   filteredGameDetails.reduce(
@@ -298,7 +298,7 @@
               }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600">有效投注:</span>
+              <span class="text-gray-600">{{ $t('user.betStatistic.summaryValidBet') }}:</span>
               <span class="font-semibold text-purple-600">{{
                 formatCurrency(
                   filteredGameDetails.reduce(
@@ -309,7 +309,7 @@
               }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600">总盈亏:</span>
+              <span class="text-gray-600">{{ $t('user.betStatistic.summaryPnl') }}:</span>
               <span
                 class="font-semibold"
                 :class="
@@ -332,7 +332,7 @@
               </span>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600">注单数:</span>
+              <span class="text-gray-600">{{ $t('user.betStatistic.summaryBetCount') }}:</span>
               <span class="font-semibold text-orange-600">{{
                 filteredGameDetails.reduce(
                   (sum, game) => sum + game.betCount,
@@ -348,6 +348,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, computed, onMounted, h } from 'vue';
 import { NCard, NButton, NDatePicker, NDataTable, NSpin, NTag } from 'naive-ui';
 import {
@@ -399,13 +401,13 @@ const lastQueryInfo = ref<{
 
 // Table enhancements
 const sortBy = ref<string>('betAmount');
-const sortOptions = [
-  { label: '投注金额', value: 'betAmount' },
-  { label: '注单数量', value: 'betCount' },
-  { label: '有效投注', value: 'validBetAmount' },
-  { label: '盈亏', value: 'profitLoss' },
-  { label: '游戏名称', value: 'gameName' },
-];
+const sortOptions = computed(() => [
+  { label: $t('user.betStatistic.sortBetAmount'), value: 'betAmount' },
+  { label: $t('user.betStatistic.sortBetCount'), value: 'betCount' },
+  { label: $t('user.betStatistic.sortValidBet'), value: 'validBetAmount' },
+  { label: $t('user.betStatistic.sortProfitLoss'), value: 'profitLoss' },
+  { label: $t('user.betStatistic.sortGameName'), value: 'gameName' },
+]);
 
 // ===================================
 // COMPUTED
@@ -466,71 +468,55 @@ const pagination = ref({
 // DATE SHORTCUTS
 // ===================================
 
-const dateShortcuts = {
-  今天: () => {
-    const today = new Date();
-    const start = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate(),
-    );
-    const end = new Date(start);
-    return [start.getTime(), end.getTime()];
-  },
-  昨天: () => {
-    const today = new Date();
-    const start = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate() - 1,
-    );
-    const end = new Date(start);
-    return [start.getTime(), end.getTime()];
-  },
-  最近7天: () => {
+const dateShortcuts = computed(() => {
+  const last7 = () => {
     const end = new Date();
-    const start = new Date(
-      end.getFullYear(),
-      end.getMonth(),
-      end.getDate() - 6,
-    );
+    const start = new Date(end.getFullYear(), end.getMonth(), end.getDate() - 6);
     return [start.getTime(), end.getTime()];
-  },
-  最近30天: () => {
-    const end = new Date();
-    const start = new Date(
-      end.getFullYear(),
-      end.getMonth(),
-      end.getDate() - 29,
-    );
-    return [start.getTime(), end.getTime()];
-  },
-  本月: () => {
-    const now = new Date();
-    const start = new Date(now.getFullYear(), now.getMonth(), 1);
-    const end = new Date();
-    return [start.getTime(), end.getTime()];
-  },
-};
+  };
+  return {
+    [$t('common.today')]: () => {
+      const today = new Date();
+      const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      return [start.getTime(), start.getTime()];
+    },
+    [$t('advancedSearch.yesterday')]: () => {
+      const today = new Date();
+      const start = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+      return [start.getTime(), start.getTime()];
+    },
+    [$t('user.betStatistic.last7Days')]: last7,
+    [$t('user.betStatistic.last30Days')]: () => {
+      const end = new Date();
+      const start = new Date(end.getFullYear(), end.getMonth(), end.getDate() - 29);
+      return [start.getTime(), end.getTime()];
+    },
+    [$t('common.thisMonth')]: () => {
+      const now = new Date();
+      return [new Date(now.getFullYear(), now.getMonth(), 1).getTime(), now.getTime()];
+    },
+  };
+});
+const last7DaysShortcut = computed(() => dateShortcuts.value[$t('user.betStatistic.last7Days')]);
 
 // ===================================
 // TABLE COLUMNS
 // ===================================
 
-const enhancedGameColumns = [
+const enhancedGameColumns = computed(() => [
   {
-    title: '平台',
+    title: $t('user.betStatistic.platform'),
     key: 'gameProvider',
     width: 120,
     fixed: 'left',
   },
   {
-    title: '类别',
+    title: $t('user.betStatistic.category'),
     key: 'gameCategory',
     width: 120,
   },
   {
-    title: '游戏名称',
+    title: $t('user.betStatistic.gameName'),
     key: 'gameName',
     width: 200,
     ellipsis: {
@@ -540,7 +526,7 @@ const enhancedGameColumns = [
       h('div', { class: 'font-medium text-gray-800' }, row.gameName),
   },
   {
-    title: '注单数量',
+    title: $t('user.betStatistic.betCount'),
     key: 'betCount',
     width: 100,
     align: 'right',
@@ -549,7 +535,7 @@ const enhancedGameColumns = [
       h('span', { class: 'font-bold text-blue-600' }, row.betCount),
   },
   {
-    title: '投注金额',
+    title: $t('user.betStatistic.betAmount'),
     key: 'betAmount',
     width: 130,
     align: 'right',
@@ -562,7 +548,7 @@ const enhancedGameColumns = [
       ),
   },
   {
-    title: '有效投注',
+    title: $t('user.betStatistic.validBet'),
     key: 'validBetAmount',
     width: 130,
     align: 'right',
@@ -575,7 +561,7 @@ const enhancedGameColumns = [
       ),
   },
   {
-    title: '盈亏',
+    title: $t('user.betStatistic.profitLoss'),
     key: 'profitLoss',
     width: 130,
     align: 'right',
@@ -591,14 +577,14 @@ const enhancedGameColumns = [
     },
   },
   {
-    title: '会员数量',
+    title: $t('user.betStatistic.memberCount'),
     key: 'memberCount',
     width: 100,
     align: 'right',
     render: (row: BetGameDetail) =>
       h('span', { class: 'font-bold text-orange-600' }, row.memberCount),
   },
-];
+]);
 
 // ===================================
 // METHODS
@@ -687,7 +673,7 @@ const loadBetStatistics = async () => {
       timestamp: new Date().toLocaleString('zh-CN'),
       dateRange: dateRange.value
         ? `${dateRange.value[0]} ~ ${dateRange.value[1]}`
-        : '最近7天',
+        : $t('user.betStatistic.last7Days'),
       gameCount: gameDetails.value.length,
       totalBet: formatCurrency(summary.value.totalBetAmount),
     };
@@ -799,7 +785,7 @@ const getRowClassName = (row: BetGameDetail) => {
 onMounted(() => {
   console.log('🎯 BetStatisticTab mounted for user:', props.userId);
   // Default to 最近7天
-  dateRange.value = dateShortcuts['最近7天']();
+  dateRange.value = last7DaysShortcut.value();
   loadBetStatistics();
 });
 </script>

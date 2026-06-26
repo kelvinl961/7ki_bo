@@ -2,8 +2,12 @@
   <div class="member-tier-management p-4">
     <!-- Page Header -->
     <div class="mb-6">
-      <h1 class="text-2xl font-bold text-gray-800">会员层级管理</h1>
-      <p class="mt-1 text-gray-600">管理会员层级配置和晋级规则</p>
+      <h1 class="text-2xl font-bold text-gray-800">
+        {{ $t('user.memberTier.pageTitle') }}
+      </h1>
+      <p class="mt-1 text-gray-600">
+        {{ $t('user.memberTier.pageSubtitle') }}
+      </p>
     </div>
 
     <!-- Tier Type Tabs -->
@@ -14,8 +18,9 @@
         animated
         @update:value="handleTabChange"
       >
-        <n-tab name="auto_upgrade" tab="自动晋级"> </n-tab>
-        <n-tab name="fixed_tier" tab="固定等级"> </n-tab>
+        <n-tab name="auto_upgrade" :tab="$t('user.memberTier.autoUpgrade')">
+        </n-tab>
+        <n-tab name="fixed_tier" :tab="$t('user.memberTier.fixedTier')"> </n-tab>
       </n-tabs>
     </n-card>
 
@@ -25,7 +30,7 @@
         <div class="min-w-64 flex-1">
           <n-input
             v-model:value="searchKeyword"
-            placeholder="搜索等级名称、代码或描述..."
+            :placeholder="$t('user.memberTier.searchPlaceholder')"
             clearable
             @input="handleSearch"
           />
@@ -33,7 +38,7 @@
 
         <n-select
           v-model:value="statusFilter"
-          placeholder="状态筛选"
+          :placeholder="$t('user.memberTier.statusFilter')"
           clearable
           style="width: 120px"
           :options="statusOptions"
@@ -42,13 +47,15 @@
 
         <n-select
           v-model:value="sortBy"
-          placeholder="排序方式"
+          :placeholder="$t('user.memberTier.sortBy')"
           style="width: 150px"
           :options="sortOptions"
           @update:value="handleSort"
         />
 
-        <n-button @click="handleResetFilters"> 重置筛选 </n-button>
+        <n-button @click="handleResetFilters">
+          {{ $t('user.memberTier.resetFilters') }}
+        </n-button>
       </div>
     </n-card>
 
@@ -74,23 +81,29 @@
               <!-- 主要操作按钮 -->
               <div class="flex gap-2">
                 <n-button type="primary" @click="handleCreateTier">
-                  新增等级
+                  {{ $t('user.memberTier.addTier') }}
                 </n-button>
                 <n-button type="info" @click="handleRefreshStatistics">
-                  刷新统计
+                  {{ $t('user.memberTier.refreshStats') }}
                 </n-button>
               </div>
 
               <!-- 当前标签页信息 -->
               <div class="text-sm text-gray-600">
-                {{ activeTab === 'auto_upgrade' ? '自动晋级' : '固定等级' }} -
-                共 {{ paginationReactive.total }} 条记录
+                {{
+                  $t('user.memberTier.recordCount', [
+                    activeTabLabel,
+                    paginationReactive.total,
+                  ])
+                }}
               </div>
             </div>
 
             <div class="flex gap-2">
               <!-- 刷新按钮 -->
-              <n-button size="small" @click="handleRefresh">刷新数据</n-button>
+              <n-button size="small" @click="handleRefresh">
+                {{ $t('user.memberTier.refreshData') }}
+              </n-button>
             </div>
           </div>
         </n-card>
@@ -115,52 +128,54 @@
           class="pr-4"
         >
           <!-- Basic Information -->
-          <n-divider title-placement="left">基本信息</n-divider>
+          <n-divider title-placement="left">
+            {{ $t('user.memberTier.basicInfo') }}
+          </n-divider>
 
-          <n-form-item label="等级类型" path="tierType">
+          <n-form-item :label="$t('user.memberTier.tierType')" path="tierType">
             <n-select
               v-model:value="formData.tierType"
               :options="tierTypeOptions"
               :disabled="isEditing"
-              placeholder="选择等级类型"
+              :placeholder="$t('user.memberTier.selectTierType')"
             />
           </n-form-item>
 
-          <n-form-item label="等级名称" path="tierName">
+          <n-form-item :label="$t('user.memberTier.tierName')" path="tierName">
             <n-input
               v-model:value="formData.tierName"
-              placeholder="输入等级名称"
+              :placeholder="$t('user.memberTier.enterTierName')"
             />
           </n-form-item>
 
-          <n-form-item label="等级代码" path="tierCode">
+          <n-form-item :label="$t('user.memberTier.tierCode')" path="tierCode">
             <n-input
               v-model:value="formData.tierCode"
-              placeholder="输入等级代码（如：VIP1）"
+              :placeholder="$t('user.memberTier.enterTierCode')"
               :disabled="isEditing"
             />
           </n-form-item>
 
-          <n-form-item label="描述" path="description">
+          <n-form-item :label="$t('common.description')" path="description">
             <n-input
               v-model:value="formData.description"
               type="textarea"
-              placeholder="输入等级描述"
+              :placeholder="$t('user.memberTier.enterDescription')"
               :rows="2"
             />
           </n-form-item>
 
-          <n-form-item label="关键标签" path="keyTags">
+          <n-form-item :label="$t('user.memberTier.keyTags')" path="keyTags">
             <n-dynamic-tags
               v-model:value="formData.keyTags"
-              placeholder="添加标签"
+              :placeholder="$t('user.memberTier.addTag')"
             />
           </n-form-item>
 
-          <n-form-item label="排序顺序" path="sortOrder">
+          <n-form-item :label="$t('user.memberTier.sortOrder')" path="sortOrder">
             <n-input-number
               v-model:value="formData.sortOrder"
-              placeholder="排序顺序"
+              :placeholder="$t('user.memberTier.sortOrder')"
               :min="0"
               style="width: 150px"
             />
@@ -168,12 +183,17 @@
 
           <!-- Auto Upgrade Criteria (only for auto_upgrade type) -->
           <template v-if="formData.tierType === 'auto_upgrade'">
-            <n-divider title-placement="left">晋级条件</n-divider>
+            <n-divider title-placement="left">
+              {{ $t('user.memberTier.upgradeCriteria') }}
+            </n-divider>
 
-            <n-form-item label="最低充值金额" path="minDepositAmount">
+            <n-form-item
+              :label="$t('user.memberTier.minDeposit')"
+              path="minDepositAmount"
+            >
               <n-input-number
                 v-model:value="formData.minDepositAmount"
-                placeholder="最低充值金额"
+                :placeholder="$t('user.memberTier.minDeposit')"
                 :min="0"
                 :precision="2"
                 style="width: 200px"
@@ -182,10 +202,13 @@
               </n-input-number>
             </n-form-item>
 
-            <n-form-item label="最低投注金额" path="minBetAmount">
+            <n-form-item
+              :label="$t('user.memberTier.minBet')"
+              path="minBetAmount"
+            >
               <n-input-number
                 v-model:value="formData.minBetAmount"
-                placeholder="最低投注金额"
+                :placeholder="$t('user.memberTier.minBet')"
                 :min="0"
                 :precision="2"
                 style="width: 200px"
@@ -194,10 +217,13 @@
               </n-input-number>
             </n-form-item>
 
-            <n-form-item label="最低有效投注" path="minValidBetAmount">
+            <n-form-item
+              :label="$t('user.memberTier.minValidBet')"
+              path="minValidBetAmount"
+            >
               <n-input-number
                 v-model:value="formData.minValidBetAmount"
-                placeholder="最低有效投注"
+                :placeholder="$t('user.memberTier.minValidBet')"
                 :min="0"
                 :precision="2"
                 style="width: 200px"
@@ -206,26 +232,34 @@
               </n-input-number>
             </n-form-item>
 
-            <n-form-item label="评估周期" path="evaluationPeriodDays">
+            <n-form-item
+              :label="$t('user.memberTier.evaluationPeriod')"
+              path="evaluationPeriodDays"
+            >
               <n-input-number
                 v-model:value="formData.evaluationPeriodDays"
-                placeholder="评估周期天数"
+                :placeholder="$t('user.memberTier.evaluationDays')"
                 :min="1"
                 style="width: 150px"
               >
-                <template #suffix>天</template>
+                <template #suffix>{{ $t('user.memberTier.daysSuffix') }}</template>
               </n-input-number>
             </n-form-item>
           </template>
 
           <!-- Benefits -->
-          <n-divider title-placement="left">等级权益</n-divider>
+          <n-divider title-placement="left">
+            {{ $t('user.memberTier.tierBenefits') }}
+          </n-divider>
 
           <div class="grid grid-cols-2 gap-4">
-            <n-form-item label="充值奖励比例" path="depositBonusRate">
+            <n-form-item
+              :label="$t('user.memberTier.depositBonusRate')"
+              path="depositBonusRate"
+            >
               <n-input-number
                 v-model:value="formData.depositBonusRate"
-                placeholder="充值奖励比例"
+                :placeholder="$t('user.memberTier.depositBonusRate')"
                 :min="0"
                 :max="1"
                 :precision="4"
@@ -236,10 +270,13 @@
               </n-input-number>
             </n-form-item>
 
-            <n-form-item label="返水比例" path="rebateRate">
+            <n-form-item
+              :label="$t('user.memberTier.rebateRate')"
+              path="rebateRate"
+            >
               <n-input-number
                 v-model:value="formData.rebateRate"
-                placeholder="返水比例"
+                :placeholder="$t('user.memberTier.rebateRate')"
                 :min="0"
                 :max="1"
                 :precision="4"
@@ -250,10 +287,13 @@
               </n-input-number>
             </n-form-item>
 
-            <n-form-item label="提现限额" path="withdrawLimit">
+            <n-form-item
+              :label="$t('user.memberTier.withdrawLimit')"
+              path="withdrawLimit"
+            >
               <n-input-number
                 v-model:value="formData.withdrawLimit"
-                placeholder="提现限额"
+                :placeholder="$t('user.memberTier.withdrawLimit')"
                 :min="0"
                 :precision="2"
                 style="width: 150px"
@@ -262,10 +302,13 @@
               </n-input-number>
             </n-form-item>
 
-            <n-form-item label="日提现限额" path="dailyWithdrawLimit">
+            <n-form-item
+              :label="$t('user.memberTier.dailyWithdrawLimit')"
+              path="dailyWithdrawLimit"
+            >
               <n-input-number
                 v-model:value="formData.dailyWithdrawLimit"
-                placeholder="日提现限额"
+                :placeholder="$t('user.memberTier.dailyWithdrawLimit')"
                 :min="0"
                 :precision="2"
                 style="width: 150px"
@@ -274,10 +317,13 @@
               </n-input-number>
             </n-form-item>
 
-            <n-form-item label="生日奖金" path="birthdayBonus">
+            <n-form-item
+              :label="$t('user.memberTier.birthdayBonus')"
+              path="birthdayBonus"
+            >
               <n-input-number
                 v-model:value="formData.birthdayBonus"
-                placeholder="生日奖金"
+                :placeholder="$t('user.memberTier.birthdayBonus')"
                 :min="0"
                 :precision="2"
                 style="width: 150px"
@@ -286,10 +332,13 @@
               </n-input-number>
             </n-form-item>
 
-            <n-form-item label="月度奖金" path="monthlyBonus">
+            <n-form-item
+              :label="$t('user.memberTier.monthlyBonus')"
+              path="monthlyBonus"
+            >
               <n-input-number
                 v-model:value="formData.monthlyBonus"
-                placeholder="月度奖金"
+                :placeholder="$t('user.memberTier.monthlyBonus')"
                 :min="0"
                 :precision="2"
                 style="width: 150px"
@@ -300,32 +349,52 @@
           </div>
 
           <div class="grid grid-cols-2 gap-4">
-            <n-form-item label="优先客服" path="prioritySupport">
+            <n-form-item
+              :label="$t('user.memberTier.prioritySupport')"
+              path="prioritySupport"
+            >
               <n-switch v-model:value="formData.prioritySupport" />
             </n-form-item>
 
-            <n-form-item label="专属活动" path="exclusivePromotions">
+            <n-form-item
+              :label="$t('user.memberTier.exclusivePromotions')"
+              path="exclusivePromotions"
+            >
               <n-switch v-model:value="formData.exclusivePromotions" />
             </n-form-item>
           </div>
 
           <!-- Status and Appearance -->
-          <n-divider title-placement="left">状态设置</n-divider>
+          <n-divider title-placement="left">
+            {{ $t('user.memberTier.statusSettings') }}
+          </n-divider>
 
           <div class="grid grid-cols-2 gap-4">
-            <n-form-item label="启用状态" path="isActive">
+            <n-form-item
+              :label="$t('user.memberTier.activeStatus')"
+              path="isActive"
+            >
               <n-switch v-model:value="formData.isActive" />
             </n-form-item>
 
-            <n-form-item label="默认等级" path="isDefault">
+            <n-form-item
+              :label="$t('user.memberTier.defaultTier')"
+              path="isDefault"
+            >
               <n-switch v-model:value="formData.isDefault" />
             </n-form-item>
 
-            <n-form-item label="背景色" path="backgroundColor">
+            <n-form-item
+              :label="$t('user.memberTier.backgroundColor')"
+              path="backgroundColor"
+            >
               <n-color-picker v-model:value="formData.backgroundColor" />
             </n-form-item>
 
-            <n-form-item label="文字色" path="textColor">
+            <n-form-item
+              :label="$t('user.memberTier.textColor')"
+              path="textColor"
+            >
               <n-color-picker v-model:value="formData.textColor" />
             </n-form-item>
           </div>
@@ -334,9 +403,9 @@
 
       <template #footer>
         <div class="flex justify-end gap-2">
-          <n-button @click="handleCancel">取消</n-button>
+          <n-button @click="handleCancel">{{ $t('common.cancel') }}</n-button>
           <n-button type="primary" :loading="submitting" @click="handleSubmit">
-            {{ isEditing ? '更新' : '创建' }}
+            {{ isEditing ? $t('user.memberTier.update') : $t('common.create') }}
           </n-button>
         </div>
       </template>
@@ -346,7 +415,7 @@
     <n-modal
       v-model:show="showMemberModal"
       preset="card"
-      title="等级会员列表"
+      :title="$t('user.memberTier.memberListTitle')"
       style="width: 1000px; height: 80vh"
       :mask-closable="false"
     >
@@ -360,6 +429,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import {
   ref,
   reactive,
@@ -480,49 +551,57 @@ const formData = reactive<CreateMemberTierParams>({
 // ===================================
 
 const modalTitle = computed(() =>
-  isEditing.value ? '编辑会员层级' : '新增会员层级',
+  isEditing.value
+    ? $t('user.memberTier.editTier')
+    : $t('user.memberTier.createTier'),
 );
 
-// Options
-const tierTypeOptions = [
-  { label: '自动晋级', value: 'auto_upgrade' },
-  { label: '固定等级', value: 'fixed_tier' },
-];
+const activeTabLabel = computed(() =>
+  activeTab.value === 'auto_upgrade'
+    ? $t('user.memberTier.autoUpgrade')
+    : $t('user.memberTier.fixedTier'),
+);
 
-const statusOptions = [
-  { label: '启用', value: true },
-  { label: '禁用', value: false },
-] as const;
+const tierTypeOptions = computed(() => [
+  { label: $t('user.memberTier.autoUpgrade'), value: 'auto_upgrade' },
+  { label: $t('user.memberTier.fixedTier'), value: 'fixed_tier' },
+]);
 
-const sortOptions = [
-  { label: '排序顺序', value: 'sortOrder' },
-  { label: '等级名称', value: 'tierName' },
-  { label: '当前人数', value: 'currentMemberCount' },
-  { label: '晋级次数', value: 'totalUpgradeCount' },
-  { label: '创建时间', value: 'createdAt' },
-];
+const statusOptions = computed(
+  () =>
+    [
+      { label: $t('common.enabled'), value: true },
+      { label: $t('common.disabled'), value: false },
+    ] as const,
+);
 
-// Form validation rules
-const formRules = {
+const sortOptions = computed(() => [
+  { label: $t('user.memberTier.sortOrderCol'), value: 'sortOrder' },
+  { label: $t('user.memberTier.tierName'), value: 'tierName' },
+  { label: $t('user.memberTier.currentMemberCount'), value: 'currentMemberCount' },
+  { label: $t('user.memberTier.upgradeCount'), value: 'totalUpgradeCount' },
+  { label: $t('common.createTime'), value: 'createdAt' },
+]);
+
+const formRules = computed(() => ({
   tierType: {
     required: true,
-    message: '请选择等级类型',
+    message: $t('user.memberTier.selectTierTypeRequired'),
     trigger: 'blur',
   },
   tierName: {
     required: true,
-    message: '请输入等级名称',
+    message: $t('user.memberTier.enterTierNameRequired'),
     trigger: 'blur',
   },
   tierCode: {
     required: true,
-    message: '请输入等级代码',
+    message: $t('user.memberTier.enterTierCodeRequired'),
     trigger: 'blur',
   },
-};
+}));
 
-// Table columns
-const columns: DataTableColumns<MemberTier> = [
+const columns = computed<DataTableColumns<MemberTier>>(() => [
   {
     title: 'ID',
     key: 'id',
@@ -530,7 +609,7 @@ const columns: DataTableColumns<MemberTier> = [
     align: 'center',
   },
   {
-    title: '层级类型',
+    title: $t('user.memberTier.tierTypeCol'),
     key: 'tierType',
     width: 100,
     render: (row) => {
@@ -542,13 +621,16 @@ const columns: DataTableColumns<MemberTier> = [
           size: 'small',
         },
         {
-          default: () => (isAuto ? '自动晋级' : '固定等级'),
+          default: () =>
+            isAuto
+              ? $t('user.memberTier.autoUpgrade')
+              : $t('user.memberTier.fixedTier'),
         },
       );
     },
   },
   {
-    title: '层级名称',
+    title: $t('user.memberTier.tierNameCol'),
     key: 'tierName',
     width: 120,
     render: (row) => {
@@ -569,7 +651,7 @@ const columns: DataTableColumns<MemberTier> = [
     },
   },
   {
-    title: '描述',
+    title: $t('user.memberTier.descriptionCol'),
     key: 'description',
     width: 100,
     ellipsis: {
@@ -577,7 +659,7 @@ const columns: DataTableColumns<MemberTier> = [
     },
   },
   {
-    title: '关键标签',
+    title: $t('user.memberTier.keyTagsCol'),
     key: 'keyTags',
     width: 80,
     render: (row) => {
@@ -598,7 +680,7 @@ const columns: DataTableColumns<MemberTier> = [
     },
   },
   {
-    title: '晋级次数',
+    title: $t('user.memberTier.upgradeCount'),
     key: 'totalUpgradeCount',
     width: 100,
     align: 'center',
@@ -612,7 +694,7 @@ const columns: DataTableColumns<MemberTier> = [
     },
   },
   {
-    title: '最低充值要求',
+    title: $t('user.memberTier.minDepositReq'),
     key: 'minDepositAmount',
     width: 120,
     align: 'right',
@@ -626,7 +708,7 @@ const columns: DataTableColumns<MemberTier> = [
     },
   },
   {
-    title: '层级人数',
+    title: $t('user.memberTier.tierMemberCount'),
     key: 'currentMemberCount',
     width: 100,
     align: 'center',
@@ -645,14 +727,14 @@ const columns: DataTableColumns<MemberTier> = [
             h(
               'span',
               { class: 'font-semibold' },
-              `${count.toLocaleString()} 人`,
+              `${count.toLocaleString()} ${$t('user.memberTier.people')}`,
             ),
         },
       );
     },
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'isActive',
     width: 80,
     align: 'center',
@@ -664,13 +746,14 @@ const columns: DataTableColumns<MemberTier> = [
           size: 'small',
         },
         {
-          default: () => (row.isActive ? '启用' : '禁用'),
+          default: () =>
+            row.isActive ? $t('common.enabled') : $t('common.disabled'),
         },
       );
     },
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 120,
     align: 'center',
@@ -689,7 +772,7 @@ const columns: DataTableColumns<MemberTier> = [
                 onClick: () => handleEdit(row),
               },
               {
-                default: () => '编辑',
+                default: () => $t('common.edit'),
               },
             ),
             h(
@@ -706,10 +789,10 @@ const columns: DataTableColumns<MemberTier> = [
                       type: 'error',
                     },
                     {
-                      default: () => '删除',
+                      default: () => $t('common.delete'),
                     },
                   ),
-                default: () => '确定删除这个等级吗？删除后无法恢复！',
+                default: () => $t('user.memberTier.confirmDeleteTier'),
               },
             ),
           ],
@@ -717,7 +800,7 @@ const columns: DataTableColumns<MemberTier> = [
       );
     },
   },
-];
+]);
 
 // ===================================
 // METHODS
@@ -741,7 +824,7 @@ const loadData = async () => {
     tableData.value = response.list;
     paginationReactive.total = response.pagination.total;
   } catch (error) {
-    message.error('获取数据失败');
+    message.error($t('user.memberTier.loadFailed'));
     console.error('Error loading data:', error);
   } finally {
     loading.value = false;
@@ -851,10 +934,10 @@ const handleEdit = (tier: MemberTier) => {
 const handleDelete = async (id: number) => {
   try {
     await deleteMemberTierApi(id);
-    message.success('删除成功');
+    message.success($t('user.memberTier.deleteSuccess'));
     loadData();
   } catch (error) {
-    message.error('删除失败');
+    message.error($t('user.memberTier.deleteFailed'));
     console.error('Error deleting tier:', error);
   }
 };
@@ -868,10 +951,10 @@ const handleViewMembers = (tierId: number, tierName: string) => {
 const handleRefreshStatistics = async () => {
   try {
     await updateAllTierStatisticsApi();
-    message.success('统计数据已刷新');
+    message.success($t('user.memberTier.statsRefreshed'));
     loadData();
   } catch (error) {
-    message.error('刷新统计失败');
+    message.error($t('user.memberTier.statsRefreshFailed'));
     console.error('Error refreshing statistics:', error);
   }
 };
@@ -883,10 +966,10 @@ const handleSubmit = async () => {
 
     if (isEditing.value && editingId.value) {
       await updateMemberTierApi(editingId.value, formData);
-      message.success('更新成功');
+      message.success($t('user.memberTier.updateSuccess'));
     } else {
       await createMemberTierApi(formData);
-      message.success('创建成功');
+      message.success($t('user.memberTier.createSuccess'));
     }
 
     showModal.value = false;
@@ -895,7 +978,11 @@ const handleSubmit = async () => {
     if (error?.message) {
       message.error(error.message);
     } else {
-      message.error(isEditing.value ? '更新失败' : '创建失败');
+      message.error(
+        isEditing.value
+          ? $t('user.memberTier.updateFailed')
+          : $t('user.memberTier.createFailed'),
+      );
     }
     console.error('Error submitting form:', error);
   } finally {

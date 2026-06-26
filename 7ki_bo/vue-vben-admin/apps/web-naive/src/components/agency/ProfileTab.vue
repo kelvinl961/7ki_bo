@@ -1,84 +1,84 @@
 <template>
   <div class="profile-tab">
-    <!-- Profile Overview -->
-    <n-card title="代理资料概览" class="mb-4">
+    <n-card :title="$t('agency.profile.overview')" class="mb-4">
       <n-descriptions bordered :column="3" size="small">
-        <n-descriptions-item label="代理ID">
+        <n-descriptions-item :label="$t('agency.profile.agentId')">
           {{ agentDetail?.id || '--' }}
         </n-descriptions-item>
-        <n-descriptions-item label="代理账号">
+        <n-descriptions-item :label="$t('agency.profile.agentAccount')">
           {{ agentDetail?.username || '--' }}
         </n-descriptions-item>
-        <n-descriptions-item label="推荐码">
+        <n-descriptions-item :label="$t('agency.profile.referralCode')">
           {{ agentDetail?.referralCode || '--' }}
         </n-descriptions-item>
-        <n-descriptions-item label="代理等级">
+        <n-descriptions-item :label="$t('agency.profile.agentLevel')">
           <n-tag type="warning" size="small"
-            >{{ agentDetail?.level || '--' }}级</n-tag
+            >{{ agentDetail?.level || '--'
+            }}{{ $t('agency.profile.levelSuffix') }}</n-tag
           >
         </n-descriptions-item>
-        <n-descriptions-item label="状态">
+        <n-descriptions-item :label="$t('common.status')">
           <n-tag :type="getStatusType(agentDetail?.isActive)" size="small">
             {{ getStatusLabel(agentDetail?.isActive) }}
           </n-tag>
         </n-descriptions-item>
-        <n-descriptions-item label="币种">
+        <n-descriptions-item :label="$t('common.currency')">
           <n-tag type="info" size="small">{{
             agentDetail?.currency || '--'
           }}</n-tag>
         </n-descriptions-item>
-        <n-descriptions-item label="注册来源">
+        <n-descriptions-item :label="$t('agency.profile.registrationSource')">
           {{ agentDetail?.registrationSource || '--' }}
         </n-descriptions-item>
-        <n-descriptions-item label="注册模式">
+        <n-descriptions-item :label="$t('agency.profile.registrationMode')">
           <n-tag type="info" size="small">{{
             agentDetail?.mode || '--'
           }}</n-tag>
         </n-descriptions-item>
-        <n-descriptions-item label="层级等级">
+        <n-descriptions-item :label="$t('agency.profile.hierarchyLevel')">
           {{ agentDetail?.hierarchyLevel || '--' }}
         </n-descriptions-item>
-        <n-descriptions-item label="创建时间">
+        <n-descriptions-item :label="$t('common.createTime')">
           {{ formatDateTime(agentDetail?.createdAt) || '--' }}
         </n-descriptions-item>
-        <n-descriptions-item label="分配时间">
+        <n-descriptions-item :label="$t('agency.profile.assignedAt')">
           {{ formatDateTime(agentDetail?.assignedAt) || '--' }}
         </n-descriptions-item>
-        <n-descriptions-item label="最后更新">
+        <n-descriptions-item :label="$t('agency.profile.lastUpdated')">
           {{ formatDateTime(agentDetail?.updatedAt) || '--' }}
         </n-descriptions-item>
       </n-descriptions>
     </n-card>
 
-    <!-- Commission Information -->
-    <n-card title="佣金信息" class="mb-4">
+    <n-card :title="$t('agency.profile.commissionInfo')" class="mb-4">
       <n-descriptions bordered :column="3" size="small">
-        <n-descriptions-item label="总佣金">
+        <n-descriptions-item :label="$t('agency.profile.totalCommission')">
           <span class="font-semibold text-green-600">
             {{ formatCurrency(agentDetail?.commissionTotal) }}
           </span>
         </n-descriptions-item>
-        <n-descriptions-item label="已领取佣金">
+        <n-descriptions-item :label="$t('agency.profile.claimedCommission')">
           <span class="font-semibold text-blue-600">
             {{ formatCurrency(agentDetail?.claimedCommission) }}
           </span>
         </n-descriptions-item>
-        <n-descriptions-item label="未领取佣金">
+        <n-descriptions-item :label="$t('agency.profile.unclaimedCommission')">
           <span class="font-semibold text-orange-600">
             {{ formatCurrency(agentDetail?.unclaimedCommission) }}
           </span>
         </n-descriptions-item>
-        <n-descriptions-item label="佣金模式">
+        <n-descriptions-item :label="$t('agency.profile.commissionMode')">
           <n-tag type="info" size="small">{{
             agentDetail?.commissionMode || '--'
           }}</n-tag>
         </n-descriptions-item>
-        <n-descriptions-item label="下级代理数">
+        <n-descriptions-item :label="$t('agency.profile.subAgentCount')">
           <span class="font-semibold"
-            >{{ agentDetail?.otherCount || 0 }} 个</span
+            >{{ agentDetail?.otherCount || 0
+            }}{{ $t('agency.profile.countSuffix') }}</span
           >
         </n-descriptions-item>
-        <n-descriptions-item label="推荐链接">
+        <n-descriptions-item :label="$t('agency.profile.referralLink')">
           <div class="flex items-center gap-2">
             <span class="max-w-32 truncate">{{
               agentDetail?.referralUrl || '--'
@@ -88,85 +88,91 @@
               v-if="agentDetail?.referralUrl"
               @click="copyToClipboard(agentDetail.referralUrl)"
             >
-              复制
+              {{ $t('common.copy') }}
             </n-button>
           </div>
         </n-descriptions-item>
       </n-descriptions>
     </n-card>
 
-    <!-- Hierarchy Information -->
-    <n-card title="层级关系" class="mb-4">
+    <n-card :title="$t('agency.profile.hierarchy')" class="mb-4">
       <n-descriptions bordered :column="2" size="small">
-        <n-descriptions-item label="邀请人推荐码">
-          {{ agentDetail?.invitedByCode || '无' }}
+        <n-descriptions-item :label="$t('agency.profile.inviterCode')">
+          {{ agentDetail?.invitedByCode || $t('agency.agentDetail.none') }}
         </n-descriptions-item>
-        <n-descriptions-item label="顶级代理推荐码">
-          {{ agentDetail?.topAgentCode || '无' }}
+        <n-descriptions-item :label="$t('agency.profile.topAgentCode')">
+          {{ agentDetail?.topAgentCode || $t('agency.agentDetail.none') }}
         </n-descriptions-item>
-        <n-descriptions-item label="当前层级">
+        <n-descriptions-item :label="$t('agency.profile.currentLevel')">
           {{ agentDetail?.hierarchyLevel || '--' }}
         </n-descriptions-item>
-        <n-descriptions-item label="下级代理数量">
-          {{ agentDetail?.otherCount || 0 }} 个
+        <n-descriptions-item :label="$t('agency.profile.subAgentCountLabel')">
+          {{ agentDetail?.otherCount || 0 }}{{ $t('agency.profile.countSuffix') }}
         </n-descriptions-item>
       </n-descriptions>
     </n-card>
 
-    <!-- Activity Statistics -->
-    <n-card title="活动统计" class="mb-4">
+    <n-card :title="$t('agency.profile.activityStats')" class="mb-4">
       <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
         <div class="stat-card">
           <div class="stat-value">{{ agentDetail?.otherCount || 0 }}</div>
-          <div class="stat-label">下级代理</div>
+          <div class="stat-label">{{ $t('agency.profile.subAgents') }}</div>
         </div>
         <div class="stat-card">
           <div class="stat-value">
             {{ formatCurrency(agentDetail?.commissionTotal) }}
           </div>
-          <div class="stat-label">累计佣金</div>
+          <div class="stat-label">
+            {{ $t('agency.profile.totalCommissionStat') }}
+          </div>
         </div>
         <div class="stat-card">
           <div class="stat-value">{{ getDaysSinceCreation() }}</div>
-          <div class="stat-label">注册天数</div>
+          <div class="stat-label">
+            {{ $t('agency.profile.registrationDays') }}
+          </div>
         </div>
       </div>
     </n-card>
 
-    <!-- Quick Actions -->
-    <n-card title="快速操作" class="mb-4">
+    <n-card :title="$t('agency.profile.quickActions')" class="mb-4">
       <div class="flex flex-wrap gap-2">
         <n-button type="primary" @click="handleEditProfile">
-          编辑资料
+          {{ $t('agency.profile.editProfile') }}
         </n-button>
         <n-button type="info" @click="handleViewSubAgents">
-          查看下级代理
+          {{ $t('agency.profile.viewSubAgents') }}
         </n-button>
         <n-button type="success" @click="handleViewCommissionHistory">
-          查看佣金记录
+          {{ $t('agency.profile.viewCommissionHistory') }}
         </n-button>
         <n-button type="warning" @click="handleExportProfile">
-          导出资料
+          {{ $t('agency.profile.exportProfile') }}
         </n-button>
-        <n-button @click="handleRefreshProfile"> 刷新资料 </n-button>
+        <n-button @click="handleRefreshProfile">
+          {{ $t('agency.profile.refreshProfile') }}
+        </n-button>
       </div>
     </n-card>
 
-    <!-- Profile History -->
-    <n-card title="资料变更历史" class="mb-4">
+    <n-card :title="$t('agency.profile.changeHistory')" class="mb-4">
       <div class="py-8 text-center text-gray-500">
         <n-icon size="48" class="mb-4">
           <TimeOutline />
         </n-icon>
-        <div class="mb-2 text-lg font-medium">暂无变更记录</div>
-        <div class="text-sm">代理资料变更历史将在此显示</div>
+        <div class="mb-2 text-lg font-medium">
+          {{ $t('agency.profile.noChangeHistory') }}
+        </div>
+        <div class="text-sm">{{ $t('agency.profile.changeHistoryHint') }}</div>
       </div>
     </n-card>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { $t } from '@vben/locales';
+
+import { ref, onMounted } from 'vue';
 import {
   NCard,
   NDescriptions,
@@ -191,12 +197,9 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const message = useMessage();
-
-// Reactive data
 const loading = ref(false);
 const agentDetail = ref<AgentProfileInfo | null>(null);
 
-// Methods
 const loadAgentProfile = async () => {
   if (!props.agentId) return;
 
@@ -206,7 +209,7 @@ const loadAgentProfile = async () => {
     agentDetail.value = data;
   } catch (error) {
     console.error('Failed to load agent profile:', error);
-    message.error('加载代理资料失败');
+    message.error($t('agency.profile.loadFailed'));
   } finally {
     loading.value = false;
   }
@@ -214,7 +217,7 @@ const loadAgentProfile = async () => {
 
 const formatDateTime = (dateString: string | undefined) => {
   if (!dateString) return '--';
-  return new Date(dateString).toLocaleString('zh-CN');
+  return new Date(dateString).toLocaleString();
 };
 
 const formatCurrency = (amount: number | undefined) => {
@@ -228,8 +231,8 @@ const getStatusType = (status: boolean | undefined) => {
 };
 
 const getStatusLabel = (status: boolean | undefined) => {
-  if (status === undefined) return '未知';
-  return status ? '激活' : '停用';
+  if (status === undefined) return $t('agency.profile.unknown');
+  return status ? $t('agency.profile.active') : $t('agency.profile.inactive');
 };
 
 const getDaysSinceCreation = () => {
@@ -237,38 +240,37 @@ const getDaysSinceCreation = () => {
   const created = new Date(agentDetail.value.createdAt);
   const now = new Date();
   const diffTime = Math.abs(now.getTime() - created.getTime());
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  return diffDays;
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 };
 
 const copyToClipboard = async (text: string) => {
   try {
     await navigator.clipboard.writeText(text);
-    message.success('已复制到剪贴板');
-  } catch (error) {
-    message.error('复制失败');
+    message.success($t('common.copySuccess'));
+  } catch {
+    message.error($t('agency.profile.copyFailed'));
   }
 };
 
 const handleEditProfile = () => {
-  message.info('编辑资料功能开发中...');
+  message.info($t('agency.profile.editDeveloping'));
 };
 
 const handleViewSubAgents = () => {
-  message.info('查看下级代理功能开发中...');
+  message.info($t('agency.profile.subAgentsDeveloping'));
 };
 
 const handleViewCommissionHistory = () => {
-  message.info('查看佣金记录功能开发中...');
+  message.info($t('agency.profile.commissionDeveloping'));
 };
 
 const handleExportProfile = () => {
-  message.info('导出资料功能开发中...');
+  message.info($t('agency.profile.exportDeveloping'));
 };
 
 const handleRefreshProfile = () => {
   loadAgentProfile();
-  message.success('资料已刷新');
+  message.success($t('agency.profile.refreshed'));
 };
 
 onMounted(() => {

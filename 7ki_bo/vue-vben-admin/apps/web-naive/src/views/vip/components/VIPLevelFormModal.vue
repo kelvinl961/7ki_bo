@@ -2,7 +2,7 @@
   <n-modal
     v-model:show="showModal"
     preset="dialog"
-    :title="isEditing ? '编辑VIP等级' : '新增VIP等级'"
+    :title="isEditing ? $t('vip.editVipLevel') : $t('vip.addVipLevel')"
     :style="{ width: '900px' }"
     :closable="false"
     :mask-closable="false"
@@ -18,10 +18,10 @@
       >
         <!-- 基本信息 -->
         <div class="form-section">
-          <h3 class="section-title">基本信息</h3>
+          <h3 class="section-title">{{ $t('vip.basicInfo') }}</h3>
           <div class="form-grid">
             <div class="form-item">
-              <label>VIP等级 *</label>
+              <label>{{ $t('vip.vipLevelLabel') }}</label>
               <n-input-number
                 v-model:value="formData.level"
                 :min="0"
@@ -30,27 +30,27 @@
                 class="form-input"
                 :disabled="true"
               />
-              <small class="mt-1 text-gray-500">自动递增，不可编辑</small>
+              <small class="mt-1 text-gray-500">{{ $t('vip.autoIncrementHint') }}</small>
             </div>
 
             <div class="form-item">
-              <label>等级名称 *</label>
+              <label>{{ $t('vip.levelNameLabel') }}</label>
               <n-input
                 v-model:value="formData.name"
-                placeholder="请输入等级名称"
+                :placeholder="$t('vip.enterLevelName')"
                 class="form-input"
               />
             </div>
 
             <div class="form-item vip-icon-settings-item">
-              <label>VIP图标设置 *</label>
+              <label>{{ $t('vip.vipIconSettings') }}</label>
               <div class="vip-icon-settings">
                 <div class="icon-settings-layout">
                   <!-- Left side: VIP颜色 and 等级样式 -->
                   <div class="icon-selection-left">
                     <!-- VIP颜色选择 -->
                     <div class="icon-section">
-                      <h4 class="icon-section-title">VIP颜色</h4>
+                      <h4 class="icon-section-title">{{ $t('vip.vipColor') }}</h4>
                       <div class="icon-options">
                         <div
                           v-for="color in vipColors"
@@ -71,13 +71,13 @@
 
                     <!-- 等级样式选择 -->
                     <div class="icon-section">
-                      <h4 class="icon-section-title">等级样式</h4>
+                      <h4 class="icon-section-title">{{ $t('vip.levelStyle') }}</h4>
                       <div class="icon-options">
                         <div
                           class="icon-option clear-option"
                           :class="{ active: formData.vipStyle === '' }"
                           @click="selectStyle('')"
-                          title="清除样式选择"
+                          :title="$t('vip.clearStyleSelection')"
                         >
                           <div class="clear-icon">✕</div>
                         </div>
@@ -101,7 +101,7 @@
 
                   <!-- Right side: 图标预览 -->
                   <div class="icon-preview">
-                    <h4 class="icon-section-title">图标预览</h4>
+                    <h4 class="icon-section-title">{{ $t('vip.iconPreview') }}</h4>
                     <div class="preview-container">
                       <div class="preview-background">
                         <img
@@ -126,17 +126,17 @@
             </div>
 
             <div class="form-item">
-              <label>币种 *</label>
+              <label>{{ $t('common.currency') }} *</label>
               <n-select
                 v-model:value="formData.currency"
                 :options="currencyOptions"
-                placeholder="请选择币种"
+                :placeholder="$t('vip.selectCurrency')"
                 class="form-input"
               />
             </div>
 
             <div class="form-item">
-              <label>显示顺序</label>
+              <label>{{ $t('vip.displayOrder') }}</label>
               <n-input-number
                 v-model:value="formData.displayOrder"
                 :min="0"
@@ -146,13 +146,13 @@
             </div>
 
             <div class="form-item">
-              <label>状态</label>
+              <label>{{ $t('common.status') }}</label>
               <n-switch v-model:value="formData.isActive" />
               <span
                 class="status-text"
                 :class="formData.isActive ? 'active' : 'inactive'"
               >
-                {{ formData.isActive ? '启用' : '禁用' }}
+                {{ formData.isActive ? $t('vip.statusEnabled') : $t('vip.statusDisabled') }}
               </span>
             </div>
           </div>
@@ -160,10 +160,10 @@
 
         <!-- 晋级条件 -->
         <div class="form-section">
-          <h3 class="section-title">晋级条件</h3>
+          <h3 class="section-title">{{ $t('vip.upgradeConditions') }}</h3>
           <div class="form-grid">
             <div class="form-item">
-              <label>晋级需再充值</label>
+              <label>{{ $t('vip.requiredDeposit') }}</label>
               <n-input-number
                 v-model:value="formData.requiredDeposit"
                 :min="0"
@@ -174,7 +174,7 @@
             </div>
 
             <div class="form-item">
-              <label>晋级需再打码</label>
+              <label>{{ $t('vip.requiredBet') }}</label>
               <n-input-number
                 v-model:value="formData.requiredBet"
                 :min="0"
@@ -188,10 +188,10 @@
 
         <!-- 晋级奖金 -->
         <div class="form-section">
-          <h3 class="section-title">晋级奖金</h3>
+          <h3 class="section-title">{{ $t('vip.upgradeBonus') }}</h3>
           <div class="form-grid">
             <div class="form-item">
-              <label>晋级奖金</label>
+              <label>{{ $t('vip.upgradeBonus') }}</label>
               <n-input-number
                 v-model:value="formData.upgradeBonus"
                 :min="0"
@@ -205,10 +205,10 @@
 
         <!-- 月俸禄 -->
         <div class="form-section">
-          <h3 class="section-title">月俸禄</h3>
+          <h3 class="section-title">{{ $t('vip.monthlySalary') }}</h3>
           <div class="form-grid">
             <div class="form-item">
-              <label>当月充值</label>
+              <label>{{ $t('vip.monthlyDeposit') }}</label>
               <n-input-number
                 v-model:value="formData.monthlyDepositRequirement"
                 :min="0"
@@ -219,7 +219,7 @@
             </div>
 
             <div class="form-item">
-              <label>当月打码</label>
+              <label>{{ $t('vip.monthlyBet') }}</label>
               <n-input-number
                 v-model:value="formData.monthlyBetRequirement"
                 :min="0"
@@ -230,7 +230,7 @@
             </div>
 
             <div class="form-item">
-              <label>月俸禄 (%)</label>
+              <label>{{ $t('vip.monthlyRebatePercent') }}</label>
               <n-input-number
                 v-model:value="formData.monthlyRebate"
                 :min="0"
@@ -242,7 +242,7 @@
             </div>
 
             <div class="form-item">
-              <label>月累计封顶</label>
+              <label>{{ $t('vip.monthlyLimit') }}</label>
               <n-input-number
                 v-model:value="formData.monthlyLimit"
                 :min="0"
@@ -256,10 +256,10 @@
 
         <!-- 周俸禄 -->
         <div class="form-section">
-          <h3 class="section-title">周俸禄</h3>
+          <h3 class="section-title">{{ $t('vip.weeklySalary') }}</h3>
           <div class="form-grid">
             <div class="form-item">
-              <label>当周充值</label>
+              <label>{{ $t('vip.weeklyDeposit') }}</label>
               <n-input-number
                 v-model:value="formData.weeklyDepositRequirement"
                 :min="0"
@@ -270,7 +270,7 @@
             </div>
 
             <div class="form-item">
-              <label>当周打码</label>
+              <label>{{ $t('vip.weeklyBet') }}</label>
               <n-input-number
                 v-model:value="formData.weeklyBetRequirement"
                 :min="0"
@@ -281,7 +281,7 @@
             </div>
 
             <div class="form-item">
-              <label>周俸禄</label>
+              <label>{{ $t('vip.weeklyRebate') }}</label>
               <n-input-number
                 v-model:value="formData.weeklyTaskValue"
                 :min="0"
@@ -292,7 +292,7 @@
             </div>
 
             <div class="form-item">
-              <label>周累计封顶</label>
+              <label>{{ $t('vip.weeklyLimit') }}</label>
               <n-input-number
                 v-model:value="formData.weeklyLimit"
                 :min="0"
@@ -306,10 +306,10 @@
 
         <!-- 日俸禄 -->
         <div class="form-section">
-          <h3 class="section-title">日俸禄</h3>
+          <h3 class="section-title">{{ $t('vip.dailySalary') }}</h3>
           <div class="form-grid">
             <div class="form-item">
-              <label>当日充值</label>
+              <label>{{ $t('vip.dailyDeposit') }}</label>
               <n-input-number
                 v-model:value="formData.dailyDepositRequirement"
                 :min="0"
@@ -320,7 +320,7 @@
             </div>
 
             <div class="form-item">
-              <label>当日打码</label>
+              <label>{{ $t('vip.dailyBet') }}</label>
               <n-input-number
                 v-model:value="formData.dailyBetRequirement"
                 :min="0"
@@ -331,7 +331,7 @@
             </div>
 
             <div class="form-item">
-              <label>日俸禄</label>
+              <label>{{ $t('vip.dailyRebate') }}</label>
               <n-input-number
                 v-model:value="formData.dailyTaskValue"
                 :min="0"
@@ -342,7 +342,7 @@
             </div>
 
             <div class="form-item">
-              <label>日累计封顶</label>
+              <label>{{ $t('vip.dailyLimit') }}</label>
               <n-input-number
                 v-model:value="formData.dailyLimit"
                 :min="0"
@@ -356,10 +356,10 @@
 
         <!-- 生日礼金 -->
         <div class="form-section">
-          <h3 class="section-title">生日礼金</h3>
+          <h3 class="section-title">{{ $t('vip.birthdayBonus') }}</h3>
           <div class="form-grid">
             <div class="form-item">
-              <label>生日礼金</label>
+              <label>{{ $t('vip.birthdayBonus') }}</label>
               <n-input-number
                 v-model:value="formData.birthdayBonus"
                 :min="0"
@@ -375,9 +375,9 @@
 
     <template #action>
       <n-space>
-        <n-button @click="handleCancel">取消</n-button>
+        <n-button @click="handleCancel">{{ $t('common.cancel') }}</n-button>
         <n-button type="primary" :loading="submitLoading" @click="handleSubmit">
-          {{ isEditing ? '更新' : '创建' }}
+          {{ isEditing ? $t('vip.update') : $t('vip.create') }}
         </n-button>
       </n-space>
     </template>
@@ -385,6 +385,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, watch } from 'vue';
 import type { FormInst, FormRules } from 'naive-ui';
 import {
@@ -488,137 +490,137 @@ const formData = reactive<
 const currencyOptions = CURRENCY_OPTIONS;
 
 // VIP颜色选项 - 使用实际上传的图片
-const vipColors = [
+const vipColors = computed(() => [
   {
     id: 'color1',
-    name: '金色',
+    name: $t('vip.colorGold'),
     image:
       'https://media.cheshi8899.com/media/media-1756084724117-248517786-style_1_vip_color2.avif',
   },
   {
     id: 'color2',
-    name: '银色',
+    name: $t('vip.colorSilver'),
     image:
       'https://media.cheshi8899.com/media/media-1756084723983-980058730-style_1_vip_color3.avif',
   },
   {
     id: 'color3',
-    name: '铜色',
+    name: $t('vip.colorBronze'),
     image:
       'https://media.cheshi8899.com/media/media-1756084723850-421767660-style_1_vip_color4.avif',
   },
   {
     id: 'color4',
-    name: '红色',
+    name: $t('vip.colorRed'),
     image:
       'https://media.cheshi8899.com/media/media-1756084723734-656919956-style_1_vip_color5.avif',
   },
   {
     id: 'color5',
-    name: '蓝色',
+    name: $t('vip.colorBlue'),
     image:
       'https://media.cheshi8899.com/media/media-1756084723591-416052528-style_1_vip_color6.avif',
   },
   {
     id: 'color6',
-    name: '绿色',
+    name: $t('vip.colorGreen'),
     image:
       'https://media.cheshi8899.com/media/media-1756084723456-975551315-style_1_vip_color7.avif',
   },
   {
     id: 'color7',
-    name: '紫色',
+    name: $t('vip.colorPurple'),
     image:
       'https://media.cheshi8899.com/media/media-1756084723321-874400306-style_1_vip_color8.avif',
   },
   {
     id: 'color8',
-    name: '橙色',
+    name: $t('vip.colorOrange'),
     image:
       'https://media.cheshi8899.com/media/media-1756084723183-411276279-style_1_vip_color9.avif',
   },
   {
     id: 'color9',
-    name: '粉色',
+    name: $t('vip.colorPink'),
     image:
       'https://media.cheshi8899.com/media/media-1756084723041-541182858-style_1_vip_color10.avif',
   },
   {
     id: 'color10',
-    name: '青色',
+    name: $t('vip.colorCyan'),
     image:
       'https://media.cheshi8899.com/media/media-1756084722928-768032392-style_1_vip_style0.avif',
   },
-];
+]);
 
 // VIP样式选项 - 使用实际上传的图片
-const vipStyles = [
+const vipStyles = computed(() => [
   {
     id: 'style1',
-    name: '1星',
+    name: $t('vip.style1Star'),
     image:
       'https://media.cheshi8899.com/media/media-1756084722842-582069789-style_1_vip_style1.avif',
   },
   {
     id: 'style2',
-    name: '2星',
+    name: $t('vip.style2Star'),
     image:
       'https://media.cheshi8899.com/media/media-1756084722740-802103472-style_1_vip_style2.avif',
   },
   {
     id: 'style3',
-    name: '3星',
+    name: $t('vip.style3Star'),
     image:
       'https://media.cheshi8899.com/media/media-1756084722636-333894626-style_1_vip_style3.avif',
   },
   {
     id: 'style4',
-    name: '4星',
+    name: $t('vip.style4Star'),
     image:
       'https://media.cheshi8899.com/media/media-1756084722532-886989642-style_1_vip_style4.avif',
   },
   {
     id: 'style5',
-    name: '5星',
+    name: $t('vip.style5Star'),
     image:
       'https://media.cheshi8899.com/media/media-1756084722447-561278426-style_1_vip_style5.avif',
   },
   {
     id: 'style6',
-    name: '3钻',
+    name: $t('vip.style3Diamond'),
     image:
       'https://media.cheshi8899.com/media/media-1756084722361-747879972-style_1_vip_style6.avif',
   },
   {
     id: 'style7',
-    name: '5钻',
+    name: $t('vip.style5Diamond'),
     image:
       'https://media.cheshi8899.com/media/media-1756084722271-216094122-style_1_vip_style7.avif',
   },
   {
     id: 'style8',
-    name: '皇冠1',
+    name: $t('vip.styleCrown1'),
     image:
       'https://media.cheshi8899.com/media/media-1756084722181-225699275-style_1_vip_style8.avif',
   },
   {
     id: 'style9',
-    name: '皇冠2',
+    name: $t('vip.styleCrown2'),
     image:
       'https://media.cheshi8899.com/media/media-1756084722063-17229909-style_1_vip_style9.avif',
   },
   {
     id: 'style10',
-    name: '皇冠3',
+    name: $t('vip.styleCrown3'),
     image:
       'https://media.cheshi8899.com/media/media-1756084721842-860245261-style_1_vip_style10.avif',
   },
-];
+]);
 
 // 选择颜色
 function selectColor(colorId: string) {
   // Find the color object and set the actual image URL
-  const selectedColor = vipColors.find((color) => color.id === colorId);
+  const selectedColor = vipColors.value.find((color) => color.id === colorId);
   if (selectedColor) {
     formData.color = selectedColor.image;
     console.log('🎨 Color selected:', {
@@ -638,7 +640,7 @@ function selectStyle(styleId: string) {
     console.log('🎨 Style cleared - no selection');
   } else {
     // Find the style object and set the actual image URL
-    const selectedStyle = vipStyles.find((style) => style.id === styleId);
+    const selectedStyle = vipStyles.value.find((style) => style.id === styleId);
     if (selectedStyle) {
       formData.icon = selectedStyle.image; // Store the actual image URL in the icon field
       console.log('🎨 Style selected:', {
@@ -651,12 +653,12 @@ function selectStyle(styleId: string) {
 
 // 获取选中的样式
 function getSelectedStyle() {
-  return vipStyles.find((style) => style.id === formData.vipStyle);
+  return vipStyles.value.find((style) => style.id === formData.vipStyle);
 }
 
 // 获取选中的颜色
 function getSelectedColor() {
-  return vipColors.find((color) => color.image === formData.color);
+  return vipColors.value.find((color) => color.image === formData.color);
 }
 
 // 处理图片加载错误
@@ -723,33 +725,37 @@ async function getNextVIPLevel() {
 }
 
 // 表单验证规则
-const rules: FormRules = {
+const rules = computed<FormRules>(() => ({
   level: [
-    { required: true, message: '请输入VIP等级', trigger: 'blur' },
+    { required: true, message: $t('vip.enterVipLevel'), trigger: 'blur' },
     {
       type: 'number',
       min: 0,
       max: 100,
-      message: 'VIP等级必须在0-100之间',
+      message: $t('vip.vipLevelRange'),
       trigger: 'blur',
     },
   ],
   name: [
-    { required: true, message: '请输入等级名称', trigger: 'blur' },
+    { required: true, message: $t('vip.enterLevelName'), trigger: 'blur' },
     {
       min: 1,
       max: 50,
-      message: '等级名称长度必须在1-50个字符之间',
+      message: $t('vip.levelNameLength'),
       trigger: 'blur',
     },
   ],
-  color: [{ required: true, message: '请选择等级颜色', trigger: 'change' }],
-  currency: [{ required: true, message: '请选择币种', trigger: 'change' }],
+  color: [
+    { required: true, message: $t('vip.selectLevelColor'), trigger: 'change' },
+  ],
+  currency: [
+    { required: true, message: $t('vip.selectCurrencyRequired'), trigger: 'change' },
+  ],
   requiredDeposit: [
     {
       type: 'number',
       min: 0,
-      message: '晋级需再充值不能为负数',
+      message: $t('vip.requiredDepositNonNegative'),
       trigger: 'blur',
     },
   ],
@@ -757,33 +763,48 @@ const rules: FormRules = {
     {
       type: 'number',
       min: 0,
-      message: '晋级需再打码不能为负数',
+      message: $t('vip.requiredBetNonNegative'),
       trigger: 'blur',
     },
   ],
   upgradeBonus: [
-    { type: 'number', min: 0, message: '晋级奖金不能为负数', trigger: 'blur' },
+    {
+      type: 'number',
+      min: 0,
+      message: $t('vip.upgradeBonusNonNegative'),
+      trigger: 'blur',
+    },
   ],
   monthlyRebate: [
     {
       type: 'number',
       min: 0,
       max: 100,
-      message: '月俸禄必须在0-100之间',
+      message: $t('vip.monthlyRebateRange'),
       trigger: 'blur',
     },
   ],
   weeklyTaskValue: [
-    { type: 'number', min: 0, message: '周俸禄不能为负数', trigger: 'blur' },
+    {
+      type: 'number',
+      min: 0,
+      message: $t('vip.weeklyRebateNonNegative'),
+      trigger: 'blur',
+    },
   ],
   dailyTaskValue: [
-    { type: 'number', min: 0, message: '日俸禄不能为负数', trigger: 'blur' },
+    {
+      type: 'number',
+      min: 0,
+      message: $t('vip.dailyRebateNonNegative'),
+      trigger: 'blur',
+    },
   ],
   monthlyDepositRequirement: [
     {
       type: 'number',
       min: 0,
-      message: '当月充值要求不能为负数',
+      message: $t('vip.monthlyDepositNonNegative'),
       trigger: 'blur',
     },
   ],
@@ -791,7 +812,7 @@ const rules: FormRules = {
     {
       type: 'number',
       min: 0,
-      message: '当月打码要求不能为负数',
+      message: $t('vip.monthlyBetNonNegative'),
       trigger: 'blur',
     },
   ],
@@ -799,7 +820,7 @@ const rules: FormRules = {
     {
       type: 'number',
       min: 0,
-      message: '月累计封顶不能为负数',
+      message: $t('vip.monthlyLimitNonNegative'),
       trigger: 'blur',
     },
   ],
@@ -807,7 +828,7 @@ const rules: FormRules = {
     {
       type: 'number',
       min: 0,
-      message: '当周充值要求不能为负数',
+      message: $t('vip.weeklyDepositNonNegative'),
       trigger: 'blur',
     },
   ],
@@ -815,7 +836,7 @@ const rules: FormRules = {
     {
       type: 'number',
       min: 0,
-      message: '当周打码要求不能为负数',
+      message: $t('vip.weeklyBetNonNegative'),
       trigger: 'blur',
     },
   ],
@@ -823,7 +844,7 @@ const rules: FormRules = {
     {
       type: 'number',
       min: 0,
-      message: '周累计封顶不能为负数',
+      message: $t('vip.weeklyLimitNonNegative'),
       trigger: 'blur',
     },
   ],
@@ -831,7 +852,7 @@ const rules: FormRules = {
     {
       type: 'number',
       min: 0,
-      message: '当日充值要求不能为负数',
+      message: $t('vip.dailyDepositNonNegative'),
       trigger: 'blur',
     },
   ],
@@ -839,7 +860,7 @@ const rules: FormRules = {
     {
       type: 'number',
       min: 0,
-      message: '当日打码要求不能为负数',
+      message: $t('vip.dailyBetNonNegative'),
       trigger: 'blur',
     },
   ],
@@ -847,17 +868,27 @@ const rules: FormRules = {
     {
       type: 'number',
       min: 0,
-      message: '日累计封顶不能为负数',
+      message: $t('vip.dailyLimitNonNegative'),
       trigger: 'blur',
     },
   ],
   birthdayBonus: [
-    { type: 'number', min: 0, message: '生日礼金不能为负数', trigger: 'blur' },
+    {
+      type: 'number',
+      min: 0,
+      message: $t('vip.birthdayBonusNonNegative'),
+      trigger: 'blur',
+    },
   ],
   displayOrder: [
-    { type: 'number', min: 0, message: '显示顺序不能为负数', trigger: 'blur' },
+    {
+      type: 'number',
+      min: 0,
+      message: $t('vip.displayOrderNonNegative'),
+      trigger: 'blur',
+    },
   ],
-};
+}));
 
 // 监听props变化
 watch(
@@ -905,7 +936,7 @@ watch(
 
       // Initialize vipStyle based on stored icon if vipStyle is not set
       if (newItem.icon && !(newItem as any).vipStyle) {
-        const matchingStyle = vipStyles.find(
+        const matchingStyle = vipStyles.value.find(
           (style) => style.image === newItem.icon,
         );
         if (matchingStyle) {
@@ -933,11 +964,11 @@ const handleSubmit = async () => {
     if (isEditing.value) {
       console.log('🔄 Updating VIP level with ID:', props.editingItem!.id);
       await updateVIPLevel(props.editingItem!.id, formData);
-      message.success('更新VIP等级成功');
+      message.success($t('vip.updateLevelSuccess'));
     } else {
       console.log('🔄 Creating new VIP level');
       await createVIPLevel(formData);
-      message.success('创建VIP等级成功');
+      message.success($t('vip.createLevelSuccess'));
     }
 
     emit('success');
@@ -945,10 +976,13 @@ const handleSubmit = async () => {
   } catch (error) {
     if (error instanceof Error) {
       message.error(
-        error.message || `${isEditing.value ? '更新' : '创建'}VIP等级失败`,
+        error.message ||
+          (isEditing.value
+            ? $t('vip.updateLevelFailed')
+            : $t('vip.createLevelFailed')),
       );
     } else {
-      message.error('表单验证失败，请检查输入');
+      message.error($t('vip.formValidationFailed'));
     }
     console.error(
       `Error ${isEditing.value ? 'updating' : 'creating'} VIP level:`,
@@ -1002,7 +1036,7 @@ const resetForm = () => {
 
     // Initialize vipStyle based on stored icon if vipStyle is not set
     if (props.editingItem?.icon && !(props.editingItem as any).vipStyle) {
-      const matchingStyle = vipStyles.find(
+      const matchingStyle = vipStyles.value.find(
         (style) => style.image === props.editingItem?.icon,
       );
       if (matchingStyle) {

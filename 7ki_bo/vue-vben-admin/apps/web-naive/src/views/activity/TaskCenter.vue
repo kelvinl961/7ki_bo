@@ -1,14 +1,14 @@
 <template>
   <div class="task-center">
     <Page
-      title="任务中心"
-      description="管理新人福利、每日任务、每周任务等各类任务的配置和设置"
+      :title="$t('activity.taskCenter.k4efb')"
+      :description="$t('activity.taskCenter.k7ba1k6bcfk6bcf')"
     >
       <!-- 面包屑导航 -->
       <div class="mb-4">
         <n-breadcrumb>
-          <n-breadcrumb-item>优惠活动</n-breadcrumb-item>
-          <n-breadcrumb-item>任务中心</n-breadcrumb-item>
+          <n-breadcrumb-item>{{ $t('activity.center.k4f182') }}</n-breadcrumb-item>
+          <n-breadcrumb-item>{{ $t('activity.taskCenter.k4efb') }}</n-breadcrumb-item>
         </n-breadcrumb>
       </div>
 
@@ -21,27 +21,27 @@
         @update:value="handleTabChange"
       >
         <!-- 新人福利 -->
-        <n-tab-pane name="novice_welfare" tab="新人福利">
+        <n-tab-pane name="novice_welfare" :tab="$t('activity.rewardReport.k65b0')">
           <NoviceWelfareManager />
         </n-tab-pane>
 
         <!-- 每日任务 -->
-        <n-tab-pane name="daily_task" tab="每日任务">
+        <n-tab-pane name="daily_task" :tab="$t('activity.taskDetail.k6bcf4')">
           <DailyTaskManager />
         </n-tab-pane>
 
         <!-- 每周任务 -->
-        <n-tab-pane name="weekly_task" tab="每周任务">
+        <n-tab-pane name="weekly_task" :tab="$t('activity.taskDetail.k6bcf5')">
           <WeeklyTaskManager />
         </n-tab-pane>
 
         <!-- 三日神秘任务 -->
-        <n-tab-pane name="three_day_mystery" tab="三日神秘任务">
+        <n-tab-pane name="three_day_mystery" :tab="$t('activity.taskDetail.k4e09')">
           <ThreeDayMysteryManager />
         </n-tab-pane>
 
         <!-- 活跃度设置 -->
-        <n-tab-pane name="activity_setting" tab="活跃度设置">
+        <n-tab-pane name="activity_setting" :tab="$t('activity.taskCenter.k6d3b')">
           <ActivitySettingManager />
         </n-tab-pane>
       </n-tabs>
@@ -50,6 +50,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, onMounted, defineAsyncComponent } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { NBreadcrumb, NBreadcrumbItem, NTabs, NTabPane } from 'naive-ui';

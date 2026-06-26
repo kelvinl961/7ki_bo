@@ -4,18 +4,16 @@
     <div class="mb-6">
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="mb-2 text-2xl font-semibold text-gray-900">虚拟彩金池</h1>
-          <p class="text-gray-600">管理各个游戏或区域的虚拟彩金池配置</p>
+          <<h1 class="mb-2 text-2xl font-semibold text-gray-900">{{ $t('game.virtualBonusPool.title') }}</h1>
+          <<p class="text-gray-600">{{ $t('game.virtualBonusPool.desc') }}</p>
         </div>
         <div class="flex gap-3">
-          <n-button type="primary" @click="handleAdd"> 新增 </n-button>
+          <n-button type="primary" @click="handleAdd"> {{ $t('common.create') }} </n-button>
           <n-button
             type="default"
             @click="handleBulkConfig"
             :disabled="!hasSelectedRows"
-          >
-            批量修改配置
-          </n-button>
+          >{{ $t('game.virtualBonusPool.bulkEditConfig') }}</n-button>
         </div>
       </div>
     </div>
@@ -23,24 +21,24 @@
     <!-- Filter Section -->
     <n-card class="mb-4">
       <div class="flex flex-wrap items-end gap-4">
-        <!-- 虚拟彩金池ID -->
+        <!-- {{ $t('game.virtualBonusPool.poolTitle') }}ID -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">虚拟彩金池ID</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('game.virtualBonusPool.poolId') }}</label>
           <n-input
             v-model:value="filterForm.poolId"
-            placeholder="输入虚拟彩金池ID"
+            :placeholder="$t('game.virtualBonusPool.enterPoolId')"
             clearable
             style="width: 180px"
             @keyup.enter="handleFilter"
           />
         </div>
 
-        <!-- 展示形式 -->
+        
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">展示形式</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('game.virtualBonusPool.displayType') }}</label>
           <n-select
             v-model:value="filterForm.displayType"
-            placeholder="选择展示形式"
+            :placeholder="$t('game.virtualBonusPool.selectDisplayType')"
             clearable
             style="width: 160px"
             :options="displayTypeOptions"
@@ -48,12 +46,12 @@
           />
         </div>
 
-        <!-- 状态 -->
+        
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">状态</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('common.status') }}</label>
           <n-select
             v-model:value="filterForm.status"
-            placeholder="选择状态"
+            :placeholder="$t('game.subgame.selectStatus')"
             clearable
             style="width: 120px"
             :options="statusOptions"
@@ -61,10 +59,10 @@
           />
         </div>
 
-        <!-- 操作按钮 -->
+        
         <div class="flex gap-2">
-          <n-button type="primary" @click="handleFilter"> 搜索 </n-button>
-          <n-button @click="handleReset"> 重置 </n-button>
+          <n-button type="primary" @click="handleFilter"> {{ $t('common.search') }} </n-button>
+          <n-button @click="handleReset"> {{ $t('common.reset') }} </n-button>
         </div>
       </div>
     </n-card>
@@ -81,15 +79,13 @@
             :checked="isAllSelected"
             :indeterminate="isIndeterminate"
             @update:checked="handleSelectAll"
-          >
-            全选当前页
-          </n-checkbox>
+          >{{ $t('game.virtualBonusPool.selectAllPage') }}</n-checkbox>
           <span class="text-sm text-gray-600"
-            >已选择 {{ selectedRows.length }} 项</span
+            >{{ $t('game.virtualBonusPool.selectedCount', [selectedRows.length]) }}</span
           >
         </div>
         <n-dropdown :options="bulkActions" @select="handleBulkAction">
-          <n-button size="small"> 批量操作 </n-button>
+          <n-button size="small"> {{ $t('common.batchOperation') }} </n-button>
         </n-dropdown>
       </div>
 
@@ -128,7 +124,7 @@
     <n-modal
       v-model:show="showDetailModal"
       preset="card"
-      title="虚拟彩金池详情"
+      :title="$t('game.virtualBonusPool.detailTitle')"
       size="large"
       :bordered="false"
       :segmented="{ content: 'soft', footer: 'soft' }"
@@ -137,7 +133,7 @@
       <VirtualBonusPoolDetail :data="detailData" />
       <template #footer>
         <div class="flex justify-end">
-          <n-button @click="showDetailModal = false">关闭</n-button>
+          <n-button @click="showDetailModal = false">{{ $t('common.close') }}</n-button>
         </div>
       </template>
     </n-modal>
@@ -146,7 +142,7 @@
     <n-modal
       v-model:show="showBulkModal"
       preset="card"
-      title="批量修改配置"
+      :title="$t('game.virtualBonusPool.bulkEditTitle')"
       size="large"
       :bordered="false"
       :segmented="{ content: 'soft', footer: 'soft' }"
@@ -162,6 +158,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, onMounted, h } from 'vue';
 import {
   NCard,
@@ -250,25 +248,25 @@ const paginationReactive = computed<PaginationProps>(() => ({
 
 // Options
 const displayTypeOptions = [
-  { label: '单独模块', value: 'single' },
-  { label: '多个馆馆', value: 'multiple' },
+  { label: $t('game.virtualBonusPool.displaySingle'), value: 'single' },
+  { label: $t('game.virtualBonusPool.displayMultiple'), value: 'multiple' },
 ];
 
 const statusOptions = [
-  { label: '启用', value: 'true' },
-  { label: '禁用', value: 'false' },
+  { label: $t('common.enabled'), value: 'true' },
+  { label: $t('common.disabled'), value: 'false' },
 ];
 
 const numberStyleOptions = [
-  { label: '样式一', value: 'style1' },
-  { label: '样式二', value: 'style2' },
-  { label: '样式三', value: 'style3' },
+  { label: $t('game.virtualBonusPool.style1'), value: 'style1' },
+  { label: $t('game.virtualBonusPool.style2'), value: 'style2' },
+  { label: $t('game.virtualBonusPool.style3'), value: 'style3' },
 ];
 
 const backgroundStyleOptions = [
-  { label: '样式一', value: 'style1' },
-  { label: '样式二', value: 'style2' },
-  { label: '样式三', value: 'style3' },
+  { label: $t('game.virtualBonusPool.style1'), value: 'style1' },
+  { label: $t('game.virtualBonusPool.style2'), value: 'style2' },
+  { label: $t('game.virtualBonusPool.style3'), value: 'style3' },
 ];
 
 // Computed
@@ -293,21 +291,21 @@ const isIndeterminate = computed(
 );
 
 const modalTitle = computed(() =>
-  modalMode.value === 'add' ? '新增' : '修改',
+  modalMode.value === 'add' ? $t('common.add') : $t('common.modify'),
 );
 
 // Bulk actions
 const bulkActions = [
   {
-    label: '批量启用',
+    label: $t('game.virtualBonusPool.bulkEnable'),
     key: 'enable',
   },
   {
-    label: '批量禁用',
+    label: $t('game.virtualBonusPool.bulkDisable'),
     key: 'disable',
   },
   {
-    label: '批量删除',
+    label: $t('game.virtualBonusPool.bulkDelete'),
     key: 'delete',
   },
 ];
@@ -325,14 +323,14 @@ const columns: DataTableColumns<VirtualBonusPool> = [
     sorter: true,
   },
   {
-    title: '币种',
+    title: $t('common.currency'),
     key: 'currency',
     width: 100,
     render: (row) =>
       h(NTag, { type: 'info', size: 'small' }, { default: () => row.currency }),
   },
   {
-    title: '展示形式',
+    title: $t('game.virtualBonusPool.displayForm'),
     key: 'displayType',
     width: 120,
     render: (row) => {
@@ -343,7 +341,7 @@ const columns: DataTableColumns<VirtualBonusPool> = [
     },
   },
   {
-    title: '展示位置',
+    title: $t('game.virtualBonusPool.displayPosition'),
     key: 'displayPosition',
     width: 120,
     render: (row) => {
@@ -362,7 +360,7 @@ const columns: DataTableColumns<VirtualBonusPool> = [
     },
   },
   {
-    title: '点击跳转位置',
+    title: $t('game.virtualBonusPool.clickTarget'),
     key: 'clickTarget',
     width: 140,
     ellipsis: {
@@ -370,7 +368,7 @@ const columns: DataTableColumns<VirtualBonusPool> = [
     },
   },
   {
-    title: '最大展示金额',
+    title: $t('game.virtualBonusPool.maxDisplayAmount'),
     key: 'maxAmount',
     width: 130,
     render: (row) => {
@@ -389,7 +387,7 @@ const columns: DataTableColumns<VirtualBonusPool> = [
     sorter: true,
   },
   {
-    title: '最小展示金额',
+    title: $t('game.virtualBonusPool.minDisplayAmount'),
     key: 'minAmount',
     width: 130,
     render: (row) => {
@@ -408,13 +406,13 @@ const columns: DataTableColumns<VirtualBonusPool> = [
     sorter: true,
   },
   {
-    title: '小数点位数',
+    title: $t('game.virtualBonusPool.decimalPlaces'),
     key: 'decimalPlaces',
     width: 110,
     align: 'center',
   },
   {
-    title: '金额数字样式',
+    title: $t('game.virtualBonusPool.numberStyle'),
     key: 'numberStyle',
     width: 130,
     render: (row) => {
@@ -425,7 +423,7 @@ const columns: DataTableColumns<VirtualBonusPool> = [
         return h('div', { class: 'flex items-center justify-center' }, [
           h('img', {
             src: row.numberStyle,
-            alt: '数字样式',
+            alt: $t('game.virtualBonusPool.numberStyle'),
             class: 'w-12 h-8 object-cover rounded border',
             style: 'max-width: 48px; max-height: 32px;',
             onError: (e: Event) => {
@@ -445,7 +443,7 @@ const columns: DataTableColumns<VirtualBonusPool> = [
               style: 'display: none;',
               class: 'text-xs text-gray-500',
             },
-            '加载失败',
+            $t('game.virtualBonusPool.loadImageFailed'),
           ),
         ]);
       }
@@ -458,7 +456,7 @@ const columns: DataTableColumns<VirtualBonusPool> = [
     },
   },
   {
-    title: '背景风格',
+    title: $t('game.virtualBonusPool.backgroundStyle'),
     key: 'backgroundStyle',
     width: 100,
     render: (row) => {
@@ -472,7 +470,7 @@ const columns: DataTableColumns<VirtualBonusPool> = [
         return h('div', { class: 'flex items-center justify-center' }, [
           h('img', {
             src: row.backgroundStyle,
-            alt: '背景风格',
+            alt: $t('game.virtualBonusPool.backgroundStyle'),
             class: 'w-16 h-10 object-cover rounded border',
             style: 'max-width: 64px; max-height: 40px;',
             onError: (e: Event) => {
@@ -492,7 +490,7 @@ const columns: DataTableColumns<VirtualBonusPool> = [
               style: 'display: none;',
               class: 'text-xs text-gray-500',
             },
-            '加载失败',
+            $t('game.virtualBonusPool.loadImageFailed'),
           ),
         ]);
       }
@@ -505,7 +503,7 @@ const columns: DataTableColumns<VirtualBonusPool> = [
     },
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 80,
     align: 'center',
@@ -516,7 +514,7 @@ const columns: DataTableColumns<VirtualBonusPool> = [
       }),
   },
   {
-    title: '备注',
+    title: $t('common.remark'),
     key: 'remark',
     width: 150,
     ellipsis: {
@@ -524,19 +522,19 @@ const columns: DataTableColumns<VirtualBonusPool> = [
     },
   },
   {
-    title: '操作人',
+    title: $t('common.operator'),
     key: 'operator',
     width: 100,
   },
   {
-    title: '操作时间',
+    title: $t('common.operationTime'),
     key: 'operationTime',
     width: 160,
     render: (row) => new Date(row.operationTime).toLocaleString('zh-CN'),
     sorter: true,
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 200,
     align: 'center',
@@ -555,7 +553,7 @@ const columns: DataTableColumns<VirtualBonusPool> = [
                 secondary: true,
                 onClick: () => handleEdit(row),
               },
-              { default: () => '修改' },
+              { default: () => $t('common.modify') },
             ),
             h(
               NButton,
@@ -565,7 +563,7 @@ const columns: DataTableColumns<VirtualBonusPool> = [
                 secondary: true,
                 onClick: () => handleDetail(row),
               },
-              { default: () => '详情' },
+              { default: () => $t('common.detail') },
             ),
             h(
               NButton,
@@ -575,7 +573,7 @@ const columns: DataTableColumns<VirtualBonusPool> = [
                 secondary: true,
                 onClick: () => handleDelete(row),
               },
-              { default: () => '删除' },
+              { default: () => $t('common.delete') },
             ),
           ],
         },
@@ -621,7 +619,7 @@ const loadData = async () => {
     console.log('Table data set to:', tableData.value);
     console.log('Pagination total set to:', pagination.total);
   } catch (error) {
-    message.error('加载数据失败');
+    message.error($t('game.loadFailed'));
     console.error('Failed to load data:', error);
     tableData.value = [];
     pagination.total = 0;
@@ -681,14 +679,14 @@ const handleDetail = (row: VirtualBonusPool) => {
 };
 
 const handleDelete = async (row: VirtualBonusPool) => {
-  const dialog = window.confirm(`确认删除虚拟彩金池 "${row.id}" 吗？`);
+  const dialog = window.confirm($t('game.virtualBonusPool.confirmDelete', [String(row.id)]));
   if (dialog) {
     try {
       await deleteVirtualBonusPool(row.id);
-      message.success('删除成功');
+      message.success($t('common.deleteSuccess'));
       loadData(); // Refresh the data
     } catch (error) {
-      message.error('删除失败');
+      message.error($t('common.operationFailed'));
       console.error('Delete error:', error);
     }
   }
@@ -702,9 +700,9 @@ const handleStatusChange = async (id: number, status: boolean) => {
     if (item) {
       item.status = status;
     }
-    message.success(`${status ? '启用' : '禁用'}成功`);
+    message.success(status ? $t('common.enable') + ' OK' : $t('common.disable') + ' OK');
   } catch (error) {
-    message.error('状态更新失败');
+    message.error($t('game.virtualBonusPool.statusUpdateFailed'));
     console.error('Status change error:', error);
     // Revert the status change
     const item = tableData.value.find((item) => item.id === id);
@@ -718,15 +716,15 @@ const handleSubmit = async (data: any) => {
   try {
     if (modalMode.value === 'add') {
       await createVirtualBonusPool(data);
-      message.success('新增成功');
+      message.success($t('common.operationSuccess'));
     } else {
       await updateVirtualBonusPool(editingItem.value!.id, data);
-      message.success('修改成功');
+      message.success($t('common.saveSuccess'));
     }
     showModal.value = false;
     loadData(); // Refresh the data
   } catch (error) {
-    message.error(modalMode.value === 'add' ? '新增失败' : '修改失败');
+    message.error(modalMode.value === 'add' ? $t('game.virtualBonusPool.addFailed') : $t('game.virtualBonusPool.editFailed'));
     console.error('Submit error:', error);
   }
 };
@@ -749,29 +747,29 @@ const handleBulkAction = async (key: string) => {
           ids: selectedRowKeys.value,
           updates: { status: true },
         });
-        message.success('批量启用成功');
+        message.success($t('game.virtualBonusPool.bulkEnable') + ' OK');
         break;
       case 'disable':
         await bulkUpdateVirtualBonusPools({
           ids: selectedRowKeys.value,
           updates: { status: false },
         });
-        message.success('批量禁用成功');
+        message.success($t('game.virtualBonusPool.bulkDisable') + ' OK');
         break;
       case 'delete':
         const confirmed = window.confirm(
-          `确认删除选中的 ${selectedRows.value.length} 项吗？`,
+          $t('game.virtualBonusPool.confirmBulkDelete', [selectedRows.value.length]),
         );
         if (confirmed) {
           await bulkDeleteVirtualBonusPools(selectedRowKeys.value);
-          message.success('批量删除成功');
+          message.success($t('common.deleteSuccess'));
           selectedRowKeys.value = [];
         }
         break;
     }
     loadData(); // Refresh the data
   } catch (error) {
-    message.error('批量操作失败');
+    message.error($t('game.virtualBonusPool.bulkOpFailed'));
     console.error('Bulk action error:', error);
   }
 };
@@ -782,12 +780,12 @@ const handleBulkSubmit = async (data: any) => {
       ids: selectedRowKeys.value,
       updates: data,
     });
-    message.success('批量修改成功');
+    message.success($t('game.virtualBonusPool.bulkEditSuccess'));
     showBulkModal.value = false;
     selectedRowKeys.value = [];
     loadData(); // Refresh the data
   } catch (error) {
-    message.error('批量修改失败');
+    message.error($t('game.virtualBonusPool.bulkEditFailed'));
     console.error('Bulk submit error:', error);
   }
 };

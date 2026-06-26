@@ -6,7 +6,7 @@ const routes: RouteRecordRaw[] = [
       icon: 'ic:baseline-support-agent',
       keepAlive: true,
       order: 750,
-      title: '运营',
+      title: 'page.menu.operations',
     },
     name: 'Operations',
     path: '/operations',
@@ -14,7 +14,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '客服管理',
+          title: 'page.menu.customerService',
         },
         name: 'CustomerService',
         path: '/operations/customer-service',
@@ -25,7 +25,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '有奖反馈',
+          title: 'page.menu.feedbackManagement',
         },
         name: 'FeedbackManagement',
         path: '/operations/feedback-management',
@@ -36,7 +36,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '三方埋点',
+          title: 'page.menu.thirdPartyTracking',
         },
         name: 'ThirdPartyTracking',
         path: '/operations/third-party-tracking',
@@ -47,7 +47,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: 'APP包管理',
+          title: 'page.menu.appPackageManagement',
         },
         name: 'AppPackageManagement',
         path: '/operations/app-package-management',

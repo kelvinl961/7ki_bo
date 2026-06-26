@@ -2,14 +2,14 @@
   <n-modal
     v-model:show="showModal"
     preset="dialog"
-    title="CDN切换"
+    :title="$t('operations.domain.cdnSwitch.title')"
     :style="{ width: '500px' }"
   >
     <n-space vertical>
       <n-alert type="info" :show-icon="true">
         <div v-if="domain">
-          <p>域名: {{ domain.domain }}</p>
-          <p>当前CDN: {{ domain.cdnProvider }}</p>
+          <p>{{ $t('operations.domain.column.domain') }}: {{ domain.domain }}</p>
+          <p>{{ $t('operations.domain.modal.currentCdn') }}: {{ domain.cdnProvider }}</p>
         </div>
       </n-alert>
 
@@ -20,19 +20,19 @@
         label-placement="left"
         label-width="auto"
       >
-        <n-form-item label="新CDN提供商" path="newCdnProvider">
+        <n-form-item :label="$t('operations.domain.cdnSwitch.newProvider')" path="newCdnProvider">
           <n-select
             v-model:value="formData.newCdnProvider"
             :options="cdnProviderOptions"
-            placeholder="请选择新的CDN提供商"
+            :placeholder="$t('operations.domain.cdnSwitch.selectNewProvider')"
           />
         </n-form-item>
 
-        <n-form-item label="切换原因" path="reason">
+        <n-form-item :label="$t('operations.domain.cdnSwitch.reason')" path="reason">
           <n-input
             v-model:value="formData.reason"
             type="textarea"
-            placeholder="请输入切换原因"
+            :placeholder="$t('operations.domain.cdnSwitch.reasonPlaceholder')"
             :autosize="{ minRows: 3, maxRows: 5 }"
           />
         </n-form-item>
@@ -41,9 +41,9 @@
 
     <template #action>
       <n-space>
-        <n-button @click="showModal = false">取消</n-button>
+        <n-button @click="showModal = false">{{ $t('common.cancel') }}</n-button>
         <n-button type="primary" @click="handleSubmit" :loading="submitting">
-          确定切换
+          {{ $t('operations.domain.cdnSwitch.confirmSwitch') }}
         </n-button>
       </n-space>
     </template>
@@ -51,6 +51,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, computed } from 'vue';
 import { useMessage } from 'naive-ui';
 
@@ -87,19 +89,19 @@ const formData = ref({
 const cdnProviderOptions = [
   { label: 'Cloudflare', value: 'cloudflare' },
   { label: 'AWS CloudFront', value: 'aws' },
-  { label: '阿里云', value: 'aliyun' },
-  { label: '腾讯云', value: 'tencent' },
+  { label: 'Aliyun', value: 'aliyun' },
+  { label: 'Tencent Cloud', value: 'tencent' },
 ];
 
 const rules = {
   newCdnProvider: {
     required: true,
-    message: '请选择新的CDN提供商',
+    message: $t('operations.domain.cdnSwitch.selectNewProvider'),
     trigger: 'change',
   },
   reason: {
     required: true,
-    message: '请输入切换原因',
+    message: $t('common.pleaseEnterField', [$t('operations.domain.cdnSwitch.reason')]),
     trigger: 'blur',
   },
 };
@@ -110,7 +112,7 @@ const handleSubmit = async () => {
     submitting.value = true;
 
     // TODO: Implement API call
-    message.success('CDN切换成功');
+    message.success($t('operations.domain.message.cdnSwitchSuccess'));
     emit('success');
     showModal.value = false;
 

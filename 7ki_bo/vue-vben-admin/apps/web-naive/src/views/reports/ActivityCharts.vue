@@ -1,50 +1,50 @@
 <template>
   <div class="activity-charts">
-    <n-card title="活跃图表" class="mb-4">
+    <n-card :title="$t('reports.activityCharts')" class="mb-4">
       <div class="mb-4">
         <n-form inline>
-          <n-form-item label="开始日期">
+          <n-form-item :label="$t('reports.startDate')">
             <n-date-picker
               v-model:value="startDate"
               type="date"
-              placeholder="选择开始日期"
+              :placeholder="$t('reports.selectStartDate')"
               format="yyyy-MM-dd"
               clearable
             />
           </n-form-item>
-          <n-form-item label="结束日期">
+          <n-form-item :label="$t('reports.endDate')">
             <n-date-picker
               v-model:value="endDate"
               type="date"
-              placeholder="选择结束日期"
+              :placeholder="$t('reports.selectEndDate')"
               format="yyyy-MM-dd"
               clearable
             />
           </n-form-item>
-          <n-form-item label="图表类型">
+          <n-form-item :label="$t('reports.chartType')">
             <n-select
               v-model:value="chartType"
               :options="chartTypeOptions"
-              placeholder="选择图表类型"
+              :placeholder="$t('reports.selectChartType')"
               style="width: 150px"
             />
           </n-form-item>
           <n-form-item>
             <n-button type="primary" @click="fetchData" :loading="loading">
-              查询
+              {{ $t('common.query') }}
             </n-button>
           </n-form-item>
         </n-form>
       </div>
 
       <div v-if="reportData" class="py-8 text-center">
-        <n-alert type="info" title="活跃图表功能开发中" />
-        <p class="mt-4">此功能正在开发中，敬请期待...</p>
+        <n-alert type="info" :title="$t('reports.activityChartsDev')" />
+        <p class="mt-4">{{ $t('reports.featureComingSoon') }}</p>
       </div>
 
       <div v-else-if="loading" class="py-8 text-center">
         <n-spin size="large" />
-        <p class="mt-4">正在加载数据...</p>
+        <p class="mt-4">{{ $t('reports.loadingData') }}</p>
       </div>
 
       <div v-else-if="error" class="py-8 text-center">
@@ -55,7 +55,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { $t } from '@vben/locales';
+
+import { ref, onMounted, computed } from 'vue';
 import {
   NCard,
   NForm,
@@ -74,19 +76,18 @@ const loading = ref(false);
 const error = ref('');
 const reportData = ref(null);
 
-// ✅ Fix: Use timestamp (number) for date picker v-model
 const startDate = ref<number | null>(null);
 const endDate = ref<number | null>(null);
 const chartType = ref('daily');
 
-const chartTypeOptions = [
-  { label: '日活跃图表', value: 'daily' },
-  { label: '周活跃图表', value: 'weekly' },
-];
+const chartTypeOptions = computed(() => [
+  { label: $t('reports.chartTypeDaily'), value: 'daily' },
+  { label: $t('reports.chartTypeWeekly'), value: 'weekly' },
+]);
 
 const fetchData = async () => {
   if (!startDate.value || !endDate.value) {
-    message.warning('请选择开始日期和结束日期');
+    message.warning($t('reports.selectStartAndEndDate'));
     return;
   }
 
@@ -94,15 +95,11 @@ const fetchData = async () => {
   error.value = '';
 
   try {
-    // Format dates for API call
-    const startDateStr = new Date(startDate.value).toISOString().split('T')[0];
-    const endDateStr = new Date(endDate.value).toISOString().split('T')[0];
-
-    // TODO: Implement activity charts API
     reportData.value = { placeholder: true };
-    message.success('数据加载成功');
+    message.success($t('reports.dataLoadedSuccess'));
   } catch (err) {
-    error.value = err instanceof Error ? err.message : '获取数据时发生错误';
+    error.value =
+      err instanceof Error ? err.message : $t('reports.fetchDataError');
     message.error(error.value);
   } finally {
     loading.value = false;
@@ -114,7 +111,6 @@ onMounted(() => {
   today.setHours(0, 0, 0, 0);
   const lastWeek = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-  // ✅ Fix: Use timestamps instead of strings
   startDate.value = lastWeek.getTime();
   endDate.value = today.getTime();
 });

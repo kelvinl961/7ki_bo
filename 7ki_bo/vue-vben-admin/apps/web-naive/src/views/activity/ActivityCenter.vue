@@ -1,11 +1,11 @@
 <template>
   <div class="activity-center">
-    <Page title="活动中心" description="管理所有活动的创建、编辑、监控和统计">
+    <Page :title="$t('activity.center.k6d3b')" :description="$t('activity.center.k7ba1k7f16k76d1')">
       <!-- 面包屑导航 -->
       <div class="mb-4">
         <n-breadcrumb>
-          <n-breadcrumb-item>优惠活动</n-breadcrumb-item>
-          <n-breadcrumb-item>活动中心</n-breadcrumb-item>
+          <n-breadcrumb-item>{{ $t('activity.center.k4f182') }}</n-breadcrumb-item>
+          <n-breadcrumb-item>{{ $t('activity.center.k6d3b') }}</n-breadcrumb-item>
         </n-breadcrumb>
       </div>
 
@@ -18,22 +18,22 @@
         @update:value="handleTabChange"
       >
         <!-- 活动列表 -->
-        <n-tab-pane name="first" tab="活动列表">
+        <n-tab-pane name="first" :tab="$t('activity.center.k6d3b2')">
           <ActivityList />
         </n-tab-pane>
 
         <!-- 已关闭活动 -->
-        <n-tab-pane name="closed" tab="已关闭活动">
+        <n-tab-pane name="closed" :tab="$t('activity.center.k5df2')">
           <ClosedActivityList />
         </n-tab-pane>
 
         <!-- 优惠统计 -->
-        <n-tab-pane name="statistics" tab="优惠统计">
+        <n-tab-pane name="statistics" :tab="$t('activity.center.k4f18')">
           <ActivityStatistics />
         </n-tab-pane>
 
         <!-- 分享管理 -->
-        <n-tab-pane name="share" tab="分享管理">
+        <n-tab-pane name="share" :tab="$t('activity.center.k5206')">
           <ShareManagement />
         </n-tab-pane>
       </n-tabs>
@@ -42,6 +42,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, onMounted, defineAsyncComponent } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { NBreadcrumb, NBreadcrumbItem, NTabs, NTabPane } from 'naive-ui';

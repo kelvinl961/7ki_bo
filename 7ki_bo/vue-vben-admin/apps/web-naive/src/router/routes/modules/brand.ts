@@ -6,7 +6,7 @@ const routes: RouteRecordRaw[] = [
       icon: 'ic:outline-branding-watermark',
       keepAlive: true,
       order: 500,
-      title: '品牌管理',
+      title: 'page.menu.brandManagement',
     },
     name: 'OperateManager',
     path: '/operateManager',
@@ -14,7 +14,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '品牌LOGO设置',
+          title: 'page.menu.brandLogoSetting',
           fullPathKey: false, // 子 tab 切换不新开标签页，与游戏管理一致
         },
         name: 'BrandLogoSetting',
@@ -25,7 +25,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '品牌皮肤设置',
+          title: 'page.menu.brandSkinSetting',
         },
         name: 'BrandSkinSetting',
         path: '/operateManager/brandSkinSetting',
@@ -35,7 +35,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '域名管理',
+          title: 'page.menu.domainManagement',
         },
         name: 'DomainManagement',
         path: '/operateManager/domainManagement',
@@ -46,7 +46,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '消息设置',
+          title: 'page.menu.messageSettings',
         },
         name: 'SystemMessageSet',
         path: '/operateManager/systemMessageSet',
@@ -57,7 +57,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '个性化配置',
+          title: 'page.menu.layoutDesign',
         },
         name: 'LayoutDesign',
         path: '/operateManager/layoutDesign',

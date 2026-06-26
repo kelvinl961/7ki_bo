@@ -3,10 +3,10 @@
     v-model:show="visible"
     :title="
       currentStep === 'upload'
-        ? '导入游戏'
+        ? $t('game.importDialog.title')
         : currentStep === 'preview'
-          ? '预览导入数据'
-          : '导入结果'
+          ? $t('game.importDialog.previewTitle')
+          : $t('game.importDialog.resultTitle')
     "
     preset="dialog"
     :style="{ width: currentStep === 'upload' ? '600px' : '1000px' }"
@@ -14,25 +14,11 @@
     :mask-closable="currentStep !== 'importing'"
     @after-leave="resetDialog"
   >
-    <!-- Step 1: File Upload -->
     <div v-if="currentStep === 'upload'" class="upload-step">
       <div class="mb-6">
         <n-alert type="info" :show-icon="false" class="mb-4">
           <div class="text-sm">
-            <p class="mb-2">
-              支持的文件格式：CSV (.csv) 推荐，Excel (.xlsx, .xls) 实验性支持
-            </p>
-            <p class="mb-2">文件要求：</p>
-            <ul class="ml-4 list-inside list-disc space-y-1">
-              <li>第一行为标题行</li>
-              <li>
-                必填列：Game Name (中文)、Game Name (英文)、游戏类型、GameID
-              </li>
-              <li>可选列：显示ID、Icon、备注</li>
-              <li>支持大文件导入（无行数限制）</li>
-              <li>大文件导入可能需要几分钟时间，请耐心等待</li>
-              <li>Excel文件如果解析失败，请另存为CSV格式</li>
-            </ul>
+            <p>{{ $t('game.importDialog.importHint') }}</p>
           </div>
         </n-alert>
 
@@ -41,19 +27,16 @@
             <template #icon>
               <icon-download />
             </template>
-            下载模板
-          </n-button>
-          <n-button type="info" ghost @click="debugFormValues">
-            调试表单值
+            {{ $t('game.importDialog.downloadTemplate') }}
           </n-button>
         </div>
       </div>
 
       <n-form ref="uploadFormRef" :model="uploadForm" :rules="uploadRules">
-        <n-form-item label="所属平台" path="platformId">
+        <n-form-item :label="$t('game.subgame.selectBelongPlatform')" path="platformId">
           <n-select
             v-model:value="uploadForm.platformId"
-            placeholder="选择所属平台"
+            :placeholder="$t('game.subgame.selectBelongPlatform')"
             :options="platformOptions"
             value-field="value"
             label-field="label"
@@ -61,22 +44,22 @@
           />
         </n-form-item>
 
-        <n-form-item label="游戏厂商" path="vendor">
+        <n-form-item :label="$t('game.subgame.vendor')" path="vendor">
           <n-input
             v-model:value="uploadForm.vendor"
-            placeholder="请输入游戏厂商，如 PG Soft / CQ9 / JILI"
+            :placeholder="$t('game.subgame.enterVendor')"
           />
         </n-form-item>
 
-        <n-form-item label="默认币种" path="currency">
+        <n-form-item :label="$t('game.subgame.selectCurrency')" path="currency">
           <n-select
             v-model:value="uploadForm.currency"
-            placeholder="选择默认币种"
+            :placeholder="$t('game.subgame.selectCurrency')"
             :options="currencyOptions"
           />
         </n-form-item>
 
-        <n-form-item label="导入文件" path="file">
+        <n-form-item :label="$t('game.importDialog.uploadFile')" path="file">
           <n-upload
             ref="uploadRef"
             :max="1"
@@ -92,10 +75,8 @@
                 <div class="upload-icon">
                   <icon-upload />
                 </div>
-                <p class="upload-text">点击或拖拽文件到此区域上传</p>
-                <p class="upload-hint">
-                  支持 Excel (.xlsx, .xls) 和 CSV (.csv) 文件
-                </p>
+                <p class="upload-text">{{ $t('game.importDialog.uploadFile') }}</p>
+                <p class="upload-hint">{{ $t('game.importDialog.importHint') }}</p>
               </div>
             </n-upload-dragger>
           </n-upload>
@@ -103,7 +84,6 @@
       </n-form>
     </div>
 
-    <!-- Step 2: Preview Data -->
     <div v-else-if="currentStep === 'preview'" class="preview-step">
       <div class="mb-4">
         <n-alert
@@ -114,7 +94,7 @@
         >
           <div class="text-sm">
             <p class="mb-2">
-              发现 {{ previewData.errors.length }} 个数据错误，请检查并修正：
+              {{ $t('game.importDialog.errorsFound', [previewData.errors.length]) }}
             </p>
             <div class="max-h-32 overflow-y-auto">
               <div
@@ -122,7 +102,7 @@
                 :key="`${error.row}-${error.field}`"
                 class="mb-1"
               >
-                第{{ error.row }}行 {{ error.field }}：{{ error.message }}
+                {{ $t('game.importDialog.rowFieldError', [error.row, error.field, error.message]) }}
               </div>
             </div>
           </div>
@@ -130,21 +110,21 @@
 
         <div class="mb-4 flex items-center justify-between">
           <div class="flex gap-4">
-            <n-statistic label="总数据" :value="previewData.summary.total" />
-            <n-statistic label="有效数据" :value="previewData.summary.valid" />
+            <n-statistic :label="$t('game.importDialog.totalData')" :value="previewData.summary.total" />
+            <n-statistic :label="$t('game.importDialog.validData')" :value="previewData.summary.valid" />
             <n-statistic
-              label="错误数据"
+              :label="$t('game.importDialog.errorData')"
               :value="previewData.summary.invalid"
             />
           </div>
           <div class="flex gap-2">
-            <n-button @click="currentStep = 'upload'">返回上传</n-button>
+            <n-button @click="currentStep = 'upload'">{{ $t('game.importDialog.backToUpload') }}</n-button>
             <n-button
               type="primary"
               :disabled="previewData.summary.valid === 0"
               @click="startImport"
             >
-              开始导入 ({{ previewData.summary.valid }}条)
+              {{ $t('game.importDialog.startImport', [previewData.summary.valid]) }}
             </n-button>
           </div>
         </div>
@@ -160,19 +140,15 @@
       />
     </div>
 
-    <!-- Step 3: Importing -->
     <div v-else-if="currentStep === 'importing'" class="importing-step">
       <div class="py-8 text-center">
         <n-spin size="large" />
-        <p class="mt-4 text-lg">正在导入数据，请稍候...</p>
+        <p class="mt-4 text-lg">{{ $t('game.importDialog.importing') }}</p>
         <p class="mt-2 text-sm text-gray-500">
-          已处理 {{ importProgress.current }} /
-          {{ importProgress.total }} 条数据
+          {{ $t('game.importDialog.processedProgress', [importProgress.current, importProgress.total]) }}
         </p>
         <p class="mt-2 text-sm text-orange-600">
-          <strong
-            >大文件导入可能需要几分钟时间，请耐心等待，不要关闭页面</strong
-          >
+          <strong>{{ $t('game.importDialog.largeFileWarning') }}</strong>
         </p>
         <n-progress
           type="line"
@@ -183,7 +159,6 @@
       </div>
     </div>
 
-    <!-- Step 4: Results -->
     <div v-else-if="currentStep === 'results'" class="results-step">
       <div class="mb-4">
         <n-alert
@@ -192,27 +167,25 @@
           class="mb-4"
         >
           <div class="text-sm">
-            <p class="mb-2">导入完成！</p>
+            <p class="mb-2">{{ $t('game.importDialog.importDone') }}</p>
             <div class="flex gap-6">
-              <span>总计：{{ importResults.summary.total }}</span>
+              <span>{{ $t('game.importDialog.total') }}: {{ importResults.summary.total }}</span>
               <span class="text-green-600"
-                >成功：{{ importResults.summary.success }}</span
+                >{{ $t('game.importDialog.success') }}: {{ importResults.summary.success }}</span
               >
               <span class="text-red-600"
-                >失败：{{ importResults.summary.error }}</span
+                >{{ $t('game.importDialog.failed') }}: {{ importResults.summary.error }}</span
               >
               <span class="text-orange-600"
-                >跳过：{{ importResults.summary.skipped }}</span
+                >{{ $t('game.importDialog.skipped') }}: {{ importResults.summary.skipped }}</span
               >
             </div>
           </div>
         </n-alert>
 
         <div class="mb-4 flex justify-end gap-2">
-          <n-button @click="visible = false">关闭</n-button>
-          <n-button type="primary" @click="handleImportComplete">
-            确定
-          </n-button>
+          <n-button @click="visible = false">{{ $t('common.close') }}</n-button>
+          <n-button type="primary" @click="handleImportComplete">{{ $t('common.confirm') }}</n-button>
         </div>
       </div>
 
@@ -228,21 +201,21 @@
 
     <template #action>
       <div v-if="currentStep === 'upload'" class="flex justify-end gap-2">
-        <n-button @click="visible = false">取消</n-button>
+        <n-button @click="visible = false">{{ $t('common.cancel') }}</n-button>
         <n-button
           type="primary"
           :loading="parsing"
           :disabled="!uploadForm.file || !uploadForm.platformId"
           @click="parseFileData"
-        >
-          解析文件
-        </n-button>
+        >{{ $t('game.importDialog.parseFile') }}</n-button>
       </div>
     </template>
   </n-modal>
 </template>
 
 <script lang="ts" setup>
+import { $t } from '@vben/locales';
+
 import { computed, reactive, ref, watch } from 'vue';
 import type {
   DataTableColumns,
@@ -344,27 +317,27 @@ const uploadRules: FormRules = {
   platformId: [
     {
       required: true,
-      message: '请选择所属平台',
+      message: $t('game.platformExtra.selectPlatformRequired'),
       trigger: ['blur', 'change'],
       validator: (_, value) => {
         if (!value) {
-          return new Error('请选择所属平台');
+          return new Error($t('game.importDialog.selectPlatformRequired'));
         }
         return true;
       },
     },
   ],
   vendor: [
-    { required: true, message: '请输入游戏厂商', trigger: ['blur', 'change'] },
+    { required: true, message: $t('game.subgame.enterVendor'), trigger: ['blur', 'change'] },
   ],
   currency: [
     {
       required: true,
-      message: '请选择默认币种',
+      message: $t('game.importDialog.selectDefaultCurrency'),
       trigger: ['blur', 'change'],
       validator: (_, value) => {
         if (!value) {
-          return new Error('请选择默认币种');
+          return new Error($t('game.importDialog.selectDefaultCurrency'));
         }
         return true;
       },
@@ -373,11 +346,11 @@ const uploadRules: FormRules = {
   file: [
     {
       required: true,
-      message: '请选择要导入的文件',
+      message: $t('game.importDialog.selectFileRequired'),
       trigger: ['blur', 'change'],
       validator: (_, value) => {
         if (!value) {
-          return new Error('请选择要导入的文件');
+          return new Error($t('game.importDialog.selectFileRequired'));
         }
         return true;
       },
@@ -393,41 +366,41 @@ const visible = computed({
 
 // Preview table columns
 const previewColumns: DataTableColumns<ImportGameData> = [
-  { title: '行号', key: 'no', width: 60 },
-  { title: '游戏名称(中文)', key: 'gameNameCn', width: 150 },
-  { title: '游戏名称(英文)', key: 'gameNameEn', width: 150 },
-  { title: '游戏类型', key: 'gameType', width: 100 },
-  { title: '游戏ID', key: 'gameId', width: 120 },
-  { title: '显示ID', key: 'gameDisplayId', width: 100 },
+  { title: $t('game.importDialog.rowNo'), key: 'no', width: 60 },
+  { title: $t('game.subgame.gameNameZh'), key: 'gameNameCn', width: 150 },
+  { title: $t('game.subgame.gameNameEn'), key: 'gameNameEn', width: 150 },
+  { title: $t('game.subgame.gameType'), key: 'gameType', width: 100 },
+  { title: $t('game.subgame.gameId'), key: 'gameId', width: 120 },
+  { title: $t('game.subgame.displayId'), key: 'gameDisplayId', width: 100 },
   {
-    title: '图标链接',
+    title: $t('game.importDialog.iconUrl'),
     key: 'iconUrl',
     width: 200,
     ellipsis: { tooltip: true },
   },
-  { title: '备注', key: 'remark', width: 150, ellipsis: { tooltip: true } },
+  { title: $t('common.remark'), key: 'remark', width: 150, ellipsis: { tooltip: true } },
 ];
 
 // Results table columns
 const resultColumns: DataTableColumns<FileImportResult> = [
-  { title: '行号', key: 'row', width: 60 },
-  { title: '游戏ID', key: 'gameId', width: 120 },
-  { title: '游戏名称', key: 'gameNameCn', width: 150 },
+  { title: $t('game.importDialog.rowNo'), key: 'row', width: 60 },
+  { title: $t('game.subgame.gameId'), key: 'gameId', width: 120 },
+  { title: $t('game.subgame.gameNameZh'), key: 'gameNameCn', width: 150 },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 80,
     render(row) {
       const statusMap = {
-        success: { text: '成功', type: 'success' },
-        error: { text: '失败', type: 'error' },
-        skipped: { text: '跳过', type: 'warning' },
+        success: { text: $t('game.importDialog.statusSuccess'), type: 'success' },
+        error: { text: $t('game.importDialog.statusFailed'), type: 'error' },
+        skipped: { text: $t('game.importDialog.statusSkipped'), type: 'warning' },
       };
-      const status = statusMap[row.status] || { text: '未知', type: 'default' };
+      const status = statusMap[row.status] || { text: $t('game.importDialog.statusUnknown'), type: 'default' };
       return `${status.text}`;
     },
   },
-  { title: '消息', key: 'message', width: 200, ellipsis: { tooltip: true } },
+  { title: $t('game.importDialog.message'), key: 'message', width: 200, ellipsis: { tooltip: true } },
 ];
 
 // Methods
@@ -479,13 +452,13 @@ const downloadTemplate = () => {
   try {
     downloadTemplateUtil();
     notification.success({
-      content: '模板下载成功',
+      content: $t('game.importDialog.templateDownloadSuccess'),
       duration: 2000,
     });
   } catch (error) {
     console.error('下载模板失败:', error);
     notification.error({
-      content: '下载模板失败',
+      content: $t('game.importDialog.templateDownloadFailed'),
       duration: 3000,
     });
   }
@@ -517,15 +490,15 @@ const parseFileData = async () => {
     });
 
     if (!uploadForm.platformId) {
-      throw new Error('请选择所属平台');
+      throw new Error($t('game.importDialog.selectPlatformRequired'));
     }
 
     if (!uploadForm.currency) {
-      throw new Error('请选择默认币种');
+      throw new Error($t('game.importDialog.selectDefaultCurrency'));
     }
 
     if (!uploadForm.file) {
-      throw new Error('请选择要导入的文件');
+      throw new Error($t('game.importDialog.selectFileRequired'));
     }
 
     parsing.value = true;
@@ -539,7 +512,7 @@ const parseFileData = async () => {
     console.log('解析后的原始数据:', rawData);
 
     if (!rawData || rawData.length === 0) {
-      throw new Error('文件为空或无法解析');
+      throw new Error($t('game.importDialog.fileEmpty'));
     }
 
     const validationResult = validateGameData(rawData);
@@ -561,7 +534,7 @@ const parseFileData = async () => {
   } catch (error: any) {
     console.error('解析文件失败:', error);
     notification.error({
-      content: error?.message || '解析文件失败',
+      content: error?.message || $t('game.importDialog.parseFailed'),
       duration: 3000,
     });
   } finally {
@@ -616,7 +589,7 @@ const startImport = async () => {
   } catch (error: any) {
     console.error('导入失败:', error);
     notification.error({
-      content: error?.message || '导入失败',
+      content: error?.message || $t('game.importDialog.importFailed'),
       duration: 3000,
     });
     currentStep.value = 'preview';

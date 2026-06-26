@@ -748,7 +748,7 @@
                       <div class="header-item">指定会员层级</div>
                       <div class="header-item">首次提现要求最低充值</div>
                       <div class="header-item">首次提现要求最高提现</div>
-                      <div class="header-item">操作</div>
+                      <div class="header-item">{{ $t('common.actions') }}</div>
                     </div>
 
                     <div class="rules-list">
@@ -829,6 +829,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, watch, computed } from 'vue';
 import {
   NModal,

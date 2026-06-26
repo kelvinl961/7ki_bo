@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { computed, h, onMounted, reactive, ref } from 'vue';
 import {
   NButton,
@@ -58,7 +60,7 @@ async function loadData() {
     tableData.value = resp?.data?.records || [];
     total.value = resp?.data?.total || 0;
   } catch (error: any) {
-    message.error(error?.message || '加载商户失败');
+    message.error(error?.message || $t('merchants.loadFailed'));
   } finally {
     loading.value = false;
   }
@@ -84,11 +86,11 @@ function openEdit(row: MerchantItem) {
 async function saveMerchant() {
   try {
     if (!form.merchantId.trim() || !form.name.trim()) {
-      message.error('商户ID和名称必填');
+      message.error($t('merchants.idAndNameRequired'));
       return;
     }
     if (!editingId.value && !form.secretKey.trim()) {
-      message.error('新建商户必须填写 secretKey');
+      message.error($t('merchants.secretKeyRequired'));
       return;
     }
     let parsedConfig: any = null;
@@ -96,7 +98,7 @@ async function saveMerchant() {
       try {
         parsedConfig = JSON.parse(form.configText);
       } catch {
-        message.error('Config 必须是合法 JSON');
+        message.error($t('merchants.invalidJson'));
         return;
       }
     }
@@ -110,33 +112,33 @@ async function saveMerchant() {
     if (form.secretKey.trim()) payload.secretKey = form.secretKey.trim();
     if (editingId.value) {
       await updateMerchantApi(editingId.value, payload);
-      message.success('更新成功');
+      message.success($t('common.saveSuccess'));
     } else {
       await createMerchantApi(payload);
-      message.success('创建成功');
+      message.success($t('common.operationSuccess'));
     }
     showModal.value = false;
     await loadData();
   } catch (error: any) {
-    message.error(error?.message || '保存失败');
+    message.error(error?.message || $t('merchants.saveFailed'));
   }
 }
 
 async function removeMerchant(id: string) {
   try {
     await deleteMerchantApi(id);
-    message.success('删除成功');
+    message.success($t('common.deleteSuccess'));
     await loadData();
   } catch (error: any) {
-    message.error(error?.message || '删除失败');
+    message.error(error?.message || $t('merchants.deleteFailed'));
   }
 }
 
-const columns: DataTableColumns<MerchantItem> = [
-  { title: '商户ID', key: 'merchantId', width: 180 },
-  { title: '名称', key: 'name', width: 220 },
+const columns = computed<DataTableColumns<MerchantItem>>(() => [
+  { title: $t('merchants.merchantId'), key: 'merchantId', width: 180 },
+  { title: $t('common.name'), key: 'name', width: 220 },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 120,
     render: (row) =>
@@ -148,7 +150,7 @@ const columns: DataTableColumns<MerchantItem> = [
   },
   { title: 'Webhook', key: 'webhookUrl', ellipsis: { tooltip: true } },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 220,
     render: (row) =>
@@ -156,7 +158,7 @@ const columns: DataTableColumns<MerchantItem> = [
         h(
           NButton,
           { size: 'small', onClick: () => openEdit(row) },
-          { default: () => '编辑' },
+          { default: () => $t('common.edit') },
         ),
         !isMerchantRole.value
           ? h(
@@ -164,14 +166,14 @@ const columns: DataTableColumns<MerchantItem> = [
               { onPositiveClick: () => removeMerchant(row.id) },
               {
                 trigger: () =>
-                  h(NButton, { size: 'small', type: 'error' }, { default: () => '删除' }),
-                default: () => '确认删除此商户？',
+                  h(NButton, { size: 'small', type: 'error' }, { default: () => $t('common.delete') }),
+                default: () => $t('merchants.confirmDelete'),
               },
             )
           : null,
       ]),
   },
-];
+]);
 
 onMounted(loadData);
 </script>
@@ -179,9 +181,9 @@ onMounted(loadData);
 <template>
   <div class="p-4">
     <div class="mb-3 flex items-center gap-2">
-      <n-input v-model:value="query.search" placeholder="搜索商户ID/名称" class="w-64" />
-      <n-button type="primary" @click="loadData">搜索</n-button>
-      <n-button v-if="!isMerchantRole" type="success" @click="openCreate">新建商户</n-button>
+      <n-input v-model:value="query.search" :placeholder="$t('merchants.searchPlaceholder')" class="w-64" />
+      <n-button type="primary" @click="loadData">{{ $t('common.search') }}</n-button>
+      <n-button v-if="!isMerchantRole" type="success" @click="openCreate">{{ $t('merchants.createMerchant') }}</n-button>
     </div>
 
     <n-data-table
@@ -191,12 +193,12 @@ onMounted(loadData);
       :pagination="{ page: query.page, pageSize: query.limit, itemCount: total }"
     />
 
-    <n-modal v-model:show="showModal" preset="card" title="商户" class="max-w-[520px]">
+    <n-modal v-model:show="showModal" preset="card" :title="$t('merchants.title')" class="max-w-[520px]">
       <n-form label-placement="left" label-width="90">
-        <n-form-item label="商户ID">
+        <n-form-item :label="$t('merchants.merchantId')">
           <n-input v-model:value="form.merchantId" :disabled="isMerchantRole" />
         </n-form-item>
-        <n-form-item label="名称">
+        <n-form-item :label="$t('common.name')">
           <n-input v-model:value="form.name" />
         </n-form-item>
         <n-form-item label="Secret Key">
@@ -205,7 +207,7 @@ onMounted(loadData);
         <n-form-item label="Webhook URL">
           <n-input v-model:value="form.webhookUrl" />
         </n-form-item>
-        <n-form-item v-if="!isMerchantRole" label="状态">
+        <n-form-item v-if="!isMerchantRole" :label="$t('common.status')">
           <n-select
             v-model:value="form.status"
             :options="[{ label: 'active', value: 'active' }, { label: 'suspended', value: 'suspended' }, { label: 'pending', value: 'pending' }]"
@@ -217,8 +219,8 @@ onMounted(loadData);
       </n-form>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <n-button @click="showModal = false">取消</n-button>
-          <n-button type="primary" @click="saveMerchant">保存</n-button>
+          <n-button @click="showModal = false">{{ $t('common.cancel') }}</n-button>
+          <n-button type="primary" @click="saveMerchant">{{ $t('common.save') }}</n-button>
         </div>
       </template>
     </n-modal>

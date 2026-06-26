@@ -1,11 +1,11 @@
 <template>
   <div class="merchant-rtp-page">
-    <n-card title="商户RTP调控V2" class="mb-4">
-      <n-alert type="info" title="说明" class="mb-4">
+    <n-card :title="$t('demo.merchantRtp.title')" class="mb-4">
+      <n-alert type="info" :title="$t('demo.merchantRtp.descriptionTitle')" class="mb-4">
         <template #default>
           <ul>
-            <li>✅ 商户级别的RTP调控</li>
-            <li>✅ 支持单个游戏或全部游戏调控</li>
+            <li>{{ $t('demo.merchantRtp.featureMerchantLevel') }}</li>
+            <li>{{ $t('demo.merchantRtp.featureSingleOrAllGames') }}</li>
           </ul>
         </template>
       </n-alert>
@@ -19,11 +19,11 @@
         label-width="auto"
         require-mark-placement="right-hanging"
       >
-        <n-form-item label="对接厂商" path="rtpVendor">
+        <n-form-item :label="$t('demo.merchantRtp.integrationVendor')" path="rtpVendor">
           <n-select
             v-model:value="formData.rtpVendor"
             :options="vendorOptions"
-            placeholder="根据已启用的游戏平台加载"
+            :placeholder="$t('demo.merchantRtp.vendorPlaceholder')"
             :disabled="vendorOptions.length === 0"
             @update:value="onVendorChange"
           />
@@ -34,7 +34,7 @@
 
         <n-form-item
           v-if="formData.rtpVendor === 'HG'"
-          label="RTP类型"
+          :label="$t('demo.merchantRtp.rtpType')"
           path="gamePattern"
         >
           <n-select
@@ -46,7 +46,7 @@
 
         <n-form-item
           v-if="formData.rtpVendor === 'HG'"
-          label="游戏类型 "
+          :label="$t('demo.merchantRtp.gameType')"
           path="gameType"
         >
           <n-select
@@ -58,7 +58,7 @@
 
         <n-form-item
           v-if="formData.rtpVendor === 'HG'"
-          label="单局最高倍数 "
+          :label="$t('demo.merchantRtp.maxMultiple')"
           path="maxMultiple"
         >
           <n-input-number
@@ -67,14 +67,14 @@
             :max="10000"
             :precision="0"
             clearable
-            placeholder="留空默认 100；非 0 时范围 1–10000"
+            :placeholder="$t('demo.merchantRtp.maxMultiplePlaceholder')"
             class="w-full max-w-md"
           />
         </n-form-item>
 
         <n-form-item
           v-if="formData.rtpVendor === 'HG'"
-          label="单局最高赢取 "
+          :label="$t('demo.merchantRtp.maxWin')"
           path="maxWinPoints"
         >
           <n-input-number
@@ -83,28 +83,28 @@
             :max="100000000"
             :precision="0"
             clearable
-            placeholder="留空默认 1000000；非 0 时范围 1–100000000"
+            :placeholder="$t('demo.merchantRtp.maxWinPlaceholder')"
             class="w-full max-w-md"
           />
         </n-form-item>
 
-        <n-form-item label="RTP值" path="Rtp">
+        <n-form-item :label="$t('demo.merchantRtp.rtpValue')" path="Rtp">
           <n-select
             v-model:value="formData.Rtp"
             :options="rtpOptionsEffective"
-            placeholder="选择RTP值"
+            :placeholder="$t('demo.merchantRtp.selectRtp')"
             filterable
           />
           <template #feedback>
             {{
               formData.rtpVendor === 'HG'
-                ? 'HG：可选 RTP 与白名单一致，最高 97'
-                : '注意：AG 支持 0、10–97 的 RTP 值'
+                ? $t('demo.merchantRtp.hgRtpFeedback')
+                : $t('demo.merchantRtp.agRtpFeedback')
             }}
           </template>
         </n-form-item>
 
-        <n-form-item label="游戏" path="GameId">
+        <n-form-item :label="$t('common.game')" path="GameId">
           <n-select
             v-model:value="formData.GameId"
             multiple
@@ -113,14 +113,14 @@
             :options="gameOptions"
             :loading="gamesLoading"
             :remote-method="handleSearchGames"
-            placeholder="搜索并选择游戏（可多选），或选择 ALL"
+            :placeholder="$t('demo.merchantRtp.searchGamesPlaceholder')"
             clearable
             max-tag-count="responsive"
             @update:value="handleGameSelect"
             @scroll="handleScroll"
           />
           <template #feedback>
-            可以选择多个游戏，或选择 ALL 应用到全部slots游戏
+            {{ $t('demo.merchantRtp.gamesFeedback') }}
           </template>
         </n-form-item>
 
@@ -132,16 +132,16 @@
               @click="handleSubmit"
               :loading="submitting"
             >
-              设置RTP
+              {{ $t('demo.merchantRtp.setRtp') }}
             </n-button>
-            <n-button @click="handleReset"> 重置 </n-button>
+            <n-button @click="handleReset"> {{ $t('common.reset') }} </n-button>
           </n-space>
         </n-form-item>
       </n-form>
     </n-card>
 
     <!-- History Table -->
-    <n-card title="操作历史">
+    <n-card :title="$t('demo.merchantRtp.historyTitle')">
       <n-data-table
         :columns="historyColumns"
         :data="historyData"
@@ -155,6 +155,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, onMounted, h, computed, watch } from 'vue';
 import {
   NTag,

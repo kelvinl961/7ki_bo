@@ -31,7 +31,7 @@
         />
       </n-form-item-gi>
 
-      <n-form-item-gi label="币种" path="currency">
+      <n-form-item-gi :label="$t('common.currency')" path="currency">
         <n-input
           v-model:value="formData.currency"
           placeholder="请输入币种，如BRL、USD"
@@ -225,6 +225,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, watch, nextTick } from 'vue';
 import type { FormRules, UploadFileInfo } from 'naive-ui';
 import {

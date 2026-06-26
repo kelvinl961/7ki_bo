@@ -3,7 +3,7 @@
   <n-modal
     v-model:show="modalShow"
     preset="card"
-    :title="isEditing ? '编辑活动' : '新增活动'"
+    :title="isEditing ? $t('activity.formModal.k7f16') : $t('activity.activityList.k65b0')"
     style="width: 90vw; height: 90vh; max-width: 1400px; margin: 0 auto"
     :mask-closable="false"
     class="activity-form-modal"
@@ -14,7 +14,7 @@
       <div class="mb-4 flex-shrink-0">
         <div class="mb-3">
           <span class="mb-2 block text-sm font-medium text-gray-700"
-            >活动类型:</span
+            >{{ $t('activity.formModal.k6d3b') }}</span
           >
           <div class="flex flex-wrap gap-2">
             <n-button
@@ -37,7 +37,7 @@
       <div class="tabs-wrapper">
         <n-tabs v-model:value="activeTab" type="line" animated>
           <!-- Tab 1: Basic Settings -->
-          <n-tab-pane name="basic" tab="基础设置">
+          <n-tab-pane name="basic" :tab="$t('activity.formModal.k57fa')">
             <div class="flex gap-6">
               <!-- Left Column -->
               <div class="flex-1 pr-4">
@@ -45,8 +45,8 @@
                   <!-- Activity Classification -->
                   <div>
                     <label class="mb-2 block text-sm font-medium text-gray-700"
-                      >* 活动分类</label
-                    >
+                      >{{ $t('activity.labels.lyhz308') }}</label
+                      >
                     <n-checkbox-group v-model:value="formData.categories">
                       <div class="grid grid-cols-3 gap-2">
                         <n-checkbox
@@ -64,14 +64,14 @@
                   <!-- Currency Selection -->
                   <div>
                     <label class="mb-2 block text-sm font-medium text-gray-700"
-                      >* 选择币种</label
-                    >
+                      >{{ $t('activity.labels.l12yg2ea') }}</label
+                      >
                     <n-checkbox-group
                       v-model:value="formData.currencies"
                       @update:value="handleCurrencyChange"
                     >
                       <div class="grid grid-cols-2 gap-2">
-                        <n-checkbox value="all">全选</n-checkbox>
+                        <n-checkbox value="all">{{ $t('activity.formModal.k51683') }}</n-checkbox>
                         <n-checkbox value="BRL">BRL</n-checkbox>
                       </div>
                     </n-checkbox-group>
@@ -81,36 +81,34 @@
                   <div>
                     <div class="mb-2 flex items-center justify-between">
                       <label class="block text-sm font-medium text-gray-700"
-                        >* 活动名称</label
+                        >{{ $t('activity.labels.lyhzex2') }}</label
                       >
-                      <n-button size="small" text @click="openTranslationModal">
-                        更多语言
-                      </n-button>
+                      <n-button size="small" text @click="openTranslationModal">{{ $t('activity.formModal.k66f4') }}</n-button>
                     </div>
                     <div class="mb-2 flex gap-3">
                       <n-radio-group v-model:value="formData.nameType">
                         <n-space>
-                          <n-radio value="custom">自定义</n-radio>
-                          <n-radio value="system">系统自带</n-radio>
+                          <n-radio value="custom">{{ $t('activity.detailModal.k81ea') }}</n-radio>
+                          <n-radio value="system">{{ $t('activity.formModal.k7cfb') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
                     <n-input
                       v-model:value="formData.title"
-                      placeholder="请输入活动名称"
+                      :placeholder="$t('activity.formModal.k8bf7')"
                     />
                   </div>
 
                   <!-- Activity Time -->
                   <div>
                     <label class="mb-2 block text-sm font-medium text-gray-700"
-                      >* 活动时间</label
-                    >
+                      >{{ $t('activity.labels.lyi2m4h') }}</label
+                      >
                     <div class="flex gap-3">
                       <n-date-picker
                         v-model:value="formData.startTime"
                         type="datetime"
-                        placeholder="活动开始时间"
+                        :placeholder="$t('activity.detailModal.k6d3b5')"
                         class="flex-1"
                         :is-date-disabled="(ts: number) => ts < Date.now()"
                         clearable
@@ -119,7 +117,7 @@
                       <n-date-picker
                         v-model:value="formData.endTime"
                         type="datetime"
-                        placeholder="活动结束时间"
+                        :placeholder="$t('activity.detailModal.k6d3b6')"
                         class="flex-1"
                         :is-date-disabled="
                           (ts: number) =>
@@ -133,21 +131,19 @@
                     <n-checkbox
                       v-model:checked="formData.syncDisplayTime"
                       class="mt-2"
-                    >
-                      展示时间与活动时间保持一致
-                    </n-checkbox>
+                    >{{ $t('activity.formModal.k5c55') }}</n-checkbox>
                   </div>
 
                   <!-- Display Time (if not synced) -->
                   <div v-if="!formData.syncDisplayTime">
                     <label class="mb-2 block text-sm font-medium text-gray-700"
-                      >* 展示时间</label
-                    >
+                      >{{ $t('activity.labels.lwizqk9') }}</label
+                      >
                     <div class="flex gap-3">
                       <n-date-picker
                         v-model:value="formData.displayStartTime"
                         type="datetime"
-                        placeholder="客户端展示开始时间"
+                        :placeholder="$t('activity.formModal.k5ba2')"
                         class="flex-1"
                         :is-date-disabled="(ts: number) => ts < Date.now()"
                         clearable
@@ -156,7 +152,7 @@
                       <n-date-picker
                         v-model:value="formData.displayEndTime"
                         type="datetime"
-                        placeholder="客户端展示结束时间"
+                        :placeholder="$t('activity.formModal.k5ba22')"
                         class="flex-1"
                         :is-date-disabled="
                           (ts: number) =>
@@ -176,19 +172,19 @@
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
                       >
-                        * 循环方式
+                        {{ $t('activity.labels.lwxatv5') }}
                         <n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
                       </label>
                       <n-radio-group v-model:value="formData.loopMethod">
                         <n-space>
-                          <n-radio value="daily_cumulative">日累计循环</n-radio>
+                          <n-radio value="daily_cumulative">{{ $t('activity.formModal.k65e5') }}</n-radio>
                           <n-radio value="weekly_cumulative"
-                            >周累计循环</n-radio
+                            >{{ $t('activity.formModal.k5468') }}</n-radio
                           >
                           <n-radio value="monthly_cumulative"
-                            >月累计循环</n-radio
+                            >{{ $t('activity.formModal.k6708') }}</n-radio
                           >
                         </n-space>
                       </n-radio-group>
@@ -197,7 +193,7 @@
                     <!-- Time Limited -->
                     <div class="flex items-center justify-between">
                       <label class="block text-sm font-medium text-gray-700"
-                        >是否限时</label
+                        >{{ $t('activity.formModal.k662f') }}</label
                       >
                       <n-switch v-model:value="formData.isTimeLimited" />
                     </div>
@@ -206,21 +202,21 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >派发方式</label
+                        >{{ $t('activity.formModal.k6d3e') }}</label
                       >
                       <n-radio-group
                         v-model:value="formData.distributionMethod"
                       >
                         <n-space vertical>
-                          <n-radio value="auto_claim">系统立即自动派发</n-radio>
+                          <n-radio value="auto_claim">{{ $t('activity.formModal.k7cfb2') }}</n-radio>
                           <n-radio value="player_claim_expires"
-                            >玩家自领-过期作废</n-radio
+                            >{{ $t('activity.formModal.k73a9k8fc7') }}</n-radio
                           >
                           <n-radio value="player_claim_auto_after_expire"
-                            >玩家自领-过期自动派发</n-radio
+                            >{{ $t('activity.formModal.k73a9k8fc72') }}</n-radio
                           >
                           <n-radio value="player_apply_manual_approve"
-                            >玩家申请-人工派发</n-radio
+                            >{{ $t('activity.formModal.k73a9k4eba') }}</n-radio
                           >
                         </n-space>
                       </n-radio-group>
@@ -230,15 +226,15 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >领取时间</label
+                        >{{ $t('activity.rewardReport.k98862') }}</label
                       >
                       <n-radio-group v-model:value="formData.claimTime">
                         <n-space vertical>
-                          <n-radio value="next_day">次日领取</n-radio>
+                          <n-radio value="next_day">{{ $t('activity.formModal.k6b21') }}</n-radio>
                           <n-radio value="real_time"
-                            >实时领取(影响留存)</n-radio
+                            >{{ $t('activity.formModal.k5b9ek5f71') }}</n-radio
                           >
-                          <n-radio value="daily">每日</n-radio>
+                          <n-radio value="daily">{{ $t('activity.formModal.k6bcf') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -247,7 +243,7 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >选择时间</label
+                        >{{ $t('activity.formModal.k90096') }}</label
                       >
                       <div class="flex items-center gap-2">
                         <n-input-number
@@ -257,7 +253,7 @@
                           :min="0"
                           :max="23"
                         />
-                        <span class="text-sm text-gray-500">以后可领取</span>
+                        <span class="text-sm text-gray-500">{{ $t('activity.formModal.k4ee5') }}</span>
                       </div>
                     </div>
 
@@ -265,9 +261,7 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                      >
-                        奖励领取过期天数
-                        <n-icon size="16" class="ml-1 text-blue-500">
+                      >{{ $t('activity.formModal.k59562') }}<n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
                       </label>
@@ -283,15 +277,15 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >有效打码平台</label
+                        >{{ $t('activity.formModal.k67092') }}</label
                       >
 
                       <n-radio-group v-model:value="formData.wageringPlatform">
                         <n-space>
-                          <n-radio value="all_platforms">全部平台</n-radio>
-                          <n-radio value="specific_platforms">指定平台</n-radio>
+                          <n-radio value="all_platforms">{{ $t('activity.formModal.k5168') }}</n-radio>
+                          <n-radio value="specific_platforms">{{ $t('activity.formModal.k6307') }}</n-radio>
                           <n-radio value="exclude_platforms"
-                            >排除勾选平台</n-radio
+                            >{{ $t('activity.formModal.k6392') }}</n-radio
                           >
                         </n-space>
                       </n-radio-group>
@@ -315,13 +309,13 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >领取次数</label
+                        >{{ $t('activity.formModal.k9886') }}</label
                       >
                       <n-radio-group v-model:value="formData.claimCount">
                         <n-space vertical>
-                          <n-radio value="continuous_claim">可连续领取</n-radio>
+                          <n-radio value="continuous_claim">{{ $t('activity.formModal.k53ef') }}</n-radio>
                           <n-radio value="single_claim_only"
-                            >领取最高一档(只领一次)</n-radio
+                            >{{ $t('activity.formModal.k9886k53ea') }}</n-radio
                           >
                         </n-space>
                       </n-radio-group>
@@ -331,7 +325,7 @@
                     <div>
                       <label
                         class="mb-3 block text-sm font-medium text-gray-700"
-                        >奖励设置</label
+                        >{{ $t('activity.formModal.k59563') }}</label
                       >
                       <div class="overflow-hidden rounded-lg border">
                         <table class="w-full">
@@ -339,19 +333,13 @@
                             <tr>
                               <th
                                 class="border-b px-4 py-2 text-left text-sm font-medium text-gray-700"
-                              >
-                                有效投注额
-                              </th>
+                              >{{ $t('activity.formModal.k67093') }}</th>
                               <th
                                 class="border-b px-4 py-2 text-left text-sm font-medium text-gray-700"
-                              >
-                                奖励金额
-                              </th>
+                              >{{ $t('activity.formModal.k5956') }}</th>
                               <th
                                 class="w-16 border-b px-4 py-2 text-left text-sm font-medium text-gray-700"
-                              >
-                                操作
-                              </th>
+                              >{{ $t('activity.rewardReport.k64cd') }}</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -365,14 +353,14 @@
                               <td class="px-4 py-2">
                                 <n-input
                                   v-model:value="item.effectiveWageringAmount"
-                                  placeholder="请输入有效投注额"
+                                  :placeholder="$t('activity.formModal.k8bf72')"
                                   class="w-full"
                                 />
                               </td>
                               <td class="px-4 py-2">
                                 <n-input
                                   v-model:value="item.rewardAmount"
-                                  placeholder="请输入奖励金额"
+                                  :placeholder="$t('activity.formModal.k8bf73')"
                                   class="w-full"
                                 />
                               </td>
@@ -403,9 +391,7 @@
                         >
                           <n-icon size="16" class="mr-1">
                             <Add />
-                          </n-icon>
-                          添加奖励设置
-                        </n-button>
+                          </n-icon>{{ $t('activity.formModal.k6dfb') }}</n-button>
                       </div>
                     </div>
 
@@ -414,14 +400,14 @@
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
                       >
-                        * 奖励领取过期天数
+                        {{ $t('activity.labels.lihat34') }}
                         <n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
                       </label>
                       <n-input-number
                         v-model:value="formData.wageringRewardExpiryDays"
-                        placeholder="请输入过期天数"
+                        :placeholder="$t('activity.formModal.k8bf74')"
                         class="w-full"
                         :min="1"
                       />
@@ -434,9 +420,7 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                      >
-                        有效打码平台
-                        <n-icon size="16" class="ml-1 text-blue-500">
+                      >{{ $t('activity.formModal.k67092') }}<n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
                       </label>
@@ -445,10 +429,10 @@
                         v-model:value="formData.rescueWageringPlatform"
                       >
                         <n-space>
-                          <n-radio value="all_platforms">全部平台</n-radio>
-                          <n-radio value="specific_platforms">指定平台</n-radio>
+                          <n-radio value="all_platforms">{{ $t('activity.formModal.k5168') }}</n-radio>
+                          <n-radio value="specific_platforms">{{ $t('activity.formModal.k6307') }}</n-radio>
                           <n-radio value="exclude_platforms"
-                            >排除勾选平台</n-radio
+                            >{{ $t('activity.formModal.k6392') }}</n-radio
                           >
                         </n-space>
                       </n-radio-group>
@@ -472,9 +456,7 @@
 
                     <!-- Deduct Discounts -->
                     <div class="flex items-center justify-between">
-                      <label class="block text-sm font-medium text-gray-700">
-                        扣除优惠
-                        <n-icon size="16" class="ml-1 text-blue-500">
+                      <label class="block text-sm font-medium text-gray-700">{{ $t('activity.formModal.k6263') }}<n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
                       </label>
@@ -485,13 +467,13 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >亏损范围</label
+                        >{{ $t('activity.formModal.k4e8f2') }}</label
                       >
                       <n-radio-group v-model:value="formData.lossRange">
                         <n-space>
-                          <n-radio value="yesterday">昨日亏损</n-radio>
-                          <n-radio value="last_week">上周亏损</n-radio>
-                          <n-radio value="last_month">上月亏损</n-radio>
+                          <n-radio value="yesterday">{{ $t('activity.formModal.k6628') }}</n-radio>
+                          <n-radio value="last_week">{{ $t('activity.formModal.k4e0a') }}</n-radio>
+                          <n-radio value="last_month">{{ $t('activity.formModal.k4e0a2') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -500,11 +482,11 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >* 每日奖励上限</label
+                        >{{ $t('activity.labels.ls373il') }}</label
                       >
                       <n-input
                         v-model:value="formData.dailyRewardLimit"
-                        placeholder="请输入每日奖励上限"
+                        :placeholder="$t('activity.formModal.k8bf75')"
                         class="w-full"
                       />
                     </div>
@@ -513,20 +495,20 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >派发方式</label
+                        >{{ $t('activity.formModal.k6d3e') }}</label
                       >
                       <n-radio-group
                         v-model:value="formData.rescueDistributionMethod"
                       >
                         <n-space vertical>
                           <n-radio value="self_claim_expire"
-                            >玩家自领-过期作废</n-radio
+                            >{{ $t('activity.formModal.k73a9k8fc7') }}</n-radio
                           >
                           <n-radio value="self_claim_auto"
-                            >玩家自领-过期自动派发</n-radio
+                            >{{ $t('activity.formModal.k73a9k8fc72') }}</n-radio
                           >
                           <n-radio value="manual_distribution"
-                            >玩家申请-人工派发</n-radio
+                            >{{ $t('activity.formModal.k73a9k4eba') }}</n-radio
                           >
                         </n-space>
                       </n-radio-group>
@@ -536,12 +518,12 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >领取时间</label
+                        >{{ $t('activity.rewardReport.k98862') }}</label
                       >
                       <n-radio-group v-model:value="formData.rescueClaimTime">
                         <n-space>
-                          <n-radio value="next_day">次日领取</n-radio>
-                          <n-radio value="daily">每日</n-radio>
+                          <n-radio value="next_day">{{ $t('activity.formModal.k6b21') }}</n-radio>
+                          <n-radio value="daily">{{ $t('activity.formModal.k6bcf') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -550,7 +532,7 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >* 选择时间</label
+                        >{{ $t('activity.labels.l12yhkok') }}</label
                       >
                       <div class="flex items-center gap-2">
                         <n-time-picker
@@ -558,7 +540,7 @@
                           placeholder="00:00:00"
                           class="w-32"
                         />
-                        <span class="text-sm text-gray-600">以后可领取</span>
+                        <span class="text-sm text-gray-600">{{ $t('activity.formModal.k4ee5') }}</span>
                       </div>
                     </div>
 
@@ -567,7 +549,7 @@
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
                       >
-                        * 奖励领取过期天数
+                        {{ $t('activity.labels.lihat34') }}
                         <n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
@@ -584,11 +566,11 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >奖励类型</label
+                        >{{ $t('activity.rewardReport.k5956') }}</label
                       >
                       <n-select
                         v-model:value="formData.rewardType"
-                        placeholder="比例"
+                        :placeholder="$t('activity.formModal.k6bd4')"
                         :options="rewardTypeOptions"
                         class="w-full"
                       />
@@ -598,7 +580,7 @@
                     <div>
                       <label
                         class="mb-3 block text-sm font-medium text-gray-700"
-                        >奖励设置</label
+                        >{{ $t('activity.formModal.k59563') }}</label
                       >
                       <div class="space-y-3">
                         <div
@@ -609,11 +591,11 @@
                           <!-- Loss Amount -->
                           <div class="flex-1">
                             <label class="mb-1 block text-xs text-gray-600"
-                              >亏损金额</label
+                              >{{ $t('activity.formModal.k4e8f') }}</label
                             >
                             <n-input
                               v-model:value="item.lossAmount"
-                              placeholder="亏损金额"
+                              :placeholder="$t('activity.formModal.k4e8f')"
                               class="w-full"
                             />
                           </div>
@@ -621,7 +603,7 @@
                           <!-- Return Reward Ratio -->
                           <div class="flex-1">
                             <label class="mb-1 block text-xs text-gray-600"
-                              >返奖比例</label
+                              >{{ $t('activity.formModal.k8fd4') }}</label
                             >
                             <n-input-number
                               v-model:value="item.returnRatio"
@@ -655,9 +637,7 @@
                         >
                           <n-icon size="16" class="mr-1">
                             <Add />
-                          </n-icon>
-                          添加奖励设置
-                        </n-button>
+                          </n-icon>{{ $t('activity.formModal.k6dfb') }}</n-button>
                       </div>
                     </div>
                   </template>
@@ -668,16 +648,16 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >有效打码平台</label
+                        >{{ $t('activity.formModal.k67092') }}</label
                       >
                       <n-radio-group
                         v-model:value="formData.checkinWageringPlatform"
                       >
                         <n-space>
-                          <n-radio value="all_platforms">全部平台</n-radio>
-                          <n-radio value="specific_platforms">指定平台</n-radio>
+                          <n-radio value="all_platforms">{{ $t('activity.formModal.k5168') }}</n-radio>
+                          <n-radio value="specific_platforms">{{ $t('activity.formModal.k6307') }}</n-radio>
                           <n-radio value="exclude_platforms"
-                            >排除勾选平台</n-radio
+                            >{{ $t('activity.formModal.k6392') }}</n-radio
                           >
                         </n-space>
                       </n-radio-group>
@@ -687,19 +667,19 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >* 充值方式</label
+                        >{{ $t('activity.labels.luyqxz7') }}</label
                       >
                       <n-checkbox-group
                         v-model:value="formData.checkinRechargeMethods"
                         @update:value="handleCheckinRechargeMethodChange"
                       >
                         <div class="grid grid-cols-2 gap-2">
-                          <n-checkbox value="all">全选</n-checkbox>
+                          <n-checkbox value="all">{{ $t('activity.formModal.k51683') }}</n-checkbox>
                           <n-checkbox value="pix">PIX</n-checkbox>
                           <n-checkbox value="customer_service"
-                            >客服充值</n-checkbox
+                            >{{ $t('activity.formModal.k5ba23') }}</n-checkbox
                           >
-                          <n-checkbox value="merchant">银商充值</n-checkbox>
+                          <n-checkbox value="merchant">{{ $t('activity.formModal.k94f6') }}</n-checkbox>
                         </div>
                       </n-checkbox-group>
                     </div>
@@ -708,19 +688,15 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >* 签到方式</label
+                        >{{ $t('activity.labels.l10ar1y6') }}</label
                       >
                       <n-radio-group v-model:value="formData.signinMethod">
                         <n-space>
-                          <n-radio value="continuous">
-                            连续签到
-                            <n-icon size="16" class="ml-1 text-blue-500">
+                          <n-radio value="continuous">{{ $t('activity.formModal.k8fde') }}<n-icon size="16" class="ml-1 text-blue-500">
                               <HelpCircle />
                             </n-icon>
                           </n-radio>
-                          <n-radio value="accumulated">
-                            累计签到
-                            <n-icon size="16" class="ml-1 text-blue-500">
+                          <n-radio value="accumulated">{{ $t('activity.formModal.k7d2f') }}<n-icon size="16" class="ml-1 text-blue-500">
                               <HelpCircle />
                             </n-icon>
                           </n-radio>
@@ -732,14 +708,14 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >签到周期</label
+                        >{{ $t('activity.formModal.k7b7e') }}</label
                       >
                       <n-radio-group v-model:value="formData.signinPeriod">
                         <n-space>
-                          <n-radio value="7">7天</n-radio>
-                          <n-radio value="15">15天</n-radio>
-                          <n-radio value="30">30天</n-radio>
-                          <n-radio value="custom">自定义</n-radio>
+                          <n-radio value="7">{{ $t('activity.formModal.7') }}</n-radio>
+                          <n-radio value="15">{{ $t('activity.formModal.15') }}</n-radio>
+                          <n-radio value="30">{{ $t('activity.formModal.30') }}</n-radio>
+                          <n-radio value="custom">{{ $t('activity.detailModal.k81ea') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -747,16 +723,14 @@
                     <!-- Monthly Reset -->
                     <div class="flex items-center justify-between">
                       <label class="block text-sm font-medium text-gray-700"
-                        >每月重置</label
+                        >{{ $t('activity.formModal.k6bcf2') }}</label
                       >
                       <n-switch v-model:value="formData.monthlyReset" />
                     </div>
 
                     <!-- Pop-up After Recharge -->
                     <div class="flex items-center justify-between">
-                      <label class="block text-sm font-medium text-gray-700">
-                        充值成功后直接弹窗
-                        <n-icon size="16" class="ml-1 text-blue-500">
+                      <label class="block text-sm font-medium text-gray-700">{{ $t('activity.formModal.k51452') }}<n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
                       </label>
@@ -768,7 +742,7 @@
                     <!-- Enable Make-up Sign-in -->
                     <div class="flex items-center justify-between">
                       <label class="block text-sm font-medium text-gray-700"
-                        >是否开启补签</label
+                        >{{ $t('activity.formModal.k662f2') }}</label
                       >
                       <n-switch v-model:value="formData.enableMakeupSignin" />
                     </div>
@@ -777,15 +751,15 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >登录前弹窗方式</label
+                        >{{ $t('activity.formModal.k767b') }}</label
                       >
                       <n-radio-group
                         v-model:value="formData.checkinBeforeLoginPopup"
                       >
                         <n-space>
-                          <n-radio value="none">不弹窗</n-radio>
-                          <n-radio value="high_frequency">高频弹窗</n-radio>
-                          <n-radio value="daily">每日一次</n-radio>
+                          <n-radio value="none">{{ $t('activity.formModal.k4e0d') }}</n-radio>
+                          <n-radio value="high_frequency">{{ $t('activity.formModal.k9ad8') }}</n-radio>
+                          <n-radio value="daily">{{ $t('activity.formModal.k6bcf3') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -794,17 +768,17 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >登录后弹窗方式</label
+                        >{{ $t('activity.formModal.k767b2') }}</label
                       >
                       <n-radio-group
                         v-model:value="formData.checkinAfterLoginPopup"
                       >
                         <n-space>
-                          <n-radio value="none">不弹窗</n-radio>
-                          <n-radio value="high_frequency">高频弹窗</n-radio>
-                          <n-radio value="daily">每日一次</n-radio>
-                          <n-radio value="every_login">每次登录</n-radio>
-                          <n-radio value="once_only">只弹一次</n-radio>
+                          <n-radio value="none">{{ $t('activity.formModal.k4e0d') }}</n-radio>
+                          <n-radio value="high_frequency">{{ $t('activity.formModal.k9ad8') }}</n-radio>
+                          <n-radio value="daily">{{ $t('activity.formModal.k6bcf3') }}</n-radio>
+                          <n-radio value="every_login">{{ $t('activity.formModal.k6bcf4') }}</n-radio>
+                          <n-radio value="once_only">{{ $t('activity.formModal.k53ea2') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -813,13 +787,13 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >展示样式</label
+                        >{{ $t('activity.formModal.k5c552') }}</label
                       >
                       <n-radio-group v-model:value="formData.displayStyle">
                         <n-space>
-                          <n-radio value="calendar">样式1</n-radio>
-                          <n-radio value="list">样式2</n-radio>
-                          <n-radio value="cards">样式3</n-radio>
+                          <n-radio value="calendar">{{ $t('activity.formModal.k6837') }}</n-radio>
+                          <n-radio value="list">{{ $t('activity.formModal.k68372') }}</n-radio>
+                          <n-radio value="cards">{{ $t('activity.formModal.k68373') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -828,22 +802,24 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >样式预览</label
+                        >{{ $t('activity.formModal.k68374') }}</label
                       >
                       <div
                         class="flex h-48 w-32 items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50"
                       >
                         <div class="text-center text-xs text-gray-500">
                           <div>
-                            样式{{
-                              formData.displayStyle === 'calendar'
-                                ? '1'
-                                : formData.displayStyle === 'list'
-                                  ? '2'
-                                  : '3'
-                            }}预览
+                            {{
+                              $t('activity.labels.stylePreview', [
+                                formData.displayStyle === 'calendar'
+                                  ? '1'
+                                  : formData.displayStyle === 'list'
+                                    ? '2'
+                                    : '3',
+                              ])
+                            }}
                           </div>
-                          <div class="mt-2">签到活动弹窗</div>
+                          <div class="mt-2">{{ $t('activity.formModal.k7b7e2') }}</div>
                         </div>
                       </div>
                     </div>
@@ -852,16 +828,14 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >奖励方式</label
+                        >{{ $t('activity.formModal.k59564') }}</label
                       >
                       <n-radio-group
                         v-model:value="formData.checkinRewardMethod"
                       >
                         <n-space>
-                          <n-radio value="daily">全员统一</n-radio>
-                          <n-radio value="milestone">
-                            按VIP等级奖励
-                            <n-icon size="16" class="ml-1 text-blue-500">
+                          <n-radio value="daily">{{ $t('activity.formModal.k51682') }}</n-radio>
+                          <n-radio value="milestone">{{ $t('activity.formModal.k6309') }}<n-icon size="16" class="ml-1 text-blue-500">
                               <HelpCircle />
                             </n-icon>
                           </n-radio>
@@ -873,7 +847,7 @@
                     <div>
                       <label
                         class="mb-3 block text-sm font-medium text-gray-700"
-                        >奖励配置表</label
+                        >{{ $t('activity.formModal.k59565') }}</label
                       >
                       <div class="overflow-x-auto">
                         <table
@@ -883,39 +857,25 @@
                             <tr>
                               <th
                                 class="w-12 border-b px-3 py-2 text-left text-xs font-medium text-gray-700"
-                              >
-                                天
-                              </th>
+                              >{{ $t('activity.detailModal.k5929') }}</th>
                               <th
                                 class="min-w-[120px] border-b px-3 py-2 text-left text-xs font-medium text-gray-700"
-                              >
-                                类型
-                              </th>
+                              >{{ $t('activity.formModal.k7c7b') }}</th>
                               <th
                                 class="min-w-[100px] border-b px-3 py-2 text-left text-xs font-medium text-gray-700"
-                              >
-                                奖励金额
-                              </th>
+                              >{{ $t('activity.formModal.k5956') }}</th>
                               <th
                                 class="min-w-[100px] border-b px-3 py-2 text-left text-xs font-medium text-gray-700"
-                              >
-                                充值要求
-                              </th>
+                              >{{ $t('activity.formModal.k51453') }}</th>
                               <th
                                 class="min-w-[100px] border-b px-3 py-2 text-left text-xs font-medium text-gray-700"
-                              >
-                                打码要求
-                              </th>
+                              >{{ $t('activity.formModal.k6253') }}</th>
                               <th
                                 class="min-w-[100px] border-b px-3 py-2 text-left text-xs font-medium text-gray-700"
-                              >
-                                额外奖励
-                              </th>
+                              >{{ $t('activity.formModal.k989d') }}</th>
                               <th
                                 class="min-w-[160px] border-b px-3 py-2 text-left text-xs font-medium text-gray-700"
-                              >
-                                签到图标
-                              </th>
+                              >{{ $t('activity.formModal.k7b7e3') }}</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -930,7 +890,7 @@
                               <td class="px-3 py-2">
                                 <n-select
                                   v-model:value="item.type"
-                                  placeholder="固定"
+                                  :placeholder="$t('activity.formModal.k56fa')"
                                   :options="rewardTypeOptions"
                                   size="small"
                                   class="w-32 min-w-[120px]"
@@ -975,7 +935,7 @@
                                   <MediaLibrarySelector
                                     v-model="item.checkinIcon"
                                     category="checkin"
-                                    placeholder="选择图标"
+                                    :placeholder="$t('activity.formModal.k9009')"
                                     size="small"
                                     class="w-32 min-w-[120px]"
                                   />
@@ -1010,9 +970,7 @@
                         >
                           <n-icon size="16" class="mr-1">
                             <Add />
-                          </n-icon>
-                          添加签到天数
-                        </n-button>
+                          </n-icon>{{ $t('activity.formModal.k6dfb2') }}</n-button>
                       </div>
                     </div>
                   </template>
@@ -1023,16 +981,16 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >* 转盘开关</label
+                        >{{ $t('activity.labels.l12ykvit') }}</label
                       >
                       <n-checkbox-group
                         v-model:value="formData.turntableSwitches"
                       >
                         <div class="space-y-2">
-                          <n-checkbox value="all">全选</n-checkbox>
-                          <n-checkbox value="silver">白银转盘</n-checkbox>
-                          <n-checkbox value="gold">黄金转盘</n-checkbox>
-                          <n-checkbox value="diamond">钻石转盘</n-checkbox>
+                          <n-checkbox value="all">{{ $t('activity.formModal.k51683') }}</n-checkbox>
+                          <n-checkbox value="silver">{{ $t('activity.formModal.k767d') }}</n-checkbox>
+                          <n-checkbox value="gold">{{ $t('activity.formModal.k9ec4') }}</n-checkbox>
+                          <n-checkbox value="diamond">{{ $t('activity.formModal.k94bb') }}</n-checkbox>
                         </div>
                       </n-checkbox-group>
                     </div>
@@ -1041,9 +999,7 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                      >
-                        幸运值有效期
-                        <n-icon size="16" class="ml-1 text-blue-500">
+                      >{{ $t('activity.formModal.k5e78') }}<n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
                       </label>
@@ -1051,9 +1007,9 @@
                         v-model:value="formData.luckyValueValidityPeriod"
                       >
                         <n-space>
-                          <n-radio value="daily">每日</n-radio>
-                          <n-radio value="weekly">每周</n-radio>
-                          <n-radio value="monthly">每月</n-radio>
+                          <n-radio value="daily">{{ $t('activity.formModal.k6bcf') }}</n-radio>
+                          <n-radio value="weekly">{{ $t('activity.formModal.k6bcf5') }}</n-radio>
+                          <n-radio value="monthly">{{ $t('activity.formModal.k6bcf6') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -1062,14 +1018,14 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >奖励类型</label
+                        >{{ $t('activity.rewardReport.k5956') }}</label
                       >
                       <n-radio-group
                         v-model:value="formData.luckyspinRewardType"
                       >
                         <n-space>
-                          <n-radio value="valid_bet">有效投注</n-radio>
-                          <n-radio value="task_creation">任务创建</n-radio>
+                          <n-radio value="valid_bet">{{ $t('activity.formModal.k6709') }}</n-radio>
+                          <n-radio value="task_creation">{{ $t('activity.formModal.k4efb') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -1078,9 +1034,7 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                      >
-                        有效打码平台
-                        <n-icon size="16" class="ml-1 text-blue-500">
+                      >{{ $t('activity.formModal.k67092') }}<n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
                       </label>
@@ -1088,10 +1042,10 @@
                         v-model:value="formData.luckyspinWageringPlatform"
                       >
                         <n-space>
-                          <n-radio value="all_platforms">全部平台</n-radio>
-                          <n-radio value="specific_platforms">指定平台</n-radio>
+                          <n-radio value="all_platforms">{{ $t('activity.formModal.k5168') }}</n-radio>
+                          <n-radio value="specific_platforms">{{ $t('activity.formModal.k6307') }}</n-radio>
                           <n-radio value="exclude_platforms"
-                            >排除勾选平台</n-radio
+                            >{{ $t('activity.formModal.k6392') }}</n-radio
                           >
                         </n-space>
                       </n-radio-group>
@@ -1101,7 +1055,7 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >* 获得幸运值</label
+                        >{{ $t('activity.labels.lmkxz8u') }}</label
                       >
                       <div class="flex items-center gap-3">
                         <n-input-number
@@ -1111,7 +1065,7 @@
                           :min="1"
                         />
                         <span class="text-sm text-gray-600"
-                          >有效投注=1幸运值</span
+                          >{{ $t('activity.formModal.k67091') }}</span
                         >
                       </div>
                     </div>
@@ -1120,12 +1074,12 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >获奖公告</label
+                        >{{ $t('activity.formModal.k83b7') }}</label
                       >
                       <div class="space-y-3">
                         <div class="flex items-center justify-between">
                           <span class="text-sm text-gray-600"
-                            >开启获奖公告</span
+                            >{{ $t('activity.formModal.k5f002') }}</span
                           >
                           <n-switch
                             v-model:value="formData.enableWinningAnnouncement"
@@ -1136,7 +1090,7 @@
                           v-if="formData.enableWinningAnnouncement"
                           class="flex items-center gap-2"
                         >
-                          <span class="text-sm text-gray-600">每</span>
+                          <span class="text-sm text-gray-600">{{ $t('activity.formModal.k6bcf7') }}</span>
                           <n-input-number
                             v-model:value="formData.announcementInterval"
                             placeholder="24"
@@ -1144,7 +1098,7 @@
                             :min="1"
                           />
                           <span class="text-sm text-gray-600"
-                            >小时随机显示</span
+                            >{{ $t('activity.formModal.k5c0f') }}</span
                           >
                           <n-input-number
                             v-model:value="formData.announcementCount"
@@ -1152,14 +1106,12 @@
                             class="w-20"
                             :min="1"
                           />
-                          <span class="text-sm text-gray-600">条</span>
+                          <span class="text-sm text-gray-600">{{ $t('activity.formModal.k6761') }}</span>
                         </div>
 
                         <div
                           class="rounded bg-gray-50 p-2 text-xs text-gray-500"
-                        >
-                          抽中金额最大的三条奖励,会显示在获奖公告
-                        </div>
+                        >{{ $t('activity.formModal.k62bdk4f1a') }}</div>
                       </div>
                     </div>
                   </template>
@@ -1170,9 +1122,7 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                      >
-                        有效打码平台
-                        <n-icon size="16" class="ml-1 text-blue-500">
+                      >{{ $t('activity.formModal.k67092') }}<n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
                       </label>
@@ -1180,10 +1130,10 @@
                         v-model:value="formData.luckywagerWageringPlatform"
                       >
                         <n-space>
-                          <n-radio value="all_platforms">全部平台</n-radio>
-                          <n-radio value="specific_platforms">指定平台</n-radio>
+                          <n-radio value="all_platforms">{{ $t('activity.formModal.k5168') }}</n-radio>
+                          <n-radio value="specific_platforms">{{ $t('activity.formModal.k6307') }}</n-radio>
                           <n-radio value="exclude_platforms"
-                            >排除勾选平台</n-radio
+                            >{{ $t('activity.formModal.k6392') }}</n-radio
                           >
                         </n-space>
                       </n-radio-group>
@@ -1193,13 +1143,13 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >* 领取次数限制</label
+                        >{{ $t('activity.labels.l1gch4kb') }}</label
                       >
                       <n-radio-group v-model:value="formData.claimCountLimit">
                         <n-space>
-                          <n-radio value="fixed">固定次数</n-radio>
-                          <n-radio value="daily_recharge">当日充值</n-radio>
-                          <n-radio value="daily_wagering">当日打码</n-radio>
+                          <n-radio value="fixed">{{ $t('activity.formModal.k56fa2') }}</n-radio>
+                          <n-radio value="daily_recharge">{{ $t('activity.formModal.k5f53') }}</n-radio>
+                          <n-radio value="daily_wagering">{{ $t('activity.formModal.k5f532') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -1208,11 +1158,11 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >* 每日次数上限</label
+                        >{{ $t('activity.labels.lueqfa9') }}</label
                       >
                       <n-input
                         v-model:value="formData.dailyCountLimit"
-                        placeholder="请输入每日次数上限"
+                        :placeholder="$t('activity.formModal.k8bf76')"
                         class="w-full"
                       />
                     </div>
@@ -1221,11 +1171,11 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >* 总次数上限</label
+                        >{{ $t('activity.labels.lrdj69m') }}</label
                       >
                       <n-input
                         v-model:value="formData.totalCountLimit"
-                        placeholder="请输入活动总次数, 0表示不限制"
+                        :placeholder="$t('activity.formModal.k8bf70')"
                         class="w-full"
                       />
                     </div>
@@ -1234,11 +1184,11 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >* 最低有效投注金额</label
+                        >{{ $t('activity.labels.l1vsgv7m') }}</label
                       >
                       <n-input
                         v-model:value="formData.minimumValidBetAmount"
-                        placeholder="请输入金额"
+                        :placeholder="$t('activity.formModal.k8bf77')"
                         class="w-full"
                       />
                     </div>
@@ -1247,15 +1197,15 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >* 奖励方式</label
+                        >{{ $t('activity.labels.lvzqgav') }}</label
                       >
                       <n-radio-group
                         v-model:value="formData.luckywagerRewardMethod"
                       >
                         <n-space>
-                          <n-radio value="fixed_amount">固定金额</n-radio>
+                          <n-radio value="fixed_amount">{{ $t('activity.formModal.k56fa3') }}</n-radio>
                           <n-radio value="bet_multiple"
-                            >有效投注金额倍数</n-radio
+                            >{{ $t('activity.formModal.k67094') }}</n-radio
                           >
                         </n-space>
                       </n-radio-group>
@@ -1266,17 +1216,17 @@
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
                       >
-                        * 注单号规则
+                        {{ $t('activity.labels.l2ub955') }}
                         <n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
                       </label>
                       <n-radio-group v-model:value="formData.betSlipNumberRule">
                         <n-space>
-                          <n-radio value="ending_digits">尾号</n-radio>
-                          <n-radio value="consecutive_digits">连号</n-radio>
+                          <n-radio value="ending_digits">{{ $t('activity.formModal.k5c3e') }}</n-radio>
+                          <n-radio value="consecutive_digits">{{ $t('activity.formModal.k8fde2') }}</n-radio>
                           <n-radio value="contains_anywhere"
-                            >包含(任意位置)</n-radio
+                            >{{ $t('activity.formModal.k5305k4efb') }}</n-radio
                           >
                         </n-space>
                       </n-radio-group>
@@ -1287,19 +1237,19 @@
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
                       >
-                        * 大额审核金额
+                        {{ $t('activity.labels.lpda967') }}
                         <n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
                       </label>
                       <div class="flex items-center gap-2">
-                        <span class="text-sm text-gray-600">奖励金额 ≥</span>
+                        <span class="text-sm text-gray-600">{{ $t('activity.formModal.k59566') }}</span>
                         <n-input
                           v-model:value="formData.largeAmountReviewAmount"
-                          placeholder="请输入大额审核金额, 0表示不限制"
+                          :placeholder="$t('activity.formModal.k8bf702')"
                           class="flex-1"
                         />
-                        <span class="text-sm text-gray-600">需人工审核</span>
+                        <span class="text-sm text-gray-600">{{ $t('activity.formModal.k9700') }}</span>
                       </div>
                     </div>
 
@@ -1307,7 +1257,7 @@
                     <div>
                       <label
                         class="mb-3 block text-sm font-medium text-gray-700"
-                        >奖励配置</label
+                        >{{ $t('activity.formModal.k59567') }}</label
                       >
                       <div class="space-y-3">
                         <div
@@ -1320,11 +1270,11 @@
                           <!-- Bet Slip Ending Digits -->
                           <div class="flex-1">
                             <label class="mb-1 block text-xs text-gray-600"
-                              >注单尾号为</label
+                              >{{ $t('activity.formModal.k6ce8') }}</label
                             >
                             <n-input
                               v-model:value="item.betSlipEnding"
-                              placeholder="请输入"
+                              :placeholder="$t('activity.formModal.k8bf78')"
                               class="w-full"
                             />
                           </div>
@@ -1332,11 +1282,11 @@
                           <!-- Reward Amount -->
                           <div class="flex-1">
                             <label class="mb-1 block text-xs text-gray-600"
-                              >奖励金额</label
+                              >{{ $t('activity.formModal.k5956') }}</label
                             >
                             <n-input
                               v-model:value="item.rewardAmount"
-                              placeholder="请输入"
+                              :placeholder="$t('activity.formModal.k8bf78')"
                               class="w-full"
                             />
                           </div>
@@ -1364,9 +1314,7 @@
                         >
                           <n-icon size="16" class="mr-1">
                             <Add />
-                          </n-icon>
-                          添加奖励配置
-                        </n-button>
+                          </n-icon>{{ $t('activity.formModal.k6dfb3') }}</n-button>
                       </div>
                     </div>
                   </template>
@@ -1377,17 +1325,15 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                      >
-                        红包类型
-                        <n-icon size="16" class="ml-1 text-blue-500">
+                      >{{ $t('activity.formModal.k7ea2') }}<n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
                       </label>
                       <n-radio-group v-model:value="formData.redPacketType">
                         <n-space>
-                          <n-radio value="fixed">开红包</n-radio>
-                          <n-radio value="random">抢红包</n-radio>
-                          <n-radio value="progressive">送红包</n-radio>
+                          <n-radio value="fixed">{{ $t('activity.formModal.k5f003') }}</n-radio>
+                          <n-radio value="random">{{ $t('activity.formModal.k62a2') }}</n-radio>
+                          <n-radio value="progressive">{{ $t('activity.formModal.k9001') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -1396,7 +1342,7 @@
                     <div v-if="formData.redPacketType === 'random'">
                       <label
                         class="mb-3 block text-sm font-medium text-gray-700"
-                        >每日派发时间</label
+                        >{{ $t('activity.formModal.k6bcf8') }}</label
                       >
                       <div class="space-y-3">
                         <div
@@ -1416,7 +1362,7 @@
                               format="HH:mm"
                               class="w-24"
                             />
-                            <span class="text-gray-500">至</span>
+                            <span class="text-gray-500">{{ $t('activity.formModal.k81f3') }}</span>
                             <n-time-picker
                               v-model:value="item.endTime"
                               placeholder="23:59"
@@ -1448,9 +1394,7 @@
                         >
                           <n-icon size="16" class="mr-1">
                             <Add />
-                          </n-icon>
-                          添加派发时间
-                        </n-button>
+                          </n-icon>{{ $t('activity.formModal.k6dfb4') }}</n-button>
                       </div>
                     </div>
 
@@ -1458,16 +1402,16 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >领取条件</label
+                        >{{ $t('activity.formModal.k98862') }}</label
                       >
                       <n-radio-group
                         v-model:value="formData.redPacketClaimCondition"
                       >
                         <n-space>
-                          <n-radio value="none">无条件</n-radio>
-                          <n-radio value="deposit">累计充值</n-radio>
-                          <n-radio value="wagering">累计打码</n-radio>
-                          <n-radio value="signup">充值次数</n-radio>
+                          <n-radio value="none">{{ $t('activity.formModal.k65e0') }}</n-radio>
+                          <n-radio value="deposit">{{ $t('activity.formModal.k7d2f2') }}</n-radio>
+                          <n-radio value="wagering">{{ $t('activity.formModal.k7d2f3') }}</n-radio>
+                          <n-radio value="signup">{{ $t('activity.formModal.k51454') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -1476,9 +1420,7 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                      >
-                        安全验证
-                        <n-icon size="16" class="ml-1 text-blue-500">
+                      >{{ $t('activity.formModal.k5b89') }}<n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
                       </label>
@@ -1489,17 +1431,17 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >奖励类型</label
+                        >{{ $t('activity.rewardReport.k5956') }}</label
                       >
                       <n-radio-group
                         v-model:value="formData.redPacketRewardType"
                       >
                         <n-space>
-                          <n-radio value="fixed">固定金额</n-radio>
-                          <n-radio value="percent">百分比</n-radio>
-                          <n-radio value="points">积分</n-radio>
-                          <n-radio value="spins">旋转</n-radio>
-                          <n-radio value="coupon">优惠券</n-radio>
+                          <n-radio value="fixed">{{ $t('activity.formModal.k56fa3') }}</n-radio>
+                          <n-radio value="percent">{{ $t('activity.formModal.k767e') }}</n-radio>
+                          <n-radio value="points">{{ $t('activity.rewardReport.k79ef2') }}</n-radio>
+                          <n-radio value="spins">{{ $t('activity.formModal.k65cb') }}</n-radio>
+                          <n-radio value="coupon">{{ $t('activity.formModal.k4f18') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -1509,7 +1451,7 @@
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
                       >
-                        * 总计金额
+                        {{ $t('activity.labels.lx3lht4') }}
                         <n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
@@ -1527,7 +1469,7 @@
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
                       >
-                        * 每个时间段红包总数
+                        {{ $t('activity.labels.l1lwx21q') }}
                         <n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
@@ -1544,7 +1486,7 @@
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
                       >
-                        * 实际红包金额
+                        {{ $t('activity.labels.lz671bg') }}
                         <n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
@@ -1571,7 +1513,7 @@
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
                       >
-                        * 展示红包金额
+                        {{ $t('activity.labels.l89djt6') }}
                         <n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
@@ -1598,7 +1540,7 @@
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
                       >
-                        * 每个时间段限抢次数
+                        {{ $t('activity.labels.l1oyrz3b') }}
                         <n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
@@ -1615,7 +1557,7 @@
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
                       >
-                        * 每日限抢次数
+                        {{ $t('activity.labels.lzuj7cd') }}
                         <n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
@@ -1624,9 +1566,9 @@
                         v-model:value="formData.dailyGrabLimitType"
                       >
                         <n-space>
-                          <n-radio value="fixed">固定</n-radio>
-                          <n-radio value="daily_charge">当日充值</n-radio>
-                          <n-radio value="daily_bet">当日打码</n-radio>
+                          <n-radio value="fixed">{{ $t('activity.formModal.k56fa') }}</n-radio>
+                          <n-radio value="daily_charge">{{ $t('activity.formModal.k5f53') }}</n-radio>
+                          <n-radio value="daily_bet">{{ $t('activity.formModal.k5f532') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                       <n-input-number
@@ -1642,7 +1584,7 @@
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
                       >
-                        * 总次数上限
+                        {{ $t('activity.labels.lrdj69m') }}
                         <n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
@@ -1659,7 +1601,7 @@
                     <div>
                       <label
                         class="mb-3 block text-sm font-medium text-gray-700"
-                        >首页展示样式</label
+                        >{{ $t('activity.formModal.k9996') }}</label
                       >
 
                       <!-- Radio Button Selection -->
@@ -1683,7 +1625,7 @@
                       <div>
                         <label
                           class="mb-3 block text-sm font-medium text-gray-700"
-                          >样式预览</label
+                          >{{ $t('activity.formModal.k68374') }}</label
                         >
                         <div
                           class="flex justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-8"
@@ -1698,9 +1640,7 @@
                             <div
                               v-else
                               class="mx-auto flex h-32 w-32 items-center justify-center rounded-lg bg-gray-200 text-gray-500"
-                            >
-                              预览图片
-                            </div>
+                            >{{ $t('activity.formModal.k9884') }}</div>
                             <p class="mt-3 text-sm text-gray-600">
                               {{ getCurrentStyleLabel() }}
                             </p>
@@ -1716,12 +1656,12 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >投资类型</label
+                        >{{ $t('activity.formModal.k6295') }}</label
                       >
                       <n-radio-group v-model:value="formData.investmentType">
                         <n-space>
-                          <n-radio value="fixed_amount">固定金额</n-radio>
-                          <n-radio value="gift_by_ratio">按比例赠送</n-radio>
+                          <n-radio value="fixed_amount">{{ $t('activity.formModal.k56fa3') }}</n-radio>
+                          <n-radio value="gift_by_ratio">{{ $t('activity.formModal.k63092') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -1730,7 +1670,7 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >* 返奖天数</label
+                        >{{ $t('activity.labels.l12w2syn') }}</label
                       >
                       <n-input-number
                         v-model:value="formData.rewardDays"
@@ -1744,17 +1684,17 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >派发方式</label
+                        >{{ $t('activity.formModal.k6d3e') }}</label
                       >
                       <n-radio-group
                         v-model:value="formData.investmentDistributionMethod"
                       >
                         <n-space>
                           <n-radio value="daily_auto"
-                            >玩家自领-每日自动派发</n-radio
+                            >{{ $t('activity.formModal.k73a9k6bcf') }}</n-radio
                           >
                           <n-radio value="expired_auto"
-                            >玩家自领-过期自动派发</n-radio
+                            >{{ $t('activity.formModal.k73a9k8fc72') }}</n-radio
                           >
                         </n-space>
                       </n-radio-group>
@@ -1764,7 +1704,7 @@
                     <div>
                       <label
                         class="mb-3 block text-sm font-medium text-gray-700"
-                        >投资配置</label
+                        >{{ $t('activity.formModal.k62952') }}</label
                       >
                       <div class="overflow-x-auto">
                         <table class="w-full rounded-lg border border-gray-200">
@@ -1772,24 +1712,16 @@
                             <tr>
                               <th
                                 class="border-b px-3 py-2 text-left text-xs font-medium text-gray-700"
-                              >
-                                投资金额
-                              </th>
+                              >{{ $t('activity.formModal.k62953') }}</th>
                               <th
                                 class="border-b px-3 py-2 text-left text-xs font-medium text-gray-700"
-                              >
-                                赠送金额
-                              </th>
+                              >{{ $t('activity.detailModal.k8d60') }}</th>
                               <th
                                 class="border-b px-3 py-2 text-left text-xs font-medium text-gray-700"
-                              >
-                                累计返奖
-                              </th>
+                              >{{ $t('activity.formModal.k7d2f4') }}</th>
                               <th
                                 class="border-b px-3 py-2 text-left text-xs font-medium text-gray-700"
-                              >
-                                每日返奖
-                              </th>
+                              >{{ $t('activity.formModal.k6bcf9') }}</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -1803,7 +1735,7 @@
                               <td class="px-3 py-2">
                                 <n-input
                                   v-model:value="item.investmentAmount"
-                                  placeholder="请输入投资金额"
+                                  :placeholder="$t('activity.formModal.k8bf79')"
                                   size="small"
                                   class="w-full"
                                 />
@@ -1811,7 +1743,7 @@
                               <td class="px-3 py-2">
                                 <n-input
                                   v-model:value="item.giftAmount"
-                                  placeholder="请输入赠送金额"
+                                  :placeholder="$t('activity.formModal.k8bf710')"
                                   size="small"
                                   class="w-full"
                                 />
@@ -1839,9 +1771,7 @@
                         >
                           <n-icon size="16" class="mr-1">
                             <Add />
-                          </n-icon>
-                          添加投资配置
-                        </n-button>
+                          </n-icon>{{ $t('activity.formModal.k6dfb5') }}</n-button>
                       </div>
                     </div>
                   </template>
@@ -1852,18 +1782,18 @@
                     <div>
                       <label
                         class="mb-3 block text-sm font-medium text-gray-700"
-                        >有效会员标准</label
+                        >{{ $t('activity.formModal.k67095') }}</label
                       >
 
                       <!-- Accumulated Recharge -->
                       <div class="mb-3">
                         <label
                           class="mb-2 block text-sm font-medium text-gray-700"
-                          >* 累计充值</label
-                        >
+                          >{{ $t('activity.labels.l10qqv1b') }}</label
+                      >
                         <n-input
                           v-model:value="formData.promotionAccumulatedRecharge"
-                          placeholder="请输入累计充值, 0表示不限制"
+                          :placeholder="$t('activity.formModal.k8bf703')"
                           class="w-full"
                         />
                       </div>
@@ -1872,13 +1802,13 @@
                       <div class="mb-3">
                         <label
                           class="mb-2 block text-sm font-medium text-gray-700"
-                          >* 累计充值天数</label
-                        >
+                          >{{ $t('activity.labels.l7miy4m') }}</label
+                      >
                         <n-input
                           v-model:value="
                             formData.promotionAccumulatedRechargeDays
                           "
-                          placeholder="请输入累计充值天数, 0表示不限制"
+                          :placeholder="$t('activity.formModal.k8bf704')"
                           class="w-full"
                         />
                       </div>
@@ -1887,13 +1817,13 @@
                       <div class="mb-3">
                         <label
                           class="mb-2 block text-sm font-medium text-gray-700"
-                          >* 累计充值次数</label
-                        >
+                          >{{ $t('activity.labels.l7mm05q') }}</label
+                      >
                         <n-input
                           v-model:value="
                             formData.promotionAccumulatedRechargeCount
                           "
-                          placeholder="请输入累计充值次数, 0表示不限制"
+                          :placeholder="$t('activity.formModal.k8bf705')"
                           class="w-full"
                         />
                       </div>
@@ -1902,11 +1832,11 @@
                       <div class="mb-3">
                         <label
                           class="mb-2 block text-sm font-medium text-gray-700"
-                          >* 累计打码</label
-                        >
+                          >{{ $t('activity.labels.l10qtzbq') }}</label
+                      >
                         <n-input
                           v-model:value="formData.promotionAccumulatedWagering"
-                          placeholder="请输入金额, 0表示不限制"
+                          :placeholder="$t('activity.formModal.k8bf706')"
                           class="w-full"
                         />
                       </div>
@@ -1915,18 +1845,18 @@
                       <div class="mb-3">
                         <label
                           class="mb-2 block text-sm font-medium text-gray-700"
-                          >有效打码平台</label
+                          >{{ $t('activity.formModal.k67092') }}</label
                         >
                         <n-radio-group
                           v-model:value="formData.promotionWageringPlatform"
                         >
                           <n-space>
-                            <n-radio value="all_platforms">全部平台</n-radio>
+                            <n-radio value="all_platforms">{{ $t('activity.formModal.k5168') }}</n-radio>
                             <n-radio value="specific_platforms"
-                              >指定平台</n-radio
+                              >{{ $t('activity.formModal.k6307') }}</n-radio
                             >
                             <n-radio value="exclude_platforms"
-                              >排除勾选平台</n-radio
+                              >{{ $t('activity.formModal.k6392') }}</n-radio
                             >
                           </n-space>
                         </n-radio-group>
@@ -1954,7 +1884,7 @@
                       <!-- Download App and Login -->
                       <div class="mb-3 flex items-center justify-between">
                         <label class="block text-sm font-medium text-gray-700"
-                          >下载app并登录</label
+                          >{{ $t('activity.formModal.k4e0b') }}</label
                         >
                         <n-switch
                           v-model:value="formData.promotionDownloadAppLogin"
@@ -1966,18 +1896,18 @@
                     <div>
                       <label
                         class="mb-3 block text-sm font-medium text-gray-700"
-                        >统计人数限制</label
+                        >{{ $t('activity.formModal.k7edf') }}</label
                       >
 
                       <!-- Same Registration IP Limit -->
                       <div class="mb-3">
                         <label
                           class="mb-2 block text-sm font-medium text-gray-700"
-                          >* 同注册IP上限</label
-                        >
+                          >{{ $t('activity.labels.l1b84jvr') }}</label
+                      >
                         <n-input
                           v-model:value="formData.promotionSameIPLimit"
-                          placeholder="请输入同注册IP上限, 0表示不限制"
+                          :placeholder="$t('activity.formModal.k8bf707')"
                           class="w-full"
                         />
                       </div>
@@ -1986,11 +1916,11 @@
                       <div class="mb-3">
                         <label
                           class="mb-2 block text-sm font-medium text-gray-700"
-                          >* 同注册设备上限</label
-                        >
+                          >{{ $t('activity.labels.l1t6cb2h') }}</label
+                      >
                         <n-input
                           v-model:value="formData.promotionSameDeviceLimit"
-                          placeholder="请输入同注册设备上限, 0表示不限制"
+                          :placeholder="$t('activity.formModal.k8bf708')"
                           class="w-full"
                         />
                       </div>
@@ -2000,17 +1930,15 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >奖励类型</label
+                        >{{ $t('activity.rewardReport.k5956') }}</label
                       >
                       <n-radio-group
                         v-model:value="formData.promotionRewardType"
                       >
                         <n-space>
-                          <n-radio value="fixed_amount">固定金额</n-radio>
-                          <n-radio value="random_amount">随机金额</n-radio>
-                          <n-radio value="accumulated_daily">
-                            累计日结(只领取最高一档)
-                            <n-icon size="16" class="ml-1 text-blue-500">
+                          <n-radio value="fixed_amount">{{ $t('activity.formModal.k56fa3') }}</n-radio>
+                          <n-radio value="random_amount">{{ $t('activity.formModal.k968f') }}</n-radio>
+                          <n-radio value="accumulated_daily">{{ $t('activity.formModal.k7d2fk53ea') }}<n-icon size="16" class="ml-1 text-blue-500">
                               <HelpCircle />
                             </n-icon>
                           </n-radio>
@@ -2021,7 +1949,7 @@
                     <!-- Whether to Display on Agent Page -->
                     <div class="flex items-center justify-between">
                       <label class="block text-sm font-medium text-gray-700"
-                        >是否展示到代理页面</label
+                        >{{ $t('activity.formModal.k662f3') }}</label
                       >
                       <n-switch
                         v-model:value="formData.promotionDisplayOnAgentPage"
@@ -2030,9 +1958,7 @@
 
                     <!-- Whether to Allow Claiming Same Activity Type -->
                     <div class="flex items-center justify-between">
-                      <label class="block text-sm font-medium text-gray-700">
-                        是否允许玩家领同样类型的活动
-                      </label>
+                      <label class="block text-sm font-medium text-gray-700">{{ $t('activity.formModal.k662f4') }}</label>
                       <n-switch v-model:value="allowClaimSamePromotionType" />
                     </div>
 
@@ -2040,20 +1966,20 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >派发方式</label
+                        >{{ $t('activity.formModal.k6d3e') }}</label
                       >
                       <n-radio-group
                         v-model:value="formData.promotionDistributionMethod"
                       >
                         <n-space>
                           <n-radio value="expired_invalid"
-                            >玩家自领-过期作废</n-radio
+                            >{{ $t('activity.formModal.k73a9k8fc7') }}</n-radio
                           >
                           <n-radio value="expired_auto"
-                            >玩家自领-过期自动派发</n-radio
+                            >{{ $t('activity.formModal.k73a9k8fc72') }}</n-radio
                           >
                           <n-radio value="manual_distribution"
-                            >玩家申请-人工派发</n-radio
+                            >{{ $t('activity.formModal.k73a9k4eba') }}</n-radio
                           >
                         </n-space>
                       </n-radio-group>
@@ -2063,27 +1989,21 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >展示领取方式</label
+                        >{{ $t('activity.formModal.k5c553') }}</label
                       >
                       <n-radio-group
                         v-model:value="formData.promotionDisplayClaimMethod"
                       >
                         <n-space>
-                          <n-radio value="open_redpacket">
-                            开红包
-                            <n-icon size="16" class="ml-1 text-blue-500">
+                          <n-radio value="open_redpacket">{{ $t('activity.formModal.k5f003') }}<n-icon size="16" class="ml-1 text-blue-500">
                               <HelpCircle />
                             </n-icon>
                           </n-radio>
-                          <n-radio value="open_treasurechest">
-                            开宝箱
-                            <n-icon size="16" class="ml-1 text-blue-500">
+                          <n-radio value="open_treasurechest">{{ $t('activity.formModal.k5f004') }}<n-icon size="16" class="ml-1 text-blue-500">
                               <HelpCircle />
                             </n-icon>
                           </n-radio>
-                          <n-radio value="claim_button">
-                            领取按钮
-                            <n-icon size="16" class="ml-1 text-blue-500">
+                          <n-radio value="claim_button">{{ $t('activity.formModal.k98863') }}<n-icon size="16" class="ml-1 text-blue-500">
                               <HelpCircle />
                             </n-icon>
                           </n-radio>
@@ -2095,14 +2015,14 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >是否显示金额</label
+                        >{{ $t('activity.formModal.k662f5') }}</label
                       >
                       <n-radio-group
                         v-model:value="formData.promotionDisplayAmount"
                       >
                         <n-space>
-                          <n-radio value="hide">不显示</n-radio>
-                          <n-radio value="show">显示</n-radio>
+                          <n-radio value="hide">{{ $t('activity.formModal.k4e0d2') }}</n-radio>
+                          <n-radio value="show">{{ $t('activity.formModal.k663e') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -2111,7 +2031,7 @@
                     <div>
                       <div class="mb-3 flex items-center justify-between">
                         <label class="block text-sm font-medium text-gray-700"
-                          >奖励设置</label
+                          >{{ $t('activity.formModal.k59563') }}</label
                         >
                         <div class="flex items-center gap-2">
                           <n-button
@@ -2119,17 +2039,13 @@
                             type="info"
                             text
                             @click="downloadPromotionTemplate"
-                          >
-                            下载模板
-                          </n-button>
+                          >{{ $t('activity.formModal.k4e0b2') }}</n-button>
                           <n-button
                             size="small"
                             type="primary"
                             text
                             @click="batchImportPromotion"
-                          >
-                            批量导入 (CSV/Excel)
-                            <n-icon size="16" class="ml-1 text-blue-500">
+                          >{{ $t('activity.formModal.k6279CSVExcel') }}<n-icon size="16" class="ml-1 text-blue-500">
                               <HelpCircle />
                             </n-icon>
                           </n-button>
@@ -2142,14 +2058,10 @@
                             <tr>
                               <th
                                 class="border-b px-3 py-2 text-left text-xs font-medium text-gray-700"
-                              >
-                                有效推广人数
-                              </th>
+                              >{{ $t('activity.formModal.k67096') }}</th>
                               <th
                                 class="border-b px-3 py-2 text-left text-xs font-medium text-gray-700"
-                              >
-                                奖励金额
-                              </th>
+                              >{{ $t('activity.formModal.k5956') }}</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -2163,7 +2075,7 @@
                               <td class="px-3 py-2">
                                 <n-input
                                   v-model:value="item.effectivePromotionCount"
-                                  placeholder="请输入有效推广人数"
+                                  :placeholder="$t('activity.formModal.k8bf711')"
                                   size="small"
                                   class="w-full"
                                 />
@@ -2171,7 +2083,7 @@
                               <td class="px-3 py-2">
                                 <n-input
                                   v-model:value="item.rewardAmount"
-                                  placeholder="请输入奖励金额"
+                                  :placeholder="$t('activity.formModal.k8bf73')"
                                   size="small"
                                   class="w-full"
                                 />
@@ -2189,9 +2101,7 @@
                         >
                           <n-icon size="16" class="mr-1">
                             <Add />
-                          </n-icon>
-                          添加奖励设置
-                        </n-button>
+                          </n-icon>{{ $t('activity.formModal.k6dfb') }}</n-button>
                       </div>
                     </div>
                   </template>
@@ -2201,7 +2111,7 @@
                     <!-- Whether to Display on Agent Page -->
                     <div class="flex items-center justify-between">
                       <label class="block text-sm font-medium text-gray-700"
-                        >是否展示到代理页面</label
+                        >{{ $t('activity.formModal.k662f3') }}</label
                       >
                       <n-switch
                         v-model:value="formData.agentDisplayOnAgentPage"
@@ -2212,20 +2122,20 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >派发方式</label
+                        >{{ $t('activity.formModal.k6d3e') }}</label
                       >
                       <n-radio-group
                         v-model:value="formData.agentDistributionMethod"
                       >
                         <n-space>
                           <n-radio value="expired_invalid"
-                            >玩家自领-过期作废</n-radio
+                            >{{ $t('activity.formModal.k73a9k8fc7') }}</n-radio
                           >
                           <n-radio value="expired_auto"
-                            >玩家自领-过期自动派发</n-radio
+                            >{{ $t('activity.formModal.k73a9k8fc72') }}</n-radio
                           >
                           <n-radio value="manual_distribution"
-                            >玩家申请-人工派发</n-radio
+                            >{{ $t('activity.formModal.k73a9k4eba') }}</n-radio
                           >
                         </n-space>
                       </n-radio-group>
@@ -2236,7 +2146,7 @@
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
                       >
-                        * 奖励领取过期天数
+                        {{ $t('activity.labels.lihat34') }}
                         <n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
@@ -2253,13 +2163,13 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >返奖周期</label
+                        >{{ $t('activity.formModal.k8fd42') }}</label
                       >
                       <n-radio-group v-model:value="formData.agentRewardCycle">
                         <n-space>
-                          <n-radio value="daily">每日返奖</n-radio>
-                          <n-radio value="weekly">每周返奖</n-radio>
-                          <n-radio value="monthly">每月返奖</n-radio>
+                          <n-radio value="daily">{{ $t('activity.formModal.k6bcf9') }}</n-radio>
+                          <n-radio value="weekly">{{ $t('activity.formModal.k6bcf10') }}</n-radio>
+                          <n-radio value="monthly">{{ $t('activity.formModal.k6bcf11') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -2268,17 +2178,15 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >返奖类型</label
+                        >{{ $t('activity.formModal.k8fd43') }}</label
                       >
                       <n-radio-group v-model:value="formData.agentRewardType">
                         <n-space>
-                          <n-radio value="agent_rebate">代理返佣</n-radio>
+                          <n-radio value="agent_rebate">{{ $t('activity.formModal.k4ee3') }}</n-radio>
                           <n-radio value="direct_member_accumulated_recharge"
-                            >直属会员累计充值</n-radio
+                            >{{ $t('activity.formModal.k76f4') }}</n-radio
                           >
-                          <n-radio value="direct_member_first_recharge">
-                            直属会员首充
-                            <n-icon size="16" class="ml-1 text-blue-500">
+                          <n-radio value="direct_member_first_recharge">{{ $t('activity.formModal.k76f42') }}<n-icon size="16" class="ml-1 text-blue-500">
                               <HelpCircle />
                             </n-icon>
                           </n-radio>
@@ -2290,15 +2198,15 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >奖励类型</label
+                        >{{ $t('activity.rewardReport.k5956') }}</label
                       >
                       <n-radio-group
                         v-model:value="formData.agentRewardAmountType"
                       >
                         <n-space>
-                          <n-radio value="fixed_amount">固定金额</n-radio>
+                          <n-radio value="fixed_amount">{{ $t('activity.formModal.k56fa3') }}</n-radio>
                           <n-radio value="proportional_amount"
-                            >比例金额</n-radio
+                            >{{ $t('activity.formModal.k6bd42') }}</n-radio
                           >
                         </n-space>
                       </n-radio-group>
@@ -2308,7 +2216,7 @@
                     <div>
                       <label
                         class="mb-3 block text-sm font-medium text-gray-700"
-                        >奖励设置</label
+                        >{{ $t('activity.formModal.k59563') }}</label
                       >
                       <div class="space-y-3">
                         <div
@@ -2319,11 +2227,11 @@
                           <!-- Rebate Amount -->
                           <div class="flex-1">
                             <label class="mb-1 block text-xs text-gray-600"
-                              >返佣金额</label
+                              >{{ $t('activity.formModal.k8fd44') }}</label
                             >
                             <n-input
                               v-model:value="item.rebateAmount"
-                              placeholder="请输入返佣金额"
+                              :placeholder="$t('activity.formModal.k8bf712')"
                               class="w-full"
                             />
                           </div>
@@ -2331,11 +2239,11 @@
                           <!-- Reward Amount -->
                           <div class="flex-1">
                             <label class="mb-1 block text-xs text-gray-600"
-                              >奖励金额</label
+                              >{{ $t('activity.formModal.k5956') }}</label
                             >
                             <n-input
                               v-model:value="item.rewardAmount"
-                              placeholder="奖励金额"
+                              :placeholder="$t('activity.formModal.k5956')"
                               class="w-full"
                             />
                           </div>
@@ -2363,9 +2271,7 @@
                         >
                           <n-icon size="16" class="mr-1">
                             <Add />
-                          </n-icon>
-                          添加奖励设置
-                        </n-button>
+                          </n-icon>{{ $t('activity.formModal.k6dfb') }}</n-button>
                       </div>
                     </div>
                   </template>
@@ -2376,14 +2282,14 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >集字组合</label
+                        >{{ $t('activity.formModal.k96c6') }}</label
                       >
                       <div class="space-y-3">
                         <!-- Combination Type -->
                         <div>
                           <n-select
                             v-model:value="formData.collectCombinationType"
-                            placeholder="节日语"
+                            :placeholder="$t('activity.formModal.k8282')"
                             :options="collectCombinationOptions"
                             class="w-full"
                           />
@@ -2393,7 +2299,7 @@
                         <div>
                           <n-select
                             v-model:value="formData.collectCombinationName"
-                            placeholder="新年大吉"
+                            :placeholder="$t('activity.formModal.k65b0')"
                             :options="collectCombinationNameOptions"
                             class="w-full"
                           />
@@ -2416,15 +2322,15 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >瓜分金额方式</label
+                        >{{ $t('activity.formModal.k74dc') }}</label
                       >
                       <n-radio-group
                         v-model:value="formData.collectDistributionMethod"
                       >
                         <n-space>
-                          <n-radio value="daily">每日瓜分</n-radio>
-                          <n-radio value="weekly">每周瓜分</n-radio>
-                          <n-radio value="monthly">每月瓜分</n-radio>
+                          <n-radio value="daily">{{ $t('activity.formModal.k6bcf12') }}</n-radio>
+                          <n-radio value="weekly">{{ $t('activity.formModal.k6bcf13') }}</n-radio>
+                          <n-radio value="monthly">{{ $t('activity.formModal.k6bcf14') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -2433,7 +2339,7 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >* 奖励领取过期天数</label
+                        >{{ $t('activity.labels.lihat34') }}</label
                       >
                       <n-input-number
                         v-model:value="formData.collectRewardClaimExpiryDays"
@@ -2447,11 +2353,11 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >* 实际瓜分金额</label
+                        >{{ $t('activity.labels.lxxo71v') }}</label
                       >
                       <n-input
                         v-model:value="formData.collectActualDistributionAmount"
-                        :placeholder="`请输入${getDistributionMethodText()}瓜分`"
+                        :placeholder="$t('activity.formModal.enterDistributionShare', [getDistributionMethodText()])"
                         class="w-full"
                       />
                     </div>
@@ -2460,13 +2366,13 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >* 展示瓜分金额</label
+                        >{{ $t('activity.labels.l70upjl') }}</label
                       >
                       <n-input
                         v-model:value="
                           formData.collectDisplayedDistributionAmount
                         "
-                        :placeholder="`请输入${getDistributionMethodText()}瓜分`"
+                        :placeholder="$t('activity.formModal.enterDistributionShare', [getDistributionMethodText()])"
                         class="w-full"
                       />
                     </div>
@@ -2475,15 +2381,13 @@
                     <div>
                       <label
                         class="mb-3 block text-sm font-medium text-gray-700"
-                        >集字获得途径</label
+                        >{{ $t('activity.formModal.k96c62') }}</label
                       >
 
                       <!-- Important Note -->
                       <div
                         class="mb-3 rounded bg-orange-50 p-2 text-xs text-orange-600"
-                      >
-                        重要提示:获取条件修改后,次日才生效
-                      </div>
+                      >{{ $t('activity.formModal.k91cdk83b7k6b21') }}</div>
 
                       <!-- Conditions Table -->
                       <div class="space-y-3">
@@ -2495,11 +2399,11 @@
                           <!-- Type -->
                           <div class="flex-1">
                             <label class="mb-1 block text-xs text-gray-600"
-                              >类型</label
+                              >{{ $t('activity.formModal.k7c7b') }}</label
                             >
                             <n-select
                               v-model:value="item.type"
-                              placeholder="有效投注"
+                              :placeholder="$t('activity.formModal.k6709')"
                               :options="collectConditionTypeOptions"
                               size="small"
                               class="w-full"
@@ -2509,11 +2413,11 @@
                           <!-- Condition Value -->
                           <div class="flex-1">
                             <label class="mb-1 block text-xs text-gray-600"
-                              >条件值</label
+                              >{{ $t('activity.formModal.k67612') }}</label
                             >
                             <n-input
                               v-model:value="item.conditionValue"
-                              placeholder="请输入"
+                              :placeholder="$t('activity.formModal.k8bf78')"
                               size="small"
                               class="w-full"
                             />
@@ -2522,11 +2426,11 @@
                           <!-- Daily Count Limit -->
                           <div class="flex-1">
                             <label class="mb-1 block text-xs text-gray-600"
-                              >每日次数上限</label
+                              >{{ $t('activity.formModal.k6bcf15') }}</label
                             >
                             <n-input
                               v-model:value="item.dailyCountLimit"
-                              placeholder="请输入"
+                              :placeholder="$t('activity.formModal.k8bf78')"
                               size="small"
                               class="w-full"
                             />
@@ -2555,9 +2459,7 @@
                         >
                           <n-icon size="16" class="mr-1">
                             <Add />
-                          </n-icon>
-                          添加集字条件
-                        </n-button>
+                          </n-icon>{{ $t('activity.formModal.k6dfb6') }}</n-button>
                       </div>
                     </div>
                   </template>
@@ -2568,7 +2470,7 @@
                     <div>
                       <label
                         class="mb-3 block text-sm font-medium text-gray-700"
-                        >队伍配置</label
+                        >{{ $t('activity.formModal.k961f') }}</label
                       >
                       <div class="overflow-x-auto">
                         <table class="w-full rounded-lg border border-gray-200">
@@ -2576,24 +2478,16 @@
                             <tr>
                               <th
                                 class="border-b px-3 py-2 text-left text-xs font-medium text-gray-700"
-                              >
-                                编号
-                              </th>
+                              >{{ $t('activity.formModal.k7f16') }}</th>
                               <th
                                 class="border-b px-3 py-2 text-left text-xs font-medium text-gray-700"
-                              >
-                                队伍Icon
-                              </th>
+                              >{{ $t('activity.formModal.k961f2') }}</th>
                               <th
                                 class="border-b px-3 py-2 text-left text-xs font-medium text-gray-700"
-                              >
-                                队伍中文名
-                              </th>
+                              >{{ $t('activity.formModal.k961f3') }}</th>
                               <th
                                 class="border-b px-3 py-2 text-left text-xs font-medium text-gray-700"
-                              >
-                                队伍英文名
-                              </th>
+                              >{{ $t('activity.formModal.k961f4') }}</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -2618,7 +2512,7 @@
                               <td class="px-3 py-2">
                                 <n-input
                                   v-model:value="team.chineseName"
-                                  placeholder="请输入队伍中文名"
+                                  :placeholder="$t('activity.formModal.k8bf713')"
                                   size="small"
                                   class="w-full"
                                 />
@@ -2626,7 +2520,7 @@
                               <td class="px-3 py-2">
                                 <n-input
                                   v-model:value="team.englishName"
-                                  placeholder="请输入队伍英文名"
+                                  :placeholder="$t('activity.formModal.k8bf714')"
                                   size="small"
                                   class="w-full"
                                 />
@@ -2646,28 +2540,24 @@
                         >
                           <n-icon size="16" class="mr-1">
                             <Add />
-                          </n-icon>
-                          添加队伍
-                        </n-button>
+                          </n-icon>{{ $t('activity.formModal.k6dfb7') }}</n-button>
                       </div>
 
                       <!-- Image Upload Instructions -->
                       <div
                         class="mt-3 rounded bg-gray-50 p-2 text-xs text-gray-500"
-                      >
-                        只能上传png,jpeg,jpg格式图片,且不超过1mb,图片尺寸100px*100px
-                      </div>
+                      >{{ $t('activity.formModal.k53eaJpegJpgk4e14k56fe100px') }}</div>
                     </div>
 
                     <!-- Participation Conditions -->
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >* 参与条件</label
+                        >{{ $t('activity.labels.lv9qdtj') }}</label
                       >
                       <n-select
                         v-model:value="formData.guessingParticipationCondition"
-                        placeholder="无条件"
+                        :placeholder="$t('activity.formModal.k65e0')"
                         :options="guessingParticipationOptions"
                         class="w-full"
                       />
@@ -2677,11 +2567,11 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >* 获取积分</label
+                        >{{ $t('activity.labels.l11cf7fw') }}</label
                       >
                       <n-select
                         v-model:value="formData.guessingObtainPoints"
-                        placeholder="请选择"
+                        :placeholder="$t('activity.labels.pleaseSelect')"
                         :options="guessingObtainPointsOptions"
                         class="w-full"
                       />
@@ -2692,14 +2582,14 @@
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
                       >
-                        * 积分上限
+                        {{ $t('activity.labels.l103joxf') }}
                         <n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
                       </label>
                       <n-input
                         v-model:value="formData.guessingPointLimit"
-                        placeholder="请输入积分上限,0表示不限制"
+                        :placeholder="$t('activity.formModal.k8bf709')"
                         class="w-full"
                       />
                     </div>
@@ -2708,18 +2598,18 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >* 下注限额</label
+                        >{{ $t('activity.labels.luojaf4') }}</label
                       >
                       <div class="flex items-center gap-2">
                         <n-input
                           v-model:value="formData.guessingBettingLimitMin"
-                          placeholder="请输入最低限额"
+                          :placeholder="$t('activity.formModal.k8bf715')"
                           class="flex-1"
                         />
                         <span class="text-gray-500">-</span>
                         <n-input
                           v-model:value="formData.guessingBettingLimitMax"
-                          placeholder="请输入最高限额"
+                          :placeholder="$t('activity.formModal.k8bf716')"
                           class="flex-1"
                         />
                       </div>
@@ -2729,13 +2619,13 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >* 实际瓜分金额</label
+                        >{{ $t('activity.labels.lxxo71v') }}</label
                       >
                       <n-input
                         v-model:value="
                           formData.guessingActualDistributionAmount
                         "
-                        placeholder="请输入实际瓜分金额"
+                        :placeholder="$t('activity.formModal.k8bf717')"
                         class="w-full"
                       />
                     </div>
@@ -2744,13 +2634,13 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >* 展示瓜分金额</label
+                        >{{ $t('activity.labels.l70upjl') }}</label
                       >
                       <n-input
                         v-model:value="
                           formData.guessingDisplayedDistributionAmount
                         "
-                        placeholder="请输入展示瓜分金额"
+                        :placeholder="$t('activity.formModal.k8bf718')"
                         class="w-full"
                       />
                     </div>
@@ -2759,17 +2649,17 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >瓜分方式</label
+                        >{{ $t('activity.formModal.k74dc2') }}</label
                       >
                       <n-radio-group
                         v-model:value="formData.guessingDistributionMethod"
                       >
                         <n-space>
                           <n-radio value="all_members"
-                            >未下注会员可参与瓜分</n-radio
+                            >{{ $t('activity.formModal.k672a') }}</n-radio
                           >
                           <n-radio value="betting_members_only"
-                            >仅下注会员参与瓜分</n-radio
+                            >{{ $t('activity.formModal.k4ec5') }}</n-radio
                           >
                         </n-space>
                       </n-radio-group>
@@ -2784,7 +2674,7 @@
                           <HelpCircle />
                         </n-icon>
                         <span class="text-sm"
-                          >请保存后选择录入赛况,更新比赛数据</span
+                          >{{ $t('activity.formModal.k8bf7k66f4') }}</span
                         >
                       </div>
                     </div>
@@ -2796,29 +2686,25 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                      >
-                        优惠类型
-                        <n-icon size="16" class="ml-1 text-blue-500">
+                      >{{ $t('activity.formModal.k4f182') }}<n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
                       </label>
                       <n-select
                         v-model:value="formData.newbiePromotionType"
-                        placeholder="通用型兑换码（填写即可领奖）"
+                        :placeholder="$t('activity.formModal.k901ak586b')"
                         :options="newbiePromotionTypeOptions"
                         class="w-full"
                         disabled
                       />
-                      <div class="mt-1 text-xs text-gray-500">
-                        新人彩金活动自动使用通用型兑换码
-                      </div>
+                      <div class="mt-1 text-xs text-gray-500">{{ $t('activity.formModal.k65b02') }}</div>
                     </div>
 
                     <!-- Redemption Code, Total Usage Count, Validity Period -->
                     <div>
                       <label
                         class="mb-3 block text-sm font-medium text-gray-700"
-                        >兑换码 总使用次数 有效期</label
+                        >{{ $t('activity.formModal.k5151k603bk6709') }}</label
                       >
 
                       <!-- Batch Import and Download Template -->
@@ -2828,17 +2714,13 @@
                           type="info"
                           text
                           @click="downloadNewbieTemplate"
-                        >
-                          下载模板
-                        </n-button>
+                        >{{ $t('activity.formModal.k4e0b2') }}</n-button>
                         <n-button
                           size="small"
                           type="primary"
                           text
                           @click="batchImportNewbie"
-                        >
-                          批量导入
-                          <n-icon size="16" class="ml-1 text-blue-500">
+                        >{{ $t('activity.formModal.k6279') }}<n-icon size="16" class="ml-1 text-blue-500">
                             <HelpCircle />
                           </n-icon>
                         </n-button>
@@ -2856,11 +2738,11 @@
                           <!-- Redemption Code -->
                           <div class="flex-1">
                             <label class="mb-1 block text-xs text-gray-600"
-                              >兑换码</label
+                              >{{ $t('activity.formModal.k5151') }}</label
                             >
                             <n-input
                               v-model:value="item.redemptionCode"
-                              placeholder="请输入优惠码数字"
+                              :placeholder="$t('activity.formModal.k8bf719')"
                               class="w-full"
                             />
                           </div>
@@ -2868,11 +2750,11 @@
                           <!-- Total Usage Count -->
                           <div class="flex-1">
                             <label class="mb-1 block text-xs text-gray-600"
-                              >总使用次数</label
+                              >{{ $t('activity.formModal.k603b') }}</label
                             >
                             <n-input
                               v-model:value="item.totalUsageCount"
-                              placeholder="使用次数, 0表示不限制"
+                              :placeholder="$t('activity.formModal.k4f7f0')"
                               class="w-full"
                             />
                           </div>
@@ -2880,11 +2762,11 @@
                           <!-- Validity Period Start -->
                           <div class="flex-1">
                             <label class="mb-1 block text-xs text-gray-600"
-                              >有效期开始</label
+                              >{{ $t('activity.formModal.k67097') }}</label
                             >
                             <n-date-picker
                               v-model:value="item.startTime"
-                              placeholder="开始时间"
+                              :placeholder="$t('activity.formModal.k5f00')"
                               class="w-full"
                             />
                           </div>
@@ -2892,11 +2774,11 @@
                           <!-- Validity Period End -->
                           <div class="flex-1">
                             <label class="mb-1 block text-xs text-gray-600"
-                              >有效期结束</label
+                              >{{ $t('activity.formModal.k67098') }}</label
                             >
                             <n-date-picker
                               v-model:value="item.endTime"
-                              placeholder="结束时间"
+                              :placeholder="$t('activity.formModal.k7ed3')"
                               class="w-full"
                             />
                           </div>
@@ -2924,9 +2806,7 @@
                         >
                           <n-icon size="16" class="mr-1">
                             <Add />
-                          </n-icon>
-                          添加兑换设置
-                        </n-button>
+                          </n-icon>{{ $t('activity.formModal.k6dfb8') }}</n-button>
                       </div>
                     </div>
 
@@ -2934,17 +2814,17 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >获取兑换码方式</label
+                        >{{ $t('activity.formModal.k83b72') }}</label
                       >
                       <n-radio-group
                         v-model:value="formData.newbieRedemptionMethod"
                       >
                         <n-space>
-                          <n-radio value="click_link">点击链接获取</n-radio>
+                          <n-radio value="click_link">{{ $t('activity.formModal.k70b9') }}</n-radio>
                           <n-radio value="private_promotion"
-                            >私下推广发送</n-radio
+                            >{{ $t('activity.formModal.k79c1') }}</n-radio
                           >
-                          <n-radio value="user_click">用户点击获取</n-radio>
+                          <n-radio value="user_click">{{ $t('activity.formModal.k7528') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -2953,12 +2833,12 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >* 赠送方式</label
+                        >{{ $t('activity.labels.l12t06bx') }}</label
                       >
                       <n-radio-group v-model:value="formData.newbieGiftMethod">
                         <n-space>
-                          <n-radio value="fixed_bonus">固定彩金</n-radio>
-                          <n-radio value="proportional_gift">随机彩金</n-radio>
+                          <n-radio value="fixed_bonus">{{ $t('activity.formModal.k56fa4') }}</n-radio>
+                          <n-radio value="proportional_gift">{{ $t('activity.formModal.k968f2') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -2967,7 +2847,7 @@
                     <div>
                       <label
                         class="mb-3 block text-sm font-medium text-gray-700"
-                        >实际赠送金额</label
+                        >{{ $t('activity.formModal.k5b9e') }}</label
                       >
                       <div class="flex items-end gap-3">
                         <n-input
@@ -2987,7 +2867,7 @@
                     <div>
                       <label
                         class="mb-3 block text-sm font-medium text-gray-700"
-                        >展示赠送金额</label
+                        >{{ $t('activity.formModal.k5c554') }}</label
                       >
                       <div class="flex items-end gap-3">
                         <n-input
@@ -3007,9 +2887,7 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                      >
-                        期望奖金
-                        <n-icon size="16" class="ml-1 text-blue-500">
+                      >{{ $t('activity.formModal.k671f') }}<n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
                       </label>
@@ -3023,26 +2901,22 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                      >
-                        提现门槛
-                        <n-icon size="16" class="ml-1 text-red-500">*</n-icon>
+                      >{{ $t('activity.formModal.k63d0') }}<n-icon size="16" class="ml-1 text-red-500">*</n-icon>
                       </label>
                       <div class="flex items-center gap-2">
-                        <span class="text-sm text-gray-600">累计充值</span>
+                        <span class="text-sm text-gray-600">{{ $t('activity.formModal.k7d2f2') }}</span>
                         <n-input
                           v-model:value="formData.newbieWithdrawalThreshold"
                           placeholder="0"
                           class="flex-1"
                         />
-                        <span class="text-sm text-gray-600">才可提现</span>
+                        <span class="text-sm text-gray-600">{{ $t('activity.formModal.k624d') }}</span>
                       </div>
                     </div>
 
                     <!-- Display Bonus -->
                     <div class="flex items-center justify-between">
-                      <label class="block text-sm font-medium text-gray-700">
-                        展示彩金
-                        <n-icon size="16" class="ml-1 text-blue-500">
+                      <label class="block text-sm font-medium text-gray-700">{{ $t('activity.formModal.k5c555') }}<n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
                       </label>
@@ -3053,16 +2927,16 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >* 提现门槛</label
+                        >{{ $t('activity.labels.lxgd7ux') }}</label
                       >
                       <div class="flex items-center gap-2">
-                        <span class="text-sm text-gray-600">累计充值</span>
+                        <span class="text-sm text-gray-600">{{ $t('activity.formModal.k7d2f2') }}</span>
                         <n-input
                           v-model:value="formData.newbieWithdrawalThreshold"
-                          placeholder="请输入充值金额, 0表示不限制"
+                          :placeholder="$t('activity.formModal.k8bf7010')"
                           class="flex-1"
                         />
-                        <span class="text-sm text-gray-600">才可提现</span>
+                        <span class="text-sm text-gray-600">{{ $t('activity.formModal.k624d') }}</span>
                       </div>
                     </div>
 
@@ -3071,17 +2945,13 @@
                       class="rounded-lg border border-blue-200 bg-blue-50 p-3"
                     >
                       <div class="flex items-center justify-between">
-                        <div class="text-sm text-blue-700">
-                          盈利封顶 进入提现设置页面,未首充会员盈利上限设置
-                        </div>
+                        <div class="text-sm text-blue-700">{{ $t('activity.formModal.k76c8k8fdbk672a') }}</div>
                         <n-button
                           size="small"
                           type="primary"
                           text
                           @click="goToWithdrawalSettings"
-                        >
-                          前往
-                        </n-button>
+                        >{{ $t('activity.formModal.k524d') }}</n-button>
                       </div>
                     </div>
                   </template>
@@ -3092,16 +2962,16 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >活动条件</label
+                        >{{ $t('activity.formModal.k6d3b2') }}</label
                       >
                       <n-radio-group v-model:value="formData.condition">
                         <n-space vertical>
-                          <n-radio value="first_deposit">账号首充</n-radio>
+                          <n-radio value="first_deposit">{{ $t('activity.formModal.k8d26') }}</n-radio>
                           <n-radio value="accumulate_recharge"
-                            >累计充值</n-radio
+                            >{{ $t('activity.formModal.k7d2f2') }}</n-radio
                           >
-                          <n-radio value="single_recharge">单笔充值</n-radio>
-                          <n-radio value="recharge_count">充值次数</n-radio>
+                          <n-radio value="single_recharge">{{ $t('activity.formModal.k5355') }}</n-radio>
+                          <n-radio value="recharge_count">{{ $t('activity.formModal.k51454') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -3111,19 +2981,19 @@
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
                       >
-                        * 循环方式
+                        {{ $t('activity.labels.lwxatv5') }}
                         <n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
                       </label>
                       <n-radio-group v-model:value="formData.cycleMethod">
                         <n-space vertical>
-                          <n-radio value="daily_cumulative">日累计循环</n-radio>
+                          <n-radio value="daily_cumulative">{{ $t('activity.formModal.k65e5') }}</n-radio>
                           <n-radio value="weekly_cumulative"
-                            >周累计循环</n-radio
+                            >{{ $t('activity.formModal.k5468') }}</n-radio
                           >
                           <n-radio value="monthly_cumulative"
-                            >月累计循环</n-radio
+                            >{{ $t('activity.formModal.k6708') }}</n-radio
                           >
                         </n-space>
                       </n-radio-group>
@@ -3133,19 +3003,19 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >派发方式</label
+                        >{{ $t('activity.formModal.k6d3e') }}</label
                       >
                       <n-radio-group
                         v-model:value="formData.distributionMethod"
                       >
                         <n-space vertical>
                           <n-radio value="player_claim_expires"
-                            >玩家自领-过期作废</n-radio
+                            >{{ $t('activity.formModal.k73a9k8fc7') }}</n-radio
                           >
                           <n-radio value="player_claim_auto_after_expire"
-                            >玩家自领-过期自动派发</n-radio
+                            >{{ $t('activity.formModal.k73a9k8fc72') }}</n-radio
                           >
-                          <n-radio value="auto_claim">系统立即自动派发</n-radio>
+                          <n-radio value="auto_claim">{{ $t('activity.formModal.k7cfb2') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -3154,15 +3024,15 @@
                     <div v-if="formData.distributionMethod !== 'auto_claim'">
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >领取时间</label
+                        >{{ $t('activity.rewardReport.k98862') }}</label
                       >
                       <n-radio-group v-model:value="formData.claimTime">
                         <n-space vertical>
                           <n-radio value="real_time"
-                            >实时领取(影响留存)</n-radio
+                            >{{ $t('activity.formModal.k5b9ek5f71') }}</n-radio
                           >
-                          <n-radio value="next_day">次日领取</n-radio>
-                          <n-radio value="daily">每日</n-radio>
+                          <n-radio value="next_day">{{ $t('activity.formModal.k6b21') }}</n-radio>
+                          <n-radio value="daily">{{ $t('activity.formModal.k6bcf') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -3171,15 +3041,15 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >领取次数</label
+                        >{{ $t('activity.formModal.k9886') }}</label
                       >
                       <n-radio-group v-model:value="formData.claimCount">
                         <n-space vertical>
                           <n-radio value="claim_individually"
-                            >可逐条领取</n-radio
+                            >{{ $t('activity.formModal.k53ef2') }}</n-radio
                           >
                           <n-radio value="claim_highest_only"
-                            >领取最高一档(只领一次)</n-radio
+                            >{{ $t('activity.formModal.k9886k53ea') }}</n-radio
                           >
                         </n-space>
                       </n-radio-group>
@@ -3191,7 +3061,7 @@
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
                       >
-                        * 奖励领取过期天数
+                        {{ $t('activity.labels.lihat34') }}
                         <n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
@@ -3208,13 +3078,13 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >登录前弹窗方式</label
+                        >{{ $t('activity.formModal.k767b') }}</label
                       >
                       <n-radio-group v-model:value="formData.beforeLoginPopup">
                         <n-space>
-                          <n-radio value="none">不弹窗</n-radio>
-                          <n-radio value="daily">每日一次</n-radio>
-                          <n-radio value="high_frequency">高频弹窗</n-radio>
+                          <n-radio value="none">{{ $t('activity.formModal.k4e0d') }}</n-radio>
+                          <n-radio value="daily">{{ $t('activity.formModal.k6bcf3') }}</n-radio>
+                          <n-radio value="high_frequency">{{ $t('activity.formModal.k9ad8') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -3222,24 +3092,22 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >登录后弹窗方式</label
+                        >{{ $t('activity.formModal.k767b2') }}</label
                       >
                       <n-radio-group v-model:value="formData.afterLoginPopup">
                         <n-space>
-                          <n-radio value="none">不弹窗</n-radio>
-                          <n-radio value="high_frequency">高频弹窗</n-radio>
-                          <n-radio value="daily">每日一次</n-radio>
-                          <n-radio value="every_login">每次登录</n-radio>
-                          <n-radio value="once_only">只弹一次</n-radio>
+                          <n-radio value="none">{{ $t('activity.formModal.k4e0d') }}</n-radio>
+                          <n-radio value="high_frequency">{{ $t('activity.formModal.k9ad8') }}</n-radio>
+                          <n-radio value="daily">{{ $t('activity.formModal.k6bcf3') }}</n-radio>
+                          <n-radio value="every_login">{{ $t('activity.formModal.k6bcf4') }}</n-radio>
+                          <n-radio value="once_only">{{ $t('activity.formModal.k53ea2') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
 
                     <!-- Direct Pop-up After Recharge -->
                     <div class="flex items-center justify-between">
-                      <label class="block text-sm font-medium text-gray-700">
-                        充值成功后直接弹窗
-                        <n-icon size="16" class="ml-1 text-blue-500">
+                      <label class="block text-sm font-medium text-gray-700">{{ $t('activity.formModal.k51452') }}<n-icon size="16" class="ml-1 text-blue-500">
                           <HelpCircle />
                         </n-icon>
                       </label>
@@ -3252,7 +3120,7 @@
                     <div>
                       <label
                         class="mb-3 block text-sm font-medium text-gray-700"
-                        >充值类型配置</label
+                        >{{ $t('activity.formModal.k51455') }}</label
                       >
                       <div class="space-y-3">
                         <div
@@ -3263,11 +3131,11 @@
                           <!-- Recharge Amount -->
                           <div class="flex-1">
                             <label class="mb-1 block text-xs text-gray-600"
-                              >充值金额</label
+                              >{{ $t('activity.formModal.k5145') }}</label
                             >
                             <n-input
                               v-model:value="item.betAmount"
-                              placeholder="充值金额"
+                              :placeholder="$t('activity.formModal.k5145')"
                               :class="{
                                 'border-red-500':
                                   item.betAmount === '' ||
@@ -3279,15 +3147,13 @@
                                 item.betAmount === '' || item.betAmount === null
                               "
                               class="mt-1 text-xs text-red-500"
-                            >
-                              不能为空
-                            </div>
+                            >{{ $t('activity.formModal.k4e0d3') }}</div>
                           </div>
 
                           <!-- Reward Amount -->
                           <div class="flex-1">
                             <label class="mb-1 block text-xs text-gray-600"
-                              >奖励金额</label
+                              >{{ $t('activity.formModal.k5956') }}</label
                             >
                             <n-input-number
                               v-model:value="item.rewardAmount"
@@ -3320,9 +3186,7 @@
                         >
                           <n-icon size="16" class="mr-1">
                             <Add />
-                          </n-icon>
-                          添加充值类型
-                        </n-button>
+                          </n-icon>{{ $t('activity.formModal.k6dfb9') }}</n-button>
                       </div>
                     </div>
                   </template>
@@ -3333,23 +3197,20 @@
                     class="space-y-6"
                   >
                     <div class="border-l-4 border-blue-500 pl-4">
-                      <h3 class="mb-4 text-lg font-semibold text-gray-900">
-                        自定义类型配置
-                      </h3>
+                      <h3 class="mb-4 text-lg font-semibold text-gray-900">{{ $t('activity.formModal.k81ea2') }}</h3>
 
                       <!-- Display Method -->
                       <div class="mb-6">
                         <label
                           class="mb-3 block text-sm font-medium text-gray-700"
-                        >
-                          展示方式 <span class="text-red-500">*</span>
+                        >{{ $t('activity.formModal.k5c556') }}<span class="text-red-500">*</span>
                         </label>
                         <n-radio-group
                           v-model:value="formData.customDisplayMethod"
                         >
                           <n-space>
-                            <n-radio value="builtin_page">内置页面</n-radio>
-                            <n-radio value="jump_link">跳转链接</n-radio>
+                            <n-radio value="builtin_page">{{ $t('activity.formModal.k5185') }}</n-radio>
+                            <n-radio value="jump_link">{{ $t('activity.formModal.k8df3') }}</n-radio>
                           </n-space>
                         </n-radio-group>
                       </div>
@@ -3361,14 +3222,13 @@
                       >
                         <label
                           class="mb-3 block text-sm font-medium text-gray-700"
-                        >
-                          页面内容 <span class="text-red-500">*</span>
+                        >{{ $t('activity.formModal.k9875') }}<span class="text-red-500">*</span>
                         </label>
                         <RichTextEditor
                           v-model="formData.customPageContent"
                           :max-length="50000"
                           :height="420"
-                          placeholder="编辑内置页面内容，支持富文本、图片、文件链接、表格等"
+                          :placeholder="$t('activity.formModal.k7f16k652fk56fek6587k8868')"
                         />
                       </div>
 
@@ -3379,28 +3239,27 @@
                       >
                         <label
                           class="mb-3 block text-sm font-medium text-gray-700"
-                        >
-                          选择页面 <span class="text-red-500">*</span>
+                        >{{ $t('activity.formModal.k90097') }}<span class="text-red-500">*</span>
                         </label>
                         <n-radio-group v-model:value="formData.customJumpType">
                           <n-space vertical>
-                            <n-radio value="external_link">外部链接</n-radio>
-                            <n-radio value="activity">活动</n-radio>
-                            <n-radio value="task">任务</n-radio>
-                            <n-radio value="recharge">充值</n-radio>
-                            <n-radio value="rebate">返水</n-radio>
-                            <n-radio value="agent">代理</n-radio>
+                            <n-radio value="external_link">{{ $t('activity.formModal.k5916') }}</n-radio>
+                            <n-radio value="activity">{{ $t('activity.rewardReport.k6d3b3') }}</n-radio>
+                            <n-radio value="task">{{ $t('activity.rewardReport.k4efb') }}</n-radio>
+                            <n-radio value="recharge">{{ $t('activity.detailModal.k5145') }}</n-radio>
+                            <n-radio value="rebate">{{ $t('activity.rewardReport.k8fd4') }}</n-radio>
+                            <n-radio value="agent">{{ $t('activity.detailModal.k4ee3') }}</n-radio>
                             <n-radio value="vip">VIP</n-radio>
-                            <n-radio value="interest_treasure">利息宝</n-radio>
-                            <n-radio value="provident_fund">公积金</n-radio>
-                            <n-radio value="blind_box_draw">盲盒抽奖</n-radio>
-                            <n-radio value="to_be_claimed">待领取</n-radio>
-                            <n-radio value="claim_record">领取记录</n-radio>
+                            <n-radio value="interest_treasure">{{ $t('activity.rewardReport.k5229') }}</n-radio>
+                            <n-radio value="provident_fund">{{ $t('activity.rewardReport.k516c') }}</n-radio>
+                            <n-radio value="blind_box_draw">{{ $t('activity.rewardReport.k76f2') }}</n-radio>
+                            <n-radio value="to_be_claimed">{{ $t('activity.formModal.k5f85') }}</n-radio>
+                            <n-radio value="claim_record">{{ $t('activity.formModal.k98864') }}</n-radio>
                             <n-radio value="personal_promotion_link"
-                              >个人推广链接</n-radio
+                              >{{ $t('activity.formModal.k4e2a') }}</n-radio
                             >
                             <n-radio value="cooperative_operation"
-                              >合作联营</n-radio
+                              >{{ $t('activity.formModal.k5408') }}</n-radio
                             >
                           </n-space>
                         </n-radio-group>
@@ -3413,20 +3272,19 @@
                       >
                         <label
                           class="mb-3 block text-sm font-medium text-gray-700"
-                        >
-                          链接地址 <span class="text-red-500">*</span>
+                        >{{ $t('activity.formModal.k94fe') }}<span class="text-red-500">*</span>
                         </label>
                         <div class="flex items-center gap-3">
                           <n-select
                             v-model:value="formData.customOpenInNewWindow"
                             :options="[
                               {
-                                label: '新窗口打开',
+                                label: $t('activity.formModal.k65b03'),
                                 value: 'true',
                                 type: 'option',
                               },
                               {
-                                label: '当前窗口打开',
+                                label: $t('activity.formModal.k5f533'),
                                 value: 'false',
                                 type: 'option',
                               },
@@ -3435,7 +3293,7 @@
                           />
                           <n-input
                             v-model:value="formData.customTargetUrl"
-                            placeholder="请输入链接地址（例如：https://example.com）"
+                            :placeholder="$t('activity.formModal.enterLinkAddress')"
                             class="flex-1"
                             :status="getCustomUrlStatus()"
                             @blur="validateCustomUrl"
@@ -3451,9 +3309,7 @@
                           <n-icon size="16" class="mr-2 mt-0.5 text-orange-500">
                             <InformationCircle />
                           </n-icon>
-                          <span class="text-sm text-orange-700">
-                            点击活动宣传图，则打开设置的链接地址
-                          </span>
+                          <span class="text-sm text-orange-700">{{ $t('activity.formModal.k70b9k5219') }}</span>
                         </div>
                       </div>
                     </div>
@@ -3467,7 +3323,7 @@
                 <div class="space-y-4">
                   <div class="flex items-center justify-between">
                     <label class="block text-sm font-medium text-gray-700"
-                      >展示宣传图</label
+                      >{{ $t('activity.formModal.k5c557') }}</label
                     >
                     <n-switch v-model:value="formData.displayEnabled" />
                   </div>
@@ -3478,12 +3334,12 @@
                   <!-- Participation Method -->
                   <div>
                     <label class="mb-2 block text-sm font-medium text-gray-700"
-                      >参与活动方式</label
+                      >{{ $t('activity.formModal.k53c2') }}</label
                     >
                     <n-radio-group v-model:value="formData.participationMethod">
                       <n-space>
-                        <n-radio value="auto">自动参与</n-radio>
-                        <n-radio value="manual_click">需手动点击参与</n-radio>
+                        <n-radio value="auto">{{ $t('activity.formModal.k81ea3') }}</n-radio>
+                        <n-radio value="manual_click">{{ $t('activity.formModal.k97002') }}</n-radio>
                       </n-space>
                     </n-radio-group>
                   </div>
@@ -3491,19 +3347,19 @@
                   <!-- Recharge Methods -->
                   <div>
                     <label class="mb-2 block text-sm font-medium text-gray-700"
-                      >* 充值方式</label
-                    >
+                      >{{ $t('activity.labels.luyqxz7') }}</label
+                      >
                     <n-checkbox-group
                       v-model:value="formData.rechargeMethods"
                       @update:value="handleRechargeMethodChange"
                     >
                       <div class="grid grid-cols-2 gap-2">
-                        <n-checkbox value="all">全选</n-checkbox>
+                        <n-checkbox value="all">{{ $t('activity.formModal.k51683') }}</n-checkbox>
                         <n-checkbox value="pix">PIX</n-checkbox>
                         <n-checkbox value="customer_service"
-                          >客服充值</n-checkbox
+                          >{{ $t('activity.formModal.k5ba23') }}</n-checkbox
                         >
-                        <n-checkbox value="merchant">银商充值</n-checkbox>
+                        <n-checkbox value="merchant">{{ $t('activity.formModal.k94f6') }}</n-checkbox>
                       </div>
                     </n-checkbox-group>
                   </div>
@@ -3511,13 +3367,13 @@
                   <!-- Bonus Method -->
                   <div>
                     <label class="mb-2 block text-sm font-medium text-gray-700"
-                      >奖金方式</label
+                      >{{ $t('activity.formModal.k59568') }}</label
                     >
                     <n-radio-group v-model:value="formData.bonusMethod">
                       <n-space>
-                        <n-radio value="fixed">固定金额</n-radio>
-                        <n-radio value="random">随机金额</n-radio>
-                        <n-radio value="percentage">比例金额</n-radio>
+                        <n-radio value="fixed">{{ $t('activity.formModal.k56fa3') }}</n-radio>
+                        <n-radio value="random">{{ $t('activity.formModal.k968f') }}</n-radio>
+                        <n-radio value="percentage">{{ $t('activity.formModal.k6bd42') }}</n-radio>
                       </n-space>
                     </n-radio-group>
                   </div>
@@ -3527,7 +3383,7 @@
           </n-tab-pane>
 
           <!-- Tab 2: Restrictions & Conditions -->
-          <n-tab-pane name="restrictions" tab="限制条件">
+          <n-tab-pane name="restrictions" :tab="$t('activity.formModal.k9650')">
             <div class="flex gap-6">
               <!-- Left Column -->
               <div class="flex-1 pr-4">
@@ -3535,85 +3391,85 @@
                   <!-- Additional Restrictions -->
                   <div>
                     <label class="mb-3 block text-sm font-medium text-gray-700"
-                      >更多奖领取限制</label
+                      >{{ $t('activity.formModal.k66f42') }}</label
                     >
                     <n-checkbox-group v-model:value="formData.restrictions">
                       <div class="grid grid-cols-2 gap-2">
                         <n-checkbox value="phone_verified"
-                          >完成手机验证才能领取</n-checkbox
+                          >{{ $t('activity.formModal.k5b8c') }}</n-checkbox
                         >
                         <n-checkbox value="complete_email"
-                          >完成邮箱验证才能领取</n-checkbox
+                          >{{ $t('activity.formModal.k5b8c2') }}</n-checkbox
                         >
                         <n-checkbox value="bank_card"
-                          >完成银行卡绑定才能领取</n-checkbox
+                          >{{ $t('activity.formModal.k5b8c3') }}</n-checkbox
                         >
                         <n-checkbox value="complete_recharge"
-                          >完成充值后才能领取</n-checkbox
+                          >{{ $t('activity.formModal.k5b8c4') }}</n-checkbox
                         >
                         <n-checkbox value="bind_currency"
-                          >绑定虚拟货币才能领取</n-checkbox
+                          >{{ $t('activity.formModal.k7ed1') }}</n-checkbox
                         >
                         <n-checkbox value="three_party"
-                          >绑定三方钱包才能领取</n-checkbox
+                          >{{ $t('activity.formModal.k7ed12') }}</n-checkbox
                         >
                         <n-checkbox value="complete_birthday"
-                          >完成生日设置才能领取</n-checkbox
+                          >{{ $t('activity.formModal.k5b8c5') }}</n-checkbox
                         >
                         <n-checkbox value="bind_payment"
-                          >绑定收款方式才能领取</n-checkbox
+                          >{{ $t('activity.formModal.k7ed13') }}</n-checkbox
                         >
                         <n-checkbox value="real_name"
-                          >完成实名认证才能领取</n-checkbox
+                          >{{ $t('activity.formModal.k5b8c6') }}</n-checkbox
                         >
                         <n-checkbox value="game_experience"
-                          >填写真实姓名才能领取</n-checkbox
+                          >{{ $t('activity.formModal.k586b') }}</n-checkbox
                         >
                         <n-checkbox value="same_activity"
-                          >同类型活动只能领取1次</n-checkbox
+                          >{{ $t('activity.formModal.k540c') }}</n-checkbox
                         >
                         <n-checkbox value="charge_after_complete"
-                          >充值后未来法才能领取</n-checkbox
+                          >{{ $t('activity.formModal.k51456') }}</n-checkbox
                         >
                         <n-checkbox value="same_ip"
-                          >同登录IP只能申请1次</n-checkbox
+                          >{{ $t('activity.formModal.k540c2') }}</n-checkbox
                         >
                         <!-- 🎯 NEW: Additional restrictions from Screenshot 2 -->
                         <n-checkbox value="complete_kyc"
-                          >完成KYC认证才能领取</n-checkbox
+                          >{{ $t('activity.formModal.k5b8c7') }}</n-checkbox
                         >
                         <n-checkbox value="bind_currency_third_party"
-                          >绑定虚拟货币三方钱包才能领取</n-checkbox
+                          >{{ $t('activity.formModal.k7ed14') }}</n-checkbox
                         >
                         <n-checkbox value="complete_recharge_education"
-                          >完成充值教育才能领取</n-checkbox
+                          >{{ $t('activity.formModal.k5b8c8') }}</n-checkbox
                         >
                         <n-checkbox value="complete_bet_education"
-                          >完成投注教育才能领取</n-checkbox
+                          >{{ $t('activity.formModal.k5b8c9') }}</n-checkbox
                         >
                         <n-checkbox value="same_ip_device"
-                          >同IP同设备只能申请1次</n-checkbox
+                          >{{ $t('activity.formModal.k540c3') }}</n-checkbox
                         >
                         <n-checkbox value="network_verification"
-                          >网络实名验证才能领取</n-checkbox
+                          >{{ $t('activity.formModal.k7f51') }}</n-checkbox
                         >
                         <n-checkbox value="same_ip_limit"
-                          >同登录IP只能申请1次</n-checkbox
+                          >{{ $t('activity.formModal.k540c2') }}</n-checkbox
                         >
                         <n-checkbox value="device_binding_limit"
-                          >同设备绑定只能申请1次</n-checkbox
+                          >{{ $t('activity.formModal.k540c4') }}</n-checkbox
                         >
                         <n-checkbox value="phone_number_uniqueness"
-                          >手机号唯一性才能领取</n-checkbox
+                          >{{ $t('activity.formModal.k624b') }}</n-checkbox
                         >
                         <n-checkbox value="physical_verification"
-                          >物理验证才能领取</n-checkbox
+                          >{{ $t('activity.formModal.k7269') }}</n-checkbox
                         >
                         <n-checkbox value="location_verification"
-                          >地理位置验证才能领取</n-checkbox
+                          >{{ $t('activity.formModal.k5730') }}</n-checkbox
                         >
                         <n-checkbox value="payment_method_verification"
-                          >支付方式验证才能领取</n-checkbox
+                          >{{ $t('activity.formModal.k652f') }}</n-checkbox
                         >
                       </div>
                     </n-checkbox-group>
@@ -3622,26 +3478,26 @@
                   <!-- Audit Multiplier Configuration -->
                   <div>
                     <label class="mb-3 block text-sm font-medium text-gray-700"
-                      >稽核倍数设置</label
+                      >{{ $t('activity.formModal.k7a3d') }}</label
                     >
                     <div class="grid grid-cols-2 gap-4">
                       <!-- Audit Required -->
                       <div>
                         <label class="mb-1 block text-xs text-gray-600"
-                          >是否需要稽核</label
+                          >{{ $t('activity.formModal.k662f6') }}</label
                         >
                         <n-switch
                           v-model:value="formData.auditSettings.auditRequired"
                         >
-                          <template #checked>需要稽核</template>
-                          <template #unchecked>无需稽核</template>
+                          <template #checked>{{ $t('activity.formModal.k97003') }}</template>
+                          <template #unchecked>{{ $t('activity.formModal.k65e02') }}</template>
                         </n-switch>
                       </div>
 
                       <!-- Audit Multiplier -->
                       <div>
                         <label class="mb-1 block text-xs text-gray-600"
-                          >稽核倍数</label
+                          >{{ $t('activity.formModal.k7a3d2') }}</label
                         >
                         <n-input-number
                           v-model:value="formData.auditSettings.auditMultiplier"
@@ -3653,7 +3509,7 @@
                           :disabled="!formData.auditSettings.auditRequired"
                           class="w-full"
                         >
-                          <template #suffix>倍</template>
+                          <template #suffix>{{ $t('activity.formModal.k500d') }}</template>
                         </n-input-number>
                       </div>
 
@@ -3662,7 +3518,7 @@
                       <!-- Manual Review Required -->
                       <div>
                         <label class="mb-1 block text-xs text-gray-600"
-                          >人工审核</label
+                          >{{ $t('activity.formModal.k4eba') }}</label
                         >
                         <n-switch
                           v-model:value="
@@ -3670,8 +3526,8 @@
                           "
                           :disabled="!formData.auditSettings.auditRequired"
                         >
-                          <template #checked>需要人工审核</template>
-                          <template #unchecked>自动审核</template>
+                          <template #checked>{{ $t('activity.formModal.k97004') }}</template>
+                          <template #unchecked>{{ $t('activity.formModal.k81ea4') }}</template>
                         </n-switch>
                       </div>
                     </div>
@@ -3682,17 +3538,13 @@
                       class="mt-3 rounded-lg bg-blue-50 p-3"
                     >
                       <p class="text-xs text-blue-600">
-                        <i class="fa fa-info-circle mr-1"></i>
-                        稽核说明：用户获得奖励后需要投注
-                        <strong
+                        <i class="fa fa-info-circle mr-1"></i>{{ $t('activity.formModal.k7a3dk7528') }}<strong
                           >{{
-                            (
-                              formData.auditSettings.auditMultiplier || 1
-                            ).toFixed(1)
-                          }}倍</strong
-                        >
-                        奖励金额才能提现。
-                      </p>
+                            $t('activity.common.auditMultiplierSuffix', [
+                              (formData.auditSettings.auditMultiplier || 1).toFixed(1),
+                            ])
+                          }}</strong
+                        >{{ $t('activity.formModal.k59569') }}</p>
                     </div>
                   </div>
 
@@ -3700,7 +3552,7 @@
                   <div>
                     <div class="mb-3 flex flex-wrap items-center gap-2">
                       <span class="text-sm font-medium text-gray-700"
-                        >参与会员:</span
+                        >{{ $t('activity.formModal.k53c22') }}</span
                       >
                       <n-button
                         v-for="level in memberLevelButtons"
@@ -3721,24 +3573,18 @@
                     <div
                       v-if="memberTiersLoading"
                       class="text-sm text-gray-500"
-                    >
-                      加载会员层级中...
-                    </div>
+                    >{{ $t('activity.formModal.k52a0') }}</div>
                     <div
                       v-else-if="memberTierOptions.length === 0"
                       class="text-sm text-gray-500"
-                    >
-                      暂无可用会员层级，请先在会员层级管理配置
-                    </div>
+                    >{{ $t('activity.formModal.k6682k8bf7') }}</div>
                     <template v-else>
                       <n-checkbox
                         class="mb-2"
                         :checked="allMemberTiersSelected"
                         :indeterminate="memberTagsIndeterminate"
                         @update:checked="onToggleAllMemberTiers"
-                      >
-                        全选
-                      </n-checkbox>
+                      >{{ $t('activity.formModal.k51683') }}</n-checkbox>
                       <n-checkbox-group v-model:value="formData.memberTags">
                         <div class="grid grid-cols-4 gap-2">
                           <n-checkbox
@@ -3759,18 +3605,18 @@
                       <div>
                         <label
                           class="mb-2 block text-sm font-medium text-gray-700"
-                          >奖金触发平台限制</label
+                          >{{ $t('activity.formModal.k595610') }}</label
                         >
                         <n-radio-group
                           v-model:value="formData.platformRestriction"
                         >
                           <n-space vertical>
-                            <n-radio value="no_limit">不限制</n-radio>
+                            <n-radio value="no_limit">{{ $t('activity.formModal.k4e0d4') }}</n-radio>
                             <n-radio value="only_selected"
-                              >仅限勾选平台</n-radio
+                              >{{ $t('activity.formModal.k4ec52') }}</n-radio
                             >
                             <n-radio value="exclude_selected"
-                              >排除勾选平台</n-radio
+                              >{{ $t('activity.formModal.k6392') }}</n-radio
                             >
                           </n-space>
                         </n-radio-group>
@@ -3779,15 +3625,15 @@
                       <div>
                         <label
                           class="mb-2 block text-sm font-medium text-gray-700"
-                          >奖金提现方式限制</label
+                          >{{ $t('activity.formModal.k595611') }}</label
                         >
                         <n-radio-group
                           v-model:value="formData.withdrawalRestriction"
                         >
                           <n-space vertical>
-                            <n-radio value="no_limit">不限制</n-radio>
+                            <n-radio value="no_limit">{{ $t('activity.formModal.k4e0d4') }}</n-radio>
                             <n-radio value="only_selected"
-                              >仅限勾选方式</n-radio
+                              >{{ $t('activity.formModal.k4ec53') }}</n-radio
                             >
                           </n-space>
                         </n-radio-group>
@@ -3803,31 +3649,31 @@
                 <div class="space-y-4">
                   <div class="flex items-center justify-between">
                     <label class="block text-sm font-medium text-gray-700"
-                      >指定渠道或代理</label
+                      >{{ $t('activity.formModal.k63072') }}</label
                     >
                     <n-switch v-model:value="formData.specifyChannel" />
                   </div>
 
                   <div class="flex items-center justify-between">
                     <label class="block text-sm font-medium text-gray-700"
-                      >详细页时间</label
+                      >{{ $t('activity.formModal.k8be6') }}</label
                     >
                     <n-switch v-model:value="formData.detailPageTime" />
                   </div>
 
                   <div>
                     <label class="mb-2 block text-sm font-medium text-gray-700"
-                      >转核方式</label
+                      >{{ $t('activity.formModal.k8f6c') }}</label
                     >
                     <n-input
                       v-model:value="formData.transferMethod"
-                      placeholder="只转核奖金"
+                      :placeholder="$t('activity.formModal.k53ea')"
                     />
                   </div>
 
                   <div>
                     <label class="mb-2 block text-sm font-medium text-gray-700"
-                      >转核倍数</label
+                      >{{ $t('activity.formModal.k8f6c2') }}</label
                     >
                     <n-input-number
                       v-model:value="formData.transferMultiplier"
@@ -3842,14 +3688,14 @@
           </n-tab-pane>
 
           <!-- Tab 3: Design & Platform -->
-          <n-tab-pane name="design" tab="设计设置">
+          <n-tab-pane name="design" :tab="$t('activity.formModal.k8bbe')">
             <div class="flex gap-6">
               <!-- Left Column -->
               <div class="flex-1 pr-4">
                 <!-- Background Color Selection -->
                 <div class="mb-6">
                   <label class="mb-3 block text-sm font-medium text-gray-700"
-                    >选择背景色</label
+                    >{{ $t('activity.formModal.k90098') }}</label
                   >
                   <div class="grid grid-cols-8 gap-2">
                     <div
@@ -3870,7 +3716,7 @@
                 <!-- Icon Selection -->
                 <div class="mb-6">
                   <label class="mb-3 block text-sm font-medium text-gray-700"
-                    >选择图标</label
+                    >{{ $t('activity.formModal.k9009') }}</label
                   >
                   <div class="mb-3 grid grid-cols-5 gap-2">
                     <div
@@ -3887,31 +3733,29 @@
                       {{ icon.label }}
                     </div>
                   </div>
-                  <n-button size="small" @click="openIconUpload" block>
-                    自定义
-                  </n-button>
+                  <n-button size="small" @click="openIconUpload" block>{{ $t('activity.detailModal.k81ea') }}</n-button>
                 </div>
 
                 <!-- Platform Selection -->
                 <div class="mb-6">
                   <label class="mb-3 block text-sm font-medium text-gray-700"
-                    >活动申领端</label
+                    >{{ $t('activity.formModal.k6d3b3') }}</label
                   >
                   <n-checkbox-group v-model:value="formData.platforms">
                     <div class="grid grid-cols-2 gap-2">
                       <n-checkbox value="android_app"
-                        >Android_APP可领取</n-checkbox
+                        >{{ $t('activity.formModal.androidAPP') }}</n-checkbox
                       >
-                      <n-checkbox value="ios_app">iOS_APP可领取</n-checkbox>
-                      <n-checkbox value="native_app">原生APP</n-checkbox>
-                      <n-checkbox value="browser_app">极速APP</n-checkbox>
-                      <n-checkbox value="pwa_app">PWA快捷APP</n-checkbox>
-                      <n-checkbox value="ios_browser">iOS浏览器</n-checkbox>
-                      <n-checkbox value="pc_browser">PC可领取</n-checkbox>
+                      <n-checkbox value="ios_app">{{ $t('activity.formModal.iOSAPP') }}</n-checkbox>
+                      <n-checkbox value="native_app">{{ $t('activity.formModal.k539f') }}</n-checkbox>
+                      <n-checkbox value="browser_app">{{ $t('activity.formModal.k6781') }}</n-checkbox>
+                      <n-checkbox value="pwa_app">{{ $t('activity.formModal.pWAAPP') }}</n-checkbox>
+                      <n-checkbox value="ios_browser">{{ $t('activity.detailModal.iOS2') }}</n-checkbox>
+                      <n-checkbox value="pc_browser">{{ $t('activity.formModal.pC') }}</n-checkbox>
                       <n-checkbox value="android_h5"
-                        >Android_H5可领取</n-checkbox
+                        >{{ $t('activity.formModal.androidH5') }}</n-checkbox
                       >
-                      <n-checkbox value="ios_h5">iOS_H5可领取</n-checkbox>
+                      <n-checkbox value="ios_h5">{{ $t('activity.formModal.iOSH5') }}</n-checkbox>
                     </div>
                   </n-checkbox-group>
                 </div>
@@ -3924,31 +3768,29 @@
                 <!-- Promotion Image -->
                 <div>
                   <label class="mb-3 block text-sm font-medium text-gray-700"
-                    >宣传图片</label
+                    >{{ $t('activity.formModal.k5ba3') }}</label
                   >
                   <MediaLibrarySelector
                     v-model="formData.promoImage"
                     category="promotion"
-                    placeholder="选择宣传图片"
+                    :placeholder="$t('activity.formModal.k90092')"
                     @change="handlePromoImageChange"
                   />
-                  <div class="mt-1 text-xs text-gray-500">
-                    建议尺寸: 750x400
-                  </div>
+                  <div class="mt-1 text-xs text-gray-500">{{ $t('activity.formModal.k5efa750x400') }}</div>
                 </div>
 
                 <!-- Floating Icon Configuration -->
                 <div>
                   <div class="mb-3 flex items-center justify-between">
                     <label class="block text-sm font-medium text-gray-700"
-                      >悬浮图(原快捷入口)</label
+                      >{{ $t('activity.formModal.k60ack539f') }}</label
                     >
                     <div class="flex items-center gap-2">
                       <n-switch v-model:value="formData.floatingIcon.enabled" />
                       <n-checkbox
                         v-model:checked="formData.floatingIcon.showActivityName"
                         size="small"
-                        >显示活动名称</n-checkbox
+                        >{{ $t('activity.formModal.k663e2') }}</n-checkbox
                       >
                     </div>
                   </div>
@@ -3961,7 +3803,7 @@
                     <!-- Display Time Settings -->
                     <div class="flex items-center justify-between">
                       <label class="block text-sm font-medium text-gray-700"
-                        >显示时间</label
+                        >{{ $t('activity.formModal.k663e3') }}</label
                       >
                       <div class="flex items-center gap-2">
                         <n-switch
@@ -3970,7 +3812,7 @@
                           "
                           size="small"
                         />
-                        <span class="text-xs text-gray-500">关</span>
+                        <span class="text-xs text-gray-500">{{ $t('activity.formModal.k5173') }}</span>
                       </div>
                     </div>
 
@@ -3979,8 +3821,7 @@
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
                       >
-                        <span class="text-red-500">*</span> 展示终端
-                      </label>
+                        <span class="text-red-500">*</span>{{ $t('activity.formModal.k5c558') }}</label>
                       <div class="grid grid-cols-2 gap-1 text-xs">
                         <n-checkbox
                           v-model:checked="
@@ -4001,35 +3842,35 @@
                             formData.floatingIcon.terminals.native_app
                           "
                           size="small"
-                          >原生APP</n-checkbox
+                          >{{ $t('activity.formModal.k539f') }}</n-checkbox
                         >
                         <n-checkbox
                           v-model:checked="
                             formData.floatingIcon.terminals.extreme_app
                           "
                           size="small"
-                          >极速APP</n-checkbox
+                          >{{ $t('activity.formModal.k6781') }}</n-checkbox
                         >
                         <n-checkbox
                           v-model:checked="
                             formData.floatingIcon.terminals.wechat_app
                           "
                           size="small"
-                          >马甲包</n-checkbox
+                          >{{ $t('activity.formModal.k9a6c') }}</n-checkbox
                         >
                         <n-checkbox
                           v-model:checked="
                             formData.floatingIcon.terminals.pwa_app
                           "
                           size="small"
-                          >PWA快捷APP</n-checkbox
+                          >{{ $t('activity.formModal.pWAAPP') }}</n-checkbox
                         >
                         <n-checkbox
                           v-model:checked="
                             formData.floatingIcon.terminals.ios_webapp
                           "
                           size="small"
-                          >iOS描述器</n-checkbox
+                          >{{ $t('activity.formModal.iOS') }}</n-checkbox
                         >
                         <n-checkbox
                           v-model:checked="formData.floatingIcon.terminals.pc"
@@ -4058,17 +3899,16 @@
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
                       >
-                        <span class="text-red-500">*</span> 展示方式
-                      </label>
+                        <span class="text-red-500">*</span>{{ $t('activity.formModal.k5c556') }}</label>
                       <n-radio-group
                         v-model:value="formData.floatingIcon.displayMethod"
                         size="small"
                       >
                         <n-space vertical>
                           <n-radio value="carousel"
-                            >叠加轮播展示（默认）</n-radio
+                            >{{ $t('activity.formModal.k53e0k9ed8') }}</n-radio
                           >
-                          <n-radio value="single">单独展示</n-radio>
+                          <n-radio value="single">{{ $t('activity.formModal.k53552') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -4077,15 +3917,15 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >展示位置</label
+                        >{{ $t('activity.formModal.k5c559') }}</label
                       >
                       <n-radio-group
                         v-model:value="formData.floatingIcon.position"
                         size="small"
                       >
                         <n-space>
-                          <n-radio value="bottom-left">左下角</n-radio>
-                          <n-radio value="bottom-right">右下角</n-radio>
+                          <n-radio value="bottom-left">{{ $t('activity.formModal.k5de6') }}</n-radio>
+                          <n-radio value="bottom-right">{{ $t('activity.formModal.k53f3') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -4094,16 +3934,16 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >展示页面</label
+                        >{{ $t('activity.formModal.k5c5510') }}</label
                       >
                       <div class="flex items-center gap-4">
                         <n-radio
                           v-model:checked="formData.floatingIcon.pages.homepage"
                           size="small"
-                          >仅首页展示</n-radio
+                          >{{ $t('activity.formModal.k4ec54') }}</n-radio
                         >
                         <span class="text-xs text-gray-500"
-                          >任意页面均展示</span
+                          >{{ $t('activity.formModal.k4efb2') }}</span
                         >
                       </div>
                     </div>
@@ -4112,15 +3952,15 @@
                     <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
-                        >是否展示背景图</label
+                        >{{ $t('activity.formModal.k662f7') }}</label
                       >
                       <n-radio-group
                         v-model:value="formData.floatingIcon.showBackground"
                         size="small"
                       >
                         <n-space>
-                          <n-radio value="show">展示</n-radio>
-                          <n-radio value="hide">不展示</n-radio>
+                          <n-radio value="show">{{ $t('activity.formModal.k5c5511') }}</n-radio>
+                          <n-radio value="hide">{{ $t('activity.formModal.k4e0d5') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -4130,15 +3970,14 @@
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
                       >
-                        <span class="text-red-500">*</span> 选择图标
-                      </label>
+                        <span class="text-red-500">*</span>{{ $t('activity.formModal.k9009') }}</label>
                       <n-radio-group
                         v-model:value="formData.floatingIcon.iconType"
                         size="small"
                       >
                         <n-space>
-                          <n-radio value="general">全部通用（推荐）</n-radio>
-                          <n-radio value="language">按语言设置</n-radio>
+                          <n-radio value="general">{{ $t('activity.formModal.k5168k63a8') }}</n-radio>
+                          <n-radio value="language">{{ $t('activity.formModal.k63093') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
@@ -4150,27 +3989,25 @@
                         type="segment"
                         size="small"
                       >
-                        <n-tab-pane name="pt" tab="葡萄牙语">
+                        <n-tab-pane name="pt" :tab="$t('activity.formModal.k8461')">
                           <div class="space-y-2">
                             <MediaLibrarySelector
                               v-model="formData.floatingIcon.icons.pt"
                               category="floating-icon"
-                              placeholder="选择葡萄牙语图标"
+                              :placeholder="$t('activity.formModal.k90093')"
                             />
-                            <div class="text-xs text-gray-500">
-                              格式:png,jpeg,jpg,gif，尺寸220px*220px，大小<1MB
+                            <div class="text-xs text-gray-500">{{ $t('activity.formModal.k683cPngJpegJpgGifk5c3a220pxk5927') }}<1MB
                             </div>
                           </div>
                         </n-tab-pane>
-                        <n-tab-pane name="zh" tab="简体中文">
+                        <n-tab-pane name="zh" :tab="$t('activity.formModal.k7b80')">
                           <div class="space-y-2">
                             <MediaLibrarySelector
                               v-model="formData.floatingIcon.icons.zh"
                               category="floating-icon"
-                              placeholder="选择简体中文图标"
+                              :placeholder="$t('activity.formModal.k90094')"
                             />
-                            <div class="text-xs text-gray-500">
-                              格式:png,jpeg,jpg,gif，尺寸220px*220px，大小<1MB
+                            <div class="text-xs text-gray-500">{{ $t('activity.formModal.k683cPngJpegJpgGifk5c3a220pxk5927') }}<1MB
                             </div>
                           </div>
                         </n-tab-pane>
@@ -4182,10 +4019,9 @@
                       <MediaLibrarySelector
                         v-model="formData.floatingIcon.icons.general"
                         category="floating-icon"
-                        placeholder="选择通用图标"
+                        :placeholder="$t('activity.formModal.k90095')"
                       />
-                      <div class="text-xs text-gray-500">
-                        格式:png,jpeg,jpg,gif，尺寸220px*220px，大小<1MB
+                      <div class="text-xs text-gray-500">{{ $t('activity.formModal.k683cPngJpegJpgGifk5c3a220pxk5927') }}<1MB
                       </div>
 
                       <!-- Preset Icons -->
@@ -4219,18 +4055,18 @@
           </n-tab-pane>
 
           <!-- Tab 4: Rules -->
-          <n-tab-pane name="rules" tab="规则说明">
+          <n-tab-pane name="rules" :tab="$t('activity.formModal.k89c4')">
             <div class="flex gap-6">
               <!-- Left Column -->
               <div class="flex-1 pr-4">
                 <div class="space-y-4">
                   <div class="mb-2 flex items-center justify-between">
                     <label class="block text-sm font-medium text-gray-700"
-                      >规则说明</label
+                      >{{ $t('activity.formModal.k89c4') }}</label
                     >
                     <n-select
                       v-model:value="formData.ruleTemplate"
-                      placeholder="自定义"
+                      :placeholder="$t('activity.detailModal.k81ea')"
                       :options="ruleTemplateOptions"
                       class="w-32"
                     />
@@ -4239,7 +4075,7 @@
                     v-if="formData.ruleTemplate === 'custom'"
                     v-model:value="formData.rules"
                     type="textarea"
-                    placeholder="请输入活动规则说明（T&C）"
+                    :placeholder="$t('activity.formModal.k8bf7TC')"
                     :rows="14"
                     :maxlength="10000"
                     show-count
@@ -4248,9 +4084,7 @@
                     v-else
                     class="rounded-lg border border-gray-200 bg-gray-50 p-4"
                   >
-                    <div class="mb-2 text-xs font-medium text-gray-500">
-                      系统默认规则说明
-                    </div>
+                    <div class="mb-2 text-xs font-medium text-gray-500">{{ $t('activity.formModal.k7cfb3') }}</div>
                     <pre
                       class="m-0 whitespace-pre-wrap text-sm leading-relaxed text-gray-700"
                     >{{ systemRulesPreview }}</pre>
@@ -4260,9 +4094,7 @@
 
               <!-- Right Column - Rules preview -->
               <div class="w-80 border-l border-gray-200 pl-6">
-                <div class="mb-2 text-sm font-medium text-gray-700">
-                  规则预览
-                </div>
+                <div class="mb-2 text-sm font-medium text-gray-700">{{ $t('activity.formModal.k89c42') }}</div>
                 <div
                   v-if="formData.ruleTemplate === 'custom' && formData.rules"
                   class="activity-rules-preview activity-rules-preview--system"
@@ -4275,9 +4107,7 @@
                 >
                   {{ systemRulesPreview }}
                 </div>
-                <div v-else class="text-center text-sm text-gray-400">
-                  暂无规则内容
-                </div>
+                <div v-else class="text-center text-sm text-gray-400">{{ $t('activity.formModal.k6682') }}</div>
               </div>
             </div>
           </n-tab-pane>
@@ -4288,14 +4118,10 @@
     <!-- Footer -->
     <template #action>
       <div class="flex w-full items-center justify-between">
-        <n-button @click="handleCancel">关闭</n-button>
+        <n-button @click="handleCancel">{{ $t('activity.activityList.k5173') }}</n-button>
         <div class="flex gap-2">
-          <n-button @click="handleSaveDraft" :loading="submitting">
-            保存草稿
-          </n-button>
-          <n-button type="primary" @click="handleSubmit" :loading="submitting">
-            保存提交
-          </n-button>
+          <n-button @click="handleSaveDraft" :loading="submitting">{{ $t('activity.formModal.k4fdd') }}</n-button>
+          <n-button type="primary" @click="handleSubmit" :loading="submitting">{{ $t('activity.formModal.k4fdd2') }}</n-button>
         </div>
       </div>
     </template>
@@ -4305,7 +4131,7 @@
   <n-modal
     v-model:show="translationModalShow"
     preset="card"
-    title="多语言设置"
+    :title="$t('activity.formModal.k591a')"
     style="width: 600px"
   >
     <div class="space-y-4">
@@ -4315,14 +4141,14 @@
         }}</label>
         <n-input
           v-model:value="formData.translations[lang.code]"
-          :placeholder="`请输入${lang.name}活动名称`"
+          :placeholder="$t('activity.formModal.enterLangActivityName', [lang.name])"
         />
       </div>
     </div>
     <template #footer>
       <n-space justify="end">
-        <n-button @click="translationModalShow = false">取消</n-button>
-        <n-button type="primary" @click="saveTranslations">确定</n-button>
+        <n-button @click="translationModalShow = false">{{ $t('activity.activityList.k53d6') }}</n-button>
+        <n-button type="primary" @click="saveTranslations">{{ $t('activity.formModal.k786e') }}</n-button>
       </n-space>
     </template>
   </n-modal>
@@ -4331,7 +4157,7 @@
   <n-modal
     v-model:show="iconUploadModalShow"
     preset="card"
-    title="自定义上传图标"
+    :title="$t('activity.formModal.k81ea')"
     style="width: 500px"
   >
     <n-upload
@@ -4345,20 +4171,22 @@
           <n-icon size="48" class="mb-2 text-gray-400">
             <CloudUpload />
           </n-icon>
-          <p class="text-sm text-gray-600">点击或拖拽上传自定义图标</p>
+          <p class="text-sm text-gray-600">{{ $t('activity.formModal.k70b92') }}</p>
         </div>
       </n-upload-dragger>
     </n-upload>
     <template #footer>
       <n-space justify="end">
-        <n-button @click="iconUploadModalShow = false">取消</n-button>
-        <n-button type="primary" @click="saveCustomIcon">确定</n-button>
+        <n-button @click="iconUploadModalShow = false">{{ $t('activity.activityList.k53d6') }}</n-button>
+        <n-button type="primary" @click="saveCustomIcon">{{ $t('activity.formModal.k786e') }}</n-button>
       </n-space>
     </template>
   </n-modal>
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, watch } from 'vue';
 import {
   NModal,
@@ -4461,31 +4289,31 @@ function resolvePromotionTemplateDownloadUrl(): string {
 const allRedPacketStyles = [
   {
     value: 'modal',
-    label: '红包',
+    label: $t('activity.rewardReport.k7ea2'),
     imageUrl:
       'https://media.cheshi8899.com/media/media-1758164088476-327616913-style0.126acc89cddaa21ea37c.avif',
   },
   {
     value: 'banner',
-    label: '福袋',
+    label: $t('activity.formModal.k798f'),
     imageUrl:
       'https://media.cheshi8899.com/media/media-1758164096103-86127679-style3.0bebc3c7351d85ed90e6.avif',
   },
   {
     value: 'floating',
-    label: '礼包',
+    label: $t('activity.formModal.k793c'),
     imageUrl:
       'https://media.cheshi8899.com/media/media-1758164105287-572717226-style2.300901be34962fe97975.avif',
   },
   {
     value: 'treasurechest',
-    label: '宝箱',
+    label: $t('activity.formModal.k5b9d'),
     imageUrl:
       'https://media.cheshi8899.com/media/media-1758164113679-778866272-style1.b0289469b16cd12697b4.avif',
   },
   {
     value: 'treasurechest2',
-    label: '宝箱2',
+    label: $t('activity.formModal.k5b9d2'),
     imageUrl:
       'https://media.cheshi8899.com/media/media-1758164509457-995019276-style4.332d1817313bf49a4341.avif',
   },
@@ -4503,7 +4331,7 @@ const getCurrentStyleLabel = () => {
   const currentStyle = allRedPacketStyles.find(
     (style) => style.value === formData.redPacketDisplayStyle,
   );
-  return currentStyle?.label || '未知样式';
+  return currentStyle?.label || $t('activity.labels.unknownStyle');
 };
 
 // Reset form data to initial state
@@ -4958,82 +4786,82 @@ const allowClaimSamePromotionType = computed({
 
 // Options data
 const activityTypes = [
-  { label: '充值', value: 'recharge' },
-  { label: '打码', value: 'wagering' },
-  { label: '救援金', value: 'rescue' },
-  { label: '签到', value: 'checkin' },
-  { label: '幸运转盘', value: 'luckyspin' },
-  { label: '幸运注单', value: 'luckywager' },
-  { label: '红包', value: 'redpacket' },
-  { label: '投资', value: 'invest' },
-  { label: '推广', value: 'promotion' },
-  { label: '代理', value: 'agent' },
-  { label: '集字', value: 'collect' },
-  { label: '竞猜', value: 'guessing' },
-  { label: '新人彩金', value: 'newbie' },
-  { label: '推荐奖励', value: 'referral' },
-  { label: '软一刀', value: 'soft' },
-  { label: '新一刀', value: 'new' },
-  { label: '相行榜', value: 'ranking' },
-  { label: '自定义', value: 'custom' },
+  { label: $t('activity.detailModal.k5145'), value: 'recharge' },
+  { label: $t('activity.detailModal.k6253'), value: 'wagering' },
+  { label: $t('activity.detailModal.k6551'), value: 'rescue' },
+  { label: $t('activity.detailModal.k7b7e'), value: 'checkin' },
+  { label: $t('activity.rewardReport.k5e78'), value: 'luckyspin' },
+  { label: $t('activity.detailModal.k5e78'), value: 'luckywager' },
+  { label: $t('activity.rewardReport.k7ea2'), value: 'redpacket' },
+  { label: $t('activity.detailModal.k6295'), value: 'invest' },
+  { label: $t('activity.rewardReport.k63a8'), value: 'promotion' },
+  { label: $t('activity.detailModal.k4ee3'), value: 'agent' },
+  { label: $t('activity.detailModal.k96c6'), value: 'collect' },
+  { label: $t('activity.detailModal.k7ade'), value: 'guessing' },
+  { label: $t('activity.rewardReport.k65b02'), value: 'newbie' },
+  { label: $t('activity.detailModal.k63a8'), value: 'referral' },
+  { label: $t('activity.detailModal.k8f6f'), value: 'soft' },
+  { label: $t('activity.detailModal.k65b02'), value: 'new' },
+  { label: $t('activity.detailModal.k76f8'), value: 'ranking' },
+  { label: $t('activity.detailModal.k81ea'), value: 'custom' },
 ];
 
 const activityCategories = [
-  { label: '综合', value: 'comprehensive' },
-  { label: '棋牌', value: 'chess_cards' },
-  { label: '捕鱼', value: 'hunting' },
-  { label: '电子', value: 'slot' },
-  { label: '真人', value: 'live' },
-  { label: '体育', value: 'sports' },
-  { label: '斗鸡', value: 'cockfight' },
-  { label: '彩票', value: 'lottery' },
-  { label: '视频', value: 'video' },
-  { label: '电竞', value: 'esports' },
-  { label: '桌面', value: 'table' },
-  { label: '街机', value: 'arcade' },
-  { label: '模拟', value: 'simulation' },
-  { label: '其他', value: 'other' },
+  { label: $t('activity.detailModal.k7efc'), value: 'comprehensive' },
+  { label: $t('activity.detailModal.k68cb'), value: 'chess_cards' },
+  { label: $t('activity.detailModal.k6355'), value: 'hunting' },
+  { label: $t('activity.detailModal.k7535'), value: 'slot' },
+  { label: $t('activity.detailModal.k771f'), value: 'live' },
+  { label: $t('activity.detailModal.k4f53'), value: 'sports' },
+  { label: $t('activity.detailModal.k6597'), value: 'cockfight' },
+  { label: $t('activity.detailModal.k5f69'), value: 'lottery' },
+  { label: $t('activity.detailModal.k89c6'), value: 'video' },
+  { label: $t('activity.detailModal.k75352'), value: 'esports' },
+  { label: $t('activity.detailModal.k684c'), value: 'table' },
+  { label: $t('activity.detailModal.k8857'), value: 'arcade' },
+  { label: $t('activity.detailModal.k6a21'), value: 'simulation' },
+  { label: $t('activity.detailModal.k5176'), value: 'other' },
 ];
 
 const currencyOptions = [
-  { label: '全选', value: 'all' },
+  { label: $t('activity.formModal.k51683'), value: 'all' },
   { label: 'BRL', value: 'BRL' },
 ];
 
 const backgroundColors = [
   // Row 1
-  { label: '黑1', value: '#000000' },
-  { label: '灰1', value: '#6B7280' },
-  { label: '灰2', value: '#9CA3AF' },
-  { label: '黑2', value: '#1F2937' },
-  { label: '黑3', value: '#374151' },
-  { label: '黑4', value: '#111827' },
-  { label: '黑5', value: '#0F172A' },
+  { label: $t('activity.formModal.k9ed1'), value: '#000000' },
+  { label: $t('activity.formModal.k7070'), value: '#6B7280' },
+  { label: $t('activity.formModal.k70702'), value: '#9CA3AF' },
+  { label: $t('activity.formModal.k9ed12'), value: '#1F2937' },
+  { label: $t('activity.formModal.k9ed13'), value: '#374151' },
+  { label: $t('activity.formModal.k9ed14'), value: '#111827' },
+  { label: $t('activity.formModal.k9ed15'), value: '#0F172A' },
   // Row 2
-  { label: '灰3', value: '#4B5563' },
-  { label: '黑6', value: '#030712' },
-  { label: '灰4', value: '#71717A' },
-  { label: '黑7', value: '#18181B' },
-  { label: '黑8', value: '#27272A' },
-  { label: '黑9', value: '#3F3F46' },
-  { label: '灰5', value: '#A1A1AA' },
+  { label: $t('activity.formModal.k70703'), value: '#4B5563' },
+  { label: $t('activity.formModal.k9ed16'), value: '#030712' },
+  { label: $t('activity.formModal.k70704'), value: '#71717A' },
+  { label: $t('activity.formModal.k9ed17'), value: '#18181B' },
+  { label: $t('activity.formModal.k9ed18'), value: '#27272A' },
+  { label: $t('activity.formModal.k9ed19'), value: '#3F3F46' },
+  { label: $t('activity.formModal.k70705'), value: '#A1A1AA' },
   // Row 3
-  { label: '灰6', value: '#52525B' },
-  { label: '黑10', value: '#09090B' },
-  { label: '灰7', value: '#D4D4D8' },
-  { label: '灰8', value: '#E4E4E7' },
-  { label: '灰9', value: '#F4F4F5' },
-  { label: '蓝紫', value: '#8B5FBF' },
+  { label: $t('activity.formModal.k70706'), value: '#52525B' },
+  { label: $t('activity.formModal.k9ed110'), value: '#09090B' },
+  { label: $t('activity.formModal.k70707'), value: '#D4D4D8' },
+  { label: $t('activity.formModal.k70708'), value: '#E4E4E7' },
+  { label: $t('activity.formModal.k70709'), value: '#F4F4F5' },
+  { label: $t('activity.formModal.k84dd'), value: '#8B5FBF' },
 ];
 
 const activityIcons = [
-  { id: 'game', label: '游戏' },
-  { id: 'award', label: '奖品' },
-  { id: 'activity', label: '活动' },
-  { id: 'daily', label: '节日' },
-  { id: 'casino', label: '赌场' },
-  { id: 'sports', label: '美女' },
-  { id: 'custom', label: '自定义' },
+  { id: 'game', label: $t('activity.formModal.k6e38') },
+  { id: 'award', label: $t('activity.formModal.k595612') },
+  { id: 'activity', label: $t('activity.rewardReport.k6d3b3') },
+  { id: 'daily', label: $t('activity.formModal.k82822') },
+  { id: 'casino', label: $t('activity.formModal.k8d4c') },
+  { id: 'sports', label: $t('activity.formModal.k7f8e') },
+  { id: 'custom', label: $t('activity.detailModal.k81ea') },
 ];
 
 const {
@@ -5044,7 +4872,7 @@ const {
 } = useActiveMemberTiers();
 
 const memberLevelButtons = computed(() => [
-  { label: '全部层级', value: 'all' },
+  { label: $t('activity.formModal.k51684'), value: 'all' },
   ...memberTierOptions.value.map((tier) => ({
     label: tier.label,
     value: tier.id,
@@ -5075,22 +4903,22 @@ function applyMemberTierSelectionFromConfig(config: Record<string, unknown>) {
   );
 }
 
-const languages = [
-  { code: 'zh-CN', name: '简体中文' },
+const languages = computed(() => [
+  { code: 'zh-CN', name: $t('activity.formModal.langZhCN') },
   { code: 'en-US', name: 'English' },
   { code: 'pt-BR', name: 'Português' },
-];
+]);
 
 const ruleTemplateOptions = [
-  { label: '自定义', value: 'custom' },
-  { label: '系统自带', value: 'system' },
+  { label: $t('activity.detailModal.k81ea'), value: 'custom' },
+  { label: $t('activity.formModal.k7cfb'), value: 'system' },
 ];
 
 const systemRulesPreview = computed(() => {
   const typeLabel =
     activityTypes.find((t) => t.value === formData.activityType)?.label ||
     formData.activityType;
-  return `【${typeLabel}】活动规则由系统根据活动类型自动生成，前台将展示平台默认 T&C 说明。如需自定义，请选择「自定义」并编辑规则文本。`;
+  return $t('activity.formModal.systemRulesAutoPreview', [typeLabel]);
 });
 
 /** 提交时：系统自带不传自定义规则，自定义模板传 T&C 文本 */
@@ -5099,32 +4927,32 @@ function resolveRulesForSubmit(): string {
 }
 
 const rewardTypeOptions = [
-  { label: '固定奖励', value: 'fixed' },
-  { label: '比例奖励', value: 'percentage' },
-  { label: '随机奖励', value: 'random' },
+  { label: $t('activity.formModal.k56fa5'), value: 'fixed' },
+  { label: $t('activity.formModal.k6bd43'), value: 'percentage' },
+  { label: $t('activity.formModal.k968f3'), value: 'random' },
 ];
 
 // Preset floating icons
-const presetIcons = ref([
-  { id: 'gift1', name: '礼品1', url: '/uploads/icons/floating/gift1.png' },
-  { id: 'bonus1', name: '奖金1', url: '/uploads/icons/floating/bonus1.png' },
+const presetIcons = computed(() => [
+  { id: 'gift1', name: $t('activity.formModal.floatingIconGift1'), url: '/uploads/icons/floating/gift1.png' },
+  { id: 'bonus1', name: $t('activity.formModal.floatingIconBonus1'), url: '/uploads/icons/floating/bonus1.png' },
   {
     id: 'activity1',
-    name: '活动1',
+    name: $t('activity.formModal.floatingIconActivity1'),
     url: '/uploads/icons/floating/activity1.png',
   },
   { id: 'vip1', name: 'VIP1', url: '/uploads/icons/floating/vip1.png' },
   {
     id: 'recharge1',
-    name: '充值1',
+    name: $t('activity.formModal.floatingIconRecharge1'),
     url: '/uploads/icons/floating/recharge1.png',
   },
   {
     id: 'mission1',
-    name: '任务1',
+    name: $t('activity.formModal.floatingIconTask1'),
     url: '/uploads/icons/floating/mission1.png',
   },
-  { id: 'lucky1', name: '幸运1', url: '/uploads/icons/floating/lucky1.png' },
+  { id: 'lucky1', name: $t('activity.formModal.floatingIconLucky1'), url: '/uploads/icons/floating/lucky1.png' },
 ]);
 
 // File lists
@@ -5614,7 +5442,7 @@ function toCustomOpenInNewWindowBoolean(
 
 /** API may store title in locales; config.title can be stale placeholder. */
 function resolveActivityTitle(item: any): string {
-  const placeholder = '未设置标题';
+  const placeholder = $t('activity.detailModal.k672a2');
   const locales = item?.locales as
     | Array<{ locale?: string; title?: string }>
     | undefined;
@@ -5693,11 +5521,11 @@ const validateCustomUrl = () => {
     if (!isValidUrl(formData.customTargetUrl)) {
       const url = formData.customTargetUrl.trim();
       if (!url) {
-        message.warning('请输入链接地址');
+        message.warning($t('activity.formModal.k8bf720'));
       } else if (!url.startsWith('http://') && !url.startsWith('https://')) {
-        message.warning('链接地址必须以 http:// 或 https:// 开头');
+        message.warning($t('activity.formModal.linkMustStartHttp'));
       } else {
-        message.warning('请输入有效的链接地址');
+        message.warning($t('activity.formModal.k8bf721'));
       }
     }
   }
@@ -5708,12 +5536,12 @@ const handleSaveDraft = async () => {
   try {
     // Validate required fields
     if (!formData.title) {
-      message.error('请输入活动名称');
+      message.error($t('activity.formModal.k8bf7'));
       return;
     }
 
     if (!formData.startTime || !formData.endTime) {
-      message.error('请设置活动时间段');
+      message.error($t('activity.formModal.k8bf722'));
       return;
     }
 
@@ -5739,12 +5567,12 @@ const handleSaveDraft = async () => {
     // TODO: Call API to save activity
     console.log('Saving activity draft:', activityData);
 
-    message.success('活动已保存为草稿');
+    message.success($t('activity.formModal.k6d3b4'));
     modalShow.value = false;
     emit('success');
   } catch (error) {
     console.error('Error saving activity draft:', error);
-    message.error('保存失败，请重试');
+    message.error($t('activity.formModal.k4fddk8bf7'));
   } finally {
     submitting.value = false;
   }
@@ -5755,19 +5583,19 @@ const handleSubmit = async () => {
   try {
     // Validate required fields
     if (!formData.title) {
-      message.error('请输入活动名称');
+      message.error($t('activity.formModal.k8bf7'));
       return;
     }
 
     if (!formData.startTime || !formData.endTime) {
-      message.error('请设置活动时间段');
+      message.error($t('activity.formModal.k8bf722'));
       return;
     }
 
     // Validate custom type configuration
     if (formData.activityType === 'custom') {
       if (!formData.customDisplayMethod) {
-        message.error('请选择展示方式');
+        message.error($t('activity.formModal.k8bf723'));
         submitting.value = false;
         return;
       }
@@ -5776,7 +5604,7 @@ const handleSubmit = async () => {
         formData.customDisplayMethod === 'jump_link' &&
         !formData.customJumpType
       ) {
-        message.error('请选择跳转页面类型');
+        message.error($t('activity.formModal.k8bf724'));
         submitting.value = false;
         return;
       }
@@ -5786,7 +5614,7 @@ const handleSubmit = async () => {
         formData.customJumpType === 'external_link' &&
         !formData.customTargetUrl
       ) {
-        message.error('请输入链接地址');
+        message.error($t('activity.formModal.k8bf720'));
         submitting.value = false;
         return;
       }
@@ -5801,7 +5629,7 @@ const handleSubmit = async () => {
 
         // Check if URL is not empty after trimming
         if (!url) {
-          message.error('请输入链接地址');
+          message.error($t('activity.formModal.k8bf720'));
           submitting.value = false;
           return;
         }
@@ -5810,9 +5638,9 @@ const handleSubmit = async () => {
         if (!isValidUrl(url)) {
           // Provide specific error messages
           if (!url.startsWith('http://') && !url.startsWith('https://')) {
-            message.error('链接地址必须以 http:// 或 https:// 开头');
+            message.error($t('activity.formModal.linkMustStartHttp'));
           } else {
-            message.error('请输入有效的链接地址（格式不正确）');
+            message.error($t('activity.formModal.k8bf7k683c'));
           }
           submitting.value = false;
           return;
@@ -5825,7 +5653,7 @@ const handleSubmit = async () => {
           .replace(/&nbsp;/g, ' ')
           .trim();
         if (!plainText) {
-          message.error('请编辑内置页面内容');
+          message.error($t('activity.formModal.k8bf725'));
           submitting.value = false;
           return;
         }
@@ -6240,9 +6068,7 @@ const handleSubmit = async () => {
         configPayload.newbieActualGiftMin && configPayload.newbieActualGiftMax;
 
       if (!hasRewardSettings && !hasGiftAmounts) {
-        message.warning(
-          '请配置奖励设置：填写实际赠送金额范围，或添加奖励设置表（如果使用固定金额方式）',
-        );
+        message.warning($t('activity.formModal.configureRewardSettings'));
         submitting.value = false;
         return;
       }
@@ -6370,7 +6196,7 @@ const handleSubmit = async () => {
         Number((props.editingItem as any).id),
         updatePayload,
       );
-      message.success('活动更新成功！');
+      message.success($t('activity.formModal.k6d3b5'));
       modalShow.value = false;
       emit('success');
     } else {
@@ -6462,13 +6288,13 @@ const handleSubmit = async () => {
 
       console.log('🚀 Debug - Final CREATE payload:', createPayload);
       await createActivity(createPayload);
-      message.success('活动创建成功！');
+      message.success($t('activity.formModal.k6d3b6'));
       modalShow.value = false;
       emit('success');
     }
   } catch (error) {
     console.error('Error submitting activity:', error);
-    message.error('提交失败，请重试');
+    message.error($t('activity.formModal.k63d0k8bf7'));
   } finally {
     submitting.value = false;
   }
@@ -6480,7 +6306,7 @@ const openTranslationModal = () => {
 
 const saveTranslations = () => {
   translationModalShow.value = false;
-  message.success('多语言设置已保存');
+  message.success($t('activity.formModal.k591a2'));
 };
 
 const openIconUpload = () => {
@@ -6489,7 +6315,7 @@ const openIconUpload = () => {
 
 const saveCustomIcon = () => {
   iconUploadModalShow.value = false;
-  message.success('自定义图标已保存');
+  message.success($t('activity.formModal.k81ea5'));
 };
 
 const handlePromoImageChange = (options: any) => {
@@ -6622,7 +6448,13 @@ const handleFloatingIconUpload = (language: string, event: any) => {
     }
 
     message.success(
-      `${language === 'general' ? '通用' : language === 'pt' ? '葡萄牙语' : '简体中文'}图标上传成功`,
+      $t('activity.formModal.iconUploadSuccess', [
+        language === 'general'
+          ? $t('activity.formModal.k901a')
+          : language === 'pt'
+            ? 'Português'
+            : $t('activity.formModal.langZhCN'),
+      ]),
     );
   }
 };
@@ -6633,7 +6465,7 @@ const selectPresetIcon = (icon: { id: string; name: string; url: string }) => {
     name: icon.name,
     url: icon.url,
   };
-  message.success(`已选择预设图标: ${icon.name}`);
+  message.success($t('activity.formModal.presetIconSelected', [icon.name]));
 };
 
 // Methods for Promotion Specific Fields
@@ -6648,7 +6480,7 @@ const downloadPromotionTemplate = async () => {
   try {
     // Check if this is a promotion activity type
     if (formData.activityType !== 'promotion') {
-      message.error('只有推广类型活动支持模板下载');
+      message.error($t('activity.formModal.k53ea3'));
       return;
     }
 
@@ -6719,10 +6551,10 @@ const downloadPromotionTemplate = async () => {
     document.body.removeChild(a);
     window.URL.revokeObjectURL(blobUrl);
 
-    message.success('模板已下载');
+    message.success($t('activity.formModal.k6a21'));
   } catch (error) {
     console.error('❌ Download failed:', error);
-    message.error('模板下载失败');
+    message.error($t('activity.formModal.k6a212'));
   }
 };
 
@@ -6732,7 +6564,7 @@ const batchImportPromotion = () => {
 
     // Check if this is a promotion activity type
     if (formData.activityType !== 'promotion') {
-      message.error('只有推广类型活动支持批量导入');
+      message.error($t('activity.formModal.k53ea4'));
       return;
     }
 
@@ -6771,7 +6603,7 @@ const batchImportPromotion = () => {
           result = await parsePromotionExcel(file);
         } else {
           console.log('❌ Unsupported file type:', fileName);
-          message.error('不支持的文件格式，请上传 .csv 或 .xlsx 文件');
+          message.error($t('activity.formModal.k4e0dk8bf7Csvk6216Xlsxk6587'));
           return;
         }
 
@@ -6801,7 +6633,7 @@ const batchImportPromotion = () => {
         }
       } catch (error) {
         console.error('❌ Import failed with exception:', error);
-        message.error('批量导入失败，请检查文件格式');
+        message.error($t('activity.formModal.k6279k8bf7'));
       } finally {
         // Clean up
         document.body.removeChild(input);
@@ -6813,7 +6645,7 @@ const batchImportPromotion = () => {
     input.click();
   } catch (error) {
     console.error('❌ Batch import error:', error);
-    message.error('批量导入功能异常');
+    message.error($t('activity.formModal.k62792'));
   }
 };
 
@@ -6870,7 +6702,7 @@ const parsePromotionCSV = (csvContent: string) => {
     if (rewardSettings.length === 0) {
       return {
         success: false,
-        message: '没有有效的奖励设置数据',
+        message: $t('activity.formModal.k6ca1'),
       };
     }
 
@@ -6884,7 +6716,7 @@ const parsePromotionCSV = (csvContent: string) => {
   } catch (error) {
     return {
       success: false,
-      message: 'CSV文件格式错误',
+      message: $t('activity.formModal.cSV'),
     };
   }
 };
@@ -6912,7 +6744,7 @@ const parsePromotionExcel = async (file: File) => {
     console.error('❌ Excel parsing error:', error);
     return {
       success: false,
-      message: 'Excel文件解析失败，请检查文件格式或转换为CSV格式后重试',
+      message: $t('activity.formModal.excelk8bf7'),
     };
   }
 };
@@ -6973,7 +6805,7 @@ const parseExcelWithSheetJS = async (file: File, XLSX: any) => {
         if (rewardSettings.length === 0) {
           resolve({
             success: false,
-            message: '没有有效的奖励设置数据',
+            message: $t('activity.formModal.k6ca1'),
           });
           return;
         }
@@ -6988,7 +6820,7 @@ const parseExcelWithSheetJS = async (file: File, XLSX: any) => {
       } catch (error) {
         resolve({
           success: false,
-          message: 'Excel文件解析失败',
+          message: $t('activity.formModal.excel'),
         });
       }
     };
@@ -6996,7 +6828,7 @@ const parseExcelWithSheetJS = async (file: File, XLSX: any) => {
     reader.onerror = () => {
       resolve({
         success: false,
-        message: 'Excel文件读取失败',
+        message: $t('activity.formModal.excel2'),
       });
     };
 
@@ -7029,33 +6861,33 @@ const removeCollectCondition = (index: number) => {
 const getDistributionMethodText = () => {
   switch (formData.collectDistributionMethod) {
     case 'daily':
-      return '每日';
+      return $t('activity.formModal.k6bcf');
     case 'weekly':
-      return '每周';
+      return $t('activity.formModal.k6bcf5');
     case 'monthly':
-      return '每月';
+      return $t('activity.formModal.k6bcf6');
     default:
-      return '每月';
+      return $t('activity.formModal.k6bcf6');
   }
 };
 
 // Options for Collect Characters
 const collectCombinationOptions = [
-  { label: '节日语', value: 'festival' },
-  { label: '祝福语', value: 'blessing' },
-  { label: '成语', value: 'idiom' },
+  { label: $t('activity.formModal.k8282'), value: 'festival' },
+  { label: $t('activity.formModal.k795d'), value: 'blessing' },
+  { label: $t('activity.formModal.k6210'), value: 'idiom' },
 ];
 
 const collectCombinationNameOptions = [
-  { label: '新年大吉', value: 'new_year_luck' },
-  { label: '恭喜发财', value: 'congratulations_wealth' },
-  { label: '万事如意', value: 'everything_goes_well' },
+  { label: $t('activity.formModal.k65b0'), value: 'new_year_luck' },
+  { label: $t('activity.formModal.k606d'), value: 'congratulations_wealth' },
+  { label: $t('activity.formModal.k4e07'), value: 'everything_goes_well' },
 ];
 
 const collectConditionTypeOptions = [
-  { label: '有效投注', value: 'valid_bet' },
-  { label: '充值金额', value: 'recharge_amount' },
-  { label: '登录次数', value: 'login_count' },
+  { label: $t('activity.formModal.k6709'), value: 'valid_bet' },
+  { label: $t('activity.formModal.k5145'), value: 'recharge_amount' },
+  { label: $t('activity.formModal.k767b3'), value: 'login_count' },
 ];
 
 // Methods for Guessing/Competition Specific Fields
@@ -7070,17 +6902,17 @@ const uploadTeamIcon = (index: number) => {
 
 // Options for Guessing/Competition
 const guessingParticipationOptions = [
-  { label: '无条件', value: 'no_condition' },
-  { label: 'VIP等级', value: 'vip_level' },
-  { label: '充值金额', value: 'recharge_amount' },
-  { label: '打码金额', value: 'wagering_amount' },
+  { label: $t('activity.formModal.k65e0'), value: 'no_condition' },
+  { label: $t('activity.formModal.vIP'), value: 'vip_level' },
+  { label: $t('activity.formModal.k5145'), value: 'recharge_amount' },
+  { label: $t('activity.formModal.k62532'), value: 'wagering_amount' },
 ];
 
 const guessingObtainPointsOptions = [
-  { label: '有效投注', value: 'valid_bet' },
-  { label: '充值金额', value: 'recharge_amount' },
-  { label: '登录次数', value: 'login_count' },
-  { label: '完成任务', value: 'complete_task' },
+  { label: $t('activity.formModal.k6709'), value: 'valid_bet' },
+  { label: $t('activity.formModal.k5145'), value: 'recharge_amount' },
+  { label: $t('activity.formModal.k767b3'), value: 'login_count' },
+  { label: $t('activity.formModal.k5b8c10'), value: 'complete_task' },
 ];
 
 // Methods for Newcomer Bonus Specific Fields
@@ -7130,10 +6962,10 @@ const goToWithdrawalSettings = () => {
 
 // Options for Newcomer Bonus
 const newbiePromotionTypeOptions = [
-  { label: '首充优惠券', value: 'first_deposit_coupon' },
-  { label: '新人礼包', value: 'newcomer_gift' },
-  { label: '注册奖励', value: 'registration_bonus' },
-  { label: '通用型兑换码（填写即可领奖', value: 'code_redemption' },
+  { label: $t('activity.formModal.k99962'), value: 'first_deposit_coupon' },
+  { label: $t('activity.formModal.k65b04'), value: 'newcomer_gift' },
+  { label: $t('activity.formModal.k6ce82'), value: 'registration_bonus' },
+  { label: $t('activity.formModal.k901ak586b2'), value: 'code_redemption' },
 ];
 
 // Watch for modal show/hide to reset form

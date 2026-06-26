@@ -3,89 +3,89 @@
     v-model:show="visible"
     preset="card"
     :style="{ width: '1200px' }"
-    title="用户详情"
+    :title="$t('user.userDetail.userDetailTitle')"
   >
     <n-tabs v-model:value="activeTab" type="card" animated>
       <!-- 会员概览 -->
-      <n-tab-pane name="overview" tab="会员概览">
+      <n-tab-pane name="overview" :tab="$t('user.userDetail.overview')">
         <div class="grid grid-cols-2 gap-6">
           <!-- Section A: Basic Account Info -->
           <div class="space-y-4">
-            <n-card title="基本账户信息" size="small">
+            <n-card :title="$t('user.userDetail.basicAccountInfo')" size="small">
               <div class="space-y-3">
                 <div class="flex items-center justify-between">
-                  <span class="text-gray-600">帐户状态:</span>
+                  <span class="text-gray-600">{{ $t('user.userDetail.accountStatus') }}:</span>
                   <div class="flex items-center gap-2">
                     <n-tag
-                      :type="userDetail.status === '正常' ? 'success' : 'error'"
+                      :type="isNormalAccountStatus(userDetail.status) ? 'success' : 'error'"
                       size="small"
                     >
                       {{ userDetail.status }}
                     </n-tag>
                     <n-button text type="primary" size="tiny"
-                      >修改状态</n-button
+                      >{{ $t('user.userDetail.modifyStatus') }}</n-button
                     >
                   </div>
                 </div>
 
                 <div class="flex justify-between">
-                  <span class="text-gray-600">帐号类型:</span>
+                  <span class="text-gray-600">{{ $t('user.userDetail.accountType') }}:</span>
                   <span>{{ userDetail.accountType }}</span>
                 </div>
 
                 <div class="flex justify-between">
-                  <span class="text-gray-600">自我禁止状态:</span>
+                  <span class="text-gray-600">{{ $t('user.userDetail.selfExclusion') }}:</span>
                   <span>{{ userDetail.selfExclusionStatus || '--' }}</span>
                 </div>
 
                 <div class="flex justify-between">
-                  <span class="text-gray-600">上级代理:</span>
+                  <span class="text-gray-600">{{ $t('user.userDetail.upperAgent') }}:</span>
                   <span>{{ userDetail.referrer }}</span>
                 </div>
 
                 <div class="flex justify-between">
-                  <span class="text-gray-600">代理佣金:</span>
+                  <span class="text-gray-600">{{ $t('user.userDetail.agentCommission') }}:</span>
                   <span>{{ formatCurrency(userDetail.agentCommission) }}</span>
                 </div>
 
                 <div class="flex items-center justify-between">
-                  <span class="text-gray-600">实名姓名:</span>
+                  <span class="text-gray-600">{{ $t('user.userDetail.realName') }}:</span>
                   <div class="flex items-center gap-2">
                     <span>{{ userDetail.realName }}</span>
-                    <n-button text type="primary" size="tiny">记录</n-button>
+                    <n-button text type="primary" size="tiny">{{ $t('user.userDetail.record') }}</n-button>
                   </div>
                 </div>
 
                 <div class="flex justify-between">
-                  <span class="text-gray-600">币种:</span>
+                  <span class="text-gray-600">{{ $t('common.currency') }}:</span>
                   <span>{{ userDetail.currency }}</span>
                 </div>
 
                 <div class="flex justify-between">
-                  <span class="text-gray-600">奖励钱包:</span>
+                  <span class="text-gray-600">{{ $t('user.userDetail.rewardWallet') }}:</span>
                   <!-- <span>{{ formatCurrency(userDetail.rewardWallet) }}</span> -->
                   <span>{{ 0 }}</span>
                 </div>
 
                 <div class="flex justify-between">
-                  <span class="text-gray-600">利息宝:</span>
+                  <span class="text-gray-600">{{ $t('user.userDetail.interestTreasure') }}:</span>
                   <span>{{ formatCurrency(userDetail.savingsWallet) }}</span>
                 </div>
 
                 <div class="flex items-center justify-between">
-                  <span class="text-gray-600">VIP等级:</span>
+                  <span class="text-gray-600">{{ $t('user.userDetail.vipLevel') }}:</span>
                   <div class="flex items-center gap-2">
                     <span>{{ userDetail.vipLevel }}</span>
-                    <n-button text type="primary" size="tiny">修改</n-button>
+                    <n-button text type="primary" size="tiny">{{ $t('common.modify') }}</n-button>
                   </div>
                 </div>
               </div>
 
               <template #action>
                 <div class="flex gap-2">
-                  <n-button size="small" type="primary">更多关联</n-button>
-                  <n-button size="small">记录</n-button>
-                  <n-button size="small">刷新</n-button>
+                  <n-button size="small" type="primary">{{ $t('user.userDetail.moreAssociations') }}</n-button>
+                  <n-button size="small">{{ $t('user.userDetail.record') }}</n-button>
+                  <n-button size="small">{{ $t('common.refresh') }}</n-button>
                 </div>
               </template>
             </n-card>
@@ -93,13 +93,13 @@
 
           <!-- Section B: Financial/Betting Behavior -->
           <div class="space-y-4">
-            <n-card title="资金投注行为" size="small">
+            <n-card :title="$t('user.userDetail.fundBetBehavior')" size="small">
               <div class="space-y-3">
                 <div class="flex items-center justify-between">
-                  <span class="text-gray-600">账户余额:</span>
+                  <span class="text-gray-600">{{ $t('user.userDetail.accountBalance') }}:</span>
                   <div class="flex items-center gap-3">
                     <span
-                      >可用: {{ formatCurrency(userDetail.balance) }} | 冻结:
+                      >{{ $t('user.userDetail.available') }}: {{ formatCurrency(userDetail.balance) }} | {{ $t('user.userDetail.frozen') }}:
                       {{ formatCurrency(userDetail.frozenBalance) }}</span
                     >
                     <div class="flex gap-1">
@@ -107,63 +107,63 @@
                         size="tiny"
                         type="primary"
                         @click="handleRefreshBalance"
-                        >刷新</n-button
+                        >{{ $t('common.refresh') }}</n-button
                       >
                       <n-button
                         size="tiny"
                         type="warning"
                         @click="handleManualPullback"
-                        >人工拉回</n-button
+                        >{{ $t('user.userDetail.manualRecall') }}</n-button
                       >
                       <n-button
                         size="tiny"
                         type="info"
                         @click="handleAccountRecords"
-                        >账变记录</n-button
+                        >{{ $t('user.userDetail.transactionRecords') }}</n-button
                       >
                       <n-button
                         size="tiny"
                         type="success"
                         @click="handleManualCredit"
-                        >手动加款</n-button
+                        >{{ $t('user.userDetail.manualCredit') }}</n-button
                       >
                       <n-button
                         size="tiny"
                         type="error"
                         @click="handleManualDebit"
-                        >手动扣除</n-button
+                        >{{ $t('user.userDetail.manualDebit') }}</n-button
                       >
                     </div>
                   </div>
                 </div>
 
                 <div class="flex justify-between">
-                  <span class="text-gray-600">累计充值:</span>
+                  <span class="text-gray-600">{{ $t('user.userDetail.totalDeposit') }}:</span>
                   <span
-                    >{{ userDetail.rechargeCount }}次 |
+                    >{{ userDetail.rechargeCount }}{{ $t('user.userDetail.times') }} |
                     {{ formatCurrency(userDetail.rechargeAmount) }}</span
                   >
                 </div>
 
                 <div class="flex justify-between">
-                  <span class="text-gray-600">累计提现:</span>
+                  <span class="text-gray-600">{{ $t('user.userDetail.totalWithdraw') }}:</span>
                   <span
-                    >{{ userDetail.withdrawCount }}次 |
+                    >{{ userDetail.withdrawCount }}{{ $t('user.userDetail.times') }} |
                     {{ formatCurrency(userDetail.withdrawAmount) }}</span
                   >
                 </div>
 
                 <div class="flex justify-between">
-                  <span class="text-gray-600">今日投注:</span>
+                  <span class="text-gray-600">{{ $t('user.userDetail.todayBet') }}:</span>
                   <span
-                    >有效: {{ formatCurrency(userDetail.todayValidBet) }} |
-                    总投注:
+                    >{{ $t('user.userDetail.validBet') }}: {{ formatCurrency(userDetail.todayValidBet) }} |
+                    {{ $t('user.userDetail.totalBet') }}:
                     {{ formatCurrency(userDetail.todayBetAmount) }}</span
                   >
                 </div>
 
                 <div class="flex justify-between">
-                  <span class="text-gray-600">今日损益:</span>
+                  <span class="text-gray-600">{{ $t('user.userDetail.todayPnl') }}:</span>
                   <span
                     :class="
                       userDetail.todayProfit >= 0
@@ -176,10 +176,10 @@
                 </div>
 
                 <div class="flex justify-between">
-                  <span class="text-gray-600">活动优惠:</span>
+                  <span class="text-gray-600">{{ $t('user.userDetail.promotions') }}:</span>
                   <span
-                    >任务:
-                    {{ formatCurrency(userDetail.promotionStats.task) }} | 充值:
+                    >{{ $t('user.userDetail.task') }}:
+                    {{ formatCurrency(userDetail.promotionStats.task) }} | {{ $t('user.userDetail.deposit') }}:
                     {{
                       formatCurrency(userDetail.promotionStats.rechargeReward)
                     }}</span
@@ -187,41 +187,41 @@
                 </div>
 
                 <div class="flex items-center justify-between">
-                  <span class="text-gray-600">会员层级:</span>
+                  <span class="text-gray-600">{{ $t('user.userDetail.memberTier') }}:</span>
                   <div class="flex items-center gap-2">
                     <span>{{ userDetail.level }}</span>
-                    <n-button text type="primary" size="tiny">修改</n-button>
+                    <n-button text type="primary" size="tiny">{{ $t('common.modify') }}</n-button>
                   </div>
                 </div>
 
                 <div class="flex items-center justify-between">
-                  <span class="text-gray-600">会员标签:</span>
+                  <span class="text-gray-600">{{ $t('user.userDetail.memberTags') }}:</span>
                   <div class="flex items-center gap-2">
                     <n-tag size="small">{{ userDetail.tag }}</n-tag>
-                    <n-button text type="primary" size="tiny">修改</n-button>
+                    <n-button text type="primary" size="tiny">{{ $t('common.modify') }}</n-button>
                   </div>
                 </div>
 
                 <div class="flex justify-between">
-                  <span class="text-gray-600">登录密码:</span>
+                  <span class="text-gray-600">{{ $t('user.userDetail.loginPassword') }}:</span>
                   <span
-                    >****** (同密码人数:
+                    >****** ({{ $t('user.userDetail.samePasswordCount') }}:
                     {{ userDetail.passwordMatchCount }})</span
                   >
                 </div>
 
                 <div class="flex justify-between">
-                  <span class="text-gray-600">提现密码:</span>
+                  <span class="text-gray-600">{{ $t('user.userDetail.withdrawPassword') }}:</span>
                   <span
-                    >****** (同密码人数:
+                    >****** ({{ $t('user.userDetail.samePasswordCount') }}:
                     {{ userDetail.sameWithdrawalPinCount || 0 }})</span
                   >
                 </div>
 
                 <div class="flex justify-between">
-                  <span class="text-gray-600">提现账号:</span>
+                  <span class="text-gray-600">{{ $t('user.userDetail.withdrawAccounts') }}:</span>
                   <span
-                    >{{ userDetail.withdrawAccountCount }}个 (同号人数:
+                    >{{ userDetail.withdrawAccountCount }}{{ $t('user.userDetail.units') }} ({{ $t('user.userDetail.sameAccountCount') }}:
                     {{ userDetail.sameAccountCount }})</span
                   >
                 </div>
@@ -229,9 +229,9 @@
 
               <template #action>
                 <div class="flex gap-2">
-                  <n-button size="small" type="primary">更多关联</n-button>
-                  <n-button size="small">记录</n-button>
-                  <n-button size="small">刷新</n-button>
+                  <n-button size="small" type="primary">{{ $t('user.userDetail.moreAssociations') }}</n-button>
+                  <n-button size="small">{{ $t('user.userDetail.record') }}</n-button>
+                  <n-button size="small">{{ $t('common.refresh') }}</n-button>
                 </div>
               </template>
             </n-card>
@@ -239,47 +239,48 @@
 
           <!-- Section C: Login/Registration Device/IP Data -->
           <div class="col-span-2">
-            <n-card title="登录注册设备IP数据" size="small">
+            <n-card :title="$t('user.userDetail.loginRegisterDevice')" size="small">
               <div class="grid grid-cols-2 gap-6">
                 <div class="space-y-3">
-                  <h4 class="font-medium text-gray-800">注册信息</h4>
+                  <h4 class="font-medium text-gray-800">{{ $t('user.userDetail.registerInfo') }}</h4>
                   <div class="flex justify-between">
-                    <span class="text-gray-600">注册IP:</span>
+                    <span class="text-gray-600">{{ $t('user.userDetail.registerIp') }}:</span>
                     <span
-                      >{{ userDetail.registrationIp }} (同IP人数:
+                      >{{ userDetail.registrationIp }} ({{ $t('user.userDetail.sameIpCount') }}:
                       {{ userDetail.sameRegIpCount }})</span
                     >
                   </div>
 
                   <div class="flex justify-between">
-                    <span class="text-gray-600">注册时间:</span>
+                    <span class="text-gray-600">{{ $t('user.userDetail.registerTime') }}:</span>
                     <span>{{
                       formatDateTime(userDetail.registrationTime)
                     }}</span>
                   </div>
 
                   <div class="flex justify-between">
-                    <span class="text-gray-600">注册域名:</span>
+                    <span class="text-gray-600">{{ $t('user.userDetail.registerDomain') }}:</span>
                     <span>{{ userDetail.registrationDomain }}</span>
                   </div>
 
                   <div class="flex justify-between">
-                    <span class="text-gray-600">注册设备号:</span>
+                    <span class="text-gray-600">{{ $t('user.userDetail.registerDeviceId') }}:</span>
                     <span>{{ userDetail.registrationDeviceId }}</span>
                   </div>
 
                   <div class="flex justify-between">
-                    <span class="text-gray-600">注册浏览器指纹:</span>
+                    <span class="text-gray-600">{{ $t('user.userDetail.registerFingerprint') }}:</span>
                     <span class="truncate">{{
                       userDetail.registrationFingerprint
                     }}</span>
                   </div>
 
                   <div class="flex justify-between">
-                    <span class="text-gray-600">注册来源:</span>
+                    <span class="text-gray-600">{{ $t('user.allMembers.registrationSource') }}:</span>
                     <n-tag
                       :type="
-                        userDetail.registrationSource === '官网'
+                        userDetail.registrationSource === '官网' ||
+                        isOfficialRegistrationSource(userDetail.registrationSource)
                           ? 'info'
                           : 'success'
                       "
@@ -291,34 +292,34 @@
                 </div>
 
                 <div class="space-y-3">
-                  <h4 class="font-medium text-gray-800">最后登录信息</h4>
+                  <h4 class="font-medium text-gray-800">{{ $t('user.userDetail.lastLoginInfo') }}</h4>
                   <div class="flex justify-between">
-                    <span class="text-gray-600">最后登录IP:</span>
+                    <span class="text-gray-600">{{ $t('user.userDetail.lastLoginIp') }}:</span>
                     <span>{{ userDetail.lastLoginIp }}</span>
                   </div>
 
                   <div class="flex justify-between">
-                    <span class="text-gray-600">地理位置:</span>
+                    <span class="text-gray-600">{{ $t('user.userDetail.location') }}:</span>
                     <span>{{ userDetail.lastLoginLocation }}</span>
                   </div>
 
                   <div class="flex justify-between">
-                    <span class="text-gray-600">最后登录时间:</span>
+                    <span class="text-gray-600">{{ $t('user.userDetail.lastLoginTime') }}:</span>
                     <span>{{ formatDateTime(userDetail.lastLoginTime) }}</span>
                   </div>
 
                   <div class="flex justify-between">
-                    <span class="text-gray-600">最后登录域名:</span>
+                    <span class="text-gray-600">{{ $t('user.userDetail.lastLoginDomain') }}:</span>
                     <span>{{ userDetail.lastLoginDomain }}</span>
                   </div>
 
                   <div class="flex justify-between">
-                    <span class="text-gray-600">最后登录设备号:</span>
+                    <span class="text-gray-600">{{ $t('user.userDetail.lastLoginDeviceId') }}:</span>
                     <span>{{ userDetail.lastLoginDeviceId }}</span>
                   </div>
 
                   <div class="flex justify-between">
-                    <span class="text-gray-600">最后登录指纹:</span>
+                    <span class="text-gray-600">{{ $t('user.userDetail.lastLoginFingerprint') }}:</span>
                     <span class="truncate">{{
                       userDetail.lastLoginFingerprint
                     }}</span>
@@ -328,9 +329,9 @@
 
               <template #action>
                 <div class="flex gap-2">
-                  <n-button size="small" type="primary">更多关联</n-button>
-                  <n-button size="small">记录</n-button>
-                  <n-button size="small">刷新</n-button>
+                  <n-button size="small" type="primary">{{ $t('user.userDetail.moreAssociations') }}</n-button>
+                  <n-button size="small">{{ $t('user.userDetail.record') }}</n-button>
+                  <n-button size="small">{{ $t('common.refresh') }}</n-button>
                 </div>
               </template>
             </n-card>
@@ -339,33 +340,33 @@
       </n-tab-pane>
 
       <!-- 联系方式 -->
-      <n-tab-pane name="contact" tab="联系方式">
+      <n-tab-pane name="contact" :tab="$t('user.userDetail.contact')">
         <n-result
           status="info"
-          title="需安全密码解密"
-          description="请输入安全密码以查看联系方式信息"
+          :title="$t('user.userDetail.securityPasswordRequired')"
+          :description="$t('user.userDetail.enterSecurityPassword')"
         >
           <template #footer>
             <n-space>
-              <n-input type="password" placeholder="请输入安全密码" />
-              <n-button type="primary">解密查看</n-button>
+              <n-input type="password" :placeholder="$t('user.userDetail.enterSecurityPasswordPlaceholder')" />
+              <n-button type="primary">{{ $t('user.userDetail.decryptView') }}</n-button>
             </n-space>
           </template>
         </n-result>
       </n-tab-pane>
 
       <!-- 个人资料 -->
-      <n-tab-pane name="profile" tab="个人资料">
-        <div class="py-12 text-center text-gray-500">个人资料功能开发中...</div>
+      <n-tab-pane name="profile" :tab="$t('user.userDetail.profile')">
+        <div class="py-12 text-center text-gray-500">{{ $t('user.userDetail.profileDeveloping') }}</div>
       </n-tab-pane>
 
       <!-- 提现账号 -->
-      <n-tab-pane name="withdraw" tab="提现账号">
-        <div class="py-12 text-center text-gray-500">提现账号功能开发中...</div>
+      <n-tab-pane name="withdraw" :tab="$t('user.userDetail.withdrawTab')">
+        <div class="py-12 text-center text-gray-500">{{ $t('user.userDetail.withdrawDeveloping') }}</div>
       </n-tab-pane>
 
       <!-- 账户交易 -->
-      <n-tab-pane name="transactions" tab="账户交易">
+      <n-tab-pane name="transactions" :tab="$t('user.userDetail.transactions')">
         <div class="transactions-content">
           <!-- 筛选器区域 -->
           <div class="mb-4">
@@ -378,21 +379,21 @@
                       @click="setDateFilter('today')"
                       size="small"
                     >
-                      日
+                      {{ $t('user.userDetail.dayFilter') }}
                     </n-button>
                     <n-button
                       :type="dateFilter === 'week' ? 'primary' : 'default'"
                       @click="setDateFilter('week')"
                       size="small"
                     >
-                      周
+                      {{ $t('user.userDetail.weekFilter') }}
                     </n-button>
                     <n-button
                       :type="dateFilter === 'month' ? 'primary' : 'default'"
                       @click="setDateFilter('month')"
                       size="small"
                     >
-                      月
+                      {{ $t('user.userDetail.monthFilter') }}
                     </n-button>
                   </n-button-group>
                 </n-form-item>
@@ -401,8 +402,8 @@
                   <n-date-picker
                     v-model:value="dateRange"
                     type="datetimerange"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
+                    :start-placeholder="$t('common.startTime')"
+                    :end-placeholder="$t('common.endTime')"
                     style="width: 360px"
                     @update:value="handleDateRangeChange"
                   />
@@ -411,23 +412,23 @@
                 <n-form-item>
                   <n-select
                     v-model:value="transactionTypeFilter"
-                    placeholder="账变大类"
+                    :placeholder="$t('user.userDetail.transactionCategory')"
                     style="width: 120px"
                     @update:value="handleTransactionTypeFilter"
                   >
-                    <n-option value="" label="全部" />
-                    <n-option value="deposit" label="存款" />
-                    <n-option value="withdrawal" label="提款" />
-                    <n-option value="manual" label="手动" />
-                    <n-option value="bet" label="投注" />
-                    <n-option value="bonus" label="奖金" />
+                    <n-option value="" :label="$t('common.all')" />
+                    <n-option value="deposit" :label="$t('user.userDetail.deposit')" />
+                    <n-option value="withdrawal" :label="$t('user.userDetail.withdrawal')" />
+                    <n-option value="manual" :label="$t('user.userDetail.manual')" />
+                    <n-option value="bet" :label="$t('user.userDetail.bet')" />
+                    <n-option value="bonus" :label="$t('user.userDetail.bonus')" />
                   </n-select>
                 </n-form-item>
 
                 <n-form-item>
                   <n-input
                     v-model:value="transactionNumberFilter"
-                    placeholder="请输入单号"
+                    :placeholder="$t('user.userDetail.enterOrderNo')"
                     style="width: 120px"
                     clearable
                   />
@@ -435,13 +436,13 @@
 
                 <n-form-item>
                   <n-button type="primary" @click="handleSearchTransactions">
-                    搜索
+                    {{ $t('common.search') }}
                   </n-button>
                   <n-button
                     style="margin-left: 8px"
                     @click="handleResetFilters"
                   >
-                    重置
+                    {{ $t('common.reset') }}
                   </n-button>
                 </n-form-item>
               </n-form>
@@ -464,29 +465,29 @@
       </n-tab-pane>
 
       <!-- 投注统计 -->
-      <n-tab-pane name="betting" tab="投注统计">
-        <div class="py-12 text-center text-gray-500">投注统计功能开发中...</div>
+      <n-tab-pane name="betting" :tab="$t('user.userDetail.betting')">
+        <div class="py-12 text-center text-gray-500">{{ $t('user.userDetail.bettingDeveloping') }}</div>
       </n-tab-pane>
 
       <!-- 会员消息 -->
-      <n-tab-pane name="messages" tab="会员消息">
-        <div class="py-12 text-center text-gray-500">会员消息功能开发中...</div>
+      <n-tab-pane name="messages" :tab="$t('user.userDetail.messages')">
+        <div class="py-12 text-center text-gray-500">{{ $t('user.userDetail.messagesDeveloping') }}</div>
       </n-tab-pane>
 
       <!-- 会员日志 -->
-      <n-tab-pane name="logs" tab="会员日志">
-        <div class="py-12 text-center text-gray-500">会员日志功能开发中...</div>
+      <n-tab-pane name="logs" :tab="$t('user.userDetail.logs')">
+        <div class="py-12 text-center text-gray-500">{{ $t('user.userDetail.logsDeveloping') }}</div>
       </n-tab-pane>
 
       <!-- 登录设备 -->
-      <n-tab-pane name="devices" tab="登录设备">
-        <div class="py-12 text-center text-gray-500">登录设备功能开发中...</div>
+      <n-tab-pane name="devices" :tab="$t('user.userDetail.devices')">
+        <div class="py-12 text-center text-gray-500">{{ $t('user.userDetail.devicesDeveloping') }}</div>
       </n-tab-pane>
 
       <!-- 账号同关联 -->
-      <n-tab-pane name="associations" tab="账号同关联">
+      <n-tab-pane name="associations" :tab="$t('user.userDetail.associations')">
         <div class="py-12 text-center text-gray-500">
-          账号同关联功能开发中...
+          {{ $t('user.userDetail.associationsDeveloping') }}
         </div>
       </n-tab-pane>
     </n-tabs>
@@ -508,6 +509,16 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
+function isNormalAccountStatus(status: string | undefined) {
+  return ['NORMAL', 'ACTIVE', '正常'].includes(status || '');
+}
+
+function isOfficialRegistrationSource(source: string | undefined) {
+  return ['官网', 'official', 'OFFICIAL'].includes(source || '');
+}
+
 import { ref, computed, h, watch } from 'vue';
 import {
   NModal,
@@ -661,7 +672,7 @@ const transactionPaginationConfig = computed(() => ({
 // Transaction preview table columns
 const transactionPreviewColumns = computed(() => [
   {
-    title: '类型',
+    title: $t('common.type'),
     key: 'transactionType',
     width: 80,
     render(row: TransactionRecord) {
@@ -676,7 +687,7 @@ const transactionPreviewColumns = computed(() => [
     },
   },
   {
-    title: '金额',
+    title: $t('common.amount'),
     key: 'amount',
     width: 100,
     render(row: TransactionRecord) {
@@ -690,7 +701,7 @@ const transactionPreviewColumns = computed(() => [
     },
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 80,
     render(row: TransactionRecord) {
@@ -706,7 +717,7 @@ const transactionPreviewColumns = computed(() => [
     },
   },
   {
-    title: '时间',
+    title: $t('common.time'),
     key: 'createdAt',
     width: 140,
     render(row: TransactionRecord) {
@@ -714,7 +725,7 @@ const transactionPreviewColumns = computed(() => [
     },
   },
   {
-    title: '描述',
+    title: $t('common.description'),
     key: 'description',
     ellipsis: { tooltip: true },
   },
@@ -723,13 +734,13 @@ const transactionPreviewColumns = computed(() => [
 // Full transaction table columns (matching screenshot)
 const transactionFullColumns = computed(() => [
   {
-    title: '单号',
+    title: $t('user.userDetail.orderNo'),
     key: 'id',
     width: 160,
     ellipsis: { tooltip: true },
   },
   {
-    title: '交易时间',
+    title: $t('user.transactionRecords.transactionTime'),
     key: 'createdAt',
     width: 160,
     render(row: TransactionRecord) {
@@ -737,15 +748,15 @@ const transactionFullColumns = computed(() => [
     },
   },
   {
-    title: '变动钱包',
+    title: $t('user.userDetail.changeWalletCol'),
     key: 'wallet',
     width: 80,
     render() {
-      return '余额';
+      return $t('user.userDetail.walletBalance');
     },
   },
   {
-    title: '账变大类',
+    title: $t('user.userDetail.transactionCategory'),
     key: 'transactionType',
     width: 100,
     render(row: TransactionRecord) {
@@ -764,7 +775,7 @@ const transactionFullColumns = computed(() => [
     },
   },
   {
-    title: '小类明细',
+    title: $t('user.userDetail.subCategory'),
     key: 'subType',
     width: 120,
     render(row: TransactionRecord) {
@@ -772,7 +783,7 @@ const transactionFullColumns = computed(() => [
     },
   },
   {
-    title: '变动前余额',
+    title: $t('user.userDetail.balanceBefore'),
     key: 'balanceBefore',
     width: 120,
     render(row: TransactionRecord) {
@@ -782,7 +793,7 @@ const transactionFullColumns = computed(() => [
     },
   },
   {
-    title: '变动金额',
+    title: $t('user.userDetail.changeAmount'),
     key: 'amount',
     width: 120,
     render(row: TransactionRecord) {
@@ -818,7 +829,7 @@ const transactionFullColumns = computed(() => [
     },
   },
   {
-    title: '变动后余额',
+    title: $t('user.userDetail.balanceAfter'),
     key: 'balanceAfter',
     width: 120,
     render(row: TransactionRecord) {
@@ -828,7 +839,7 @@ const transactionFullColumns = computed(() => [
     },
   },
   {
-    title: '前台备注',
+    title: $t('user.userDetail.frontendNote'),
     key: 'frontendNotes',
     width: 150,
     ellipsis: { tooltip: true },
@@ -837,7 +848,7 @@ const transactionFullColumns = computed(() => [
     },
   },
   {
-    title: '最后操作人',
+    title: $t('user.userDetail.lastOperator'),
     key: 'operator',
     width: 120,
     render(row: TransactionRecord) {
@@ -845,7 +856,7 @@ const transactionFullColumns = computed(() => [
     },
   },
   {
-    title: '后台备注',
+    title: $t('user.userDetail.backendNote'),
     key: 'backendNotes',
     width: 150,
     ellipsis: { tooltip: true },
@@ -915,12 +926,14 @@ const userDetail = computed<UserDetail>(() => {
   return {
     id: userData.id,
     account: userData.account,
-    realName: userData.realName || userData.name || '张三',
-    referrer: userData.invitedBy || '一级代理',
+    realName: userData.realName || userData.name || '--',
+    referrer: userData.invitedBy || '--',
     vipLevel: userData.vipLevel || 'VIP0',
     currency: userData.currency || 'BRL',
-    status: userData.status || (userData.isBanned ? '冻结' : '正常'),
-    accountType: '正式账号',
+    status:
+      userData.status ||
+      (userData.isBanned ? 'MANUAL_FREEZE' : 'NORMAL'),
+    accountType: userData.accountType || $t('user.allMembers.officialMember'),
     selfExclusionStatus: undefined,
     agentCommission: 1250.0,
     // Use real balance data from API
@@ -941,8 +954,8 @@ const userDetail = computed<UserDetail>(() => {
       rechargeReward: bonus.rechargeReward,
       abandonedReward: bonus.abandonedReward,
     },
-    tag: '活跃用户',
-    level: '默认层级',
+    tag: userData.tag || $t('user.allMembers.defaultTag'),
+    level: userData.memberLevel || $t('user.userDetail.defaultTier'),
     passwordMatchCount: 0, // Will be fetched from API
     sameWithdrawalPinCount: 0, // Will be fetched from API
     withdrawAccountCount: 0, // Will be fetched from API
@@ -953,10 +966,11 @@ const userDetail = computed<UserDetail>(() => {
       userData.registrationTime || userData.createdAt || '2024-01-15 14:30:25',
     registrationDeviceId: 'DEV_123456789',
     registrationFingerprint: 'FP_abcdef123456',
-    registrationSource: '官网',
+    registrationSource:
+      userData.registrationSource || $t('user.userDetail.officialSite'),
     sameRegIpCount: 0, // Will be fetched from API
     lastLoginIp: userData.lastLoginIp || '192.168.1.105',
-    lastLoginLocation: '巴西 圣保罗',
+    lastLoginLocation: userData.lastLoginLocation || '--',
     lastLoginDeviceId: 'DEV_987654321',
     lastLoginTime: userData.lastLoginTime || '2024-01-30 15:45:12',
     lastLoginDomain: 'www.example.com',
@@ -977,58 +991,58 @@ watch(activeTab, (newTab) => {
 const getTransactionCategoryText = (transaction: any): string => {
   // Handle real withdrawals from Withdrawal table
   if (transaction.transactionType === 'withdrawal') {
-    return '提款';
+    return $t('user.userDetail.withdrawal');
   }
 
   // Handle manual transactions from ManualTransaction table
   if (transaction.transactionType === 'manual') {
     if (transaction.type === 'debit') {
-      return '手动扣款';
+      return $t('user.userDetail.manualDeduct');
     } else if (transaction.type === 'credit') {
-      return '手动加款';
+      return $t('user.userDetail.manualCreditOp');
     }
-    return '手动';
+    return $t('user.userDetail.manual');
   }
 
   // Handle other transaction types
   switch (transaction.transactionType) {
     case 'deposit':
-      return '存款';
+      return $t('user.userDetail.deposit');
     case 'bet':
-      return '投注';
+      return $t('user.userDetail.bet');
     case 'bonus':
-      return '奖金';
+      return $t('user.userDetail.bonus');
     default:
-      return '其他';
+      return $t('user.userDetail.other');
   }
 };
 
 const getTransactionSubTypeText = (transaction: any): string => {
   // Handle real withdrawals from Withdrawal table
   if (transaction.transactionType === 'withdrawal') {
-    return transaction.paymentMethod || '提款';
+    return transaction.paymentMethod || $t('user.userDetail.withdrawal');
   }
 
   // Handle manual transactions from ManualTransaction table
   if (transaction.transactionType === 'manual') {
     if (transaction.type === 'debit') {
-      return transaction.subType === 'manual_deduct' ? '手动扣款' : '扣款';
+      return transaction.subType === 'manual_deduct' ? $t('user.userDetail.manualDeduct') : $t('user.userDetail.deduct');
     } else if (transaction.type === 'credit') {
-      return transaction.subType === 'manual_credit' ? '手动加款' : '加款';
+      return transaction.subType === 'manual_credit' ? $t('user.userDetail.manualCreditOp') : $t('user.userDetail.credit');
     }
-    return transaction.description || '手动操作';
+    return transaction.description || $t('user.userDetail.manual');
   }
 
   // Handle other transaction types
   switch (transaction.transactionType) {
     case 'deposit':
-      return transaction.paymentMethod || '存款';
+      return transaction.paymentMethod || $t('user.userDetail.deposit');
     case 'bet':
-      return '投注';
+      return $t('user.userDetail.bet');
     case 'bonus':
-      return '奖金';
+      return $t('user.userDetail.bonus');
     default:
-      return transaction.description || '其他';
+      return transaction.description || $t('user.userDetail.other');
   }
 };
 
@@ -1065,14 +1079,14 @@ const formatTransactionStatus = (status: string) => {
   switch (status) {
     case 'completed':
     case 'success':
-      return { type: 'success', text: '成功' };
+      return { type: 'success', text: $t('common.success') };
     case 'pending':
-      return { type: 'warning', text: '处理中' };
+      return { type: 'warning', text: $t('user.userDetail.processing') };
     case 'failed':
     case 'rejected':
-      return { type: 'error', text: '失败' };
+      return { type: 'error', text: $t('common.failed') };
     default:
-      return { type: 'default', text: status || '未知' };
+      return { type: 'default', text: status || $t('user.userDetail.unknown') };
   }
 };
 
@@ -1168,7 +1182,7 @@ const fetchRecentTransactions = async () => {
   } catch (error) {
     console.error('获取最近交易记录失败:', error);
     notification.error({
-      content: '获取最近交易记录失败',
+      content: $t('user.userDetail.loadRecentTxFailed'),
       duration: 3000,
     });
     recentTransactions.value = [];
@@ -1216,7 +1230,7 @@ const fetchAllTransactions = async () => {
   } catch (error) {
     console.error('❌ 获取交易记录失败:', error);
     notification.error({
-      content: '获取交易记录失败',
+      content: $t('user.userDetail.loadTxFailed'),
       duration: 3000,
     });
     allTransactions.value = [];

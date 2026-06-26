@@ -1,17 +1,19 @@
 <template>
-  <Page title="有奖反馈管理" description="管理用户提交的反馈和建议">
+  <Page
+    :title="$t('operations.feedback.title')"
+    :description="$t('operations.feedback.description')"
+  >
     <div class="feedback-management">
-      <!-- Tab Navigation -->
       <n-tabs
         v-model:value="activeTab"
         type="line"
         class="mb-4"
         @update:value="handleTabChange"
       >
-        <n-tab-pane name="pending" tab="待处理">
+        <n-tab-pane name="pending" :tab="$t('operations.feedback.tabPending')">
           <template #tab>
             <span class="flex items-center gap-2">
-              待处理
+              {{ $t('operations.feedback.tabPending') }}
               <n-badge
                 :value="tabCounts.pending"
                 :max="99"
@@ -22,10 +24,10 @@
           </template>
         </n-tab-pane>
 
-        <n-tab-pane name="approved" tab="已采纳">
+        <n-tab-pane name="approved" :tab="$t('operations.feedback.tabApproved')">
           <template #tab>
             <span class="flex items-center gap-2">
-              已采纳
+              {{ $t('operations.feedback.tabApproved') }}
               <n-badge
                 :value="tabCounts.approved"
                 :max="99"
@@ -36,10 +38,10 @@
           </template>
         </n-tab-pane>
 
-        <n-tab-pane name="rejected" tab="已忽略">
+        <n-tab-pane name="rejected" :tab="$t('operations.feedback.tabRejected')">
           <template #tab>
             <span class="flex items-center gap-2">
-              已忽略
+              {{ $t('operations.feedback.tabRejected') }}
               <n-badge
                 :value="tabCounts.rejected"
                 :max="99"
@@ -50,10 +52,10 @@
           </template>
         </n-tab-pane>
 
-        <n-tab-pane name="all" tab="全部反馈">
+        <n-tab-pane name="all" :tab="$t('operations.feedback.tabAll')">
           <template #tab>
             <span class="flex items-center gap-2">
-              全部反馈
+              {{ $t('operations.feedback.tabAll') }}
               <n-badge
                 :value="tabCounts.all"
                 :max="999"
@@ -65,22 +67,19 @@
         </n-tab-pane>
       </n-tabs>
 
-      <!-- Filter Section -->
       <n-card class="mb-4">
         <div class="flex flex-wrap items-center gap-4">
-          <!-- Status Filter -->
           <n-select
             v-model:value="filterForm.status"
-            placeholder="反馈状态"
+            :placeholder="$t('operations.feedback.statusPlaceholder')"
             style="width: 140px"
             clearable
             :options="statusOptions"
           />
 
-          <!-- Search -->
           <n-input
             v-model:value="filterForm.search"
-            placeholder="搜索用户账号/反馈内容/反馈类型"
+            :placeholder="$t('operations.feedback.searchPlaceholder')"
             style="width: 300px"
             clearable
             @keyup.enter="handleSearch"
@@ -90,33 +89,30 @@
             </template>
           </n-input>
 
-          <!-- Date Range -->
           <n-date-picker
             v-model:value="filterForm.dateRange"
             type="datetimerange"
             format="yyyy-MM-dd HH:mm:ss"
-            placeholder="选择时间范围"
+            :placeholder="$t('common.selectDateRange')"
             style="width: 400px"
             clearable
           />
 
-          <!-- Actions -->
           <n-button type="primary" @click="handleSearch">
             <template #icon>
               <n-icon :component="SearchOutline" />
             </template>
-            查询
+            {{ $t('common.query') }}
           </n-button>
           <n-button @click="handleReset">
             <template #icon>
               <n-icon :component="RefreshOutline" />
             </template>
-            重置
+            {{ $t('common.reset') }}
           </n-button>
         </div>
       </n-card>
 
-      <!-- Data Table -->
       <n-card>
         <n-data-table
           ref="tableRef"
@@ -134,51 +130,52 @@
         />
       </n-card>
 
-      <!-- Detail Modal -->
       <n-modal
         v-model:show="showDetailModal"
         preset="card"
-        title="反馈详情"
+        :title="$t('operations.feedback.detailTitle')"
         style="width: 800px"
         :mask-closable="false"
       >
         <div v-if="currentFeedback" class="feedback-detail">
-          <!-- User Info -->
           <n-descriptions :column="2" bordered class="mb-4">
-            <n-descriptions-item label="反馈ID">
+            <n-descriptions-item :label="$t('operations.feedback.feedbackId')">
               {{ currentFeedback.id }}
             </n-descriptions-item>
-            <n-descriptions-item label="用户账号">
+            <n-descriptions-item :label="$t('operations.feedback.userAccount')">
               {{
                 currentFeedback.user?.account || currentFeedback.user?.userID
               }}
             </n-descriptions-item>
-            <n-descriptions-item label="反馈类型">
+            <n-descriptions-item :label="$t('operations.feedback.feedbackType')">
               {{ currentFeedback.feedbackType }}
             </n-descriptions-item>
-            <n-descriptions-item label="提交时间">
+            <n-descriptions-item :label="$t('operations.feedback.submitTime')">
               {{ formatDateTime(currentFeedback.createdAt) }}
             </n-descriptions-item>
-            <n-descriptions-item label="状态">
+            <n-descriptions-item :label="$t('common.status')">
               <n-tag :type="getStatusType(currentFeedback.status)">
-                {{ getStatusLabel(currentFeedback.status) }}
+                {{ feedbackStatusLabel(currentFeedback.status) }}
               </n-tag>
             </n-descriptions-item>
-            <n-descriptions-item label="奖励金额" v-if="currentFeedback.reward">
+            <n-descriptions-item
+              :label="$t('operations.feedback.rewardAmount')"
+              v-if="currentFeedback.reward"
+            >
               {{ currentFeedback.reward }} ({{
-                currentFeedback.rewardGiven ? '已发放' : '未发放'
+                currentFeedback.rewardGiven
+                  ? $t('operations.rewardGiven')
+                  : $t('operations.rewardNotGiven')
               }})
             </n-descriptions-item>
           </n-descriptions>
 
-          <!-- Feedback Content -->
-          <n-card title="反馈内容" class="mb-4">
+          <n-card :title="$t('operations.feedback.feedbackContent')" class="mb-4">
             <p class="whitespace-pre-wrap">{{ currentFeedback.content }}</p>
           </n-card>
 
-          <!-- Attachments -->
           <n-card
-            title="附件"
+            :title="$t('operations.feedback.attachments')"
             class="mb-4"
             v-if="currentFeedback.images?.length > 0"
           >
@@ -194,50 +191,52 @@
             </n-space>
           </n-card>
 
-          <!-- Admin Reply -->
-          <n-card title="管理员回复" v-if="currentFeedback.adminReply">
+          <n-card
+            :title="$t('operations.feedback.adminReply')"
+            v-if="currentFeedback.adminReply"
+          >
             <p class="whitespace-pre-wrap">{{ currentFeedback.adminReply }}</p>
             <div
               class="mt-2 text-sm text-gray-500"
               v-if="currentFeedback.repliedAt"
             >
-              回复时间: {{ formatDateTime(currentFeedback.repliedAt) }}
+              {{ $t('operations.replyTime') }}:
+              {{ formatDateTime(currentFeedback.repliedAt) }}
             </div>
           </n-card>
         </div>
 
         <template #footer>
           <div class="flex justify-end">
-            <n-button @click="showDetailModal = false">关闭</n-button>
+            <n-button @click="showDetailModal = false">{{ $t('common.close') }}</n-button>
           </div>
         </template>
       </n-modal>
 
-      <!-- Reply Modal -->
       <n-modal
         v-model:show="showReplyModal"
         preset="card"
-        title="处理反馈"
+        :title="$t('operations.feedback.processTitle')"
         style="width: 600px"
         :mask-closable="false"
       >
         <n-form ref="replyFormRef" :model="replyForm" :rules="replyRules">
-          <n-form-item label="处理状态" path="status">
+          <n-form-item :label="$t('operations.feedback.processStatus')" path="status">
             <n-select
               v-model:value="replyForm.status"
               :options="actionStatusOptions"
-              placeholder="选择处理状态"
+              :placeholder="$t('operations.feedback.selectProcessStatus')"
             />
           </n-form-item>
 
           <n-form-item
-            label="奖励金额"
+            :label="$t('operations.feedback.rewardAmount')"
             path="reward"
             v-if="replyForm.status === 'APPROVED'"
           >
             <n-input-number
               v-model:value="replyForm.reward"
-              placeholder="输入奖励金额"
+              :placeholder="$t('operations.feedback.rewardPlaceholder')"
               :min="0"
               :step="10"
               style="width: 100%"
@@ -246,11 +245,11 @@
             </n-input-number>
           </n-form-item>
 
-          <n-form-item label="回复内容" path="adminReply">
+          <n-form-item :label="$t('operations.feedback.replyContent')" path="adminReply">
             <n-input
               v-model:value="replyForm.adminReply"
               type="textarea"
-              placeholder="输入回复内容"
+              :placeholder="$t('operations.feedback.replyPlaceholder')"
               :rows="4"
               maxlength="500"
               show-count
@@ -260,19 +259,18 @@
 
         <template #footer>
           <div class="flex justify-end gap-2">
-            <n-button @click="showReplyModal = false">取消</n-button>
+            <n-button @click="showReplyModal = false">{{ $t('common.cancel') }}</n-button>
             <n-button
               type="primary"
               :loading="modalLoading"
               @click="handleSubmitReply"
             >
-              提交
+              {{ $t('common.submit') }}
             </n-button>
           </div>
         </template>
       </n-modal>
 
-      <!-- User Detail Modal - same binding as user management (v-model:visible) -->
       <UserDetailModal
         v-model:visible="showUserDetailModal"
         :user-id="currentUserId"
@@ -282,7 +280,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, h, onMounted } from 'vue';
+import { $t } from '@vben/locales';
+
+import { ref, reactive, h, onMounted, computed, defineAsyncComponent } from 'vue';
 import {
   NCard,
   NDataTable,
@@ -311,33 +311,24 @@ import {
 import {
   SearchOutline,
   RefreshOutline,
-  EyeOutline,
-  CheckmarkCircleOutline,
-  CloseCircleOutline,
 } from '@vicons/ionicons5';
 import { Page } from '@vben/common-ui';
 import {
   feedbackApi,
-  getStatusLabel,
   getStatusType,
   type Feedback,
   type FeedbackStatus,
 } from '#/api/operations/feedback';
-// ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
-import { defineAsyncComponent } from 'vue';
 const UserDetailModal = defineAsyncComponent(
   () => import('#/components/user/UserDetailModal.vue'),
 );
 import { formatDateTime } from '#/utils/format';
 
-// Message
 const message = useMessage();
 
-// Refs
 const tableRef = ref();
 const replyFormRef = ref<FormInst | null>(null);
 
-// State
 const loading = ref(false);
 const modalLoading = ref(false);
 const showDetailModal = ref(false);
@@ -346,9 +337,8 @@ const showUserDetailModal = ref(false);
 const currentUserId = ref(0);
 const tableData = ref<Feedback[]>([]);
 const currentFeedback = ref<Feedback | null>(null);
-const activeTab = ref('pending'); // Default to pending tab
+const activeTab = ref('pending');
 
-// Tab counts
 const tabCounts = reactive({
   pending: 0,
   approved: 0,
@@ -356,63 +346,78 @@ const tabCounts = reactive({
   all: 0,
 });
 
-// Filter Form
 const filterForm = reactive({
   status: null as FeedbackStatus | string | null,
   search: '',
   dateRange: null as [number, number] | null,
 });
 
-// Reply Form
 const replyForm = reactive({
   status: '' as FeedbackStatus | '',
   adminReply: '',
   reward: 0,
 });
 
-const replyRules: FormRules = {
-  status: [{ required: true, message: '请选择处理状态', trigger: 'change' }],
-  adminReply: [{ required: true, message: '请输入回复内容', trigger: 'blur' }],
+const replyRules = computed<FormRules>(() => ({
+  status: [
+    {
+      required: true,
+      message: $t('operations.feedback.rules.selectStatus'),
+      trigger: 'change',
+    },
+  ],
+  adminReply: [
+    {
+      required: true,
+      message: $t('operations.feedback.rules.enterReply'),
+      trigger: 'blur',
+    },
+  ],
   reward: [
     {
       required: true,
       type: 'number',
       min: 0,
-      message: '请输入有效的奖励金额',
+      message: $t('operations.feedback.rules.enterReward'),
       trigger: 'blur',
     },
   ],
-};
+}));
 
-// Pagination
 const pagination = reactive({
   page: 1,
   pageSize: 20,
   itemCount: 0,
   pageSizes: [10, 20, 50, 100],
   showSizePicker: true,
-  prefix: ({ itemCount }: { itemCount: number }) => `共 ${itemCount} 条`,
+  prefix: ({ itemCount }: { itemCount: number }) =>
+    $t('operations.totalCount', [itemCount]),
 });
 
-// Options
-const statusOptions = [
-  { label: '全部', value: null },
-  { label: '待处理', value: 'PENDING' },
-  { label: '审核中', value: 'IN_REVIEW' },
-  { label: '已回复', value: 'REPLIED' },
-  { label: '已采纳', value: 'APPROVED' },
-  { label: '已拒绝', value: 'REJECTED' },
-];
+function feedbackStatusLabel(status: FeedbackStatus): string {
+  return $t(`operations.feedback.status.${status}`);
+}
 
-const actionStatusOptions = [
-  { label: '审核中', value: 'IN_REVIEW' },
-  { label: '回复', value: 'REPLIED' },
-  { label: '采纳并奖励', value: 'APPROVED' },
-  { label: '拒绝', value: 'REJECTED' },
-];
+const statusOptions = computed(() => [
+  { label: $t('common.all'), value: null },
+  { label: $t('operations.feedback.status.PENDING'), value: 'PENDING' },
+  { label: $t('operations.feedback.status.IN_REVIEW'), value: 'IN_REVIEW' },
+  { label: $t('operations.feedback.status.REPLIED'), value: 'REPLIED' },
+  { label: $t('operations.feedback.status.APPROVED'), value: 'APPROVED' },
+  { label: $t('operations.feedback.status.REJECTED'), value: 'REJECTED' },
+]);
 
-// Columns
-const columns: DataTableColumns<Feedback> = [
+const actionStatusOptions = computed(() => [
+  { label: $t('operations.feedback.actionStatus.IN_REVIEW'), value: 'IN_REVIEW' },
+  { label: $t('operations.feedback.actionStatus.REPLIED'), value: 'REPLIED' },
+  {
+    label: $t('operations.feedback.actionStatus.APPROVED'),
+    value: 'APPROVED',
+  },
+  { label: $t('operations.feedback.actionStatus.REJECTED'), value: 'REJECTED' },
+]);
+
+const columns = computed<DataTableColumns<Feedback>>(() => [
   {
     title: 'ID',
     key: 'id',
@@ -420,7 +425,7 @@ const columns: DataTableColumns<Feedback> = [
     fixed: 'left',
   },
   {
-    title: '转号类型',
+    title: $t('operations.feedback.transferType'),
     key: 'feedbackType',
     width: 120,
     render: (row) => {
@@ -432,19 +437,19 @@ const columns: DataTableColumns<Feedback> = [
     },
   },
   {
-    title: '来源页面',
+    title: $t('operations.feedback.sourcePage'),
     key: 'source',
     width: 120,
-    render: () => 'H5', // From the screenshot, all show 'H5'
+    render: () => 'H5',
   },
   {
-    title: '币种',
+    title: $t('common.currency'),
     key: 'currency',
     width: 80,
-    render: () => 'BRL', // Default currency
+    render: () => 'BRL',
   },
   {
-    title: '反馈账号',
+    title: $t('operations.feedback.feedbackAccount'),
     key: 'user.account',
     width: 150,
     render: (row) => {
@@ -459,13 +464,13 @@ const columns: DataTableColumns<Feedback> = [
     },
   },
   {
-    title: '反馈时间',
+    title: $t('operations.feedback.feedbackTime'),
     key: 'createdAt',
     width: 180,
     render: (row) => formatDateTime(row.createdAt),
   },
   {
-    title: '反馈内容',
+    title: $t('operations.feedback.feedbackContent'),
     key: 'content',
     width: 300,
     ellipsis: {
@@ -473,24 +478,25 @@ const columns: DataTableColumns<Feedback> = [
     },
   },
   {
-    title: '反馈类型',
+    title: $t('operations.feedback.feedbackType'),
     key: 'feedbackCategory',
     width: 100,
     render: (row) => {
-      // Categorize based on content or type
       return row.feedbackType.includes('问题') ||
-        row.feedbackType.includes('建议')
-        ? '提现问题'
-        : '其他问题';
+        row.feedbackType.includes('建议') ||
+        row.feedbackType.toLowerCase().includes('issue') ||
+        row.feedbackType.toLowerCase().includes('suggest')
+        ? $t('operations.withdrawalIssue')
+        : $t('operations.otherIssue');
     },
   },
   {
-    title: '附件(数量)',
+    title: $t('operations.feedback.attachmentCount'),
     key: 'images',
     width: 150,
     render: (row) => {
       if (!row.images || row.images.length === 0) {
-        return '无';
+        return $t('operations.none');
       }
       const count = row.images.length;
       const firstImage = row.images[0];
@@ -506,19 +512,19 @@ const columns: DataTableColumns<Feedback> = [
     },
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 100,
     render: (row) => {
       return h(
         NTag,
         { type: getStatusType(row.status) },
-        { default: () => getStatusLabel(row.status) },
+        { default: () => feedbackStatusLabel(row.status) },
       );
     },
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 180,
     fixed: 'right',
@@ -533,7 +539,7 @@ const columns: DataTableColumns<Feedback> = [
               class: 'text-blue-500 hover:underline cursor-pointer text-sm',
               onClick: () => handleViewDetail(row),
             },
-            '详情',
+            $t('common.detail'),
           ),
           row.status === 'PENDING' || row.status === 'IN_REVIEW'
             ? h(
@@ -543,7 +549,7 @@ const columns: DataTableColumns<Feedback> = [
                     'text-green-500 hover:underline cursor-pointer text-sm',
                   onClick: () => handleApprove(row),
                 },
-                '采纳',
+                $t('operations.feedback.approve'),
               )
             : null,
           h(
@@ -552,15 +558,14 @@ const columns: DataTableColumns<Feedback> = [
               class: 'text-blue-500 hover:underline cursor-pointer text-sm',
               onClick: () => handleViewDetail(row),
             },
-            '查看',
+            $t('common.view'),
           ),
         ].filter(Boolean),
       );
     },
   },
-];
+]);
 
-// Methods
 async function loadData() {
   try {
     loading.value = true;
@@ -569,7 +574,6 @@ async function loadData() {
       pageSize: pagination.pageSize,
     };
 
-    // Set status based on active tab
     if (activeTab.value !== 'all') {
       if (activeTab.value === 'pending') {
         params.status = 'PENDING';
@@ -580,7 +584,6 @@ async function loadData() {
       }
     }
 
-    // Override with manual filter if set
     if (filterForm.status) {
       params.status = filterForm.status;
     }
@@ -602,13 +605,13 @@ async function loadData() {
       tableData.value = response.data.feedbacks;
       pagination.itemCount = response.data.pagination.total;
     } else {
-      message.error(response.message || '获取反馈列表失败');
+      message.error(response.message || $t('operations.feedback.loadFailed'));
       tableData.value = [];
       pagination.itemCount = 0;
     }
   } catch (error: any) {
     console.error('Load feedback data error:', error);
-    message.error(error.message || '获取反馈列表失败');
+    message.error(error.message || $t('operations.feedback.loadFailed'));
     tableData.value = [];
     pagination.itemCount = 0;
   } finally {
@@ -618,7 +621,6 @@ async function loadData() {
 
 async function loadTabCounts() {
   try {
-    // Load counts for each tab
     const [pendingRes, approvedRes, rejectedRes, allRes] = await Promise.all([
       feedbackApi.getAll({ page: 1, pageSize: 1, status: 'PENDING' }),
       feedbackApi.getAll({ page: 1, pageSize: 1, status: 'APPROVED' }),
@@ -646,7 +648,7 @@ async function loadTabCounts() {
 function handleTabChange(value: string) {
   activeTab.value = value;
   pagination.page = 1;
-  filterForm.status = null; // Clear manual filter when switching tabs
+  filterForm.status = null;
   loadData();
 }
 
@@ -688,7 +690,7 @@ function handleApprove(feedback: Feedback) {
   currentFeedback.value = feedback;
   replyForm.status = 'APPROVED';
   replyForm.adminReply = '';
-  replyForm.reward = 50; // Default reward
+  replyForm.reward = 50;
   showReplyModal.value = true;
 }
 
@@ -697,7 +699,7 @@ async function handleSubmitReply() {
     await replyFormRef.value?.validate();
 
     if (!currentFeedback.value) {
-      message.error('未选择反馈');
+      message.error($t('operations.feedback.noFeedbackSelected'));
       return;
     }
 
@@ -718,26 +720,24 @@ async function handleSubmitReply() {
     );
 
     if (response.success) {
-      message.success('处理成功');
+      message.success($t('operations.feedback.processSuccess'));
       showReplyModal.value = false;
-      loadData(); // Reload data
-      loadTabCounts(); // Reload tab counts
+      loadData();
+      loadTabCounts();
     } else {
-      message.error(response.message || '处理失败');
+      message.error(response.message || $t('operations.feedback.processFailed'));
     }
   } catch (error: any) {
     if (error.errors) {
-      // Form validation error
       return;
     }
     console.error('Submit reply error:', error);
-    message.error(error.message || '处理失败');
+    message.error(error.message || $t('operations.feedback.processFailed'));
   } finally {
     modalLoading.value = false;
   }
 }
 
-// Lifecycle
 onMounted(() => {
   loadData();
   loadTabCounts();

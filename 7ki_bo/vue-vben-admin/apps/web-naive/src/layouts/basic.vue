@@ -732,9 +732,7 @@ watch(
           @mouseleave="handleOnlineUsersMouseLeave"
         >
           <div class="h-2 w-2 animate-pulse rounded-full bg-green-500"></div>
-          <span class="text-sm font-medium text-blue-800 dark:text-blue-200">{{
-            $t('page.header.online')
-          }}</span>
+          <span class="text-sm font-medium text-blue-800 dark:text-blue-200">{{ $t('page.header.online') }}</span>
           <span class="text-sm font-bold text-blue-900 dark:text-blue-100">{{
             onlineUsersCount
           }}</span>

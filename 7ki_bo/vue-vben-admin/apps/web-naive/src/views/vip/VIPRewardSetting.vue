@@ -1,15 +1,15 @@
 <template>
   <div class="vip-reward-setting">
-    <Page title="VIP设置" description="管理VIP等级奖励设置">
+    <Page :title="$t('vip.rewardSettingTitle')" :description="$t('vip.rewardSettingDescription')">
       <!-- 操作栏 -->
       <n-card class="mb-4">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-4">
             <n-button type="primary" @click="handleApplyToAllCurrencies"
-              >应用到所有币种</n-button
+              >{{ $t('vip.applyToAllCurrencies') }}</n-button
             >
             <div class="flex items-center gap-2">
-              <n-text>VIP开关</n-text>
+              <n-text>{{ $t('vip.vipSwitch') }}</n-text>
               <n-switch
                 v-model:value="vipEnabled"
                 @update:value="handleVipToggle"
@@ -17,16 +17,16 @@
             </div>
           </div>
           <div class="flex items-center gap-2">
-            <n-button @click="handleDetails">详情</n-button>
+            <n-button @click="handleDetails">{{ $t('common.detail') }}</n-button>
             <n-button type="primary" @click="openGlobalSettingModal"
-              >VIP公共设置</n-button
+              >{{ $t('vip.globalSettings') }}</n-button
             >
-            <n-button type="primary" @click="openLevelModal">新增等级</n-button>
+            <n-button type="primary" @click="openLevelModal">{{ $t('vip.addLevel') }}</n-button>
             <n-button type="primary" @click="handleImportCorrection"
-              >导入修正</n-button
+              >{{ $t('vip.importCorrection') }}</n-button
             >
             <n-button type="error" @click="handleBatchModify"
-              >批量修改</n-button
+              >{{ $t('vip.batchModify') }}</n-button
             >
           </div>
         </div>
@@ -36,8 +36,7 @@
       <n-card>
         <div class="mb-4 rounded border border-blue-200 bg-blue-50 p-3">
           <n-text type="info" class="text-sm">
-            💡
-            提示：表格中的数值为只读显示，如需修改请点击右侧"修改"按钮进入编辑弹窗
+            💡 {{ $t('vip.tableReadonlyHint') }}
           </n-text>
         </div>
         <n-data-table
@@ -69,7 +68,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, h } from 'vue';
+import { $t } from '@vben/locales';
+
+import { ref, onMounted, h, computed } from 'vue';
 import {
   useMessage,
   useDialog,
@@ -135,14 +136,14 @@ const vipEnabled = ref(true);
 // 字段更新处理 - 已移除，现在只能通过编辑弹窗修改
 
 // 创建表格列配置
-const columns = [
+const columns = computed(() => [
   {
-    title: '等级名称',
+    title: $t('vip.levelName'),
     key: 'level',
     width: 120,
   },
   {
-    title: '当前人数',
+    title: $t('vip.currentMemberCount'),
     key: 'currentMemberCount',
     width: 100,
     render(row: VIPLevelExtended) {
@@ -154,7 +155,7 @@ const columns = [
     },
   },
   {
-    title: '币种',
+    title: $t('common.currency'),
     key: 'currency',
     width: 80,
     render(row: VIPLevelExtended) {
@@ -162,7 +163,7 @@ const columns = [
     },
   },
   {
-    title: '预览图',
+    title: $t('vip.previewImage'),
     key: 'preview',
     width: 80,
     render(row: VIPLevelExtended) {
@@ -214,11 +215,11 @@ const columns = [
     },
   },
   {
-    title: '晋级要求',
+    title: $t('vip.upgradeRequirements'),
     key: 'upgrade-requirements',
     children: [
       {
-        title: '晋级需再充值',
+        title: $t('vip.requiredDeposit'),
         key: 'requiredDeposit',
         width: 120,
         render(row: VIPLevelExtended) {
@@ -230,7 +231,7 @@ const columns = [
         },
       },
       {
-        title: '晋级需再打码',
+        title: $t('vip.requiredBet'),
         key: 'requiredBet',
         width: 120,
         render(row: VIPLevelExtended) {
@@ -244,7 +245,7 @@ const columns = [
     ],
   },
   {
-    title: '晋级奖金',
+    title: $t('vip.upgradeBonus'),
     key: 'upgradeBonus',
     width: 100,
     render(row: VIPLevelExtended) {
@@ -256,11 +257,11 @@ const columns = [
     },
   },
   {
-    title: '月俸禄',
+    title: $t('vip.monthlySalary'),
     key: 'monthly-rewards',
     children: [
       {
-        title: '当月充值',
+        title: $t('vip.monthlyDeposit'),
         key: 'monthlyDepositRequirement',
         width: 100,
         render(row: VIPLevelExtended) {
@@ -275,7 +276,7 @@ const columns = [
         },
       },
       {
-        title: '当月打码',
+        title: $t('vip.monthlyBet'),
         key: 'monthlyBetRequirement',
         width: 100,
         render(row: VIPLevelExtended) {
@@ -289,7 +290,7 @@ const columns = [
         },
       },
       {
-        title: '月俸禄',
+        title: $t('vip.monthlyRebate'),
         key: 'monthlyRebate',
         width: 100,
         render(row: VIPLevelExtended) {
@@ -301,7 +302,7 @@ const columns = [
         },
       },
       {
-        title: '月累计封顶',
+        title: $t('vip.monthlyLimit'),
         key: 'monthlyLimit',
         width: 100,
         render(row: VIPLevelExtended) {
@@ -315,11 +316,11 @@ const columns = [
     ],
   },
   {
-    title: '周俸禄',
+    title: $t('vip.weeklySalary'),
     key: 'weekly-rewards',
     children: [
       {
-        title: '当周充值',
+        title: $t('vip.weeklyDeposit'),
         key: 'weeklyDepositRequirement',
         width: 100,
         render(row: VIPLevelExtended) {
@@ -334,7 +335,7 @@ const columns = [
         },
       },
       {
-        title: '当周打码',
+        title: $t('vip.weeklyBet'),
         key: 'weeklyBetRequirement',
         width: 100,
         render(row: VIPLevelExtended) {
@@ -346,7 +347,7 @@ const columns = [
         },
       },
       {
-        title: '周俸禄',
+        title: $t('vip.weeklyRebate'),
         key: 'weeklyTaskValue',
         width: 100,
         render(row: VIPLevelExtended) {
@@ -358,7 +359,7 @@ const columns = [
         },
       },
       {
-        title: '周累计封顶',
+        title: $t('vip.weeklyLimit'),
         key: 'weeklyLimit',
         width: 100,
         render(row: VIPLevelExtended) {
@@ -372,11 +373,11 @@ const columns = [
     ],
   },
   {
-    title: '日俸禄',
+    title: $t('vip.dailySalary'),
     key: 'daily-rewards',
     children: [
       {
-        title: '当日充值',
+        title: $t('vip.dailyDeposit'),
         key: 'dailyDepositRequirement',
         width: 100,
         render(row: VIPLevelExtended) {
@@ -391,7 +392,7 @@ const columns = [
         },
       },
       {
-        title: '当日打码',
+        title: $t('vip.dailyBet'),
         key: 'dailyBetRequirement',
         width: 100,
         render(row: VIPLevelExtended) {
@@ -403,7 +404,7 @@ const columns = [
         },
       },
       {
-        title: '日俸禄',
+        title: $t('vip.dailyRebate'),
         key: 'dailyTaskValue',
         width: 100,
         render(row: VIPLevelExtended) {
@@ -415,7 +416,7 @@ const columns = [
         },
       },
       {
-        title: '日累计封顶',
+        title: $t('vip.dailyLimit'),
         key: 'dailyLimit',
         width: 100,
         render(row: VIPLevelExtended) {
@@ -429,7 +430,7 @@ const columns = [
     ],
   },
   {
-    title: '生日礼金',
+    title: $t('vip.birthdayBonus'),
     key: 'birthdayBonus',
     width: 100,
     render(row: VIPLevelExtended) {
@@ -441,7 +442,7 @@ const columns = [
     },
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 100,
     fixed: 'right' as const,
@@ -453,11 +454,11 @@ const columns = [
           type: 'primary',
           onClick: () => openEditLevel(row),
         },
-        { default: () => '修改' },
+        { default: () => $t('common.modify') },
       );
     },
   },
-];
+]);
 
 // 数据获取和处理函数
 async function fetchTableData() {
@@ -530,12 +531,12 @@ async function fetchTableData() {
       console.error(
         '🔐 Authentication failed - user not logged in or token expired',
       );
-      message.error('请先登录或重新登录');
+      message.error($t('vip.pleaseLogin'));
     } else if ((error as any).response?.status === 403) {
       console.error('🚫 Access denied - insufficient permissions');
-      message.error('权限不足，需要管理员权限');
+      message.error($t('vip.permissionDenied'));
     } else {
-      message.error('获取VIP等级失败');
+      message.error($t('vip.loadLevelsFailed'));
     }
 
     tableData.value = [];
@@ -565,10 +566,12 @@ async function loadVipSettings() {
 async function handleVipToggle(enabled: boolean) {
   try {
     await updateVIPGlobalSettings({ isEnabled: enabled });
-    message.success(`VIP系统已${enabled ? '开启' : '关闭'}`);
+    message.success(
+      enabled ? $t('vip.systemEnabled') : $t('vip.systemDisabled'),
+    );
   } catch (error) {
     console.error('VIP开关切换失败:', error);
-    message.error('VIP开关切换失败');
+    message.error($t('vip.systemToggleFailed'));
     // 恢复原状态
     vipEnabled.value = !enabled;
   }
@@ -577,26 +580,26 @@ async function handleVipToggle(enabled: boolean) {
 // 操作按钮处理函数
 function handleApplyToAllCurrencies() {
   dialog.info({
-    title: '应用到所有币种',
-    content: '此功能将当前设置应用到所有币种的VIP等级，确定继续吗？',
-    positiveText: '确定',
-    negativeText: '取消',
+    title: $t('vip.applyToAllCurrencies'),
+    content: $t('vip.applyToAllCurrenciesContent'),
+    positiveText: $t('common.confirm'),
+    negativeText: $t('common.cancel'),
     onPositiveClick: () => {
-      message.info('功能开发中...');
+      message.info($t('vip.featureInDevelopment'));
     },
   });
 }
 
 function handleDetails() {
-  message.info('详情功能开发中...');
+  message.info($t('vip.detailInDevelopment'));
 }
 
 function handleImportCorrection() {
-  message.info('导入修正功能开发中...');
+  message.info($t('vip.importCorrectionInDevelopment'));
 }
 
 function handleBatchModify() {
-  message.info('批量修改功能开发中...');
+  message.info($t('vip.batchModifyInDevelopment'));
 }
 
 function openLevelModal() {

@@ -2,36 +2,40 @@
   <n-modal
     v-model:show="visible"
     preset="card"
-    title="手动扣除"
+    :title="$t('agency.manualDebit.title')"
     :style="{ width: '600px' }"
   >
     <div class="space-y-4">
-      <!-- Agent Info Header -->
       <div class="grid grid-cols-3 gap-4 rounded bg-gray-50 p-4">
         <div>
-          <span class="text-sm text-gray-600">代理ID:</span>
+          <span class="text-sm text-gray-600"
+            >{{ $t('agency.manualDebit.agentId') }}:</span
+          >
           <span class="ml-2 font-medium text-gray-600">{{ agentInfo.id }}</span>
         </div>
         <div>
-          <span class="text-sm text-gray-600">代理账号:</span>
+          <span class="text-sm text-gray-600"
+            >{{ $t('agency.manualDebit.agentAccount') }}:</span
+          >
           <span class="ml-2 font-medium text-gray-600">{{
             agentInfo.username
           }}</span>
         </div>
         <div class="flex items-center justify-between">
           <div>
-            <span class="text-sm text-gray-600">代理币种:</span>
+            <span class="text-sm text-gray-600"
+              >{{ $t('agency.manualDebit.agentCurrency') }}:</span
+            >
             <span class="ml-2 font-medium text-gray-600">{{
               agentInfo.currency
             }}</span>
           </div>
           <n-button size="small" @click="refreshBalance" :loading="loading">
-            刷新余额
+            {{ $t('agency.manualDebit.refreshBalance') }}
           </n-button>
         </div>
       </div>
 
-      <!-- Form Fields -->
       <n-form
         ref="formRef"
         :model="formData"
@@ -40,17 +44,17 @@
         label-width="120px"
       >
         <div class="grid grid-cols-2 gap-4">
-          <n-form-item label="代理ID">
+          <n-form-item :label="$t('agency.manualDebit.agentId')">
             <n-input v-model:value="formData.agentId" readonly />
           </n-form-item>
 
-          <n-form-item label="代理名称">
+          <n-form-item :label="$t('agency.manualDebit.agentName')">
             <n-input v-model:value="formData.agentName" readonly />
           </n-form-item>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
-          <n-form-item label="可用余额">
+          <n-form-item :label="$t('agency.manualDebit.availableBalance')">
             <n-input-group>
               <n-input v-model:value="formData.availableBalance" readonly />
               <n-input-group-label>{{
@@ -59,7 +63,7 @@
             </n-input-group>
           </n-form-item>
 
-          <n-form-item label="冻结余额">
+          <n-form-item :label="$t('agency.manualDebit.frozenBalance')">
             <n-input-group>
               <n-input v-model:value="formData.frozenBalance" readonly />
               <n-input-group-label>{{
@@ -69,59 +73,63 @@
           </n-form-item>
         </div>
 
-        <n-form-item label="总余额">
+        <n-form-item :label="$t('agency.manualDebit.totalBalance')">
           <n-input-group>
             <n-input v-model:value="formData.totalBalance" readonly />
             <n-input-group-label>{{ agentInfo.currency }}</n-input-group-label>
           </n-input-group>
         </n-form-item>
 
-        <n-form-item label="扣除类型" path="type">
+        <n-form-item :label="$t('agency.manualDebit.debitType')" path="type">
           <n-radio-group v-model:value="formData.type">
             <n-space>
-              <n-radio value="manual_debit">手动扣除</n-radio>
-              <n-radio value="penalty">违规处罚</n-radio>
-              <n-radio value="adjustment">余额调整</n-radio>
+              <n-radio value="manual_debit">{{ $t('agency.manualDebit.manualDebit') }}</n-radio>
+              <n-radio value="penalty">{{
+                $t('agency.manualDebit.penalty')
+              }}</n-radio>
+              <n-radio value="adjustment">{{
+                $t('agency.manualDebit.adjustment')
+              }}</n-radio>
             </n-space>
           </n-radio-group>
         </n-form-item>
 
-        <n-form-item label="扣除金额" path="amount">
+        <n-form-item :label="$t('agency.manualDebit.debitAmount')" path="amount">
           <n-input-group>
             <n-input-group-label>{{ agentInfo.currency }}</n-input-group-label>
             <n-input
               v-model:value="formData.amount"
-              placeholder="请输入扣除金额"
+              :placeholder="$t('agency.manualDebit.enterAmount')"
               type="number"
             />
           </n-input-group>
         </n-form-item>
 
-        <n-form-item label="扣除原因" path="reason">
+        <n-form-item :label="$t('agency.manualDebit.debitReason')" path="reason">
           <n-input
             v-model:value="formData.reason"
             type="textarea"
-            placeholder="请输入扣除原因"
+            :placeholder="$t('agency.manualDebit.enterReason')"
             :maxlength="500"
             show-count
           />
         </n-form-item>
 
-        <n-form-item label="前台备注">
+        <n-form-item :label="$t('agency.manualDebit.frontendNote')">
           <n-input
             v-model:value="formData.frontendNotes"
             type="textarea"
-            placeholder="请输入显示在客户端的备注"
+            :placeholder="$t('agency.manualDebit.frontendNotePlaceholder')"
             :maxlength="500"
             show-count
           />
         </n-form-item>
 
-        <n-form-item label="后台备注">
+        <n-form-item :label="$t('agency.manualDebit.backendNote')">
           <n-input
             v-model:value="formData.backendNotes"
             type="textarea"
-            placeholder="请输入后台备注信息"
+            :placeholder="$t('agency.manualDebit.backendNotePlaceholder')"
             :maxlength="500"
             show-count
           />
@@ -131,9 +139,9 @@
 
     <template #action>
       <div class="flex gap-2">
-        <n-button @click="visible = false">取消</n-button>
+        <n-button @click="visible = false">{{ $t('common.cancel') }}</n-button>
         <n-button type="error" @click="handleSubmit" :loading="submitting">
-          确认扣除
+          {{ $t('agency.manualDebit.confirmDebit') }}
         </n-button>
       </div>
     </template>
@@ -141,8 +149,10 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, watch, computed } from 'vue';
-import { useMessage, NTag } from 'naive-ui';
+import { useMessage } from 'naive-ui';
 import type { FormInst, FormRules } from 'naive-ui';
 
 interface Props {
@@ -193,35 +203,34 @@ const formData = reactive<FormData>({
   backendNotes: '',
 });
 
-const rules: FormRules = {
+const rules = computed<FormRules>(() => ({
   type: {
     required: true,
-    message: '请选择扣除类型',
+    message: $t('agency.manualDebit.selectType'),
     trigger: 'change',
   },
   amount: {
     required: true,
-    message: '请输入扣除金额',
+    message: $t('agency.manualDebit.enterAmount'),
     trigger: 'blur',
-    validator: (rule, value) => {
-      if (!value) return new Error('请输入扣除金额');
+    validator: (_rule, value) => {
+      if (!value) return new Error($t('agency.manualDebit.enterAmount'));
       if (isNaN(Number(value)) || Number(value) <= 0) {
-        return new Error('请输入有效的金额');
+        return new Error($t('agency.manualDebit.enterValidAmount'));
       }
       if (Number(value) > formData.availableBalance) {
-        return new Error('扣除金额不能超过可用余额');
+        return new Error($t('agency.manualDebit.amountExceedsBalance'));
       }
       return true;
     },
   },
   reason: {
     required: true,
-    message: '请输入扣除原因',
+    message: $t('agency.manualDebit.enterReasonRequired'),
     trigger: 'blur',
   },
-};
+}));
 
-// Watch for agent info changes
 watch(
   () => props.agentInfo,
   (newInfo) => {
@@ -240,11 +249,10 @@ watch(
 const refreshBalance = async () => {
   loading.value = true;
   try {
-    // TODO: Implement API call to refresh agent balance
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    message.success('余额刷新成功');
-  } catch (error) {
-    message.error('余额刷新失败');
+    message.success($t('agency.manualDebit.balanceRefreshed'));
+  } catch {
+    message.error($t('agency.manualDebit.balanceRefreshFailed'));
   } finally {
     loading.value = false;
   }
@@ -254,11 +262,8 @@ const handleSubmit = async () => {
   try {
     await formRef.value?.validate();
     submitting.value = true;
-
-    // TODO: Implement API call to submit manual debit
     await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    message.success('手动扣除操作成功');
+    message.success($t('agency.manualDebit.debitSuccess'));
     emit('success');
     emit('update:visible', false);
   } catch (error) {
@@ -268,7 +273,6 @@ const handleSubmit = async () => {
   }
 };
 
-// Computed
 const visible = computed({
   get: () => props.visible,
   set: (value) => emit('update:visible', value),

@@ -1,6 +1,6 @@
 <template>
   <Page>
-    <n-card title="代理模式">
+    <n-card :title="$t('agency.agentMode.title')">
       <!-- 筛选表单（与 AgentList 布局一致） -->
       <n-form
         ref="filterFormRef"
@@ -10,59 +10,59 @@
         size="small"
         label-width="90"
       >
-        <n-form-item label="代理模式名称">
+        <n-form-item :label="$t('agency.agentMode.modeName')">
           <n-input
             v-model:value="filterForm.name"
-            placeholder="请输入模式名称"
+            :placeholder="$t('agency.agentMode.enterModeName')"
             style="width: 220px"
           />
         </n-form-item>
-        <n-form-item label="币种">
+        <n-form-item :label="$t('common.currency')">
           <n-select
             v-model:value="filterForm.currency"
             :options="currencyOptions"
-            placeholder="选择币种"
+            :placeholder="$t('agency.agentMode.selectCurrency')"
             style="width: 140px"
           />
         </n-form-item>
-        <n-form-item label="模式来源">
+        <n-form-item :label="$t('agency.agentMode.modeSource')">
           <n-select
             v-model:value="filterForm.source"
             :options="sourceOptions"
-            placeholder="选择来源"
+            :placeholder="$t('agency.agentMode.selectSource')"
             style="width: 140px"
           />
         </n-form-item>
-        <n-form-item label="启用状态">
+        <n-form-item :label="$t('agency.agentMode.enableStatus')">
           <n-select
             v-model:value="filterForm.isEnabled"
             :options="enabledOptions"
-            placeholder="选择状态"
+            :placeholder="$t('agency.agentMode.selectStatus')"
             style="width: 140px"
           />
         </n-form-item>
-        <n-form-item label="是否默认">
+        <n-form-item :label="$t('agency.agentMode.isDefault')">
           <n-select
             v-model:value="filterForm.isDefault"
             :options="defaultOptions"
-            placeholder="选择默认"
+            :placeholder="$t('agency.agentMode.selectDefault')"
             style="width: 140px"
           />
         </n-form-item>
-        <n-form-item label="结算周期">
+        <n-form-item :label="$t('agency.agentMode.settlementCycle')">
           <n-select
             v-model:value="filterForm.settlementCycle"
             :options="settlementCycleOptions"
-            placeholder="选择周期"
+            :placeholder="$t('agency.agentMode.selectCycle')"
             style="width: 140px"
           />
         </n-form-item>
         <n-form-item>
           <n-button size="small" type="primary" @click="handleSearch"
-            >搜索</n-button
+            >{{ $t('common.search') }}</n-button
           >
           <n-button size="small" style="margin-left: 8px" @click="handleReset"
-            >重置</n-button
+            >{{ $t('common.reset') }}</n-button
           >
         </n-form-item>
       </n-form>
@@ -90,23 +90,22 @@
                 <!-- 主要操作按钮 - 4个按钮如截图 -->
                 <div class="flex gap-2">
                   <n-button type="primary" @click="handleCreate">
-                    新增代理模式
+                    {{ $t('agency.agentMode.addMode') }}
                   </n-button>
                   <n-button type="success" @click="handleAgentPublicSettings">
-                    代理公共设置
+                    {{ $t('agency.agentMode.publicSettings') }}
                   </n-button>
                   <n-button type="warning" @click="handleNetProfitSettings">
-                    净盈利设置
+                    {{ $t('agency.agentMode.netProfitSettings') }}
                   </n-button>
                   <n-button type="info" @click="handleAgentLevelSettings">
-                    代理等级设置
+                    {{ $t('agency.agentMode.levelSettings') }}
                   </n-button>
                 </div>
 
                 <!-- 选择信息 -->
                 <div class="text-sm text-gray-600">
-                  已选择 {{ selectedCount }} 条数据，共
-                  {{ paginationReactive.total }} 条
+                  {{ $t('agency.agentMode.selectedCount', [String(selectedCount), String(paginationReactive.total)]) }}
                 </div>
               </div>
 
@@ -118,14 +117,14 @@
                   size="small"
                   @click="handleBatchClose(selectedRows)"
                 >
-                  批量关闭 ({{ selectedCount }})
+                  {{ $t('agency.agentMode.batchClose') }} ({{ selectedCount }})
                 </n-button>
 
                 <!-- 选择控制 -->
                 <n-button size="small" @click="clearSelection"
-                  >清空选择</n-button
+                  >{{ $t('agency.agentMode.clearSelection') }}</n-button
                 >
-                <n-button size="small" @click="selectAll">全选</n-button>
+                <n-button size="small" @click="selectAll">{{ $t('common.selectAll') }}</n-button>
               </div>
             </div>
           </n-card>
@@ -136,7 +135,7 @@
     <!-- 新增/编辑 代理模式（按截图进行布局） -->
     <n-modal
       v-model:show="modalVisible"
-      :title="isEdit ? '编辑代理模式' : '新增代理模式'"
+      :title="isEdit ? $t('agency.agentMode.editMode') : $t('agency.agentMode.addModeTitle')"
       :mask-closable="false"
       preset="card"
       style="width: 1200px; max-width: 95vw"
@@ -145,78 +144,78 @@
         <n-grid :cols="2" :x-gap="24" :y-gap="16">
           <!-- 左侧表单 -->
           <n-gi>
-            <n-form-item label="币种" required>
+            <n-form-item :label="$t('common.currency')" required>
               <n-select
                 v-model:value="formData.currency"
                 :options="currencyOptions"
-                placeholder="请选择币种"
+                :placeholder="$t('agency.agentMode.selectCurrencyFull')"
               />
             </n-form-item>
 
-            <n-form-item label="代理模式名称" required>
+            <n-form-item :label="$t('agency.agentMode.modeName')" required>
               <n-input
                 v-model:value="formData.name"
-                placeholder="请输入代理模式名称"
+                :placeholder="$t('agency.agentMode.enterModeNameFull')"
               />
             </n-form-item>
 
-            <n-form-item label="申请方式" required>
+            <n-form-item :label="$t('agency.agentMode.applicationMethod')" required>
               <n-radio-group v-model:value="formData.applyMethod">
-                <n-radio value="DIRECT">直接生效</n-radio>
-                <n-radio value="APPROVAL">需要审核</n-radio>
+                <n-radio value="DIRECT">{{ $t('agency.agentMode.directEffect') }}</n-radio>
+                <n-radio value="APPROVAL">{{ $t('agency.agentMode.needsApproval') }}</n-radio>
               </n-radio-group>
             </n-form-item>
 
-            <n-form-item label="佣金计算层数" required>
+            <n-form-item :label="$t('agency.agentMode.commissionLayers')" required>
               <n-select
                 v-model:value="formData.calcLevels"
                 :options="calcLevelsOptions"
-                placeholder="请选择"
+                :placeholder="$t('common.pleaseSelect')"
               />
             </n-form-item>
 
-            <n-form-item label="启用状态" required>
+            <n-form-item :label="$t('agency.agentMode.enableStatus')" required>
               <n-radio-group v-model:value="formData.isEnabled">
-                <n-radio :value="true">启用</n-radio>
-                <n-radio :value="false">停用</n-radio>
+                <n-radio :value="true">{{ $t('common.enable') }}</n-radio>
+                <n-radio :value="false">{{ $t('common.disable') }}</n-radio>
               </n-radio-group>
             </n-form-item>
 
-            <n-form-item label="结算周期" required>
+            <n-form-item :label="$t('agency.agentMode.settlementCycle')" required>
               <n-radio-group v-model:value="formData.settlementCycle">
-                <n-radio value="DAILY">日结</n-radio>
-                <n-radio value="WEEKLY">周结</n-radio>
-                <n-radio value="MONTHLY">月结</n-radio>
-                <n-radio value="CUSTOM">自定义结算</n-radio>
+                <n-radio value="DAILY">{{ $t('agency.agentMode.daily') }}</n-radio>
+                <n-radio value="WEEKLY">{{ $t('agency.agentMode.weekly') }}</n-radio>
+                <n-radio value="MONTHLY">{{ $t('agency.agentMode.monthly') }}</n-radio>
+                <n-radio value="CUSTOM">{{ $t('agency.agentMode.customSettlement') }}</n-radio>
               </n-radio-group>
             </n-form-item>
 
-            <n-form-item label="佣金计算依据" required>
+            <n-form-item :label="$t('agency.agentMode.commissionBasis')" required>
               <n-radio-group v-model:value="formData.commissionBasis">
-                <n-radio value="VALID_BET">有效投注</n-radio>
-                <n-radio value="NET_PROFIT">净盈利</n-radio>
+                <n-radio value="VALID_BET">{{ $t('agency.agentMode.validBet') }}</n-radio>
+                <n-radio value="NET_PROFIT">{{ $t('agency.agentMode.netProfit') }}</n-radio>
               </n-radio-group>
             </n-form-item>
 
-            <n-form-item label="业绩计算范围" required>
+            <n-form-item :label="$t('agency.agentMode.performanceScope')" required>
               <n-radio-group v-model:value="formData.performanceScope">
-                <n-radio value="ALL">全部计算（含无效）</n-radio>
-                <n-radio value="VALID_ONLY">只计算有效会员业绩</n-radio>
+                <n-radio value="ALL">{{ $t('agency.agentMode.allIncludingInvalid') }}</n-radio>
+                <n-radio value="VALID_ONLY">{{ $t('agency.agentMode.validOnly') }}</n-radio>
               </n-radio-group>
             </n-form-item>
           </n-gi>
 
           <!-- 右侧区域 -->
           <n-gi>
-            <n-form-item label="代理教程设置">
+            <n-form-item :label="$t('agency.agentMode.tutorialSettings')">
               <n-radio-group v-model:value="formData.tutorialType">
-                <n-radio value="CUSTOM">自定义</n-radio>
+                <n-radio value="CUSTOM">{{ $t('common.custom') }}</n-radio>
               </n-radio-group>
               <div style="margin-top: 8px">
                 <n-select
                   v-model:value="formData.tutorialTemplate"
                   :options="tutorialOptions"
-                  placeholder="请选择模版"
+                  :placeholder="$t('agency.agentMode.selectTemplate')"
                 />
                 <n-button type="primary" style="margin-left: 8px">
                   <template #icon>
@@ -292,17 +291,17 @@
               </div>
             </div>
 
-            <n-form-item label="备注" style="margin-top: 16px">
+            <n-form-item :label="$t('common.remark')" style="margin-top: 16px">
               <n-input
                 v-model:value="formData.remark"
                 type="textarea"
-                placeholder="请输入备注"
+                :placeholder="$t('common.pleaseEnter') + $t('common.remark')"
               />
             </n-form-item>
           </n-gi>
         </n-grid>
 
-        <n-divider title-placement="left">阶梯返佣（按游戏类型）</n-divider>
+        <n-divider title-placement="left">{{ $t('agency.agentMode.tierRebate') }}</n-divider>
         <n-tabs type="line">
           <n-tab-pane
             v-for="gt in gameTypes"
@@ -312,8 +311,7 @@
           >
             <div class="mb-2 flex items-center justify-between">
               <div class="text-sm text-gray-500">
-                当前 {{ gt.label }} 共
-                {{ tierMap[gt.value]?.length || 0 }} 个层级
+                {{ $t('agency.agentMode.currentTiers', [gt.label, String(tierMap[gt.value]?.length || 0)]) }}
               </div>
               <div class="flex items-center">
                 <n-button
@@ -325,25 +323,25 @@
                     !tierMap[gt.value] || tierMap[gt.value].length === 0
                   "
                 >
-                  复制此配置到全部
+                  {{ $t('agency.agentMode.copyToAll') }}
                 </n-button>
                 <n-button
                   size="small"
                   style="margin-left: 8px"
                   @click="addTier(gt.value)"
                   type="primary"
-                  >新增层级</n-button
+                  >{{ $t('agency.agentMode.addTier') }}</n-button
                 >
               </div>
             </div>
             <n-table size="small" bordered>
               <thead>
                 <tr>
-                  <th style="width: 160px">有效人数(0不限)</th>
-                  <th style="width: 200px">有效投注(单位:金额)</th>
-                  <th style="width: 160px">返佣比例(%)</th>
-                  <th style="width: 160px">返佣金额</th>
-                  <th style="width: 120px">操作</th>
+                  <th style="width: 160px">{{ $t('agency.agentMode.validMembers') }}</th>
+                  <th style="width: 200px">{{ $t('agency.agentMode.validBetAmount') }}</th>
+                  <th style="width: 160px">{{ $t('agency.agentMode.rebateRate') }}</th>
+                  <th style="width: 160px">{{ $t('agency.agentMode.rebateAmount') }}</th>
+                  <th style="width: 120px">{{ $t('common.actions') }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -397,14 +395,14 @@
                         text
                         type="primary"
                         @click="addTier(gt.value, idx)"
-                        >新增</n-button
+                        >{{ $t('common.create') }}</n-button
                       >
                       <n-button
                         size="tiny"
                         text
                         type="error"
                         @click="removeTier(gt.value, idx)"
-                        >删除</n-button
+                        >{{ $t('common.delete') }}</n-button
                       >
                     </n-space>
                   </td>
@@ -416,9 +414,9 @@
       </n-form>
 
       <template #action>
-        <n-button @click="modalVisible = false">取消</n-button>
+        <n-button @click="modalVisible = false">{{ $t('common.cancel') }}</n-button>
         <n-button type="primary" :loading="submitLoading" @click="handleConfirm"
-          >确认</n-button
+          >{{ $t('common.confirm') }}</n-button
         >
       </template>
     </n-modal>
@@ -426,7 +424,7 @@
     <!-- 代理等级设置模态框 -->
     <n-modal
       v-model:show="agentLevelModalVisible"
-      title="代理等级设置"
+      :title="$t('agency.agentMode.levelSettings')"
       :mask-closable="false"
       preset="card"
       style="width: 1200px; max-width: 95vw"
@@ -439,18 +437,18 @@
               size="small"
               @click="handleAutoUpgradeAgents"
             >
-              自动升级代理
+              {{ $t('agency.agentMode.autoUpgradeAgent') }}
             </n-button>
           </div>
           <div class="flex gap-2">
             <n-button type="primary" size="small" @click="handleAddAgentLevel"
-              >新增</n-button
+              >{{ $t('common.create') }}</n-button
             >
             <n-button
               type="warning"
               size="small"
               @click="handleBatchSaveAgentLevels"
-              >批量保存</n-button
+              >{{ $t('agency.agentMode.batchSave') }}</n-button
             >
           </div>
         </div>
@@ -458,12 +456,12 @@
         <n-table size="small" bordered :loading="agentLevelLoading">
           <thead>
             <tr>
-              <th style="width: 80px; text-align: center">图标</th>
-              <th style="width: 120px">代理等级名称</th>
-              <th style="width: 200px">晋升条件 (需获得佣金)</th>
-              <th style="width: 300px">描述</th>
-              <th style="width: 100px; text-align: center">当前人数</th>
-              <th style="width: 150px; text-align: center">操作</th>
+              <th style="width: 80px; text-align: center">{{ $t('agency.agentMode.icon') }}</th>
+              <th style="width: 120px">{{ $t('agency.agentMode.levelName') }}</th>
+              <th style="width: 200px">{{ $t('agency.agentMode.promotionCondition') }}</th>
+              <th style="width: 300px">{{ $t('common.description') }}</th>
+              <th style="width: 100px; text-align: center">{{ $t('agency.agentMode.currentCount') }}</th>
+              <th style="width: 150px; text-align: center">{{ $t('common.actions') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -512,21 +510,21 @@
                     type="error"
                     @click="handleCancelAgentLevel(level.id)"
                   >
-                    取消
+                    {{ $t('common.cancel') }}
                   </n-button>
                   <n-button
                     size="tiny"
                     type="success"
                     @click="handleConfirmAgentLevel(level)"
                   >
-                    确认
+                    {{ $t('common.confirm') }}
                   </n-button>
                   <n-button
                     size="tiny"
                     type="primary"
                     @click="handleEditAgentLevel(level)"
                   >
-                    修改
+                    {{ $t('common.modify') }}
                   </n-button>
                 </div>
               </td>
@@ -540,7 +538,7 @@
             size="large"
             @click="agentLevelModalVisible = false"
           >
-            关闭
+            {{ $t('common.close') }}
           </n-button>
         </div>
       </div>
@@ -549,7 +547,7 @@
     <!-- 编辑代理等级模态框 -->
     <n-modal
       v-model:show="agentLevelEditModalVisible"
-      title="编辑代理等级"
+      :title="$t('agency.agentMode.editLevel')"
       :mask-closable="false"
       preset="card"
       style="width: 600px; max-width: 90vw"
@@ -560,30 +558,30 @@
           label-placement="left"
           label-width="120px"
         >
-          <n-form-item label="等级名称">
+          <n-form-item :label="$t('agency.agentMode.levelNameLabel')">
             <n-input v-model:value="editingAgentLevel.name" />
           </n-form-item>
-          <n-form-item label="晋升条件">
+          <n-form-item :label="$t('agency.agentMode.promotionConditionLabel')">
             <n-input-number
               v-model:value="editingAgentLevel.promotionCondition"
               :min="0"
               style="width: 100%"
             />
           </n-form-item>
-          <n-form-item label="描述">
+          <n-form-item :label="$t('common.description')">
             <n-input
               v-model:value="editingAgentLevel.description"
               type="textarea"
               :rows="3"
             />
           </n-form-item>
-          <n-form-item label="图标颜色">
+          <n-form-item :label="$t('agency.agentMode.iconColor')">
             <n-input v-model:value="editingAgentLevel.iconColor" />
           </n-form-item>
         </n-form>
 
         <div class="mt-4 flex justify-end gap-2">
-          <n-button @click="agentLevelEditModalVisible = false">取消</n-button>
+          <n-button @click="agentLevelEditModalVisible = false">{{ $t('common.cancel') }}</n-button>
           <n-button
             type="primary"
             @click="
@@ -592,7 +590,7 @@
                 : handleCreateAgentLevel()
             "
           >
-            {{ editingAgentLevel?.id ? '保存' : '创建' }}
+            {{ editingAgentLevel?.id ? $t('common.save') : $t('common.create') }}
           </n-button>
         </div>
       </div>
@@ -601,7 +599,7 @@
     <!-- 净盈利设置模态框 -->
     <n-modal
       v-model:show="netProfitModalVisible"
-      title="净盈利设置"
+      :title="$t('agency.agentMode.netProfitSettings')"
       :mask-closable="false"
       preset="card"
       style="width: 600px; max-width: 90vw"
@@ -611,7 +609,7 @@
           class="section-title"
           style="margin-bottom: 16px; font-weight: bold; color: #333"
         >
-          净盈利排除平台运营成本
+          {{ $t('agency.agentMode.netProfitExcludeTitle') }}
         </div>
 
         <div
@@ -619,21 +617,21 @@
           style="display: flex; gap: 24px; flex-wrap: wrap"
         >
           <n-checkbox v-model:checked="netProfitSettings.excludePromotions">
-            所有优惠和活动
+            {{ $t('agency.agentMode.excludePromotions') }}
           </n-checkbox>
           <n-checkbox v-model:checked="netProfitSettings.excludeGameCosts">
-            三方游戏统一成本
+            {{ $t('agency.agentMode.excludeGameCosts') }}
           </n-checkbox>
           <n-checkbox v-model:checked="netProfitSettings.excludeDepositFees">
-            充值手续费
+            {{ $t('agency.agentMode.excludeDepositFees') }}
           </n-checkbox>
           <n-checkbox v-model:checked="netProfitSettings.excludeWithdrawFees">
-            提现手续费
+            {{ $t('agency.agentMode.excludeWithdrawFees') }}
           </n-checkbox>
           <n-checkbox
             v-model:checked="netProfitSettings.excludePreviousBalance"
           >
-            上期结余
+            {{ $t('agency.agentMode.excludePreviousBalance') }}
           </n-checkbox>
         </div>
 
@@ -641,13 +639,13 @@
           <n-button
             @click="netProfitModalVisible = false"
             :disabled="netProfitLoading"
-            >取消</n-button
+            >{{ $t('common.cancel') }}</n-button
           >
           <n-button
             type="primary"
             @click="handleSaveNetProfitSettings"
             :loading="netProfitLoading"
-            >确认</n-button
+            >{{ $t('common.confirm') }}</n-button
           >
         </div>
       </div>
@@ -656,7 +654,7 @@
     <!-- 代理公共设置模态框 -->
     <n-modal
       v-model:show="agentPublicModalVisible"
-      title="代理公共设置"
+      :title="$t('agency.agentMode.publicSettings')"
       :mask-closable="false"
       preset="card"
       style="width: 900px; max-width: 95vw"
@@ -665,11 +663,11 @@
         <!-- 默认代理模式设置 -->
         <div class="section">
           <h3 style="margin-bottom: 16px; font-weight: bold">
-            默认代理模式设置
+            {{ $t('agency.agentMode.defaultModeSettings') }}
           </h3>
           <n-grid :cols="2" :x-gap="16">
             <n-gi>
-              <n-form-item label="币种">
+              <n-form-item :label="$t('common.currency')">
                 <n-select
                   v-model:value="agentPublicSettings.currency"
                   :options="[
@@ -680,10 +678,10 @@
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="代理模式">
+              <n-form-item :label="$t('agency.agentMode.agentModeLabel')">
                 <n-select
                   v-model:value="agentPublicSettings.defaultAgentMode"
-                  :options="[{ label: '一级代理', value: '一级代理' }]"
+                  :options="[{ label: $t('agency.agentMode.levelOneAgent'), value: '一级代理' }]"
                 />
               </n-form-item>
             </n-gi>
@@ -693,13 +691,13 @@
         <!-- 返佣前端显示格式设置 -->
         <div class="section" style="margin-top: 24px">
           <h3 style="margin-bottom: 16px; font-weight: bold">
-            返佣前端显示格式设置
+            {{ $t('agency.agentMode.rebateDisplaySettings') }}
           </h3>
           <n-radio-group v-model:value="agentPublicSettings.displayFormat">
             <n-space>
-              <n-radio value="展示佣金比例">展示佣金比例</n-radio>
-              <n-radio value="展示佣金金额">展示佣金金额</n-radio>
-              <n-radio value="展示佣金金额和比例">展示佣金金额和比例</n-radio>
+              <n-radio :value="$t('agency.agentMode.showRebateRate')">{{ $t('agency.agentMode.showRebateRate') }}</n-radio>
+              <n-radio :value="$t('agency.agentMode.showRebateAmount')">{{ $t('agency.agentMode.showRebateAmount') }}</n-radio>
+              <n-radio :value="$t('agency.agentMode.showBoth')">{{ $t('agency.agentMode.showBoth') }}</n-radio>
             </n-space>
           </n-radio-group>
 
@@ -713,16 +711,16 @@
                 margin-bottom: 8px;
               "
             >
-              <span style="font-weight: bold">返佣比例表</span>
-              <n-button size="small" @click="addRebateRow">添加行</n-button>
+              <span style="font-weight: bold">{{ $t('agency.agentMode.rebateRateTable') }}</span>
+              <n-button size="small" @click="addRebateRow">{{ $t('agency.agentMode.addRow') }}</n-button>
             </div>
             <n-table size="small" bordered>
               <thead>
                 <tr>
-                  <th style="width: 80px">序号</th>
-                  <th style="width: 150px">业绩</th>
-                  <th style="width: 150px">返佣比例</th>
-                  <th style="width: 80px">操作</th>
+                  <th style="width: 80px">{{ $t('agency.agentMode.sequence') }}</th>
+                  <th style="width: 150px">{{ $t('agency.agentMode.performance') }}</th>
+                  <th style="width: 150px">{{ $t('agency.agentMode.rebateRate') }}</th>
+                  <th style="width: 80px">{{ $t('common.actions') }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -754,7 +752,7 @@
                       @click="removeRebateRow(index)"
                       :disabled="agentPublicSettings.rebateTable.length === 1"
                     >
-                      删除
+                      {{ $t('common.delete') }}
                     </n-button>
                   </td>
                 </tr>
@@ -765,13 +763,13 @@
 
         <!-- 结算设置 -->
         <div class="section" style="margin-top: 24px">
-          <h3 style="margin-bottom: 16px; font-weight: bold">结算设置</h3>
+          <h3 style="margin-bottom: 16px; font-weight: bold">{{ $t('agency.agentMode.settlementSettings') }}</h3>
 
           <!-- 佣金领取时间 -->
-          <n-form-item label="佣金领取时间">
+          <n-form-item :label="$t('agency.agentMode.claimTime')">
             <n-radio-group v-model:value="agentPublicSettings.settlementTime">
               <n-space>
-                <n-radio value="每天">每天</n-radio>
+                <n-radio :value="$t('agency.agentMode.everyDay')">{{ $t('agency.agentMode.everyDay') }}</n-radio>
               </n-space>
             </n-radio-group>
           </n-form-item>
@@ -796,28 +794,28 @@
           </n-grid>
 
           <!-- 佣金积分倍数 -->
-          <n-form-item label="佣金积分倍数" style="margin-top: 16px">
+          <n-form-item :label="$t('agency.agentMode.commissionMultiplier')" style="margin-top: 16px">
             <n-radio-group
               v-model:value="agentPublicSettings.commissionMultiplier"
             >
               <n-space>
-                <n-radio value="无需积分">无需积分</n-radio>
-                <n-radio value="倍数">倍数</n-radio>
+                <n-radio :value="$t('agency.agentMode.noPointsRequired')">{{ $t('agency.agentMode.noPointsRequired') }}</n-radio>
+                <n-radio :value="$t('agency.agentMode.multiplier')">{{ $t('agency.agentMode.multiplier') }}</n-radio>
               </n-space>
             </n-radio-group>
             <n-input-number
-              v-if="agentPublicSettings.commissionMultiplier === '倍数'"
+              v-if="agentPublicSettings.commissionMultiplier === $t('agency.agentMode.multiplier')"
               v-model:value="agentPublicSettings.multiplierValue"
               :min="0"
-              suffix="倍"
+              :suffix="$t('agency.agentMode.multiplierSuffix')"
               style="width: 120px; margin-left: 16px"
             />
           </n-form-item>
 
           <!-- 有效人数计算 -->
-          <n-form-item label="有效人数计算" style="margin-top: 16px">
+          <n-form-item :label="$t('agency.agentMode.validMemberCalc')" style="margin-top: 16px">
             <div style="display: flex; gap: 16px; align-items: center">
-              <span>直属下级单个会员在结算周期内有效投注</span>
+              <span>{{ $t('agency.agentMode.directSubValidBet') }}</span>
               <n-input-number
                 v-model:value="agentPublicSettings.validMemberCalculation"
                 :min="0"
@@ -828,7 +826,7 @@
 
           <n-form-item label="" style="margin-top: 8px">
             <div style="display: flex; gap: 16px; align-items: center">
-              <span>并且直属下级单个会员在结算周期内充值></span>
+              <span>{{ $t('agency.agentMode.directSubDeposit') }}</span>
               <n-input-number
                 v-model:value="agentPublicSettings.subordinateValidBet"
                 :min="0"
@@ -839,11 +837,11 @@
 
           <!-- 直属下级单个会员返佣上限 -->
           <n-form-item
-            label="直属下级单个会员返佣上限"
+            :label="$t('agency.agentMode.rebateCapPerMember')"
             style="margin-top: 16px"
           >
             <div style="display: flex; gap: 16px; align-items: center">
-              <span>日结模式上限</span>
+              <span>{{ $t('agency.agentMode.dailyCap') }}</span>
               <n-input-number
                 v-model:value="agentPublicSettings.dailyLimit"
                 :min="0"
@@ -854,7 +852,7 @@
 
           <n-form-item label="" style="margin-top: 8px">
             <div style="display: flex; gap: 16px; align-items: center">
-              <span>周结模式上限</span>
+              <span>{{ $t('agency.agentMode.weeklyCap') }}</span>
               <n-input-number
                 v-model:value="agentPublicSettings.weeklyLimit"
                 :min="0"
@@ -865,7 +863,7 @@
 
           <n-form-item label="" style="margin-top: 8px">
             <div style="display: flex; gap: 16px; align-items: center">
-              <span>月结模式上限</span>
+              <span>{{ $t('agency.agentMode.monthlyCap') }}</span>
               <n-input-number
                 v-model:value="agentPublicSettings.monthlyLimit"
                 :min="0"
@@ -879,13 +877,13 @@
           <n-button
             @click="agentPublicModalVisible = false"
             :disabled="agentPublicLoading"
-            >取消</n-button
+            >{{ $t('common.cancel') }}</n-button
           >
           <n-button
             type="primary"
             @click="handleSaveAgentPublicSettings"
             :loading="agentPublicLoading"
-            >确认</n-button
+            >{{ $t('common.confirm') }}</n-button
           >
         </div>
       </div>
@@ -894,7 +892,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, h, defineAsyncComponent } from 'vue';
+import { $t } from '@vben/locales';
+
+import { ref, reactive, h, computed, defineAsyncComponent } from 'vue';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 const SmartDataGrid = defineAsyncComponent(
   () => import('../../components/smart/SmartDataGrid/index.vue'),
@@ -1034,73 +1034,69 @@ const paginationReactive = reactive({
   total: 0,
 });
 
-// options (使用字符串，避免 MixedOption 类型告警)
-const currencyOptions = [
+const currencyOptions = computed(() => [
   { label: 'BRL', value: 'BRL' },
   { label: 'USD', value: 'USD' },
   { label: 'EUR', value: 'EUR' },
-];
-const sourceOptions = [
-  { label: '系统自带', value: 'SYSTEM' },
-  { label: '自定义', value: 'CUSTOM' },
-];
-const enabledOptions = [
-  { label: '启用', value: 'true' },
-  { label: '禁用', value: 'false' },
-];
-const defaultOptions = [
-  { label: '是', value: 'true' },
-  { label: '否', value: 'false' },
-];
-const settlementCycleOptions = [
-  { label: '日结', value: 'DAILY' },
-  { label: '周结', value: 'WEEKLY' },
-  { label: '月结', value: 'MONTHLY' },
-  { label: '自定义结算', value: 'CUSTOM' },
-];
-const calcLevelsOptions = [
-  { label: '只算一级', value: 'LEVEL_ONE' },
-  { label: '最多两级', value: 'MAX_TWO' },
-  { label: '最多三级', value: 'MAX_THREE' },
-  { label: '无数级', value: 'UNLIMITED' },
-];
-
-const tutorialOptions = [
-  { label: '请选择模版', value: '' },
-  { label: '默认模版', value: 'DEFAULT' },
-  { label: '新手指南', value: 'BEGINNER' },
-  { label: '高级教程', value: 'ADVANCED' },
-];
-
-const fontSizeOptions = [
+]);
+const sourceOptions = computed(() => [
+  { label: $t('agency.agentMode.systemSource'), value: 'SYSTEM' },
+  { label: $t('agency.agentMode.customSource'), value: 'CUSTOM' },
+]);
+const enabledOptions = computed(() => [
+  { label: $t('common.enable'), value: 'true' },
+  { label: $t('common.disable'), value: 'false' },
+]);
+const defaultOptions = computed(() => [
+  { label: $t('common.yes'), value: 'true' },
+  { label: $t('common.no'), value: 'false' },
+]);
+const settlementCycleOptions = computed(() => [
+  { label: $t('agency.agentMode.daily'), value: 'DAILY' },
+  { label: $t('agency.agentMode.weekly'), value: 'WEEKLY' },
+  { label: $t('agency.agentMode.monthly'), value: 'MONTHLY' },
+  { label: $t('agency.agentMode.customSettlement'), value: 'CUSTOM' },
+]);
+const calcLevelsOptions = computed(() => [
+  { label: $t('agency.agentMode.levelOneOnly'), value: 'LEVEL_ONE' },
+  { label: $t('agency.agentMode.maxTwoLevels'), value: 'MAX_TWO' },
+  { label: $t('agency.agentMode.maxThreeLevels'), value: 'MAX_THREE' },
+  { label: $t('agency.agentMode.unlimitedLevels'), value: 'UNLIMITED' },
+]);
+const tutorialOptions = computed(() => [
+  { label: $t('agency.agentMode.selectTemplate'), value: '' },
+  { label: $t('agency.agentMode.templateDefault'), value: 'DEFAULT' },
+  { label: $t('agency.agentMode.templateBeginner'), value: 'BEGINNER' },
+  { label: $t('agency.agentMode.templateAdvanced'), value: 'ADVANCED' },
+]);
+const fontSizeOptions = computed(() => [
   { label: '12px', value: '12px' },
   { label: '14px', value: '14px' },
   { label: '16px', value: '16px' },
   { label: '18px', value: '18px' },
   { label: '20px', value: '20px' },
-];
-
-const fontFamilyOptions = [
-  { label: '系统字体', value: '系统字体' },
-  { label: '微软雅黑', value: '微软雅黑' },
+]);
+const fontFamilyOptions = computed(() => [
+  { label: $t('agency.agentMode.fontSystem'), value: '系统字体' },
+  { label: $t('agency.agentMode.fontYaHei'), value: '微软雅黑' },
   { label: 'Arial', value: 'Arial' },
   { label: 'Times New Roman', value: 'Times New Roman' },
-];
+]);
 
 // columns（按照截图布局）
-const columns: DataTableColumns<AgentModeRow> = [
+const columns = computed<DataTableColumns<AgentModeRow>>(() => [
   {
     type: 'selection',
     width: 50,
   },
   {
-    title: '代理模式ID',
+    title: $t('agency.agentMode.modeId'),
     key: 'id',
     width: 100,
     sorter: true,
   },
   {
-    title: '币种',
+    title: $t('common.currency'),
     key: 'currency',
     width: 80,
     render: (row) => {
@@ -1115,7 +1111,7 @@ const columns: DataTableColumns<AgentModeRow> = [
     },
   },
   {
-    title: '模式名称',
+    title: $t('agency.agentMode.modeNameCol'),
     key: 'name',
     width: 150,
     render: (row) =>
@@ -1124,75 +1120,75 @@ const columns: DataTableColumns<AgentModeRow> = [
           ? h(
               'span',
               { style: 'color:#18a058;margin-right:6px;font-weight:bold;' },
-              '默认',
+              $t('agency.agentMode.defaultBadge'),
             )
           : null,
         row.name,
       ]),
   },
   {
-    title: '模式来源',
+    title: $t('agency.agentMode.modeSource'),
     key: 'source',
     width: 100,
     render: (row) => {
       const sourceMap: Record<string, string> = {
-        SYSTEM: '系统自带',
-        CUSTOM: '自定义',
+        SYSTEM: $t('agency.agentMode.systemSource'),
+        CUSTOM: $t('agency.agentMode.customSource'),
       };
       return sourceMap[row.source] || row.source;
     },
   },
   {
-    title: '结算周期',
+    title: $t('agency.agentMode.settlementCycle'),
     key: 'settlementCycle',
     width: 100,
     render: (row) => {
       const cycleMap: Record<string, string> = {
-        DAILY: '日结',
-        WEEKLY: '周结',
-        MONTHLY: '月结',
-        CUSTOM: '自定义结算',
+        DAILY: $t('agency.agentMode.daily'),
+        WEEKLY: $t('agency.agentMode.weekly'),
+        MONTHLY: $t('agency.agentMode.monthly'),
+        CUSTOM: $t('agency.agentMode.customSettlement'),
       };
       return cycleMap[row.settlementCycle] || row.settlementCycle;
     },
   },
   {
-    title: '佣金计算依据',
+    title: $t('agency.agentMode.commissionBasis'),
     key: 'commissionBasis',
     width: 120,
     render: (row) => {
       const basisMap: Record<string, string> = {
-        VALID_BET: '有效投注',
-        NET_PROFIT: '净盈利',
+        VALID_BET: $t('agency.agentMode.validBet'),
+        NET_PROFIT: $t('agency.agentMode.netProfit'),
       };
       return basisMap[row.commissionBasis] || row.commissionBasis;
     },
   },
   {
-    title: '佣金计算层数',
+    title: $t('agency.agentMode.commissionLayers'),
     key: 'calcLevels',
     width: 120,
     render: (row) => {
       const levelsMap: Record<string, string> = {
-        LEVEL_ONE: '只算一级',
-        MAX_TWO: '最多两级',
-        MAX_THREE: '最多三级',
-        MAX_FOUR: '最多四级',
-        MAX_FIVE: '最多五级',
-        UNLIMITED: '无数级',
-        CUSTOM: '自定义层数',
+        LEVEL_ONE: $t('agency.agentMode.levelOneOnly'),
+        MAX_TWO: $t('agency.agentMode.maxTwoLevels'),
+        MAX_THREE: $t('agency.agentMode.maxThreeLevels'),
+        MAX_FOUR: $t('agency.agentMode.maxFourLevels'),
+        MAX_FIVE: $t('agency.agentMode.maxFiveLevels'),
+        UNLIMITED: $t('agency.agentMode.unlimitedLevels'),
+        CUSTOM: $t('agency.agentMode.customLevels'),
       };
       return levelsMap[row.calcLevels] || row.calcLevels;
     },
   },
   {
-    title: '超出部分额外返佣',
+    title: $t('agency.agentMode.overflowRebate'),
     key: 'overflowSummary',
     width: 150,
     render: (row) => row.overflowSummary || '-',
   },
   {
-    title: '启用状态',
+    title: $t('agency.agentMode.enableStatus'),
     key: 'isEnabled',
     width: 100,
     render: (row) => {
@@ -1204,25 +1200,25 @@ const columns: DataTableColumns<AgentModeRow> = [
     },
   },
   {
-    title: '上周期结算时间',
+    title: $t('agency.agentMode.lastCycleClosed'),
     key: 'lastCycleClosedDate',
     width: 130,
     render: (row) => row.lastCycleClosedDate || '-',
   },
   {
-    title: '已使用人数',
+    title: $t('agency.agentMode.usedCount'),
     key: 'usedCount',
     width: 100,
     render: (row) => row.usedCount || 0,
   },
   {
-    title: '备注',
+    title: $t('common.remark'),
     key: 'remark',
     width: 100,
     render: (row) => row.remark || '-',
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 80,
     fixed: 'right',
@@ -1237,24 +1233,24 @@ const columns: DataTableColumns<AgentModeRow> = [
             handleEdit(row);
           },
         },
-        '修改',
+        $t('common.modify'),
       );
     },
   },
   {
-    title: '操作人',
+    title: $t('common.operator'),
     key: 'operator',
     width: 100,
     render: (row) => row.operator || '-',
   },
   {
-    title: '操作时间',
+    title: $t('common.operationTime'),
     key: 'operatedAt',
     width: 140,
     sorter: true,
     render: (row) => row.operatedAt || '-',
   },
-];
+]);
 
 // modal state
 const modalVisible = ref(false);
@@ -1263,17 +1259,17 @@ const submitLoading = ref(false);
 const currentModeId = ref<number | null>(null);
 
 // 游戏类型集合（与数据库 GameCategory 枚举对应，基于 GamePlatform 实际类型）
-const gameTypes = [
-  { label: '街机', value: 'ARCADE' },
-  { label: '区块链', value: 'BLOCKCHAIN' },
-  { label: '棋牌', value: 'CHESS_CARDS' },
-  { label: '斗鸡', value: 'COCKFIGHT' },
-  { label: '捕鱼', value: 'HUNTING' },
-  { label: '真人', value: 'LIVE' },
-  { label: '彩票', value: 'LOTTERY' },
-  { label: '电子', value: 'SLOT' },
-  { label: '体育', value: 'SPORTS' },
-];
+const gameTypes = computed(() => [
+  { label: $t('agency.agentMode.gameArcade'), value: 'ARCADE' },
+  { label: $t('agency.agentMode.gameBlockchain'), value: 'BLOCKCHAIN' },
+  { label: $t('agency.agentMode.gameChessCards'), value: 'CHESS_CARDS' },
+  { label: $t('agency.agentMode.gameCockfight'), value: 'COCKFIGHT' },
+  { label: $t('agency.agentMode.gameHunting'), value: 'HUNTING' },
+  { label: $t('agency.agentMode.gameLive'), value: 'LIVE' },
+  { label: $t('agency.agentMode.gameLottery'), value: 'LOTTERY' },
+  { label: $t('agency.agentMode.gameSlot'), value: 'SLOT' },
+  { label: $t('agency.agentMode.gameSports'), value: 'SPORTS' },
+]);
 
 interface TierRow {
   key: string;
@@ -1294,7 +1290,7 @@ const calculateRebateAmount = (row: TierRow) => {
 };
 
 // Initialize tierMap with watchers for auto-calculation
-for (const gt of gameTypes) {
+for (const gt of gameTypes.value) {
   const initialRow = {
     key: `${gt.value}-0`,
     minUsers: 0,
@@ -1344,7 +1340,7 @@ function handleCreate() {
     isDefault: false,
     remark: '',
   });
-  for (const gt of gameTypes) {
+  for (const gt of gameTypes.value) {
     const newRow = {
       key: `${gt.value}-0`,
       minUsers: 0,
@@ -1380,26 +1376,26 @@ function removeTier(gt: string, index: number) {
 function copyConfigToAll(from: string) {
   const src = tierMap[from];
   if (!src || src.length === 0) {
-    message.warning('当前游戏类型没有配置可复制');
+    message.warning($t('agency.agentMode.noConfigToCopy'));
     return;
   }
 
   // Find the display name for the source game type
-  const sourceGameType = gameTypes.find((gt) => gt.value === from);
+  const sourceGameType = gameTypes.value.find((gt) => gt.value === from);
   const sourceDisplayName = sourceGameType?.label || from;
 
   // Show confirmation dialog
   dialog.info({
-    title: '确认复制配置',
-    content: `确定要将"${sourceDisplayName}"的配置复制到所有其他游戏类型吗？这将覆盖其他游戏类型的现有配置。`,
-    positiveText: '确认复制',
-    negativeText: '取消',
+    title: $t('agency.agentMode.confirmCopyTitle'),
+    content: $t('agency.agentMode.confirmCopyContent', [sourceDisplayName]),
+    positiveText: $t('agency.agentMode.confirmCopyPositive'),
+    negativeText: $t('common.cancel'),
     onPositiveClick: () => {
       // Create deep copy of source configuration
       const srcCopy = src.map((r) => ({ ...r, key: '' }));
       let copiedCount = 0;
 
-      for (const gt of gameTypes) {
+      for (const gt of gameTypes.value) {
         if (gt.value === from) continue;
 
         tierMap[gt.value] = srcCopy.map((r, i) => {
@@ -1413,9 +1409,7 @@ function copyConfigToAll(from: string) {
         copiedCount++;
       }
 
-      message.success(
-        `已成功将"${sourceDisplayName}"的配置复制到 ${copiedCount} 个其他游戏类型`,
-      );
+      message.success($t('agency.agentMode.copySuccess', [sourceDisplayName, String(copiedCount)]));
     },
     onNegativeClick: () => {
       // User cancelled, do nothing
@@ -1435,14 +1429,14 @@ async function handleConfirm() {
         formData as any,
       );
       if (!(resp as any).success) {
-        message.error('更新代理模式失败');
+        message.error($t('agency.agentMode.updateModeFailed'));
         return;
       }
       modeId = currentModeId.value;
     } else {
       const resp = await agentModeApi.createAgentMode(formData as any);
       if (!(resp as any).success) {
-        message.error('创建代理模式失败');
+        message.error($t('agency.agentMode.createModeFailed'));
         return;
       }
       modeId = parseInt((resp as any).data.id);
@@ -1453,7 +1447,7 @@ async function handleConfirm() {
     if (modeId) {
       const gameRebateConfigs: GameRebateConfigRequest[] = [];
 
-      for (const gt of gameTypes) {
+      for (const gt of gameTypes.value) {
         const list = tierMap[gt.value];
         if (!list || list.length === 0) continue;
 
@@ -1473,19 +1467,19 @@ async function handleConfirm() {
 
       try {
         await gameRebateApi.updateGameRebateConfigs(modeId, gameRebateConfigs);
-        message.success('游戏返佣配置保存成功');
+        message.success($t('agency.agentMode.gameRebateSaved'));
       } catch (error) {
         console.error('保存游戏返佣配置失败:', error);
-        message.warning('代理模式保存成功，但游戏返佣配置保存失败');
+        message.warning($t('agency.agentMode.gameRebatePartialFail'));
       }
     }
 
     modalVisible.value = false;
-    message.success(isEdit.value ? '代理模式更新成功' : '代理模式创建成功');
+    message.success(isEdit.value ? $t('agency.agentMode.modeUpdateSuccess') : $t('agency.agentMode.modeCreateSuccess'));
     await loadData();
   } catch (error) {
     console.error('保存代理模式失败:', error);
-    message.error('保存失败');
+    message.error($t('agency.agentMode.saveModeFailed'));
   } finally {
     submitLoading.value = false;
   }
@@ -1565,7 +1559,7 @@ const loadNetProfitSettings = async () => {
     });
   } catch (error) {
     console.error('加载净盈利设置失败:', error);
-    message.error('加载净盈利设置失败');
+    message.error($t('agency.agentMode.loadNetProfitFailed'));
   } finally {
     netProfitLoading.value = false;
   }
@@ -1584,11 +1578,11 @@ const handleSaveNetProfitSettings = async () => {
     };
 
     await updateNetProfitSettingsApi(netProfitSettings.currency, updateData);
-    message.success('净盈利设置已保存');
+    message.success($t('agency.agentMode.netProfitSaved'));
     netProfitModalVisible.value = false;
   } catch (error) {
     console.error('保存净盈利设置失败:', error);
-    message.error('保存净盈利设置失败');
+    message.error($t('agency.agentMode.saveNetProfitFailed'));
   } finally {
     netProfitLoading.value = false;
   }
@@ -1645,7 +1639,7 @@ const loadAgentPublicSettings = async () => {
     });
   } catch (error) {
     console.error('加载代理公共设置失败:', error);
-    message.error('加载代理公共设置失败');
+    message.error($t('agency.agentMode.loadPublicFailed'));
   } finally {
     agentPublicLoading.value = false;
   }
@@ -1672,11 +1666,11 @@ const handleSaveAgentPublicSettings = async () => {
     };
 
     await updatePublicSettingsApi(agentPublicSettings.currency, updateData);
-    message.success('代理公共设置已保存');
+    message.success($t('agency.agentMode.publicSaved'));
     agentPublicModalVisible.value = false;
   } catch (error) {
     console.error('保存代理公共设置失败:', error);
-    message.error('保存代理公共设置失败');
+    message.error($t('agency.agentMode.savePublicFailed'));
   } finally {
     agentPublicLoading.value = false;
   }
@@ -1697,7 +1691,7 @@ const fetchAgentLevels = async () => {
     console.log('📊 Agent levels loaded:', agentLevels.value.length);
   } catch (error) {
     console.error('获取代理等级失败:', error);
-    message.error('获取代理等级失败');
+    message.error($t('agency.agentMode.loadLevelsFailed'));
   } finally {
     agentLevelLoading.value = false;
   }
@@ -1714,10 +1708,10 @@ const handleCancelAgentLevel = async (_levelId: number) => {
   try {
     // 刷新数据以恢复原始状态
     await fetchAgentLevels();
-    message.info('已取消修改');
+    message.info($t('agency.agentMode.cancelEditDone'));
   } catch (error) {
     console.error('取消操作失败:', error);
-    message.error('取消操作失败');
+    message.error($t('agency.agentMode.cancelFailed'));
   }
 };
 
@@ -1736,11 +1730,11 @@ const handleConfirmAgentLevel = async (level: AgentLevel) => {
     };
 
     await updateAgentLevelApi(updateData);
-    message.success('代理等级设置已确认');
+    message.success($t('agency.agentMode.levelConfirmed'));
     await fetchAgentLevels(); // 刷新数据
   } catch (error) {
     console.error('确认操作失败:', error);
-    message.error('确认操作失败');
+    message.error($t('agency.agentMode.confirmFailed'));
     await fetchAgentLevels(); // 出错时也刷新数据
   }
 };
@@ -1762,13 +1756,13 @@ const handleSaveAgentLevel = async () => {
     };
 
     await updateAgentLevelApi(updateData);
-    message.success('代理等级设置已保存');
+    message.success($t('agency.agentMode.levelSaved'));
     agentLevelEditModalVisible.value = false;
     editingAgentLevel.value = null;
     await fetchAgentLevels(); // 刷新数据
   } catch (error) {
     console.error('保存失败:', error);
-    message.error('保存失败');
+    message.error($t('agency.agentMode.saveModeFailed'));
   }
 };
 
@@ -1781,7 +1775,7 @@ const handleAddAgentLevel = () => {
     level: maxLevel + 1,
     name: `LV${maxLevel + 1}`,
     promotionCondition: 0,
-    description: `晋级需再获得0佣金的代理`,
+    description: $t('agency.agentMode.promotionDesc', ['0']),
     icon: (maxLevel + 1).toString(),
     iconColor: '#CD7F32',
     isActive: true,
@@ -1810,13 +1804,13 @@ const handleCreateAgentLevel = async () => {
     };
 
     await createAgentLevelApi(createData);
-    message.success('代理等级创建成功');
+    message.success($t('agency.agentMode.levelCreated'));
     agentLevelEditModalVisible.value = false;
     editingAgentLevel.value = null;
     await fetchAgentLevels(); // 刷新数据
   } catch (error) {
     console.error('创建失败:', error);
-    message.error('创建失败');
+    message.error($t('agency.agentMode.saveModeFailed'));
   }
 };
 
@@ -1837,11 +1831,11 @@ const handleBatchSaveAgentLevels = async () => {
     );
 
     await batchUpdateAgentLevelsApi(updateData);
-    message.success(`成功批量更新 ${updateData.length} 个代理等级`);
+    message.success($t('agency.agentMode.batchLevelsSaved', [String(updateData.length)]));
     await fetchAgentLevels(); // 刷新数据
   } catch (error) {
     console.error('批量保存失败:', error);
-    message.error('批量保存失败');
+    message.error($t('agency.agentMode.batchSaveFailed'));
   }
 };
 
@@ -1852,7 +1846,7 @@ const handleAutoUpgradeAgents = async () => {
     const { upgradedCount, upgradedAgents } = response.data;
 
     if (upgradedCount > 0) {
-      message.success(`自动升级完成！共升级 ${upgradedCount} 个代理`);
+      message.success($t('agency.agentMode.autoUpgradeDone', [String(upgradedCount)]));
       // 显示升级详情
       const upgradeDetails = upgradedAgents
         .map(
@@ -1862,18 +1856,18 @@ const handleAutoUpgradeAgents = async () => {
         .join('\n');
 
       dialog.success({
-        title: '自动升级结果',
-        content: `升级详情：\n${upgradeDetails}`,
-        positiveText: '确定',
+        title: $t('agency.agentMode.autoUpgradeResult'),
+        content: `${$t('agency.agentMode.autoUpgradeResult')}:\n${upgradeDetails}`,
+        positiveText: $t('common.confirm'),
       });
     } else {
-      message.info('没有代理符合升级条件');
+      message.info($t('agency.agentMode.autoUpgradeNone'));
     }
 
     await fetchAgentLevels(); // 刷新数据以更新用户数量
   } catch (error) {
     console.error('自动升级失败:', error);
-    message.error('自动升级失败');
+    message.error($t('agency.agentMode.autoUpgradeFailed'));
   }
 };
 
@@ -1937,7 +1931,7 @@ const loadGameRebateConfigs = async (modeId: number) => {
     const response = await gameRebateApi.getGameRebateConfigs(modeId);
     if (response.success && response.data) {
       // Reset tierMap
-      for (const gt of gameTypes) {
+      for (const gt of gameTypes.value) {
         tierMap[gt.value] = [];
       }
 
@@ -1972,7 +1966,7 @@ const loadGameRebateConfigs = async (modeId: number) => {
       });
 
       // For game types without configurations, add default empty tier
-      for (const gt of gameTypes) {
+      for (const gt of gameTypes.value) {
         if (!tierMap[gt.value] || tierMap[gt.value]?.length === 0) {
           const defaultRow = {
             key: `${gt.value}-${Date.now()}-0`,
@@ -1989,10 +1983,10 @@ const loadGameRebateConfigs = async (modeId: number) => {
   } catch (error) {
     console.error('Failed to load game rebate configurations:', error);
     const errorMessage = error instanceof Error ? error.message : '未知错误';
-    message.warning(`加载游戏返佣配置失败，将使用默认配置: ${errorMessage}`);
+    message.warning($t('agency.agentMode.loadRebateFailed', [errorMessage]));
 
     // Initialize with default empty tiers
-    for (const gt of gameTypes) {
+    for (const gt of gameTypes.value) {
       const defaultRow = {
         key: `${gt.value}-${Date.now()}-0`,
         minUsers: 0,
@@ -2050,13 +2044,13 @@ const handleStatusToggle = async (row: AgentModeRow, newStatus: boolean) => {
     );
 
     if (response.success) {
-      message.success(`已${newStatus ? '启用' : '停用'}代理模式: ${row.name}`);
+      message.success(newStatus ? $t('agency.agentMode.statusEnabled', [row.name]) : $t('agency.agentMode.statusDisabled', [row.name]));
       // Optionally refresh the data to ensure consistency
       // await loadData();
     } else {
       // API returned success: false, revert the change
       row.isEnabled = originalStatus;
-      message.error('状态更新失败: ' + (response.message || '未知错误'));
+      message.error($t('agency.agentMode.statusUpdateFailed', [response.message || '']));
     }
   } catch (error) {
     // Revert the change if API call fails
@@ -2065,10 +2059,10 @@ const handleStatusToggle = async (row: AgentModeRow, newStatus: boolean) => {
 
     // Handle 409 Conflict specifically
     if ((error as any)?.response?.status === 409) {
-      message.warning('无法禁用该货币的最后一个代理模式，请先创建其他代理模式');
+      message.warning($t('agency.agentMode.cannotDisableLast'));
     } else {
-      const errorMessage = error instanceof Error ? error.message : '网络错误';
-      message.error('状态更新失败: ' + errorMessage);
+      const errorMessage = error instanceof Error ? error.message : '';
+      message.error($t('agency.agentMode.statusUpdateFailed', [errorMessage]));
     }
   }
 };

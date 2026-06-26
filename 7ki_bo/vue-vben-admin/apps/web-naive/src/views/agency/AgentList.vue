@@ -15,36 +15,36 @@
           <n-button
             :type="activeTab === 'day' ? 'primary' : 'default'"
             @click="activeTab = 'day'"
-            >日</n-button
+            >{{ $t('common.day') }}</n-button
           >
           <n-button
             :type="activeTab === 'week' ? 'primary' : 'default'"
             @click="activeTab = 'week'"
-            >周</n-button
+            >{{ $t('common.week') }}</n-button
           >
           <n-button
             :type="activeTab === 'month' ? 'primary' : 'default'"
             @click="activeTab = 'month'"
-            >月</n-button
+            >{{ $t('common.month') }}</n-button
           >
         </n-button-group>
 
         <!-- Date Range -->
         <div style="display: flex; gap: 4px; align-items: center">
-          <span style="font-size: 12px">开始时间</span>
+          <span style="font-size: 12px">{{ $t('common.startTime') }}</span>
           <n-date-picker
             v-model:value="searchForm.startDate"
             type="datetime"
-            placeholder="选择时间"
+            :placeholder="$t('agency.agentList.selectTime')"
             style="width: 200px"
           />
         </div>
         <div style="display: flex; gap: 4px; align-items: center">
-          <span style="font-size: 12px">结束时间</span>
+          <span style="font-size: 12px">{{ $t('common.endTime') }}</span>
           <n-date-picker
             v-model:value="searchForm.endDate"
             type="datetime"
-            placeholder="选择时间"
+            :placeholder="$t('agency.agentList.selectTime')"
             style="width: 200px"
           />
         </div>
@@ -52,69 +52,69 @@
         <!-- Filters -->
         <n-select
           v-model:value="searchForm.keywordField"
-          placeholder="代理ID"
+          :placeholder="$t('agency.commission.agentId')"
           style="width: 140px"
           :options="keywordFieldOptions"
         />
         <n-input
           v-model:value="searchForm.keyword"
-          placeholder="支持模糊号、引用关键字"
+          :placeholder="$t('agency.agentList.keywordFuzzy')"
           style="width: 220px"
           clearable
         />
         <n-select
           v-model:value="searchForm.metricField"
-          placeholder="累计佣金"
+          :placeholder="$t('agency.agentList.totalCommissionFilter')"
           style="width: 140px"
           :options="metricFieldOptions"
           clearable
         />
         <n-input-number
           v-model:value="searchForm.metricMin"
-          placeholder="最小值"
+          :placeholder="$t('agency.agentList.minValue')"
           style="width: 120px"
           :show-button="false"
           clearable
         />
         <n-input-number
           v-model:value="searchForm.metricMax"
-          placeholder="最大值"
+          :placeholder="$t('agency.agentList.maxValue')"
           style="width: 120px"
           :show-button="false"
           clearable
         />
         <n-select
           v-model:value="searchForm.commissionMode"
-          placeholder="全部提佣方式"
+          :placeholder="$t('agency.agentList.allCommissionModes')"
           style="width: 140px"
           :options="commissionFilterOptions"
           clearable
         />
         <n-select
           v-model:value="searchForm.agentMethod"
-          placeholder="全部代理方式"
+          :placeholder="$t('agency.agentList.allAgentMethods')"
           style="width: 150px"
           :options="agentMethodOptions"
           clearable
         />
         <n-select
           v-model:value="searchForm.agentType"
-          placeholder="全部代理等级"
+          :placeholder="$t('agency.agentList.allAgentLevels')"
           style="width: 150px"
           :options="agentTypeOptions"
           clearable
         />
         <n-select
           v-model:value="searchForm.registrationSource"
-          placeholder="全部注册来源"
+          :placeholder="$t('agency.agentList.allRegSources')"
           style="width: 150px"
           :options="registrationSourceOptions"
           clearable
         />
 
         <!-- Search button -->
-        <n-button type="primary" @click="handleSearch">搜索</n-button>
-        <n-button @click="handleReset">清除筛选</n-button>
+        <n-button type="primary" @click="handleSearch">{{ $t('common.search') }}</n-button>
+        <n-button @click="handleReset">{{ $t('agency.agentList.clearFilters') }}</n-button>
       </div>
 
       <!-- Action buttons -->
@@ -123,19 +123,19 @@
           <template #icon>
             <span>+</span>
           </template>
-          新增代理
+          {{ $t('agency.agentList.addAgent') }}
         </n-button>
         <n-button @click="handleImport">
           <template #icon>
             <span>↓</span>
           </template>
-          导入代理
+          {{ $t('agency.agentList.importAgent') }}
         </n-button>
         <n-button @click="handleExport">
           <template #icon>
             <span>↑</span>
           </template>
-          分出提取
+          {{ $t('agency.agentList.exportExtract') }}
         </n-button>
       </div>
 
@@ -164,25 +164,25 @@
         <n-space vertical :size="8">
           <!-- 小计 (Page Subtotal) -->
           <n-space :size="24">
-            <span style="font-weight: bold; width: 80px">小计</span>
-            <span>直属会员: {{ pageSubtotal.memberCount }}</span>
-            <span>下级代理: {{ pageSubtotal.downlineCount }}</span>
-            <span>累计佣金: {{ pageSubtotal.commissionTotal.toFixed(2) }}</span>
+            <span style="font-weight: bold; width: 80px">{{ $t('agency.agentList.subtotal') }}</span>
+            <span>{{ $t('agency.agentList.directMembers') }}: {{ pageSubtotal.memberCount }}</span>
+            <span>{{ $t('agency.agentList.downlineAgents') }}: {{ pageSubtotal.downlineCount }}</span>
+            <span>{{ $t('agency.agentList.totalCommission') }}: {{ pageSubtotal.commissionTotal.toFixed(2) }}</span>
             <span
-              >累计领取: {{ pageSubtotal.claimedCommission.toFixed(2) }}</span
+              >{{ $t('agency.agentList.totalClaimed') }}: {{ pageSubtotal.claimedCommission.toFixed(2) }}</span
             >
             <span
-              >未领取: {{ pageSubtotal.unclaimedCommission.toFixed(2) }}</span
+              >{{ $t('agency.agentList.unclaimed') }}: {{ pageSubtotal.unclaimedCommission.toFixed(2) }}</span
             >
           </n-space>
           <!-- 总计 (Grand Total) -->
           <n-space :size="24">
-            <span style="font-weight: bold; width: 80px">总计</span>
-            <span>直属会员: {{ grandTotal.memberCount }}</span>
-            <span>下级代理: {{ grandTotal.downlineCount }}</span>
-            <span>累计佣金: {{ grandTotal.commissionTotal.toFixed(2) }}</span>
-            <span>累计领取: {{ grandTotal.claimedCommission.toFixed(2) }}</span>
-            <span>未领取: {{ grandTotal.unclaimedCommission.toFixed(2) }}</span>
+            <span style="font-weight: bold; width: 80px">{{ $t('agency.agentList.grandTotal') }}</span>
+            <span>{{ $t('agency.agentList.directMembers') }}: {{ grandTotal.memberCount }}</span>
+            <span>{{ $t('agency.agentList.downlineAgents') }}: {{ grandTotal.downlineCount }}</span>
+            <span>{{ $t('agency.agentList.totalCommission') }}: {{ grandTotal.commissionTotal.toFixed(2) }}</span>
+            <span>{{ $t('agency.agentList.totalClaimed') }}: {{ grandTotal.claimedCommission.toFixed(2) }}</span>
+            <span>{{ $t('agency.agentList.unclaimed') }}: {{ grandTotal.unclaimedCommission.toFixed(2) }}</span>
           </n-space>
         </n-space>
       </div>
@@ -192,7 +192,7 @@
     <n-modal
       v-model:show="modalVisible"
       preset="card"
-      title="新增代理"
+      :title="$t('agency.agentList.addAgentTitle')"
       size="medium"
       :style="{ width: '600px', maxWidth: '90vw' }"
       :segmented="false"
@@ -212,25 +212,25 @@
           <!-- 代理币种 -->
           <n-gi>
             <n-form-item
-              label="* 代理币种"
+              :label="`* ${$t('agency.agentList.agentCurrency')}`"
               path="currency"
               :show-feedback="true"
             >
               <n-select
                 v-model:value="formData.currency"
                 :options="currencyOptions"
-                placeholder="巴西(BRL)"
+                :placeholder="$t('agency.agentList.brazilBrl')"
               />
             </n-form-item>
           </n-gi>
 
           <!-- 代理模式 -->
           <n-gi>
-            <n-form-item label="代理模式" path="mode">
+            <n-form-item :label="$t('agency.agentList.agentMode')" path="mode">
               <n-select
                 v-model:value="formData.mode"
                 :options="modeOptions"
-                placeholder="一级代理"
+                :placeholder="$t('agency.agentList.levelOneAgent')"
               />
             </n-form-item>
           </n-gi>
@@ -238,13 +238,13 @@
           <!-- 代理账号 -->
           <n-gi>
             <n-form-item
-              label="* 代理账号"
+              :label="`* ${$t('agency.agentList.agentAccount')}`"
               path="username"
               :show-feedback="true"
             >
               <n-input
                 v-model:value="formData.username"
-                placeholder="请输入代理账号"
+                :placeholder="$t('agency.agentList.enterAgentAccount')"
               />
             </n-form-item>
           </n-gi>
@@ -252,14 +252,14 @@
           <!-- 登录密码 -->
           <n-gi>
             <n-form-item
-              label="* 登录密码"
+              :label="`* ${$t('agency.agentList.loginPassword')}`"
               path="loginPassword"
               :show-feedback="true"
             >
               <n-input
                 v-model:value="formData.loginPassword"
                 type="password"
-                placeholder="请输入登录密码"
+                :placeholder="$t('agency.agentList.enterLoginPassword')"
               />
             </n-form-item>
           </n-gi>
@@ -267,14 +267,14 @@
           <!-- 提现密码 -->
           <n-gi>
             <n-form-item
-              label="提现密码"
+              :label="$t('agency.agentList.withdrawalPassword')"
               path="withdrawalPassword"
               :show-feedback="true"
             >
               <n-input
                 v-model:value="formData.withdrawalPassword"
                 type="password"
-                placeholder="请输入限6位纯数字密码"
+                :placeholder="$t('agency.agentList.withdrawalPasswordHint')"
               />
             </n-form-item>
           </n-gi>
@@ -282,25 +282,25 @@
           <!-- 代理本人层级 -->
           <n-gi>
             <n-form-item
-              label="* 代理本人层级"
+              :label="`* ${$t('agency.agentList.agentLevel')}`"
               path="level"
               :show-feedback="true"
             >
               <n-select
                 v-model:value="formData.level"
                 :options="memberTierOptions"
-                placeholder="请选择代理本人层级"
+                :placeholder="$t('agency.agentList.selectAgentLevel')"
               />
             </n-form-item>
           </n-gi>
 
           <!-- 代理本人标签 -->
           <n-gi>
-            <n-form-item label="代理本人标签" path="agentTag">
+            <n-form-item :label="$t('agency.agentList.agentTag')" path="agentTag">
               <n-select
                 v-model:value="formData.agentTag"
                 :options="agentTagOptions"
-                placeholder="默认标签"
+                :placeholder="$t('agency.agentList.defaultTag')"
               />
             </n-form-item>
           </n-gi>
@@ -308,25 +308,25 @@
           <!-- 直属强制绑定层级 -->
           <n-gi>
             <n-form-item
-              label="* 直属强制绑定层级"
+              :label="`* ${$t('agency.agentList.directForcedLevel')}`"
               path="directForcedLevel"
               :show-feedback="true"
             >
               <n-select
                 v-model:value="formData.directForcedLevel"
                 :options="memberTierOptions"
-                placeholder="请选择直属强制绑定层级"
+                :placeholder="$t('agency.agentList.selectDirectForcedLevel')"
               />
             </n-form-item>
           </n-gi>
 
           <!-- 直属强制绑定标签 -->
           <n-gi>
-            <n-form-item label="直属强制绑定标签" path="directForcedTag">
+            <n-form-item :label="$t('agency.agentList.directForcedTag')" path="directForcedTag">
               <n-select
                 v-model:value="formData.directForcedTag"
                 :options="directForcedTagOptions"
-                placeholder="默认标签"
+                :placeholder="$t('agency.agentList.defaultTag')"
               />
             </n-form-item>
           </n-gi>
@@ -334,14 +334,14 @@
           <!-- 代理提佣方式 -->
           <n-gi>
             <n-form-item
-              label="* 代理提佣方式"
+              :label="`* ${$t('agency.agentList.commissionMode')}`"
               path="commissionMode"
               :show-feedback="true"
             >
               <n-select
                 v-model:value="formData.commissionMode"
                 :options="commissionModeOptions"
-                placeholder="不限制（自由领取）"
+                :placeholder="$t('agency.agentList.unlimitedFreeClaim')"
               />
             </n-form-item>
           </n-gi>
@@ -357,9 +357,9 @@
           border-top: 1px solid #e5e7eb;
         "
       >
-        <n-button @click="modalVisible = false">取消</n-button>
+        <n-button @click="modalVisible = false">{{ $t('common.cancel') }}</n-button>
         <n-button type="primary" @click="handleSubmit" :loading="submitting">
-          确认
+          {{ $t('common.confirm') }}
         </n-button>
       </div>
     </n-modal>
@@ -379,6 +379,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, onMounted, h, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Page } from '@vben/common-ui';
@@ -569,30 +571,29 @@ const currencyOptions = [
   { label: 'BTC', value: 'BTC' },
   { label: 'ETH', value: 'ETH' },
 ];
-const agentTagOptions = [{ label: '默认标签', value: '默认标签' }];
-
-const directForcedTagOptions = [{ label: '默认标签', value: '默认标签' }];
-
-const commissionModeOptions = [
-  { label: '不限制（自由领取）', value: '不限制' },
-  { label: '按比例', value: '按比例' },
-  { label: '固定金额', value: '固定金额' },
-];
-
-// Filter options for the new search form
-const metricFieldOptions = [
-  { label: '累计佣金', value: 'commissionTotal' },
-  { label: '累计领取', value: 'claimedCommission' },
-  { label: '未领取', value: 'unclaimedCommission' },
-  { label: '所属层数', value: 'hierarchyLevel' },
-];
-
-const commissionFilterOptions = [
-  { label: '全部提佣方式', value: null },
-  { label: '不限制（自由领取）', value: '不限制' },
-  { label: '按比例', value: '按比例' },
-  { label: '固定金额', value: '固定金额' },
-];
+const agentTagOptions = computed(() => [
+  { label: $t('agency.agentList.defaultTag'), value: '默认标签' },
+]);
+const directForcedTagOptions = computed(() => [
+  { label: $t('agency.agentList.defaultTag'), value: '默认标签' },
+]);
+const commissionModeOptions = computed(() => [
+  { label: $t('agency.agentList.unlimitedFreeClaim'), value: '不限制' },
+  { label: $t('agency.agentList.byRatio'), value: '按比例' },
+  { label: $t('agency.agentList.fixedAmount'), value: '固定金额' },
+]);
+const metricFieldOptions = computed(() => [
+  { label: $t('agency.agentList.totalCommissionFilter'), value: 'commissionTotal' },
+  { label: $t('agency.agentList.totalClaimedFilter'), value: 'claimedCommission' },
+  { label: $t('agency.agentList.unclaimedFilter'), value: 'unclaimedCommission' },
+  { label: $t('agency.agentList.hierarchyLevel'), value: 'hierarchyLevel' },
+]);
+const commissionFilterOptions = computed(() => [
+  { label: $t('agency.agentList.allCommissionModes'), value: null },
+  { label: $t('agency.agentList.unlimitedFreeClaim'), value: '不限制' },
+  { label: $t('agency.agentList.byRatio'), value: '按比例' },
+  { label: $t('agency.agentList.fixedAmount'), value: '固定金额' },
+]);
 
 const getRebateMetric = (
   row: AgentRecord,
@@ -615,66 +616,60 @@ const metricValueGetters: Record<string, (row: AgentRecord) => number> = {
   hierarchyLevel: (row) => Number(row.hierarchyLevel || 0),
 };
 
-const keywordFieldOptions = [
-  { label: '代理ID', value: 'agentId' },
-  { label: '邀请码', value: 'referralCode' },
-  { label: '会员账号', value: 'username' },
-  { label: '上级代理ID', value: 'invitedById' },
-  { label: '上级代理账号', value: 'invitedByUsername' },
-  { label: '顶层代理ID', value: 'topAgentId' },
-  { label: '顶层代理账号', value: 'topAgentUsername' },
-];
-
-const registrationSourceOptions = [
-  { label: '推广注册', value: '推广注册' },
-  { label: '手动注册', value: '手动注册' },
-];
-
-const totalInvitesOptions = [
-  { label: '全部', value: null },
-  { label: '大于10', value: '>10' },
-  { label: '大于50', value: '>50' },
-  { label: '大于100', value: '>100' },
-];
-
-const profitLossOptions = [
-  { label: '全部', value: null },
-  { label: '盈利', value: 'profit' },
-  { label: '亏损', value: 'loss' },
-];
-
-const sortOptions = [
-  { label: '默认排序', value: null },
-  { label: '金额升序', value: 'amount_asc' },
-  { label: '金额降序', value: 'amount_desc' },
-];
-
-const agentMethodOptions = [
-  { label: '全部代理用方式', value: null },
-  { label: '推广代理', value: 'REFERRAL' },
-  { label: '手动代理', value: 'MANUAL' },
-];
-
-const agentTypeOptions = [
-  { label: '全部代理类型', value: null },
-  { label: '一级代理', value: '1' },
-  { label: '二级代理', value: '2' },
-];
+const keywordFieldOptions = computed(() => [
+  { label: $t('agency.commission.agentId'), value: 'agentId' },
+  { label: $t('agency.agentList.referralCode'), value: 'referralCode' },
+  { label: $t('common.memberAccount'), value: 'username' },
+  { label: $t('agency.agentList.superiorAgentId'), value: 'invitedById' },
+  { label: $t('agency.agentList.superiorAgentAccount'), value: 'invitedByUsername' },
+  { label: $t('agency.agentList.topAgentId'), value: 'topAgentId' },
+  { label: $t('agency.agentList.topAgentAccount'), value: 'topAgentUsername' },
+]);
+const registrationSourceOptions = computed(() => [
+  { label: $t('agency.agentList.promoRegistration'), value: '推广注册' },
+  { label: $t('agency.agentList.manualRegistration'), value: '手动注册' },
+]);
+const totalInvitesOptions = computed(() => [
+  { label: $t('common.all'), value: null },
+  { label: $t('agency.agentList.greaterThan10'), value: '>10' },
+  { label: $t('agency.agentList.greaterThan50'), value: '>50' },
+  { label: $t('agency.agentList.greaterThan100'), value: '>100' },
+]);
+const profitLossOptions = computed(() => [
+  { label: $t('common.all'), value: null },
+  { label: $t('agency.agentList.profit'), value: 'profit' },
+  { label: $t('agency.agentList.loss'), value: 'loss' },
+]);
+const sortOptions = computed(() => [
+  { label: $t('agency.agentList.defaultSort'), value: null },
+  { label: $t('agency.agentList.amountAsc'), value: 'amount_asc' },
+  { label: $t('agency.agentList.amountDesc'), value: 'amount_desc' },
+]);
+const agentMethodOptions = computed(() => [
+  { label: $t('agency.agentList.allAgentMethodsFilter'), value: null },
+  { label: $t('agency.agentList.referralAgent'), value: 'REFERRAL' },
+  { label: $t('agency.agentList.manualAgent'), value: 'MANUAL' },
+]);
+const agentTypeOptions = computed(() => [
+  { label: $t('agency.agentList.allAgentTypes'), value: null },
+  { label: $t('agency.agentList.levelOne'), value: '1' },
+  { label: $t('agency.agentList.levelTwo'), value: '2' },
+]);
 
 // 表格列配置
-const columns: DataTableColumns<AgentRecord> = [
+const columns = computed<DataTableColumns<AgentRecord>>(() => [
   {
     type: 'selection',
     width: 40,
   },
   {
-    title: '币种',
+    title: $t('common.currency'),
     key: 'currency',
     width: 60,
     render: (row) => row.currency || 'BRL',
   },
   {
-    title: '用户ID',
+    title: $t('agency.agentList.userId'),
     key: 'userID',
     width: 100,
     render: (row) => {
@@ -690,7 +685,7 @@ const columns: DataTableColumns<AgentRecord> = [
     },
   },
   {
-    title: '代理账号',
+    title: $t('agency.agentList.agentAccount'),
     key: 'username',
     width: 140,
     render: (row) => {
@@ -720,52 +715,52 @@ const columns: DataTableColumns<AgentRecord> = [
     },
   },
   {
-    title: '代理方式',
+    title: $t('agency.agentList.agentMethod'),
     key: 'mode',
     width: 100,
     align: 'center',
-    render: (row) => (row.mode === 'MANUAL' ? '人工代理' : '推广注册'),
+    render: (row) => (row.mode === 'MANUAL' ? $t('agency.agentList.manualAgentDisplay') : $t('agency.agentList.promoRegistration')),
   },
   {
-    title: '上级代理',
+    title: $t('agency.agentList.superiorAgent'),
     key: 'invitedByUsername',
     width: 120,
     render: (row) => row.invitedByUsername || '-',
   },
   {
-    title: '顶层代理',
+    title: $t('agency.agentList.topAgent'),
     key: 'topAgentUsername',
     width: 120,
     render: (row) => row.topAgentUsername || '-',
   },
   {
-    title: '所属层数',
+    title: $t('agency.agentList.hierarchyLevel'),
     key: 'hierarchyLevel',
     width: 80,
     align: 'center',
     render: (row) => row.hierarchyLevel || 1,
   },
   {
-    title: '顶层代理',
+    title: $t('agency.agentList.topAgent'),
     key: 'registrationSource',
     width: 100,
-    render: (row) => row.registrationSource || '推广注册',
+    render: (row) => row.registrationSource || $t('agency.agentList.promoRegistration'),
   },
   {
-    title: '所属层数',
+    title: $t('agency.agentList.hierarchyLevel'),
     key: 'memberCount',
     width: 80,
     align: 'center',
     render: (row) => row.memberCount || row.otherCount || 0,
   },
   {
-    title: '代理模式',
+    title: $t('agency.agentList.agentMode'),
     key: 'commissionMode',
     width: 120,
-    render: (row) => row.commissionMode || '一级代理',
+    render: (row) => row.commissionMode || $t('agency.agentList.levelOneAgent'),
   },
   {
-    title: '直属数',
+    title: $t('agency.agentList.directCount'),
     key: 'downlineCount',
     width: 80,
     align: 'center',
@@ -788,14 +783,14 @@ const columns: DataTableColumns<AgentRecord> = [
     },
   },
   {
-    title: '其他数',
+    title: $t('agency.agentList.otherCount'),
     key: 'secondGenerationCount',
     width: 80,
     align: 'center',
     render: (row) => row.secondGenerationCount || 0,
   },
   {
-    title: '累计佣金',
+    title: $t('agency.agentList.totalCommission'),
     key: 'commissionTotal',
     width: 100,
     align: 'right',
@@ -806,7 +801,7 @@ const columns: DataTableColumns<AgentRecord> = [
     },
   },
   {
-    title: '累计领取',
+    title: $t('agency.agentList.totalClaimed'),
     key: 'claimedCommission',
     width: 100,
     align: 'right',
@@ -818,7 +813,7 @@ const columns: DataTableColumns<AgentRecord> = [
     },
   },
   {
-    title: '未领取',
+    title: $t('agency.agentList.unclaimed'),
     key: 'unclaimedCommission',
     width: 100,
     align: 'right',
@@ -830,7 +825,7 @@ const columns: DataTableColumns<AgentRecord> = [
     },
   },
   {
-    title: '成为代理时间',
+    title: $t('agency.agentList.agentSince'),
     key: 'createdAt',
     width: 160,
     render: (row) => {
@@ -849,13 +844,13 @@ const columns: DataTableColumns<AgentRecord> = [
     },
   },
   {
-    title: '提佣方式',
+    title: $t('agency.agentList.commissionMethod'),
     key: 'bindingMethod',
     width: 160,
-    render: (row) => `不限制（${row.commissionMode || '自由领取'}）`,
+    render: (row) => $t('agency.agentList.unlimitedPrefix', [row.commissionMode || $t('agency.agentList.freeClaim')]),
   },
   {
-    title: '推广链接',
+    title: $t('agency.agentList.referralLink'),
     key: 'referralUrl',
     width: 180,
     render: (row) => {
@@ -882,7 +877,7 @@ const columns: DataTableColumns<AgentRecord> = [
               style: 'cursor: pointer;',
               onClick: () => {
                 navigator.clipboard.writeText(referralUrl);
-                window.$message?.success('推广链接已复制');
+                window.$message?.success($t('agency.agentList.referralCopied'));
               },
             },
             '📋',
@@ -892,14 +887,14 @@ const columns: DataTableColumns<AgentRecord> = [
     },
   },
   {
-    title: '访问量',
+    title: $t('agency.agentList.visitCount'),
     key: 'visitCount',
     width: 80,
     align: 'center',
     render: (row) => row.visitCount || 0,
   },
   {
-    title: '推广状态',
+    title: $t('agency.agentList.promoStatus'),
     key: 'isActive',
     width: 100,
     align: 'center',
@@ -911,7 +906,7 @@ const columns: DataTableColumns<AgentRecord> = [
     },
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 120,
     fixed: 'right',
@@ -924,33 +919,33 @@ const columns: DataTableColumns<AgentRecord> = [
           type: 'primary',
           onClick: () => handleViewAgentDetail(row),
         },
-        { default: () => '详情 查看 >' },
+        { default: () => $t('agency.agentList.viewDetail') },
       );
     },
   },
-];
+]);
 
 // 表单验证规则
 const rules = computed(() => {
   return {
-    username: [{ required: true, message: '请输入代理账号', trigger: 'blur' }],
+    username: [{ required: true, message: $t('agency.agentList.enterAgentAccountRequired'), trigger: 'blur' }],
     loginPassword: [
-      { required: true, message: '请输入登录密码', trigger: 'blur' },
+      { required: true, message: $t('agency.agentList.enterLoginPasswordRequired'), trigger: 'blur' },
     ],
     withdrawalPassword: [
       {
         pattern: /^\d{6}$/,
-        message: '提现密码必须为6位数字',
+        message: $t('agency.agentList.withdrawalPasswordInvalid'),
         trigger: 'blur',
       },
     ],
-    currency: [{ required: true, message: '请选择代理币种', trigger: 'blur' }],
-    level: [{ required: true, message: '请选择代理本人层级', trigger: 'blur' }],
+    currency: [{ required: true, message: $t('agency.agentList.selectCurrencyRequired'), trigger: 'blur' }],
+    level: [{ required: true, message: $t('agency.agentList.selectLevelRequired'), trigger: 'blur' }],
     directForcedLevel: [
-      { required: true, message: '请选择直属强制绑定层级', trigger: 'blur' },
+      { required: true, message: $t('agency.agentList.selectDirectLevelRequired'), trigger: 'blur' },
     ],
     commissionMode: [
-      { required: true, message: '请选择代理提佣方式', trigger: 'blur' },
+      { required: true, message: $t('agency.agentList.selectCommissionRequired'), trigger: 'blur' },
     ],
   };
 });
@@ -1047,7 +1042,7 @@ const fetchData = async () => {
   } catch (error) {
     console.error('获取代理列表失败:', error);
     notification.error({
-      content: '获取代理列表失败',
+      content: $t('agency.agentList.loadListFailed'),
       duration: 3000,
     });
   } finally {
@@ -1066,7 +1061,7 @@ const fetchMemberTiers = async () => {
   } catch (error) {
     console.error('获取会员层级失败:', error);
     notification.error({
-      content: '获取会员层级失败',
+      content: $t('agency.agentList.loadTiersFailed'),
       duration: 3000,
     });
   }
@@ -1090,7 +1085,7 @@ const fetchAgentModes = async () => {
   } catch (error) {
     console.error('获取代理模式失败:', error);
     notification.error({
-      content: '获取代理模式失败',
+      content: $t('agency.agentList.loadModesFailed'),
       duration: 3000,
     });
   }
@@ -1120,21 +1115,21 @@ const handleSearch = () => {
 };
 
 const handleImport = () => {
-  message.info('导入代理功能开发中...');
+  message.info($t('agency.agentList.importDeveloping'));
 };
 
 const handleExport = () => {
-  message.info('导出功能开发中...');
+  message.info($t('agency.agentList.exportDeveloping'));
 };
 
 const handleToggleStatus = async (agentId: number, isActive: boolean) => {
   try {
     await updateAgent(agentId, { isActive });
-    message.success(isActive ? '已启用代理' : '已停用代理');
+    message.success(isActive ? $t('agency.agentList.agentEnabled') : $t('agency.agentList.agentDisabled'));
     fetchData();
   } catch (error) {
     console.error('更新代理状态失败:', error);
-    message.error('更新代理状态失败');
+    message.error($t('agency.agentList.updateStatusFailed'));
   }
 };
 
@@ -1187,7 +1182,7 @@ const openUserDetailByAgentRecord = async (record: AgentRecord) => {
     userDetailModalVisible.value = true;
   } catch (error) {
     console.error('打开用户详情失败:', error);
-    message.error('无法获取用户详情，请稍后重试');
+    message.error($t('agency.agentList.openUserDetailFailed'));
   }
 };
 
@@ -1269,7 +1264,7 @@ const handleViewDirectMembers = (record: AgentRecord) => {
   const agentIdentifier = record.userID || record.username || '';
 
   if (!agentIdentifier) {
-    message.warning('无法获取代理信息');
+    message.warning($t('agency.agentList.cannotGetAgent'));
     return;
   }
 
@@ -1310,14 +1305,14 @@ const handleDelete = async (id: number) => {
   try {
     await deleteAgent(id);
     notification.success({
-      content: '删除成功',
+      content: $t('common.deleteSuccess'),
       duration: 3000,
     });
     fetchData();
   } catch (error) {
     console.error('删除失败:', error);
     notification.error({
-      content: '删除失败',
+      content: $t('common.operationFailed'),
       duration: 3000,
     });
   }
@@ -1344,7 +1339,7 @@ const handleSubmit = async () => {
       };
       await updateAgent(currentRecord.value.id, updateData);
       notification.success({
-        content: '更新成功',
+        content: $t('agency.agentList.updateSuccess'),
         duration: 3000,
       });
     } else {
@@ -1368,7 +1363,7 @@ const handleSubmit = async () => {
       };
       await createAgent(createData);
       notification.success({
-        content: '创建成功',
+        content: $t('agency.agentList.createSuccess'),
         duration: 3000,
       });
     }
@@ -1378,7 +1373,7 @@ const handleSubmit = async () => {
   } catch (error) {
     console.error('提交失败:', error);
     notification.error({
-      content: '提交失败',
+      content: $t('agency.agentList.submitFailed'),
       duration: 3000,
     });
   } finally {

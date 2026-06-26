@@ -3,19 +3,19 @@
     <!-- 统计卡片 -->
     <div class="mb-4 grid grid-cols-5 gap-4">
       <n-card>
-        <n-statistic label="总数" :value="stats.total" />
+        <n-statistic :label="$t('operations.messageSettings.total')" :value="stats.total" />
       </n-card>
       <n-card>
-        <n-statistic label="生效中" :value="stats.active" />
+        <n-statistic :label="$t('operations.form.statusActive')" :value="stats.active" />
       </n-card>
       <n-card>
-        <n-statistic label="已过期" :value="stats.expired" />
+        <n-statistic :label="$t('operations.form.statusExpired')" :value="stats.expired" />
       </n-card>
       <n-card>
-        <n-statistic label="草稿" :value="stats.draft" />
+        <n-statistic :label="$t('operations.messageSettings.draft')" :value="stats.draft" />
       </n-card>
       <n-card>
-        <n-statistic label="已停用" :value="stats.inactive" />
+        <n-statistic :label="$t('operations.messageSettings.option.statusDisabled')" :value="stats.inactive" />
       </n-card>
     </div>
 
@@ -24,10 +24,10 @@
       <div class="flex flex-wrap items-end gap-4">
         <!-- 标题搜索 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">标题</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('operations.messageSettings.titleLabel') }}</label>
           <n-input
             v-model:value="filters.title"
-            placeholder="输入标题搜索"
+            :placeholder="$t('operations.messageSettings.titleSearch')"
             clearable
             style="width: 200px"
             @keyup.enter="handleFilter"
@@ -36,10 +36,10 @@
 
         <!-- 语言选择 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">语言</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('operations.messageSettings.language') }}</label>
           <n-select
             v-model:value="filters.language"
-            placeholder="选择语言"
+            :placeholder="$t('operations.messageSettings.selectLanguage')"
             clearable
             style="width: 120px"
             :options="languageOptions"
@@ -49,10 +49,10 @@
 
         <!-- 币种选择 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">币种</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('common.currency') }}</label>
           <n-select
             v-model:value="filters.currency"
-            placeholder="选择币种"
+            :placeholder="$t('operations.messageSettings.selectCurrency')"
             clearable
             style="width: 120px"
             :options="currencyOptions"
@@ -62,10 +62,10 @@
 
         <!-- 状态筛选 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">状态</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('common.status') }}</label>
           <n-select
             v-model:value="filters.status"
-            placeholder="选择状态"
+            :placeholder="$t('operations.messageSettings.selectStatus')"
             clearable
             style="width: 120px"
             :options="statusOptions"
@@ -75,10 +75,10 @@
 
         <!-- 跳转类型 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">跳转类型</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('operations.form.jumpType') }}</label>
           <n-select
             v-model:value="filters.jumpType"
-            placeholder="选择跳转类型"
+            :placeholder="$t('operations.form.jumpType')"
             clearable
             style="width: 140px"
             :options="jumpTypeOptions"
@@ -88,10 +88,10 @@
 
         <!-- 展示入口 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">展示入口</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('operations.form.entryPoints') }}</label>
           <n-select
             v-model:value="filters.entryPoints"
-            placeholder="选择展示入口"
+            :placeholder="$t('operations.form.entryPoints')"
             clearable
             style="width: 140px"
             :options="entryPointOptions"
@@ -101,10 +101,10 @@
 
         <!-- 受众 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">受众</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('operations.messageSettings.targetAudience') }}</label>
           <n-input
             v-model:value="filters.targetAudience"
-            placeholder="输入受众搜索"
+            :placeholder="$t('operations.messageSettings.targetAudience')"
             clearable
             style="width: 150px"
             @keyup.enter="handleFilter"
@@ -113,10 +113,10 @@
 
         <!-- 操作人 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">操作人</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('common.operator') }}</label>
           <n-input
             v-model:value="filters.updatedBy"
-            placeholder="输入操作人搜索"
+            :placeholder="$t('operations.messageSettings.operatorPlaceholder')"
             clearable
             style="width: 120px"
             @keyup.enter="handleFilter"
@@ -125,11 +125,11 @@
 
         <!-- 时间范围 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">时间范围</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('operations.messageSettings.timeRange') }}</label>
           <n-date-picker
             v-model:value="timeRange"
             type="datetimerange"
-            placeholder="选择时间范围"
+            :placeholder="$t('common.selectDateRange')"
             style="width: 300px"
             @update:value="handleTimeRangeChange"
           />
@@ -137,8 +137,8 @@
 
         <!-- 搜索按钮 -->
         <div class="flex gap-2">
-          <n-button type="primary" @click="handleFilter"> 搜索 </n-button>
-          <n-button @click="resetFilter"> 重置 </n-button>
+          <n-button type="primary" @click="handleFilter"> {{ $t('common.search') }} </n-button>
+          <n-button @click="resetFilter"> {{ $t('common.reset') }} </n-button>
         </div>
       </div>
     </n-card>
@@ -164,15 +164,13 @@
             <div class="flex items-center gap-4">
               <!-- 主要操作按钮 -->
               <div class="flex gap-2">
-                <n-button type="primary" @click="handleCreate">
-                  新增弹窗
-                </n-button>
+                <n-button type="primary" @click="handleCreate">{{ $t('operations.messageSettings.addPop') }}</n-button>
               </div>
 
               <!-- 选择信息 -->
               <div class="text-sm text-gray-600">
-                已选择 {{ selectedCount }} 条数据，共
-                {{ paginationReactive.total }} 条
+                {{ $t('operations.messageSettings.selectedData', [selectedCount, '']) }}
+                {{ $t('operations.domain.modal.recordsCount', [paginationReactive.total]) }}
               </div>
             </div>
 
@@ -183,16 +181,14 @@
                 type="success"
                 size="small"
                 @click="handleBatchToggleStatus('active', selectedRows)"
-              >
-                批量启用 ({{ selectedCount }})
+              >{{ $t('common.enable') }} ({{ selectedCount }})
               </n-button>
               <n-button
                 v-if="selectedCount > 0"
                 type="warning"
                 size="small"
                 @click="handleBatchToggleStatus('inactive', selectedRows)"
-              >
-                批量停用 ({{ selectedCount }})
+              >{{ $t('common.disable') }} ({{ selectedCount }})
               </n-button>
               <n-button
                 v-if="selectedCount > 0"
@@ -200,12 +196,12 @@
                 size="small"
                 @click="handleBatchDelete(selectedRows)"
               >
-                批量删除 ({{ selectedCount }})
+                {{ $t('operations.messageSettings.batchDelete', [selectedCount]) }}
               </n-button>
 
               <!-- 选择控制 -->
-              <n-button size="small" @click="clearSelection">清空选择</n-button>
-              <n-button size="small" @click="selectAll">全选</n-button>
+              <n-button size="small" @click="clearSelection">{{ $t('operations.messageSettings.clearSelection') }}</n-button>
+              <n-button size="small" @click="selectAll">{{ $t('common.selectAll') }}</n-button>
             </div>
           </div>
         </n-card>
@@ -222,7 +218,7 @@
     <!-- 详情查看对话框 -->
     <n-modal
       v-model:show="showDetailModal"
-      title="弹窗详情"
+      :title="$t('operations.messageSettings.popDetail')"
       preset="dialog"
       style="width: 800px"
     >
@@ -233,31 +229,31 @@
             <div class="mt-1 rounded bg-gray-50 p-2">{{ detailData.id }}</div>
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-600">排序</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.sort') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
               {{ detailData.sortOrder }}
             </div>
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-600">语言</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.language') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
               {{ detailData.language }}
             </div>
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-600">币种</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('common.currency') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
               {{ detailData.currency }}
             </div>
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-600">受众</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.targetAudience') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
               {{ detailData.targetAudience }}
             </div>
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-600">跳转类型</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('operations.form.jumpType') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
               {{ getJumpTypeText(detailData.jumpType) }}
             </div>
@@ -265,16 +261,16 @@
         </div>
 
         <div class="mb-4">
-          <label class="text-sm font-medium text-gray-600">标题</label>
+          <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.titleLabel') }}</label>
           <div class="mt-1 rounded bg-gray-50 p-3">{{ detailData.title }}</div>
         </div>
 
         <div class="mb-4">
-          <label class="text-sm font-medium text-gray-600">弹窗图片</label>
+          <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.popImage') }}</label>
           <div class="mt-1">
             <n-image
               :src="detailData.imageUrl"
-              alt="弹窗图片"
+              :alt="$t('operations.messageSettings.popImage')"
               width="200"
               height="100"
               object-fit="cover"
@@ -286,13 +282,13 @@
 
         <div class="mb-4 grid grid-cols-2 gap-4">
           <div>
-            <label class="text-sm font-medium text-gray-600">开始时间</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.startTime') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
               {{ formatDate(detailData.startTime) }}
             </div>
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-600">结束时间</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.endTime') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
               {{ formatDate(detailData.endTime) }}
             </div>
@@ -300,7 +296,7 @@
         </div>
 
         <div class="mb-4">
-          <label class="text-sm font-medium text-gray-600">展示入口</label>
+          <label class="text-sm font-medium text-gray-600">{{ $t('operations.form.entryPoints') }}</label>
           <div class="mt-1 rounded bg-gray-50 p-2">
             <n-space>
               <n-tag
@@ -317,20 +313,20 @@
         <div class="mb-4 grid grid-cols-3 gap-4">
           <div>
             <label class="text-sm font-medium text-gray-600"
-              >最大显示次数</label
+              >{{ $t('operations.form.maxDisplayTimes') }}</label
             >
             <div class="mt-1 rounded bg-gray-50 p-2">
-              {{ detailData.maxDisplayTimes }}次
+              {{ detailData.maxDisplayTimes }}{{ $t('operations.messageSettings.timesUnit') }}
             </div>
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-600">显示间隔</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('operations.form.displayInterval') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
-              {{ detailData.displayInterval }}小时
+              {{ detailData.displayInterval }}{{ $t('operations.messageSettings.hoursUnit') }}
             </div>
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-600">状态</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('common.status') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
               <n-tag :type="getStatusType(detailData.status)" size="small">
                 {{ getStatusText(detailData.status) }}
@@ -341,19 +337,19 @@
 
         <div class="mb-4 grid grid-cols-3 gap-4">
           <div>
-            <label class="text-sm font-medium text-gray-600">总浏览量</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.totalViews') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
               {{ detailData.totalViews }}
             </div>
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-600">总点击量</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.totalClicks') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
               {{ detailData.totalClicks }}
             </div>
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-600">点击率</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.clickRate') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
               {{ (detailData.clickRate * 100).toFixed(2) }}%
             </div>
@@ -361,21 +357,21 @@
         </div>
 
         <div v-if="detailData.targetUrl" class="mb-4">
-          <label class="text-sm font-medium text-gray-600">跳转目标</label>
+          <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.jumpTarget') }}</label>
           <div class="mt-1 rounded bg-gray-50 p-3">
             {{ detailData.targetUrl }}
           </div>
         </div>
 
         <div v-if="detailData.remark" class="mb-4">
-          <label class="text-sm font-medium text-gray-600">后台备注</label>
+          <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.backendRemark') }}</label>
           <div class="mt-1 rounded bg-gray-50 p-3">{{ detailData.remark }}</div>
         </div>
       </div>
 
       <template #action>
         <div class="flex justify-end gap-2">
-          <n-button @click="showDetailModal = false">关闭</n-button>
+          <n-button @click="showDetailModal = false">{{ $t('common.close') }}</n-button>
         </div>
       </template>
     </n-modal>
@@ -383,14 +379,14 @@
     <!-- 图片预览对话框 -->
     <n-modal
       v-model:show="showImagePreview"
-      title="图片预览"
+      :title="$t('operations.messageSettings.imagePreview')"
       preset="dialog"
       style="width: 80vw; max-width: 1000px"
     >
       <div class="text-center">
         <n-image
           :src="previewImageUrl"
-          alt="弹窗图片预览"
+          :alt="$t('operations.form.popImagePreview')"
           style="max-width: 100%; max-height: 70vh"
           :fallback-src="placeholderImageUrl"
           @error="handleImageError"
@@ -399,7 +395,7 @@
 
       <template #action>
         <div class="flex justify-end gap-2">
-          <n-button @click="showImagePreview = false">关闭</n-button>
+          <n-button @click="showImagePreview = false">{{ $t('common.close') }}</n-button>
         </div>
       </template>
     </n-modal>
@@ -407,6 +403,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import {
   ref,
   reactive,
@@ -499,11 +497,11 @@ const timeRange = ref<[number, number] | null>(null);
 
 // Options
 const languageOptions: SelectOption[] = [
-  { label: '中文', value: 'zh-CN' },
-  { label: '英文', value: 'en' },
-  { label: '葡语', value: 'pt' },
-  { label: '西班牙语', value: 'es' },
-  { label: '日语', value: 'ja' },
+  { label: $t('operations.messageSettings.option.langZh'), value: 'zh-CN' },
+  { label: $t('operations.messageSettings.option.langEn'), value: 'en' },
+  { label: $t('operations.messageSettings.option.langPt'), value: 'pt' },
+  { label: $t('operations.messageSettings.option.langEs'), value: 'es' },
+  { label: $t('operations.messageSettings.option.langJa'), value: 'ja' },
 ];
 
 const currencyOptions: SelectOption[] = [
@@ -515,35 +513,35 @@ const currencyOptions: SelectOption[] = [
 ];
 
 const statusOptions: SelectOption[] = [
-  { label: '生效中', value: 'active' },
-  { label: '已过期', value: 'expired' },
-  { label: '草稿', value: 'draft' },
-  { label: '已停用', value: 'inactive' },
+  { label: $t('operations.form.statusActive'), value: 'active' },
+  { label: $t('operations.form.statusExpired'), value: 'expired' },
+  { label: $t('operations.messageSettings.option.statusDraft'), value: 'draft' },
+  { label: $t('operations.form.statusInactive'), value: 'inactive' },
 ];
 
 const jumpTypeOptions: SelectOption[] = [
-  { label: '无', value: 'none' },
-  { label: '外部链接', value: 'external_link' },
-  { label: '活动', value: 'activity' },
-  { label: '任务', value: 'task' },
-  { label: '充值', value: 'recharge' },
-  { label: '返水', value: 'rebate' },
-  { label: '代理', value: 'agent' },
+  { label: $t('operations.messageSettings.option.jumpNone'), value: 'none' },
+  { label: $t('operations.messageSettings.option.jumpExternal'), value: 'external_link' },
+  { label: $t('operations.messageSettings.option.jumpActivity'), value: 'activity' },
+  { label: $t('operations.messageSettings.option.jumpTask'), value: 'task' },
+  { label: $t('operations.layout.deposit'), value: 'recharge' },
+  { label: $t('operations.messageSettings.option.jumpRebate'), value: 'rebate' },
+  { label: $t('operations.layout.agent'), value: 'agent' },
   { label: 'VIP', value: 'vip' },
-  { label: '利息宝', value: 'interest_treasure' },
-  { label: '公积金', value: 'public_fund' },
-  { label: '游戏', value: 'game' },
-  { label: '盲盒抽奖', value: 'blind_box_lottery' },
-  { label: '俱乐部申请（合作联营）', value: 'club_application' },
+  { label: $t('operations.messageSettings.option.jumpInterest'), value: 'interest_treasure' },
+  { label: $t('operations.messageSettings.option.jumpPublicFund'), value: 'public_fund' },
+  { label: $t('operations.messageSettings.option.jumpGame'), value: 'game' },
+  { label: $t('operations.messageSettings.option.jumpBlindBox'), value: 'blind_box_lottery' },
+  { label: $t('operations.messageSettings.option.jumpClub'), value: 'club_application' },
 ];
 
 const entryPointOptions: SelectOption[] = [
-  { label: '登录后弹窗', value: 'login' },
-  { label: '首页加载', value: 'homepage' },
-  { label: '充值页面', value: 'deposit' },
-  { label: '游戏大厅', value: 'game_lobby' },
-  { label: '活动页面', value: 'promotion' },
-  { label: '手动触发', value: 'manual' },
+  { label: $t('operations.form.afterLogin'), value: 'login' },
+  { label: $t('operations.form.homepageLoad'), value: 'homepage' },
+  { label: $t('operations.form.depositPage'), value: 'deposit' },
+  { label: $t('operations.form.gameLobby'), value: 'game_lobby' },
+  { label: $t('operations.form.promotionPage'), value: 'promotion' },
+  { label: $t('operations.messageSettings.option.triggerManual'), value: 'manual' },
 ];
 
 // Pagination (simplified for SmartDataGrid)
@@ -560,7 +558,7 @@ const columns: DataTableColumns<LobbyPopModal> = [
     width: 50,
   },
   {
-    title: '排序',
+    title: $t('operations.messageSettings.sort'),
     key: 'sortOrder',
     width: 80,
     sorter: true,
@@ -571,27 +569,27 @@ const columns: DataTableColumns<LobbyPopModal> = [
     width: 80,
   },
   {
-    title: '币种',
+    title: $t('common.currency'),
     key: 'currency',
     width: 80,
   },
   {
-    title: '语言',
+    title: $t('operations.messageSettings.language'),
     key: 'language',
     width: 100,
     render(row) {
       const langMap: Record<string, string> = {
-        'zh-CN': '中文',
-        en: '英文',
-        pt: '葡语',
-        es: '西班牙语',
-        ja: '日语',
+        'zh-CN': $t('operations.messageSettings.option.langZh'),
+        en: $t('operations.messageSettings.option.langEn'),
+        pt: $t('operations.messageSettings.option.langPt'),
+        es: $t('operations.messageSettings.option.langEs'),
+        ja: $t('operations.messageSettings.option.langJa'),
       };
       return langMap[row.language] || row.language;
     },
   },
   {
-    title: '标题',
+    title: $t('operations.messageSettings.titleLabel'),
     key: 'title',
     width: 200,
     ellipsis: {
@@ -599,7 +597,7 @@ const columns: DataTableColumns<LobbyPopModal> = [
     },
   },
   {
-    title: '弹窗图片预览',
+    title: $t('operations.form.popImagePreview'),
     key: 'imageUrl',
     width: 120,
     render(row) {
@@ -618,7 +616,7 @@ const columns: DataTableColumns<LobbyPopModal> = [
     },
   },
   {
-    title: '受众',
+    title: $t('operations.messageSettings.targetAudience'),
     key: 'targetAudience',
     width: 150,
     ellipsis: {
@@ -626,7 +624,7 @@ const columns: DataTableColumns<LobbyPopModal> = [
     },
   },
   {
-    title: '展示入口',
+    title: $t('operations.form.entryPoints'),
     key: 'entryPoints',
     width: 150,
     render(row) {
@@ -660,7 +658,7 @@ const columns: DataTableColumns<LobbyPopModal> = [
     },
   },
   {
-    title: '跳转',
+    title: $t('operations.messageSettings.jumpMode'),
     key: 'jumpType',
     width: 120,
     render(row) {
@@ -668,7 +666,7 @@ const columns: DataTableColumns<LobbyPopModal> = [
     },
   },
   {
-    title: '开始时间',
+    title: $t('operations.messageSettings.startTime'),
     key: 'startTime',
     width: 160,
     render(row) {
@@ -676,7 +674,7 @@ const columns: DataTableColumns<LobbyPopModal> = [
     },
   },
   {
-    title: '结束时间',
+    title: $t('operations.messageSettings.endTime'),
     key: 'endTime',
     width: 160,
     render(row) {
@@ -684,7 +682,7 @@ const columns: DataTableColumns<LobbyPopModal> = [
     },
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 100,
     render(row) {
@@ -699,7 +697,7 @@ const columns: DataTableColumns<LobbyPopModal> = [
     },
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 280,
     fixed: 'right',
@@ -712,7 +710,7 @@ const columns: DataTableColumns<LobbyPopModal> = [
             type: row.status === 'active' ? 'warning' : 'success',
             onClick: () => handleToggleStatus(row),
           },
-          { default: () => (row.status === 'active' ? '停止' : '发布') },
+          { default: () => (row.status === 'active' ? $t('operations.messageSettings.stop') : $t('operations.messageSettings.publish')) },
         ),
 
         h(
@@ -721,7 +719,7 @@ const columns: DataTableColumns<LobbyPopModal> = [
             size: 'small',
             onClick: () => handleCopy(row),
           },
-          { default: () => '复制创建' },
+          { default: () => $t('operations.messageSettings.copyCreate') },
         ),
 
         h(
@@ -730,7 +728,7 @@ const columns: DataTableColumns<LobbyPopModal> = [
             size: 'small',
             onClick: () => handleViewDetail(row),
           },
-          { default: () => '详情' },
+          { default: () => $t('common.detail') },
         ),
 
         h(
@@ -740,7 +738,7 @@ const columns: DataTableColumns<LobbyPopModal> = [
             type: 'primary',
             onClick: () => handleEdit(row),
           },
-          { default: () => '编辑' },
+          { default: () => $t('common.edit') },
         ),
 
         h(
@@ -749,7 +747,7 @@ const columns: DataTableColumns<LobbyPopModal> = [
             onPositiveClick: () => handleDelete(row),
           },
           {
-            default: () => '确定删除这个弹窗吗？',
+            default: () => $t('operations.messageSettings.confirmDeletePop'),
             trigger: () =>
               h(
                 NButton,
@@ -757,7 +755,7 @@ const columns: DataTableColumns<LobbyPopModal> = [
                   size: 'small',
                   type: 'error',
                 },
-                { default: () => '删除' },
+                { default: () => $t('common.delete') },
               ),
           },
         ),
@@ -793,7 +791,7 @@ const loadData = async () => {
   } catch (error) {
     console.error('Error loading popup modals:', error);
     notification.error({
-      content: '加载弹窗数据失败',
+      content: $t('operations.messageSettings.loadPopFailed'),
       duration: 3000,
     });
   } finally {
@@ -864,7 +862,7 @@ const handleCopy = async (row: LobbyPopModal) => {
   try {
     await duplicatePopModal(row.id);
     notification.success({
-      content: '复制成功',
+      content: $t('operations.messageSettings.copySuccess'),
       duration: 3000,
     });
     loadData();
@@ -872,7 +870,7 @@ const handleCopy = async (row: LobbyPopModal) => {
   } catch (error) {
     console.error('Error copying popup modal:', error);
     notification.error({
-      content: '复制失败',
+      content: $t('operations.messageSettings.copyFailed'),
       duration: 3000,
     });
   }
@@ -888,7 +886,7 @@ const handleDelete = async (row: LobbyPopModal) => {
     await deletePopModal(row.id);
 
     notification.success({
-      content: '删除成功',
+      content: $t('common.deleteSuccess'),
       duration: 3000,
     });
     loadData();
@@ -896,7 +894,7 @@ const handleDelete = async (row: LobbyPopModal) => {
   } catch (error) {
     console.error('Error deleting popup modal:', error);
     notification.error({
-      content: '删除失败',
+      content: $t('operations.messageSettings.deleteFailed'),
       duration: 3000,
     });
   }
@@ -908,7 +906,7 @@ const handleToggleStatus = async (row: LobbyPopModal) => {
     await togglePopModalStatus(row.id, newStatus);
 
     notification.success({
-      content: `${newStatus === 'active' ? '启用' : '停用'}成功`,
+      content: newStatus === 'active' ? $t('operations.messageSettings.toggleSuccess', [$t('common.enable')]) : $t('operations.messageSettings.toggleSuccess', [$t('common.disable')]),
       duration: 3000,
     });
     loadData();
@@ -916,7 +914,7 @@ const handleToggleStatus = async (row: LobbyPopModal) => {
   } catch (error) {
     console.error('Error toggling popup modal status:', error);
     notification.error({
-      content: '状态切换失败',
+      content: $t('operations.messageSettings.toggleFailed'),
       duration: 3000,
     });
   }
@@ -944,7 +942,7 @@ const handleBatchToggleStatus = async (
     await batchToggleStatus({ ids, status });
 
     notification.success({
-      content: `批量${status === 'active' ? '启用' : '停用'}成功`,
+      content: $t('operations.messageSettings.batchToggleSuccess', [status === 'active' ? $t('common.enable') : $t('common.disable')]),
       duration: 3000,
     });
     selectedRowKeys.value = [];
@@ -953,7 +951,7 @@ const handleBatchToggleStatus = async (
   } catch (error) {
     console.error('Error batch toggling status:', error);
     notification.error({
-      content: '批量操作失败',
+      content: $t('operations.messageSettings.batchOpFailed'),
       duration: 3000,
     });
   }
@@ -974,7 +972,7 @@ const handleBatchDelete = async (selectedRows?: LobbyPopModal[]) => {
     await batchDeletePopModals({ ids });
 
     notification.success({
-      content: `成功删除 ${modalsToDelete.length} 个弹窗`,
+      content: $t('operations.messageSettings.batchDeletePopSuccess', [modalsToDelete.length]),
       duration: 3000,
     });
     selectedRowKeys.value = [];
@@ -983,7 +981,7 @@ const handleBatchDelete = async (selectedRows?: LobbyPopModal[]) => {
   } catch (error) {
     console.error('Error batch deleting popup modals:', error);
     notification.error({
-      content: '批量删除失败',
+      content: $t('operations.messageSettings.batchDeleteFailed'),
       duration: 3000,
     });
   }

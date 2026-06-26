@@ -29,21 +29,16 @@
                 <n-button type="primary" @click="handleAdd">
                   <template #icon>
                     <AddOutline />
-                  </template>
-                  新人福利设置
-                </n-button>
+                  </template>{{ $t('activity.noviceWelfareGlobal.k65b0') }}</n-button>
                 <n-button @click="refreshData">
                   <template #icon>
                     <RefreshOutline />
-                  </template>
-                  刷新
-                </n-button>
+                  </template>{{ $t('activity.noviceWelfare.k5237') }}</n-button>
               </div>
 
               <!-- 选择信息 -->
               <div class="text-sm text-gray-600">
-                已选择 {{ selectedCount }} 条数据，共
-                {{ paginationReactive.total }} 条
+                {{ $t('activity.common.selectedCount', [selectedCount, paginationReactive.total]) }}
               </div>
             </div>
 
@@ -55,41 +50,39 @@
                   type="success"
                   @click="handleBulkActivate(selectedRows)"
                 >
-                  批量启用 ({{ selectedCount }})
+                  {{ $t('activity.common.batchEnable') }} ({{ selectedCount }})
                 </n-button>
                 <n-button
                   size="small"
                   type="warning"
                   @click="handleBulkDeactivate(selectedRows)"
                 >
-                  批量禁用 ({{ selectedCount }})
+                  {{ $t('activity.common.batchDisable') }} ({{ selectedCount }})
                 </n-button>
               </div>
 
               <!-- 总开关 -->
               <div class="flex items-center gap-2">
-                <span class="text-sm font-medium">新人福利开关</span>
+                <span class="text-sm font-medium">{{ $t('activity.noviceWelfare.k65b0') }}</span>
                 <n-switch
                   v-model:value="globalSettings.noviceWelfareEnabled"
                   @update:value="handleGlobalToggle"
                   :loading="globalLoading"
                 >
-                  <template #checked>开</template>
-                  <template #unchecked>关</template>
+                  <template #checked>{{ $t('activity.noviceWelfare.k5f00') }}</template>
+                  <template #unchecked>{{ $t('activity.formModal.k5173') }}</template>
                 </n-switch>
 
                 <!-- Help text -->
-                <span class="ml-2 text-xs text-gray-500">
-                  (可手动开启，即使所有任务已禁用)
-                </span>
+                <span class="ml-2 text-xs text-gray-500">{{ $t('activity.noviceWelfare.k53efk5373') }}</span>
               </div>
 
               <!-- 选择控制 -->
               <div class="flex gap-2">
                 <n-button size="small" @click="clearSelection"
-                  >清空选择</n-button
+                  >{{ $t('activity.activityList.k6e05') }}</n-button
                 >
-                <n-button size="small" @click="selectAll">全选</n-button>
+                <n-button size="small" @click="selectAll">{{ $t('activity.formModal.k51683') }}</n-button>
               </div>
             </div>
           </div>
@@ -97,17 +90,17 @@
       </template>
 
       <template #empty>
-        <n-empty description="暂无数据" />
+        <n-empty :description="$t('activity.rewardReport.k6682')" />
       </template>
     </SmartDataGrid>
 
     <!-- 底部统计信息 -->
     <div class="mt-4 flex items-center justify-between">
       <div class="text-sm text-gray-500">
-        共 {{ paginationReactive.total }} 条记录
+        {{ $t('activity.common.totalRecordsLabel', [paginationReactive.total]) }}
       </div>
       <div class="text-sm font-medium">
-        已开启奖励合计: {{ totalActiveReward.toFixed(2) }} BRL
+        {{ $t('activity.common.totalActiveReward', [totalActiveReward.toFixed(2)]) }}
       </div>
     </div>
 
@@ -138,6 +131,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, onMounted, h } from 'vue';
 import type { DataTableColumns, DataTableRowKey } from 'naive-ui';
 import {
@@ -244,7 +239,7 @@ const columns: DataTableColumns<TaskCenter> = [
     width: 50,
   },
   {
-    title: '排序',
+    title: $t('activity.detailModal.k6392'),
     key: 'sortOrder',
     width: 80,
     align: 'center',
@@ -257,7 +252,7 @@ const columns: DataTableColumns<TaskCenter> = [
             type: 'default',
             onClick: () => handleMoveToTop(row),
           },
-          { default: () => '置顶' },
+          { default: () => $t('activity.noviceWelfare.k7f6e2') },
         ),
         h('span', { class: 'text-xs text-gray-500' }, `#${row.sortOrder}`),
       ]);
@@ -270,7 +265,7 @@ const columns: DataTableColumns<TaskCenter> = [
     align: 'center',
   },
   {
-    title: '任务条件',
+    title: $t('activity.noviceWelfare.k4efb'),
     key: 'title',
     width: 200,
     ellipsis: {
@@ -278,18 +273,18 @@ const columns: DataTableColumns<TaskCenter> = [
     },
   },
   {
-    title: '奖励类型',
+    title: $t('activity.rewardReport.k5956'),
     key: 'rewardType',
     width: 100,
     align: 'center',
     render: (row) => {
       const typeMap: Record<string, string> = {
-        CASH: '固定',
-        BONUS: '浮动',
-        POINTS: '积分',
-        FREE_SPINS: '免费旋转',
-        DISCOUNT: '折扣',
-        CUSTOM: '自定义',
+        CASH: $t('activity.rewardTypesShort.CASH'),
+        BONUS: $t('activity.rewardTypesShort.BONUS'),
+        POINTS: $t('activity.rewardTypesShort.POINTS'),
+        FREE_SPINS: $t('activity.rewardTypesShort.FREE_SPINS'),
+        DISCOUNT: $t('activity.rewardTypesShort.DISCOUNT'),
+        CUSTOM: $t('activity.rewardTypesShort.CUSTOM'),
       };
       const color = row.rewardType === 'CASH' ? 'success' : 'warning';
       return h(
@@ -300,7 +295,7 @@ const columns: DataTableColumns<TaskCenter> = [
     },
   },
   {
-    title: '奖励金额',
+    title: $t('activity.formModal.k5956'),
     key: 'rewardAmount',
     width: 120,
     align: 'center',
@@ -313,7 +308,7 @@ const columns: DataTableColumns<TaskCenter> = [
     },
   },
   {
-    title: '期望奖金',
+    title: $t('activity.formModal.k671f'),
     key: 'expectedReward',
     width: 120,
     align: 'center',
@@ -322,7 +317,7 @@ const columns: DataTableColumns<TaskCenter> = [
     },
   },
   {
-    title: '显示金额',
+    title: $t('activity.noviceWelfare.k663e'),
     key: 'displayAmount',
     width: 120,
     align: 'center',
@@ -331,7 +326,7 @@ const columns: DataTableColumns<TaskCenter> = [
     },
   },
   {
-    title: '活跃度',
+    title: $t('activity.rewardReport.k6d3b5'),
     key: 'activityLevel',
     width: 80,
     align: 'center',
@@ -340,7 +335,7 @@ const columns: DataTableColumns<TaskCenter> = [
     },
   },
   {
-    title: '是否开启',
+    title: $t('activity.noviceWelfare.k662f'),
     key: 'isActive',
     width: 100,
     align: 'center',
@@ -353,14 +348,14 @@ const columns: DataTableColumns<TaskCenter> = [
           loading: row.id === currentToggleId.value,
         },
         {
-          checked: () => '开',
-          unchecked: () => '关',
+          checked: () => $t('activity.common.onLabel'),
+          unchecked: () => $t('activity.common.offLabel'),
         },
       );
     },
   },
   {
-    title: '提示气泡',
+    title: $t('activity.noviceWelfare.k63d0'),
     key: 'showTooltip',
     width: 100,
     align: 'center',
@@ -373,14 +368,14 @@ const columns: DataTableColumns<TaskCenter> = [
           size: 'small',
         },
         {
-          checked: () => '开',
-          unchecked: () => '关',
+          checked: () => $t('activity.common.onLabel'),
+          unchecked: () => $t('activity.common.offLabel'),
         },
       );
     },
   },
   {
-    title: '操作',
+    title: $t('activity.rewardReport.k64cd'),
     key: 'actions',
     width: 150,
     align: 'center',
@@ -395,7 +390,7 @@ const columns: DataTableColumns<TaskCenter> = [
             ghost: true,
             onClick: () => handleEdit(row),
           },
-          { default: () => '修改' },
+          { default: () => $t('activity.luckyWheelEdit.k4fee') },
         ),
         h(
           NButton,
@@ -405,13 +400,13 @@ const columns: DataTableColumns<TaskCenter> = [
             ghost: true,
             onClick: () => handleDetail(row),
           },
-          { default: () => '详情' },
+          { default: () => $t('activity.rewardReport.k8be6') },
         ),
       ]);
     },
   },
   {
-    title: '操作人',
+    title: $t('activity.activityList.k64cd'),
     key: 'updatedBy',
     width: 100,
     ellipsis: {
@@ -419,7 +414,7 @@ const columns: DataTableColumns<TaskCenter> = [
     },
   },
   {
-    title: '操作时间',
+    title: $t('activity.noviceWelfare.k64cd'),
     key: 'updatedAt',
     width: 160,
     render: (row) => {
@@ -515,7 +510,7 @@ const loadData = async () => {
   } catch (error) {
     console.error('❌ Failed to load data:', error);
     message.error(
-      '加载数据失败: ' +
+      $t('activity.common.loadDataFailed') +
         (error instanceof Error ? error.message : String(error)),
     );
   } finally {
@@ -572,11 +567,11 @@ const handleGlobalToggle = async (value: boolean) => {
     // Update local state
     globalSettings.value.noviceWelfareEnabled = value;
 
-    message.success(value ? '新人福利已开启' : '新人福利已关闭');
+    message.success(value ? $t('activity.common.noviceWelfareOn') : $t('activity.common.noviceWelfareOff'));
     console.log('✅ Global toggle completed:', value);
   } catch (error) {
     console.error('Failed to update global settings:', error);
-    message.error('更新设置失败');
+    message.error($t('activity.noviceWelfare.k66f42'));
     // 回滚状态
     globalSettings.value.noviceWelfareEnabled = !value;
   } finally {
@@ -595,13 +590,13 @@ const handleToggleStatus = async (row: TaskCenter, value: boolean) => {
       tableData.value[index].isActive = value;
     }
 
-    message.success(value ? '任务已开启' : '任务已关闭');
+    message.success(value ? $t('activity.common.taskOn') : $t('activity.common.taskOff'));
 
     // Check if all tasks are now inactive and auto-turn off global switch
     await checkAndUpdateGlobalSwitch();
   } catch (error) {
     console.error('Failed to toggle status:', error);
-    message.error('更新状态失败');
+    message.error($t('activity.noviceWelfare.k66f43'));
   } finally {
     currentToggleId.value = null;
   }
@@ -617,13 +612,13 @@ const handleTooltipToggle = async (row: TaskCenter, value: boolean) => {
       tableData.value[index].showTooltip = value;
     }
 
-    message.success(value ? '提示气泡已开启' : '提示气泡已关闭');
+    message.success(value ? $t('activity.common.bubbleOn') : $t('activity.common.bubbleOff'));
 
     // TODO: Add API call to save tooltip setting if needed
     // await updateTaskTooltip(row.id, value);
   } catch (error) {
     console.error('Failed to toggle tooltip:', error);
-    message.error('更新提示气泡失败');
+    message.error($t('activity.noviceWelfare.k66f4'));
   }
 };
 
@@ -640,19 +635,19 @@ const handleBulkActivate = async (selectedRows?: TaskCenter[]) => {
     : selectedRowKeys.value;
 
   if (rowKeys.length === 0) {
-    message.warning('请选择要启用的任务');
+    message.warning($t('activity.noviceWelfare.k8bf7'));
     return;
   }
 
   try {
     await bulkUpdateTaskCenters(rowKeys, { isActive: true });
-    message.success(`成功启用 ${rowKeys.length} 个任务`);
+    message.success($t('activity.common.batchEnableSuccess', [rowKeys.length]));
     selectedRowKeys.value = [];
     await loadData(); // Refresh data to show updated status
     await checkAndUpdateGlobalSwitch();
   } catch (error) {
     console.error('Failed to bulk activate tasks:', error);
-    message.error('批量启用失败');
+    message.error($t('activity.noviceWelfare.k6279'));
   }
 };
 
@@ -662,19 +657,19 @@ const handleBulkDeactivate = async (selectedRows?: TaskCenter[]) => {
     : selectedRowKeys.value;
 
   if (rowKeys.length === 0) {
-    message.warning('请选择要禁用的任务');
+    message.warning($t('activity.noviceWelfare.k8bf72'));
     return;
   }
 
   try {
     await bulkUpdateTaskCenters(rowKeys, { isActive: false });
-    message.success(`成功禁用 ${rowKeys.length} 个任务`);
+    message.success($t('activity.common.batchDisableSuccess', [rowKeys.length]));
     selectedRowKeys.value = [];
     await loadData(); // Refresh data to show updated status
     await checkAndUpdateGlobalSwitch();
   } catch (error) {
     console.error('Failed to bulk deactivate tasks:', error);
-    message.error('批量禁用失败');
+    message.error($t('activity.noviceWelfare.k62792'));
   }
 };
 
@@ -708,7 +703,7 @@ const checkAndUpdateGlobalSwitch = async () => {
       // Auto-turn off global switch when all tasks are inactive
       await updateGlobalTaskSettings({ noviceWelfareEnabled: false });
       globalSettings.value.noviceWelfareEnabled = false;
-      message.info('所有任务已禁用，新人福利开关已自动关闭');
+      message.info($t('activity.noviceWelfare.k6240k65b0'));
       console.log('✅ Global switch auto-turned off');
     } else {
       console.log('✅ No auto-turn-off needed');
@@ -723,7 +718,7 @@ const handleMoveToTop = async (row: TaskCenter) => {
   try {
     // 将当前任务移到第一位，其他任务排序+1
     if (!tableData.value) {
-      message.error('数据未加载，无法置顶');
+      message.error($t('activity.noviceWelfare.k6570k65e0'));
       return;
     }
 
@@ -735,18 +730,18 @@ const handleMoveToTop = async (row: TaskCenter) => {
       }));
 
     await updateTaskSortOrder(updates);
-    message.success('已置顶');
+    message.success($t('activity.noviceWelfare.k5df2'));
     await loadData();
   } catch (error) {
     console.error('Failed to move to top:', error);
-    message.error('置顶失败');
+    message.error($t('activity.noviceWelfare.k7f6e'));
   }
 };
 
 const handleFormSubmit = async () => {
   showModal.value = false;
   await loadData();
-  message.success(isEdit.value ? '修改成功' : '新增成功');
+  message.success(isEdit.value ? $t('activity.common.editSuccess') : $t('activity.common.createSuccess'));
 
   // Check if all tasks are inactive and auto-turn off global switch
   await checkAndUpdateGlobalSwitch();

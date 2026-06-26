@@ -1,21 +1,21 @@
 <template>
-  <Page title="游戏管理" description="平台与子游戏管理">
+  <Page :title="$t('game.title')" :description="$t('game.desc')">
     <n-tabs
       v-model:value="activeTab"
       type="line"
       animated
       @update:value="handleTabChange"
     >
-      <n-tab-pane name="platform" tab="平台管理">
+      <n-tab-pane name="platform" :tab="$t('game.platformTab')">
         <PlatformTable @manage-subgames="handleManageSubgames" />
       </n-tab-pane>
-      <n-tab-pane name="subgame" tab="子游戏管理">
+      <n-tab-pane name="subgame" :tab="$t('game.subgameTab')">
         <SubgameTable :platform-id="selectedPlatformId" />
       </n-tab-pane>
-      <n-tab-pane name="hot-game" tab="热门管理">
+      <n-tab-pane name="hot-game" :tab="$t('game.hotGameTab')">
         <HotGameTable />
       </n-tab-pane>
-      <n-tab-pane name="virtual-bonus-pool" tab="虚拟彩金池">
+      <n-tab-pane name="virtual-bonus-pool" :tab="$t('game.virtualBonusPoolTab')">
         <VirtualBonusPoolTable />
       </n-tab-pane>
     </n-tabs>
@@ -23,11 +23,12 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, onMounted, defineAsyncComponent } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Page } from '@vben/common-ui';
 import { NTabs, NTabPane } from 'naive-ui';
-// ✅ PERFORMANCE FIX: Lazy load tab components - they only load when their tab is opened
 const PlatformTable = defineAsyncComponent(
   () => import('./platform/index.vue'),
 );
@@ -48,7 +49,6 @@ function handleManageSubgames(platformId: number) {
   activeTab.value = 'subgame';
 }
 
-// Handle tab change with URL query parameter
 const handleTabChange = (value: string) => {
   router.push({
     path: route.path,
@@ -59,7 +59,6 @@ const handleTabChange = (value: string) => {
   });
 };
 
-// Initialize tab from URL query parameter
 onMounted(() => {
   const tab = route.query.tab as string;
   if (

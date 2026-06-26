@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { computed, h, onMounted, onUnmounted, ref, watch } from 'vue';
 import {
   NButton,
@@ -45,7 +47,7 @@ function updateFeeTableMaxHeight() {
 function formatGameTypeLabel(raw: string | undefined): string {
   const t = (raw || '').trim();
   if (!t || t === '—') return '—';
-  if (t.toUpperCase() === 'SLOT') return '电子';
+  if (t.toUpperCase() === 'SLOT') return $t('system.siteBill.gameTypeSlot');
   return t;
 }
 
@@ -76,7 +78,7 @@ const currencyOptions = computed(() => {
   }
   if (set.size === 0) set.add('BRL');
   return [
-    { label: '全部币种', value: null as string | null },
+    { label: $t('system.siteBill.allCurrencies'), value: null as string | null },
     ...[...set].sort().map((c) => ({ label: c, value: c })),
   ];
 });
@@ -88,7 +90,7 @@ const gameTypeOptions = computed(() => {
     if (row.gameType && row.gameType !== '—') set.add(row.gameType);
   }
   return [
-    { label: '全部类型', value: null as string | null },
+    { label: $t('system.siteBill.allTypes'), value: null as string | null },
     ...[...set].sort().map((c) => ({ label: formatGameTypeLabel(c), value: c })),
   ];
 });
@@ -100,7 +102,7 @@ const vendorOptions = computed(() => {
     if (row.gameVendor && row.gameVendor !== '—') set.add(row.gameVendor);
   }
   return [
-    { label: '全部厂商', value: null as string | null },
+    { label: $t('system.siteBill.allVendors'), value: null as string | null },
     ...[...set].sort().map((c) => ({ label: c, value: c })),
   ];
 });
@@ -140,7 +142,7 @@ async function load() {
     siteBalance.value = d.siteBalanceUsdt;
     filterBrand.value = d.bill.brandId;
   } catch (e: any) {
-    message.error(e?.message || '加载失败');
+    message.error(e?.message || $t('system.siteBill.loadFailed'));
     detail.value = null;
   } finally {
     loading.value = false;
@@ -175,9 +177,9 @@ async function refreshBalance() {
     siteBalance.value = await getSiteBalanceUsdtApi(
       detail.value.bill.mainSiteId || props.billId,
     );
-    message.success('余额已刷新');
+    message.success($t('system.siteBill.balanceRefreshed'));
   } catch {
-    message.error('刷新失败');
+    message.error($t('system.siteBill.refreshFailed'));
   } finally {
     balanceLoading.value = false;
   }
@@ -195,20 +197,20 @@ const feeColumns = computed<DataTableColumns<SiteBillFeeLine>>(() => {
 
   return [
     {
-      title: '品牌名称(ID)',
+      title: $t('system.siteBill.brandNameId'),
       key: 'brandNameId',
       width: 168,
       ellipsis: { tooltip: true },
       render: () => brandTitle(),
     },
     {
-      title: '账单月份',
+      title: $t('system.siteBill.billMonth'),
       key: 'billMonth',
       width: 100,
       render: () => b?.billMonth ?? '—',
     },
     {
-      title: '币种',
+      title: $t('common.currency'),
       key: 'lineCurrency',
       width: 72,
       render: (row) => {
@@ -217,61 +219,61 @@ const feeColumns = computed<DataTableColumns<SiteBillFeeLine>>(() => {
       },
     },
     {
-      title: '游戏类型',
+      title: $t('system.siteBill.gameType'),
       key: 'gameType',
       width: 96,
       render: (row) => formatGameTypeLabel(row.gameType),
     },
     {
-      title: '游戏厂商',
+      title: $t('system.siteBill.gameVendor'),
       key: 'gameVendor',
       minWidth: 120,
       ellipsis: { tooltip: true },
     },
     {
-      title: '有效投注',
+      title: $t('system.siteBill.validBet'),
       key: 'validBet',
       width: 120,
       render: (row) => fmtMoney(row.validBet),
     },
     {
-      title: '盈亏金额',
+      title: $t('system.siteBill.winLoss'),
       key: 'winLoss',
       width: 120,
       render: (row) => fmtMoney(row.winLoss),
     },
     {
-      title: '抽佣比例',
+      title: $t('system.siteBill.commissionRate'),
       key: 'commissionRate',
       width: 100,
       render: (row) => fmtPctFromDecimal(row.commissionRate),
     },
     {
-      title: '账单金额',
+      title: $t('system.siteBill.billAmount'),
       key: 'billAmount',
       width: 110,
       render: (row) => fmtMoney(row.billAmount),
     },
     {
-      title: '厂商专属优惠',
+      title: $t('system.siteBill.vendorExclusiveDiscount'),
       key: 'vendorExclusiveDiscount',
       width: 120,
       render: (row) => fmtPctFromDecimal(row.vendorExclusiveDiscount),
     },
     {
-      title: '优惠后比例',
+      title: $t('system.siteBill.rateAfterDiscount'),
       key: 'rateAfterDiscount',
       width: 110,
       render: (row) => fmtPctFromDecimal(row.rateAfterDiscount),
     },
     {
-      title: '抽佣金额',
+      title: $t('system.siteBill.commissionAmount'),
       key: 'commissionCutAmount',
       width: 110,
       render: (row) => fmtMoney(row.commissionCutAmount),
     },
     {
-      title: '折算汇率',
+      title: $t('system.siteBill.fxRate'),
       key: 'fxRate',
       width: 100,
       render: (row) =>
@@ -281,19 +283,19 @@ const feeColumns = computed<DataTableColumns<SiteBillFeeLine>>(() => {
         }),
     },
     {
-      title: '游戏帐单U',
+      title: $t('system.siteBill.gameBillUsdt'),
       key: 'adjustedBillUsdt',
       width: 110,
       render: (row) => fmtMoney(row.adjustedBillUsdt),
     },
     {
-      title: '状态',
+      title: $t('common.status'),
       key: 'lineStatus',
       width: 80,
       render: (row) =>
         row.lineStatus === 'normal'
-          ? h('span', { class: 'text-emerald-600' }, '正常')
-          : h('span', { class: 'text-rose-600' }, '异常'),
+          ? h('span', { class: 'text-emerald-600' }, $t('system.siteBill.statusNormal'))
+          : h('span', { class: 'text-rose-600' }, $t('system.siteBill.statusAbnormal')),
     },
   ];
 });
@@ -315,7 +317,7 @@ const feeTableSummary: DataTableCreateSummary<SiteBillFeeLine> = (pageData) => {
   }
   return {
     brandNameId: {
-      value: h('span', { class: 'font-semibold text-slate-800' }, '合计'),
+      value: h('span', { class: 'font-semibold text-slate-800' }, $t('common.total')),
     },
     billMonth: { value: '' },
     lineCurrency: { value: '' },
@@ -361,11 +363,13 @@ function resetFilters() {
     <div v-if="detail && summary" class="flex flex-col gap-3 pr-1">
       <div class="shrink-0 flex flex-wrap items-center gap-2 border-b border-slate-100 pb-2">
         <n-button v-if="showBack" quaternary size="small" @click="emit('back')">
-          ← 返回列表
+          {{ $t('system.siteBill.backToList') }}
         </n-button>
         <span class="text-sm text-slate-600">
-          {{ detail.bill.brandName }} · 品牌ID {{ detail.bill.brandId }} ·
-          {{ detail.bill.billMonth }} · 主站 {{ detail.bill.mainSiteName || '—' }}
+          {{ detail.bill.brandName }} · {{ $t('system.siteBill.brandIdLabel') }}
+          {{ detail.bill.brandId }} ·
+          {{ detail.bill.billMonth }} · {{ $t('system.siteBill.mainSite') }}
+          {{ detail.bill.mainSiteName || '—' }}
         </span>
       </div>
 
@@ -375,12 +379,12 @@ function resetFilters() {
       >
         <div class="min-w-[128px] flex-1 rounded border border-white bg-white p-2 shadow-sm">
           <div class="flex items-center gap-1 text-xs text-slate-500">
-            游戏账单
+            {{ $t('system.siteBill.gameBill') }}
             <n-tooltip trigger="hover">
               <template #trigger>
                 <span class="cursor-help text-slate-400">ⓘ</span>
               </template>
-              各厂商游戏账单 U 合计
+              {{ $t('system.siteBill.gameBillTooltip') }}
             </n-tooltip>
           </div>
           <div class="text-base font-semibold tabular-nums text-slate-900">
@@ -389,29 +393,29 @@ function resetFilters() {
         </div>
         <div class="min-w-[128px] flex-1 rounded border border-white bg-white p-2 shadow-sm">
           <div class="flex items-center gap-1 text-xs text-slate-500">
-            CDN流量费
+            {{ $t('system.siteBill.cdnTrafficFee') }}
             <n-tooltip trigger="hover">
               <template #trigger>
                 <span class="cursor-help text-slate-400">ⓘ</span>
               </template>
-              当月 CDN 流量费用(BRL)
+              {{ $t('system.siteBill.cdnTrafficTooltip') }}
             </n-tooltip>
           </div>
           <div class="text-base font-semibold tabular-nums">
             {{ fmtMoney(summary.cdnTrafficFeeUsdt) }}
           </div>
           <div class="text-[11px] leading-tight text-slate-400">
-            封顶规则本月已为您节约 {{ fmtMoney(summary.cdnCapSavedUsdt) }}
+            {{ $t('system.siteBill.cdnCapSaved', [fmtMoney(summary.cdnCapSavedUsdt)]) }}
           </div>
         </div>
         <div class="min-w-[128px] flex-1 rounded border border-white bg-white p-2 shadow-sm">
           <div class="flex items-center gap-1 text-xs text-slate-500">
-            线路维护费
+            {{ $t('system.siteBill.lineMaintenanceFee') }}
             <n-tooltip trigger="hover">
               <template #trigger>
                 <span class="cursor-help text-slate-400">ⓘ</span>
               </template>
-              固定线路 / 运维类费用(BRL)
+              {{ $t('system.siteBill.lineMaintenanceTooltip') }}
             </n-tooltip>
           </div>
           <div class="text-base font-semibold tabular-nums">
@@ -419,25 +423,25 @@ function resetFilters() {
           </div>
         </div>
         <div class="min-w-[120px] flex-1 rounded border border-white bg-white p-2 shadow-sm">
-          <div class="text-xs text-slate-500">其他费用</div>
+          <div class="text-xs text-slate-500">{{ $t('system.siteBill.otherFees') }}</div>
           <div class="text-base font-semibold tabular-nums">
             {{ fmtMoney(summary.otherFeesUsdt) }}
           </div>
         </div>
         <div class="min-w-[120px] flex-1 rounded border border-white bg-white p-2 shadow-sm">
-          <div class="text-xs text-slate-500">费用调整</div>
+          <div class="text-xs text-slate-500">{{ $t('system.siteBill.feeAdjustment') }}</div>
           <div class="text-base font-semibold tabular-nums">
             {{ fmtMoney(summary.feeAdjustmentUsdt) }}
           </div>
         </div>
         <div class="min-w-[120px] flex-1 rounded border border-white bg-white p-2 shadow-sm">
-          <div class="text-xs text-slate-500">账单合计</div>
+          <div class="text-xs text-slate-500">{{ $t('system.siteBill.billTotal') }}</div>
           <div class="text-base font-semibold tabular-nums text-blue-700">
             {{ fmtMoney(summary.billTotalUsdt) }}
           </div>
         </div>
         <div class="min-w-[140px] flex-1 rounded border border-white bg-white p-2 shadow-sm">
-          <div class="text-xs text-slate-500">推荐折扣</div>
+          <div class="text-xs text-slate-500">{{ $t('system.siteBill.referralDiscount') }}</div>
           <div class="text-base font-semibold tabular-nums">
             {{ fmtMoney(summary.referralDiscountUsdt) }}
             <span class="text-xs font-normal text-slate-500">
@@ -446,7 +450,7 @@ function resetFilters() {
           </div>
         </div>
         <div class="min-w-[160px] flex-1 rounded border border-white bg-white p-2 shadow-sm">
-          <div class="text-xs text-slate-500">实际需支付总额U</div>
+          <div class="text-xs text-slate-500">{{ $t('system.siteBill.actualPayTotalUsdt') }}</div>
           <div class="text-lg font-bold tabular-nums text-slate-900">
             {{ fmtMoney(summary.actualPayUsdt) }}
           </div>
@@ -458,7 +462,7 @@ function resetFilters() {
           <n-select
             v-model:value="filterBrand"
             disabled
-            placeholder="品牌ID"
+            :placeholder="$t('system.siteBill.brandIdLabel')"
             :options="
               detail
                 ? [{ label: detail.bill.brandId, value: detail.bill.brandId }]
@@ -469,7 +473,7 @@ function resetFilters() {
           />
           <n-select
             v-model:value="filterCurrency"
-            placeholder="币种"
+            :placeholder="$t('common.currency')"
             clearable
             :options="currencyOptions"
             style="width: 120px"
@@ -477,7 +481,7 @@ function resetFilters() {
           />
           <n-select
             v-model:value="filterGameType"
-            placeholder="游戏类型"
+            :placeholder="$t('system.siteBill.gameType')"
             clearable
             :options="gameTypeOptions"
             style="width: 120px"
@@ -485,20 +489,20 @@ function resetFilters() {
           />
           <n-select
             v-model:value="filterVendor"
-            placeholder="游戏厂商"
+            :placeholder="$t('system.siteBill.gameVendor')"
             clearable
             :options="vendorOptions"
             style="width: 160px"
             size="small"
           />
-          <n-button type="primary" size="small" @click="message.success('已应用筛选')">
-            搜索
+          <n-button type="primary" size="small" @click="message.success($t('system.siteBill.filterApplied'))">
+            {{ $t('common.search') }}
           </n-button>
-          <n-button size="small" @click="resetFilters">重置</n-button>
+          <n-button size="small" @click="resetFilters">{{ $t('common.reset') }}</n-button>
         </n-space>
         <n-space size="small">
           <span class="text-xs text-slate-500">
-            站点余额(BRL):
+            {{ $t('system.siteBill.siteBalanceBrl') }}
             <span class="tabular-nums font-medium text-slate-800">{{
               fmtMoney(siteBalance)
             }}</span>
@@ -517,9 +521,9 @@ function resetFilters() {
           </span>
           <n-button
             size="small"
-            @click="message.info('导出报表：待对接后端导出接口')"
+            @click="message.info($t('system.siteBill.exportPendingDetail'))"
           >
-            导出报表
+            {{ $t('common.exportReport') }}
           </n-button>
         </n-space>
       </div>
@@ -541,7 +545,7 @@ function resetFilters() {
         v-if="detail.financeRemark"
         class="shrink-0 rounded border border-dashed border-slate-200 bg-slate-50/50 p-2 text-xs text-slate-600"
       >
-        站长备注：{{ detail.financeRemark }}
+        {{ $t('system.siteBill.stationMasterRemark') }}{{ detail.financeRemark }}
       </p>
     </div>
   </n-spin>

@@ -2,7 +2,7 @@
   <n-modal
     v-model:show="visible"
     preset="card"
-    title="派发奖励"
+    :title="$t('activity.activityList.k6d3e')"
     :style="{ width: '760px', maxWidth: '96vw' }"
     :mask-closable="false"
     :close-on-esc="false"
@@ -10,27 +10,27 @@
   >
     <div class="distribute-modal-body">
       <!-- Activity name -->
-      <n-form-item label="活动名称" label-placement="left" :label-width="90">
+      <n-form-item :label="$t('activity.rewardReport.k6d3b')" label-placement="left" :label-width="90">
         <span class="form-value-text">{{ activity?.title || activity?.config?.title || '—' }}</span>
       </n-form-item>
 
       <!-- Add mode switch -->
-      <n-form-item label="添加方式" label-placement="left" :label-width="90">
+      <n-form-item :label="$t('activity.distributeReward.k6dfb')" label-placement="left" :label-width="90">
         <n-radio-group v-model:value="form.addMode">
-          <n-radio value="manual">多条添加</n-radio>
-          <n-radio value="batch">批量导入</n-radio>
+          <n-radio value="manual">{{ $t('activity.distributeReward.k591a') }}</n-radio>
+          <n-radio value="batch">{{ $t('activity.formModal.k6279') }}</n-radio>
         </n-radio-group>
       </n-form-item>
 
       <!-- Account type -->
       <n-form-item
-        :label="form.addMode === 'manual' ? '会员类型' : '账号类型'"
+        :label="form.addMode === 'manual' ? $t('activity.common.memberType') : $t('activity.common.accountType')"
         label-placement="left"
         :label-width="90"
       >
         <n-radio-group v-model:value="form.accountType">
-          <n-radio value="account">会员账号</n-radio>
-          <n-radio value="userID">会员ID</n-radio>
+          <n-radio value="account">{{ $t('activity.rewardReport.k4f1a3') }}</n-radio>
+          <n-radio value="userID">{{ $t('activity.rewardReport.k4f1a2') }}</n-radio>
         </n-radio-group>
       </n-form-item>
 
@@ -41,25 +41,25 @@
             v-model:value="form.memberInput"
             type="textarea"
             :placeholder="form.accountType === 'account'
-              ? '输入多条请用逗号拼接，最多支持200个会员账号'
-              : '输入多条请用逗号拼接，最多支持200个会员ID'"
+              ? $t('activity.common.multiAccountHint')
+              : $t('activity.common.multiIdHint')"
             :rows="4"
             :maxlength="20000"
             style="width: 100%"
           />
         </n-form-item>
 
-        <n-form-item label="* 奖励金额" label-placement="left" :label-width="90">
+        <n-form-item :label="$t('activity.common.rewardAmountLabel')" label-placement="left" :label-width="90">
           <n-input-number
             v-model:value="form.rewardAmount"
-            placeholder="请输入奖励金额"
+            :placeholder="$t('activity.formModal.k8bf73')"
             :min="0.01"
             :precision="2"
             style="width: 320px"
           />
         </n-form-item>
 
-        <n-form-item label="* 稽核倍数" label-placement="left" :label-width="90">
+        <n-form-item :label="$t('activity.common.auditMultiplierLabel')" label-placement="left" :label-width="90">
           <n-input-number
             v-model:value="form.auditMultiplier"
             :min="0"
@@ -71,11 +71,11 @@
       </template>
 
       <!-- Platform scope -->
-      <n-form-item label="奖金稽核指定平台" label-placement="left" :label-width="120">
+      <n-form-item :label="$t('activity.distributeReward.k5956')" label-placement="left" :label-width="120">
         <n-radio-group v-model:value="form.platformScope">
-          <n-radio value="all">不限制</n-radio>
-          <n-radio value="include">仅限勾选平台</n-radio>
-          <n-radio value="exclude">排除勾选平台</n-radio>
+          <n-radio value="all">{{ $t('activity.formModal.k4e0d4') }}</n-radio>
+          <n-radio value="include">{{ $t('activity.formModal.k4ec52') }}</n-radio>
+          <n-radio value="exclude">{{ $t('activity.formModal.k6392') }}</n-radio>
         </n-radio-group>
       </n-form-item>
 
@@ -95,17 +95,13 @@
               :name="cat.value"
               :tab="cat.label + (selectedCountByCategory(cat.value) > 0 ? `(${selectedCountByCategory(cat.value)})` : '')"
             >
-              <div v-if="platformsLoading" class="platform-loading">
-                加载平台中...
-              </div>
+              <div v-if="platformsLoading" class="platform-loading">{{ $t('activity.distributeReward.k52a04') }}</div>
               <div v-else class="platform-list">
                 <n-checkbox
                   :checked="isAllCategorySelected(cat.value)"
                   :indeterminate="isCategoryIndeterminate(cat.value)"
                   @update:checked="toggleAllCategory(cat.value, $event)"
-                >
-                  全部平台
-                </n-checkbox>
+                >{{ $t('activity.formModal.k5168') }}</n-checkbox>
                 <n-divider style="margin: 8px 0" />
                 <div class="platform-grid">
                   <div
@@ -119,12 +115,15 @@
                     >
                       {{ platform.name }}
                     </n-checkbox>
-                    <span v-if="platform.subCount > 0" class="sub-game-link">
-                      展开子游戏 &gt;
+                    <span
+                      v-if="platform.subCount > 0"
+                      class="sub-game-link"
+                    >
+                      {{ $t('activity.distributeReward.expandSubGames') }}
                     </span>
                   </div>
                 </div>
-                <n-empty v-if="getPlatformsByCategory(cat.value).length === 0" size="small" description="暂无平台" />
+                <n-empty v-if="getPlatformsByCategory(cat.value).length === 0" size="small" :description="$t('activity.distributeReward.k6682')" />
               </div>
             </n-tab-pane>
           </n-tabs>
@@ -132,13 +131,13 @@
       </n-form-item>
 
       <!-- Double reward toggle -->
-      <n-form-item label="加倍奖励" label-placement="left" :label-width="90">
+      <n-form-item :label="$t('activity.distributeReward.k52a0')" label-placement="left" :label-width="90">
         <n-switch v-model:value="form.doubleReward" />
       </n-form-item>
 
       <!-- Double reward fields (only when toggle is on, manual mode) -->
       <template v-if="form.doubleReward && form.addMode === 'manual'">
-        <n-form-item label="加倍奖励倍数" label-placement="left" :label-width="120">
+        <n-form-item :label="$t('activity.distributeReward.k52a02')" label-placement="left" :label-width="120">
           <n-input-number
             v-model:value="form.doubleRewardMultiplier"
             :min="1"
@@ -146,7 +145,7 @@
             style="width: 320px"
           />
         </n-form-item>
-        <n-form-item label="加倍稽核倍数" label-placement="left" :label-width="120">
+        <n-form-item :label="$t('activity.distributeReward.k52a03')" label-placement="left" :label-width="120">
           <n-input-number
             v-model:value="form.doubleAuditMultiplier"
             :min="0"
@@ -158,45 +157,43 @@
 
       <!-- Batch mode specific fields -->
       <template v-if="form.addMode === 'batch'">
-        <n-form-item label="上传方式" label-placement="left" :label-width="90">
+        <n-form-item :label="$t('activity.distributeReward.k4e0a')" label-placement="left" :label-width="90">
           <n-radio-group v-model:value="form.skipOnError">
-            <n-radio :value="false">严格校验（数据格式全部正确才开始上传）</n-radio>
-            <n-radio :value="true">自动跳过错误（层级不满足自动排除）</n-radio>
+            <n-radio :value="false">{{ $t('activity.distributeReward.k4e25k6570') }}</n-radio>
+            <n-radio :value="true">{{ $t('activity.distributeReward.k81eak5c42') }}</n-radio>
           </n-radio-group>
         </n-form-item>
 
-        <n-form-item label="* 批量上传" label-placement="left" :label-width="90">
+        <n-form-item :label="$t('activity.common.batchUploadLabel')" label-placement="left" :label-width="90">
           <n-upload
             accept=".xlsx,.xls,.csv"
             :max="1"
             :show-file-list="true"
             :custom-request="handleFileUpload"
-            @change="(data: { file: UploadFileInfo; fileList: UploadFileInfo[] }) => handleFileChange(data)"
+            @change="handleUploadChange"
             @remove="() => handleFileRemove()"
           >
-            <n-button type="primary">数据上传</n-button>
+            <n-button type="primary">{{ $t('activity.distributeReward.k6570') }}</n-button>
           </n-upload>
         </n-form-item>
 
         <!-- Upload instructions -->
         <div class="upload-instructions">
-          <p class="instructions-title">使用说明:</p>
+          <p class="instructions-title">{{ $t('activity.distributeReward.k4f7f') }}</p>
           <ul>
-            <li>建议每个文档会员数量为1,000,000以下，超出请批次上传</li>
-            <li>上传文档的大小不超过50M，文件格式仅限.xlsx</li>
-            <li>上传文档的字段顺序请按照规则顺序排序</li>
+            <li>{{ $t('activity.distributeReward.k5efa000000k8d85') }}</li>
+            <li>{{ $t('activity.distributeReward.k4e0ak6587Xlsx') }}</li>
+            <li>{{ $t('activity.distributeReward.k4e0a2') }}</li>
             <li>
-              <a class="template-link" @click.prevent="handleDownloadTemplate">模板下载</a>
+              <a class="template-link" @click.prevent="handleDownloadTemplate">{{ $t('activity.distributeReward.k6a21') }}</a>
             </li>
           </ul>
         </div>
 
         <!-- Parsed data preview -->
         <div v-if="batchPreview.length > 0" class="batch-preview">
-          <p class="preview-title">
-            已解析 <b>{{ batchPreview.length }}</b> 条数据
-            <n-tag v-if="batchErrors.length > 0" type="error" size="small" style="margin-left:8px">
-              {{ batchErrors.length }} 条错误
+          <p class="preview-title">{{ $t('activity.distributeReward.k5df2') }}<b>{{ batchPreview.length }}</b>{{ $t('activity.distributeReward.k6761') }}<n-tag v-if="batchErrors.length > 0" type="error" size="small" style="margin-left:8px">
+              {{ $t('activity.common.batchErrors', [batchErrors.length]) }}
             </n-tag>
           </p>
           <n-data-table
@@ -206,23 +203,25 @@
             :bordered="false"
             style="max-height: 200px; overflow-y: auto"
           />
-          <p v-if="batchPreview.length > 10" class="preview-more">... 仅显示前10条</p>
+          <p v-if="batchPreview.length > 10" class="preview-more">
+            {{ $t('activity.distributeReward.onlyShowFirst10', [batchPreview.length]) }}
+          </p>
         </div>
       </template>
 
       <!-- Notes (manual mode) -->
       <template v-if="form.addMode === 'manual'">
-        <n-form-item label="前台备注" label-placement="left" :label-width="90">
+        <n-form-item :label="$t('activity.distributeReward.k524d')" label-placement="left" :label-width="90">
           <n-input
             v-model:value="form.frontendNote"
-            placeholder="请输入前台备注"
+            :placeholder="$t('activity.distributeReward.k8bf7')"
             style="width: 100%"
           />
         </n-form-item>
-        <n-form-item label="后台备注" label-placement="left" :label-width="90">
+        <n-form-item :label="$t('activity.distributeReward.k540e')" label-placement="left" :label-width="90">
           <n-input
             v-model:value="form.backendNote"
-            placeholder="请输入后台备注"
+            :placeholder="$t('activity.distributeReward.k8bf72')"
             style="width: 100%"
           />
         </n-form-item>
@@ -234,12 +233,12 @@
       <n-divider />
       <n-alert
         :type="distributeResults.failCount === 0 ? 'success' : 'warning'"
-        :title="`派发完成：成功 ${distributeResults.successCount} 人，失败 ${distributeResults.failCount} 人`"
+        :title="$t('activity.common.distributeComplete', [distributeResults.successCount, distributeResults.failCount])"
         closable
         @close="distributeResults = null"
       />
       <div v-if="distributeResults.failCount > 0" class="failed-list">
-        <p class="failed-title">失败明细：</p>
+        <p class="failed-title">{{ $t('activity.distributeReward.k5931') }}</p>
         <n-data-table
           :columns="resultColumns"
           :data="distributeResults.results.filter((r) => !r.success)"
@@ -252,16 +251,16 @@
 
     <template #footer>
       <n-space justify="end">
-        <n-button @click="handleCancel">取消</n-button>
-        <n-button type="primary" :loading="submitting" :disabled="submitting" @click="handleSubmit">
-          确认
-        </n-button>
+        <n-button @click="handleCancel">{{ $t('activity.activityList.k53d6') }}</n-button>
+        <n-button type="primary" :loading="submitting" :disabled="submitting" @click="handleSubmit">{{ $t('activity.noviceWelfareGlobal.k786e') }}</n-button>
       </n-space>
     </template>
   </n-modal>
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, h, watch } from 'vue';
 import {
   NModal,
@@ -415,7 +414,7 @@ async function fetchPlatforms() {
     }
   } catch (err) {
     console.error('[DistributeReward] Failed to load platforms:', err);
-    message.error('加载平台列表失败');
+    message.error($t('activity.distributeReward.k52a05'));
     allPlatforms.value = [];
   } finally {
     platformsLoading.value = false;
@@ -468,21 +467,21 @@ const batchErrors = computed(() => batchPreview.value.filter((r) => r._error));
 const uploadedFile = ref<File | null>(null);
 
 const previewColumns = [
-  { title: '行', key: 'rowIndex', width: 50 },
-  { title: '会员ID', key: 'userID', width: 100 },
-  { title: '会员账号', key: 'account', width: 120 },
-  { title: '奖励金额', key: 'rewardAmount', width: 100 },
-  { title: '稽核倍数', key: 'auditMultiplier', width: 100 },
-  { title: '前台备注', key: 'frontendNote', width: 100 },
-  { title: '后台备注', key: 'backendNote', width: 100 },
+  { title: $t('activity.distributeReward.k884c'), key: 'rowIndex', width: 50 },
+  { title: $t('activity.rewardReport.k4f1a2'), key: 'userID', width: 100 },
+  { title: $t('activity.rewardReport.k4f1a3'), key: 'account', width: 120 },
+  { title: $t('activity.formModal.k5956'), key: 'rewardAmount', width: 100 },
+  { title: $t('activity.formModal.k7a3d2'), key: 'auditMultiplier', width: 100 },
+  { title: $t('activity.distributeReward.k524d'), key: 'frontendNote', width: 100 },
+  { title: $t('activity.distributeReward.k540e'), key: 'backendNote', width: 100 },
   {
-    title: '状态',
+    title: $t('activity.activityList.k72b6'),
     key: '_error',
     width: 120,
     render: (row: BatchRow) =>
       row._error
         ? h(NTag, { type: 'error', size: 'small' }, { default: () => row._error })
-        : h(NTag, { type: 'success', size: 'small' }, { default: () => '正常' }),
+        : h(NTag, { type: 'success', size: 'small' }, { default: () => $t('activity.distributeReward.k6b63') }),
   },
 ];
 
@@ -495,18 +494,25 @@ const distributeResults = ref<{
 } | null>(null);
 
 const resultColumns = [
-  { title: '会员标识', key: 'identifier', width: 150 },
+  { title: $t('activity.distributeReward.k4f1a'), key: 'identifier', width: 150 },
   {
-    title: '结果',
+    title: $t('activity.distributeReward.k7ed3'),
     key: 'error',
     render: (row: DistributeRewardsResult) =>
-      h(NTag, { type: 'error', size: 'small' }, { default: () => row.error || '未知错误' }),
+      h(NTag, { type: 'error', size: 'small' }, { default: () => row.error || $t('activity.common.unknownError') }),
   },
 ];
 
 const submitting = ref(false);
 
 // ─── File handling ───────────────────────────────────────────────────────────
+function handleUploadChange(data: {
+  file: UploadFileInfo;
+  fileList: UploadFileInfo[];
+}) {
+  handleFileChange(data);
+}
+
 function handleFileChange(options: { file: UploadFileInfo; fileList: UploadFileInfo[] }) {
   uploadedFile.value = options.file.file ?? null;
   if (uploadedFile.value) {
@@ -527,7 +533,7 @@ function handleFileUpload(options: UploadCustomRequestOptions) {
 async function parseUploadedFile(file: File) {
   const ext = file.name.split('.').pop()?.toLowerCase();
   if (!['xlsx', 'xls', 'csv'].includes(ext || '')) {
-    message.error('仅支持 .xlsx / .xls / .csv 文件');
+    message.error($t('activity.distributeReward.k4ec5XlsxXlsCsvk6587'));
     return;
   }
 
@@ -544,7 +550,7 @@ async function parseUploadedFile(file: File) {
       const rows: any[][] = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
       parseRowsArray(rows);
     } catch {
-      message.error('解析Excel失败，请检查文件格式');
+      message.error($t('activity.distributeReward.k89e3k8bf7'));
     }
   }
 }
@@ -578,9 +584,9 @@ function parseRowsArray(rows: any[][]) {
       const mult = parseFloat(row.auditMultiplier) || 1;
       const identifier = form.accountType === 'userID' ? row.userID : row.account;
 
-      if (!identifier) row._error = '缺少会员标识';
-      else if (isNaN(amt) || amt <= 0) row._error = '奖励金额无效';
-      else if (mult < 0) row._error = '稽核倍数无效';
+      if (!identifier) row._error = $t('activity.common.missingMemberId');
+      else if (isNaN(amt) || amt <= 0) row._error = $t('activity.common.invalidRewardAmount');
+      else if (mult < 0) row._error = $t('activity.common.invalidAuditMultiplier');
 
       return row;
     });
@@ -609,11 +615,11 @@ async function handleSubmit() {
 
   if (form.addMode === 'manual') {
     if (!form.memberInput.trim()) {
-      message.warning('请输入至少一个会员账号或ID');
+      message.warning($t('activity.distributeReward.k8bf73'));
       return;
     }
     if (!form.rewardAmount || form.rewardAmount <= 0) {
-      message.warning('请输入有效的奖励金额');
+      message.warning($t('activity.distributeReward.k8bf74'));
       return;
     }
 
@@ -623,11 +629,11 @@ async function handleSubmit() {
       .filter(Boolean);
 
     if (identifiers.length === 0) {
-      message.warning('未解析到有效的会员标识');
+      message.warning($t('activity.distributeReward.k672a'));
       return;
     }
     if (identifiers.length > 200) {
-      message.warning('单次最多支持200个会员');
+      message.warning($t('activity.distributeReward.k5355'));
       return;
     }
 
@@ -643,12 +649,12 @@ async function handleSubmit() {
   } else {
     // Batch mode
     if (batchPreview.value.length === 0) {
-      message.warning('请先上传数据文件');
+      message.warning($t('activity.distributeReward.k8bf75'));
       return;
     }
     const hasErrors = batchErrors.value.length > 0;
     if (hasErrors && !form.skipOnError) {
-      message.warning(`有 ${batchErrors.value.length} 条数据存在错误，请修正后重新上传，或切换为"自动跳过错误"模式`);
+      message.warning($t('activity.common.batchErrorWarning', [batchErrors.value.length]));
       return;
     }
 
@@ -672,7 +678,7 @@ async function handleSubmit() {
       });
 
     if (members.length === 0) {
-      message.warning('没有有效的会员数据可提交');
+      message.warning($t('activity.distributeReward.k6ca1'));
       return;
     }
   }
@@ -697,16 +703,16 @@ async function handleSubmit() {
     distributeResults.value = result;
 
     if (result.failCount === 0) {
-      message.success(`派发成功！共 ${result.successCount} 人`);
+      message.success($t('activity.common.distributeAllSuccess', [result.successCount]));
       emit('success');
       visible.value = false;
     } else if (result.successCount > 0) {
-      message.warning(`部分派发成功：成功 ${result.successCount} 人，失败 ${result.failCount} 人`);
+      message.warning($t('activity.common.distributePartial', [result.successCount, result.failCount]));
     } else {
-      message.error(`派发失败，请检查会员信息`);
+      message.error($t('activity.common.distributeFailed'));
     }
   } catch (err: any) {
-    message.error(err?.message || '派发奖励失败，请稍后重试');
+    message.error(err?.message || $t('activity.labels.distributeFailed'));
     console.error('Distribute rewards error:', err);
   } finally {
     submitting.value = false;

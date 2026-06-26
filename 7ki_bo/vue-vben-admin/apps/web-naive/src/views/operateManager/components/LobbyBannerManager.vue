@@ -5,10 +5,10 @@
       <div class="flex flex-wrap items-end gap-4">
         <!-- Banner名称搜索 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">Banner名称</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('operations.messageSettings.bannerName') }}</label>
           <n-input
             v-model:value="filters.bannerName"
-            placeholder="输入Banner名称搜索"
+            :placeholder="$t('operations.messageSettings.bannerNameSearch')"
             clearable
             style="width: 200px"
             @keyup.enter="handleFilter"
@@ -17,10 +17,10 @@
 
         <!-- 语言选择 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">语言</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('operations.messageSettings.language') }}</label>
           <n-select
             v-model:value="filters.language"
-            placeholder="选择语言"
+            :placeholder="$t('operations.messageSettings.selectLanguage')"
             clearable
             style="width: 120px"
             :options="languageOptions"
@@ -30,10 +30,10 @@
 
         <!-- 币种选择 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">币种</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('common.currency') }}</label>
           <n-select
             v-model:value="filters.currency"
-            placeholder="选择币种"
+            :placeholder="$t('operations.messageSettings.selectCurrency')"
             clearable
             style="width: 120px"
             :options="currencyOptions"
@@ -43,10 +43,10 @@
 
         <!-- 状态筛选 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">状态</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('common.status') }}</label>
           <n-select
             v-model:value="filters.status"
-            placeholder="选择状态"
+            :placeholder="$t('operations.messageSettings.selectStatus')"
             clearable
             style="width: 120px"
             :options="statusOptions"
@@ -56,10 +56,10 @@
 
         <!-- 跳转方式 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">跳转方式</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('operations.messageSettings.jumpMode') }}</label>
           <n-select
             v-model:value="filters.jumpMode"
-            placeholder="选择跳转方式"
+            :placeholder="$t('operations.messageSettings.selectJumpMode')"
             clearable
             style="width: 140px"
             :options="jumpModeOptions"
@@ -69,10 +69,10 @@
 
         <!-- 操作人 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">操作人</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('common.operator') }}</label>
           <n-input
             v-model:value="filters.updatedBy"
-            placeholder="输入操作人"
+            :placeholder="$t('operations.messageSettings.operatorPlaceholder')"
             clearable
             style="width: 120px"
             @keyup.enter="handleFilter"
@@ -81,11 +81,11 @@
 
         <!-- 时间范围 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">时间范围</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('operations.messageSettings.timeRange') }}</label>
           <n-date-picker
             v-model:value="timeRange"
             type="daterange"
-            placeholder="选择时间范围"
+            :placeholder="$t('common.selectDateRange')"
             clearable
             style="width: 240px"
             @update:value="handleTimeRangeChange"
@@ -94,8 +94,8 @@
 
         <!-- 搜索按钮 -->
         <div class="flex gap-2">
-          <n-button type="primary" @click="handleFilter"> 搜索 </n-button>
-          <n-button @click="resetFilter"> 重置 </n-button>
+          <n-button type="primary" @click="handleFilter"> {{ $t('common.search') }} </n-button>
+          <n-button @click="resetFilter"> {{ $t('common.reset') }} </n-button>
         </div>
       </div>
     </n-card>
@@ -122,14 +122,14 @@
               <!-- 主要操作按钮 -->
               <div class="flex gap-2">
                 <n-button type="primary" @click="handleCreate">
-                  新增Banner
+                  {{ $t('operations.messageSettings.addBanner') }}
                 </n-button>
               </div>
 
               <!-- 选择信息 -->
               <div class="text-sm text-gray-600">
-                已选择 {{ selectedCount }} 条数据，共
-                {{ paginationReactive.total }} 条
+                {{ $t('operations.messageSettings.selectedData', [selectedCount, '']) }}
+                {{ $t('operations.domain.modal.recordsCount', [paginationReactive.total]) }}
               </div>
             </div>
 
@@ -141,7 +141,7 @@
                 size="small"
                 @click="handleBatchToggleStatus('active', selectedRows)"
               >
-                批量发布 ({{ selectedCount }})
+                {{ $t('operations.messageSettings.publish') }} ({{ selectedCount }})
               </n-button>
               <n-button
                 v-if="selectedCount > 0"
@@ -149,7 +149,7 @@
                 size="small"
                 @click="handleBatchToggleStatus('inactive', selectedRows)"
               >
-                批量下架 ({{ selectedCount }})
+                {{ $t('operations.messageSettings.stop') }} ({{ selectedCount }})
               </n-button>
               <n-button
                 v-if="selectedCount > 0"
@@ -157,30 +157,30 @@
                 size="small"
                 @click="handleBatchDelete(selectedRows)"
               >
-                批量删除 ({{ selectedCount }})
+                {{ $t('operations.messageSettings.batchDelete', [selectedCount]) }}
               </n-button>
 
               <!-- 选择控制 -->
-              <n-button size="small" @click="clearSelection">清空选择</n-button>
-              <n-button size="small" @click="selectAll">全选</n-button>
+              <n-button size="small" @click="clearSelection">{{ $t('operations.messageSettings.clearSelection') }}</n-button>
+              <n-button size="small" @click="selectAll">{{ $t('common.selectAll') }}</n-button>
             </div>
           </div>
 
           <!-- 统计信息 -->
           <div class="mt-3 flex gap-4 border-t border-gray-200 pt-3 text-sm">
             <span
-              >总计: <strong>{{ stats.total }}</strong></span
+              >{{ $t('operations.messageSettings.total') }}: <strong>{{ stats.total }}</strong></span
             >
             <span
-              >已发布:
+              >{{ $t('operations.messageSettings.published') }}:
               <strong class="text-green-600">{{ stats.active }}</strong></span
             >
             <span
-              >已下架:
+              >{{ $t('operations.messageSettings.unpublished') }}:
               <strong class="text-red-600">{{ stats.inactive }}</strong></span
             >
             <span
-              >草稿:
+              >{{ $t('operations.messageSettings.draft') }}:
               <strong class="text-orange-600">{{ stats.draft }}</strong></span
             >
           </div>
@@ -198,7 +198,7 @@
     <!-- 详情查看对话框 -->
     <n-modal
       v-model:show="showDetailModal"
-      title="Banner详情"
+      :title="$t('operations.messageSettings.bannerDetail')"
       preset="dialog"
       style="width: 800px"
     >
@@ -209,31 +209,31 @@
             <div class="mt-1 rounded bg-gray-50 p-2">{{ detailData.id }}</div>
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-600">排序</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.sort') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
               {{ detailData.sortOrder }}
             </div>
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-600">语言</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.language') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
               {{ getLanguageText(detailData.language) }}
             </div>
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-600">币种</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('common.currency') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
               {{ detailData.currency }}
             </div>
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-600">跳转方式</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.jumpMode') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
               {{ getJumpModeText(detailData.jumpMode) }}
             </div>
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-600">状态</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('common.status') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
               <n-tag :type="getStatusType(detailData.status)">
                 {{ getStatusText(detailData.status) }}
@@ -243,14 +243,14 @@
         </div>
 
         <div class="mb-4">
-          <label class="text-sm font-medium text-gray-600">Banner名称</label>
+          <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.bannerName') }}</label>
           <div class="mt-1 rounded bg-gray-50 p-3">
             {{ detailData.bannerName }}
           </div>
         </div>
 
         <div class="mb-4">
-          <label class="text-sm font-medium text-gray-600">Banner图片</label>
+          <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.bannerImage') }}</label>
           <div class="mt-1 rounded bg-gray-50 p-3">
             <n-image
               :src="getImageUrlByEnvironment(detailData.bannerImageUrl)"
@@ -269,28 +269,28 @@
 
         <div class="mb-4 grid grid-cols-2 gap-4">
           <div>
-            <label class="text-sm font-medium text-gray-600">停留时间</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.displayDuration') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
-              {{ detailData.displayDuration }}秒
+              {{ detailData.displayDuration }}{{ $t('operations.messageSettings.secondsUnit') }}
             </div>
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-600">跳转目标</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.jumpTarget') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
-              {{ detailData.targetUrl || '无' }}
+              {{ detailData.targetUrl || $t('operations.messageSettings.none') }}
             </div>
           </div>
         </div>
 
         <div class="mb-4 grid grid-cols-2 gap-4">
           <div>
-            <label class="text-sm font-medium text-gray-600">开始时间</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.startTime') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
               {{ formatDate(detailData.startTime) }}
             </div>
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-600">结束时间</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.endTime') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
               {{ formatDate(detailData.endTime) }}
             </div>
@@ -299,13 +299,13 @@
 
         <div class="mb-4 grid grid-cols-2 gap-4">
           <div>
-            <label class="text-sm font-medium text-gray-600">操作人</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('common.operator') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
-              {{ detailData.updatedBy || '系统' }}
+              {{ detailData.updatedBy || $t('operations.messageSettings.system') }}
             </div>
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-600">操作时间</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('common.operationTime') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
               {{ formatDate(detailData.updatedAt) }}
             </div>
@@ -313,14 +313,14 @@
         </div>
 
         <div v-if="detailData.remark" class="mb-4">
-          <label class="text-sm font-medium text-gray-600">后台备注</label>
+          <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.backendRemark') }}</label>
           <div class="mt-1 rounded bg-gray-50 p-3">{{ detailData.remark }}</div>
         </div>
       </div>
 
       <template #action>
         <div class="flex justify-end gap-2">
-          <n-button @click="showDetailModal = false">关闭</n-button>
+          <n-button @click="showDetailModal = false">{{ $t('common.close') }}</n-button>
         </div>
       </template>
     </n-modal>
@@ -328,14 +328,14 @@
     <!-- 图片预览对话框 -->
     <n-modal
       v-model:show="showImageModal"
-      title="图片预览"
+      :title="$t('operations.messageSettings.imagePreview')"
       preset="dialog"
       style="width: 80vw; max-width: 800px"
     >
       <div class="text-center">
         <n-image
           :src="getImageUrlByEnvironment(previewImageUrl)"
-          :alt="'Banner预览'"
+          :alt="$t('operations.form.bannerPreview')"
           style="max-width: 100%; max-height: 60vh"
           object-fit="contain"
           :fallback-src="placeholderImageUrl"
@@ -345,7 +345,7 @@
 
       <template #action>
         <div class="flex justify-end gap-2">
-          <n-button @click="showImageModal = false">关闭</n-button>
+          <n-button @click="showImageModal = false">{{ $t('common.close') }}</n-button>
         </div>
       </template>
     </n-modal>
@@ -353,6 +353,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import {
   ref,
   reactive,
@@ -447,11 +449,11 @@ const filters = reactive<LobbyBannerFilters>({
 
 // 选项配置
 const languageOptions: SelectOption[] = [
-  { label: '中文', value: 'zh-CN' },
-  { label: '英文', value: 'en' },
-  { label: '葡语', value: 'pt' },
-  { label: '西班牙语', value: 'es' },
-  { label: '日语', value: 'ja' },
+  { label: $t('operations.messageSettings.option.langZh'), value: 'zh-CN' },
+  { label: $t('operations.messageSettings.option.langEn'), value: 'en' },
+  { label: $t('operations.messageSettings.option.langPt'), value: 'pt' },
+  { label: $t('operations.messageSettings.option.langEs'), value: 'es' },
+  { label: $t('operations.messageSettings.option.langJa'), value: 'ja' },
 ];
 
 const currencyOptions: SelectOption[] = [
@@ -463,25 +465,25 @@ const currencyOptions: SelectOption[] = [
 ];
 
 const statusOptions: SelectOption[] = [
-  { label: '已发布', value: 'active' },
-  { label: '已下架', value: 'inactive' },
-  { label: '草稿', value: 'draft' },
+  { label: $t('operations.messageSettings.option.statusPublished'), value: 'active' },
+  { label: $t('operations.messageSettings.option.statusUnpublished'), value: 'inactive' },
+  { label: $t('operations.messageSettings.option.statusDraft'), value: 'draft' },
 ];
 
 const jumpModeOptions: SelectOption[] = [
-  { label: '无', value: 'none' },
-  { label: '外部链接', value: 'external_link' },
-  { label: '活动', value: 'activity' },
-  { label: '任务', value: 'task' },
-  { label: '充值', value: 'recharge' },
-  { label: '返水', value: 'rebate' },
-  { label: '代理', value: 'agent' },
+  { label: $t('operations.messageSettings.option.jumpNone'), value: 'none' },
+  { label: $t('operations.messageSettings.option.jumpExternal'), value: 'external_link' },
+  { label: $t('operations.messageSettings.option.jumpActivity'), value: 'activity' },
+  { label: $t('operations.messageSettings.option.jumpTask'), value: 'task' },
+  { label: $t('operations.layout.deposit'), value: 'recharge' },
+  { label: $t('operations.messageSettings.option.jumpRebate'), value: 'rebate' },
+  { label: $t('operations.layout.agent'), value: 'agent' },
   { label: 'VIP', value: 'vip' },
-  { label: '利息宝', value: 'interest_treasure' },
-  { label: '公积金', value: 'public_fund' },
-  { label: '游戏', value: 'game' },
-  { label: '盲盒抽奖', value: 'blind_box_lottery' },
-  { label: '俱乐部申请（合作联营）', value: 'club_application' },
+  { label: $t('operations.messageSettings.option.jumpInterest'), value: 'interest_treasure' },
+  { label: $t('operations.messageSettings.option.jumpPublicFund'), value: 'public_fund' },
+  { label: $t('operations.messageSettings.option.jumpGame'), value: 'game' },
+  { label: $t('operations.messageSettings.option.jumpBlindBox'), value: 'blind_box_lottery' },
+  { label: $t('operations.messageSettings.option.jumpClub'), value: 'club_application' },
 ];
 
 // Pagination (simplified for SmartDataGrid)
@@ -498,7 +500,7 @@ const columns: DataTableColumns<LobbyBanner> = [
     width: 50,
   },
   {
-    title: '排序',
+    title: $t('operations.messageSettings.sort'),
     key: 'sortOrder',
     width: 80,
     sorter: true,
@@ -509,12 +511,12 @@ const columns: DataTableColumns<LobbyBanner> = [
     width: 80,
   },
   {
-    title: '币种',
+    title: $t('common.currency'),
     key: 'currency',
     width: 80,
   },
   {
-    title: '语言',
+    title: $t('operations.messageSettings.language'),
     key: 'language',
     width: 100,
     render(row) {
@@ -522,7 +524,7 @@ const columns: DataTableColumns<LobbyBanner> = [
     },
   },
   {
-    title: 'Banner名称',
+    title: $t('operations.messageSettings.bannerName'),
     key: 'bannerName',
     width: 200,
     ellipsis: {
@@ -530,18 +532,18 @@ const columns: DataTableColumns<LobbyBanner> = [
     },
   },
   {
-    title: '跳转目标',
+    title: $t('operations.messageSettings.jumpTarget'),
     key: 'targetUrl',
     width: 150,
     ellipsis: {
       tooltip: true,
     },
     render(row) {
-      return row.targetUrl || '无';
+      return row.targetUrl || $t('operations.messageSettings.none');
     },
   },
   {
-    title: 'Banner图',
+    title: $t('operations.messageSettings.bannerImage'),
     key: 'bannerImageUrl',
     width: 120,
     render(row) {
@@ -560,15 +562,15 @@ const columns: DataTableColumns<LobbyBanner> = [
     },
   },
   {
-    title: '停留时间',
+    title: $t('operations.messageSettings.displayDuration'),
     key: 'displayDuration',
     width: 100,
     render(row) {
-      return `${row.displayDuration}秒`;
+      return `$t('operations.messageSettings.seconds', [row.displayDuration])`;
     },
   },
   {
-    title: '开始时间',
+    title: $t('operations.messageSettings.startTime'),
     key: 'startTime',
     width: 160,
     render(row) {
@@ -576,7 +578,7 @@ const columns: DataTableColumns<LobbyBanner> = [
     },
   },
   {
-    title: '结束时间',
+    title: $t('operations.messageSettings.endTime'),
     key: 'endTime',
     width: 160,
     render(row) {
@@ -584,7 +586,7 @@ const columns: DataTableColumns<LobbyBanner> = [
     },
   },
   {
-    title: '跳转',
+    title: $t('operations.messageSettings.jumpMode'),
     key: 'jumpMode',
     width: 120,
     render(row) {
@@ -592,7 +594,7 @@ const columns: DataTableColumns<LobbyBanner> = [
     },
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 100,
     render(row) {
@@ -607,15 +609,15 @@ const columns: DataTableColumns<LobbyBanner> = [
     },
   },
   {
-    title: '操作人',
+    title: $t('common.operator'),
     key: 'updatedBy',
     width: 120,
     render(row) {
-      return row.updatedBy || '系统';
+      return row.updatedBy || $t('operations.messageSettings.system');
     },
   },
   {
-    title: '操作时间',
+    title: $t('common.operationTime'),
     key: 'updatedAt',
     width: 160,
     render(row) {
@@ -623,7 +625,7 @@ const columns: DataTableColumns<LobbyBanner> = [
     },
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 280,
     fixed: 'right',
@@ -636,7 +638,7 @@ const columns: DataTableColumns<LobbyBanner> = [
             type: row.status === 'active' ? 'warning' : 'success',
             onClick: () => handleToggleStatus(row),
           },
-          { default: () => (row.status === 'active' ? '停止' : '发布') },
+          { default: () => (row.status === 'active' ? $t('operations.messageSettings.stop') : $t('operations.messageSettings.publish')) },
         ),
 
         h(
@@ -645,7 +647,7 @@ const columns: DataTableColumns<LobbyBanner> = [
             size: 'small',
             onClick: () => handleCopy(row),
           },
-          { default: () => '复制创建' },
+          { default: () => $t('operations.messageSettings.copyCreate') },
         ),
 
         h(
@@ -654,7 +656,7 @@ const columns: DataTableColumns<LobbyBanner> = [
             size: 'small',
             onClick: () => handleViewDetail(row),
           },
-          { default: () => '详情' },
+          { default: () => $t('common.detail') },
         ),
 
         h(
@@ -664,7 +666,7 @@ const columns: DataTableColumns<LobbyBanner> = [
             type: 'primary',
             onClick: () => handleEdit(row),
           },
-          { default: () => '编辑' },
+          { default: () => $t('common.edit') },
         ),
 
         h(
@@ -673,7 +675,7 @@ const columns: DataTableColumns<LobbyBanner> = [
             onPositiveClick: () => handleDelete(row),
           },
           {
-            default: () => '确定删除这个Banner吗？',
+            default: () => $t('operations.messageSettings.confirmDeleteBanner'),
             trigger: () =>
               h(
                 NButton,
@@ -681,7 +683,7 @@ const columns: DataTableColumns<LobbyBanner> = [
                   size: 'small',
                   type: 'error',
                 },
-                { default: () => '删除' },
+                { default: () => $t('common.delete') },
               ),
           },
         ),
@@ -726,7 +728,7 @@ const loadData = async () => {
   } catch (error) {
     console.error('Error loading banners:', error);
     notification.error({
-      content: '加载Banner数据失败',
+      content: $t('operations.messageSettings.loadBannerFailed'),
       duration: 3000,
     });
   } finally {
@@ -795,7 +797,7 @@ const handleCopy = async (row: LobbyBanner) => {
   try {
     await duplicateBanner(row.id);
     notification.success({
-      content: '复制创建成功',
+      content: $t('operations.messageSettings.copySuccess'),
       duration: 3000,
     });
     loadData();
@@ -803,7 +805,7 @@ const handleCopy = async (row: LobbyBanner) => {
   } catch (error) {
     console.error('Error copying banner:', error);
     notification.error({
-      content: '复制创建失败',
+      content: $t('operations.messageSettings.copyFailed'),
       duration: 3000,
     });
   }
@@ -818,7 +820,7 @@ const handleDelete = async (row: LobbyBanner) => {
   try {
     await deleteBanner(row.id);
     notification.success({
-      content: '删除成功',
+      content: $t('common.deleteSuccess'),
       duration: 3000,
     });
     loadData();
@@ -826,7 +828,7 @@ const handleDelete = async (row: LobbyBanner) => {
   } catch (error) {
     console.error('Error deleting banner:', error);
     notification.error({
-      content: '删除失败',
+      content: $t('operations.messageSettings.deleteFailed'),
       duration: 3000,
     });
   }
@@ -837,7 +839,7 @@ const handleToggleStatus = async (row: LobbyBanner) => {
     const newStatus = row.status === 'active' ? 'inactive' : 'active';
     await toggleBannerStatus(row.id, newStatus);
     notification.success({
-      content: `${newStatus === 'active' ? '发布' : '下架'}成功`,
+      content: $t('operations.messageSettings.toggleSuccess', [newStatus === 'active' ? $t('operations.messageSettings.publish') : $t('operations.messageSettings.stop')]),
       duration: 3000,
     });
     loadData();
@@ -845,7 +847,7 @@ const handleToggleStatus = async (row: LobbyBanner) => {
   } catch (error) {
     console.error('Error toggling banner status:', error);
     notification.error({
-      content: '状态切换失败',
+      content: $t('operations.messageSettings.toggleFailed'),
       duration: 3000,
     });
   }
@@ -874,7 +876,7 @@ const handleBatchToggleStatus = async (
     const ids = bannersToUpdate.map((banner) => Number(banner.id));
     await batchToggleStatus({ ids, status });
     notification.success({
-      content: `批量${getStatusText(status)}成功`,
+      content: $t('operations.messageSettings.toggleSuccess', [getStatusText(status)]),
       duration: 3000,
     });
     selectedRowKeys.value = [];
@@ -883,7 +885,7 @@ const handleBatchToggleStatus = async (
   } catch (error) {
     console.error('Error batch toggling status:', error);
     notification.error({
-      content: '批量操作失败',
+      content: $t('operations.messageSettings.batchOpFailed'),
       duration: 3000,
     });
   }
@@ -905,7 +907,7 @@ const handleBatchDelete = async (selectedRows?: LobbyBanner[]) => {
     const ids = bannersToDelete.map((banner) => Number(banner.id));
     await batchDeleteBanners({ ids });
     notification.success({
-      content: `成功删除 ${bannersToDelete.length} 个Banner`,
+      content: $t('operations.messageSettings.batchDeleteBannerSuccess', [bannersToDelete.length]),
       duration: 3000,
     });
     selectedRowKeys.value = [];
@@ -914,7 +916,7 @@ const handleBatchDelete = async (selectedRows?: LobbyBanner[]) => {
   } catch (error) {
     console.error('Error batch deleting banners:', error);
     notification.error({
-      content: '批量删除失败',
+      content: $t('operations.messageSettings.batchDeleteFailed'),
       duration: 3000,
     });
   }
@@ -994,11 +996,11 @@ const formatDate = (date: string | Date | null) => {
 
 const getLanguageText = (language: string): string => {
   const langMap: Record<string, string> = {
-    'zh-CN': '中文',
-    en: '英文',
-    pt: '葡语',
-    es: '西班牙语',
-    ja: '日语',
+    'zh-CN': $t('operations.messageSettings.option.langZh'),
+    en: $t('operations.messageSettings.option.langEn'),
+    pt: $t('operations.messageSettings.option.langPt'),
+    es: $t('operations.messageSettings.option.langEs'),
+    ja: $t('operations.messageSettings.option.langJa'),
   };
   return langMap[language] || language;
 };

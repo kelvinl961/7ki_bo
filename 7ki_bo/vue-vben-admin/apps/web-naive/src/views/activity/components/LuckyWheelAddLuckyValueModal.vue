@@ -2,42 +2,44 @@
   <n-modal
     v-model:show="visible"
     preset="card"
-    title="新增幸运值"
+    :title="$t('activity.luckyWheelAddLuckyValue.k65b0')"
     :style="{ width: '480px', maxWidth: '96vw' }"
     :mask-closable="false"
   >
     <n-form label-placement="left" :label-width="96" size="medium">
-      <n-form-item label="会员账号" required>
-        <n-input v-model:value="form.account" placeholder="请输入会员账号" clearable />
+      <n-form-item :label="$t('activity.rewardReport.k4f1a3')" required>
+        <n-input v-model:value="form.account" :placeholder="$t('activity.luckyWheelAddLuckyValue.k8bf7')" clearable />
       </n-form-item>
-      <n-form-item label="变动幸运值" required>
+      <n-form-item :label="$t('activity.luckyWheelAddLuckyValue.k53d8')" required>
         <n-input-number
           v-model:value="form.amount"
           :precision="0"
           :show-button="false"
-          placeholder="正数为增加，负数为扣除"
+          :placeholder="$t('activity.luckyWheelAddLuckyValue.k6b63k8d1f')"
           style="width: 100%"
         />
       </n-form-item>
-      <n-form-item label="后台备注">
+      <n-form-item :label="$t('activity.distributeReward.k540e')">
         <n-input
           v-model:value="form.backendRemark"
           type="textarea"
           :rows="3"
-          placeholder="选填"
+          :placeholder="$t('activity.luckyWheelAddLuckyValue.k9009')"
         />
       </n-form-item>
     </n-form>
     <template #footer>
       <div class="flex justify-end gap-3">
-        <n-button @click="visible = false">取消</n-button>
-        <n-button type="primary" :loading="saving" @click="handleSubmit">确定</n-button>
+        <n-button @click="visible = false">{{ $t('activity.activityList.k53d6') }}</n-button>
+        <n-button type="primary" :loading="saving" @click="handleSubmit">{{ $t('activity.formModal.k786e') }}</n-button>
       </div>
     </template>
   </n-modal>
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { reactive, ref } from 'vue';
 import {
   NModal,
@@ -63,11 +65,11 @@ const form = reactive({
 
 async function handleSubmit() {
   if (!form.account.trim()) {
-    message.warning('请输入会员账号');
+    message.warning($t('activity.luckyWheelAddLuckyValue.k8bf7'));
     return;
   }
   if (form.amount === null || form.amount === 0) {
-    message.warning('请填写变动幸运值');
+    message.warning($t('activity.luckyWheelAddLuckyValue.k8bf72'));
     return;
   }
   saving.value = true;
@@ -77,14 +79,14 @@ async function handleSubmit() {
       amount: form.amount,
       backendRemark: form.backendRemark.trim() || undefined,
     });
-    message.success('操作成功');
+    message.success($t('activity.luckyWheelAddLuckyValue.k64cd'));
     form.account = '';
     form.amount = null;
     form.backendRemark = '';
     emit('saved');
     visible.value = false;
   } catch {
-    message.error('操作失败，请确认 API 已接入');
+    message.error($t('activity.luckyWheelAddLuckyValue.k64cdk8bf7APIk5df2'));
   } finally {
     saving.value = false;
   }

@@ -115,7 +115,7 @@
         description="暂无收藏游戏"
       >
         <template #extra>
-          <n-button type="primary" @click="handleRefresh"> 刷新 </n-button>
+          <n-button type="primary" @click="handleRefresh"> {{ $t('common.refresh') }} </n-button>
         </template>
       </n-empty>
 
@@ -126,6 +126,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, computed, onMounted } from 'vue';
 import { useMessage, useDialog } from 'naive-ui';
 import { SearchOutline } from '@vicons/ionicons5';

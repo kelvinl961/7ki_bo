@@ -5,21 +5,21 @@
         <n-tag type="info">{{ data?.id || '-' }}</n-tag>
       </n-descriptions-item>
 
-      <n-descriptions-item label="币种">
+      <n-descriptions-item :label="$t('common.currency')">
         <n-tag type="success">{{ data?.currency || '-' }}</n-tag>
       </n-descriptions-item>
 
-      <n-descriptions-item label="展示形式">
+      <:label="$t('game.virtualBonusPool.displayForm')">
         <n-tag type="warning">{{
           getDisplayTypeLabel(data?.displayType)
         }}</n-tag>
       </n-descriptions-item>
 
-      <n-descriptions-item label="展示位置">
+      <n-descriptions-item :label="$t('game.virtualBonusPool.displayPosition')">
         {{ data?.displayPosition || '-' }}
       </n-descriptions-item>
 
-      <n-descriptions-item label="点击跳转位置" :span="2">
+      <n-descriptions-item :label="$t('game.virtualBonusPool.clickTarget')" :span="2">
         <n-ellipsis style="max-width: 100%">
           <a
             :href="data?.clickTarget"
@@ -31,58 +31,58 @@
         </n-ellipsis>
       </n-descriptions-item>
 
-      <n-descriptions-item label="最大展示金额">
+      <:label="$t('game.virtualBonusPool.maxDisplayAmount')">
         <span class="amount-text">
           {{ formatAmount(data?.maxAmount) }}
         </span>
       </n-descriptions-item>
 
-      <n-descriptions-item label="最小展示金额">
+      <:label="$t('game.virtualBonusPool.minDisplayAmount')">
         <span class="amount-text">
           {{ formatAmount(data?.minAmount) }}
         </span>
       </n-descriptions-item>
 
-      <n-descriptions-item label="小数点位数">
-        <n-tag size="small">{{ data?.decimalPlaces || 0 }} 位</n-tag>
+      <n-descriptions-item :label="$t('game.virtualBonusPool.decimalPlaces')">
+        <n-tag size="small">{{ $t('game.virtualBonusPool.decimalPlacesUnit', [data?.decimalPlaces || 0]) }}</n-tag>
       </n-descriptions-item>
 
-      <n-descriptions-item label="金额数字样式">
+      <n-descriptions-item :label="$t('game.virtualBonusPool.numberStyle')">
         <n-tag type="primary">{{
           getNumberStyleLabel(data?.numberStyle)
         }}</n-tag>
       </n-descriptions-item>
 
-      <n-descriptions-item label="背景风格">
+      <n-descriptions-item :label="$t('game.virtualBonusPool.backgroundStyle')">
         <n-tag type="primary">{{
           getBackgroundStyleLabel(data?.backgroundStyle)
         }}</n-tag>
       </n-descriptions-item>
 
-      <n-descriptions-item label="状态">
+      <n-descriptions-item :label="$t('common.status')">
         <n-tag :type="data?.status ? 'success' : 'error'">
-          {{ data?.status ? '启用' : '禁用' }}
+          {{ data?.status ? $t('common.enabled') : $t('common.disabled') }}
         </n-tag>
       </n-descriptions-item>
 
-      <n-descriptions-item label="备注" :span="2">
+      <n-descriptions-item :label="$t('common.remark')" :span="2">
         <div class="remark-content">
-          {{ data?.remark || '无备注' }}
+          {{ data?.remark || '{{ $t('game.virtualBonusPool.noRemark') }}' }}
         </div>
       </n-descriptions-item>
 
-      <n-descriptions-item label="操作人">
+      <n-descriptions-item :label="$t('common.operator')">
         <n-tag type="info">{{ data?.operator || '-' }}</n-tag>
       </n-descriptions-item>
 
-      <n-descriptions-item label="操作时间">
+      <n-descriptions-item :label="$t('common.operationTime')">
         {{ formatDateTime(data?.operationTime) }}
       </n-descriptions-item>
     </n-descriptions>
 
-    <!-- 预览区域 -->
+    
     <div class="preview-section mt-6">
-      <n-card title="样式预览" size="small">
+      <:title="$t('game.virtualBonusPool.stylePreview')" size="small">
         <div class="preview-container">
           <div
             class="bonus-pool-preview"
@@ -92,7 +92,7 @@
             ]"
           >
             <div class="pool-header">
-              <span class="pool-title">虚拟彩金池</span>
+              <span class="pool-title">{{ $t('game.virtualBonusPool.poolTitle') }}</span>
               <span class="pool-position">{{ data?.displayPosition }}</span>
             </div>
             <div class="pool-amount">
@@ -114,6 +114,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { computed } from 'vue';
 import {
   NDescriptions,
@@ -132,24 +134,24 @@ const props = defineProps<Props>();
 
 // Options for mapping
 const displayTypeOptions = [
-  { label: '固定金额', value: 'fixed' },
-  { label: '随机金额', value: 'random' },
-  { label: '实时更新', value: 'realtime' },
-  { label: '递增金额', value: 'increment' },
+  { label: $t('game.virtualBonusPool.fixedAmount'), value: 'fixed' },
+  { label: $t('game.virtualBonusPool.randomAmount'), value: 'random' },
+  { label: $t('game.virtualBonusPool.realtimeUpdate'), value: 'realtime' },
+  { label: $t('game.virtualBonusPool.incrementAmount'), value: 'increment' },
 ];
 
 const numberStyleOptions = [
-  { label: '样式一', value: 'style1' },
-  { label: '样式二', value: 'style2' },
-  { label: '样式三', value: 'style3' },
-  { label: '样式四', value: 'style4' },
+  { label: $t('game.virtualBonusPool.style1'), value: 'style1' },
+  { label: $t('game.virtualBonusPool.style2'), value: 'style2' },
+  { label: $t('game.virtualBonusPool.style3'), value: 'style3' },
+  { label: $t('game.virtualBonusPool.style4'), value: 'style4' },
 ];
 
 const backgroundStyleOptions = [
-  { label: '样式一', value: 'style1' },
-  { label: '样式二', value: 'style2' },
-  { label: '样式三', value: 'style3' },
-  { label: '样式四', value: 'style4' },
+  { label: $t('game.virtualBonusPool.style1'), value: 'style1' },
+  { label: $t('game.virtualBonusPool.style2'), value: 'style2' },
+  { label: $t('game.virtualBonusPool.style3'), value: 'style3' },
+  { label: $t('game.virtualBonusPool.style4'), value: 'style4' },
 ];
 
 // Helper functions

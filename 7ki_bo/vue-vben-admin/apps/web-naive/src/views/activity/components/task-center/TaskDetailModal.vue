@@ -2,92 +2,92 @@
   <n-modal
     v-model:show="showModal"
     preset="dialog"
-    title="任务详情"
+    :title="$t('activity.taskDetail.k4efb')"
     style="width: 700px"
   >
     <template #header>
       <div class="flex items-center gap-2">
         <EyeOutline />
-        <span>任务详情</span>
+        <span>{{ $t('activity.taskDetail.k4efb') }}</span>
       </div>
     </template>
 
     <div v-if="taskData" class="space-y-6">
       <!-- 基本信息 -->
-      <n-card title="基本信息" size="small">
+      <n-card :title="$t('activity.detailModal.k57fa')" size="small">
         <n-descriptions
           :column="2"
           label-placement="left"
           :label-style="{ fontWeight: '500' }"
         >
-          <n-descriptions-item label="任务ID">
+          <n-descriptions-item :label="$t('activity.taskDetail.k4efb2')">
             {{ taskData.id }}
           </n-descriptions-item>
-          <n-descriptions-item label="排序">
+          <n-descriptions-item :label="$t('activity.detailModal.k6392')">
             {{ taskData.sortOrder }}
           </n-descriptions-item>
-          <n-descriptions-item label="任务条件">
+          <n-descriptions-item :label="$t('activity.noviceWelfare.k4efb')">
             {{ taskData.title }}
           </n-descriptions-item>
-          <n-descriptions-item label="任务类型">
+          <n-descriptions-item :label="$t('activity.taskDetail.k4efb3')">
             {{ getTaskTypeLabel(taskData.taskType) }}
           </n-descriptions-item>
-          <n-descriptions-item label="任务分类">
+          <n-descriptions-item :label="$t('activity.taskDetail.k4efb4')">
             {{ getCategoryLabel(taskData.category) }}
           </n-descriptions-item>
-          <n-descriptions-item label="状态">
+          <n-descriptions-item :label="$t('activity.activityList.k72b6')">
             <n-tag
               :type="taskData.isActive ? 'success' : 'default'"
               size="small"
             >
-              {{ taskData.isActive ? '启用' : '禁用' }}
+              {{ taskData.isActive ? $t('activity.common.enabledTag') : $t('activity.common.disabledTag') }}
             </n-tag>
           </n-descriptions-item>
         </n-descriptions>
       </n-card>
 
       <!-- 任务描述 -->
-      <n-card v-if="taskData.description" title="任务描述" size="small">
+      <n-card v-if="taskData.description" :title="$t('activity.taskDetail.k4efb5')" size="small">
         <div class="leading-relaxed text-gray-700">
           {{ taskData.description }}
         </div>
       </n-card>
 
       <!-- 奖励信息 -->
-      <n-card title="奖励信息" size="small">
+      <n-card :title="$t('activity.taskDetail.k5956')" size="small">
         <n-descriptions
           :column="2"
           label-placement="left"
           :label-style="{ fontWeight: '500' }"
         >
-          <n-descriptions-item label="奖励类型">
+          <n-descriptions-item :label="$t('activity.rewardReport.k5956')">
             <n-tag :type="getRewardTypeColor(taskData.rewardType)" size="small">
               {{ getRewardTypeLabel(taskData.rewardType) }}
             </n-tag>
           </n-descriptions-item>
-          <n-descriptions-item label="奖励金额">
+          <n-descriptions-item :label="$t('activity.formModal.k5956')">
             <span class="font-medium text-green-600">
               {{ taskData.rewardAmount }} {{ taskData.rewardCurrency || 'BRL' }}
             </span>
           </n-descriptions-item>
-          <n-descriptions-item label="活跃度">
+          <n-descriptions-item :label="$t('activity.rewardReport.k6d3b5')">
             <span class="font-medium text-blue-600">0</span>
           </n-descriptions-item>
-          <n-descriptions-item label="提示气泡">
-            <n-tag type="default" size="small">关闭</n-tag>
+          <n-descriptions-item :label="$t('activity.noviceWelfare.k63d0')">
+            <n-tag type="default" size="small">{{ $t('activity.activityList.k5173') }}</n-tag>
           </n-descriptions-item>
         </n-descriptions>
       </n-card>
 
       <!-- 规则说明 -->
-      <n-card v-if="taskData.ruleDescription" title="规则说明" size="small">
+      <n-card v-if="taskData.ruleDescription" :title="$t('activity.formModal.k89c4')" size="small">
         <div class="whitespace-pre-wrap leading-relaxed text-gray-700">
           {{ taskData.ruleDescription }}
         </div>
       </n-card>
 
       <!-- 任务条件 -->
-      <n-card v-if="taskData.taskConditions" title="任务条件配置" size="small">
+      <n-card v-if="taskData.taskConditions" :title="$t('activity.taskDetail.k4efb6')" size="small">
         <n-code
           :code="JSON.stringify(taskData.taskConditions, null, 2)"
           language="json"
@@ -95,40 +95,40 @@
       </n-card>
 
       <!-- 时间设置 -->
-      <n-card title="时间设置" size="small">
+      <n-card :title="$t('activity.taskDetail.k65f6')" size="small">
         <n-descriptions
           :column="1"
           label-placement="left"
           :label-style="{ fontWeight: '500' }"
         >
-          <n-descriptions-item label="开始时间">
+          <n-descriptions-item :label="$t('activity.formModal.k5f00')">
             {{
-              taskData.startTime ? formatDateTime(taskData.startTime) : '无限制'
+              taskData.startTime ? formatDateTime(taskData.startTime) : $t('activity.common.unlimited')
             }}
           </n-descriptions-item>
-          <n-descriptions-item label="结束时间">
-            {{ taskData.endTime ? formatDateTime(taskData.endTime) : '无限制' }}
+          <n-descriptions-item :label="$t('activity.formModal.k7ed3')">
+            {{ taskData.endTime ? formatDateTime(taskData.endTime) : $t('activity.common.unlimited') }}
           </n-descriptions-item>
         </n-descriptions>
       </n-card>
 
       <!-- 操作信息 -->
-      <n-card title="操作信息" size="small">
+      <n-card :title="$t('activity.taskDetail.k64cd')" size="small">
         <n-descriptions
           :column="2"
           label-placement="left"
           :label-style="{ fontWeight: '500' }"
         >
-          <n-descriptions-item label="创建人">
+          <n-descriptions-item :label="$t('activity.taskDetail.k521b')">
             {{ taskData.createdBy || '--' }}
           </n-descriptions-item>
-          <n-descriptions-item label="最后操作人">
+          <n-descriptions-item :label="$t('activity.taskDetail.k6700')">
             {{ taskData.updatedBy || '--' }}
           </n-descriptions-item>
-          <n-descriptions-item label="创建时间">
+          <n-descriptions-item :label="$t('activity.providentFund.k521b')">
             {{ formatDateTime(taskData.createdAt) }}
           </n-descriptions-item>
-          <n-descriptions-item label="更新时间">
+          <n-descriptions-item :label="$t('activity.detailModal.k66f4')">
             {{ taskData.updatedAt ? formatDateTime(taskData.updatedAt) : '--' }}
           </n-descriptions-item>
         </n-descriptions>
@@ -137,13 +137,15 @@
 
     <template #action>
       <n-space>
-        <n-button @click="showModal = false">关闭</n-button>
+        <n-button @click="showModal = false">{{ $t('activity.activityList.k5173') }}</n-button>
       </n-space>
     </template>
   </n-modal>
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { computed } from 'vue';
 import {
   NModal,
@@ -190,42 +192,12 @@ const formatDateTime = (dateString: string) => {
 // 获取任务类型标签
 const getTaskTypeLabel = (taskType: string) => {
   const typeMap: Record<string, string> = {
-    REGISTRATION: '注册任务',
-    FIRST_DEPOSIT: '首充任务',
-    DAILY_CHECKIN: '每日签到',
-    DAILY_BET: '每日投注',
-    WEEKLY_BET: '每周投注',
-    INVITE_FRIENDS: '邀请好友',
-    GAME_PLAY: '游戏体验',
-    PROFILE_COMPLETE: '完善资料',
-    BANK_BINDING: '银行卡绑定',
-    PHONE_VERIFICATION: '手机验证',
-    EMAIL_VERIFICATION: '邮箱验证',
-    CUSTOM: '自定义任务',
-  };
-  return typeMap[taskType] || taskType;
-};
-
-// 获取分类标签
-const getCategoryLabel = (category: string) => {
-  const categoryMap: Record<string, string> = {
-    NOVICE_WELFARE: '新人福利',
-    DAILY_TASK: '每日任务',
-    WEEKLY_TASK: '每周任务',
-    THREE_DAY_RANKING: '三日神秘任务',
-  };
-  return categoryMap[category] || category;
-};
-
-// 获取奖励类型标签
-const getRewardTypeLabel = (rewardType: string) => {
-  const typeMap: Record<string, string> = {
-    CASH: '现金（固定）',
-    BONUS: '奖金（浮动）',
-    POINTS: '积分',
-    FREE_SPINS: '免费旋转',
-    DISCOUNT: '折扣',
-    CUSTOM: '自定义奖励',
+    CASH: $t('activity.rewardTypes.CASH'),
+    BONUS: $t('activity.rewardTypes.BONUS'),
+    POINTS: $t('activity.rewardTypes.POINTS'),
+    FREE_SPINS: $t('activity.rewardTypes.FREE_SPINS'),
+    DISCOUNT: $t('activity.rewardTypes.DISCOUNT'),
+    CUSTOM: $t('activity.rewardTypes.CUSTOM'),
   };
   return typeMap[rewardType] || rewardType;
 };

@@ -1,32 +1,39 @@
 <template>
-  <Page auto-content-height title="注册和验证">
+  <Page auto-content-height :title="$t('user.registrationVerification.pageTitle')">
     <div class="registration-verification-layout flex min-h-[calc(100vh-140px)] flex-col gap-4 bg-[#f5f7fa] p-2">
       <n-spin :show="loading">
         <section class="setting-card">
           <div class="setting-card-header">
             <div>
-              <div class="setting-card-title">注册端限制</div>
-          
+              <div class="setting-card-title">
+                {{ $t('user.registrationVerification.platformRestrictions') }}
+              </div>
             </div>
             <button
               class="action-btn"
               :disabled="savingPlatform"
               @click="onSavePlatformRestrictions"
             >
-              {{ savingPlatform ? '保存中...' : '修改' }}
+              {{
+                savingPlatform
+                  ? $t('user.registrationVerification.saving')
+                  : $t('common.modify')
+              }}
             </button>
           </div>
 
           <div class="setting-row">
-            <div class="setting-label">启用限制</div>
+            <div class="setting-label">
+              {{ $t('user.registrationVerification.enableRestrictions') }}
+            </div>
             <div class="setting-content">
               <div class="enable-row">
                 <n-switch v-model:value="platformRestrictions.enabled" size="medium" />
                 <span class="enable-hint">
                   {{
                     platformRestrictions.enabled
-                      ? '已启用：未勾选的端将无法注册'
-                      : '未启用：所有端均可注册'
+                      ? $t('user.registrationVerification.enabledHint')
+                      : $t('user.registrationVerification.disabledHint')
                   }}
                 </span>
               </div>
@@ -44,13 +51,15 @@
                 :bordered="false"
                 class="platform-alert"
               >
-                建议：若发现电脑端（Windows）短时间大量注册，可启用限制并关闭「PC / 电脑端」。
+                {{ $t('user.registrationVerification.suggestion') }}
               </n-alert>
             </div>
           </div>
 
           <div class="setting-row no-border">
-            <div class="setting-label">允许注册</div>
+            <div class="setting-label">
+              {{ $t('user.registrationVerification.allowRegistration') }}
+            </div>
             <div class="setting-content platform-grid-wrap">
               <div
                 class="platform-grid"
@@ -62,7 +71,8 @@
                   class="platform-tile"
                   :class="{
                     'platform-tile--allowed': isPlatformAllowed(item.key),
-                    'platform-tile--blocked': platformRestrictions.enabled && !isPlatformAllowed(item.key),
+                    'platform-tile--blocked':
+                      platformRestrictions.enabled && !isPlatformAllowed(item.key),
                   }"
                 >
                   <div class="platform-tile-icon" :style="{ color: item.color }">
@@ -80,8 +90,11 @@
                   />
                 </div>
               </div>
-              <p v-if="platformRestrictions.enabled && allPlatformsBlocked" class="platform-error">
-                至少保留一个允许注册的端，否则所有用户都无法注册。
+              <p
+                v-if="platformRestrictions.enabled && allPlatformsBlocked"
+                class="platform-error"
+              >
+                {{ $t('user.registrationVerification.keepOnePlatform') }}
               </p>
             </div>
           </div>
@@ -89,41 +102,65 @@
 
         <section class="setting-card mt-4">
           <div class="setting-card-header">
-            <div class="setting-card-title">注册支持方式</div>
+            <div class="setting-card-title">
+              {{ $t('user.registrationVerification.registerSupport') }}
+            </div>
             <button class="action-btn" :disabled="savingRegister" @click="onSaveRegister">
-              {{ savingRegister ? '保存中...' : '修改' }}
+              {{
+                savingRegister
+                  ? $t('user.registrationVerification.saving')
+                  : $t('common.modify')
+              }}
             </button>
           </div>
 
           <div class="setting-row">
-            <div class="setting-label">支持方式</div>
+            <div class="setting-label">
+              {{ $t('user.registrationVerification.supportMethods') }}
+            </div>
             <div class="setting-content">
               <div class="option-line">
                 <label class="check-label">
                   <input v-model="registerSupport.phone" type="checkbox" />
-                  <span>手机号码</span>
+                  <span>{{ $t('user.registrationVerification.phoneNumber') }}</span>
                 </label>
-                <button class="text-link" @click="hintComingSoon('短信配置')">(短信配置)</button>
+                <button
+                  class="text-link"
+                  @click="hintComingSoon($t('user.registrationVerification.smsConfig'))"
+                >
+                  ({{ $t('user.registrationVerification.smsConfig') }})
+                </button>
               </div>
               <div class="option-line">
                 <label class="check-label">
                   <input v-model="registerSupport.email" type="checkbox" />
-                  <span>邮箱</span>
+                  <span>{{ $t('user.registrationVerification.email') }}</span>
                 </label>
-                <button class="text-link" @click="hintComingSoon('邮箱验证')">(邮箱配置)</button>
+                <button
+                  class="text-link"
+                  @click="hintComingSoon($t('user.registrationVerification.emailConfig'))"
+                >
+                  ({{ $t('user.registrationVerification.emailConfig') }})
+                </button>
               </div>
               <label class="check-label">
                 <input v-model="registerSupport.memberAccount" type="checkbox" />
-                <span>会员账号</span>
+                <span>{{ $t('common.memberAccount') }}</span>
               </label>
             </div>
           </div>
 
           <div class="setting-row no-border">
-            <div class="setting-label">默认注册方式</div>
+            <div class="setting-label">
+              {{ $t('user.registrationVerification.defaultRegisterMethod') }}
+            </div>
             <div class="setting-content">
               <select v-model="registerSupport.defaultRegisterMethod" class="select-box">
-                <option v-for="item in registerDefaultOptions" :key="item.value" :value="item.value">
+                <option
+                  v-for="item in registerDefaultOptions"
+                  :key="item.value"
+                  :value="item.value"
+                >
                   {{ item.label }}
                 </option>
               </select>
@@ -133,42 +170,66 @@
 
         <section class="setting-card mt-4">
           <div class="setting-card-header">
-            <div class="setting-card-title">登录支持方式</div>
+            <div class="setting-card-title">
+              {{ $t('user.registrationVerification.loginSupport') }}
+            </div>
             <button class="action-btn" :disabled="savingLogin" @click="onSaveLogin">
-              {{ savingLogin ? '保存中...' : '修改' }}
+              {{
+                savingLogin
+                  ? $t('user.registrationVerification.saving')
+                  : $t('common.modify')
+              }}
             </button>
           </div>
 
           <div class="setting-row">
-            <div class="setting-label">支持方式</div>
+            <div class="setting-label">
+              {{ $t('user.registrationVerification.supportMethods') }}
+            </div>
             <div class="setting-content">
               <div class="option-line">
                 <label class="check-label">
                   <input v-model="loginSupport.phone" type="checkbox" />
-                  <span>手机号码</span>
+                  <span>{{ $t('user.registrationVerification.phoneNumber') }}</span>
                 </label>
-                <button class="text-link" @click="hintComingSoon('短信配置')">(短信配置)</button>
+                <button
+                  class="text-link"
+                  @click="hintComingSoon($t('user.registrationVerification.smsConfig'))"
+                >
+                  ({{ $t('user.registrationVerification.smsConfig') }})
+                </button>
               </div>
               <div class="option-line">
                 <label class="check-label">
                   <input v-model="loginSupport.email" type="checkbox" />
-                  <span>邮箱</span>
+                  <span>{{ $t('user.registrationVerification.email') }}</span>
                 </label>
-                <button class="text-link" @click="hintComingSoon('邮箱验证')">(绑定配置)</button>
+                <button
+                  class="text-link"
+                  @click="hintComingSoon($t('user.registrationVerification.emailConfig'))"
+                >
+                  ({{ $t('user.registrationVerification.bindConfig') }})
+                </button>
               </div>
               <label class="check-label">
                 <input v-model="loginSupport.memberAccount" type="checkbox" />
-                <span>会员账号</span>
+                <span>{{ $t('common.memberAccount') }}</span>
               </label>
             </div>
           </div>
 
           <div class="setting-row no-border">
-            <div class="setting-label">默认登录方式</div>
+            <div class="setting-label">
+              {{ $t('user.registrationVerification.defaultLoginMethod') }}
+            </div>
             <div class="setting-content">
               <select v-model="defaultLoginMethod" class="select-box">
-                <option value="" disabled>请选择</option>
-                <option v-for="item in loginDefaultOptions" :key="item.value" :value="item.value">
+                <option value="" disabled>{{ $t('common.pleaseSelect') }}</option>
+                <option
+                  v-for="item in loginDefaultOptions"
+                  :key="item.value"
+                  :value="item.value"
+                >
                   {{ item.label }}
                 </option>
               </select>
@@ -181,6 +242,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { Page } from '@vben/common-ui';
 import {
   LogoAndroid,
@@ -215,18 +278,24 @@ const meta = ref({
 });
 
 const config = ref<RegistrationVerificationConfigPayload | null>(null);
-const registerSupport = ref<RegistrationVerificationConfigPayload['publicPage']['registerSupport']>({
+const registerSupport = ref<
+  RegistrationVerificationConfigPayload['publicPage']['registerSupport']
+>({
   phone: true,
   email: false,
   memberAccount: true,
   defaultRegisterMethod: 'member_account',
 });
-const loginSupport = ref<RegistrationVerificationConfigPayload['publicPage']['loginSupport']>({
+const loginSupport = ref<
+  RegistrationVerificationConfigPayload['publicPage']['loginSupport']
+>({
   phone: true,
   email: false,
   memberAccount: true,
 });
-const defaultLoginMethod = ref<'phone' | 'email' | 'member_account'>('member_account');
+const defaultLoginMethod = ref<'phone' | 'email' | 'member_account'>(
+  'member_account',
+);
 
 const defaultPlatformRestrictions = (): RegistrationPlatformRestrictions => ({
   enabled: false,
@@ -240,56 +309,49 @@ const platformRestrictions = ref<RegistrationPlatformRestrictions>(
   defaultPlatformRestrictions(),
 );
 
-const platformOptions: Array<{
-  key: PlatformKey;
-  label: string;
-  description: string;
-  icon: typeof LogoWindows;
-  color: string;
-  allowField: keyof RegistrationPlatformRestrictions;
-}> = [
+const platformOptions = computed(() => [
   {
-    key: 'pc',
-    label: 'PC / 电脑端',
-    description: 'Windows、Mac 浏览器等桌面访问（刷号高发）',
+    key: 'pc' as PlatformKey,
+    label: $t('user.registrationVerification.platformPc'),
+    description: $t('user.registrationVerification.platformPcDesc'),
     icon: LogoWindows,
     color: '#0078d4',
-    allowField: 'allowPc',
+    allowField: 'allowPc' as keyof RegistrationPlatformRestrictions,
   },
   {
-    key: 'apple',
-    label: 'Apple / iOS',
-    description: 'iPhone、iPad、iOS App 与 Safari H5',
+    key: 'apple' as PlatformKey,
+    label: $t('user.registrationVerification.platformApple'),
+    description: $t('user.registrationVerification.platformAppleDesc'),
     icon: LogoApple,
     color: '#333333',
-    allowField: 'allowApple',
+    allowField: 'allowApple' as keyof RegistrationPlatformRestrictions,
   },
   {
-    key: 'android',
-    label: 'Android',
-    description: 'Android App 与手机浏览器 H5',
+    key: 'android' as PlatformKey,
+    label: $t('user.registrationVerification.platformAndroid'),
+    description: $t('user.registrationVerification.platformAndroidDesc'),
     icon: LogoAndroid,
     color: '#3ddc84',
-    allowField: 'allowAndroid',
+    allowField: 'allowAndroid' as keyof RegistrationPlatformRestrictions,
   },
   {
-    key: 'other',
-    label: '其他端',
-    description: '无法识别的客户端、部分 WebView / 第三方容器',
+    key: 'other' as PlatformKey,
+    label: $t('user.registrationVerification.platformOther'),
+    description: $t('user.registrationVerification.platformOtherDesc'),
     icon: PhonePortraitOutline,
     color: '#8c8c8c',
-    allowField: 'allowOther',
+    allowField: 'allowOther' as keyof RegistrationPlatformRestrictions,
   },
-];
+]);
 
 function isPlatformAllowed(key: PlatformKey): boolean {
-  const field = platformOptions.find((p) => p.key === key)?.allowField;
+  const field = platformOptions.value.find((p) => p.key === key)?.allowField;
   if (!field || field === 'enabled') return true;
   return platformRestrictions.value[field] !== false;
 }
 
 function setPlatformAllowed(key: PlatformKey, allowed: boolean) {
-  const field = platformOptions.find((p) => p.key === key)?.allowField;
+  const field = platformOptions.value.find((p) => p.key === key)?.allowField;
   if (!field || field === 'enabled') return;
   platformRestrictions.value[field] = allowed;
 }
@@ -306,26 +368,60 @@ const allPlatformsBlocked = computed(() => {
 
 const platformBlockSummary = computed(() => {
   if (!platformRestrictions.value.enabled) return '';
-  const blocked = platformOptions
+  const blocked = platformOptions.value
     .filter((p) => !isPlatformAllowed(p.key))
     .map((p) => p.label);
-  if (blocked.length === 0) return '当前未关闭任何端，所有客户端均可注册。';
-  return `已关闭注册：${blocked.join('、')}。其余端可正常注册。`;
+  if (blocked.length === 0) {
+    return $t('user.registrationVerification.allPlatformsOpen');
+  }
+  return $t('user.registrationVerification.platformsBlocked', [
+    blocked.join('、'),
+  ]);
 });
 
 const registerDefaultOptions = computed(() => {
-  const opts: Array<{ label: string; value: 'phone' | 'email' | 'member_account' }> = [];
-  if (registerSupport.value.phone) opts.push({ label: '手机号码', value: 'phone' });
-  if (registerSupport.value.email) opts.push({ label: '邮箱', value: 'email' });
-  if (registerSupport.value.memberAccount) opts.push({ label: '会员账号', value: 'member_account' });
+  const opts: Array<{
+    label: string;
+    value: 'phone' | 'email' | 'member_account';
+  }> = [];
+  if (registerSupport.value.phone) {
+    opts.push({
+      label: $t('user.registrationVerification.phoneNumber'),
+      value: 'phone',
+    });
+  }
+  if (registerSupport.value.email) {
+    opts.push({
+      label: $t('user.registrationVerification.email'),
+      value: 'email',
+    });
+  }
+  if (registerSupport.value.memberAccount) {
+    opts.push({ label: $t('common.memberAccount'), value: 'member_account' });
+  }
   return opts;
 });
 
 const loginDefaultOptions = computed(() => {
-  const opts: Array<{ label: string; value: 'phone' | 'email' | 'member_account' }> = [];
-  if (loginSupport.value.phone) opts.push({ label: '手机号码', value: 'phone' });
-  if (loginSupport.value.email) opts.push({ label: '邮箱', value: 'email' });
-  if (loginSupport.value.memberAccount) opts.push({ label: '会员账号', value: 'member_account' });
+  const opts: Array<{
+    label: string;
+    value: 'phone' | 'email' | 'member_account';
+  }> = [];
+  if (loginSupport.value.phone) {
+    opts.push({
+      label: $t('user.registrationVerification.phoneNumber'),
+      value: 'phone',
+    });
+  }
+  if (loginSupport.value.email) {
+    opts.push({
+      label: $t('user.registrationVerification.email'),
+      value: 'email',
+    });
+  }
+  if (loginSupport.value.memberAccount) {
+    opts.push({ label: $t('common.memberAccount'), value: 'member_account' });
+  }
   return opts;
 });
 
@@ -355,7 +451,7 @@ function normalizePlatformRestrictions(
 }
 
 function hintComingSoon(name: string) {
-  message.info(`「${name}」请从对应顶栏菜单进入（开发中可在此接入路由）`);
+  message.info($t('user.registrationVerification.comingSoonHint', [name]));
 }
 
 function ensureSelectValueValid() {
@@ -373,7 +469,9 @@ function ensureSelectValueValid() {
 }
 
 function applyFromConfig(data: RegistrationVerificationConfigPayload) {
-  config.value = JSON.parse(JSON.stringify(data)) as RegistrationVerificationConfigPayload;
+  config.value = JSON.parse(
+    JSON.stringify(data),
+  ) as RegistrationVerificationConfigPayload;
   platformRestrictions.value = normalizePlatformRestrictions(
     data.registrationPlatformRestrictions,
   );
@@ -421,7 +519,7 @@ watch(
 async function onSavePlatformRestrictions() {
   if (!config.value) return;
   if (allPlatformsBlocked.value) {
-    message.warning('至少保留一个允许注册的端');
+    message.warning($t('user.registrationVerification.keepOnePlatform'));
     return;
   }
   savingPlatform.value = true;
@@ -439,7 +537,7 @@ async function onSavePlatformRestrictions() {
     });
     meta.value.version = d.version;
     applyFromConfig(d.config);
-    message.success('注册端限制已保存');
+    message.success($t('user.registrationVerification.platformSaved'));
   } catch (e) {
     message.error((e as Error).message);
   } finally {
@@ -455,10 +553,15 @@ async function onSaveRegister() {
     const nextConfig = JSON.parse(
       JSON.stringify(config.value),
     ) as RegistrationVerificationConfigPayload;
-    nextConfig.publicPage.registerSupport = JSON.parse(JSON.stringify(registerSupport.value));
-    nextConfig.publicPage.loginSupport.defaultLoginMethod = defaultLoginMethod.value;
-    nextConfig.registrationSupportMethods.channels.phone = registerSupport.value.phone;
-    nextConfig.registrationSupportMethods.channels.email = registerSupport.value.email;
+    nextConfig.publicPage.registerSupport = JSON.parse(
+      JSON.stringify(registerSupport.value),
+    );
+    nextConfig.publicPage.loginSupport.defaultLoginMethod =
+      defaultLoginMethod.value;
+    nextConfig.registrationSupportMethods.channels.phone =
+      registerSupport.value.phone;
+    nextConfig.registrationSupportMethods.channels.email =
+      registerSupport.value.email;
     nextConfig.registrationSupportMethods.channels.memberAccount =
       registerSupport.value.memberAccount;
     nextConfig.registrationSupportMethods.defaultChannel =
@@ -473,7 +576,7 @@ async function onSaveRegister() {
     });
     meta.value.version = d.version;
     applyFromConfig(d.config);
-    message.success('注册支持方式已保存');
+    message.success($t('user.registrationVerification.registerSaved'));
   } catch (e) {
     message.error((e as Error).message);
   } finally {
@@ -489,8 +592,11 @@ async function onSaveLogin() {
     const nextConfig = JSON.parse(
       JSON.stringify(config.value),
     ) as RegistrationVerificationConfigPayload;
-    nextConfig.publicPage.loginSupport = JSON.parse(JSON.stringify(loginSupport.value));
-    nextConfig.publicPage.loginSupport.defaultLoginMethod = defaultLoginMethod.value;
+    nextConfig.publicPage.loginSupport = JSON.parse(
+      JSON.stringify(loginSupport.value),
+    );
+    nextConfig.publicPage.loginSupport.defaultLoginMethod =
+      defaultLoginMethod.value;
     const d = await saveRegistrationVerificationConfigApi({
       scope: meta.value.scope,
       scopeValue: meta.value.scopeValue,
@@ -498,7 +604,7 @@ async function onSaveLogin() {
     });
     meta.value.version = d.version;
     applyFromConfig(d.config);
-    message.success('登录支持方式已保存');
+    message.success($t('user.registrationVerification.loginSaved'));
   } catch (e) {
     message.error((e as Error).message);
   } finally {
@@ -531,14 +637,6 @@ onMounted(() => {
   font-size: 18px;
   font-weight: 600;
   color: #111827;
-}
-
-.setting-card-subtitle {
-  margin: 4px 0 0;
-  font-size: 13px;
-  font-weight: 400;
-  color: #6b7280;
-  line-height: 1.4;
 }
 
 .action-btn {

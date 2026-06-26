@@ -59,8 +59,8 @@
               v-model:value="formData.isActive"
               :rail-style="switchRailStyle"
             >
-              <template #checked>启用</template>
-              <template #unchecked>停用</template>
+              <template #checked>{{ $t('common.enable') }}</template>
+              <template #unchecked>{{ $t('common.disable') }}</template>
             </n-switch>
           </n-form-item>
         </n-grid-item>
@@ -382,7 +382,7 @@
 
     <template #footer>
       <n-space justify="center">
-        <n-button @click="handleClose">取消</n-button>
+        <n-button @click="handleClose">{{ $t('common.cancel') }}</n-button>
         <n-button type="primary" @click="handleSubmit" :loading="submitting">
           {{ mode === 'add' ? '创建' : '更新' }}
         </n-button>
@@ -392,6 +392,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, computed, watch, nextTick } from 'vue';
 import { useMessage } from 'naive-ui';
 import type { FormInst, FormRules } from 'naive-ui';

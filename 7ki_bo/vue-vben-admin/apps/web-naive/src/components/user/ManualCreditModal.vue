@@ -2,31 +2,31 @@
   <n-modal
     v-model:show="visible"
     preset="card"
-    title="新增手动加款"
+    :title="$t('user.manualCredit.addTitle')"
     :style="{ width: '600px' }"
   >
     <div class="space-y-4">
       <!-- User Info Header -->
       <div class="grid grid-cols-3 gap-4 rounded bg-gray-50 p-4">
         <div>
-          <span class="text-sm text-gray-600">会员ID:</span>
+          <span class="text-sm text-gray-600">{{ $t('user.manualDebit.memberId') }}:</span>
           <span class="ml-2 font-medium text-gray-600">{{ userInfo.id }}</span>
         </div>
         <div>
-          <span class="text-sm text-gray-600">会员账号:</span>
+          <span class="text-sm text-gray-600">{{ $t('user.manualDebit.memberAccount') }}:</span>
           <span class="ml-2 font-medium text-gray-600">{{
             userInfo.account
           }}</span>
         </div>
         <div class="flex items-center justify-between">
           <div>
-            <span class="text-sm text-gray-600">会员币种:</span>
+            <span class="text-sm text-gray-600">{{ $t('user.manualDebit.memberCurrency') }}:</span>
             <span class="ml-2 font-medium text-gray-600">{{
               userInfo.currency
             }}</span>
           </div>
           <n-button size="small" @click="refreshBalance" :loading="loading">
-            刷新余额
+            {{ $t('user.manualCredit.refreshBalance') }}
           </n-button>
         </div>
       </div>
@@ -40,24 +40,24 @@
         label-width="120px"
       >
         <div class="grid grid-cols-2 gap-4">
-          <n-form-item label="会员ID">
+          <n-form-item :label="$t('user.manualDebit.memberId')">
             <n-input v-model:value="formData.memberId" readonly />
           </n-form-item>
 
-          <n-form-item label="真实姓名">
+          <n-form-item :label="$t('user.userDetail.realName')">
             <n-input v-model:value="formData.realName" readonly />
           </n-form-item>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
-          <n-form-item label="账户余额">
+          <n-form-item :label="$t('user.advancedSearch.accountBalance')">
             <n-input-group>
               <n-input v-model:value="formData.accountBalance" readonly />
               <n-input-group-label>{{ userInfo.currency }}</n-input-group-label>
             </n-input-group>
           </n-form-item>
 
-          <n-form-item label="利息宝余额">
+          <n-form-item :label="$t('user.manualCredit.interestBalance')">
             <n-input-group>
               <n-input v-model:value="formData.interestBalance" readonly />
               <n-input-group-label>{{ userInfo.currency }}</n-input-group-label>
@@ -65,34 +65,34 @@
           </n-form-item>
         </div>
 
-        <n-form-item label="会计总余额">
+        <n-form-item :label="$t('user.manualCredit.accountingTotalBalance')">
           <n-input-group>
             <n-input v-model:value="formData.totalBalance" readonly />
             <n-input-group-label>{{ userInfo.currency }}</n-input-group-label>
           </n-input-group>
         </n-form-item>
 
-        <n-form-item label="类型" path="type">
+        <n-form-item :label="$t('common.type')" path="type">
           <n-radio-group v-model:value="formData.type">
             <n-space>
-              <n-radio value="manual_credit">手动补单</n-radio>
-              <n-radio value="manual_add">人工加款</n-radio>
+              <n-radio value="manual_credit">{{ $t('user.manualCredit.manualAddOrder') }}</n-radio>
+              <n-radio value="manual_add">{{ $t('user.manualCredit.manualAdd') }}</n-radio>
             </n-space>
           </n-radio-group>
         </n-form-item>
 
-        <n-form-item label="订单金额" path="amount">
+        <n-form-item :label="$t('user.manualCredit.orderAmount')" path="amount">
           <n-input-group>
             <n-input-group-label>{{ userInfo.currency }}</n-input-group-label>
             <n-input
               v-model:value="formData.amount"
-              placeholder="请输入订单金额"
+              :placeholder="$t('user.manualCredit.enterOrderAmount')"
               type="number"
             />
           </n-input-group>
         </n-form-item>
 
-        <n-form-item label="倍数倍数">
+        <n-form-item :label="$t('user.manualCredit.multiplier')">
           <n-input-number
             v-model:value="formData.multiplier"
             :min="1"
@@ -101,31 +101,31 @@
           />
         </n-form-item>
 
-        <n-form-item label="补单说明" path="description">
+        <n-form-item :label="$t('user.manualCredit.adjustmentDescription')" path="description">
           <n-input
             v-model:value="formData.description"
             type="textarea"
-            placeholder="请输入补单事件说明"
+            :placeholder="$t('user.manualCredit.enterAdjustmentDescription')"
             :maxlength="1000"
             show-count
           />
         </n-form-item>
 
-        <n-form-item label="前台备注">
+        <n-form-item :label="$t('user.manualCredit.frontendNote')">
           <n-input
             v-model:value="formData.frontendNotes"
             type="textarea"
-            placeholder="请输入显示在客户端的备注"
+            :placeholder="$t('user.manualCredit.frontendNotePlaceholder')"
             :maxlength="1000"
             show-count
           />
         </n-form-item>
 
-        <n-form-item label="后台备注">
+        <n-form-item :label="$t('user.manualCredit.backendNote')">
           <n-input
             v-model:value="formData.backendNotes"
             type="textarea"
-            placeholder="请输入显示在管理后台的备注"
+            :placeholder="$t('user.manualCredit.backendNotePlaceholder')"
             :maxlength="1000"
             show-count
           />
@@ -135,9 +135,9 @@
 
     <template #footer>
       <div class="flex justify-end gap-3">
-        <n-button @click="handleCancel">取消</n-button>
+        <n-button @click="handleCancel">{{ $t('common.cancel') }}</n-button>
         <n-button type="primary" :loading="loading" @click="handleConfirm"
-          >确认</n-button
+          >{{ $t('common.confirm') }}</n-button
         >
       </div>
     </template>
@@ -145,13 +145,13 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed } from 'vue';
 import {
   NModal,
-  NCard,
   NForm,
   NFormItem,
-  NSelect,
   NInput,
   NInputGroup,
   NInputGroupLabel,
@@ -160,9 +160,6 @@ import {
   NRadio,
   NButton,
   NSpace,
-  NText,
-  NDivider,
-  type FormRules,
 } from 'naive-ui';
 import { notification } from '#/adapter/naive';
 import { requestClient } from '#/api/request';
@@ -207,23 +204,23 @@ const formData = reactive({
 });
 
 // Form rules
-const rules = {
+const rules = computed(() => ({
   type: {
     required: true,
-    message: '请选择类型',
+    message: $t('user.manualCredit.selectTypeRequired'),
     trigger: 'change',
   },
   amount: {
     required: true,
-    message: '请输入订单金额',
+    message: $t('user.manualCredit.enterOrderAmount'),
     trigger: 'blur',
   },
   description: {
     required: true,
-    message: '请输入补单说明',
+    message: $t('user.manualCredit.enterOrderDescriptionRequired'),
     trigger: 'blur',
   },
-};
+}));
 
 // Methods
 const initFormData = () => {
@@ -238,30 +235,19 @@ const initFormData = () => {
   }
 };
 
-// Refresh balance data from API
 const refreshBalance = async () => {
   try {
     if (!props.user?.id) return;
 
-    console.log('Refreshing balance data for user:', props.user.id);
-
-    // Call API to get fresh user data
     const response = await requestClient.get(`/users/${props.user.id}`);
-
-    console.log('Balance refresh API response:', response);
-
-    // Check if we have data - requestClient might unwrap the response automatically
     const userData = response.data || response;
 
     if (userData && (userData.id || userData.balance !== undefined)) {
-      // Update form with fresh balance data
       formData.accountBalance = Number(userData.balance || 0).toFixed(2);
       formData.interestBalance = Number(userData.savingsWallet || 0).toFixed(2);
       formData.totalBalance = (
         Number(userData.balance || 0) + Number(userData.savingsWallet || 0)
       ).toFixed(2);
-
-      console.log('Balance refreshed successfully');
     } else {
       throw new Error('No user data in response');
     }
@@ -280,7 +266,6 @@ const handleConfirm = async () => {
     await formRef.value?.validate();
     loading.value = true;
 
-    // Prepare API data
     const apiData = {
       userId: props.user?.id,
       type: 'credit',
@@ -293,30 +278,18 @@ const handleConfirm = async () => {
       currency: userInfo.value.currency,
     };
 
-    console.log('🚀 Submitting manual credit transaction:', apiData);
-
-    // Submit to backend API
     const response = await requestClient.post('/transactions/manual', apiData);
-
-    console.log('💰 Manual credit API response:', response);
-
-    // Handle successful response
     handleTransactionSuccess(response, 'credit');
   } catch (error) {
     console.error('Manual credit error:', error);
 
-    // Check if this is actually a successful response being thrown as an error
     if (error && typeof error === 'object' && error.success === true) {
-      console.log(
-        '🔧 Detected successful response in error - treating as success',
-      );
       handleTransactionSuccess(error, 'credit');
       return;
     }
 
-    // Show error notification only for real errors
     notification.error({
-      content: '操作失败，请重试',
+      content: $t('common.operationFailed'),
       duration: 3000,
     });
   } finally {
@@ -324,21 +297,15 @@ const handleConfirm = async () => {
   }
 };
 
-// Helper function to handle successful transactions
-const handleTransactionSuccess = (response, transactionType) => {
-  console.log('💰 Processing successful transaction:', response);
-
-  // Immediately close modal
+const handleTransactionSuccess = (response: any, transactionType: string) => {
   visible.value = false;
   resetForm();
 
-  // Show success notification
   notification.success({
-    content: '手动加款操作成功',
+    content: $t('user.manualCredit.creditSuccess'),
     duration: 3000,
   });
 
-  // Emit transaction data for immediate balance update
   const transactionData = {
     type: transactionType,
     subType: formData.type,
@@ -348,9 +315,6 @@ const handleTransactionSuccess = (response, transactionType) => {
     result: response,
   };
 
-  console.log('📤 Emitting success event with data:', transactionData);
-
-  // Emit success event to trigger immediate refresh
   emit('success', transactionData);
 };
 
@@ -373,7 +337,6 @@ const close = () => {
   resetForm();
 };
 
-// Expose methods
 defineExpose({
   open,
   close,

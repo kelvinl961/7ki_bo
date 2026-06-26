@@ -1,45 +1,52 @@
 <template>
   <div class="withdraw-account-tab">
-    <!-- Account Summary -->
-    <n-card title="提现账号概览" class="mb-4">
+    <n-card :title="$t('agency.withdrawAccount.overview')" class="mb-4">
       <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
         <div class="stat-card">
           <div class="stat-value">{{ withdrawAccounts.length }}</div>
-          <div class="stat-label">总账号数</div>
+          <div class="stat-label">
+            {{ $t('agency.withdrawAccount.totalAccounts') }}
+          </div>
         </div>
         <div class="stat-card">
           <div class="stat-value">{{ activeAccounts.length }}</div>
-          <div class="stat-label">活跃账号</div>
+          <div class="stat-label">
+            {{ $t('agency.withdrawAccount.activeAccounts') }}
+          </div>
         </div>
         <div class="stat-card">
           <div class="stat-value">{{ verifiedAccounts.length }}</div>
-          <div class="stat-label">已验证账号</div>
+          <div class="stat-label">
+            {{ $t('agency.withdrawAccount.verifiedAccounts') }}
+          </div>
         </div>
         <div class="stat-card">
           <div class="stat-value">
             {{ formatCurrency(totalWithdrawAmount) }}
           </div>
-          <div class="stat-label">累计提现</div>
+          <div class="stat-label">
+            {{ $t('agency.withdrawAccount.totalWithdrawn') }}
+          </div>
         </div>
       </div>
     </n-card>
 
-    <!-- Action Buttons -->
-    <n-card title="操作" class="mb-4">
+    <n-card :title="$t('common.actions')" class="mb-4">
       <div class="flex flex-wrap gap-2">
         <n-button type="primary" @click="handleAddAccount">
-          添加提现账号
+          {{ $t('agency.withdrawAccount.addAccount') }}
         </n-button>
-        <n-button type="info" @click="handleBatchVerify"> 批量验证 </n-button>
+        <n-button type="info" @click="handleBatchVerify">
+          {{ $t('agency.withdrawAccount.batchVerify') }}
+        </n-button>
         <n-button type="warning" @click="handleExportAccounts">
-          导出账号
+          {{ $t('agency.withdrawAccount.exportAccounts') }}
         </n-button>
-        <n-button @click="handleRefresh"> 刷新 </n-button>
+        <n-button @click="handleRefresh"> {{ $t('common.refresh') }} </n-button>
       </div>
     </n-card>
 
-    <!-- Withdraw Accounts Table -->
-    <n-card title="提现账号列表">
+    <n-card :title="$t('agency.withdrawAccount.accountList')">
       <n-data-table
         :columns="columns"
         :data="withdrawAccounts"
@@ -50,11 +57,10 @@
       />
     </n-card>
 
-    <!-- Add/Edit Account Modal -->
     <n-modal
       v-model:show="showAccountModal"
       preset="card"
-      title="提现账号"
+      :title="$t('agency.withdrawAccount.accountTitle')"
       style="width: 600px"
     >
       <n-form
@@ -64,72 +70,81 @@
         label-placement="left"
         label-width="120px"
       >
-        <n-form-item label="账号类型" path="type">
+        <n-form-item
+          :label="$t('agency.withdrawAccount.accountType')"
+          path="type"
+        >
           <n-select
             v-model:value="accountForm.type"
             :options="accountTypeOptions"
           />
         </n-form-item>
 
-        <n-form-item label="账号名称" path="name">
+        <n-form-item
+          :label="$t('agency.withdrawAccount.accountName')"
+          path="name"
+        >
           <n-input
             v-model:value="accountForm.name"
-            placeholder="请输入账号名称"
-          />
-        </n-form-item>
-
-        <n-form-item label="账号号码" path="number">
-          <n-input
-            v-model:value="accountForm.number"
-            placeholder="请输入账号号码"
+            :placeholder="$t('agency.withdrawAccount.enterAccountName')"
           />
         </n-form-item>
 
         <n-form-item
-          label="开户行"
+          :label="$t('agency.withdrawAccount.accountNumber')"
+          path="number"
+        >
+          <n-input
+            v-model:value="accountForm.number"
+            :placeholder="$t('agency.withdrawAccount.enterAccountNumber')"
+          />
+        </n-form-item>
+
+        <n-form-item
+          :label="$t('agency.withdrawAccount.bankName')"
           path="bank"
           v-if="accountForm.type === 'bank'"
         >
           <n-input
             v-model:value="accountForm.bank"
-            placeholder="请输入开户行"
+            :placeholder="$t('agency.withdrawAccount.enterBankName')"
           />
         </n-form-item>
 
         <n-form-item
-          label="支付宝账号"
+          :label="$t('agency.withdrawAccount.alipayAccount')"
           path="alipayAccount"
           v-if="accountForm.type === 'alipay'"
         >
           <n-input
             v-model:value="accountForm.alipayAccount"
-            placeholder="请输入支付宝账号"
+            :placeholder="$t('agency.withdrawAccount.enterAlipay')"
           />
         </n-form-item>
 
         <n-form-item
-          label="微信账号"
+          :label="$t('agency.withdrawAccount.wechatAccount')"
           path="wechatAccount"
           v-if="accountForm.type === 'wechat'"
         >
           <n-input
             v-model:value="accountForm.wechatAccount"
-            placeholder="请输入微信账号"
+            :placeholder="$t('agency.withdrawAccount.enterWechat')"
           />
         </n-form-item>
 
-        <n-form-item label="状态" path="status">
+        <n-form-item :label="$t('common.status')" path="status">
           <n-select
             v-model:value="accountForm.status"
             :options="statusOptions"
           />
         </n-form-item>
 
-        <n-form-item label="备注" path="remark">
+        <n-form-item :label="$t('common.remark')" path="remark">
           <n-input
             v-model:value="accountForm.remark"
             type="textarea"
-            placeholder="请输入备注信息"
+            :placeholder="$t('agency.withdrawAccount.enterRemark')"
             :rows="3"
           />
         </n-form-item>
@@ -137,13 +152,13 @@
 
       <template #action>
         <div class="flex gap-2">
-          <n-button @click="showAccountModal = false">取消</n-button>
+          <n-button @click="showAccountModal = false">{{ $t('common.cancel') }}</n-button>
           <n-button
             type="primary"
             @click="handleSubmitAccount"
             :loading="submitting"
           >
-            {{ isEdit ? '更新' : '添加' }}
+            {{ isEdit ? $t('agency.shared.update') : $t('common.add') }}
           </n-button>
         </div>
       </template>
@@ -152,6 +167,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, h, onMounted } from 'vue';
 import {
   NCard,
@@ -195,16 +212,12 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const message = useMessage();
-
-// Reactive data
 const loading = ref(false);
 const submitting = ref(false);
 const showAccountModal = ref(false);
 const isEdit = ref(false);
 const currentAccountId = ref<number | null>(null);
 const formRef = ref<FormInst | null>(null);
-
-// Data from API
 const withdrawAccounts = ref<AgentWithdrawalAccount[]>([]);
 
 const accountForm = reactive<AccountForm>({
@@ -218,40 +231,38 @@ const accountForm = reactive<AccountForm>({
   remark: '',
 });
 
-// Options
-const accountTypeOptions = [
-  { label: '银行账户', value: 'bank' },
-  { label: '支付宝', value: 'alipay' },
-  { label: '微信', value: 'wechat' },
-  { label: '其他', value: 'other' },
-];
+const accountTypeOptions = computed(() => [
+  { label: $t('agency.withdrawAccount.bankAccount'), value: 'bank' },
+  { label: $t('agency.withdrawAccount.alipay'), value: 'alipay' },
+  { label: $t('agency.withdrawAccount.wechat'), value: 'wechat' },
+  { label: $t('agency.withdrawAccount.other'), value: 'other' },
+]);
 
-const statusOptions = [
-  { label: '活跃', value: 'active' },
-  { label: '停用', value: 'inactive' },
-  { label: '待验证', value: 'pending' },
-];
+const statusOptions = computed(() => [
+  { label: $t('agency.withdrawAccount.active'), value: 'active' },
+  { label: $t('agency.withdrawAccount.inactive'), value: 'inactive' },
+  { label: $t('agency.withdrawAccount.pending'), value: 'pending' },
+]);
 
-// Pagination
 const pagination = reactive({
   page: 1,
   pageSize: 10,
   itemCount: 0,
   showSizePicker: true,
   pageSizes: [10, 20, 50],
-  prefix: (info: any) => `共 ${info.itemCount} 条`,
+  prefix: (info: { itemCount: number }) =>
+    $t('agency.withdrawAccount.totalRecords', [info.itemCount]),
   onUpdatePage: (page: number) => {
     pagination.page = page;
     loadAccounts();
   },
   onUpdatePageSize: (pageSize: number) => {
     pagination.pageSize = pageSize;
-    pagination.current = 1;
+    pagination.page = 1;
     loadAccounts();
   },
 });
 
-// Computed
 const activeAccounts = computed(() =>
   withdrawAccounts.value.filter((account) => account.status === 'active'),
 );
@@ -262,13 +273,42 @@ const verifiedAccounts = computed(() =>
 
 const isBankType = computed(() => accountForm.type === 'bank');
 
-const totalWithdrawAmount = computed(() => {
-  // This would need to be calculated from actual withdrawal data
-  return 5000.0;
-});
+const totalWithdrawAmount = computed(() => 5000.0);
 
-// Table columns
-const columns: DataTableColumns<AgentWithdrawalAccount> = [
+const getTypeLabel = (type: string) => {
+  const map: Record<string, string> = {
+    bank: $t('agency.withdrawAccount.bankAccount'),
+    alipay: $t('agency.withdrawAccount.alipay'),
+    wechat: $t('agency.withdrawAccount.wechat'),
+    other: $t('agency.withdrawAccount.other'),
+  };
+  return map[type] || type;
+};
+
+const getStatusInfo = (status: string) => {
+  const map: Record<string, { label: string; type: string; icon: string }> = {
+    active: {
+      label: $t('agency.withdrawAccount.active'),
+      type: 'success',
+      icon: '✅',
+    },
+    inactive: {
+      label: $t('agency.withdrawAccount.inactive'),
+      type: 'error',
+      icon: '❌',
+    },
+    pending: {
+      label: $t('agency.withdrawAccount.pending'),
+      type: 'warning',
+      icon: '⏳',
+    },
+  };
+  return (
+    map[status] || { label: status, type: 'default', icon: '❓' }
+  );
+};
+
+const columns = computed<DataTableColumns<AgentWithdrawalAccount>>(() => [
   {
     title: 'ID',
     key: 'id',
@@ -276,91 +316,81 @@ const columns: DataTableColumns<AgentWithdrawalAccount> = [
     align: 'center',
   },
   {
-    title: '账号类型',
+    title: $t('agency.withdrawAccount.accountType'),
     key: 'type',
     width: 100,
     render: (row) => {
-      const typeMap = {
-        bank: { label: '银行账户', type: 'info' },
-        alipay: { label: '支付宝', type: 'success' },
-        wechat: { label: '微信', type: 'success' },
-        other: { label: '其他', type: 'default' },
+      const typeMap: Record<string, { label: string; type: string }> = {
+        bank: { label: getTypeLabel('bank'), type: 'info' },
+        alipay: { label: getTypeLabel('alipay'), type: 'success' },
+        wechat: { label: getTypeLabel('wechat'), type: 'success' },
+        other: { label: getTypeLabel('other'), type: 'default' },
       };
-      const typeInfo = typeMap[row.type as keyof typeof typeMap] || {
+      const typeInfo = typeMap[row.type] || {
         label: row.type,
         type: 'default',
       };
       return h('div', { class: 'flex items-center gap-2' }, [
-        h('span', { class: 'text-lg' }, typeInfo.icon),
         h(
           NTag,
-          { type: typeInfo.type, size: 'small' },
+          { type: typeInfo.type as any, size: 'small' },
           { default: () => typeInfo.label },
         ),
       ]);
     },
   },
   {
-    title: '账号名称',
+    title: $t('agency.withdrawAccount.accountName'),
     key: 'name',
     width: 150,
   },
   {
-    title: '账号号码',
+    title: $t('agency.withdrawAccount.accountNumber'),
     key: 'number',
     width: 200,
     ellipsis: true,
   },
   {
-    title: '开户行/平台',
+    title: $t('agency.withdrawAccount.bankPlatform'),
     key: 'bank',
     width: 150,
     render: (row) => {
       if (row.type === 'bank') return row.bank || '--';
-      if (row.type === 'alipay') return '支付宝';
-      if (row.type === 'wechat') return '微信';
+      if (row.type === 'alipay') return $t('agency.withdrawAccount.alipay');
+      if (row.type === 'wechat') return $t('agency.withdrawAccount.wechat');
       return '--';
     },
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 100,
     render: (row) => {
-      const statusMap = {
-        active: { label: '活跃', type: 'success', icon: '✅' },
-        inactive: { label: '停用', type: 'error', icon: '❌' },
-        pending: { label: '待验证', type: 'warning', icon: '⏳' },
-      };
-      const status = statusMap[row.status as keyof typeof statusMap] || {
-        label: row.status,
-        type: 'default',
-        icon: '❓',
-      };
+      const status = getStatusInfo(row.status);
       return h('div', { class: 'flex items-center justify-center gap-1' }, [
         h('span', { class: 'text-sm' }, status.icon),
         h(
           NTag,
-          { type: status.type, size: 'small' },
+          { type: status.type as any, size: 'small' },
           { default: () => status.label },
         ),
       ]);
     },
   },
   {
-    title: '备注',
+    title: $t('common.remark'),
     key: 'remark',
     ellipsis: true,
     tooltip: true,
   },
   {
-    title: '创建时间',
+    title: $t('common.createTime'),
     key: 'createdAt',
     width: 180,
-    render: (row) => new Date(row.createdAt).toLocaleString('zh-CN'),
+    render: (row) => new Date(row.createdAt).toLocaleString(),
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 150,
     fixed: 'right',
@@ -373,7 +403,7 @@ const columns: DataTableColumns<AgentWithdrawalAccount> = [
             type: 'primary',
             onClick: () => handleEditAccount(row),
           },
-          { default: () => '编辑' },
+          { default: () => $t('common.edit') },
         ),
         h(
           NButton,
@@ -382,7 +412,12 @@ const columns: DataTableColumns<AgentWithdrawalAccount> = [
             type: row.status === 'active' ? 'warning' : 'success',
             onClick: () => handleToggleStatus(row),
           },
-          { default: () => (row.status === 'active' ? '停用' : '启用') },
+          {
+            default: () =>
+              row.status === 'active'
+                ? $t('common.disable')
+                : $t('common.enable'),
+          },
         ),
         h(
           NButton,
@@ -391,18 +426,17 @@ const columns: DataTableColumns<AgentWithdrawalAccount> = [
             type: 'error',
             onClick: () => handleDeleteAccount(row.id),
           },
-          { default: () => '删除' },
+          { default: () => $t('common.delete') },
         ),
       ]);
     },
   },
-];
+]);
 
-// Form validation rules
-const rules = {
+const rules = computed(() => ({
   type: {
     required: true,
-    message: '请选择账号类型',
+    message: $t('agency.withdrawAccount.selectAccountType'),
     trigger: 'blur',
   },
   name: {
@@ -411,7 +445,9 @@ const rules = {
       const normalized = String(value || '').trim();
       if (!normalized) {
         return new Error(
-          isBankType.value ? '请输入银行账户持有人姓名' : '请输入账号名称',
+          isBankType.value
+            ? $t('agency.withdrawAccount.enterHolderName')
+            : $t('agency.withdrawAccount.enterAccountNameRequired'),
         );
       }
       return true;
@@ -420,12 +456,11 @@ const rules = {
   },
   number: {
     required: true,
-    message: '请输入账号号码',
+    message: $t('agency.withdrawAccount.enterAccountNumberRequired'),
     trigger: 'blur',
   },
-};
+}));
 
-// Methods
 const loadAccounts = async () => {
   if (!props.agentId) return;
 
@@ -435,12 +470,11 @@ const loadAccounts = async () => {
       page: pagination.page,
       pageSize: pagination.pageSize,
     });
-
     withdrawAccounts.value = response.list;
     pagination.itemCount = response.pagination.total;
   } catch (error) {
     console.error('Failed to load withdrawal accounts:', error);
-    message.error('加载提现账号失败');
+    message.error($t('agency.withdrawAccount.loadFailed'));
   } finally {
     loading.value = false;
   }
@@ -486,24 +520,22 @@ const handleSubmitAccount = async () => {
     };
 
     if (isEdit.value && currentAccountId.value) {
-      // Update existing account
       await updateWithdrawalAccountApi(
         props.agentId,
         currentAccountId.value,
         submitPayload,
       );
-      message.success('账号更新成功');
+      message.success($t('agency.withdrawAccount.updateSuccess'));
     } else {
-      // Add new account
       await createWithdrawalAccountApi(props.agentId, submitPayload);
-      message.success('账号添加成功');
+      message.success($t('agency.withdrawAccount.addSuccess'));
     }
 
     showAccountModal.value = false;
     loadAccounts();
   } catch (error) {
     console.error('Failed to submit account:', error);
-    message.error('操作失败');
+    message.error($t('agency.withdrawAccount.opFailed'));
   } finally {
     submitting.value = false;
   }
@@ -518,10 +550,16 @@ const handleToggleStatus = async (account: AgentWithdrawalAccount) => {
       status: newStatus,
     });
     account.status = newStatus;
-    message.success(`账号已${newStatus === 'active' ? '启用' : '停用'}`);
+    message.success(
+      $t('agency.withdrawAccount.statusUpdated', [
+        newStatus === 'active'
+          ? $t('common.enable')
+          : $t('common.disable'),
+      ]),
+    );
   } catch (error) {
     console.error('Failed to toggle status:', error);
-    message.error('状态更新失败');
+    message.error($t('agency.withdrawAccount.statusUpdateFailed'));
   }
 };
 
@@ -530,25 +568,25 @@ const handleDeleteAccount = async (id: number) => {
 
   try {
     await deleteWithdrawalAccountApi(props.agentId, id);
-    message.success('账号删除成功');
+    message.success($t('agency.withdrawAccount.deleteSuccess'));
     loadAccounts();
   } catch (error) {
     console.error('Failed to delete account:', error);
-    message.error('删除失败');
+    message.error($t('agency.withdrawAccount.deleteFailed'));
   }
 };
 
 const handleBatchVerify = () => {
-  message.info('批量验证功能开发中...');
+  message.info($t('agency.withdrawAccount.batchVerifyDeveloping'));
 };
 
 const handleExportAccounts = () => {
-  message.info('导出账号功能开发中...');
+  message.info($t('agency.withdrawAccount.exportDeveloping'));
 };
 
 const handleRefresh = () => {
   loadAccounts();
-  message.success('已刷新');
+  message.success($t('agency.withdrawAccount.refreshed'));
 };
 
 const resetForm = () => {

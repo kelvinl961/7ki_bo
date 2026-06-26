@@ -5,7 +5,7 @@
     @after-leave="resetForm"
   >
     <n-card
-      title="新增主域名"
+      :title="$t('operations.domain.modal.createMainDomain')"
       :bordered="false"
       size="small"
       role="dialog"
@@ -30,13 +30,12 @@
           <n-form-item>
             <template #label>
               <div style="display: flex; align-items: center; gap: 8px">
-                <span style="color: red">*</span>
-                <span>已开通节点</span>
+                <span style="color: red">*</span><span>{{ $t('operations.domain.modal.activatedNodes') }}</span>
                 <n-tooltip>
                   <template #trigger>
-                    <span style="color: #999; cursor: help">(已开通?)</span>
+                    <span style="color: #999; cursor: help">({{ $t('operations.domain.modal.nodeActivated') }})</span>
                   </template>
-                  <div style="max-width: 300px">节点说明</div>
+                  <div style="max-width: 300px">{{ $t('operations.domain.modal.nodeDescription') }}</div>
                 </n-tooltip>
               </div>
             </template>
@@ -79,13 +78,13 @@
                 </div>
 
                 <!-- Count -->
-                <div class="node-count">{{ node.count }}条</div>
+                <div class="node-count">{{ $t('operations.domain.createDomain.recordsCount', [node.count]) }}</div>
               </div>
             </div>
           </n-form-item>
 
           <!-- Not Activated Nodes -->
-          <n-form-item label="未开通节点">
+          <n-form-item :label="$t('operations.domain.modal.notActivatedNodes')">
             <div class="cdn-nodes-container">
               <div
                 v-for="node in notActivatedNodes"
@@ -124,9 +123,7 @@
                   type="primary"
                   ghost
                   @click="handleActivateNode(node)"
-                >
-                  开通
-                </n-button>
+                >{{ $t('operations.domain.createDomain.activate') }}</n-button>
               </div>
             </div>
             <div style="text-align: center; margin-top: 12px">
@@ -135,7 +132,7 @@
                 type="primary"
                 @click="showMoreNodes = !showMoreNodes"
               >
-                {{ showMoreNodes ? '收起' : '更多' }}
+                {{ showMoreNodes ? $t('operations.domain.action.collapse') : $t('operations.domain.action.more') }}
                 <n-icon
                   :component="showMoreNodes ? ChevronUp : ChevronDown"
                   style="margin-left: 4px"
@@ -149,14 +146,14 @@
             <template #label>
               <div style="display: flex; align-items: center; gap: 8px">
                 <span style="color: red">*</span>
-                <span>主域名</span>
+                <span>{{ $t('operations.domain.createDomain.mainDomain') }}</span>
               </div>
             </template>
             <n-input
               v-model:value="formData.domains"
               type="textarea"
               :rows="4"
-              placeholder="支持批量添加，最多20个，多个域名请换行，例如：&#10;123.com&#10;123.com.hk&#10;123.in"
+              :placeholder="$t('operations.domain.createDomain.mainDomainPlaceholder')"
               :status="domainsError ? 'error' : undefined"
             />
             <div
@@ -169,9 +166,7 @@
 
           <!-- Usage Scenario -->
           <n-form-item path="usageScenario">
-            <template #label>
-              使用场景
-              <n-tooltip>
+            <template #label>{{ $t('operations.domain.createDomain.usageScenario') }}<n-tooltip>
                 <template #trigger>
                   <n-icon size="16" style="margin-left: 4px; cursor: help">
                     <svg viewBox="0 0 24 24">
@@ -181,25 +176,23 @@
                       />
                     </svg>
                   </n-icon>
-                </template>
-                使用场景说明
-              </n-tooltip>
+                </template>{{ $t('operations.domain.createDomain.usageScenarioHint') }}</n-tooltip>
             </template>
             <n-radio-group v-model:value="formData.usageScenario">
               <n-space>
-                <n-radio value="ALL">全部</n-radio>
-                <n-radio value="CLUB_ONLY">仅俱乐部</n-radio>
-                <n-radio value="PC_AGENT_BACKEND">仅PC代理后台</n-radio>
+                <n-radio value="ALL">{{ $t('common.all') }}</n-radio>
+                <n-radio value="CLUB_ONLY">{{ $t('operations.domain.createDomain.clubOnly') }}</n-radio>
+                <n-radio value="PC_AGENT_BACKEND">{{ $t('operations.domain.createDomain.pcAgentBackend') }}</n-radio>
               </n-space>
             </n-radio-group>
           </n-form-item>
 
           <!-- Remarks -->
-          <n-form-item label="备注">
+          <n-form-item :label="$t('common.remark')">
             <n-input
               v-model:value="formData.remarks"
               type="textarea"
-              placeholder="请输入备注"
+              :placeholder="$t('common.pleaseEnterField', [$t('common.remark')])"
               :rows="3"
               :maxlength="200"
               show-count
@@ -209,44 +202,36 @@
 
           <!-- Pricing and Usage Tutorial -->
           <div class="tutorial-section">
-            <div class="tutorial-title">收费和使用法教程：</div>
+            <div class="tutorial-title">{{ $t('operations.domain.createDomain.tutorialTitle') }}</div>
 
             <div class="tutorial-item">
-              <div class="tutorial-label">1、限顶级域名：</div>
+              <div class="tutorial-label">{{ $t('operations.domain.createDomain.topLevelOnly') }}</div>
               <div class="tutorial-content">
-                此处只能添加独立的顶级域名，请勿添加子域名，例如：只能添加123.com，不是www.123.com。详见:
+                {{ $t('operations.domain.createDomain.topLevelDesc') }}
                 <n-button
                   text
                   type="primary"
                   size="small"
                   @click="openTutorial('domain')"
-                  >域名管理教程</n-button
+                  >{{ $t('operations.domain.createDomain.domainTutorial') }}</n-button>
                 >
               </div>
             </div>
 
             <div class="tutorial-item">
-              <div class="tutorial-label">2、节点使用教程：</div>
+              <div class="tutorial-label">{{ $t('operations.domain.createDomain.nodeTutorial') }}</div>
               <div class="tutorial-content">
                 <div class="tutorial-subsection">
-                  <strong>(1) 中国市场 (含港澳台)：</strong> 推荐使用alb域名
-                  (CloudFront-ALB)、三方公共域名 (CloudFront防封)、Wangsu
-                  (CDN+IP)、Apeir8、Yundun (云盾)、Funnull
-                  (方能)、superEdge、大陆阿里云。
+                  <strong>{{ $t('operations.domain.createDomain.chinaMarket') }}</strong> {{ $t('operations.domain.createDomain.chinaMarketDesc') }}
                 </div>
                 <div class="tutorial-subsection">
-                  <strong>(2) 全球市场 (即非中国)：</strong> 推荐使用alb域名
-                  (CloudFront-ALB与阿里云ALB)、三方公共域名
-                  (CloudFront防封与Azure防封)、CloudFront、Cloudflare、腾讯云、阿里云、Google、Azure、华为云、Wangsu
-                  (CDN+IP)、Yundun (云盾)。
+                  <strong>{{ $t('operations.domain.createDomain.globalMarket') }}</strong> {{ $t('operations.domain.createDomain.globalMarketDesc') }}
                 </div>
                 <div class="tutorial-subsection">
-                  <strong>(3) Wangsu独立IP：</strong>
-                  提供独立IP地址，适用于全球禁域名，但不会封禁IP的国家（例如：印尼、中国、巴西、越南等），国际和中国大陆市场均可使用（即全球通用130USDT/IP/月），若超过7天未启用系统自动回收。
+                  <strong>{{ $t('operations.domain.createDomain.wangsuIp') }}</strong> {{ $t('operations.domain.createDomain.wangsuIpDesc') }}
                 </div>
                 <div class="tutorial-subsection">
-                  <strong>(4) 开放回源：</strong>
-                  我方提供独立源服务器IP信息，您可使用外部三方CDN绑定到我方源站，所以仅限web大厅使用（不支持原生APP)，需要有专业知识才能配置websocket、HTTP2、缓存等信息，详见域名管理教程。
+                  <strong>{{ $t('operations.domain.createDomain.openOrigin') }}</strong> {{ $t('operations.domain.createDomain.openOriginDesc') }}
                 </div>
               </div>
             </div>
@@ -256,10 +241,8 @@
 
       <template #footer>
         <div style="display: flex; justify-content: flex-end; gap: 12px">
-          <n-button @click="showModal = false">取消</n-button>
-          <n-button type="primary" @click="handleSubmit" :loading="submitting">
-            确认
-          </n-button>
+          <n-button @click="showModal = false">{{ $t('common.cancel') }}</n-button>
+          <n-button type="primary" @click="handleSubmit" :loading="submitting">{{ $t('common.confirm') }}</n-button>
         </div>
       </template>
     </n-card>
@@ -267,6 +250,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, computed } from 'vue';
 import {
   useMessage,
@@ -323,8 +308,8 @@ const activatedNodes = [
     verified: true,
     count: 5,
     badges: [
-      { text: '顶级版', type: 'success' },
-      { text: '全球', type: 'info' },
+      { text: $t('operations.domain.createDomain.badgePremium'), type: 'success' },
+      { text: $t('operations.domain.createDomain.badgeGlobal'), type: 'info' },
     ],
   },
   {
@@ -332,16 +317,16 @@ const activatedNodes = [
     value: 'AWS',
     verified: true,
     count: 4,
-    badges: [{ text: '全球', type: 'info' }],
+    badges: [{ text: $t('operations.domain.createDomain.badgeGlobal'), type: 'info' }],
   },
   {
-    label: '华为云',
+    label: $t('operations.domain.cdn.huawei'),
     value: 'HUAWEI_CLOUD',
     count: 2,
     disabled: true,
     badges: [
-      { text: '国际', type: 'success' },
-      { text: '维护中', type: 'default' },
+      { text: $t('operations.domain.createDomain.badgeIntl'), type: 'success' },
+      { text: $t('operations.domain.createDomain.badgeMaintaining'), type: 'default' },
     ],
   },
 ];
@@ -352,24 +337,24 @@ const notActivatedNodes = [
     label: 'Google',
     value: 'GOOGLE',
     badges: [
-      { text: '国际', type: 'success' },
-      { text: '防封', type: 'warning' },
+      { text: $t('operations.domain.createDomain.badgeIntl'), type: 'success' },
+      { text: $t('operations.domain.createDomain.badgeAntiBlock'), type: 'warning' },
     ],
   },
   {
-    label: 'AWS防封',
+    label: $t('operations.domain.createDomain.awsAntiBlock'),
     value: 'AWS_DEFENSE',
     badges: [
-      { text: '全球', type: 'info' },
-      { text: '防封', type: 'warning' },
+      { text: $t('operations.domain.createDomain.badgeGlobal'), type: 'info' },
+      { text: $t('operations.domain.createDomain.badgeAntiBlock'), type: 'warning' },
     ],
   },
   {
     label: 'AWS-ALB',
     value: 'AWS_ALB',
     badges: [
-      { text: '全球', type: 'info' },
-      { text: '防封', type: 'warning' },
+      { text: $t('operations.domain.createDomain.badgeGlobal'), type: 'info' },
+      { text: $t('operations.domain.createDomain.badgeAntiBlock'), type: 'warning' },
     ],
   },
 ];
@@ -377,12 +362,12 @@ const notActivatedNodes = [
 const rules = {
   domains: {
     required: true,
-    message: '请输入主域名',
+    message: $t('common.pleaseEnterField', [$t('operations.domain.createDomain.validateMainDomain')]),
     trigger: 'blur',
   },
   usageScenario: {
     required: true,
-    message: '请选择使用场景',
+    message: $t('common.pleaseSelect') + ' ' + $t('operations.domain.createDomain.usageScenario'),
     trigger: 'change',
   },
 };
@@ -391,7 +376,7 @@ const validateDomains = () => {
   domainsError.value = '';
 
   if (!formData.value.domains.trim()) {
-    domainsError.value = '请输入主域名';
+    domainsError.value = $t('operations.domain.createDomain.enterMainDomain');
     return false;
   }
 
@@ -401,12 +386,12 @@ const validateDomains = () => {
     .filter((d) => d.trim());
 
   if (domains.length === 0) {
-    domainsError.value = '请输入主域名';
+    domainsError.value = $t('operations.domain.createDomain.enterMainDomain');
     return false;
   }
 
   if (domains.length > 20) {
-    domainsError.value = '最多只能添加20个域名';
+    domainsError.value = $t('operations.domain.createDomain.maxDomains');
     return false;
   }
 
@@ -416,13 +401,13 @@ const validateDomains = () => {
 
   for (const domain of domains) {
     if (!domainRegex.test(domain.trim())) {
-      domainsError.value = `域名格式错误: ${domain}`;
+      domainsError.value = $t('operations.domain.createDomain.invalidFormat', [domain]);
       return false;
     }
 
     // Check if it's a subdomain (contains more than 2 dots usually means subdomain)
     if (domain.trim().startsWith('www.')) {
-      domainsError.value = `请勿添加www子域名: ${domain}。只添加顶级域名，如: ${domain.replace('www.', '')}`;
+      domainsError.value = $t('operations.domain.createDomain.noWwwSubdomain', [domain, domain.replace('www.', '')]);
       return false;
     }
   }
@@ -431,11 +416,11 @@ const validateDomains = () => {
 };
 
 const handleActivateNode = (node: any) => {
-  message.info(`开通 ${node.label} 功能即将上线`);
+  message.info($t('operations.domain.createDomain.activateComingSoon', [node.label]));
 };
 
 const openTutorial = (type: string) => {
-  message.info('域名管理教程即将上线');
+  message.info($t('operations.domain.createDomain.tutorialComingSoon'));
 };
 
 const handleSubmit = async () => {
@@ -443,7 +428,7 @@ const handleSubmit = async () => {
     await formRef.value?.validate();
 
     if (!formData.value.cdnProvider) {
-      message.warning('请选择已开通的CDN节点');
+      message.warning($t('operations.domain.createDomain.selectActivatedNode'));
       return;
     }
 
@@ -471,7 +456,7 @@ const handleSubmit = async () => {
             activatedNodes.find((n) => n.value === formData.value.cdnProvider)
               ?.label || '',
           usageScenario: formData.value.usageScenario,
-          备注: formData.value.remarks,
+          remark: formData.value.remarks,
           useType: props.defaultUseType || 'WEB_HALL',
           isParentDomain: true,
           sslEnabled: true,
@@ -504,29 +489,29 @@ const handleSubmit = async () => {
 
     if (successful.length > 0 && failed.length === 0) {
       // All succeeded
-      message.success(`成功创建 ${successful.length} 个域名`);
+      message.success($t('operations.domain.createDomain.createSuccess', [successful.length]));
       emit('success');
       showModal.value = false;
     } else if (successful.length > 0 && failed.length > 0) {
       // Partial success
       const failedDomains = failed.map(
-        (r: any) => r.reason?.message || '未知错误',
+        (r: any) => r.reason?.message || $t('operations.unknownError'),
       );
       message.warning(
-        `成功创建 ${successful.length} 个域名，${failed.length} 个失败：${failedDomains.join('; ')}`,
+        $t('operations.domain.createDomain.createPartial', [successful.length, failed.length, failedDomains.join('; ')]),
       );
       emit('success');
       showModal.value = false;
     } else {
       // All failed
       const failedDomains = failed.map(
-        (r: any) => r.reason?.message || '未知错误',
+        (r: any) => r.reason?.message || $t('operations.unknownError'),
       );
       throw new Error(failedDomains.join('; '));
     }
   } catch (error: any) {
     console.error('Form submission failed:', error);
-    message.error(error.response?.data?.message || error.message || '创建失败');
+    message.error(error.response?.data?.message || error.message || $t('operations.domain.createDomain.createFailed'));
   } finally {
     submitting.value = false;
   }

@@ -5,13 +5,9 @@
       <n-card :bordered="false" class="rounded-16px shadow-sm">
         <div class="mb-4 flex items-center justify-between">
           <div>
-            <h2 class="text-xl font-semibold text-gray-800">免审出款</h2>
-            <p class="mt-1 text-sm text-gray-600">
-              符合免审条件的提现订单自动处理
-            </p>
-            <div class="mt-2 text-xs text-gray-500">
-              免审条件：同时满足设置的会员层级、标签、注册时长、金额限制等条件
-            </div>
+            <h2 class="text-xl font-semibold text-gray-800">{{ $t('finance.autoApprovedWithdrawal') }}</h2>
+            <p class="mt-1 text-sm text-gray-600">{{ $t('finance.autoApprovalProcessDesc') }}</p>
+            <div class="mt-2 text-xs text-gray-500">{{ $t('finance.autoApprovalConditionsDesc') }}</div>
           </div>
           <div class="flex gap-3">
             <!-- 🚀 SmartAutoRefresh Component -->
@@ -30,16 +26,16 @@
           <!-- Time Filter -->
           <div class="mb-4 flex flex-wrap items-center gap-4">
             <div class="flex items-center gap-2">
-              <span class="text-sm font-medium text-gray-600">申请时间</span>
+              <span class="text-sm font-medium text-gray-600">{{ $t('finance.applicationTime') }}</span>
               <n-radio-group v-model:value="filters.timeRange" size="small">
-                <n-radio value="today">今天</n-radio>
-                <n-radio value="month">本月</n-radio>
+                <n-radio value="today">{{ $t('common.today') }}</n-radio>
+                <n-radio value="month">{{ $t('common.thisMonth') }}</n-radio>
               </n-radio-group>
               <n-date-picker
                 v-model:value="filters.dateRange"
                 type="datetimerange"
                 format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择时间范围"
+                placeholder:placeholder="$t('finance.selectTimeRange')"
                 clearable
                 size="small"
                 class="w-80"
@@ -53,10 +49,10 @@
           >
             <!-- Member Account -->
             <div class="filter-item">
-              <n-form-item label="会员账号">
+              <n-form-item :label="$t('finance.memberAccount2')">
                 <n-input
                   v-model:value="filters.memberAccount"
-                  placeholder="会员账号或备注内容搜索，最多200个"
+                  placeholder:placeholder="$t('finance.searchMemberAccountOrRemarkUpTo200')"
                   clearable
                   size="small"
                 />
@@ -65,10 +61,10 @@
 
             <!-- Third Party Payment -->
             <div class="filter-item">
-              <n-form-item label="三方代付">
+              <n-form-item :label="$t('finance.thirdPartyPayout')">
                 <n-select
                   v-model:value="filters.thirdPartyPayment"
-                  placeholder="三方代付"
+                  placeholder:placeholder="$t('finance.thirdPartyPayout')"
                   clearable
                   size="small"
                   :options="thirdPartyOptions"
@@ -78,10 +74,10 @@
 
             <!-- Amount -->
             <div class="filter-item">
-              <n-form-item label="金额大小">
+              <n-form-item :label="$t('finance.amountRange')">
                 <n-input
                   v-model:value="filters.amount"
-                  placeholder="金额"
+                  placeholder:placeholder="$t('common.amount')"
                   clearable
                   size="small"
                 />
@@ -90,10 +86,10 @@
 
             <!-- Withdrawal Method -->
             <div class="filter-item">
-              <n-form-item label="提现方式">
+              <n-form-item :label="$t('finance.withdrawalMethod')">
                 <n-select
                   v-model:value="filters.withdrawalMethod"
-                  placeholder="提现方式"
+                  placeholder:placeholder="$t('finance.withdrawalMethod')"
                   clearable
                   size="small"
                   :options="withdrawalMethodOptions"
@@ -103,10 +99,10 @@
 
             <!-- Auto Rule -->
             <div class="filter-item">
-              <n-form-item label="自动规则">
+              <n-form-item :label="$t('finance.autoRule')">
                 <n-select
                   v-model:value="filters.autoRule"
-                  placeholder="自动规则"
+                  placeholder:placeholder="$t('finance.autoRule')"
                   clearable
                   size="small"
                   :options="autoRuleOptions"
@@ -116,10 +112,10 @@
 
             <!-- VIP Level -->
             <div class="filter-item">
-              <n-form-item label="会员层级">
+              <n-form-item :label="$t('finance.memberTier')">
                 <n-select
                   v-model:value="filters.vipLevel"
-                  placeholder="会员层级"
+                  placeholder:placeholder="$t('finance.memberTier')"
                   clearable
                   size="small"
                   :options="vipLevelOptions"
@@ -134,15 +130,13 @@
               <n-button type="primary" @click="applyFilters" :loading="loading">
                 <template #icon>
                   <n-icon><SearchOutline /></n-icon>
-                </template>
-                搜索
-              </n-button>
-              <n-button @click="resetFilters"> 重置 </n-button>
-              <n-button @click="clearFilters"> 自己提定的 </n-button>
+                </template>{{ $t('common.search') }}</n-button>
+              <n-button @click="resetFilters">{{ $t('common.reset') }}</n-button>
+              <n-button @click="clearFilters">{{ $t('finance.kzy265') }}</n-button>
             </div>
             <div class="flex items-center gap-2 text-sm text-gray-600">
               已选择 {{ selectedIds.length }} 条数据
-              <n-tag type="success" size="small">免审出款</n-tag>
+              <n-tag type="success" size="small">{{ $t('finance.autoApprovedWithdrawal') }}</n-tag>
             </div>
           </div>
         </div>
@@ -176,34 +170,30 @@
                 <n-button type="primary" @click="fetchData" :loading="loading">
                   <template #icon>
                     <n-icon><ReloadOutline /></n-icon>
-                  </template>
-                  刷新
-                </n-button>
+                  </template>{{ $t('common.refresh') }}</n-button>
 
                 <n-button type="info" @click="handleExportSearch">
                   <template #icon>
                     <n-icon><DownloadOutline /></n-icon>
-                  </template>
-                  导出搜索
-                </n-button>
+                  </template>{{ $t('finance.kbsp6s') }}</n-button>
               </div>
 
               <!-- 统计信息 -->
               <div class="flex gap-6 text-sm">
                 <span
-                  >符合免审条件:
+                  >{{ $t('finance.meetsAutoApproval') }}:
                   <span class="font-semibold text-green-600">{{
                     statistics.autoApprovalEligible
                   }}</span></span
                 >
                 <span
-                  >今日已自动处理:
+                  >{{ $t('finance.autoProcessedToday') }}:
                   <span class="font-semibold text-blue-600">{{
                     statistics.todayAutoProcessed
                   }}</span></span
                 >
                 <span
-                  >累计金额:
+                  >{{ $t('finance.cumulativeAmount') }}:
                   <span class="font-semibold text-orange-600"
                     >{{ totalAmount.toFixed(2) }} BRL</span
                   ></span
@@ -212,11 +202,8 @@
 
               <!-- 选择信息 -->
               <div class="text-sm text-gray-600">
-                已选择 {{ selectedCount }} 条数据，共
-                {{ paginationReactive.total }} 条
-                <n-tag type="success" size="small" class="ml-2">
-                  免审出款
-                </n-tag>
+                {{ $t('finance.selectedOfTotal', { selected: selectedCount, total: paginationReactive.total }) }}
+                <n-tag type="success" size="small" class="ml-2">{{ $t('finance.autoApprovedWithdrawal') }}</n-tag>
               </div>
             </div>
 
@@ -235,9 +222,9 @@
               <!-- 选择控制 -->
               <div class="flex gap-2">
                 <n-button size="small" @click="clearSelection"
-                  >清空选择</n-button
+                  >{{ $t('finance.kxqos8') }}</n-button
                 >
-                <n-button size="small" @click="selectAll">全选</n-button>
+                <n-button size="small" @click="selectAll">{{ $t('common.selectAll') }}</n-button>
               </div>
             </div>
           </div>
@@ -248,19 +235,19 @@
     <!-- Batch Operations -->
     <div class="batch-operations mt-4 border-t p-4">
       <div class="flex items-center gap-4">
-        <span class="text-sm text-gray-600">全选当前页</span>
+        <span class="text-sm text-gray-600">{{ $t('finance.kq5y7t') }}</span>
         <n-select
           v-model:value="batchOperation"
-          placeholder="批量操作"
+          placeholder:placeholder="$t('finance.bulkActions')"
           size="small"
           class="w-40"
           :options="batchOperationOptions"
         />
         <span class="text-sm text-gray-600"
-          >已选择{{ selectedIds.length }}条数据</span
+          >{{ $t('finance.selectedRecords', { count: selectedIds.length }) }}</span
         >
         <span class="text-sm text-gray-600"
-          >共{{ paginationReactive.total }}条</span
+          >{{ $t('finance.totalRecordsCompact', { count: paginationReactive.total }) }}</span
         >
       </div>
     </div>
@@ -270,9 +257,9 @@
   <n-modal
     v-model:show="autoApprovalModal.show"
     preset="dialog"
-    title="批量自动出款确认"
-    positive-text="确认处理"
-    negative-text="取消"
+    :title="$t('finance.bulkAutoPayoutConfirm')"
+    positive-text:positive-text="$t('finance.confirmProcess')"
+    negative-text:negative-text="$t('common.cancel')"
     @positive-click="handleAutoApproval"
   >
     <div class="space-y-4">
@@ -290,28 +277,28 @@
           class="mb-2 rounded border p-2"
         >
           <div class="text-sm">
-            <div><strong>订单号:</strong> {{ item.orderId }}</div>
+            <div><strong>{{ $t('finance.orderNo') }}:</strong> {{ item.orderId }}</div>
             <div>
-              <strong>会员:</strong> {{ item.memberAccount }} ({{
+              <strong>{{ $t('finance.member') }}:</strong> {{ item.memberAccount }} ({{
                 item.vipLevel
               }})
             </div>
             <div>
-              <strong>金额:</strong> {{ item.amount }} {{ item.currency }}
+              <strong>{{ $t('common.amount') }}:</strong> {{ item.amount }} {{ item.currency }}
             </div>
             <div>
-              <strong>符合规则:</strong>
+              <strong>{{ $t('finance.meetsRule') }}:</strong>
               <n-tag type="success" size="small">{{ item.autoRule }}</n-tag>
             </div>
           </div>
         </div>
       </div>
       <div>
-        <n-form-item label="处理备注">
+        <n-form-item :label="$t('finance.processRemark')">
           <n-input
             v-model:value="autoApprovalModal.notes"
             type="textarea"
-            placeholder="自动审核处理备注（可选）"
+            placeholder:placeholder="$t('finance.autoApprovalRemarkOptional')"
             :rows="3"
           />
         </n-form-item>
@@ -323,30 +310,28 @@
   <n-modal
     v-model:show="autoRulesModal.show"
     preset="card"
-    title="自动审核规则设置"
+    :title="$t('finance.autoApprovalRuleSettings')"
     size="large"
     :style="{ width: '80%', maxWidth: '1000px' }"
   >
     <div class="space-y-6">
-      <n-alert type="info" :show-icon="false">
-        设置符合免审出款的条件，满足条件的提现申请将自动通过审核
-      </n-alert>
+      <n-alert type="info" :show-icon="false">{{ $t('finance.autoApprovalRulesDesc') }}</n-alert>
 
       <!-- Rule Categories -->
       <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <n-card title="VIP等级规则" size="small">
+        <n-card :title="$t('finance.vipLevelRules')" size="small">
           <div class="space-y-4">
-            <n-form-item label="最低VIP等级">
+            <n-form-item :label="$t('finance.minimumVipLevel')">
               <n-select
                 v-model:value="autoRules.minVipLevel"
-                placeholder="选择最低VIP等级"
+                placeholder:placeholder="$t('finance.selectMinimumVipLevel')"
                 :options="vipLevelOptions"
               />
             </n-form-item>
-            <n-form-item label="VIP用户免审金额上限">
+            <n-form-item :label="$t('finance.vipAutoApprovalAmountLimit')">
               <n-input-number
                 v-model:value="autoRules.vipMaxAmount"
-                placeholder="输入金额上限"
+                placeholder:placeholder="$t('finance.enterAmount')"
                 :min="0"
                 class="w-full"
               />
@@ -354,20 +339,20 @@
           </div>
         </n-card>
 
-        <n-card title="账户安全规则" size="small">
+        <n-card :title="$t('finance.accountSecurityRules')" size="small">
           <div class="space-y-4">
-            <n-form-item label="账户注册天数">
+            <n-form-item :label="$t('finance.accountRegistrationDays')">
               <n-input-number
                 v-model:value="autoRules.minAccountAge"
-                placeholder="最少注册天数"
+                placeholder:placeholder="$t('finance.minimumRegistrationDays')"
                 :min="0"
                 class="w-full"
               />
             </n-form-item>
-            <n-form-item label="最近登录天数">
+            <n-form-item :label="$t('finance.recentLoginDays')">
               <n-input-number
                 v-model:value="autoRules.maxLastLoginDays"
-                placeholder="最近登录天数内"
+                placeholder:placeholder="$t('finance.recentLoginDays1')"
                 :min="0"
                 class="w-full"
               />
@@ -375,20 +360,20 @@
           </div>
         </n-card>
 
-        <n-card title="交易历史规则" size="small">
+        <n-card :title="$t('finance.transactionHistoryRules')" size="small">
           <div class="space-y-4">
-            <n-form-item label="最少充值次数">
+            <n-form-item :label="$t('finance.minimumDepositCount')">
               <n-input-number
                 v-model:value="autoRules.minDepositCount"
-                placeholder="最少充值次数"
+                placeholder:placeholder="$t('finance.minimumDepositCount')"
                 :min="0"
                 class="w-full"
               />
             </n-form-item>
-            <n-form-item label="充值提现比例">
+            <n-form-item :label="$t('finance.depositWithdrawalRatio')">
               <n-input-number
                 v-model:value="autoRules.depositWithdrawRatio"
-                placeholder="最低充值提现比例"
+                placeholder:placeholder="$t('finance.depositWithdrawalRatio1')"
                 :min="0"
                 :max="100"
                 class="w-full"
@@ -397,20 +382,20 @@
           </div>
         </n-card>
 
-        <n-card title="风险控制规则" size="small">
+        <n-card :title="$t('finance.riskControlRules')" size="small">
           <div class="space-y-4">
-            <n-form-item label="单笔免审金额上限">
+            <n-form-item :label="$t('finance.singleAutoApprovalLimit')">
               <n-input-number
                 v-model:value="autoRules.maxSingleAmount"
-                placeholder="单笔最大金额"
+                placeholder:placeholder="$t('finance.singleMaxAmount')"
                 :min="0"
                 class="w-full"
               />
             </n-form-item>
-            <n-form-item label="日累计免审金额">
+            <n-form-item :label="$t('finance.dailyAutoApprovalLimit')">
               <n-input-number
                 v-model:value="autoRules.dailyMaxAmount"
-                placeholder="每日累计最大金额"
+                placeholder:placeholder="$t('finance.dailyCumulativeMaxAmount')"
                 :min="0"
                 class="w-full"
               />
@@ -420,18 +405,18 @@
       </div>
 
       <!-- Rule Status -->
-      <n-card title="规则启用状态" size="small">
+      <n-card :title="$t('finance.ruleEnableStatus')" size="small">
         <div class="grid grid-cols-2 gap-4">
-          <n-form-item label="启用VIP免审">
+          <n-form-item :label="$t('finance.enableVipAutoApproval')">
             <n-switch v-model:value="autoRules.enableVipAuto" />
           </n-form-item>
-          <n-form-item label="启用小额免审">
+          <n-form-item :label="$t('finance.enableSmallAmountAutoApproval')">
             <n-switch v-model:value="autoRules.enableSmallAmountAuto" />
           </n-form-item>
-          <n-form-item label="启用老用户免审">
+          <n-form-item :label="$t('finance.enableVeteranUserAutoApproval')">
             <n-switch v-model:value="autoRules.enableOldUserAuto" />
           </n-form-item>
-          <n-form-item label="启用高频用户免审">
+          <n-form-item :label="$t('finance.enableFrequentUserAutoApproval')">
             <n-switch v-model:value="autoRules.enableFrequentUserAuto" />
           </n-form-item>
         </div>
@@ -439,8 +424,8 @@
 
       <!-- Actions -->
       <div class="flex justify-end gap-3">
-        <n-button @click="autoRulesModal.show = false">取消</n-button>
-        <n-button type="primary" @click="saveAutoRules">保存规则</n-button>
+        <n-button @click="autoRulesModal.show = false">{{ $t('common.cancel') }}</n-button>
+        <n-button type="primary" @click="saveAutoRules">{{ $t('finance.k52rjl') }}</n-button>
       </div>
     </div>
   </n-modal>
@@ -449,31 +434,31 @@
   <n-modal
     v-model:show="detailModal.show"
     preset="card"
-    title="免审出款详情"
+    :title="$t('finance.autoApprovalPayoutDetails')"
     size="large"
     :style="{ width: '80%', maxWidth: '1000px' }"
   >
     <div v-if="detailModal.data" class="space-y-6">
       <!-- Basic Info -->
       <div class="grid grid-cols-2 gap-6">
-        <n-card title="订单信息" size="small">
+        <n-card :title="$t('finance.orderInfo')" size="small">
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
-              <span class="text-gray-600">订单号:</span>
+              <span class="text-gray-600">{{ $t('finance.orderNo') }}:</span>
               <span>{{ detailModal.data.orderId }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600">会员账号:</span>
+              <span class="text-gray-600">{{ $t('common.memberAccount') }}:</span>
               <span>{{ detailModal.data.memberAccount }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600">申请时间:</span>
+              <span class="text-gray-600">{{ $t('finance.applyTime') }}:</span>
               <span>{{
                 formatDateTime(detailModal.data.applicationTime)
               }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600">订单状态:</span>
+              <span class="text-gray-600">{{ $t('common.orderStatus') }}:</span>
               <n-tag :type="getStatusType(detailModal.data.status)">
                 {{ getStatusText(detailModal.data.status) }}
               </n-tag>
@@ -481,22 +466,22 @@
           </div>
         </n-card>
 
-        <n-card title="免审规则匹配" size="small">
+        <n-card :title="$t('finance.autoRuleMatch')" size="small">
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
-              <span class="text-gray-600">符合规则:</span>
+              <span class="text-gray-600">{{ $t('finance.meetsRule') }}:</span>
               <n-tag type="success">{{ detailModal.data.autoRule }}</n-tag>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600">VIP等级:</span>
+              <span class="text-gray-600">{{ $t('finance.vIPLevel') }}:</span>
               <span>{{ detailModal.data.vipLevel }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600">账户注册:</span>
+              <span class="text-gray-600">{{ $t('finance.accountRegistration') }}:</span>
               <span>{{ detailModal.data.accountAge }}天</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600">充值次数:</span>
+              <span class="text-gray-600">{{ $t('finance.depositCount') }}:</span>
               <span>{{ detailModal.data.depositCount }}次</span>
             </div>
           </div>
@@ -504,24 +489,24 @@
       </div>
 
       <!-- Payment Info -->
-      <n-card title="提现信息" size="small">
+      <n-card :title="$t('finance.withdrawalInfo')" size="small">
         <div class="grid grid-cols-2 gap-4 text-sm">
           <div class="flex justify-between">
-            <span class="text-gray-600">提现金额:</span>
+            <span class="text-gray-600">{{ $t('finance.withdrawalAmount') }}:</span>
             <span class="font-semibold text-green-600">
               {{ detailModal.data.amount }} {{ detailModal.data.currency }}
             </span>
           </div>
           <div class="flex justify-between">
-            <span class="text-gray-600">提现方式:</span>
+            <span class="text-gray-600">{{ $t('finance.withdrawalMethod') }}:</span>
             <span>{{ detailModal.data.withdrawalMethod }}</span>
           </div>
           <div class="flex justify-between">
-            <span class="text-gray-600">收款账户:</span>
+            <span class="text-gray-600">{{ $t('finance.receivingAccount') }}:</span>
             <span>{{ detailModal.data.accountNumber }}</span>
           </div>
           <div class="flex justify-between">
-            <span class="text-gray-600">收款人:</span>
+            <span class="text-gray-600">{{ $t('finance.payee') }}:</span>
             <span>{{ detailModal.data.accountHolderName }}</span>
           </div>
         </div>
@@ -529,20 +514,20 @@
 
       <!-- Actions -->
       <div class="flex justify-end gap-3">
-        <n-button @click="closeDetailModal">关闭</n-button>
+        <n-button @click="closeDetailModal">{{ $t('common.close') }}</n-button>
         <n-button
           type="success"
           @click="showSingleAutoApprovalModal(detailModal.data)"
           v-if="canAutoApprove(detailModal.data.status)"
-        >
-          立即自动出款
-        </n-button>
+        >{{ $t('finance.processAutoPayoutNow') }}</n-button>
       </div>
     </div>
   </n-modal>
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import {
   ref,
   reactive,
@@ -712,22 +697,22 @@ const autoRules = reactive({
 
 // Options
 const thirdPartyOptions = [
-  { label: 'PIX自动代付', value: 'PIX_AUTO' },
-  { label: '银行转账', value: 'BANK_TRANSFER' },
-  { label: '数字钱包', value: 'DIGITAL_WALLET' },
+  { label: $t('finance.pixAutoPayout'), value: 'PIX_AUTO' },
+  { label: $t('finance.bankTransfer'), value: 'BANK_TRANSFER' },
+  { label: $t('finance.digitalWallet'), value: 'DIGITAL_WALLET' },
 ];
 
 const withdrawalMethodOptions = [
   { label: 'PIX', value: 'PIX' },
-  { label: '银行卡', value: 'BANK_CARD' },
-  { label: '数字钱包', value: 'WALLET' },
+  { label: $t('finance.bankCard'), value: 'BANK_CARD' },
+  { label: $t('finance.digitalWallet'), value: 'WALLET' },
 ];
 
 const autoRuleOptions = [
-  { label: 'VIP免审', value: 'VIP_AUTO' },
-  { label: '小额免审', value: 'SMALL_AMOUNT' },
-  { label: '老用户免审', value: 'OLD_USER' },
-  { label: '高频用户免审', value: 'FREQUENT_USER' },
+  { label: $t('finance.vIPAutoApproved'), value: 'VIP_AUTO' },
+  { label: $t('finance.smallAmountAutoApproved'), value: 'SMALL_AMOUNT' },
+  { label: $t('finance.veteranUserAutoApproved'), value: 'OLD_USER' },
+  { label: $t('finance.frequentUserAutoApproved'), value: 'FREQUENT_USER' },
 ];
 
 const vipLevelOptions = [
@@ -740,9 +725,9 @@ const vipLevelOptions = [
 ];
 
 const batchOperationOptions = [
-  { label: '批量自动出款', value: 'batch_auto_approval' },
-  { label: '批量导出', value: 'batch_export' },
-  { label: '批量标记', value: 'batch_mark' },
+  { label: $t('finance.bulkAutoPayout'), value: 'batch_auto_approval' },
+  { label: $t('finance.bulkExport'), value: 'batch_export' },
+  { label: $t('finance.bulkMark'), value: 'batch_mark' },
 ];
 
 // Computed
@@ -758,7 +743,7 @@ const columns: DataTableColumns<AutoWithdrawalRecord> = [
     width: 50,
   },
   {
-    title: '订单号',
+    title: $t('finance.orderNo'),
     key: 'orderId',
     width: 140,
     fixed: 'left',
@@ -774,7 +759,7 @@ const columns: DataTableColumns<AutoWithdrawalRecord> = [
       ),
   },
   {
-    title: '会员ID / 会员账号 (VIP / 层级)',
+    title: $t('finance.memberIdMemberAccountVIPTier'),
     key: 'memberInfo',
     width: 200,
     render: (row) =>
@@ -811,7 +796,7 @@ const columns: DataTableColumns<AutoWithdrawalRecord> = [
       ]),
   },
   {
-    title: '申请时间 (操作时间)',
+    title: $t('finance.applicationTimeActionsTime'),
     key: 'applicationTime',
     width: 150,
     render: (row) =>
@@ -821,7 +806,7 @@ const columns: DataTableColumns<AutoWithdrawalRecord> = [
       ]),
   },
   {
-    title: '会员币种 (比例)',
+    title: $t('finance.memberCurrencyRatio'),
     key: 'currency',
     width: 80,
     render: (row) =>
@@ -831,7 +816,7 @@ const columns: DataTableColumns<AutoWithdrawalRecord> = [
       ]),
   },
   {
-    title: '提现金额 当前金额 (实际金额)',
+    title: $t('finance.withdrawalAmountAmountActualAmount'),
     key: 'amount',
     width: 130,
     render: (row) =>
@@ -849,7 +834,7 @@ const columns: DataTableColumns<AutoWithdrawalRecord> = [
       ]),
   },
   {
-    title: '充/提次数 (累计充/提金额) (重复IP人数)',
+    title: $t('finance.countCumulativeAmountIP'),
     key: 'statistics',
     width: 140,
     render: (row) =>
@@ -862,7 +847,7 @@ const columns: DataTableColumns<AutoWithdrawalRecord> = [
       ]),
   },
   {
-    title: '收款方式 (收款人信息)',
+    title: $t('finance.receivingMethodPayeeInfo'),
     key: 'paymentInfo',
     width: 140,
     render: (row) =>
@@ -888,7 +873,7 @@ const columns: DataTableColumns<AutoWithdrawalRecord> = [
       ]),
   },
   {
-    title: '订单状态 (操作人)',
+    title: $t('finance.orderStatusActions'),
     key: 'status',
     width: 110,
     render: (row) => {
@@ -941,13 +926,13 @@ const columns: DataTableColumns<AutoWithdrawalRecord> = [
     },
   },
   {
-    title: '前台备注',
+    title: $t('finance.frontendRemark'),
     key: 'frontendNotes',
     width: 80,
     render: () => h('div', { class: 'text-center text-gray-500' }, '免审订单'),
   },
   {
-    title: '后台备注',
+    title: $t('finance.backendRemark'),
     key: 'backendNotes',
     width: 100,
     render: (row) =>
@@ -958,7 +943,7 @@ const columns: DataTableColumns<AutoWithdrawalRecord> = [
       ),
   },
   {
-    title: '三方代付 (代付次数)',
+    title: $t('finance.thirdPartyPayoutPayoutCount'),
     key: 'thirdParty',
     width: 100,
     render: (row) => {
@@ -987,7 +972,7 @@ const columns: DataTableColumns<AutoWithdrawalRecord> = [
     },
   },
   {
-    title: '免审规则',
+    title: $t('finance.autoApprovalRule'),
     key: 'autoRule',
     width: 100,
     render: (row) =>
@@ -1003,7 +988,7 @@ const columns: DataTableColumns<AutoWithdrawalRecord> = [
       ]),
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 120,
     fixed: 'right',
@@ -1017,7 +1002,7 @@ const columns: DataTableColumns<AutoWithdrawalRecord> = [
             onClick: () => showSingleAutoApprovalModal(row),
             disabled: !canAutoApprove(row.status),
           },
-          { default: () => '自动出款' },
+          { default: () => $t('finance.autoPayout') },
         ),
         h(
           NButton,
@@ -1026,7 +1011,7 @@ const columns: DataTableColumns<AutoWithdrawalRecord> = [
             type: 'info',
             onClick: () => showDetail(row),
           },
-          { default: () => '详情' },
+          { default: () => $t('common.detail') },
         ),
       ]),
   },
@@ -1063,7 +1048,7 @@ const handleBulkAutoApproval = (_selectedRows: AutoWithdrawalRecord[]) => {
 
 const handleExportSearch = () => {
   // TODO: Implement export search functionality
-  message.info('导出搜索功能开发中');
+  message.info($t('finance.exportSearchFeatureInDevelopment'));
 };
 
 // Watch for timeRange changes and update dateRange accordingly
@@ -1147,7 +1132,7 @@ const fetchData = async () => {
         );
         tableData.value = [];
         paginationReactive.total = 0;
-        message.warning('暂无符合免审条件的订单');
+        message.warning($t('finance.noOrdersEligibleForAutoApproval'));
         loading.value = false;
         return;
       }
@@ -1190,13 +1175,13 @@ const fetchData = async () => {
       statistics.autoApprovalEligible = 0;
       statistics.todayAutoProcessed = 0;
       statistics.totalAmount = 0;
-      message.error('获取数据失败，请稍后重试');
+      message.error($t('finance.failedToFetchDataPleaseLaterRetry'));
     }
   } catch (error) {
     console.error('Fetch data error:', error);
     tableData.value = [];
     paginationReactive.total = 0;
-    message.error('获取数据失败');
+    message.error($t('finance.failedToFetchData'));
   } finally {
     loading.value = false;
   }
@@ -1261,7 +1246,7 @@ const showAutoRulesModal = () => {
 const showAutoRuleConfigModal = () => {
   // TODO: Implement comprehensive auto-approval rule configuration
   // Based on requirements: 会员层级、标签、注册时长、金额条件、出款代付设置
-  message.info('免审规则配置功能开发中 - 会员层级、标签、注册时长、金额条件等');
+  message.info($t('finance.autoRuleConfigFeatureInDevelopmentMemberTierTagRegistrationAmountConditions'));
 };
 
 const handleAutoApproval = async () => {
@@ -1277,7 +1262,7 @@ const handleAutoApproval = async () => {
         );
 
         if (response.success) {
-          message.success('成功自动处理提现申请');
+          message.success($t('finance.withdrawalAutoProcessedSuccessfully'));
           autoApprovalModal.show = false;
           selectedIds.value = [];
           fetchData();
@@ -1320,7 +1305,7 @@ const handleAutoApproval = async () => {
       }
     }
   } catch (error) {
-    message.error('自动处理失败');
+    message.error($t('finance.autoProcessFailed'));
   }
 };
 
@@ -1331,7 +1316,7 @@ const saveAutoRules = async () => {
         await autoWithdrawalApi.updateAutoApprovalRules(autoRules);
 
       if (response.success) {
-        message.success('自动审核规则保存成功');
+        message.success($t('finance.autoApprovalRulesSaved'));
         autoRulesModal.show = false;
         fetchData(); // Refresh data with new rules
       } else {
@@ -1339,11 +1324,11 @@ const saveAutoRules = async () => {
       }
     } catch (apiError) {
       console.warn('API call failed:', apiError);
-      message.success('自动审核规则保存成功 (模拟)');
+      message.success($t('finance.autoApprovalRulesSavedSimulated'));
       autoRulesModal.show = false;
     }
   } catch (error) {
-    message.error('规则保存失败');
+    message.error($t('finance.failedToSaveRules'));
   }
 };
 

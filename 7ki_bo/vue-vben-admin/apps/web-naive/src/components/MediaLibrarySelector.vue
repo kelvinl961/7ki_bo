@@ -45,7 +45,7 @@
         <div class="filters-section mb-4">
           <div class="flex items-end gap-4">
             <div class="flex flex-col">
-              <label class="mb-2 text-sm font-medium">搜索</label>
+              <label class="mb-2 text-sm font-medium">{{ $t('common.search') }}</label>
               <n-input
                 v-model:value="filters.search"
                 placeholder="搜索文件名..."
@@ -65,7 +65,7 @@
               />
             </div>
             <div class="flex flex-col">
-              <label class="mb-2 text-sm font-medium">类型</label>
+              <label class="mb-2 text-sm font-medium">{{ $t('common.type') }}</label>
               <n-select
                 v-model:value="filters.type"
                 placeholder="选择类型"
@@ -74,8 +74,8 @@
                 style="width: 120px"
               />
             </div>
-            <n-button type="primary" @click="loadMediaFiles">搜索</n-button>
-            <n-button @click="resetFilters">重置</n-button>
+            <n-button type="primary" @click="loadMediaFiles">{{ $t('common.search') }}</n-button>
+            <n-button @click="resetFilters">{{ $t('common.reset') }}</n-button>
           </div>
           <!-- Help text for category filtering -->
           <div
@@ -146,7 +146,7 @@
         <!-- Loading State -->
         <div v-if="loading" class="loading-state">
           <n-spin size="large" />
-          <p>加载中...</p>
+          <p>{{ $t('common.loading') }}</p>
         </div>
 
         <!-- Pagination -->
@@ -172,7 +172,7 @@
             <n-button @click="openMediaLibrary"> 前往媒体库 </n-button>
           </div>
           <div class="flex gap-2">
-            <n-button @click="showModal = false">取消</n-button>
+            <n-button @click="showModal = false">{{ $t('common.cancel') }}</n-button>
             <n-button
               type="primary"
               @click="confirmSelection"
@@ -201,6 +201,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, onMounted, computed, watch } from 'vue';
 import {
   NModal,

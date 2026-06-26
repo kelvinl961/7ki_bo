@@ -2,14 +2,14 @@
   <n-modal
     v-model:show="showModal"
     preset="dialog"
-    title="新人福利设置"
+    :title="$t('activity.noviceWelfareGlobal.k65b0')"
     style="width: 90vw; max-width: 1200px"
     class="task-form-modal"
   >
     <template #header>
       <div class="flex items-center gap-2">
         <AddOutline />
-        <span>{{ isEdit ? '编辑任务' : '新人福利设置' }}</span>
+        <span>{{ isEdit ? $t('activity.common.editTask') : $t('activity.common.noviceWelfareSettings') }}</span>
       </div>
     </template>
 
@@ -17,7 +17,7 @@
       <!-- 🎯 NEW: Tabbed Layout matching Screenshot 2 -->
       <n-tabs type="line" animated class="modal-tabs">
         <!-- Tab 1: Basic Settings -->
-        <n-tab-pane name="basic" tab="基础设置">
+        <n-tab-pane name="basic" :tab="$t('activity.formModal.k57fa')">
           <div class="space-y-6">
             <n-form
               ref="formRef"
@@ -29,12 +29,12 @@
             >
               <!-- Basic Information Section -->
               <div class="rounded-lg bg-gray-50 p-4">
-                <h3 class="mb-4 text-sm font-medium text-gray-700">基础信息</h3>
+                <h3 class="mb-4 text-sm font-medium text-gray-700">{{ $t('activity.taskForm.k57fa') }}</h3>
 
-                <n-form-item label="任务条件" path="title">
+                <n-form-item :label="$t('activity.noviceWelfare.k4efb')" path="title">
                   <n-input
                     v-model:value="formData.title"
-                    placeholder="请输入任务条件描述"
+                    :placeholder="$t('activity.taskForm.k8bf7')"
                     maxlength="100"
                     show-count
                   />
@@ -42,22 +42,22 @@
 
                 <n-grid :cols="2" :x-gap="16">
                   <n-grid-item>
-                    <n-form-item label="奖励类型" path="rewardType">
+                    <n-form-item :label="$t('activity.rewardReport.k5956')" path="rewardType">
                       <n-select
                         v-model:value="formData.rewardType"
                         :options="rewardTypeOptions"
-                        placeholder="选择奖励类型"
+                        :placeholder="$t('activity.taskForm.k9009')"
                       />
                     </n-form-item>
                   </n-grid-item>
                   <n-grid-item>
-                    <n-form-item label="奖励金额" path="rewardAmount">
+                    <n-form-item :label="$t('activity.formModal.k5956')" path="rewardAmount">
                       <n-input-number
                         v-model:value="formData.rewardAmount"
                         :min="0"
                         :precision="2"
                         :step="0.01"
-                        placeholder="请输入奖励金额"
+                        :placeholder="$t('activity.formModal.k8bf73')"
                         style="width: 100%"
                         clearable
                       >
@@ -67,7 +67,7 @@
                   </n-grid-item>
                 </n-grid>
 
-                <n-form-item label="活跃度" path="activityLevel">
+                <n-form-item :label="$t('activity.rewardReport.k6d3b5')" path="activityLevel">
                   <n-input-number
                     v-model:value="formData.activityLevel"
                     :min="0"
@@ -77,75 +77,75 @@
                   />
                 </n-form-item>
 
-                <n-form-item label="状态设置">
+                <n-form-item :label="$t('activity.taskForm.k72b6')">
                   <n-switch v-model:value="formData.isActive">
-                    <template #checked>开</template>
-                    <template #unchecked>关</template>
+                    <template #checked>{{ $t('activity.noviceWelfare.k5f00') }}</template>
+                    <template #unchecked>{{ $t('activity.formModal.k5173') }}</template>
                   </n-switch>
                 </n-form-item>
               </div>
 
               <!-- Task Validity Section -->
               <div class="rounded-lg bg-gray-50 p-4">
-                <h3 class="mb-4 text-sm font-medium text-gray-700">任务时效</h3>
+                <h3 class="mb-4 text-sm font-medium text-gray-700">{{ $t('activity.taskForm.k4efb') }}</h3>
                 <n-radio-group v-model:value="formData.taskValidity">
                   <n-space vertical>
-                    <n-radio value="long_term">长期</n-radio>
-                    <n-radio value="limited_time">限时</n-radio>
+                    <n-radio value="long_term">{{ $t('activity.noviceWelfareGlobal.k957f') }}</n-radio>
+                    <n-radio value="limited_time">{{ $t('activity.noviceWelfareGlobal.k9650') }}</n-radio>
                   </n-space>
                 </n-radio-group>
               </div>
 
               <!-- Claim Method Section -->
               <div class="rounded-lg bg-gray-50 p-4">
-                <h3 class="mb-4 text-sm font-medium text-gray-700">领取方式</h3>
+                <h3 class="mb-4 text-sm font-medium text-gray-700">{{ $t('activity.rewardReport.k9886') }}</h3>
                 <n-radio-group v-model:value="formData.claimMethod">
                   <n-space vertical>
-                    <n-radio value="MANUAL">手动领取</n-radio>
-                    <n-radio value="AUTOMATIC">自动收集立即到账</n-radio>
+                    <n-radio value="MANUAL">{{ $t('activity.rewardReport.k624b') }}</n-radio>
+                    <n-radio value="AUTOMATIC">{{ $t('activity.taskForm.k81ea') }}</n-radio>
                   </n-space>
                 </n-radio-group>
               </div>
 
               <!-- Claim Time Section -->
               <div class="rounded-lg bg-gray-50 p-4">
-                <h3 class="mb-4 text-sm font-medium text-gray-700">领取时间</h3>
+                <h3 class="mb-4 text-sm font-medium text-gray-700">{{ $t('activity.rewardReport.k98862') }}</h3>
                 <n-radio-group v-model:value="formData.claimTimeType">
                   <n-space vertical>
-                    <n-radio value="NEXT_DAY">当天签到下日可领</n-radio>
-                    <n-radio value="REAL_TIME">实时</n-radio>
+                    <n-radio value="NEXT_DAY">{{ $t('activity.taskForm.k5f53') }}</n-radio>
+                    <n-radio value="REAL_TIME">{{ $t('activity.taskForm.k5b9e') }}</n-radio>
                   </n-space>
                 </n-radio-group>
               </div>
 
               <!-- Claim Entry Section -->
               <div class="rounded-lg bg-gray-50 p-4">
-                <h3 class="mb-4 text-sm font-medium text-gray-700">领取入口</h3>
+                <h3 class="mb-4 text-sm font-medium text-gray-700">{{ $t('activity.luckyWheelPublicConfig.k98862') }}</h3>
                 <div class="grid grid-cols-2 gap-3">
                   <n-checkbox
                     v-model:checked="formData.claimEntries!.androidApp"
-                    >Android APP可领取</n-checkbox
+                    >{{ $t('activity.luckyWheelPublicConfig.androidAPP') }}</n-checkbox
                   >
                   <n-checkbox v-model:checked="formData.claimEntries!.iosApp"
-                    >IOS APP可领取</n-checkbox
+                    >{{ $t('activity.taskForm.iOSAPP') }}</n-checkbox
                   >
                   <n-checkbox v-model:checked="formData.claimEntries!.h5"
-                    >马甲包</n-checkbox
+                    >{{ $t('activity.formModal.k9a6c') }}</n-checkbox
                   >
                   <n-checkbox v-model:checked="formData.claimEntries!.pwa"
-                    >PWA体验</n-checkbox
+                    >{{ $t('activity.taskForm.pWA') }}</n-checkbox
                   >
                   <n-checkbox v-model:checked="formData.claimEntries!.iosWeb"
-                    >IOS触登录</n-checkbox
+                    >{{ $t('activity.taskForm.iOS') }}</n-checkbox
                   >
                   <n-checkbox v-model:checked="formData.claimEntries!.pcWeb"
-                    >PC可领取</n-checkbox
+                    >{{ $t('activity.formModal.pC') }}</n-checkbox
                   >
                   <n-checkbox v-model:checked="formData.claimEntries!.androidH5"
-                    >Android H5可领取</n-checkbox
+                    >{{ $t('activity.luckyWheelPublicConfig.androidH5') }}</n-checkbox
                   >
                   <n-checkbox v-model:checked="formData.claimEntries!.iosH5"
-                    >IOS H5可领取</n-checkbox
+                    >{{ $t('activity.taskForm.iOSH5') }}</n-checkbox
                   >
                 </div>
 
@@ -153,15 +153,15 @@
                 <div class="mt-4 space-y-2">
                   <n-checkbox
                     v-model:checked="formData.claimEntries!.sameDeviceOnce"
-                    >同设备只需完成一次</n-checkbox
+                    >{{ $t('activity.taskForm.k540c') }}</n-checkbox
                   >
                   <n-checkbox
                     v-model:checked="formData.claimEntries!.webLoginOnce"
-                    >PC可领取</n-checkbox
+                    >{{ $t('activity.formModal.pC') }}</n-checkbox
                   >
                   <n-checkbox
                     v-model:checked="formData.claimEntries!.deviceBindingOnce"
-                    >同设备绑定只能领取1次</n-checkbox
+                    >{{ $t('activity.taskForm.k540c2') }}</n-checkbox
                   >
                 </div>
               </div>
@@ -170,84 +170,82 @@
         </n-tab-pane>
 
         <!-- Tab 2: Restriction Conditions -->
-        <n-tab-pane name="restrictions" tab="限制条件">
+        <n-tab-pane name="restrictions" :tab="$t('activity.formModal.k9650')">
           <div class="space-y-6">
             <!-- More Reward Claim Restrictions -->
             <div class="rounded-lg bg-gray-50 p-4">
-              <h3 class="mb-4 text-sm font-medium text-gray-700">
-                更多奖领取限制
-              </h3>
+              <h3 class="mb-4 text-sm font-medium text-gray-700">{{ $t('activity.formModal.k66f42') }}</h3>
               <n-checkbox-group v-model:value="formData.restrictions">
                 <div class="grid grid-cols-2 gap-2">
                   <n-checkbox value="phone_verified"
-                    >完成手机验证才能领取</n-checkbox
+                    >{{ $t('activity.formModal.k5b8c') }}</n-checkbox
                   >
                   <n-checkbox value="complete_email"
-                    >完成邮箱验证才能领取</n-checkbox
+                    >{{ $t('activity.formModal.k5b8c2') }}</n-checkbox
                   >
                   <n-checkbox value="bank_card"
-                    >完成银行卡绑定才能领取</n-checkbox
+                    >{{ $t('activity.formModal.k5b8c3') }}</n-checkbox
                   >
                   <n-checkbox value="complete_recharge"
-                    >完成充值后才能领取</n-checkbox
+                    >{{ $t('activity.formModal.k5b8c4') }}</n-checkbox
                   >
                   <n-checkbox value="bind_currency"
-                    >绑定虚拟货币才能领取</n-checkbox
+                    >{{ $t('activity.formModal.k7ed1') }}</n-checkbox
                   >
                   <n-checkbox value="three_party"
-                    >绑定三方钱包才能领取</n-checkbox
+                    >{{ $t('activity.formModal.k7ed12') }}</n-checkbox
                   >
                   <n-checkbox value="complete_birthday"
-                    >完成生日设置才能领取</n-checkbox
+                    >{{ $t('activity.formModal.k5b8c5') }}</n-checkbox
                   >
                   <n-checkbox value="bind_payment"
-                    >绑定收款方式才能领取</n-checkbox
+                    >{{ $t('activity.formModal.k7ed13') }}</n-checkbox
                   >
                   <n-checkbox value="real_name"
-                    >完成实名认证才能领取</n-checkbox
+                    >{{ $t('activity.formModal.k5b8c6') }}</n-checkbox
                   >
                   <n-checkbox value="game_experience"
-                    >填写真实姓名才能领取</n-checkbox
+                    >{{ $t('activity.formModal.k586b') }}</n-checkbox
                   >
                   <n-checkbox value="same_activity"
-                    >同类型活动只能领取1次</n-checkbox
+                    >{{ $t('activity.formModal.k540c') }}</n-checkbox
                   >
                   <n-checkbox value="charge_after_complete"
-                    >充值后未来法才能领取</n-checkbox
+                    >{{ $t('activity.formModal.k51456') }}</n-checkbox
                   >
-                  <n-checkbox value="same_ip">同登录IP只能申请1次</n-checkbox>
+                  <n-checkbox value="same_ip">{{ $t('activity.formModal.k540c2') }}</n-checkbox>
                   <n-checkbox value="complete_kyc"
-                    >完成KYC认证才能领取</n-checkbox
+                    >{{ $t('activity.formModal.k5b8c7') }}</n-checkbox
                   >
                   <n-checkbox value="bind_currency_third_party"
-                    >绑定虚拟货币三方钱包才能领取</n-checkbox
+                    >{{ $t('activity.formModal.k7ed14') }}</n-checkbox
                   >
                   <n-checkbox value="complete_recharge_education"
-                    >完成充值教育才能领取</n-checkbox
+                    >{{ $t('activity.formModal.k5b8c8') }}</n-checkbox
                   >
                   <n-checkbox value="complete_bet_education"
-                    >完成投注教育才能领取</n-checkbox
+                    >{{ $t('activity.formModal.k5b8c9') }}</n-checkbox
                   >
                   <n-checkbox value="same_ip_device"
-                    >同IP同设备只能申请1次</n-checkbox
+                    >{{ $t('activity.formModal.k540c3') }}</n-checkbox
                   >
                   <n-checkbox value="network_verification"
-                    >网络实名验证才能领取</n-checkbox
+                    >{{ $t('activity.formModal.k7f51') }}</n-checkbox
                   >
                   <n-checkbox value="device_binding_limit"
-                    >同设备绑定只能申请1次</n-checkbox
+                    >{{ $t('activity.formModal.k540c4') }}</n-checkbox
                   >
                   <n-checkbox value="phone_number_uniqueness"
-                    >手机号唯一性才能领取</n-checkbox
+                    >{{ $t('activity.formModal.k624b') }}</n-checkbox
                   >
                   <n-checkbox value="physical_verification"
-                    >物理验证才能领取</n-checkbox
+                    >{{ $t('activity.formModal.k7269') }}</n-checkbox
                   >
                   <n-checkbox value="location_verification"
-                    >地理位置验证才能领取</n-checkbox
+                    >{{ $t('activity.formModal.k5730') }}</n-checkbox
                   >
                   <n-checkbox value="payment_method_verification"
-                    >支付方式验证才能领取</n-checkbox
+                    >{{ $t('activity.formModal.k652f') }}</n-checkbox
                   >
                 </div>
               </n-checkbox-group>
@@ -255,27 +253,25 @@
 
             <!-- 🎯 CRITICAL: Audit Multiplier Configuration (稽核倍数设置) -->
             <div class="rounded-lg border border-yellow-200 bg-yellow-50 p-4">
-              <h3 class="mb-4 text-sm font-medium text-gray-700">
-                稽核倍数设置
-              </h3>
+              <h3 class="mb-4 text-sm font-medium text-gray-700">{{ $t('activity.formModal.k7a3d') }}</h3>
               <div class="grid grid-cols-2 gap-4">
                 <!-- Audit Required -->
                 <div>
                   <label class="mb-1 block text-xs text-gray-600"
-                    >是否需要稽核</label
+                    >{{ $t('activity.formModal.k662f6') }}</label
                   >
                   <n-switch
                     v-model:value="formData.auditSettings!.auditRequired"
                   >
-                    <template #checked>需要稽核</template>
-                    <template #unchecked>无需稽核</template>
+                    <template #checked>{{ $t('activity.formModal.k97003') }}</template>
+                    <template #unchecked>{{ $t('activity.formModal.k65e02') }}</template>
                   </n-switch>
                 </div>
 
                 <!-- Audit Multiplier -->
                 <div>
                   <label class="mb-1 block text-xs text-gray-600"
-                    >稽核倍数</label
+                    >{{ $t('activity.formModal.k7a3d2') }}</label
                   >
                   <n-input-number
                     v-model:value="formData.auditSettings!.auditMultiplier"
@@ -287,7 +283,7 @@
                     :disabled="!formData.auditSettings!.auditRequired"
                     class="w-full"
                   >
-                    <template #suffix>倍</template>
+                    <template #suffix>{{ $t('activity.formModal.k500d') }}</template>
                   </n-input-number>
                 </div>
 
@@ -297,7 +293,7 @@
                 <!-- Manual Review Required -->
                 <div>
                   <label class="mb-1 block text-xs text-gray-600"
-                    >人工审核</label
+                    >{{ $t('activity.formModal.k4eba') }}</label
                   >
                   <n-switch
                     v-model:value="
@@ -305,8 +301,8 @@
                     "
                     :disabled="!formData.auditSettings!.auditRequired"
                   >
-                    <template #checked>需要人工审核</template>
-                    <template #unchecked>自动审核</template>
+                    <template #checked>{{ $t('activity.formModal.k97004') }}</template>
+                    <template #unchecked>{{ $t('activity.formModal.k81ea4') }}</template>
                   </n-switch>
                 </div>
               </div>
@@ -317,48 +313,44 @@
                 class="mt-3 rounded-lg bg-blue-50 p-3"
               >
                 <p class="text-xs text-blue-600">
-                  <i class="fa fa-info-circle mr-1"></i>
-                  稽核说明：用户获得奖励后需要投注
-                  <strong
+                  <i class="fa fa-info-circle mr-1"></i>{{ $t('activity.formModal.k7a3dk7528') }}<strong
                     >{{
-                      (formData.auditSettings!.auditMultiplier || 1).toFixed(1)
-                    }}倍</strong
-                  >
-                  奖励金额才能提现。
-                </p>
+                      $t('activity.common.auditMultiplierSuffix', [
+                        (formData.auditSettings!.auditMultiplier || 1).toFixed(1),
+                      ])
+                    }}</strong
+                  >{{ $t('activity.formModal.k59569') }}</p>
               </div>
             </div>
 
             <!-- Login Redirect Methods Section -->
             <div class="rounded-lg bg-gray-50 p-4">
-              <h3 class="mb-4 text-sm font-medium text-gray-700">
-                登录跳转方式
-              </h3>
+              <h3 class="mb-4 text-sm font-medium text-gray-700">{{ $t('activity.taskForm.k767b') }}</h3>
               <div class="grid grid-cols-2 gap-4">
                 <div>
                   <label class="mb-2 block text-xs text-gray-600"
-                    >登录前跳转方式</label
+                    >{{ $t('activity.taskForm.k767b2') }}</label
                   >
                   <n-radio-group
                     v-model:value="formData.loginRedirectMethod!.beforeLogin"
                   >
                     <n-space vertical>
-                      <n-radio value="high_frequency">高频跳转</n-radio>
-                      <n-radio value="custom">自定义</n-radio>
+                      <n-radio value="high_frequency">{{ $t('activity.taskForm.k9ad8') }}</n-radio>
+                      <n-radio value="custom">{{ $t('activity.detailModal.k81ea') }}</n-radio>
                     </n-space>
                   </n-radio-group>
                 </div>
 
                 <div>
                   <label class="mb-2 block text-xs text-gray-600"
-                    >登录后跳转方式</label
+                    >{{ $t('activity.taskForm.k767b3') }}</label
                   >
                   <n-radio-group
                     v-model:value="formData.loginRedirectMethod!.afterLogin"
                   >
                     <n-space vertical>
-                      <n-radio value="high_frequency">高频跳转</n-radio>
-                      <n-radio value="custom">自定义</n-radio>
+                      <n-radio value="high_frequency">{{ $t('activity.taskForm.k9ad8') }}</n-radio>
+                      <n-radio value="custom">{{ $t('activity.detailModal.k81ea') }}</n-radio>
                     </n-space>
                   </n-radio-group>
                 </div>
@@ -370,28 +362,24 @@
                   v-model:checked="
                     formData.loginRedirectMethod!.directAfterRecharge
                   "
-                >
-                  充值后直接跳转
-                </n-checkbox>
+                >{{ $t('activity.taskForm.k5145') }}</n-checkbox>
               </div>
             </div>
 
             <!-- Reward Rules Section -->
             <div class="rounded-lg bg-gray-50 p-4">
-              <h3 class="mb-4 text-sm font-medium text-gray-700">
-                奖励获取规则
-              </h3>
+              <h3 class="mb-4 text-sm font-medium text-gray-700">{{ $t('activity.taskForm.k5956') }}</h3>
               <div class="space-y-4">
                 <div>
                   <label class="mb-1 block text-xs text-gray-600"
-                    >规则说明</label
+                    >{{ $t('activity.formModal.k89c4') }}</label
                   >
                   <n-radio-group
                     v-model:value="formData.rewardRules!.explanationType"
                   >
                     <n-space vertical>
-                      <n-radio value="default">系统默认</n-radio>
-                      <n-radio value="custom">自定义</n-radio>
+                      <n-radio value="default">{{ $t('activity.taskForm.k7cfb') }}</n-radio>
+                      <n-radio value="custom">{{ $t('activity.detailModal.k81ea') }}</n-radio>
                     </n-space>
                   </n-radio-group>
                 </div>
@@ -399,12 +387,12 @@
                 <!-- Custom Rules Text Area -->
                 <div v-if="formData.rewardRules!.explanationType === 'custom'">
                   <label class="mb-1 block text-xs text-gray-600"
-                    >自定义规则说明</label
+                    >{{ $t('activity.taskForm.k81ea2') }}</label
                   >
                   <n-input
                     v-model:value="formData.rewardRules!.customText"
                     type="textarea"
-                    placeholder="请输入自定义规则说明..."
+                    :placeholder="$t('activity.noviceWelfareGlobal.k8bf73')"
                     :rows="4"
                     class="w-full"
                   />
@@ -418,9 +406,9 @@
 
     <template #action>
       <n-space>
-        <n-button @click="handleCancel">取消</n-button>
+        <n-button @click="handleCancel">{{ $t('activity.activityList.k53d6') }}</n-button>
         <n-button type="primary" :loading="submitting" @click="handleSubmit">
-          {{ isEdit ? '更新' : '确定' }}
+          {{ isEdit ? $t('activity.common.updateBtn') : $t('activity.common.confirmBtn') }}
         </n-button>
       </n-space>
     </template>
@@ -428,6 +416,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, computed, watch, reactive } from 'vue';
 import {
   NModal,
@@ -485,7 +475,7 @@ const showModal = computed({
 // 🎯 NEW: Enhanced form data matching Screenshot 2
 const formData = reactive<TaskCenterCreateRequest>({
   // Basic Information
-  title: '注册账号', // Pre-fill with the value from screenshot
+  title: $t('activity.noviceWelfareSettings.k6ce8'), // Pre-fill with the value from screenshot
   description: '',
   category: 'NOVICE_WELFARE',
   taskType: 'REGISTRATION',
@@ -585,17 +575,17 @@ const formData = reactive<TaskCenterCreateRequest>({
 // 表单验证规则
 const rules: FormRules = {
   title: [
-    { required: true, message: '请输入任务条件', trigger: 'blur' },
-    { max: 100, message: '任务条件不能超过100个字符', trigger: 'blur' },
+    { required: true, message: $t('activity.common.enterTaskCondition'), trigger: 'blur' },
+    { max: 100, message: $t('activity.taskForm.k4efb3'), trigger: 'blur' },
   ],
   rewardType: [
-    { required: true, message: '请选择奖励类型', trigger: 'change' },
+    { required: true, message: $t('activity.rewardReport.k8bf73'), trigger: 'change' },
   ],
   rewardAmount: [
     {
       required: true,
       type: 'number',
-      message: '请输入奖励金额',
+      message: $t('activity.formModal.k8bf73'),
       trigger: ['blur', 'change'],
       transform: (value: any) => {
         if (typeof value === 'string') {
@@ -607,19 +597,19 @@ const rules: FormRules = {
     {
       type: 'number',
       min: 0,
-      message: '奖励金额不能小于0',
+      message: $t('activity.taskForm.k59562'),
       trigger: ['blur', 'change'],
     },
   ],
 };
 
 const rewardTypeOptions = [
-  { label: '现金（固定）', value: 'CASH' },
-  { label: '奖金（浮动）', value: 'BONUS' },
-  { label: '积分', value: 'POINTS' },
-  { label: '免费旋转', value: 'FREE_SPINS' },
-  { label: '折扣', value: 'DISCOUNT' },
-  { label: '自定义奖励', value: 'CUSTOM' },
+  { label: $t('activity.taskDetail.k73b0k56fa'), value: 'CASH' },
+  { label: $t('activity.taskDetail.k5956k6d6e'), value: 'BONUS' },
+  { label: $t('activity.rewardReport.k79ef2'), value: 'POINTS' },
+  { label: $t('activity.noviceWelfare.k514d'), value: 'FREE_SPINS' },
+  { label: $t('activity.noviceWelfare.k6298'), value: 'DISCOUNT' },
+  { label: $t('activity.taskDetail.k81ea2'), value: 'CUSTOM' },
 ];
 
 const handleCancel = () => {
@@ -679,12 +669,12 @@ const handleSubmit = async () => {
         })
       : createTaskCenter(formData));
 
-    message.success(props.isEdit ? '任务更新成功' : '任务创建成功');
+    message.success(props.isEdit ? $t('activity.common.taskUpdateSuccess') : $t('activity.common.taskCreateSuccess'));
     showModal.value = false;
     emit('submit');
   } catch (error: any) {
     console.error('Task center submission failed:', error);
-    message.error(error.message || '操作失败，请重试');
+    message.error(error.message || $t('activity.common.operationRetry'));
   } finally {
     submitting.value = false;
   }

@@ -9,162 +9,41 @@
   >
     <div class="skin-lang-editor">
       <div class="editor-content">
-        <!-- Left Panel - Form -->
         <div class="form-panel">
           <n-form
             ref="formRef"
             :model="formModel"
             :rules="formRules"
-            label-placement="left"
-            label-width="120px"
-            require-mark-placement="right-hanging"
-            class="editor-form"
+            label-placement="top"
+            :disabled="detailMode"
           >
-            <!-- Basic Info Section -->
             <div class="form-section">
-              <h4 class="section-title">基本信息</h4>
+              <h4 class="section-title">{{ $t('brand.skinLang.lobbyBackground') }}</h4>
 
-              <n-form-item label="品牌ID" path="brandId">
-                <n-input v-model:value="formModel.brandId" readonly />
-              </n-form-item>
-
-              <n-form-item label="品牌编号" path="brandCode">
-                <n-input v-model:value="formModel.brandCode" readonly />
-              </n-form-item>
-
-              <n-form-item label="品牌名称" path="brandName">
-                <n-text>{{ formModel.brandName }}</n-text>
-              </n-form-item>
-            </div>
-
-            <!-- Template Configuration -->
-            <div class="form-section">
-              <h4 class="section-title">模板配置</h4>
-
-              <n-form-item label="模板类型" path="templateType">
-                <n-radio-group v-model:value="formModel.templateType" :disabled="detailMode">
-                  <n-radio value="main-site">主站</n-radio>
-                  <n-radio value="skin-template">皮肤模板</n-radio>
-                </n-radio-group>
-              </n-form-item>
-
-              <n-form-item label="品牌皮肤" path="skinStyle">
-                <n-select
-                  v-model:value="formModel.skinStyle"
-                  :options="skinStyleOptions"
-                  placeholder="选择版式风格"
-                  filterable
-                  :disabled="detailMode"
-                />
-              </n-form-item>
-            </div>
-
-            <!-- Brand Icons Section -->
-            <div class="form-section">
-              <h4 class="section-title">品牌图标</h4>
-
-              <n-form-item label="玩法颜色" path="gameColor">
-                <n-radio-group v-model:value="formModel.gameColor" :disabled="detailMode">
-                  <n-radio value="有底色">有底色</n-radio>
-                  <n-radio value="无底色">无底色</n-radio>
-                </n-radio-group>
-              </n-form-item>
-
-              <n-form-item label="皮肤颜色" path="skinColor">
-                <n-radio-group
-                  v-model:value="formModel.skinColor"
-                  class="skin-color-group"
-                  :disabled="detailMode"
-                >
-                  <div class="skin-color-grid">
-                    <n-radio
-                      v-for="color in skinColorOptions"
-                      :key="color.value"
-                      :value="color.value"
-                      :label="color.label"
-                      class="skin-color-radio"
-                    />
-                  </div>
-                </n-radio-group>
-              </n-form-item>
-
-              <div class="quick-color-block">
-                <div class="quick-color-title">快捷改色</div>
-                <div class="quick-color-grid">
-                <n-form-item label="主色" path="primaryColor">
-                  <n-color-picker
-                    v-model:value="formModel.primaryColor"
-                    :show-alpha="false"
-                    :disabled="detailMode"
-                  />
-                </n-form-item>
-                <n-form-item label="强调色" path="accentColor">
-                  <n-color-picker
-                    v-model:value="formModel.accentColor"
-                    :show-alpha="false"
-                    :disabled="detailMode"
-                  />
-                </n-form-item>
-                <n-form-item label="按钮色" path="buttonColor">
-                  <n-color-picker
-                    v-model:value="formModel.buttonColor"
-                    :show-alpha="false"
-                    :disabled="detailMode"
-                  />
-                </n-form-item>
-                <n-form-item label="主文字" path="textPrimary">
-                  <n-color-picker
-                    v-model:value="formModel.textPrimary"
-                    :show-alpha="false"
-                    :disabled="detailMode"
-                  />
-                </n-form-item>
-                <n-form-item label="次文字" path="textSecondary">
-                  <n-color-picker
-                    v-model:value="formModel.textSecondary"
-                    :show-alpha="false"
-                    :disabled="detailMode"
-                  />
-                </n-form-item>
-                <n-form-item label="点缀文字" path="textAccent">
-                  <n-color-picker
-                    v-model:value="formModel.textAccent"
-                    :show-alpha="false"
-                    :disabled="detailMode"
-                  />
-                </n-form-item>
-                </div>
-              </div>
-            </div>
-
-            <!-- 大厅背景（紧跟品牌图标） -->
-            <div class="form-section">
-              <h4 class="section-title">大厅背景</h4>
-
-              <n-form-item label="大厅背景" path="lobbyBackgroundSource">
+              <n-form-item :label="$t('brand.skinLang.lobbyBackground')" path="lobbyBackgroundSource">
                 <n-radio-group
                   v-model:value="formModel.lobbyBackgroundSource"
                   :disabled="detailMode"
                 >
-                  <n-radio value="system">系统配置</n-radio>
-                  <n-radio value="custom_image">自定义图片背景</n-radio>
-                  <n-radio value="skin_default">皮肤默认</n-radio>
+                  <n-radio value="system">{{ $t('brand.skinLang.systemConfig') }}</n-radio>
+                  <n-radio value="custom_image">{{ $t('brand.skinLang.customImageBackground') }}</n-radio>
+                  <n-radio value="skin_default">{{ $t('brand.skinLang.skinDefault') }}</n-radio>
                 </n-radio-group>
               </n-form-item>
 
               <n-form-item
                 v-if="formModel.lobbyBackgroundSource === 'custom_image'"
-                label="背景图地址"
+                :label="$t('brand.skinLang.backgroundImageUrl')"
                 path="lobbyCustomImageUrl"
               >
                 <n-input
                   v-model:value="formModel.lobbyCustomImageUrl"
-                  placeholder="请输入图片 URL"
+                  :placeholder="$t('brand.skinLang.enterImageUrl')"
                   :readonly="detailMode"
                 />
               </n-form-item>
 
-              <n-form-item label="底纹背景色" path="patternBackgroundColor">
+              <n-form-item :label="$t('brand.skinLang.patternBackgroundColor')" path="patternBackgroundColor">
                 <n-color-picker
                   v-model:value="formModel.patternBackgroundColor"
                   :modes="['hex']"
@@ -173,7 +52,7 @@
                 />
               </n-form-item>
 
-              <n-form-item label="底纹样式" path="lobbyPatternUrl">
+              <n-form-item :label="$t('brand.skinLang.patternStyle')" path="lobbyPatternUrl">
                 <div class="lobby-pattern-tabs-root">
                   <n-tabs
                     v-model:value="formModel.lobbyPatternTab"
@@ -181,7 +60,7 @@
                     type="line"
                     :disabled="detailMode"
                   >
-                    <n-tab-pane name="light" tab="白色底纹">
+                    <n-tab-pane name="light" :tab="$t('brand.skinLang.whitePattern')">
                       <div class="lobby-pattern-panel">
                         <div class="lobby-pattern-grid">
                           <button
@@ -208,12 +87,12 @@
                               alt=""
                               loading="lazy"
                             />
-                            <span v-else class="lobby-pattern-none-label">无底纹</span>
+                            <span v-else class="lobby-pattern-none-label">{{ $t('brand.skinLang.noPattern') }}</span>
                           </button>
                         </div>
                       </div>
                     </n-tab-pane>
-                    <n-tab-pane name="dark" tab="深色底纹">
+                    <n-tab-pane name="dark" :tab="$t('brand.skinLang.darkPattern')">
                       <div class="lobby-pattern-panel">
                         <div class="lobby-pattern-grid">
                           <button
@@ -240,7 +119,7 @@
                               alt=""
                               loading="lazy"
                             />
-                            <span v-else class="lobby-pattern-none-label">无底纹</span>
+                            <span v-else class="lobby-pattern-none-label">{{ $t('brand.skinLang.noPattern') }}</span>
                           </button>
                         </div>
                       </div>
@@ -252,7 +131,7 @@
 
             <!-- Language Settings -->
             <div class="form-section">
-              <h4 class="section-title">语言设置</h4>
+              <h4 class="section-title">{{ $t('brand.skinLang.languageSettings') }}</h4>
 
               <div class="language-section">
                 <div
@@ -280,31 +159,31 @@
 
             <!-- Additional Settings -->
             <div class="form-section">
-              <h4 class="section-title">其他设置</h4>
+              <h4 class="section-title">{{ $t('brand.skinLang.otherSettings') }}</h4>
 
-              <n-form-item label="请求认证模式" path="authMode">
+              <n-form-item :label="$t('brand.skinLang.authMode')" path="authMode">
                 <n-select
                   v-model:value="formModel.authMode"
                   :options="authModeOptions"
-                  placeholder="选择认证模式"
+                  :placeholder="$t('brand.skinLang.selectAuthMode')"
                   :disabled="detailMode"
                 />
               </n-form-item>
 
-              <n-form-item label="APP配置" path="appSetting">
+              <n-form-item :label="$t('brand.skin.appConfig')" path="appSetting">
                 <n-input
                   v-model:value="formModel.appSetting"
-                  placeholder="输入APP配置"
+                  :placeholder="$t('brand.skinLang.enterAppConfig')"
                   :readonly="detailMode"
                 />
               </n-form-item>
 
-              <n-form-item label="备注信息" path="backendRemark">
+              <n-form-item :label="$t('brand.skinLang.remarkInfo')" path="backendRemark">
                 <n-input
                   v-model:value="formModel.backendRemark"
                   type="textarea"
                   :rows="3"
-                  placeholder="输入备注信息"
+                  :placeholder="$t('brand.skinLang.enterAppConfig')"
                   :readonly="detailMode"
                 />
               </n-form-item>
@@ -312,10 +191,10 @@
 
             <!-- Timestamps -->
             <div class="form-section">
-              <n-form-item label="上次更新时间">
+              <n-form-item :label="$t('brand.skinLang.lastUpdateTime')">
                 <n-text depth="3">{{ formatDate(formModel.updatedAt) }}</n-text>
               </n-form-item>
-              <n-form-item label="下次预览更新时间">
+              <n-form-item :label="$t('brand.skinLang.nextPreviewUpdateTime')">
                 <n-text depth="3">{{ formatDate(nextUpdateTime) }}</n-text>
               </n-form-item>
             </div>
@@ -325,28 +204,24 @@
         <!-- Right Panel - Preview -->
         <div class="preview-panel">
           <div class="preview-header">
-            <h4>预览</h4>
+            <h4>{{ $t('brand.skinLang.preview') }}</h4>
             <div class="preview-device-info">
-              <n-tag v-if="useLiveClientPreview" size="small" type="success">
-                真实页面预览
-              </n-tag>
-              <n-tag v-else size="small" type="info">静态图预览</n-tag>
+              <n-tag v-if="useLiveClientPreview" size="small" type="success">{{ $t('brand.skinLang.livePagePreview') }}</n-tag>
+              <n-tag v-else size="small" type="info">{{ $t('brand.skinLang.staticPreview') }}</n-tag>
               <n-text v-if="previewHostLabel" depth="3" class="preview-host-hint">
                 {{ previewHostLabel }}
               </n-text>
               <n-text v-if="useLiveClientPreview" depth="3" class="preview-host-hint">
-                设备：{{ livePreviewDeviceLabel }}
+                {{ $t('brand.skinLang.device') }}:{{ livePreviewDeviceLabel }}
               </n-text>
               <n-text v-if="useLiveClientPreview" depth="3" class="preview-host-hint">
-                模板：{{ previewTemplateId }}
+                {{ $t('brand.skinLang.template') }}:{{ previewTemplateId }}
               </n-text>
               <div
                 v-if="isDev && useLiveClientPreview"
                 class="preview-origin-switch"
               >
-                <n-text depth="3" class="preview-origin-switch-label">
-                  前台源
-                </n-text>
+                <n-text depth="3" class="preview-origin-switch-label">{{ $t('brand.skinLang.frontendSource') }}</n-text>
                 <n-button-group size="tiny">
                   <n-button
                     v-for="opt in devPreviewOriginOptions"
@@ -368,7 +243,7 @@
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                新窗口打开预览
+                {{ $t('brand.skinLang.openPreviewNewWindow') }}
               </n-button>
             </div>
           </div>
@@ -379,11 +254,11 @@
               <template v-if="useLiveClientPreview">
                 <div v-if="iframePreviewLoading" class="preview-loading">
                   <n-spin />
-                  <div>正在加载真实预览...</div>
+                  <div>{{ $t('brand.skinLang.loadingLivePreview') }}</div>
                 </div>
 
                 <div v-else-if="iframePreviewBlocked" class="preview-error preview-error--iframe">
-                  <div class="preview-error-title">无法在后台内嵌预览</div>
+                  <div class="preview-error-title">{{ $t('brand.skinLang.iframePreviewBlocked') }}</div>
                   <div class="preview-error-body">
                     {{ iframePreviewBlockedHint }}
                   </div>
@@ -395,7 +270,7 @@
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    新窗口打开 {{ previewHostShort }}
+                    {{ $t('brand.skinLang.openPreviewNewWindow') }} {{ previewHostShort }}
                   </n-button>
                 </div>
 
@@ -405,7 +280,7 @@
                   :key="livePreviewIframeKey"
                   :src="livePreviewUrl"
                   class="preview-iframe"
-                  title="皮肤实时预览"
+                  :title="$t('brand.skinLang.skinLivePreview')"
                   @load="handleLivePreviewLoad"
                 />
               </template>
@@ -413,7 +288,7 @@
               <template v-else>
                 <div v-if="isLoading" class="preview-loading">
                   <n-spin />
-                  <div>正在生成预览...</div>
+                  <div>{{ $t('brand.skinLang.generatingPreview') }}</div>
                 </div>
 
                 <div v-else-if="previewError" class="preview-error">
@@ -434,7 +309,7 @@
                 >
                   <img
                     :src="previewImageUrl"
-                    alt="皮肤预览"
+                    :alt="$t('brand.skinLang.skinLivePreview')"
                     class="image-preview"
                     @load="handleImageLoad"
                     @error="handleImageError"
@@ -465,12 +340,12 @@
     <template #action>
       <div class="dialog-actions">
         <template v-if="detailMode">
-          <n-button type="primary" @click="handleCancel">关闭</n-button>
+          <n-button type="primary" @click="handleCancel">{{ $t('common.close') }}</n-button>
         </template>
         <template v-else>
-          <n-button @click="handleCancel">取消</n-button>
+          <n-button @click="handleCancel">{{ $t('common.cancel') }}</n-button>
           <n-button type="primary" @click="handleSubmit" :loading="submitting">
-            {{ editingItem ? '保存修改' : '创建配置' }}
+            {{ editingItem ? $t('brand.skinLang.saveChanges') : $t('brand.skinLang.createConfig') }}
           </n-button>
         </template>
       </div>
@@ -479,6 +354,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, watch, nextTick, onMounted, onUnmounted } from 'vue';
 import {
   NModal,
@@ -544,7 +421,7 @@ import { LIVE_PREVIEW_DEVICE } from '#/constants/livePreviewDevice';
 interface Props {
   show: boolean;
   editingItem?: BrandSkinLangConfig | null;
-  /** 详情模式：只读展示 + 预览，仅显示关闭按钮 */
+  
   detailMode?: boolean;
 }
 
@@ -601,10 +478,10 @@ const formModel = reactive<
     android: ['zh-CN'],
   },
   authMode: '系统默认认证',
-  appSetting: '标准',
+  appSetting: $t('brand.skinLang.standard'),
   backendRemark: '',
   brandIcon: 'rolex',
-  operator: '当前用户',
+  operator: $t('brand.currentUser'),
   updatedAt: new Date().toISOString(),
   backgroundImage: '',
   lobbyBackgroundSource: 'system',
@@ -731,7 +608,7 @@ const deviceFrameStyle = computed(() =>
 const previewHostLabel = computed(() => {
   previewOriginTick.value;
   const host = getClientPreviewHostLabel();
-  return host ? `前台：${host}` : '';
+  return host ? $t('brand.skinLang.frontendHostPrefix', [host]) : '';
 });
 const livePreviewIframeKey = ref(0);
 const livePreviewIframeRef = ref<HTMLIFrameElement | null>(null);
@@ -745,17 +622,15 @@ const previewTemplateId = computed(() =>
   resolveSkinTemplateForForm(formModel.skinStyle, formModel.skinTemplate),
 );
 
-const previewHostShort = computed(() => getClientPreviewHostLabel().replace(/^前台：/, ''));
+const previewHostShort = computed(() => {
+  const label = previewHostLabel.value;
+  const prefix = $t('brand.skinLang.frontendHostPrefix', ['']).replace(/\{0\}/, '');
+  return label.startsWith(prefix) ? label.slice(prefix.length) : getClientPreviewHostLabel();
+});
 
 const iframePreviewBlockedHint = computed(() => {
-  const host = previewHostShort.value || '前台域名';
-  return (
-    `${host} 拒绝被后台 iframe 嵌入。请在 Cloudflare「响应头转换规则」或 Nginx 设置 frame-ancestors，` +
-    `并确保没有 X-Frame-Options: SAMEORIGIN。` +
-    `正确示例：frame-ancestors 'self' http://localhost:5888 https://118br.com https://*.118br.com；` +
-    `勿写成 "https: //*.118br.com"（中间有空格会失效）。` +
-    `可用 curl -I https://${host}/ 检查线上 Content-Security-Policy。`
-  );
+  const host = previewHostShort.value || $t('brand.skinLang.frontendDomainDefault');
+  return $t('brand.skinLang.iframeBlockedDetail', [host]);
 });
 
 function postPreviewColorsToIframe() {
@@ -876,7 +751,7 @@ function selectLobbyPattern(tab: 'light' | 'dark', url: string) {
   formModel.lobbyPatternUrl = url;
 }
 
-/** 将底纹背景色叠在皮肤色上（半透明），两者都可见 */
+
 function patternColorWashCss(colorInput: string, alpha = 0.62): string {
   const raw = colorInput.trim();
   const rgbMatch = raw.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
@@ -896,7 +771,7 @@ function patternColorWashCss(colorInput: string, alpha = 0.62): string {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-/** 预览：底层皮肤色 → 半透明底纹背景色 → 最上为自定义图 / 平铺底纹 / 皮肤背景图 */
+
 const previewImageContainerStyle = computed(() => {
   const skinTint = getSkinColorRGB(formModel.skinColor || '15');
   const lobbyUrl =
@@ -1010,57 +885,57 @@ const brandIconOptions = [
   },
 ];
 
-const clientTypes = [{ key: 'desktop', label: '普通客户端' }];
+const clientTypes = [{ key: 'desktop', label: $t('brand.skinLang.desktopClient') }];
 
 const availableLanguages = [
-  { value: 'zh-CN', label: '简体中文' },
-  { value: 'pt-BR', label: '葡萄牙语' },
-  { value: 'en-US', label: '英文' },
-  { value: 'zh-TW', label: '繁体中文' },
-  { value: 'ko-KR', label: '韩语' },
-  { value: 'ja-JP', label: '日语' },
-  { value: 'th-TH', label: '泰语' },
-  { value: 'vi-VN', label: '越南语' },
+  { value: 'zh-CN', label: $t('brand.skinLang.langZhCN') },
+  { value: 'pt-BR', label: $t('brand.skinLang.langPtBR') },
+  { value: 'en-US', label: $t('brand.skinLang.langEnUS') },
+  { value: 'zh-TW', label: $t('brand.skinLang.langZhTW') },
+  { value: 'ko-KR', label: $t('brand.skinLang.langKoKR') },
+  { value: 'ja-JP', label: $t('brand.skinLang.langJaJP') },
+  { value: 'th-TH', label: $t('brand.skinLang.langThTH') },
+  { value: 'vi-VN', label: $t('brand.skinLang.langViVN') },
 ];
 
 const authModeOptions = [
-  { label: '系统默认认证', value: '系统默认认证' },
-  { label: '双重认证', value: '双重认证' },
-  { label: '生物识别认证', value: '生物识别认证' },
-  { label: '短信验证', value: '短信验证' },
+  { label: $t('brand.skinLang.authSystemDefault'), value: '系统默认认证' },
+  { label: $t('brand.skinLang.authTwoFactor'), value: '双重认证' },
+  { label: $t('brand.skinLang.authBiometric'), value: '生物识别认证' },
+  { label: $t('brand.skinLang.authSms'), value: '短信验证' },
 ];
 
 const skinColorOptions = SKIN_COLOR_OPTIONS;
 
 // Form validation rules
 const formRules: FormRules = {
-  brandId: [{ required: true, message: '品牌ID不能为空' }],
-  brandCode: [{ required: true, message: '品牌编号不能为空' }],
-  brandName: [{ required: true, message: '品牌名称不能为空' }],
-  templateType: [{ required: true, message: '请选择模板类型' }],
-  skinStyle: [{ required: true, message: '请选择品牌皮肤' }],
-  skinTemplate: [{ required: true, message: '请选择模板' }],
-  gameColor: [{ required: true, message: '请选择玩法颜色' }],
-  skinColor: [{ required: true, message: '请选择皮肤颜色' }],
-  authMode: [{ required: true, message: '请选择认证模式' }],
-  lobbyBackgroundSource: [{ required: true, message: '请选择大厅背景' }],
+  brandId: [{ required: true, message: $t('brand.skinLang.brandIdRequired') }],
+  brandCode: [{ required: true, message: $t('brand.skinLang.brandCodeRequired') }],
+  brandName: [{ required: true, message: $t('brand.skinLang.brandNameRequired') }],
+  templateType: [{ required: true, message: $t('brand.skinLang.selectTemplateType') }],
+  skinStyle: [{ required: true, message: $t('brand.skinLang.selectBrandSkin') }],
+  skinTemplate: [{ required: true, message: $t('brand.skinLang.selectTemplate') }],
+  gameColor: [{ required: true, message: $t('brand.skinLang.selectGameColor') }],
+  skinColor: [{ required: true, message: $t('brand.skinLang.selectSkinColor') }],
+  authMode: [{ required: true, message: $t('brand.skinLang.selectAuthModeRequired') }],
+  lobbyBackgroundSource: [{ required: true, message: $t('brand.skinLang.selectLobbyBackground') }],
   lobbyCustomImageUrl: [
     {
       validator: () => {
         if (formModel.lobbyBackgroundSource !== 'custom_image') return true;
         return !!(formModel.lobbyCustomImageUrl && formModel.lobbyCustomImageUrl.trim());
       },
-      message: '请填写背景图地址',
+      message: $t('brand.skinLang.enterBackgroundUrl'),
       trigger: ['input', 'blur'],
     },
   ],
-  patternBackgroundColor: [{ required: true, message: '请选择底纹背景色' }],
+  patternBackgroundColor: [{ required: true, message: $t('brand.skinLang.selectPatternColor') }],
 };
 
 // Computed
 const computedModalTitle = computed(() => {
-  if (props.detailMode) return '皮肤语言配置详情';
-  return props.editingItem ? '编辑皮肤语言配置' : '新增皮肤语言配置';
+  if (props.detailMode) return $t('brand.skinLang.detailTitle');
+  return props.editingItem ? $t('brand.skinLang.editTitle') : $t('brand.skinLang.addTitle');
 });
 
 const nextUpdateTime = computed(() => {
@@ -1168,7 +1043,7 @@ watch(
       Object.assign(formModel, {
         brandId: 'BR' + Date.now().toString().slice(-6),
         brandCode: 'BRAND' + Date.now().toString().slice(-6),
-        brandName: '新品牌',
+        brandName: $t('brand.skinLang.newBrand'),
         brandType: '主站点',
         channelType: '通用',
         templateType: 'main-site',
@@ -1185,10 +1060,10 @@ watch(
           android: ['zh-CN'],
         },
         authMode: '系统默认认证',
-        appSetting: '标准',
+        appSetting: $t('brand.skinLang.standard'),
         backendRemark: '',
         brandIcon: 'rolex',
-        operator: '当前用户',
+        operator: $t('brand.currentUser'),
         updatedAt: new Date().toISOString(),
         backgroundImage: '',
         lobbyBackgroundSource: 'system',
@@ -1341,7 +1216,7 @@ const handleSubmit = async () => {
       textSecondary: formModel.textSecondary || palette.textSecondary,
       textAccent: formModel.textAccent || palette.textAccent,
       buttonColor: formModel.buttonColor || palette.buttonColor,
-      // Persist background image (use default for Rolex绿 when empty)
+      
       backgroundImage:
         formModel.backgroundImage ||
         getDefaultBackgroundImage(formModel.skinColor || '') ||
@@ -1352,7 +1227,7 @@ const handleSubmit = async () => {
     emit('submit', submitData);
 
     notification.success({
-      content: props.editingItem ? '配置更新成功' : '配置创建成功',
+      content: props.editingItem ? $t('brand.skinLang.configUpdateSuccess') : $t('brand.skinLang.configCreateSuccess'),
       duration: 3000,
     });
 
@@ -1689,56 +1564,9 @@ const handleClose = () => {
 .image-container {
   padding: 8px;
   border-radius: 8px;
-  background-color: #f5f5f5; /* fallback background */
-  position: relative;
-  width: 100%;
-  height: 100%;
+  background-color: #f5f5f5;
 }
 
-.image-preview {
-  border-radius: 4px;
-  max-width: 100%;
-  max-height: 100%;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-  border-radius: 8px;
-}
-
-position: absolute;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-opacity: 0.6;
-mix-blend-mode: multiply;
-background-blend-mode: overlay;
-border-radius: 8px;
-pointer-events: none;
-
-.preview-info {
-  width: 100%;
-}
-
-.preview-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
-}
-
-.dialog-actions {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  flex-shrink: 0;
-  padding-top: 4px;
-}
-</style>
-
-<style>
-/* Keep dialog footer (取消 / 保存) visible — not scoped so it can target n-dialog */
 .skin-lang-editor-modal.n-dialog {
   max-height: 96vh;
   display: flex;

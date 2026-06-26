@@ -2,7 +2,7 @@
   <n-modal
     v-model:show="modalShow"
     preset="card"
-    title="活动详情"
+    :title="$t('activity.detailModal.k6d3b')"
     style="width: 800px; max-height: 90vh"
     :mask-closable="true"
   >
@@ -65,51 +65,51 @@
 
       <!-- 活动详细信息 -->
       <n-tabs type="line" animated>
-        <n-tab-pane name="info" tab="基本信息">
+        <n-tab-pane name="info" :tab="$t('activity.detailModal.k57fa')">
           <n-descriptions
             :column="2"
             label-placement="left"
             label-style="font-weight: 600; color: #666; width: 120px"
             content-style="color: #333"
           >
-            <n-descriptions-item label="活动ID">
+            <n-descriptions-item :label="$t('activity.rewardReport.k6d3b2')">
               {{ mappedActivity.id }}
             </n-descriptions-item>
 
-            <n-descriptions-item label="活动分类">
+            <n-descriptions-item :label="$t('activity.detailModal.k6d3b2')">
               {{ getCategoryText(mappedActivity.category) }}
             </n-descriptions-item>
 
-            <n-descriptions-item label="活动子种类">
+            <n-descriptions-item :label="$t('activity.detailModal.k6d3b3')">
               {{ getTypeText(mappedActivity.type) }}
             </n-descriptions-item>
 
-            <n-descriptions-item label="币种">
-              {{ mappedActivity.currencyScope || '未设置' }}
+            <n-descriptions-item :label="$t('activity.luckyWheel.k5e01')">
+              {{ mappedActivity.currencyScope || $t('activity.statuses.notSet') }}
             </n-descriptions-item>
 
-            <n-descriptions-item label="参与会员">
+            <n-descriptions-item :label="$t('activity.detailModal.k53c2')">
               {{ memberParticipationText }}
             </n-descriptions-item>
 
-            <n-descriptions-item label="赠送金额">
+            <n-descriptions-item :label="$t('activity.detailModal.k8d60')">
               {{ mappedActivity.claimLimit }}
               {{ mappedActivity.currencyScope || '' }}
             </n-descriptions-item>
 
-            <n-descriptions-item label="排序">
+            <n-descriptions-item :label="$t('activity.detailModal.k6392')">
               {{ mappedActivity.displayOrder }}
             </n-descriptions-item>
 
-            <n-descriptions-item label="最大参与人数">
-              {{ mappedActivity.maxParticipants || '无限制' }}
+            <n-descriptions-item :label="$t('activity.detailModal.k6700')">
+              {{ mappedActivity.maxParticipants || $t('activity.common.unlimited') }}
             </n-descriptions-item>
 
-            <n-descriptions-item label="当前参与人数">
+            <n-descriptions-item :label="$t('activity.detailModal.k5f53')">
               {{ mappedActivity.currentParticipants || 0 }}
             </n-descriptions-item>
 
-            <n-descriptions-item label="参与进度">
+            <n-descriptions-item :label="$t('activity.detailModal.k53c22')">
               <div class="flex items-center gap-2">
                 <n-progress
                   type="line"
@@ -124,19 +124,19 @@
               </div>
             </n-descriptions-item>
 
-            <n-descriptions-item label="活动状态">
+            <n-descriptions-item :label="$t('activity.detailModal.k6d3b4')">
               <n-tag :type="getStatusType(mappedActivity.status)">
                 {{ getStatusText(mappedActivity.status) }}
               </n-tag>
             </n-descriptions-item>
 
-            <n-descriptions-item label="展示状态">
+            <n-descriptions-item :label="$t('activity.detailModal.k5c55')">
               <n-tag :type="mappedActivity.isActive ? 'success' : 'error'">
-                {{ mappedActivity.isActive ? '展示中' : '已隐藏' }}
+                {{ mappedActivity.isActive ? $t('activity.detailModal.k5c55') : $t('activity.detailModal.k5df2') }}
               </n-tag>
             </n-descriptions-item>
 
-            <n-descriptions-item label="支持平台">
+            <n-descriptions-item :label="$t('activity.detailModal.k652f')">
               <n-space
                 v-if="
                   mappedActivity.platforms &&
@@ -153,31 +153,31 @@
                   {{ getPlatformText(platform) }}
                 </n-tag>
               </n-space>
-              <span v-else class="text-gray-400">未设置</span>
+              <span v-else class="text-gray-400">{{ $t('activity.detailModal.k672a') }}</span>
             </n-descriptions-item>
 
-            <n-descriptions-item label="操作人">
+            <n-descriptions-item :label="$t('activity.activityList.k64cd')">
               {{ mappedActivity.lastModifiedBy }}
             </n-descriptions-item>
 
-            <n-descriptions-item label="创建时间">
+            <n-descriptions-item :label="$t('activity.providentFund.k521b')">
               {{ formatDateTime(mappedActivity.createdAt) }}
             </n-descriptions-item>
 
-            <n-descriptions-item label="更新时间">
+            <n-descriptions-item :label="$t('activity.detailModal.k66f4')">
               {{ formatDateTime(mappedActivity.updatedAt) }}
             </n-descriptions-item>
           </n-descriptions>
         </n-tab-pane>
 
-        <n-tab-pane name="time" tab="时间信息">
+        <n-tab-pane name="time" :tab="$t('activity.detailModal.k65f6')">
           <n-descriptions
             :column="1"
             label-placement="left"
             label-style="font-weight: 600; color: #666; width: 120px"
             content-style="color: #333"
           >
-            <n-descriptions-item label="活动开始时间">
+            <n-descriptions-item :label="$t('activity.detailModal.k6d3b5')">
               <div class="flex items-center gap-2">
                 <n-icon>
                   <TimeOutline />
@@ -186,7 +186,7 @@
               </div>
             </n-descriptions-item>
 
-            <n-descriptions-item label="活动结束时间">
+            <n-descriptions-item :label="$t('activity.detailModal.k6d3b6')">
               <div class="flex items-center gap-2">
                 <n-icon>
                   <TimeOutline />
@@ -195,7 +195,7 @@
               </div>
             </n-descriptions-item>
 
-            <n-descriptions-item label="活动时长">
+            <n-descriptions-item :label="$t('activity.detailModal.k6d3b7')">
               <div class="flex items-center gap-2">
                 <n-icon>
                   <CalendarOutline />
@@ -209,7 +209,7 @@
               </div>
             </n-descriptions-item>
 
-            <n-descriptions-item label="剩余时间">
+            <n-descriptions-item :label="$t('activity.detailModal.k5269')">
               <div class="flex items-center gap-2">
                 <n-icon>
                   <AlarmOutline />
@@ -222,7 +222,7 @@
               </div>
             </n-descriptions-item>
 
-            <n-descriptions-item label="活动状态">
+            <n-descriptions-item :label="$t('activity.detailModal.k6d3b4')">
               <div class="flex items-center gap-2">
                 <n-icon
                   :color="
@@ -232,31 +232,31 @@
                   <CheckmarkCircleOutline />
                 </n-icon>
                 <span>{{
-                  mappedActivity.isCurrentlyActive ? '进行中' : '未开始/已结束'
+                  mappedActivity.isCurrentlyActive ? $t('activity.statuses.active') : $t('activity.detailModal.k672a')
                 }}</span>
               </div>
             </n-descriptions-item>
           </n-descriptions>
         </n-tab-pane>
 
-        <n-tab-pane name="content" tab="内容信息">
+        <n-tab-pane name="content" :tab="$t('activity.detailModal.k5185')">
           <div class="space-y-4">
             <div v-if="mappedActivity.requirement">
-              <h4 class="mb-2 font-semibold text-gray-800">活动要求</h4>
+              <h4 class="mb-2 font-semibold text-gray-800">{{ $t('activity.detailModal.k6d3b12') }}</h4>
               <div class="rounded-lg bg-gray-50 p-3 text-sm text-gray-700">
                 {{ mappedActivity.requirement }}
               </div>
             </div>
 
             <div v-if="mappedActivity.description">
-              <h4 class="mb-2 font-semibold text-gray-800">活动描述</h4>
+              <h4 class="mb-2 font-semibold text-gray-800">{{ $t('activity.detailModal.k6d3b13') }}</h4>
               <div class="rounded-lg bg-blue-50 p-3 text-sm text-gray-700">
                 {{ mappedActivity.description }}
               </div>
             </div>
 
             <div v-if="mappedActivity.rules">
-              <h4 class="mb-2 font-semibold text-gray-800">活动规则</h4>
+              <h4 class="mb-2 font-semibold text-gray-800">{{ $t('activity.detailModal.k6d3b14') }}</h4>
               <div
                 v-if="isRulesHtml(mappedActivity.rules)"
                 class="activity-detail-rules-html rounded-lg bg-yellow-50 p-3 text-sm text-gray-700"
@@ -278,28 +278,28 @@
               "
               class="py-8 text-center"
             >
-              <n-empty description="暂无内容信息" />
+              <n-empty :description="$t('activity.detailModal.k6682')" />
             </div>
           </div>
         </n-tab-pane>
 
-        <n-tab-pane name="stats" tab="统计信息">
+        <n-tab-pane name="stats" :tab="$t('activity.detailModal.k7edf')">
           <div class="grid grid-cols-2 gap-4">
             <n-card size="small">
               <n-statistic
-                label="参与人数"
+                :label="$t('activity.detailModal.k53c23')"
                 :value="mappedActivity.currentParticipants"
               >
                 <template #suffix>
                   <span class="text-sm text-gray-500"
-                    >/ {{ mappedActivity.maxParticipants || '无限制' }}</span
+                    >/ {{ mappedActivity.maxParticipants || $t('activity.common.unlimited') }}</span
                   >
                 </template>
               </n-statistic>
             </n-card>
 
             <n-card size="small">
-              <n-statistic label="参与进度" :value="mappedActivity.progress">
+              <n-statistic :label="$t('activity.detailModal.k53c22')" :value="mappedActivity.progress">
                 <template #suffix>
                   <span class="text-sm text-gray-500">%</span>
                 </template>
@@ -308,7 +308,7 @@
 
             <n-card size="small">
               <n-statistic
-                label="预计支出"
+                :label="$t('activity.detailModal.k9884')"
                 :value="
                   (mappedActivity.currentParticipants || 0) *
                   (mappedActivity.claimLimit || 0)
@@ -324,23 +324,23 @@
 
             <n-card size="small">
               <n-statistic
-                label="活动天数"
+                :label="$t('activity.detailModal.k6d3b8')"
                 :value="mappedActivity.durationDays"
               >
                 <template #suffix>
-                  <span class="text-sm text-gray-500">天</span>
+                  <span class="text-sm text-gray-500">{{ $t('activity.detailModal.k5929') }}</span>
                 </template>
               </n-statistic>
             </n-card>
           </div>
 
           <div class="mt-6">
-            <h4 class="mb-3 font-semibold text-gray-800">活动时间线</h4>
+            <h4 class="mb-3 font-semibold text-gray-800">{{ $t('activity.detailModal.k6d3b15') }}</h4>
             <n-timeline>
               <n-timeline-item
                 type="success"
                 :title="formatDateTime(mappedActivity.createdAt)"
-                content="活动创建"
+                :content="$t('activity.detailModal.k6d3b9')"
               />
               <n-timeline-item
                 :type="
@@ -349,7 +349,7 @@
                     : 'info'
                 "
                 :title="formatDateTime(mappedActivity.startsAt)"
-                content="活动开始"
+                :content="$t('activity.detailModal.k6d3b10')"
               />
               <n-timeline-item
                 :type="
@@ -358,7 +358,7 @@
                     : 'warning'
                 "
                 :title="formatDateTime(mappedActivity.endsAt)"
-                content="活动结束"
+                :content="$t('activity.detailModal.k6d3b11')"
               />
             </n-timeline>
           </div>
@@ -367,18 +367,20 @@
     </div>
 
     <div v-else class="py-8 text-center">
-      <n-empty description="没有活动信息" />
+      <n-empty :description="$t('activity.detailModal.k6ca1')" />
     </div>
 
     <template #footer>
       <div class="flex justify-end">
-        <n-button @click="handleClose">关闭</n-button>
+        <n-button @click="handleClose">{{ $t('activity.activityList.k5173') }}</n-button>
       </div>
     </template>
   </n-modal>
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { computed, watch } from 'vue';
 import {
   NModal,
@@ -458,7 +460,7 @@ const mappedActivity = computed(() => {
   return {
     ...activity,
     // Extract from config if not directly available
-    title: activity.title || config.title || '未设置标题',
+    title: activity.title || config.title || $t('activity.detailModal.k672a2'),
     category: activity.category || config.category || '',
     type: activity.type || config.type || '',
     memberScope: activity.memberScope || config.memberScope || 'all',
@@ -503,12 +505,12 @@ const mappedActivity = computed(() => {
       activity.lastModifiedBy ||
       activity.createdBy ||
       config.lastModifiedBy ||
-      '系统',
+      $t('activity.statuses.system'),
   };
 });
 
 const memberParticipationText = computed(() => {
-  if (!props.activity) return '全部会员';
+  if (!props.activity) return $t('activity.detailModal.k5168');
 
   const config = props.activity.config || {
     memberScope: props.activity.memberScope,
@@ -520,13 +522,13 @@ const memberParticipationText = computed(() => {
 // 工具函数
 const formatDateTime = (dateString: string | Date | null | undefined) => {
   if (!dateString) {
-    return '未设置';
+    return $t('activity.detailModal.k672a');
   }
 
   try {
     const date = dateString instanceof Date ? dateString : new Date(dateString);
     if (isNaN(date.getTime())) {
-      return '无效日期';
+      return $t('activity.detailModal.k65e02');
     }
     return date.toLocaleString('zh-CN', {
       year: 'numeric',
@@ -537,7 +539,7 @@ const formatDateTime = (dateString: string | Date | null | undefined) => {
       second: '2-digit',
     });
   } catch (error) {
-    return '日期格式错误';
+    return $t('activity.detailModal.k65e5');
   }
 };
 
@@ -546,7 +548,7 @@ const getDurationText = (
   endAt: string | Date | null | undefined,
 ) => {
   if (!startAt || !endAt) {
-    return '未设置';
+    return $t('activity.detailModal.k672a');
   }
 
   try {
@@ -554,29 +556,29 @@ const getDurationText = (
     const end = endAt instanceof Date ? endAt : new Date(endAt);
 
     if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-      return '无效日期';
+      return $t('activity.detailModal.k65e02');
     }
 
     const diffMs = end.getTime() - start.getTime();
     const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
 
     if (diffDays === 1) {
-      return '1天';
+      return $t('activity.detailModal.1');
     } else if (diffDays < 30) {
-      return `${diffDays}天`;
+      return $t('activity.detailModal.k65e5', [diffDays]);
     } else if (diffDays < 365) {
-      return `${Math.floor(diffDays / 30)}个月`;
+      return $t('activity.detailModal.k6708', [Math.floor(diffDays / 30)]);
     } else {
-      return `${Math.floor(diffDays / 365)}年`;
+      return $t('activity.detailModal.k5e74', [Math.floor(diffDays / 365)]);
     }
   } catch (error) {
-    return '计算错误';
+    return $t('activity.detailModal.k8ba1');
   }
 };
 
 const getRemainingTimeText = (timeRemaining: number) => {
   if (timeRemaining <= 0) {
-    return '已结束';
+    return $t('activity.detailModal.k5df22');
   }
 
   const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
@@ -586,11 +588,11 @@ const getRemainingTimeText = (timeRemaining: number) => {
   const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
 
   if (days > 0) {
-    return `${days}天${hours}小时`;
+    return $t('activity.detailModal.k65e5h', [days, hours]);
   } else if (hours > 0) {
-    return `${hours}小时${minutes}分钟`;
+    return $t('activity.detailModal.k5c0fh', [hours, minutes]);
   } else {
-    return `${minutes}分钟`;
+    return $t('activity.detailModal.k5206f', [minutes]);
   }
 };
 
@@ -620,14 +622,14 @@ const getStatusType = (status: string) => {
 
 const getStatusText = (status: string) => {
   const statusMap: Record<string, string> = {
-    DRAFT: '草稿',
-    ACTIVE: '进行中',
-    CLOSED: '已关闭',
-    ENDED: '已结束',
-    draft: '草稿',
-    active: '进行中',
-    paused: '已暂停',
-    archived: '已归档',
+    DRAFT: $t('activity.statuses.draft'),
+    ACTIVE: $t('activity.statuses.active'),
+    CLOSED: $t('activity.activityList.k5173'),
+    ENDED: $t('activity.detailModal.k5df2'),
+    draft: $t('activity.statuses.draft'),
+    active: $t('activity.statuses.active'),
+    paused: $t('activity.statuses.paused'),
+    archived: $t('activity.statuses.archived'),
   };
   return statusMap[status] || status;
 };
@@ -635,71 +637,71 @@ const getStatusText = (status: string) => {
 // ✅ Map category to Chinese
 const getCategoryText = (category: string) => {
   const categoryMap: Record<string, string> = {
-    comprehensive: '综合',
-    chess_cards: '棋牌',
-    hunting: '捕鱼',
-    slot: '电子',
-    live: '真人',
-    sports: '体育',
-    cockfight: '斗鸡',
-    lottery: '彩票',
-    video: '视频',
-    esports: '电竞',
-    table: '桌面',
-    arcade: '街机',
-    simulation: '模拟',
-    other: '其他',
-    recharge: '充值',
-    betting: '打码',
-    signin: '签到',
-    invite: '邀请',
-    newuser: '新人礼金',
-    redpacket: '红包',
-    custom: '自定义',
+    comprehensive: $t('activity.categories.comprehensive'),
+    chess_cards: $t('activity.categories.chess_cards'),
+    hunting: $t('activity.categories.hunting'),
+    slot: $t('activity.categories.slot'),
+    live: $t('activity.categories.live'),
+    sports: $t('activity.categories.sports'),
+    cockfight: $t('activity.categories.cockfight'),
+    lottery: $t('activity.categories.lottery'),
+    video: $t('activity.categories.video'),
+    esports: $t('activity.categories.esports'),
+    table: $t('activity.categories.table'),
+    arcade: $t('activity.categories.arcade'),
+    simulation: $t('activity.categories.simulation'),
+    other: $t('activity.categories.other'),
+    recharge: $t('activity.categories.recharge'),
+    betting: $t('activity.categories.betting'),
+    signin: $t('activity.categories.signin'),
+    invite: $t('activity.categories.invite'),
+    newuser: $t('activity.categories.newuser'),
+    redpacket: $t('activity.categories.redpacket'),
+    custom: $t('activity.categories.custom'),
   };
-  return categoryMap[category] || category || '未分类';
+  return categoryMap[category] || category || $t('activity.statuses.uncategorized');
 };
 
 // ✅ Map type to Chinese
 const getTypeText = (type: string) => {
   const typeMap: Record<string, string> = {
-    recharge: '充值',
-    wagering: '打码',
-    rescue: '救援金',
-    checkin: '签到',
-    luckyspin: '幸运转盘',
-    luckywager: '幸运注单',
-    redpacket: '红包',
-    investment: '投资',
-    promotion: '推广',
-    agent: '代理',
-    collect: '集字',
-    guessing: '竞猜',
-    newbie: '新人彩金',
-    referral: '推荐奖励',
-    soft: '软一刀',
-    new: '新一刀',
-    ranking: '相行榜',
-    custom: '自定义',
+    recharge: $t('activity.types.recharge'),
+    wagering: $t('activity.types.wagering'),
+    rescue: $t('activity.types.rescue'),
+    checkin: $t('activity.types.checkin'),
+    luckyspin: $t('activity.types.luckyspin'),
+    luckywager: $t('activity.types.luckywager'),
+    redpacket: $t('activity.types.redpacket'),
+    investment: $t('activity.types.investment'),
+    promotion: $t('activity.types.promotion'),
+    agent: $t('activity.types.agent'),
+    collect: $t('activity.types.collect'),
+    guessing: $t('activity.types.guessing'),
+    newbie: $t('activity.types.newbie'),
+    referral: $t('activity.types.referral'),
+    soft: $t('activity.types.soft'),
+    new: $t('activity.types.new'),
+    ranking: $t('activity.types.ranking'),
+    custom: $t('activity.types.custom'),
   };
-  return typeMap[type] || type || '未知类型';
+  return typeMap[type] || type || $t('activity.statuses.unknownType');
 };
 
 // ✅ Map platform to Chinese
 const getPlatformText = (platform: string) => {
   const platformMap: Record<string, string> = {
-    android_app: 'Android应用',
-    ios_app: 'iOS应用',
-    native_app: '原生应用',
-    pwa_app: 'PWA应用',
-    pc_browser: 'PC浏览器',
+    android_app: $t('activity.platforms.android_app'),
+    ios_app: $t('activity.platforms.ios_app'),
+    native_app: $t('activity.platforms.native_app'),
+    pwa_app: $t('activity.platforms.pwa_app'),
+    pc_browser: $t('activity.platforms.pc_browser'),
     ios_h5: 'iOS H5',
     android_h5: 'Android H5',
-    ios_browser: 'iOS浏览器',
-    browser_app: '浏览器应用',
-    mobile: '移动端',
-    desktop: '桌面端',
-    web: '网页',
+    ios_browser: $t('activity.platforms.ios_browser'),
+    browser_app: $t('activity.platforms.browser_app'),
+    mobile: $t('activity.platforms.mobile'),
+    desktop: $t('activity.platforms.desktop'),
+    web: $t('activity.platforms.web'),
   };
   return platformMap[platform] || platform;
 };

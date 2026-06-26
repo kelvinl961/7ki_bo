@@ -1,10 +1,10 @@
 <template>
-  <Page title="消息设置" description="管理系统消息通知和推送">
+  <Page :title="$t('operations.messageSettings.title')" :description="$t('operations.messageSettings.description')">
     <!-- 面包屑导航 -->
     <div class="mb-4">
       <n-breadcrumb>
-        <n-breadcrumb-item>运营管理</n-breadcrumb-item>
-        <n-breadcrumb-item>消息设置</n-breadcrumb-item>
+        <n-breadcrumb-item>{{ $t('operations.messageSettings.breadcrumbOps') }}</n-breadcrumb-item>
+        <n-breadcrumb-item>{{ $t('operations.messageSettings.breadcrumbMessage') }}</n-breadcrumb-item>
       </n-breadcrumb>
     </div>
 
@@ -15,17 +15,17 @@
       animated
       @update:value="handleTabChange"
     >
-      <n-tab-pane name="operation_message_tz" tab="活动通知中心">
+      <n-tab-pane name="operation_message_tz" :tab="$t('operations.messageSettings.tabNotification')">
         <div class="tab-content">
           <!-- 筛选器区域 -->
           <n-card class="mb-4">
             <div class="flex flex-wrap items-end gap-4">
               <!-- 语言选择 -->
               <div class="flex flex-col">
-                <label class="mb-2 text-sm font-medium">语言</label>
+                <label class="mb-2 text-sm font-medium">{{ $t('operations.messageSettings.language') }}</label>
                 <n-select
                   v-model:value="filters.language"
-                  placeholder="选择语言"
+                  :placeholder="$t('operations.messageSettings.selectLanguage')"
                   clearable
                   style="width: 120px"
                   :options="languageOptions"
@@ -35,10 +35,10 @@
 
               <!-- 币种选择 -->
               <div class="flex flex-col">
-                <label class="mb-2 text-sm font-medium">币种</label>
+                <label class="mb-2 text-sm font-medium">{{ $t('common.currency') }}</label>
                 <n-select
                   v-model:value="filters.currency"
-                  placeholder="选择币种"
+                  :placeholder="$t('operations.messageSettings.selectCurrency')"
                   clearable
                   style="width: 120px"
                   :options="currencyOptions"
@@ -48,10 +48,10 @@
 
               <!-- 收件人类型 -->
               <div class="flex flex-col">
-                <label class="mb-2 text-sm font-medium">收件人类型</label>
+                <label class="mb-2 text-sm font-medium">{{ $t('operations.messageSettings.receiverType') }}</label>
                 <n-select
                   v-model:value="filters.receiverType"
-                  placeholder="选择收件人类型"
+                  :placeholder="$t('operations.messageSettings.selectReceiverType')"
                   clearable
                   style="width: 140px"
                   :options="receiverTypeOptions"
@@ -61,10 +61,10 @@
 
               <!-- 标题搜索 -->
               <div class="flex flex-col">
-                <label class="mb-2 text-sm font-medium">标题</label>
+                <label class="mb-2 text-sm font-medium">{{ $t('operations.messageSettings.titleLabel') }}</label>
                 <n-input
                   v-model:value="filters.title"
-                  placeholder="输入标题搜索"
+                  :placeholder="$t('operations.messageSettings.titleSearch')"
                   clearable
                   style="width: 200px"
                   @keyup.enter="handleFilter"
@@ -73,10 +73,10 @@
 
               <!-- 状态筛选 -->
               <div class="flex flex-col">
-                <label class="mb-2 text-sm font-medium">状态</label>
+                <label class="mb-2 text-sm font-medium">{{ $t('common.status') }}</label>
                 <n-select
                   v-model:value="filters.status"
-                  placeholder="选择状态"
+                  :placeholder="$t('operations.messageSettings.selectStatus')"
                   clearable
                   style="width: 120px"
                   :options="statusOptions"
@@ -86,10 +86,10 @@
 
               <!-- 触发条件 -->
               <div class="flex flex-col">
-                <label class="mb-2 text-sm font-medium">触发条件</label>
+                <label class="mb-2 text-sm font-medium">{{ $t('operations.messageSettings.triggerCondition') }}</label>
                 <n-select
                   v-model:value="filters.triggerCondition"
-                  placeholder="选择触发条件"
+                  :placeholder="$t('operations.messageSettings.selectTrigger')"
                   clearable
                   style="width: 140px"
                   :options="triggerConditionOptions"
@@ -99,7 +99,7 @@
 
               <!-- 弹窗入口 -->
               <div class="flex flex-col">
-                <label class="mb-2 text-sm font-medium">弹窗入口</label>
+                <label class="mb-2 text-sm font-medium">{{ $t('operations.messageSettings.popupEntrance') }}</label>
                 <n-switch
                   v-model:value="filters.popupEntrance"
                   @update:value="handleFilter"
@@ -108,7 +108,7 @@
 
               <!-- 视频推送 -->
               <div class="flex flex-col">
-                <label class="mb-2 text-sm font-medium">视频推送</label>
+                <label class="mb-2 text-sm font-medium">{{ $t('operations.messageSettings.videoPush') }}</label>
                 <n-switch
                   v-model:value="filters.videoPush"
                   @update:value="handleFilter"
@@ -117,8 +117,8 @@
 
               <!-- 搜索按钮 -->
               <div class="flex gap-2">
-                <n-button type="primary" @click="handleFilter"> 搜索 </n-button>
-                <n-button @click="resetFilter"> 重置 </n-button>
+                <n-button type="primary" @click="handleFilter"> {{ $t('common.search') }} </n-button>
+                <n-button @click="resetFilter"> {{ $t('common.reset') }} </n-button>
               </div>
             </div>
           </n-card>
@@ -145,14 +145,13 @@
                     <!-- 主要操作按钮 -->
                     <div class="flex gap-2">
                       <n-button type="primary" @click="handleCreate">
-                        新增通知
+                        {{ $t('operations.messageSettings.addNotification') }}
                       </n-button>
                     </div>
 
                     <!-- 选择信息 -->
                     <div class="text-sm text-gray-600">
-                      已选择 {{ selectedCount }} 条数据，共
-                      {{ paginationReactive.total }} 条
+                      {{ $t('operations.messageSettings.selectedData', [selectedCount, paginationReactive.total]) }}
                     </div>
                   </div>
 
@@ -164,7 +163,7 @@
                       size="small"
                       @click="handleBatchSend(selectedRows)"
                     >
-                      批量发送 ({{ selectedCount }})
+                      {{ $t('operations.messageSettings.batchSend', [selectedCount]) }}
                     </n-button>
                     <n-button
                       v-if="selectedCount > 0"
@@ -172,14 +171,14 @@
                       size="small"
                       @click="handleBatchDelete(selectedRows)"
                     >
-                      批量删除 ({{ selectedCount }})
+                      {{ $t('operations.messageSettings.batchDelete', [selectedCount]) }}
                     </n-button>
 
                     <!-- 选择控制 -->
                     <n-button size="small" @click="clearSelection"
-                      >清空选择</n-button
+                      >{{ $t('operations.messageSettings.clearSelection') }}</n-button
                     >
-                    <n-button size="small" @click="selectAll">全选</n-button>
+                    <n-button size="small" @click="selectAll">{{ $t('common.selectAll') }}</n-button>
                   </div>
                 </div>
               </n-card>
@@ -196,7 +195,7 @@
           <!-- 详情查看对话框 -->
           <n-modal
             v-model:show="showDetailModal"
-            title="通知详情"
+            :title="$t('operations.messageSettings.notificationDetail')"
             preset="dialog"
             style="width: 700px"
           >
@@ -209,39 +208,35 @@
                   </div>
                 </div>
                 <div>
-                  <label class="text-sm font-medium text-gray-600">语言</label>
+                  <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.language') }}</label>
                   <div class="mt-1 rounded bg-gray-50 p-2">
                     {{ detailData.language }}
                   </div>
                 </div>
                 <div>
-                  <label class="text-sm font-medium text-gray-600">币种</label>
+                  <label class="text-sm font-medium text-gray-600">{{ $t('common.currency') }}</label>
                   <div class="mt-1 rounded bg-gray-50 p-2">
                     {{ detailData.currency }}
                   </div>
                 </div>
                 <div>
-                  <label class="text-sm font-medium text-gray-600"
-                    >收件人</label
-                  >
+                  <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.receiver') }}</label>
                   <div class="mt-1 rounded bg-gray-50 p-2">
                     {{ detailData.receiverType }}
                   </div>
                 </div>
                 <div>
-                  <label class="text-sm font-medium text-gray-600"
-                    >触发条件</label
-                  >
+                  <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.triggerCondition') }}</label>
                   <div class="mt-1 rounded bg-gray-50 p-2">
                     {{ detailData.triggerCondition }}
                   </div>
                 </div>
                 <div>
-                  <label class="text-sm font-medium text-gray-600">状态</label>
+                  <label class="text-sm font-medium text-gray-600">{{ $t('common.status') }}</label>
                   <div class="mt-1 rounded bg-gray-50 p-2">
                     <n-tag
                       :type="
-                        detailData.status === '已启用' ? 'success' : 'error'
+                        detailData.status === $t('operations.messageSettings.option.statusEnabled') ? 'success' : 'error'
                       "
                     >
                       {{ detailData.status }}
@@ -251,7 +246,7 @@
               </div>
 
               <div class="mb-4">
-                <label class="text-sm font-medium text-gray-600">标题</label>
+                <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.titleLabel') }}</label>
                 <div class="mt-1 rounded bg-gray-50 p-3">
                   {{ detailData.title }}
                 </div>
@@ -259,17 +254,13 @@
 
               <div class="mb-4 grid grid-cols-2 gap-4">
                 <div>
-                  <label class="text-sm font-medium text-gray-600"
-                    >开始时间</label
-                  >
+                  <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.startTime') }}</label>
                   <div class="mt-1 rounded bg-gray-50 p-2">
                     {{ formatDate(detailData.startTime) }}
                   </div>
                 </div>
                 <div>
-                  <label class="text-sm font-medium text-gray-600"
-                    >结束时间</label
-                  >
+                  <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.endTime') }}</label>
                   <div class="mt-1 rounded bg-gray-50 p-2">
                     {{ formatDate(detailData.endTime) }}
                   </div>
@@ -278,35 +269,27 @@
 
               <div class="mb-4 grid grid-cols-3 gap-4">
                 <div>
-                  <label class="text-sm font-medium text-gray-600"
-                    >弹窗入口</label
-                  >
+                  <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.popupEntrance') }}</label>
                   <div class="mt-1 rounded bg-gray-50 p-2">
-                    {{ detailData.popupEntrance ? '是' : '否' }}
+                    {{ detailData.popupEntrance ? $t('common.yes') : $t('common.no') }}
                   </div>
                 </div>
                 <div>
-                  <label class="text-sm font-medium text-gray-600"
-                    >视频推送</label
-                  >
+                  <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.videoPush') }}</label>
                   <div class="mt-1 rounded bg-gray-50 p-2">
-                    {{ detailData.videoPush ? '是' : '否' }}
+                    {{ detailData.videoPush ? $t('common.yes') : $t('common.no') }}
                   </div>
                 </div>
                 <div>
-                  <label class="text-sm font-medium text-gray-600"
-                    >已读/发送</label
-                  >
+                  <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.readOrSent') }}</label>
                   <div class="mt-1 rounded bg-gray-50 p-2">
-                    {{ detailData.readOrSent ? '是' : '否' }}
+                    {{ detailData.readOrSent ? $t('common.yes') : $t('common.no') }}
                   </div>
                 </div>
               </div>
 
               <div v-if="detailData.remark" class="mb-4">
-                <label class="text-sm font-medium text-gray-600"
-                  >后台备注</label
-                >
+                <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.backendRemark') }}</label>
                 <div class="mt-1 rounded bg-gray-50 p-3">
                   {{ detailData.remark }}
                 </div>
@@ -315,14 +298,14 @@
 
             <template #action>
               <div class="flex justify-end gap-2">
-                <n-button @click="showDetailModal = false">关闭</n-button>
+                <n-button @click="showDetailModal = false">{{ $t('common.close') }}</n-button>
               </div>
             </template>
           </n-modal>
         </div>
       </n-tab-pane>
 
-      <n-tab-pane name="operation_message_pmd" tab="跑马灯">
+      <n-tab-pane name="operation_message_pmd" :tab="$t('operations.messageSettings.tabPmd')">
         <Suspense>
           <template #default>
             <div v-if="activeTab === 'operation_message_pmd'">
@@ -330,12 +313,12 @@
             </div>
           </template>
           <template #fallback>
-            <div class="loading-placeholder">加载中...</div>
+            <div class="loading-placeholder">{{ $t('common.loading') }}</div>
           </template>
         </Suspense>
       </n-tab-pane>
 
-      <n-tab-pane name="operation_message_gg" tab="系统公告">
+      <n-tab-pane name="operation_message_gg" :tab="$t('operations.messageSettings.tabAnnouncement')">
         <Suspense>
           <template #default>
             <div v-if="activeTab === 'operation_message_gg'">
@@ -343,12 +326,12 @@
             </div>
           </template>
           <template #fallback>
-            <div class="loading-placeholder">加载中...</div>
+            <div class="loading-placeholder">{{ $t('common.loading') }}</div>
           </template>
         </Suspense>
       </n-tab-pane>
 
-      <n-tab-pane name="lobby_banner" tab="大厅 Banner">
+      <n-tab-pane name="lobby_banner" :tab="$t('operations.messageSettings.tabBanner')">
         <Suspense>
           <template #default>
             <div v-if="activeTab === 'lobby_banner'">
@@ -356,12 +339,12 @@
             </div>
           </template>
           <template #fallback>
-            <div class="loading-placeholder">加载中...</div>
+            <div class="loading-placeholder">{{ $t('common.loading') }}</div>
           </template>
         </Suspense>
       </n-tab-pane>
 
-      <n-tab-pane name="lobby_pop" tab="大厅浮窗弹窗">
+      <n-tab-pane name="lobby_pop" :tab="$t('operations.messageSettings.tabPop')">
         <Suspense>
           <template #default>
             <div v-if="activeTab === 'lobby_pop'">
@@ -369,7 +352,7 @@
             </div>
           </template>
           <template #fallback>
-            <div class="loading-placeholder">加载中...</div>
+            <div class="loading-placeholder">{{ $t('common.loading') }}</div>
           </template>
         </Suspense>
       </n-tab-pane>
@@ -378,6 +361,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import {
   ref,
   reactive,
@@ -501,11 +486,11 @@ const filters = reactive<OperationMessageFilters>({
 
 // Options
 const languageOptions: SelectOption[] = [
-  { label: '中文', value: 'zh-CN' },
-  { label: '英文', value: 'en' },
-  { label: '葡语', value: 'pt' },
-  { label: '西班牙语', value: 'es' },
-  { label: '日语', value: 'ja' },
+  { label: $t('operations.messageSettings.option.langZh'), value: 'zh-CN' },
+  { label: $t('operations.messageSettings.option.langEn'), value: 'en' },
+  { label: $t('operations.messageSettings.option.langPt'), value: 'pt' },
+  { label: $t('operations.messageSettings.option.langEs'), value: 'es' },
+  { label: $t('operations.messageSettings.option.langJa'), value: 'ja' },
 ];
 
 const currencyOptions: SelectOption[] = [
@@ -517,26 +502,26 @@ const currencyOptions: SelectOption[] = [
 ];
 
 const receiverTypeOptions: SelectOption[] = [
-  { label: '全部用户', value: 'all' },
-  { label: 'VIP用户', value: 'vip' },
-  { label: '新用户', value: 'new' },
-  { label: '活跃用户', value: 'active' },
-  { label: '自定义', value: 'custom' },
+  { label: $t('operations.messageSettings.option.receiverAll'), value: 'all' },
+  { label: $t('operations.messageSettings.option.receiverVip'), value: 'vip' },
+  { label: $t('operations.messageSettings.option.receiverNew'), value: 'new' },
+  { label: $t('operations.messageSettings.option.receiverActive'), value: 'active' },
+  { label: $t('operations.messageSettings.option.receiverCustom'), value: 'custom' },
 ];
 
 const statusOptions: SelectOption[] = [
-  { label: '已启用', value: 'enabled' },
-  { label: '已停用', value: 'disabled' },
-  { label: '草稿', value: 'draft' },
+  { label: $t('operations.messageSettings.option.statusEnabled'), value: 'enabled' },
+  { label: $t('operations.messageSettings.option.statusDisabled'), value: 'disabled' },
+  { label: $t('operations.messageSettings.option.statusDraft'), value: 'draft' },
 ];
 
 const triggerConditionOptions: SelectOption[] = [
-  { label: '登录成功', value: 'login_success' },
-  { label: '充值成功', value: 'deposit_success' },
-  { label: '首次充值', value: 'first_deposit' },
-  { label: '投注成功', value: 'bet_success' },
-  { label: '定时发送', value: 'scheduled' },
-  { label: '手动触发', value: 'manual' },
+  { label: $t('operations.messageSettings.option.triggerLogin'), value: 'login_success' },
+  { label: $t('operations.messageSettings.option.triggerDeposit'), value: 'deposit_success' },
+  { label: $t('operations.messageSettings.option.triggerFirstDeposit'), value: 'first_deposit' },
+  { label: $t('operations.messageSettings.option.triggerBet'), value: 'bet_success' },
+  { label: $t('operations.messageSettings.option.triggerScheduled'), value: 'scheduled' },
+  { label: $t('operations.messageSettings.option.triggerManual'), value: 'manual' },
 ];
 
 // Pagination (simplified for SmartDataGrid)
@@ -558,42 +543,42 @@ const columns: DataTableColumns<OperationMessage> = [
     width: 80,
   },
   {
-    title: '语言',
+    title: $t('operations.messageSettings.language'),
     key: 'language',
     width: 100,
     render(row) {
       const langMap: Record<string, string> = {
-        'zh-CN': '中文',
-        en: '英文',
-        pt: '葡语',
-        es: '西班牙语',
-        ja: '日语',
+        'zh-CN': $t('operations.messageSettings.option.langZh'),
+        en: $t('operations.messageSettings.option.langEn'),
+        pt: $t('operations.messageSettings.option.langPt'),
+        es: $t('operations.messageSettings.option.langEs'),
+        ja: $t('operations.messageSettings.option.langJa'),
       };
       return langMap[row.language] || row.language;
     },
   },
   {
-    title: '币种',
+    title: $t('common.currency'),
     key: 'currency',
     width: 80,
   },
   {
-    title: '收件人',
+    title: $t('operations.messageSettings.receiver'),
     key: 'receiverType',
     width: 100,
     render(row) {
       const receiverMap: Record<string, string> = {
-        all: '全部用户',
-        vip: 'VIP用户',
-        new: '新用户',
-        active: '活跃用户',
-        custom: '自定义',
+        all: $t('operations.messageSettings.option.receiverAll'),
+        vip: $t('operations.messageSettings.option.receiverVip'),
+        new: $t('operations.messageSettings.option.receiverNew'),
+        active: $t('operations.messageSettings.option.receiverActive'),
+        custom: $t('operations.messageSettings.option.receiverCustom'),
       };
       return receiverMap[row.receiverType] || row.receiverType;
     },
   },
   {
-    title: '标题',
+    title: $t('operations.messageSettings.titleLabel'),
     key: 'title',
     width: 200,
     ellipsis: {
@@ -601,7 +586,7 @@ const columns: DataTableColumns<OperationMessage> = [
     },
   },
   {
-    title: '弹窗入口',
+    title: $t('operations.messageSettings.popupEntrance'),
     key: 'popupEntrance',
     width: 100,
     render(row) {
@@ -611,12 +596,12 @@ const columns: DataTableColumns<OperationMessage> = [
           type: row.popupEntrance ? 'success' : 'default',
           size: 'small',
         },
-        { default: () => (row.popupEntrance ? '是' : '否') },
+        { default: () => (row.popupEntrance ? $t('common.yes') : $t('common.no')) },
       );
     },
   },
   {
-    title: '视频推送',
+    title: $t('operations.messageSettings.videoPush'),
     key: 'videoPush',
     width: 100,
     render(row) {
@@ -626,12 +611,12 @@ const columns: DataTableColumns<OperationMessage> = [
           type: row.videoPush ? 'success' : 'default',
           size: 'small',
         },
-        { default: () => (row.videoPush ? '是' : '否') },
+        { default: () => (row.videoPush ? $t('common.yes') : $t('common.no')) },
       );
     },
   },
   {
-    title: '开始时间',
+    title: $t('operations.messageSettings.startTime'),
     key: 'startTime',
     width: 160,
     render(row) {
@@ -639,7 +624,7 @@ const columns: DataTableColumns<OperationMessage> = [
     },
   },
   {
-    title: '结束时间',
+    title: $t('operations.messageSettings.endTime'),
     key: 'endTime',
     width: 160,
     render(row) {
@@ -647,23 +632,23 @@ const columns: DataTableColumns<OperationMessage> = [
     },
   },
   {
-    title: '触发条件',
+    title: $t('operations.messageSettings.triggerCondition'),
     key: 'triggerCondition',
     width: 120,
     render(row) {
       const triggerMap: Record<string, string> = {
-        login_success: '登录成功',
-        deposit_success: '充值成功',
-        first_deposit: '首次充值',
-        bet_success: '投注成功',
-        scheduled: '定时发送',
-        manual: '手动触发',
+        login_success: $t('operations.messageSettings.option.triggerLogin'),
+        deposit_success: $t('operations.messageSettings.option.triggerDeposit'),
+        first_deposit: $t('operations.messageSettings.option.triggerFirstDeposit'),
+        bet_success: $t('operations.messageSettings.option.triggerBet'),
+        scheduled: $t('operations.messageSettings.option.triggerScheduled'),
+        manual: $t('operations.messageSettings.option.triggerManual'),
       };
       return triggerMap[row.triggerCondition] || row.triggerCondition;
     },
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 100,
     render(row) {
@@ -671,9 +656,9 @@ const columns: DataTableColumns<OperationMessage> = [
         string,
         { label: string; type: 'success' | 'error' | 'warning' }
       > = {
-        enabled: { label: '已启用', type: 'success' },
-        disabled: { label: '已停用', type: 'error' },
-        draft: { label: '草稿', type: 'warning' },
+        enabled: { label: $t('operations.messageSettings.option.statusEnabled'), type: 'success' },
+        disabled: { label: $t('operations.messageSettings.option.statusDisabled'), type: 'error' },
+        draft: { label: $t('operations.messageSettings.option.statusDraft'), type: 'warning' },
       };
       const status = statusMap[row.status] || {
         label: row.status,
@@ -690,7 +675,7 @@ const columns: DataTableColumns<OperationMessage> = [
     },
   },
   {
-    title: '已读/发送',
+    title: $t('operations.messageSettings.readOrSent'),
     key: 'readOrSent',
     width: 100,
     render(row) {
@@ -700,12 +685,12 @@ const columns: DataTableColumns<OperationMessage> = [
           type: row.readOrSent ? 'success' : 'default',
           size: 'small',
         },
-        { default: () => (row.readOrSent ? '是' : '否') },
+        { default: () => (row.readOrSent ? $t('common.yes') : $t('common.no')) },
       );
     },
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 200,
     render(row) {
@@ -717,7 +702,7 @@ const columns: DataTableColumns<OperationMessage> = [
             type: 'primary',
             onClick: () => handleViewDetail(row),
           },
-          { default: () => '详情' },
+          { default: () => $t('common.detail') },
         ),
         h(
           NButton,
@@ -725,7 +710,7 @@ const columns: DataTableColumns<OperationMessage> = [
             size: 'small',
             onClick: () => handleEdit(row),
           },
-          { default: () => '编辑' },
+          { default: () => $t('common.edit') },
         ),
         h(
           NButton,
@@ -733,7 +718,7 @@ const columns: DataTableColumns<OperationMessage> = [
             size: 'small',
             onClick: () => handleCopy(row),
           },
-          { default: () => '复制' },
+          { default: () => $t('common.copy') },
         ),
         h(
           NPopconfirm,
@@ -741,7 +726,7 @@ const columns: DataTableColumns<OperationMessage> = [
             onPositiveClick: () => handleDelete(row),
           },
           {
-            default: () => '确定删除这条通知吗？',
+            default: () => $t('operations.messageSettings.confirmDeleteNotification'),
             trigger: () =>
               h(
                 NButton,
@@ -749,7 +734,7 @@ const columns: DataTableColumns<OperationMessage> = [
                   size: 'small',
                   type: 'error',
                 },
-                { default: () => '删除' },
+                { default: () => $t('common.delete') },
               ),
           },
         ),
@@ -792,15 +777,15 @@ const loadData = async () => {
         tableData.value = response;
         totalCount.value = response.length;
       } else {
-        throw new Error('无效的响应格式：data 字段不是数组');
+        throw new Error($t('operations.messageSettings.invalidResponseData'));
       }
     } else {
-      throw new Error('无效的响应格式');
+      throw new Error($t('operations.messageSettings.invalidResponseFormat'));
     }
   } catch (error) {
     console.error('Error loading operation messages:', error);
     notification.error({
-      content: '加载通知数据失败',
+      content: $t('operations.messageSettings.loadNotificationFailed'),
       duration: 3000,
     });
   } finally {
@@ -846,7 +831,7 @@ const handleCopy = (row: OperationMessage) => {
   // Create a copy without the ID
   const copyData = { ...row };
   delete (copyData as any).id;
-  copyData.title = `${copyData.title} (复制)`;
+  copyData.title = `${copyData.title}${$t('operations.messageSettings.copySuffix')}`;
   editingItem.value = copyData as OperationMessage;
   showModal.value = true;
 };
@@ -861,14 +846,14 @@ const handleDelete = async (row: OperationMessage) => {
     await deleteOperationMessage(row.id);
 
     notification.success({
-      content: '删除成功',
+      content: $t('common.deleteSuccess'),
       duration: 3000,
     });
     loadData();
   } catch (error) {
     console.error('Error deleting operation message:', error);
     notification.error({
-      content: '删除失败',
+      content: $t('operations.messageSettings.deleteFailed'),
       duration: 3000,
     });
   }
@@ -895,7 +880,7 @@ const handleBatchSend = async (selectedRows?: OperationMessage[]) => {
     await batchSendOperationMessages({ ids });
 
     notification.success({
-      content: `成功发送 ${messagesToSend.length} 条通知`,
+      content: $t('operations.messageSettings.batchSendSuccess', [messagesToSend.length]),
       duration: 3000,
     });
     selectedRowKeys.value = [];
@@ -903,7 +888,7 @@ const handleBatchSend = async (selectedRows?: OperationMessage[]) => {
   } catch (error) {
     console.error('Error sending operation messages:', error);
     notification.error({
-      content: '批量发送失败',
+      content: $t('operations.messageSettings.sendFailed'),
       duration: 3000,
     });
   }
@@ -926,7 +911,7 @@ const handleBatchDelete = async (selectedRows?: OperationMessage[]) => {
     await batchDeleteOperationMessages({ ids });
 
     notification.success({
-      content: `成功删除 ${messagesToDelete.length} 条通知`,
+      content: $t('operations.messageSettings.batchDeleteNotificationSuccess', [messagesToDelete.length]),
       duration: 3000,
     });
     selectedRowKeys.value = [];
@@ -934,7 +919,7 @@ const handleBatchDelete = async (selectedRows?: OperationMessage[]) => {
   } catch (error) {
     console.error('Error deleting operation messages:', error);
     notification.error({
-      content: '批量删除失败',
+      content: $t('operations.messageSettings.batchDeleteFailed'),
       duration: 3000,
     });
   }

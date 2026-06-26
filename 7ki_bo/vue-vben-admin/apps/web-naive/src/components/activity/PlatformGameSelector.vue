@@ -15,7 +15,7 @@
         <div v-else class="space-y-3">
           <!-- Quick Actions -->
           <div class="mb-3 flex space-x-2">
-            <n-button size="tiny" @click="selectAllPlatforms">全选</n-button>
+            <n-button size="tiny" @click="selectAllPlatforms">{{ $t('common.selectAll') }}</n-button>
             <n-button size="tiny" @click="clearSelection">清空</n-button>
             <n-button size="tiny" @click="expandAll">展开</n-button>
             <n-button size="tiny" @click="collapseAll">收起</n-button>
@@ -24,7 +24,7 @@
           <!-- Category Tabs -->
           <div class="mb-3">
             <n-tabs type="segment" size="medium" animated>
-              <n-tab-pane name="all" tab="全部">
+              <n-tab-pane name="all" :tab="$t('common.all')">
                 <!-- All Platforms in Grid -->
                 <div class="grid max-h-80 grid-cols-2 gap-2 overflow-y-auto">
                   <div
@@ -129,7 +129,7 @@
                         size="small"
                       >
                         <n-space size="small">
-                          <n-radio value="all_games">全部</n-radio>
+                          <n-radio value="all_games">{{ $t('common.all') }}</n-radio>
                           <n-radio value="specific_games">指定</n-radio>
                         </n-space>
                       </n-radio-group>
@@ -322,7 +322,7 @@
                         size="small"
                       >
                         <n-space size="small">
-                          <n-radio value="all_games">全部</n-radio>
+                          <n-radio value="all_games">{{ $t('common.all') }}</n-radio>
                           <n-radio value="specific_games">指定</n-radio>
                         </n-space>
                       </n-radio-group>
@@ -434,6 +434,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, computed, watch, onMounted } from 'vue';
 import {
   NButton,

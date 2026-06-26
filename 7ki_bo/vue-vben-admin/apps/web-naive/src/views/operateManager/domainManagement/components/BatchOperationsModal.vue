@@ -2,12 +2,12 @@
   <n-modal
     v-model:show="showModal"
     preset="dialog"
-    title="批量操作"
+    :title="$t('common.batchOperation')"
     :style="{ width: '500px' }"
   >
     <n-space vertical>
       <n-alert type="info" :show-icon="true">
-        已选择 {{ selectedIds.length }} 个域名
+        {{ $t('operations.domain.selectedCount', [selectedIds.length]) }}
       </n-alert>
 
       <n-form
@@ -16,35 +16,35 @@
         label-placement="left"
         label-width="auto"
       >
-        <n-form-item label="操作类型" path="operationType">
+        <n-form-item :label="$t('operations.domain.batchOps.operationType')" path="operationType">
           <n-select
             v-model:value="formData.operationType"
             :options="operationOptions"
-            placeholder="请选择操作类型"
+            :placeholder="$t('operations.domain.batchOps.selectOperation')"
           />
         </n-form-item>
 
         <n-form-item
           v-if="formData.operationType === 'status'"
-          label="状态"
+          :label="$t('common.status')"
           path="status"
         >
           <n-select
             v-model:value="formData.status"
             :options="statusOptions"
-            placeholder="请选择状态"
+            :placeholder="$t('common.pleaseSelect') + ' ' + $t('common.status')"
           />
         </n-form-item>
 
         <n-form-item
           v-if="formData.operationType === 'cdn'"
-          label="CDN提供商"
+          :label="$t('operations.domain.column.cdnProvider')"
           path="cdnProvider"
         >
           <n-select
             v-model:value="formData.cdnProvider"
             :options="cdnProviderOptions"
-            placeholder="请选择CDN提供商"
+            :placeholder="$t('operations.domain.batchOps.selectCdn')"
           />
         </n-form-item>
       </n-form>
@@ -52,9 +52,9 @@
 
     <template #action>
       <n-space>
-        <n-button @click="showModal = false">取消</n-button>
+        <n-button @click="showModal = false">{{ $t('common.cancel') }}</n-button>
         <n-button type="primary" @click="handleSubmit" :loading="submitting">
-          确定
+          {{ $t('operations.layout.confirm') }}
         </n-button>
       </n-space>
     </template>
@@ -62,6 +62,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, computed } from 'vue';
 import { useMessage } from 'naive-ui';
 
@@ -91,21 +93,21 @@ const formData = ref({
 });
 
 const operationOptions = [
-  { label: '修改状态', value: 'status' },
-  { label: '切换CDN', value: 'cdn' },
-  { label: '删除', value: 'delete' },
+  { label: $t('operations.domain.batchOps.modifyStatus'), value: 'status' },
+  { label: $t('operations.domain.action.switchCdn'), value: 'cdn' },
+  { label: $t('common.delete'), value: 'delete' },
 ];
 
 const statusOptions = [
-  { label: '启用', value: 'active' },
-  { label: '禁用', value: 'inactive' },
+  { label: $t('common.enable'), value: 'active' },
+  { label: $t('common.disable'), value: 'inactive' },
 ];
 
 const cdnProviderOptions = [
   { label: 'Cloudflare', value: 'cloudflare' },
   { label: 'AWS CloudFront', value: 'aws' },
-  { label: '阿里云', value: 'aliyun' },
-  { label: '腾讯云', value: 'tencent' },
+  { label: 'Aliyun', value: 'aliyun' },
+  { label: 'Tencent Cloud', value: 'tencent' },
 ];
 
 const handleSubmit = async () => {
@@ -113,11 +115,11 @@ const handleSubmit = async () => {
     submitting.value = true;
 
     // TODO: Implement API call
-    message.success('批量操作成功');
+    message.success($t('operations.domain.message.bulkActionSuccess', [$t('common.batchOperation')]));
     emit('success');
     showModal.value = false;
   } catch (error) {
-    message.error('批量操作失败');
+    message.error($t('operations.domain.message.bulkActionFailed', [$t('common.batchOperation')]));
   } finally {
     submitting.value = false;
   }

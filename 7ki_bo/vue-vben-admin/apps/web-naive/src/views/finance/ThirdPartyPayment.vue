@@ -5,7 +5,7 @@
       <n-card :bordered="false" class="rounded-16px shadow-sm">
         <div class="mb-4 flex items-center justify-between">
           <div>
-            <h2 class="text-xl font-semibold text-gray-800">三方代付</h2>
+            <h2 class="text-xl font-semibold text-gray-800">{{ $t('finance.thirdPartyPayout') }}</h2>
             <p class="mt-1 text-sm text-gray-600">
               第三方代付商户管理 (提现/出款)
             </p>
@@ -14,15 +14,11 @@
             <n-button type="primary" @click="fetchData" :loading="loading">
               <template #icon>
                 <n-icon><ReloadOutline /></n-icon>
-              </template>
-              刷新
-            </n-button>
+              </template>{{ $t('common.refresh') }}</n-button>
             <n-button type="success" @click="showAddProviderModal">
               <template #icon>
                 <n-icon><AddOutline /></n-icon>
-              </template>
-              新增商户
-            </n-button>
+              </template>{{ $t('finance.addMerchant') }}</n-button>
           </div>
         </div>
 
@@ -31,10 +27,10 @@
           class="filter-section mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4"
         >
           <div class="filter-item">
-            <n-form-item label="代付币种">
+            <n-form-item :label="$t('finance.payoutCurrency')">
               <n-select
                 v-model:value="filters.currency"
-                placeholder="选择币种"
+                placeholder:placeholder="$t('finance.selectCurrency')"
                 clearable
                 size="small"
                 :options="currencyOptions"
@@ -43,10 +39,10 @@
           </div>
 
           <div class="filter-item">
-            <n-form-item label="商户状态">
+            <n-form-item :label="$t('finance.merchantStatus')">
               <n-select
                 v-model:value="filters.status"
-                placeholder="选择状态"
+                placeholder:placeholder="$t('finance.selectStatus')"
                 clearable
                 size="small"
                 :options="statusOptions"
@@ -55,10 +51,10 @@
           </div>
 
           <div class="filter-item">
-            <n-form-item label="三方代付">
+            <n-form-item :label="$t('finance.thirdPartyPayout')">
               <n-input
                 v-model:value="filters.providerName"
-                placeholder="输入商户名称"
+                placeholder:placeholder="$t('finance.enterMerchantName')"
                 clearable
                 size="small"
               />
@@ -74,10 +70,8 @@
             >
               <template #icon
                 ><n-icon><SearchOutline /></n-icon
-              ></template>
-              搜索
-            </n-button>
-            <n-button @click="resetFilters" size="small">重置</n-button>
+              ></template>{{ $t('common.search') }}</n-button>
+            <n-button @click="resetFilters" size="small">{{ $t('common.reset') }}</n-button>
           </div>
         </div>
       </n-card>
@@ -106,21 +100,17 @@
                 <n-button type="primary" @click="fetchData" :loading="loading">
                   <template #icon>
                     <n-icon><ReloadOutline /></n-icon>
-                  </template>
-                  刷新
-                </n-button>
+                  </template>{{ $t('common.refresh') }}</n-button>
                 <n-button type="success" @click="showAddProviderModal">
                   <template #icon>
                     <n-icon><AddOutline /></n-icon>
-                  </template>
-                  新增商户
-                </n-button>
+                  </template>{{ $t('finance.addMerchant') }}</n-button>
               </div>
 
               <!-- 信息显示 -->
               <div class="text-sm text-gray-600">
                 共 {{ paginationReactive.total }} 个代付商户
-                <n-tag type="info" size="small" class="ml-2"> 三方代付 </n-tag>
+                <n-tag type="info" size="small" class="ml-2">{{ $t('finance.thirdPartyPayout') }}</n-tag>
               </div>
             </div>
           </div>
@@ -146,20 +136,20 @@
       >
         <n-tabs v-model:value="activeTab" type="line">
           <!-- Tab 1: Basic Info -->
-          <n-tab-pane name="basic" tab="基本信息">
+          <n-tab-pane name="basic" :tab="$t('finance.basicInfo')">
             <div class="space-y-4">
               <n-grid :cols="2" :x-gap="24">
-                <n-form-item-gi label="代付币种" path="currency">
+                <n-form-item-gi :label="$t('finance.payoutCurrency')" path="currency">
                   <n-select
                     v-model:value="providerModal.data.currency"
-                    placeholder="选择代付币种"
+                    placeholder:placeholder="$t('finance.selectPayoutCurrency')"
                     :options="currencyOptions"
                   />
                 </n-form-item-gi>
-                <n-form-item-gi label="三方代付" path="providerId">
+                <n-form-item-gi :label="$t('finance.thirdPartyPayout')" path="providerId">
                   <n-select
                     v-model:value="providerModal.data.providerId"
-                    placeholder="请选择三方代付"
+                    placeholder:placeholder="$t('finance.pleaseSelectThirdPartyPayout')"
                     :options="availableProviders"
                     @update:value="onProviderChange"
                   />
@@ -167,71 +157,71 @@
               </n-grid>
 
               <n-grid :cols="2" :x-gap="24">
-                <n-form-item-gi label="三方代付平台名" path="platformName">
+                <n-form-item-gi :label="$t('finance.thirdPartyPlatformName')" path="platformName">
                   <n-input
                     v-model:value="providerModal.data.platformName"
-                    placeholder="输入三方代付平台名"
+                    placeholder:placeholder="$t('finance.enterThirdPartyPlatformName')"
                     maxlength="50"
                     show-count
                   />
                 </n-form-item-gi>
-                <n-form-item-gi label="三方商户号" path="merchantId">
+                <n-form-item-gi :label="$t('finance.thirdPartyMerchantId')" path="merchantId">
                   <n-input
                     v-model:value="providerModal.data.merchantId"
-                    placeholder="输入三方商户号"
+                    placeholder:placeholder="$t('finance.enterThirdPartyMerchantId')"
                     maxlength="100"
                     show-count
                   />
                 </n-form-item-gi>
               </n-grid>
 
-              <n-form-item label="三方商户密钥" path="merchantKey">
+              <n-form-item :label="$t('finance.thirdPartyMerchantKey')" path="merchantKey">
                 <n-input
                   v-model:value="providerModal.data.merchantKey"
-                  placeholder="输入三方商户密钥"
+                  placeholder:placeholder="$t('finance.enterThirdPartyMerchantKey')"
                   type="password"
                   show-password-on="click"
                 />
               </n-form-item>
 
-              <n-form-item label="回调成功标识" path="successFlag">
+              <n-form-item :label="$t('finance.callbackSuccessFlag')" path="successFlag">
                 <n-input
                   v-model:value="providerModal.data.successFlag"
-                  placeholder="输入回调成功标识"
+                  placeholder:placeholder="$t('finance.enterCallbackSuccessFlag')"
                   maxlength="255"
                   show-count
                 />
               </n-form-item>
 
-              <n-form-item label="三方下单地址" path="orderUrl">
+              <n-form-item :label="$t('finance.thirdPartyOrderUrl')" path="orderUrl">
                 <n-input
                   v-model:value="providerModal.data.orderUrl"
-                  placeholder="输入三方下单地址"
+                  placeholder:placeholder="$t('finance.enterThirdPartyOrderUrl')"
                 />
               </n-form-item>
 
-              <n-form-item label="查询地址" path="queryUrl">
+              <n-form-item :label="$t('finance.queryUrl')" path="queryUrl">
                 <n-input
                   v-model:value="providerModal.data.queryUrl"
-                  placeholder="输入查询地址"
+                  placeholder:placeholder="$t('finance.enterQueryUrl')"
                 />
               </n-form-item>
 
-              <n-form-item label="余额查询地址" path="balanceQueryUrl">
+              <n-form-item :label="$t('finance.balanceQueryUrl')" path="balanceQueryUrl">
                 <n-input
                   v-model:value="providerModal.data.balanceQueryUrl"
-                  placeholder="输入余额查询地址"
+                  placeholder:placeholder="$t('finance.enterBalanceQueryUrl')"
                 />
               </n-form-item>
 
-              <n-form-item label="三方回调IP" path="callbackIp">
+              <n-form-item :label="$t('finance.thirdPartyCallbackIp')" path="callbackIp">
                 <n-input
                   v-model:value="providerModal.data.callbackIp"
-                  placeholder="输入三方回调IP"
+                  placeholder:placeholder="$t('finance.enterThirdPartyCallbackIp')"
                 />
               </n-form-item>
 
-              <n-form-item label="提现方式" path="withdrawalMethods">
+              <n-form-item :label="$t('finance.withdrawalMethod')" path="withdrawalMethods">
                 <n-checkbox-group
                   v-model:value="providerModal.data.withdrawalMethods"
                 >
@@ -249,39 +239,39 @@
           </n-tab-pane>
 
           <!-- Tab 2: Limits & Settings -->
-          <n-tab-pane name="limits" tab="限额设置">
+          <n-tab-pane name="limits" :tab="$t('finance.limitSettings')">
             <div class="space-y-4">
               <n-grid :cols="2" :x-gap="24">
-                <n-form-item-gi label="代付限额" path="minLimit">
+                <n-form-item-gi :label="$t('finance.payoutLimit')" path="minLimit">
                   <n-input
                     v-model:value="providerModal.data.minLimit"
-                    placeholder="输入最小代付限额"
+                    placeholder:placeholder="$t('finance.enterMinPayoutLimit')"
                   />
                 </n-form-item-gi>
                 <n-form-item-gi label="" path="maxLimit">
                   <n-input
                     v-model:value="providerModal.data.maxLimit"
-                    placeholder="输入最大代付限额"
+                    placeholder:placeholder="$t('finance.enterMaxPayoutLimit')"
                   />
                 </n-form-item-gi>
               </n-grid>
 
-              <n-form-item label="备注" path="remarks">
+              <n-form-item :label="$t('common.remark')" path="remarks">
                 <n-input
                   v-model:value="providerModal.data.remarks"
                   type="textarea"
-                  placeholder="请输入备注"
+                  placeholder:placeholder="$t('finance.pleaseEnterRemark')"
                   maxlength="1000"
                   show-count
                   :rows="4"
                 />
               </n-form-item>
 
-              <n-form-item label="停启用">
+              <n-form-item :label="$t('finance.enableDisable')">
                 <n-select
                   v-model:value="providerModal.data.statusOption"
                   :options="enableOptions"
-                  placeholder="开启"
+                  placeholder:placeholder="$t('finance.on')"
                 />
               </n-form-item>
             </div>
@@ -291,14 +281,12 @@
 
       <template #action>
         <div class="flex justify-end gap-3">
-          <n-button @click="providerModal.show = false">取消</n-button>
+          <n-button @click="providerModal.show = false">{{ $t('common.cancel') }}</n-button>
           <n-button
             type="primary"
             @click="saveProvider"
             :loading="providerModal.saving"
-          >
-            确认
-          </n-button>
+          >{{ $t('common.confirm') }}</n-button>
         </div>
       </template>
     </n-modal>
@@ -306,6 +294,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, onMounted, h } from 'vue';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 import { defineAsyncComponent } from 'vue';
@@ -413,23 +403,23 @@ const providerModal = reactive({
 
 // Form validation rules
 const formRules: FormRules = {
-  currency: [{ required: true, message: '请选择代付币种', trigger: 'change' }],
+  currency: [{ required: true, message: $t('finance.pleaseSelectPayoutCurrency'), trigger: 'change' }],
   providerId: [
-    { required: true, message: '请选择三方代付', trigger: 'change' },
+    { required: true, message: $t('finance.pleaseSelectThirdPartyPayout'), trigger: 'change' },
   ],
   platformName: [
-    { required: true, message: '请输入三方代付平台名', trigger: 'blur' },
+    { required: true, message: $t('finance.pleaseEnterThirdPartyPlatformName'), trigger: 'blur' },
   ],
   merchantId: [
-    { required: true, message: '请输入三方商户号', trigger: 'blur' },
+    { required: true, message: $t('finance.pleaseEnterThirdPartyMerchantId'), trigger: 'blur' },
   ],
   successFlag: [
-    { required: true, message: '请输入回调成功标识', trigger: 'blur' },
+    { required: true, message: $t('finance.pleaseEnterCallbackSuccessFlag'), trigger: 'blur' },
   ],
   orderUrl: [
-    { required: true, message: '请输入三方下单地址', trigger: 'blur' },
+    { required: true, message: $t('finance.pleaseEnterThirdPartyOrderUrl'), trigger: 'blur' },
   ],
-  queryUrl: [{ required: true, message: '请输入查询地址', trigger: 'blur' }],
+  queryUrl: [{ required: true, message: $t('finance.pleaseEnterQueryUrl'), trigger: 'blur' }],
 };
 
 // Options
@@ -450,33 +440,33 @@ const availableProviders = [{ label: 'Pay4Z(BRL)', value: 'Pay4Z_BRL' }];
 
 const withdrawalMethodOptions = [
   { label: 'PIX', value: 'PIX' },
-  { label: '银行转账', value: 'BANK_TRANSFER' },
+  { label: $t('finance.bankTransfer'), value: 'BANK_TRANSFER' },
   { label: 'TED', value: 'TED' },
 ];
 
 const enableOptions = [
-  { label: '开启', value: 'enabled' },
+  { label: $t('finance.on'), value: 'enabled' },
   { label: '停用', value: 'disabled' },
 ];
 
 // Table columns (matching screenshot exactly)
 const columns: DataTableColumns<ThirdPartyWithdrawalProvider> = [
   {
-    title: '三方代付平台名',
+    title: $t('finance.thirdPartyPlatformName'),
     key: 'platformName',
     width: 150,
     render: (row) =>
       h('div', { class: 'text-center' }, row.platformName || '-'),
   },
   {
-    title: '三方代付',
+    title: $t('finance.thirdPartyPayout'),
     key: 'providerName',
     width: 150,
     render: (row) =>
       h('div', { class: 'text-center' }, row.providerName || '-'),
   },
   {
-    title: '三方商户号',
+    title: $t('finance.thirdPartyMerchantId'),
     key: 'merchantId',
     width: 150,
     render: (row) =>
@@ -487,7 +477,7 @@ const columns: DataTableColumns<ThirdPartyWithdrawalProvider> = [
       ),
   },
   {
-    title: '三方商户余额',
+    title: $t('finance.merchantBalance'),
     key: 'merchantBalance',
     width: 150,
     render: (row) => {
@@ -526,7 +516,7 @@ const columns: DataTableColumns<ThirdPartyWithdrawalProvider> = [
     },
   },
   {
-    title: '提现方式',
+    title: $t('finance.withdrawalMethod'),
     key: 'withdrawalMethods',
     width: 120,
     render: (row) =>
@@ -549,35 +539,35 @@ const columns: DataTableColumns<ThirdPartyWithdrawalProvider> = [
       ),
   },
   {
-    title: '代付币种',
+    title: $t('finance.payoutCurrency'),
     key: 'currency',
     width: 100,
     render: (row) =>
       h('div', { class: 'text-center font-medium' }, row.currency || '-'),
   },
   {
-    title: '最小限额',
+    title: $t('finance.minLimit'),
     key: 'minLimit',
     width: 100,
     render: (row) =>
       h('div', { class: 'text-center text-sm' }, row.minLimit || '0'),
   },
   {
-    title: '最大限额',
+    title: $t('finance.maxLimit'),
     key: 'maxLimit',
     width: 100,
     render: (row) =>
       h('div', { class: 'text-center text-sm' }, row.maxLimit || '∞'),
   },
   {
-    title: '备注',
+    title: $t('common.remark'),
     key: 'remarks',
     width: 120,
     render: (row) =>
       h('div', { class: 'text-center text-xs' }, row.remarks || '-'),
   },
   {
-    title: '操作人',
+    title: $t('finance.operator'),
     key: 'operator',
     width: 100,
     render: (row) =>
@@ -588,7 +578,7 @@ const columns: DataTableColumns<ThirdPartyWithdrawalProvider> = [
       ),
   },
   {
-    title: '操作时间',
+    title: $t('finance.actionsTime'),
     key: 'updatedAt',
     width: 160,
     render: (row) =>
@@ -611,7 +601,7 @@ const columns: DataTableColumns<ThirdPartyWithdrawalProvider> = [
       ),
   },
   {
-    title: '停/启用',
+    title: $t('finance.enable'),
     key: 'enabled',
     width: 100,
     render: (row) =>
@@ -627,7 +617,7 @@ const columns: DataTableColumns<ThirdPartyWithdrawalProvider> = [
       ]),
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 150,
     fixed: 'right',
@@ -640,7 +630,7 @@ const columns: DataTableColumns<ThirdPartyWithdrawalProvider> = [
             type: 'primary',
             onClick: () => editProvider(row),
           },
-          { default: () => '修改' },
+          { default: () => $t('common.edit') },
         ),
         h(
           NButton,
@@ -650,7 +640,7 @@ const columns: DataTableColumns<ThirdPartyWithdrawalProvider> = [
             disabled: row.enabled,
             onClick: () => deleteProvider(row),
           },
-          { default: () => '删除' },
+          { default: () => $t('common.delete') },
         ),
       ]),
   },
@@ -722,7 +712,7 @@ const fetchData = async () => {
   } catch (error) {
     console.error('❌ Fetch withdrawal providers error:', error);
     tableData.value = [];
-    message.error('获取数据失败');
+    message.error($t('finance.failedToFetchData'));
   } finally {
     loading.value = false;
   }
@@ -773,24 +763,24 @@ const editProvider = (provider: ThirdPartyWithdrawalProvider) => {
 
 const deleteProvider = (provider: ThirdPartyWithdrawalProvider) => {
   dialog.warning({
-    title: '删除确认',
+    title: $t('finance.deleteConfirmation'),
     content: `确认删除三方代付商户 "${provider.platformName}"？删除后无法恢复。`,
-    positiveText: '确认删除',
-    negativeText: '取消',
+    positiveText: $t('finance.confirmDelete'),
+    negativeText: $t('common.cancel'),
     onPositiveClick: async () => {
       try {
         const response = await thirdPartyWithdrawalApi.deleteProvider(
           provider.id!,
         );
         if (response.success) {
-          message.success('删除成功');
+          message.success($t('finance.deleteSuccessful'));
           fetchData();
         } else {
           message.error(response.message || '删除失败');
         }
       } catch (error) {
         console.error('Delete provider error:', error);
-        message.error('删除失败');
+        message.error($t('finance.deleteFailed'));
       }
     },
   });
@@ -836,7 +826,7 @@ const saveProvider = async () => {
   } catch (error: any) {
     console.error('Save provider error:', error);
     if (error?.errorInfo) {
-      message.error('请检查表单必填项');
+      message.error($t('finance.pleaseCheckRequiredFields'));
     } else {
       message.error(`保存失败: ${error.message || '未知错误'}`);
     }

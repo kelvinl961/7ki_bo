@@ -3,12 +3,12 @@
     <n-card>
       <template #header>
         <div class="flex items-center justify-between">
-          <h2 class="text-xl font-bold">媒体文件管理</h2>
+          <h2 class="text-xl font-bold">{{ $t('media.fileManagement') }}</h2>
           <n-button type="primary" @click="loadMediaFiles">
             <template #icon>
               <n-icon><RefreshIcon /></n-icon>
             </template>
-            刷新
+            {{ $t('common.refresh') }}
           </n-button>
         </div>
       </template>
@@ -16,13 +16,13 @@
       <!-- Loading State -->
       <div v-if="loading" class="flex items-center justify-center py-20">
         <n-spin size="large" />
-        <span class="ml-4">加载中...</span>
+        <span class="ml-4">{{ $t('common.loading') }}</span>
       </div>
 
       <!-- Error State -->
       <div v-else-if="error" class="py-20 text-center">
         <n-alert type="error" :title="error" />
-        <n-button class="mt-4" @click="loadMediaFiles">重试</n-button>
+        <n-button class="mt-4" @click="loadMediaFiles">{{ $t('media.retry') }}</n-button>
       </div>
 
       <!-- Media Files Grid -->
@@ -60,18 +60,16 @@
               {{ file.description }}
             </div>
             <div class="file-stats">
-              <span>使用: {{ file.usageCount || 0 }} 次</span>
+              <span>{{ $t('media.usageTimes', [file.usageCount || 0]) }}</span>
               <span>{{ formatDate(file.createdAt) }}</span>
             </div>
           </div>
 
           <template #action>
             <div class="file-actions">
-              <n-button size="small" @click="copyFileUrl(file)"
-                >复制链接</n-button
-              >
+              <n-button size="small" @click="copyFileUrl(file)">{{ $t('media.copyLink') }}</n-button>
               <n-button size="small" type="error" @click="deleteFile(file.id)">
-                删除
+                {{ $t('common.delete') }}
               </n-button>
             </div>
           </template>
@@ -80,9 +78,9 @@
 
       <!-- Empty State -->
       <div v-else class="py-20 text-center">
-        <n-empty description="暂无媒体文件">
+        <n-empty :description="$t('media.noMediaFiles')">
           <template #extra>
-            <n-button type="primary">上传文件</n-button>
+            <n-button type="primary">{{ $t('media.uploadFile') }}</n-button>
           </template>
         </n-empty>
       </div>
@@ -104,6 +102,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, onMounted } from 'vue';
 import {
   NCard,
@@ -202,8 +202,8 @@ const loadMediaFiles = async () => {
     }
   } catch (err: any) {
     console.error('❌ Load media files error:', err);
-    error.value = err.message || '加载媒体文件失败';
-    message.error('加载媒体文件失败');
+    error.value = err.message || $t('media.loadMediaFailed');
+    message.error($t('media.loadMediaFailed'));
   } finally {
     loading.value = false;
   }
@@ -261,30 +261,30 @@ const copyFileUrl = async (file: MediaFile) => {
   const url = getFileUrl(file.url);
   try {
     await navigator.clipboard.writeText(url);
-    message.success('链接已复制到剪贴板');
+    message.success($t('media.linkCopied'));
   } catch (err) {
-    message.error('复制失败');
+    message.error($t('common.operationFailed'));
   }
 };
 
 const deleteFile = async (fileId: number) => {
-  const confirmed = window.confirm('确认删除这个文件吗？此操作不可恢复。');
+  const confirmed = window.confirm($t('media.confirmDeleteFile'));
   if (!confirmed) return;
 
   try {
     await deleteMediaFile(fileId);
-    message.success('删除成功');
+    message.success($t('common.deleteSuccess'));
     loadMediaFiles();
   } catch (err) {
     console.error('Delete file error:', err);
-    message.error('删除失败');
+    message.error($t('media.deleteFailed'));
   }
 };
 
 const handleImageError = (event: Event) => {
   const img = event.target as HTMLImageElement;
   img.src =
-    'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%23ddd" width="200" height="200"/%3E%3Ctext fill="%23999" font-family="sans-serif" font-size="14" dy="10.5" font-weight="bold" x="50%25" y="50%25" text-anchor="middle"%3E图片加载失败%3C/text%3E%3C/svg%3E';
+    `data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%23ddd" width="200" height="200"/%3E%3Ctext fill="%23999" font-family="sans-serif" font-size="14" dy="10.5" font-weight="bold" x="50%25" y="50%25" text-anchor="middle"%3E${encodeURIComponent($t('media.imageLoadFailed'))}%3C/text%3E%3C/svg%3E`;
 };
 
 onMounted(() => {

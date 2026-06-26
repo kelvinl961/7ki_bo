@@ -1,11 +1,9 @@
 <template>
   <div class="share-management">
     <n-card>
-      <n-empty description="分享管理功能正在开发中..." size="large">
+      <n-empty :description="$t('activity.shareManagement.k5206')" size="large">
         <template #extra>
-          <n-button type="primary" @click="handleComingSoon">
-            敬请期待
-          </n-button>
+          <n-button type="primary" @click="handleComingSoon">{{ $t('activity.shareManagement.k656c') }}</n-button>
         </template>
       </n-empty>
     </n-card>
@@ -13,12 +11,14 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { NCard, NEmpty, NButton, useMessage } from 'naive-ui';
 
 const message = useMessage();
 
 const handleComingSoon = () => {
-  message.info('分享管理功能正在积极开发中，敬请期待！');
+  message.info($t('activity.shareManagement.k5206k656c'));
 };
 </script>
 

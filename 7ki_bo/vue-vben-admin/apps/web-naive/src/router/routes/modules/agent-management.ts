@@ -6,7 +6,7 @@ const routes: RouteRecordRaw[] = [
       icon: 'ic:baseline-groups',
       keepAlive: true,
       order: 250,
-      title: '代理管理',
+      title: 'page.menu.agentManagement',
     },
     name: 'AgentManagement',
     path: '/agency',
@@ -14,7 +14,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '所有代理',
+          title: 'page.menu.allAgents',
         },
         name: 'AllAgents',
         path: '/agency/agent-list',
@@ -23,7 +23,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '佣金管理',
+          title: 'page.menu.commissionManagement',
         },
         name: 'CommissionManagement',
         path: '/agency/commission-management',
@@ -33,7 +33,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '返水设置',
+          title: 'page.menu.rebateSettings',
         },
         name: 'RebateSettings',
         path: '/agency/rebate-settings',
@@ -43,7 +43,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '代理模式',
+          title: 'page.menu.agentMode',
         },
         name: 'AgentMode',
         path: '/agency/agent-mode',

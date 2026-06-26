@@ -1,41 +1,42 @@
 <template>
   <div class="login-devices-tab">
-    <!-- Device Summary -->
-    <n-card title="登录设备概览" class="mb-4">
+    <n-card :title="$t('agency.loginDevices.overview')" class="mb-4">
       <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
         <div class="stat-card">
           <div class="stat-value">{{ totalDevices }}</div>
-          <div class="stat-label">总设备数</div>
+          <div class="stat-label">{{ $t('agency.loginDevices.totalDevices') }}</div>
         </div>
         <div class="stat-card">
           <div class="stat-value">{{ activeDevices }}</div>
-          <div class="stat-label">活跃设备</div>
+          <div class="stat-label">{{ $t('agency.loginDevices.activeDevices') }}</div>
         </div>
         <div class="stat-card">
           <div class="stat-value">{{ uniqueIPs }}</div>
-          <div class="stat-label">唯一IP数</div>
+          <div class="stat-label">{{ $t('agency.loginDevices.uniqueIps') }}</div>
         </div>
         <div class="stat-card">
           <div class="stat-value">{{ lastLoginDays }}</div>
-          <div class="stat-label">最后登录天数</div>
+          <div class="stat-label">{{ $t('agency.loginDevices.lastLoginDays') }}</div>
         </div>
       </div>
     </n-card>
 
-    <!-- Action Buttons -->
-    <n-card title="操作" class="mb-4">
+    <n-card :title="$t('common.actions')" class="mb-4">
       <div class="flex flex-wrap gap-2">
-        <n-button type="primary" @click="handleAddDevice"> 添加设备 </n-button>
-        <n-button type="info" @click="handleBatchVerify"> 批量验证 </n-button>
-        <n-button type="warning" @click="handleExportDevices">
-          导出设备
+        <n-button type="primary" @click="handleAddDevice">
+          {{ $t('agency.loginDevices.addDevice') }}
         </n-button>
-        <n-button @click="handleRefresh"> 刷新 </n-button>
+        <n-button type="info" @click="handleBatchVerify">
+          {{ $t('agency.loginDevices.batchVerify') }}
+        </n-button>
+        <n-button type="warning" @click="handleExportDevices">
+          {{ $t('agency.loginDevices.exportDevices') }}
+        </n-button>
+        <n-button @click="handleRefresh"> {{ $t('common.refresh') }} </n-button>
       </div>
     </n-card>
 
-    <!-- Login Devices Table -->
-    <n-card title="登录设备列表">
+    <n-card :title="$t('agency.loginDevices.deviceList')">
       <n-data-table
         :columns="columns"
         :data="loginDevices"
@@ -46,11 +47,10 @@
       />
     </n-card>
 
-    <!-- Add/Edit Device Modal -->
     <n-modal
       v-model:show="showDeviceModal"
       preset="card"
-      title="登录设备"
+      :title="$t('agency.loginDevices.deviceTitle')"
       style="width: 600px"
     >
       <n-form
@@ -60,50 +60,53 @@
         label-placement="left"
         label-width="120px"
       >
-        <n-form-item label="设备名称" path="name">
+        <n-form-item :label="$t('agency.loginDevices.deviceName')" path="name">
           <n-input
             v-model:value="deviceForm.name"
-            placeholder="请输入设备名称"
+            :placeholder="$t('agency.loginDevices.enterDeviceName')"
           />
         </n-form-item>
 
-        <n-form-item label="设备类型" path="type">
+        <n-form-item :label="$t('agency.loginDevices.deviceType')" path="type">
           <n-select
             v-model:value="deviceForm.type"
             :options="deviceTypeOptions"
           />
         </n-form-item>
 
-        <n-form-item label="操作系统" path="os">
-          <n-input v-model:value="deviceForm.os" placeholder="请输入操作系统" />
+        <n-form-item :label="$t('agency.loginDevices.operatingSystem')" path="os">
+          <n-input
+            v-model:value="deviceForm.os"
+            :placeholder="$t('agency.loginDevices.enterOs')"
+          />
         </n-form-item>
 
-        <n-form-item label="浏览器" path="browser">
+        <n-form-item :label="$t('agency.loginDevices.browser')" path="browser">
           <n-input
             v-model:value="deviceForm.browser"
-            placeholder="请输入浏览器"
+            :placeholder="$t('agency.loginDevices.enterBrowser')"
           />
         </n-form-item>
 
-        <n-form-item label="IP地址" path="ipAddress">
+        <n-form-item :label="$t('agency.loginDevices.ipAddress')" path="ipAddress">
           <n-input
             v-model:value="deviceForm.ipAddress"
-            placeholder="请输入IP地址"
+            :placeholder="$t('agency.loginDevices.enterIp')"
           />
         </n-form-item>
 
-        <n-form-item label="状态" path="status">
+        <n-form-item :label="$t('common.status')" path="status">
           <n-select
             v-model:value="deviceForm.status"
             :options="statusOptions"
           />
         </n-form-item>
 
-        <n-form-item label="备注" path="remark">
+        <n-form-item :label="$t('common.remark')" path="remark">
           <n-input
             v-model:value="deviceForm.remark"
             type="textarea"
-            placeholder="请输入备注信息"
+            :placeholder="$t('agency.withdrawAccount.enterRemark')"
             :rows="3"
           />
         </n-form-item>
@@ -111,13 +114,13 @@
 
       <template #action>
         <div class="flex gap-2">
-          <n-button @click="showDeviceModal = false">取消</n-button>
+          <n-button @click="showDeviceModal = false">{{ $t('common.cancel') }}</n-button>
           <n-button
             type="primary"
             @click="handleSubmitDevice"
             :loading="submitting"
           >
-            {{ isEdit ? '更新' : '添加' }}
+            {{ isEdit ? $t('agency.shared.update') : $t('common.add') }}
           </n-button>
         </div>
       </template>
@@ -126,6 +129,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, h, onMounted } from 'vue';
 import {
   NCard,
@@ -140,7 +145,6 @@ import {
   useMessage,
   type DataTableColumns,
 } from 'naive-ui';
-import type { AgentRecord } from '#/api/agency/agent';
 import { getAgentLoginDevicesApi } from '#/api/agency/agent-details';
 
 interface Props {
@@ -177,15 +181,11 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const message = useMessage();
-
-// Reactive data
 const loading = ref(false);
 const submitting = ref(false);
 const showDeviceModal = ref(false);
 const isEdit = ref(false);
 const currentDeviceId = ref<number | null>(null);
-
-// Real data from API
 const loginDevices = ref<LoginDevice[]>([]);
 
 const deviceForm = reactive<DeviceForm>({
@@ -198,28 +198,27 @@ const deviceForm = reactive<DeviceForm>({
   remark: '',
 });
 
-// Options
-const deviceTypeOptions = [
-  { label: '桌面设备', value: 'desktop' },
-  { label: '移动设备', value: 'mobile' },
-  { label: '平板设备', value: 'tablet' },
-  { label: '未知设备', value: 'unknown' },
-];
+const deviceTypeOptions = computed(() => [
+  { label: $t('agency.loginDevices.desktop'), value: 'desktop' },
+  { label: $t('agency.loginDevices.mobile'), value: 'mobile' },
+  { label: $t('agency.loginDevices.tablet'), value: 'tablet' },
+  { label: $t('agency.loginDevices.unknown'), value: 'unknown' },
+]);
 
-const statusOptions = [
-  { label: '活跃', value: 'active' },
-  { label: '停用', value: 'inactive' },
-  { label: '待验证', value: 'pending' },
-];
+const statusOptions = computed(() => [
+  { label: $t('agency.withdrawAccount.active'), value: 'active' },
+  { label: $t('agency.withdrawAccount.inactive'), value: 'inactive' },
+  { label: $t('agency.withdrawAccount.pending'), value: 'pending' },
+]);
 
-// Pagination
 const pagination = reactive({
   page: 1,
   pageSize: 10,
   itemCount: 0,
   showSizePicker: true,
   pageSizes: [10, 20, 50],
-  prefix: (info: any) => `共 ${info.itemCount} 条`,
+  prefix: (info: { itemCount: number }) =>
+    $t('agency.loginDevices.totalRecords', [info.itemCount]),
   onUpdatePage: (page: number) => {
     pagination.page = page;
     loadDevices();
@@ -231,146 +230,154 @@ const pagination = reactive({
   },
 });
 
-// Computed
 const totalDevices = computed(() => loginDevices.value.length);
-
 const activeDevices = computed(
-  () =>
-    loginDevices.value.filter((device) => device.status === 'active').length,
+  () => loginDevices.value.filter((device) => device.status === 'active').length,
 );
-
 const uniqueIPs = computed(() => {
   const ips = new Set(loginDevices.value.map((device) => device.ipAddress));
   return ips.size;
 });
-
 const lastLoginDays = computed(() => {
   const lastLogin = loginDevices.value
     .map((device) => new Date(device.lastLoginTime))
     .sort((a, b) => b.getTime() - a.getTime())[0];
-
   if (!lastLogin) return 0;
-
   const now = new Date();
   const diffTime = Math.abs(now.getTime() - lastLogin.getTime());
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  return diffDays;
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 });
 
-// Table columns
-const columns: DataTableColumns<LoginDevice> = [
+const getDeviceTypeInfo = (type: string) => {
+  const map: Record<string, { label: string; type: string; icon: string }> = {
+    desktop: {
+      label: $t('agency.loginDevices.desktop'),
+      type: 'info',
+      icon: '💻',
+    },
+    mobile: {
+      label: $t('agency.loginDevices.mobile'),
+      type: 'success',
+      icon: '📱',
+    },
+    tablet: {
+      label: $t('agency.loginDevices.tablet'),
+      type: 'warning',
+      icon: '📱',
+    },
+    unknown: {
+      label: $t('agency.loginDevices.unknown'),
+      type: 'default',
+      icon: '❓',
+    },
+  };
+  return map[type] || { label: type, type: 'default', icon: '❓' };
+};
+
+const getStatusInfo = (status: string) => {
+  const map: Record<string, { label: string; type: string; icon: string }> = {
+    active: {
+      label: $t('agency.withdrawAccount.active'),
+      type: 'success',
+      icon: '✅',
+    },
+    inactive: {
+      label: $t('agency.withdrawAccount.inactive'),
+      type: 'error',
+      icon: '❌',
+    },
+    pending: {
+      label: $t('agency.withdrawAccount.pending'),
+      type: 'warning',
+      icon: '⏳',
+    },
+  };
+  return map[status] || { label: status, type: 'default', icon: '❓' };
+};
+
+const columns = computed<DataTableColumns<LoginDevice>>(() => [
+  { title: 'ID', key: 'id', width: 80, align: 'center' },
   {
-    title: 'ID',
-    key: 'id',
-    width: 80,
-    align: 'center',
-  },
-  {
-    title: '设备名称',
+    title: $t('agency.loginDevices.deviceName'),
     key: 'name',
     width: 150,
   },
   {
-    title: '设备类型',
+    title: $t('agency.loginDevices.deviceType'),
     key: 'type',
     width: 100,
     render: (row) => {
-      const typeMap = {
-        desktop: { label: '桌面设备', type: 'info', icon: '💻' },
-        mobile: { label: '移动设备', type: 'success', icon: '📱' },
-        tablet: { label: '平板设备', type: 'warning', icon: '📱' },
-        unknown: { label: '未知设备', type: 'default', icon: '❓' },
-      };
-      const typeInfo = typeMap[row.type as keyof typeof typeMap] || {
-        label: row.type,
-        type: 'default',
-        icon: '❓',
-      };
+      const typeInfo = getDeviceTypeInfo(row.type);
       return h('div', { class: 'flex items-center gap-2' }, [
         h('span', { class: 'text-lg' }, typeInfo.icon),
         h(
           NTag,
-          { type: typeInfo.type, size: 'small' },
+          { type: typeInfo.type as any, size: 'small' },
           { default: () => typeInfo.label },
         ),
       ]);
     },
   },
   {
-    title: '操作系统',
+    title: $t('agency.loginDevices.operatingSystem'),
     key: 'os',
     width: 120,
   },
   {
-    title: '浏览器',
+    title: $t('agency.loginDevices.browser'),
     key: 'browser',
     width: 100,
   },
   {
-    title: 'IP地址',
+    title: $t('agency.loginDevices.ipAddress'),
     key: 'ipAddress',
     width: 120,
-    render: (row) => {
-      return h(
-        'span',
-        { class: 'text-xs font-mono text-gray-600' },
-        row.ipAddress,
-      );
-    },
+    render: (row) =>
+      h('span', { class: 'text-xs font-mono text-gray-600' }, row.ipAddress),
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 100,
     render: (row) => {
-      const statusMap = {
-        active: { label: '活跃', type: 'success', icon: '✅' },
-        inactive: { label: '停用', type: 'error', icon: '❌' },
-        pending: { label: '待验证', type: 'warning', icon: '⏳' },
-      };
-      const status = statusMap[row.status as keyof typeof statusMap] || {
-        label: row.status,
-        type: 'default',
-        icon: '❓',
-      };
+      const status = getStatusInfo(row.status);
       return h('div', { class: 'flex items-center justify-center gap-1' }, [
         h('span', { class: 'text-sm' }, status.icon),
         h(
           NTag,
-          { type: status.type, size: 'small' },
+          { type: status.type as any, size: 'small' },
           { default: () => status.label },
         ),
       ]);
     },
   },
   {
-    title: '最后登录',
+    title: $t('agency.loginDevices.lastLogin'),
     key: 'lastLoginTime',
     width: 180,
-    render: (row) => {
-      return h('div', { class: 'text-sm' }, [
+    render: (row) =>
+      h('div', { class: 'text-sm' }, [
         h('div', { class: 'font-medium' }, formatDateTime(row.lastLoginTime)),
         h(
           'div',
           { class: 'text-xs text-gray-500' },
-          `${row.loginCount} 次登录`,
+          $t('agency.loginDevices.loginCount', [row.loginCount]),
         ),
-      ]);
-    },
+      ]),
   },
   {
-    title: '备注',
+    title: $t('common.remark'),
     key: 'remark',
     ellipsis: true,
     tooltip: true,
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 150,
     fixed: 'right',
-    render: (row) => {
-      return h('div', { class: 'flex gap-1' }, [
+    render: (row) =>
+      h('div', { class: 'flex gap-1' }, [
         h(
           NButton,
           {
@@ -378,7 +385,7 @@ const columns: DataTableColumns<LoginDevice> = [
             type: 'primary',
             onClick: () => handleEditDevice(row),
           },
-          { default: () => '编辑' },
+          { default: () => $t('common.edit') },
         ),
         h(
           NButton,
@@ -387,7 +394,12 @@ const columns: DataTableColumns<LoginDevice> = [
             type: row.status === 'active' ? 'warning' : 'success',
             onClick: () => handleToggleStatus(row),
           },
-          { default: () => (row.status === 'active' ? '停用' : '启用') },
+          {
+            default: () =>
+              row.status === 'active'
+                ? $t('common.disable')
+                : $t('common.enable'),
+          },
         ),
         h(
           NButton,
@@ -396,33 +408,30 @@ const columns: DataTableColumns<LoginDevice> = [
             type: 'error',
             onClick: () => handleDeleteDevice(row.id),
           },
-          { default: () => '删除' },
+          { default: () => $t('common.delete') },
         ),
-      ]);
-    },
+      ]),
   },
-];
+]);
 
-// Form validation rules
-const rules = {
+const rules = computed(() => ({
   name: {
     required: true,
-    message: '请输入设备名称',
+    message: $t('agency.loginDevices.enterDeviceNameRequired'),
     trigger: 'blur',
   },
   type: {
     required: true,
-    message: '请选择设备类型',
+    message: $t('agency.loginDevices.selectDeviceType'),
     trigger: 'blur',
   },
   ipAddress: {
     required: true,
-    message: '请输入IP地址',
+    message: $t('agency.loginDevices.enterIpRequired'),
     trigger: 'blur',
   },
-};
+}));
 
-// Methods
 const loadDevices = async () => {
   loading.value = true;
   try {
@@ -430,11 +439,10 @@ const loadDevices = async () => {
       page: pagination.page,
       pageSize: pagination.pageSize,
     });
-
     loginDevices.value = response.list;
     pagination.itemCount = response.pagination.total;
   } catch (error) {
-    message.error('加载设备失败');
+    message.error($t('agency.loginDevices.loadFailed'));
     console.error('Failed to load devices:', error);
   } finally {
     loading.value = false;
@@ -466,9 +474,7 @@ const handleEditDevice = (device: LoginDevice) => {
 const handleSubmitDevice = async () => {
   try {
     submitting.value = true;
-
     if (isEdit.value && currentDeviceId.value) {
-      // Update existing device
       const index = loginDevices.value.findIndex(
         (dev) => dev.id === currentDeviceId.value,
       );
@@ -478,25 +484,22 @@ const handleSubmitDevice = async () => {
           updatedAt: new Date().toISOString(),
         });
       }
-      message.success('设备更新成功');
+      message.success($t('agency.loginDevices.updateSuccess'));
     } else {
-      // Add new device
-      const newDevice: LoginDevice = {
+      loginDevices.value.push({
         id: Date.now(),
         ...deviceForm,
         lastLoginTime: new Date().toISOString(),
         loginCount: 0,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-      };
-      loginDevices.value.push(newDevice);
-      message.success('设备添加成功');
+      });
+      message.success($t('agency.loginDevices.addSuccess'));
     }
-
     showDeviceModal.value = false;
     loadDevices();
-  } catch (error) {
-    message.error('操作失败');
+  } catch {
+    message.error($t('agency.loginDevices.opFailed'));
   } finally {
     submitting.value = false;
   }
@@ -505,29 +508,35 @@ const handleSubmitDevice = async () => {
 const handleToggleStatus = (device: LoginDevice) => {
   device.status = device.status === 'active' ? 'inactive' : 'active';
   device.updatedAt = new Date().toISOString();
-  message.success(`设备已${device.status === 'active' ? '启用' : '停用'}`);
+  message.success(
+    $t('agency.loginDevices.statusUpdated', [
+      device.status === 'active'
+        ? $t('common.enable')
+        : $t('common.disable'),
+    ]),
+  );
 };
 
 const handleDeleteDevice = (id: number) => {
   const index = loginDevices.value.findIndex((dev) => dev.id === id);
   if (index !== -1) {
     loginDevices.value.splice(index, 1);
-    message.success('设备删除成功');
+    message.success($t('agency.loginDevices.deleteSuccess'));
     loadDevices();
   }
 };
 
 const handleBatchVerify = () => {
-  message.info('批量验证功能开发中...');
+  message.info($t('agency.loginDevices.batchVerifyDeveloping'));
 };
 
 const handleExportDevices = () => {
-  message.info('导出设备功能开发中...');
+  message.info($t('agency.loginDevices.exportDeveloping'));
 };
 
 const handleRefresh = () => {
   loadDevices();
-  message.success('已刷新');
+  message.success($t('agency.loginDevices.refreshed'));
 };
 
 const resetForm = () => {
@@ -543,7 +552,7 @@ const resetForm = () => {
 };
 
 const formatDateTime = (dateString: string) => {
-  return new Date(dateString).toLocaleString('zh-CN');
+  return new Date(dateString).toLocaleString();
 };
 
 onMounted(() => {

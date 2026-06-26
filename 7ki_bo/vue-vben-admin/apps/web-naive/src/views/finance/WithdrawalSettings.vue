@@ -5,8 +5,8 @@
       <n-card :bordered="false" class="rounded-16px shadow-sm">
         <div class="mb-6 flex items-center justify-between">
           <div>
-            <h2 class="text-xl font-semibold text-gray-800">提现设置</h2>
-            <p class="mt-1 text-sm text-gray-600">管理提现通道配置和限额设置</p>
+            <h2 class="text-xl font-semibold text-gray-800">{{ $t('finance.withdrawalSettings') }}</h2>
+            <p class="mt-1 text-sm text-gray-600">{{ $t('finance.kzm8b8') }}</p>
           </div>
         </div>
       </n-card>
@@ -36,39 +36,29 @@
                 >
                   <template #icon>
                     <n-icon><ReloadOutline /></n-icon>
-                  </template>
-                  刷新
-                </n-button>
+                  </template>{{ $t('common.refresh') }}</n-button>
                 <n-button type="error" @click="showCloseChannelModal">
                   <template #icon>
                     <n-icon><CloseCircleOutline /></n-icon>
-                  </template>
-                  关闭提现通道
-                </n-button>
+                  </template>{{ $t('finance.offWithdrawalChannel') }}</n-button>
                 <n-button type="success" @click="showAutoApprovalModal">
                   <template #icon>
                     <n-icon><CheckmarkCircleOutline /></n-icon>
-                  </template>
-                  免审自动出款
-                </n-button>
+                  </template>{{ $t('finance.k1782445247696') }}</n-button>
                 <n-button type="info" @click="showGeneralSettingsModal">
                   <template #icon>
                     <n-icon><SettingsOutline /></n-icon>
-                  </template>
-                  提现设置
-                </n-button>
+                  </template>{{ $t('finance.withdrawalSettings') }}</n-button>
                 <n-button type="warning" @click="showRiskControlModal">
                   <template #icon>
                     <n-icon><RocketOutline /></n-icon>
-                  </template>
-                  风控审核设置
-                </n-button>
+                  </template>{{ $t('finance.k1782445247697') }}</n-button>
               </div>
 
               <!-- 信息显示 -->
               <div class="text-sm text-gray-600">
                 共 {{ channelsData.length }} 个提现通道
-                <n-tag type="info" size="small" class="ml-2"> 提现设置 </n-tag>
+                <n-tag type="info" size="small" class="ml-2">{{ $t('finance.withdrawalSettings') }}</n-tag>
               </div>
             </div>
           </div>
@@ -80,49 +70,49 @@
     <n-modal
       v-model:show="channelModal.show"
       preset="card"
-      title="提现通道配置"
+      :title="$t('finance.withdrawalChannelConfig')"
       size="large"
       :style="{ width: '80%', maxWidth: '1200px' }"
     >
       <div class="space-y-6">
         <!-- Channel Selection -->
-        <n-card title="通道选择" size="small">
+        <n-card :title="$t('finance.channelSelect')" size="small">
           <div class="grid grid-cols-2 gap-4">
-            <n-form-item label="通道类型">
+            <n-form-item :label="$t('finance.channel3')">
               <n-select
                 v-model:value="channelModal.data.type"
-                placeholder="选择通道类型"
+                placeholder:placeholder="$t('finance.selectChannel')"
                 :options="channelTypeOptions"
                 @update:value="onChannelTypeChange"
               />
             </n-form-item>
-            <n-form-item label="通道名称">
+            <n-form-item :label="$t('finance.channel1')">
               <n-input
                 v-model:value="channelModal.data.name"
-                placeholder="输入通道名称"
+                placeholder:placeholder="$t('finance.enterChannel')"
               />
             </n-form-item>
           </div>
         </n-card>
 
         <!-- Channel Status Settings -->
-        <n-card title="通道状态设置" size="small">
+        <n-card :title="$t('finance.channelStatusSettings')" size="small">
           <div class="grid grid-cols-3 gap-6">
             <div class="space-y-4">
-              <h4 class="font-medium text-gray-700">基本状态</h4>
-              <n-form-item label="是否允许会员用">
+              <h4 class="font-medium text-gray-700">{{ $t('finance.kocyvb') }}</h4>
+              <n-form-item :label="$t('finance.yesNoMember')">
                 <n-switch
                   v-model:value="channelModal.data.allowMemberUse"
                   size="small"
                 />
               </n-form-item>
-              <n-form-item label="是否支持转账现">
+              <n-form-item :label="$t('finance.yesNoTransfer')">
                 <n-switch
                   v-model:value="channelModal.data.supportTransfer"
                   size="small"
                 />
               </n-form-item>
-              <n-form-item label="是否支持数字货币提现">
+              <n-form-item :label="$t('finance.yesNoDigitalWithdrawal')">
                 <n-switch
                   v-model:value="channelModal.data.supportDigitalCurrency"
                   size="small"
@@ -131,17 +121,17 @@
             </div>
 
             <div class="space-y-4">
-              <h4 class="font-medium text-gray-700">提现限额</h4>
-              <n-form-item label="允许提现">
+              <h4 class="font-medium text-gray-700">{{ $t('finance.kpw9lw') }}</h4>
+              <n-form-item :label="$t('finance.withdrawal3')">
                 <n-switch
                   v-model:value="channelModal.data.allowWithdrawal"
                   size="small"
                 />
               </n-form-item>
-              <n-form-item label="监号数量">
+              <n-form-item :label="$t('finance.text109')">
                 <n-input-number
                   v-model:value="channelModal.data.monitorCount"
-                  placeholder="监号数量"
+                  placeholder:placeholder="$t('finance.text109')"
                   :min="0"
                   class="w-full"
                 />
@@ -149,21 +139,21 @@
             </div>
 
             <div class="space-y-4">
-              <h4 class="font-medium text-gray-700">币种设置</h4>
-              <n-form-item label="到账币种">
+              <h4 class="font-medium text-gray-700">{{ $t('finance.k39vub') }}</h4>
+              <n-form-item :label="$t('finance.receivedCurrency')">
                 <n-select
                   v-model:value="channelModal.data.currency"
-                  placeholder="选择币种"
+                  placeholder:placeholder="$t('finance.selectCurrency')"
                   :options="currencyOptions"
                 />
               </n-form-item>
-              <n-form-item label="单笔限额">
+              <n-form-item :label="$t('finance.singleLimit')">
                 <n-input
                   v-model:value="channelModal.data.singleLimit"
                   placeholder="0.00-20,000.00"
                 />
               </n-form-item>
-              <n-form-item label="手续费">
+              <n-form-item :label="$t('finance.fee')">
                 <n-input
                   v-model:value="channelModal.data.fees"
                   placeholder="0.00-20,000.00 0.00"
@@ -174,22 +164,22 @@
         </n-card>
 
         <!-- Advanced Settings -->
-        <n-card title="高级设置" size="small">
+        <n-card :title="$t('finance.settings')" size="small">
           <div class="grid grid-cols-2 gap-6">
             <div class="space-y-4">
-              <n-form-item label="工作时间设置">
+              <n-form-item :label="$t('finance.timeSettings')">
                 <n-time-picker
                   v-model:value="channelModal.data.workingHours as any"
                   :type="timeRangeType"
                   format="HH:mm"
-                  placeholder="选择工作时间范围"
+                  placeholder:placeholder="$t('finance.selectTime')"
                   class="w-full"
                 />
               </n-form-item>
-              <n-form-item label="每日限额">
+              <n-form-item :label="$t('finance.dailyLimit')">
                 <n-input-number
                   v-model:value="channelModal.data.dailyLimit"
-                  placeholder="每日最大提现限额"
+                  placeholder:placeholder="$t('finance.dailyMaxWithdrawalLimit')"
                   :min="0"
                   class="w-full"
                 />
@@ -197,17 +187,17 @@
             </div>
 
             <div class="space-y-4">
-              <n-form-item label="风险控制等级">
+              <n-form-item :label="$t('finance.riskControlLevel')">
                 <n-select
                   v-model:value="channelModal.data.riskLevel"
-                  placeholder="选择风险等级"
+                  placeholder:placeholder="$t('finance.selectRiskLevel')"
                   :options="riskLevelOptions"
                 />
               </n-form-item>
-              <n-form-item label="优先级">
+              <n-form-item :label="$t('finance.text62')">
                 <n-input-number
                   v-model:value="channelModal.data.priority"
-                  placeholder="通道优先级 (1-100)"
+                  placeholder:placeholder="$t('finance.channel1100')"
                   :min="1"
                   :max="100"
                   class="w-full"
@@ -218,35 +208,35 @@
         </n-card>
 
         <!-- API Configuration -->
-        <n-card title="API配置" size="small">
+        <n-card :title="$t('finance.aPIConfig')" size="small">
           <div class="space-y-4">
             <div class="grid grid-cols-2 gap-4">
-              <n-form-item label="API地址">
+              <n-form-item :label="$t('finance.aPIUrl')">
                 <n-input
                   v-model:value="channelModal.data.apiUrl"
-                  placeholder="输入API地址"
+                  placeholder:placeholder="$t('finance.enterAPIUrl')"
                 />
               </n-form-item>
-              <n-form-item label="商户号">
+              <n-form-item :label="$t('finance.merchant')">
                 <n-input
                   v-model:value="channelModal.data.merchantId"
-                  placeholder="输入商户号"
+                  placeholder:placeholder="$t('finance.enterMerchant')"
                 />
               </n-form-item>
             </div>
             <div class="grid grid-cols-2 gap-4">
-              <n-form-item label="密钥">
+              <n-form-item :label="$t('finance.key')">
                 <n-input
                   v-model:value="channelModal.data.secretKey"
-                  placeholder="输入密钥"
+                  placeholder:placeholder="$t('finance.enterKey')"
                   type="password"
                   show-password-on="click"
                 />
               </n-form-item>
-              <n-form-item label="回调地址">
+              <n-form-item :label="$t('finance.callbackUrl')">
                 <n-input
                   v-model:value="channelModal.data.callbackUrl"
-                  placeholder="输入回调地址"
+                  placeholder:placeholder="$t('finance.enterCallbackUrl')"
                 />
               </n-form-item>
             </div>
@@ -255,14 +245,12 @@
 
         <!-- Actions -->
         <div class="flex justify-end gap-3">
-          <n-button @click="channelModal.show = false">取消</n-button>
+          <n-button @click="channelModal.show = false">{{ $t('common.cancel') }}</n-button>
           <n-button
             type="primary"
             @click="saveChannelSettings"
             :loading="channelModal.saving"
-          >
-            保存设置
-          </n-button>
+          >{{ $t('finance.k1782445247699') }}</n-button>
         </div>
       </div>
     </n-modal>
@@ -271,28 +259,26 @@
     <n-modal
       v-model:show="bulkSettingsModal.show"
       preset="dialog"
-      title="批量工作时间设置"
-      positive-text="应用设置"
-      negative-text="取消"
+      :title="$t('finance.bulkTimeSettings')"
+      positive-text:positive-text="$t('finance.settings1')"
+      negative-text:negative-text="$t('common.cancel')"
       @positive-click="applyBulkSettings"
     >
       <div class="space-y-4">
-        <n-alert type="info" :show-icon="false">
-          为所有启用的提现通道设置统一的工作时间
-        </n-alert>
-        <n-form-item label="工作时间">
+        <n-alert type="info" :show-icon="false">{{ $t('finance.k1782445247700') }}</n-alert>
+        <n-form-item :label="$t('finance.time4')">
           <n-time-picker
             v-model:value="bulkSettingsModal.workingHours as any"
             :type="timeRangeType"
             format="HH:mm"
-            placeholder="选择工作时间范围"
+            placeholder:placeholder="$t('finance.selectTime')"
             class="w-full"
           />
         </n-form-item>
-        <n-form-item label="应用到">
+        <n-form-item :label="$t('finance.text64')">
           <n-select
             v-model:value="bulkSettingsModal.applyTo"
-            placeholder="选择应用范围"
+            placeholder:placeholder="$t('finance.select')"
             :options="[
               { label: '所有通道', value: 'all' },
               { label: '仅启用通道', value: 'enabled' },
@@ -307,47 +293,45 @@
     <n-modal
       v-model:show="autoRuleModal.show"
       preset="card"
-      title="风险自动减控设置"
+      :title="$t('finance.riskAutoSettings')"
       size="large"
       :style="{ width: '70%', maxWidth: '800px' }"
     >
       <div class="space-y-6">
-        <n-alert type="warning" :show-icon="false">
-          当检测到异常提现行为时，系统将自动调整通道设置以降低风险
-        </n-alert>
+        <n-alert type="warning" :show-icon="false">{{ $t('finance.k17824452477001') }}</n-alert>
 
         <!-- Risk Detection Rules -->
-        <n-card title="风险检测规则" size="small">
+        <n-card :title="$t('finance.riskRules')" size="small">
           <div class="grid grid-cols-2 gap-4">
-            <n-form-item label="异常提现频率阈值">
+            <n-form-item :label="$t('finance.exceptionWithdrawal')">
               <n-input-number
                 v-model:value="autoRuleModal.data.frequencyThreshold"
-                placeholder="每分钟最大提现次数"
+                placeholder:placeholder="$t('finance.minutesMaxWithdrawalCount')"
                 :min="1"
                 class="w-full"
               />
             </n-form-item>
-            <n-form-item label="异常金额阈值">
+            <n-form-item :label="$t('finance.exceptionAmount')">
               <n-input-number
                 v-model:value="autoRuleModal.data.amountThreshold"
-                placeholder="单笔异常金额"
+                placeholder:placeholder="$t('finance.singleExceptionAmount')"
                 :min="0"
                 class="w-full"
               />
             </n-form-item>
-            <n-form-item label="失败率阈值">
+            <n-form-item :label="$t('finance.failed5')">
               <n-input-number
                 v-model:value="autoRuleModal.data.failureRateThreshold"
-                placeholder="失败率百分比"
+                placeholder:placeholder="$t('finance.failed9')"
                 :min="0"
                 :max="100"
                 class="w-full"
               />
             </n-form-item>
-            <n-form-item label="监控时间窗口（分钟）">
+            <n-form-item :label="$t('finance.timeMinutes')">
               <n-input-number
                 v-model:value="autoRuleModal.data.monitorWindow"
-                placeholder="监控时间窗口"
+                placeholder:placeholder="$t('finance.time5')"
                 :min="1"
                 class="w-full"
               />
@@ -356,15 +340,15 @@
         </n-card>
 
         <!-- Auto Actions -->
-        <n-card title="自动处理动作" size="small">
+        <n-card :title="$t('finance.autoProcess')" size="small">
           <div class="space-y-4">
-            <n-form-item label="启用自动风控">
+            <n-form-item :label="$t('finance.enableAutoRiskControl')">
               <n-switch v-model:value="autoRuleModal.data.enabled" />
             </n-form-item>
-            <n-form-item label="触发时动作">
+            <n-form-item :label="$t('finance.trigger1')">
               <n-select
                 v-model:value="autoRuleModal.data.action"
-                placeholder="选择触发动作"
+                placeholder:placeholder="$t('finance.selectTrigger')"
                 :options="[
                   { label: '暂停通道', value: 'pause' },
                   { label: '降低限额', value: 'reduce_limit' },
@@ -372,10 +356,10 @@
                 ]"
               />
             </n-form-item>
-            <n-form-item label="恢复条件">
+            <n-form-item :label="$t('finance.restoreConditions')">
               <n-select
                 v-model:value="autoRuleModal.data.recoveryCondition"
-                placeholder="选择恢复条件"
+                placeholder:placeholder="$t('finance.selectRestoreConditions')"
                 :options="[
                   { label: '手动恢复', value: 'manual' },
                   { label: '1小时后自动', value: 'auto_1h' },
@@ -388,10 +372,8 @@
 
         <!-- Actions -->
         <div class="flex justify-end gap-3">
-          <n-button @click="autoRuleModal.show = false">取消</n-button>
-          <n-button type="primary" @click="saveAutoRiskSettings">
-            保存设置
-          </n-button>
+          <n-button @click="autoRuleModal.show = false">{{ $t('common.cancel') }}</n-button>
+          <n-button type="primary" @click="saveAutoRiskSettings">{{ $t('finance.k1782445247699') }}</n-button>
         </div>
       </div>
     </n-modal>
@@ -425,30 +407,28 @@
     <n-modal
       v-model:show="showCloseChannelModalState"
       preset="dialog"
-      title="关闭提现通道"
-      positive-text="确认"
-      negative-text="取消"
+      :title="$t('finance.offWithdrawalChannel')"
+      positive-text:positive-text="$t('common.confirm')"
+      negative-text:negative-text="$t('common.cancel')"
       @positive-click="handleCloseChannelConfirm"
     >
       <div class="space-y-4">
         <!-- Channel Switch Radio Group -->
         <div>
           <div class="mb-3">
-            <span class="text-sm font-medium text-gray-700">提现通道开关</span>
+            <span class="text-sm font-medium text-gray-700">{{ $t('finance.k2sfyr') }}</span>
             <span class="ml-1 text-red-500">*</span>
           </div>
           <n-radio-group v-model:value="closeChannelForm.channelSwitch">
             <n-space direction="vertical">
-              <n-radio value="enabled">开启提现通道</n-radio>
-              <n-radio value="disabled">关闭提现通道</n-radio>
+              <n-radio value="enabled">{{ $t('finance.k671mn') }}</n-radio>
+              <n-radio value="disabled">{{ $t('finance.offWithdrawalChannel') }}</n-radio>
             </n-space>
           </n-radio-group>
         </div>
 
         <!-- Description -->
-        <div class="rounded bg-gray-50 p-3 text-sm text-gray-600">
-          关闭提现通道后，会员将无法提现
-        </div>
+        <div class="rounded bg-gray-50 p-3 text-sm text-gray-600">{{ $t('finance.k1782445247703') }}</div>
       </div>
     </n-modal>
 
@@ -456,9 +436,9 @@
     <n-modal
       v-model:show="showAutoApprovalModalState"
       preset="dialog"
-      title="免人工审核自动出款"
-      positive-text="确认"
-      negative-text="取消"
+      :title="$t('finance.manualReviewAutoPayout')"
+      positive-text:positive-text="$t('common.confirm')"
+      negative-text:negative-text="$t('common.cancel')"
       :style="{ width: '80%', maxWidth: '1200px' }"
       @positive-click="handleAutoApprovalConfirm"
     >
@@ -471,13 +451,13 @@
         <!-- Approval Switch -->
         <div class="mb-6">
           <div class="mb-3">
-            <span class="text-sm font-medium text-gray-700">免审出款开关</span>
+            <span class="text-sm font-medium text-gray-700">{{ $t('finance.kgr6uy') }}</span>
             <span class="ml-1 text-red-500">*</span>
           </div>
           <n-radio-group v-model:value="autoApprovalForm.approvalSwitch">
             <n-space direction="vertical">
-              <n-radio value="disabled">关闭免审自动出款</n-radio>
-              <n-radio value="enabled">开启免审自动出款</n-radio>
+              <n-radio value="disabled">{{ $t('finance.k0sj7k') }}</n-radio>
+              <n-radio value="enabled">{{ $t('finance.ks0b7f') }}</n-radio>
             </n-space>
           </n-radio-group>
         </div>
@@ -488,21 +468,21 @@
           <div class="mb-6">
             <div class="mb-3">
               <span class="text-sm font-medium text-gray-700"
-                >不免审原因备注开关</span
+                >{{ $t('finance.kj07qz') }}</span
               >
               <span class="ml-1 text-red-500">*</span>
             </div>
             <n-radio-group v-model:value="autoApprovalForm.reasonNoteSwitch">
               <n-space direction="vertical">
-                <n-radio value="disabled">关闭不免审原因订单备注</n-radio>
-                <n-radio value="enabled">开启不免审原因订单备注</n-radio>
+                <n-radio value="disabled">{{ $t('finance.kg086b') }}</n-radio>
+                <n-radio value="enabled">{{ $t('finance.kpw85i') }}</n-radio>
               </n-space>
             </n-radio-group>
           </div>
 
           <!-- 必须审核的情形 Section -->
           <n-card
-            title="必须审核的情形（必审的级别高于免审，只要触发必审则必须通过）"
+            :title="$t('finance.mustReviewHigherThanAutoApprovedTriggerMustPass')"
             size="small"
             class="mb-4"
             :bordered="true"
@@ -510,13 +490,11 @@
             <!-- 必审会员层级 -->
             <div class="mb-6">
               <div class="mb-3 flex items-center gap-2">
-                <span class="text-sm font-medium">必审会员层级</span>
+                <span class="text-sm font-medium">{{ $t('finance.k5q5ri') }}</span>
                 <n-checkbox
                   :checked="selectAllAutoApprovalRequiredTiers"
                   @update:checked="handleSelectAllAutoApprovalRequiredTiers"
-                >
-                  全选
-                </n-checkbox>
+                >{{ $t('common.selectAll') }}</n-checkbox>
               </div>
               <div class="grid grid-cols-4 gap-2">
                 <n-checkbox
@@ -556,13 +534,11 @@
             <!-- 必审会员标签 -->
             <div class="mb-6">
               <div class="mb-3 flex items-center gap-2">
-                <span class="text-sm font-medium">必审会员标签</span>
+                <span class="text-sm font-medium">{{ $t('finance.k90wtp') }}</span>
                 <n-checkbox
                   :checked="selectAllAutoApprovalRequiredTags"
                   @update:checked="handleSelectAllAutoApprovalRequiredTags"
-                >
-                  全选
-                </n-checkbox>
+                >{{ $t('common.selectAll') }}</n-checkbox>
               </div>
               <div class="grid grid-cols-4 gap-2">
                 <n-checkbox
@@ -593,7 +569,7 @@
             <!-- 必审会员注册时长 -->
             <div class="mb-6">
               <div class="mb-3">
-                <span class="text-sm font-medium">必审会员注册时长</span>
+                <span class="text-sm font-medium">{{ $t('finance.kf11uv') }}</span>
               </div>
               <n-radio-group
                 v-model:value="
@@ -605,7 +581,7 @@
                   <n-radio value="3d">3天以内</n-radio>
                   <n-radio value="7d">7天以内</n-radio>
                   <n-radio value="30d">30天以内</n-radio>
-                  <n-radio value="disabled">关闭此条件</n-radio>
+                  <n-radio value="disabled">{{ $t('finance.khv157') }}</n-radio>
                 </n-space>
               </n-radio-group>
             </div>
@@ -613,24 +589,20 @@
             <!-- 账号提现次数必审条件 -->
             <div class="mb-6">
               <div class="mb-3">
-                <span class="text-sm font-medium">账号提现次数必审条件</span>
+                <span class="text-sm font-medium">{{ $t('finance.k03uyy') }}</span>
               </div>
               <n-space vertical>
                 <n-checkbox
                   v-model:checked="
                     autoApprovalForm.withdrawalCountAudit.firstWithdrawal
                   "
-                >
-                  首次提现
-                </n-checkbox>
+                >{{ $t('finance.firstWithdrawal') }}</n-checkbox>
                 <div class="flex items-center gap-2">
                   <n-checkbox
                     v-model:checked="
                       autoApprovalForm.withdrawalCountAudit.firstNWithdrawals
                     "
-                  >
-                    前
-                  </n-checkbox>
+                  >{{ $t('finance.k1782445247710') }}</n-checkbox>
                   <n-input-number
                     v-model:value="
                       autoApprovalForm.withdrawalCountAudit.firstNValue
@@ -640,7 +612,7 @@
                     size="small"
                     style="width: 100px"
                   />
-                  <span>次提现</span>
+                  <span>{{ $t('finance.ktcx8e') }}</span>
                 </div>
               </n-space>
             </div>
@@ -648,7 +620,7 @@
             <!-- 打码和充提差额必审条件 -->
             <div class="mb-6">
               <div class="mb-3">
-                <span class="text-sm font-medium">打码和充提差额必审条件</span>
+                <span class="text-sm font-medium">{{ $t('finance.kzuvac') }}</span>
               </div>
               <n-space vertical class="w-full">
                 <div class="flex items-center gap-2">
@@ -656,9 +628,7 @@
                     v-model:checked="
                       autoApprovalForm.wageringAudit.wageringChargeEnabled
                     "
-                  >
-                    近
-                  </n-checkbox>
+                  >{{ $t('finance.k5ay1p') }}</n-checkbox>
                   <n-input-number
                     v-model:value="
                       autoApprovalForm.wageringAudit.wageringChargeHours
@@ -682,9 +652,7 @@
                     v-model:checked="
                       autoApprovalForm.wageringAudit.codeMultipleEnabled
                     "
-                  >
-                    近
-                  </n-checkbox>
+                  >{{ $t('finance.k5ay1p') }}</n-checkbox>
                   <n-input-number
                     v-model:value="
                       autoApprovalForm.wageringAudit.codeMultipleHours
@@ -703,7 +671,7 @@
                     size="small"
                     style="width: 120px"
                   />
-                  <span>倍</span>
+                  <span>{{ $t('finance.kblhtu') }}</span>
                 </div>
                 <div class="flex items-center gap-2">
                   <n-checkbox
@@ -737,9 +705,7 @@
                     v-model:checked="
                       autoApprovalForm.wageringAudit.memberSuccessEnabled
                     "
-                  >
-                    会员已成功提现过
-                  </n-checkbox>
+                  >{{ $t('finance.kl9rub') }}</n-checkbox>
                   <n-input-number
                     v-model:value="
                       autoApprovalForm.wageringAudit.memberSuccessValue
@@ -803,7 +769,7 @@
             <!-- 风控类型必审条件 -->
             <div class="mb-6">
               <div class="mb-3">
-                <span class="text-sm font-medium">风控类型必审条件</span>
+                <span class="text-sm font-medium">{{ $t('finance.kmt8wr') }}</span>
               </div>
               <div class="grid grid-cols-2 gap-4">
                 <!-- Left column -->
@@ -814,26 +780,20 @@
                         autoApprovalForm.riskTypesRequireAudit
                           .depositDisputeNotProcessed
                       "
-                    >
-                      触发派奖监控风控规则且未处理
-                    </n-checkbox>
+                    >{{ $t('finance.k1782445247713') }}</n-checkbox>
                     <n-checkbox
                       v-model:checked="
                         autoApprovalForm.riskTypesRequireAudit
                           .uncompletedFirstDeposit
                       "
-                    >
-                      未完成首充
-                    </n-checkbox>
+                    >{{ $t('finance.k1782445247714') }}</n-checkbox>
                     <div class="flex items-center gap-2">
                       <n-checkbox
                         v-model:checked="
                           autoApprovalForm.riskTypesRequireAudit
                             .recentWithdrawalEnabled
                         "
-                      >
-                        近
-                      </n-checkbox>
+                      >{{ $t('finance.k5ay1p') }}</n-checkbox>
                       <n-input-number
                         v-model:value="
                           autoApprovalForm.riskTypesRequireAudit
@@ -843,7 +803,7 @@
                         size="small"
                         style="width: 80px"
                       />
-                      <span>天被取消或被拒绝提现</span>
+                      <span>{{ $t('finance.klpdap') }}</span>
                     </div>
                     <div class="flex items-center gap-2">
                       <n-checkbox
@@ -851,9 +811,7 @@
                           autoApprovalForm.riskTypesRequireAudit
                             .handMotionAddEnabled
                         "
-                      >
-                        近
-                      </n-checkbox>
+                      >{{ $t('finance.k5ay1p') }}</n-checkbox>
                       <n-input-number
                         v-model:value="
                           autoApprovalForm.riskTypesRequireAudit
@@ -863,7 +821,7 @@
                         size="small"
                         style="width: 80px"
                       />
-                      <span>天手动加款</span>
+                      <span>{{ $t('finance.kh407v') }}</span>
                     </div>
                     <div class="flex items-center gap-2">
                       <n-checkbox
@@ -871,9 +829,7 @@
                           autoApprovalForm.riskTypesRequireAudit
                             .systemRemoveRiskEnabled
                         "
-                      >
-                        近
-                      </n-checkbox>
+                      >{{ $t('finance.k5ay1p') }}</n-checkbox>
                       <n-input-number
                         v-model:value="
                           autoApprovalForm.riskTypesRequireAudit
@@ -883,7 +839,7 @@
                         size="small"
                         style="width: 80px"
                       />
-                      <span>天有系统解除稽核</span>
+                      <span>{{ $t('finance.ki2up8') }}</span>
                     </div>
                   </n-space>
                 </n-checkbox-group>
@@ -915,7 +871,7 @@
                         size="small"
                         style="width: 80px"
                       />
-                      <span>个会员账号</span>
+                      <span>{{ $t('finance.kxz8cn') }}</span>
                     </div>
                   </n-space>
                 </n-checkbox-group>
@@ -925,10 +881,10 @@
             <!-- 领取过优惠必审条件 -->
             <div class="mb-6">
               <div class="mb-3">
-                <span class="text-sm font-medium">领取过优惠必审条件</span>
+                <span class="text-sm font-medium">{{ $t('finance.k85nga') }}</span>
               </div>
               <div class="mb-3 flex items-center gap-2">
-                <span>近</span>
+                <span>{{ $t('finance.k5ay1p') }}</span>
                 <n-input-number
                   v-model:value="autoApprovalForm.bonusClaimAudit.hours"
                   :min="0"
@@ -936,10 +892,10 @@
                   size="small"
                   style="width: 100px"
                 />
-                <span>小时，领取过以下指定优惠必须审核</span>
+                <span>{{ $t('finance.kycyah') }}</span>
               </div>
               <div>
-                <div class="mb-2 text-sm">领取指定优惠</div>
+                <div class="mb-2 text-sm">{{ $t('finance.kwv18b') }}</div>
                 <n-checkbox-group>
                   <n-space vertical>
                     <n-checkbox
@@ -960,16 +916,12 @@
                       v-model:checked="
                         autoApprovalForm.bonusClaimAudit.activityTypes.task
                       "
-                    >
-                      任务
-                    </n-checkbox>
+                    >{{ $t('finance.k1j6jh') }}</n-checkbox>
                     <n-checkbox
                       v-model:checked="
                         autoApprovalForm.bonusClaimAudit.activityTypes.rebate
                       "
-                    >
-                      返水
-                    </n-checkbox>
+                    >{{ $t('finance.text35') }}</n-checkbox>
                     <n-checkbox
                       v-model:checked="
                         autoApprovalForm.bonusClaimAudit.activityTypes.vipReward
@@ -981,48 +933,36 @@
                       v-model:checked="
                         autoApprovalForm.bonusClaimAudit.activityTypes.luckySpin
                       "
-                    >
-                      利恩宝
-                    </n-checkbox>
+                    >{{ $t('finance.k1782445247720') }}</n-checkbox>
                     <n-checkbox
                       v-model:checked="
                         autoApprovalForm.bonusClaimAudit.activityTypes
                           .luckyTransfer
                       "
-                    >
-                      幸运转盘
-                    </n-checkbox>
+                    >{{ $t('finance.text104') }}</n-checkbox>
                     <n-checkbox
                       v-model:checked="
                         autoApprovalForm.bonusClaimAudit.activityTypes
                           .publicFund
                       "
-                    >
-                      公积金
-                    </n-checkbox>
+                    >{{ $t('finance.text61') }}</n-checkbox>
                     <n-checkbox
                       v-model:checked="
                         autoApprovalForm.bonusClaimAudit.activityTypes
                           .firstDeposit
                       "
-                    >
-                      首盒抽奖
-                    </n-checkbox>
+                    >{{ $t('finance.kid5e7') }}</n-checkbox>
                     <n-checkbox
                       v-model:checked="
                         autoApprovalForm.bonusClaimAudit.activityTypes
                           .fixedValue
                       "
-                    >
-                      充值优惠
-                    </n-checkbox>
+                    >{{ $t('finance.kv6mce') }}</n-checkbox>
                     <n-checkbox
                       v-model:checked="
                         autoApprovalForm.bonusClaimAudit.activityTypes.silverBox
                       "
-                    >
-                      银商结算
-                    </n-checkbox>
+                    >{{ $t('finance.kk5lqa') }}</n-checkbox>
                   </n-space>
                 </n-checkbox-group>
               </div>
@@ -1032,11 +972,11 @@
             <div class="mb-6">
               <div class="mb-3">
                 <span class="text-sm font-medium"
-                  >投注过以下游戏必审（建议勾选容易套利的游戏）</span
+                  >{{ $t('finance.kja8a3') }}</span
                 >
               </div>
               <div class="mb-3 flex items-center gap-2">
-                <span>近</span>
+                <span>{{ $t('finance.k5ay1p') }}</span>
                 <n-input-number
                   v-model:value="autoApprovalForm.mustAuditGames.hours"
                   :min="0"
@@ -1044,7 +984,7 @@
                   size="small"
                   style="width: 100px"
                 />
-                <span>小时，内按过以下游戏必审</span>
+                <span>{{ $t('finance.k3e9tt') }}</span>
               </div>
               <PlatformGameSelector
                 v-model="autoApprovalForm.mustAuditGames.selectedPlatforms"
@@ -1058,20 +998,18 @@
             <!-- 其他必审条件 (Per Tier) -->
             <div class="mb-6">
               <div class="mb-3 flex items-center justify-between">
-                <span class="text-sm font-medium">其他必审条件</span>
+                <span class="text-sm font-medium">{{ $t('finance.conditions1') }}</span>
                 <n-button
                   type="primary"
                   size="small"
                   @click="applyAutoApprovalOtherAuditToAllTiers"
-                >
-                  应用到全部层级
-                </n-button>
+                >{{ $t('finance.k3632t') }}</n-button>
               </div>
               <n-tabs v-model:value="currentAutoApprovalAuditTier" type="line">
-                <n-tab-pane name="all" tab="全部层级">
+                <n-tab-pane name="all" :tab="$t('finance.allTier')">
                   <n-space vertical class="w-full">
                     <div class="flex items-center gap-2">
-                      <span class="text-sm">近</span>
+                      <span class="text-sm">{{ $t('finance.k5ay1p') }}</span>
                       <n-input-number
                         v-model:value="
                           currentAutoApprovalAuditData.bonusClaimHours
@@ -1087,12 +1025,12 @@
                         "
                         size="small"
                         style="width: 150px"
-                        placeholder="请输入金额"
+                        placeholder:placeholder="$t('finance.pleaseEnterAmount')"
                       />
-                      <span class="text-sm font-medium">必须审核</span>
+                      <span class="text-sm font-medium">{{ $t('finance.k5gtx2') }}</span>
                     </div>
                     <div class="flex items-center gap-2">
-                      <span class="text-sm">近</span>
+                      <span class="text-sm">{{ $t('finance.k5ay1p') }}</span>
                       <n-input-number
                         v-model:value="
                           currentAutoApprovalAuditData.auditExemptHours
@@ -1108,9 +1046,9 @@
                         "
                         size="small"
                         style="width: 150px"
-                        placeholder="请输入金额"
+                        placeholder:placeholder="$t('finance.pleaseEnterAmount')"
                       />
-                      <span class="text-sm font-medium">必须审核</span>
+                      <span class="text-sm font-medium">{{ $t('finance.k5gtx2') }}</span>
                     </div>
                     <div class="flex items-center gap-2">
                       <span class="text-sm">单笔提现金额＞</span>
@@ -1120,22 +1058,22 @@
                         "
                         size="small"
                         style="width: 150px"
-                        placeholder="请输入金额"
+                        placeholder:placeholder="$t('finance.pleaseEnterAmount')"
                       />
-                      <span class="text-sm font-medium">必须审核</span>
+                      <span class="text-sm font-medium">{{ $t('finance.k5gtx2') }}</span>
                     </div>
                     <div class="flex items-center gap-2">
-                      <span class="text-sm">指定银行提现</span>
+                      <span class="text-sm">{{ $t('finance.kfb8w8') }}</span>
                       <n-select
                         v-model:value="
                           currentAutoApprovalAuditData.specifiedBank
                         "
                         size="small"
                         style="width: 200px"
-                        placeholder="请选择银行"
+                        placeholder:placeholder="$t('finance.pleaseSelectBank')"
                         :options="bankOptions"
                       />
-                      <span class="text-sm font-medium">必须审核</span>
+                      <span class="text-sm font-medium">{{ $t('finance.k5gtx2') }}</span>
                     </div>
                   </n-space>
                 </n-tab-pane>
@@ -1148,7 +1086,7 @@
                   <n-space vertical class="w-full">
                     <!-- Same fields as "all" tier -->
                     <div class="flex items-center gap-2">
-                      <span class="text-sm">近</span>
+                      <span class="text-sm">{{ $t('finance.k5ay1p') }}</span>
                       <n-input-number
                         v-model:value="
                           currentAutoApprovalAuditData.bonusClaimHours
@@ -1164,12 +1102,12 @@
                         "
                         size="small"
                         style="width: 150px"
-                        placeholder="请输入金额"
+                        placeholder:placeholder="$t('finance.pleaseEnterAmount')"
                       />
-                      <span class="text-sm font-medium">必须审核</span>
+                      <span class="text-sm font-medium">{{ $t('finance.k5gtx2') }}</span>
                     </div>
                     <div class="flex items-center gap-2">
-                      <span class="text-sm">近</span>
+                      <span class="text-sm">{{ $t('finance.k5ay1p') }}</span>
                       <n-input-number
                         v-model:value="
                           currentAutoApprovalAuditData.auditExemptHours
@@ -1185,9 +1123,9 @@
                         "
                         size="small"
                         style="width: 150px"
-                        placeholder="请输入金额"
+                        placeholder:placeholder="$t('finance.pleaseEnterAmount')"
                       />
-                      <span class="text-sm font-medium">必须审核</span>
+                      <span class="text-sm font-medium">{{ $t('finance.k5gtx2') }}</span>
                     </div>
                     <div class="flex items-center gap-2">
                       <span class="text-sm">单笔提现金额＞</span>
@@ -1197,22 +1135,22 @@
                         "
                         size="small"
                         style="width: 150px"
-                        placeholder="请输入金额"
+                        placeholder:placeholder="$t('finance.pleaseEnterAmount')"
                       />
-                      <span class="text-sm font-medium">必须审核</span>
+                      <span class="text-sm font-medium">{{ $t('finance.k5gtx2') }}</span>
                     </div>
                     <div class="flex items-center gap-2">
-                      <span class="text-sm">指定银行提现</span>
+                      <span class="text-sm">{{ $t('finance.kfb8w8') }}</span>
                       <n-select
                         v-model:value="
                           currentAutoApprovalAuditData.specifiedBank
                         "
                         size="small"
                         style="width: 200px"
-                        placeholder="请选择银行"
+                        placeholder:placeholder="$t('finance.pleaseSelectBank')"
                         :options="bankOptions"
                       />
-                      <span class="text-sm font-medium">必须审核</span>
+                      <span class="text-sm font-medium">{{ $t('finance.k5gtx2') }}</span>
                     </div>
                   </n-space>
                 </n-tab-pane>
@@ -1224,7 +1162,7 @@
 
           <!-- 免审核的情形 Section -->
           <n-card
-            title="免审核的情形(满足以下任意一个条件的会员都自动免审核，不填或填0表示不限制)"
+            :title="$t('finance.autoApprovedMeetAnyOneConditionsMemberAutoAutoApprovedOr0')"
             size="small"
             class="mb-4"
             :bordered="true"
@@ -1232,13 +1170,11 @@
             <!-- 免审会员层级 -->
             <div class="mb-6">
               <div class="mb-3 flex items-center gap-2">
-                <span class="text-sm font-medium">免审会员层级</span>
+                <span class="text-sm font-medium">{{ $t('finance.kop5m3') }}</span>
                 <n-checkbox
                   :checked="selectAllAutoApprovalExemptTiers"
                   @update:checked="handleSelectAllAutoApprovalExemptTiers"
-                >
-                  全选
-                </n-checkbox>
+                >{{ $t('common.selectAll') }}</n-checkbox>
               </div>
               <div class="grid grid-cols-4 gap-2">
                 <n-checkbox
@@ -1271,13 +1207,11 @@
             <!-- 免审会员标签 -->
             <div class="mb-6">
               <div class="mb-3 flex items-center gap-2">
-                <span class="text-sm font-medium">免审会员标签</span>
+                <span class="text-sm font-medium">{{ $t('finance.kfpdnk') }}</span>
                 <n-checkbox
                   :checked="selectAllAutoApprovalExemptTags"
                   @update:checked="handleSelectAllAutoApprovalExemptTags"
-                >
-                  全选
-                </n-checkbox>
+                >{{ $t('common.selectAll') }}</n-checkbox>
               </div>
               <div class="grid grid-cols-4 gap-2">
                 <n-checkbox
@@ -1307,13 +1241,13 @@
             <!-- 免审会员注册时长 -->
             <div class="mb-6">
               <div class="mb-3">
-                <span class="text-sm font-medium">免审会员注册时长</span>
+                <span class="text-sm font-medium">{{ $t('finance.kic8sq') }}</span>
               </div>
               <n-radio-group
                 v-model:value="autoApprovalForm.exemptRegistrationDuration"
               >
                 <n-space>
-                  <n-radio value="disabled">关闭此条件</n-radio>
+                  <n-radio value="disabled">{{ $t('finance.khv157') }}</n-radio>
                   <n-radio value="超24小时">超24小时</n-radio>
                   <n-radio value="超3天">超3天</n-radio>
                   <n-radio value="超7天">超7天</n-radio>
@@ -1325,7 +1259,7 @@
             <!-- 免审提现方式 -->
             <div class="mb-6">
               <div class="mb-3">
-                <span class="text-sm font-medium">免审提现方式</span>
+                <span class="text-sm font-medium">{{ $t('finance.kl040b') }}</span>
               </div>
               <n-checkbox-group>
                 <n-space>
@@ -1334,17 +1268,13 @@
                       autoApprovalForm.exemptWithdrawMethods
                         .firstThirdPartyWallet
                     "
-                  >
-                    首次使用三方钱包提现
-                  </n-checkbox>
+                  >{{ $t('finance.k1782445247733') }}</n-checkbox>
                   <n-checkbox
                     v-model:checked="
                       autoApprovalForm.exemptWithdrawMethods
                         .everyThirdPartyWallet
                     "
-                  >
-                    每次使用三方钱包提现
-                  </n-checkbox>
+                  >{{ $t('finance.k1782445247734') }}</n-checkbox>
                   <n-checkbox
                     v-model:checked="
                       autoApprovalForm.exemptWithdrawMethods.firstNoCoinWallet
@@ -1366,7 +1296,7 @@
             <!-- 免审提现次数 -->
             <div class="mb-6">
               <div class="mb-3">
-                <span class="text-sm font-medium">免审提现次数</span>
+                <span class="text-sm font-medium">{{ $t('finance.keiovi') }}</span>
               </div>
               <div class="flex items-center gap-2">
                 <span>累计提现次数≥</span>
@@ -1376,27 +1306,25 @@
                   size="small"
                   style="width: 100px"
                 />
-                <span>次</span>
+                <span>{{ $t('finance.ko2ian') }}</span>
               </div>
             </div>
 
             <!-- 其他免审条件 (Per Tier) -->
             <div class="mb-6">
               <div class="mb-3 flex items-center justify-between">
-                <span class="text-sm font-medium">其他免审条件</span>
+                <span class="text-sm font-medium">{{ $t('finance.autoApprovedConditions1') }}</span>
                 <n-button
                   type="primary"
                   size="small"
                   @click="applyAutoApprovalOtherExemptToAllTiers"
-                >
-                  应用到全部层级
-                </n-button>
+                >{{ $t('finance.k3632t') }}</n-button>
               </div>
               <n-tabs v-model:value="currentAutoApprovalExemptTier" type="line">
-                <n-tab-pane name="all" tab="全部层级">
+                <n-tab-pane name="all" :tab="$t('finance.allTier')">
                   <n-space vertical class="w-full">
                     <div class="flex items-center gap-2">
-                      <span class="text-sm">近</span>
+                      <span class="text-sm">{{ $t('finance.k5ay1p') }}</span>
                       <n-input-number
                         v-model:value="currentAutoApprovalExemptData.claimHours"
                         :min="0"
@@ -1410,12 +1338,12 @@
                         "
                         size="small"
                         style="width: 150px"
-                        placeholder="请输入金额"
+                        placeholder:placeholder="$t('finance.pleaseEnterAmount')"
                       />
-                      <span class="text-sm font-medium">免审核的情形</span>
+                      <span class="text-sm font-medium">{{ $t('finance.kdnr8q') }}</span>
                     </div>
                     <div class="flex items-center gap-2">
-                      <span class="text-sm">近</span>
+                      <span class="text-sm">{{ $t('finance.k5ay1p') }}</span>
                       <n-input-number
                         v-model:value="
                           currentAutoApprovalExemptData.exemptHours
@@ -1431,9 +1359,9 @@
                         "
                         size="small"
                         style="width: 150px"
-                        placeholder="请输入金额"
+                        placeholder:placeholder="$t('finance.pleaseEnterAmount')"
                       />
-                      <span class="text-sm font-medium">免审核的情形</span>
+                      <span class="text-sm font-medium">{{ $t('finance.kdnr8q') }}</span>
                     </div>
                     <div class="flex items-center gap-2">
                       <span class="text-sm">单笔提现金额≤</span>
@@ -1443,9 +1371,9 @@
                         "
                         size="small"
                         style="width: 150px"
-                        placeholder="请输入单笔提现金额"
+                        placeholder:placeholder="$t('finance.pleaseEnterSingleWithdrawalAmount')"
                       />
-                      <span class="text-sm font-medium">免审核的情形</span>
+                      <span class="text-sm font-medium">{{ $t('finance.kdnr8q') }}</span>
                     </div>
                   </n-space>
                 </n-tab-pane>
@@ -1458,7 +1386,7 @@
                   <n-space vertical class="w-full">
                     <!-- Same fields as "all" tier -->
                     <div class="flex items-center gap-2">
-                      <span class="text-sm">近</span>
+                      <span class="text-sm">{{ $t('finance.k5ay1p') }}</span>
                       <n-input-number
                         v-model:value="currentAutoApprovalExemptData.claimHours"
                         :min="0"
@@ -1472,12 +1400,12 @@
                         "
                         size="small"
                         style="width: 150px"
-                        placeholder="请输入金额"
+                        placeholder:placeholder="$t('finance.pleaseEnterAmount')"
                       />
-                      <span class="text-sm font-medium">免审核的情形</span>
+                      <span class="text-sm font-medium">{{ $t('finance.kdnr8q') }}</span>
                     </div>
                     <div class="flex items-center gap-2">
-                      <span class="text-sm">近</span>
+                      <span class="text-sm">{{ $t('finance.k5ay1p') }}</span>
                       <n-input-number
                         v-model:value="
                           currentAutoApprovalExemptData.exemptHours
@@ -1493,9 +1421,9 @@
                         "
                         size="small"
                         style="width: 150px"
-                        placeholder="请输入金额"
+                        placeholder:placeholder="$t('finance.pleaseEnterAmount')"
                       />
-                      <span class="text-sm font-medium">免审核的情形</span>
+                      <span class="text-sm font-medium">{{ $t('finance.kdnr8q') }}</span>
                     </div>
                     <div class="flex items-center gap-2">
                       <span class="text-sm">单笔提现金额≤</span>
@@ -1505,9 +1433,9 @@
                         "
                         size="small"
                         style="width: 150px"
-                        placeholder="请输入单笔提现金额"
+                        placeholder:placeholder="$t('finance.pleaseEnterSingleWithdrawalAmount')"
                       />
-                      <span class="text-sm font-medium">免审核的情形</span>
+                      <span class="text-sm font-medium">{{ $t('finance.kdnr8q') }}</span>
                     </div>
                   </n-space>
                 </n-tab-pane>
@@ -1519,32 +1447,30 @@
 
           <!-- 三方代付设置 Section -->
           <n-card
-            title="三方代付设置"
+            :title="$t('finance.thirdPartyPayoutSettings')"
             size="small"
             class="mb-4"
             :bordered="true"
           >
             <div class="mb-3 flex items-center justify-between">
-              <span class="text-sm font-medium">代付模式</span>
+              <span class="text-sm font-medium">{{ $t('finance.kcrfat') }}</span>
               <n-button
                 type="primary"
                 size="small"
                 @click="applyAutoApprovalThirdPartyToAllTiers"
-              >
-                应用到全部层级
-              </n-button>
+              >{{ $t('finance.k3632t') }}</n-button>
             </div>
             <n-tabs
               v-model:value="currentAutoApprovalThirdPartyTier"
               type="line"
             >
-              <n-tab-pane name="all" tab="全部层级">
+              <n-tab-pane name="all" :tab="$t('finance.allTier')">
                 <n-radio-group
                   v-model:value="currentAutoApprovalThirdPartyData.mode"
                 >
                   <n-space vertical>
-                    <n-radio value="auto">自动匹配三方代付</n-radio>
-                    <n-radio value="manual">人工指定三方代付</n-radio>
+                    <n-radio value="auto">{{ $t('finance.kpflhn') }}</n-radio>
+                    <n-radio value="manual">{{ $t('finance.kv2886') }}</n-radio>
                   </n-space>
                 </n-radio-group>
               </n-tab-pane>
@@ -1558,8 +1484,8 @@
                   v-model:value="currentAutoApprovalThirdPartyData.mode"
                 >
                   <n-space vertical>
-                    <n-radio value="auto">自动匹配三方代付</n-radio>
-                    <n-radio value="manual">人工指定三方代付</n-radio>
+                    <n-radio value="auto">{{ $t('finance.kpflhn') }}</n-radio>
+                    <n-radio value="manual">{{ $t('finance.kv2886') }}</n-radio>
                   </n-space>
                 </n-radio-group>
               </n-tab-pane>
@@ -1573,9 +1499,9 @@
     <n-modal
       v-model:show="showRiskControlModalState"
       preset="dialog"
-      title="风控自动审核设置"
-      positive-text="确认"
-      negative-text="取消"
+      :title="$t('finance.riskControlAutoReviewSettings')"
+      positive-text:positive-text="$t('common.confirm')"
+      negative-text:negative-text="$t('common.cancel')"
       :style="{ width: '80%', maxWidth: '1200px' }"
       @positive-click="handleRiskControlConfirm"
     >
@@ -1584,14 +1510,14 @@
         <div>
           <div class="mb-3">
             <span class="text-sm font-medium text-gray-700"
-              >是否需风控审核</span
+              >{{ $t('finance.kjhee1') }}</span
             >
             <span class="ml-1 text-red-500">*</span>
           </div>
           <n-radio-group v-model:value="riskControlForm.riskControlSwitch">
             <n-space direction="vertical">
-              <n-radio value="disabled">关闭风控审核</n-radio>
-              <n-radio value="enabled">开启风控审核</n-radio>
+              <n-radio value="disabled">{{ $t('finance.kfgeo5') }}</n-radio>
+              <n-radio value="enabled">{{ $t('finance.ke0t0z') }}</n-radio>
             </n-space>
           </n-radio-group>
         </div>
@@ -1604,13 +1530,13 @@
           <div>
             <div class="mb-3">
               <span class="text-sm font-medium text-gray-700"
-                >不免审风控原因订单审核</span
+                >{{ $t('finance.k2d6px') }}</span
               >
             </div>
             <n-radio-group v-model:value="riskControlForm.noExemptRiskReview">
               <n-space direction="vertical">
-                <n-radio value="enabled">关闭不免审风控原因订单审核</n-radio>
-                <n-radio value="disabled">开启不免审风控原因订单审核</n-radio>
+                <n-radio value="enabled">{{ $t('finance.kn5akt') }}</n-radio>
+                <n-radio value="disabled">{{ $t('finance.kpkrnw') }}</n-radio>
               </n-space>
             </n-radio-group>
           </div>
@@ -1619,14 +1545,14 @@
 
           <!-- Tabs for Must Audit vs Exempt -->
           <n-tabs type="line" animated>
-            <n-tab-pane name="must-audit" tab="必审条件">
+            <n-tab-pane name="must-audit" :tab="$t('finance.conditions')">
               <!-- Must Audit Content -->
 
               <!-- 必须风控审核的情形 -->
               <div>
                 <div class="mb-3">
                   <span class="text-sm font-medium text-gray-700"
-                    >必须风控审核的情形</span
+                    >{{ $t('finance.k5da56') }}</span
                   >
                   <span class="ml-2 text-xs text-gray-500"
                     >(必审的级别高于免审，只要触发以下任意一条规则即必须风控审核)</span
@@ -1636,13 +1562,11 @@
                 <!-- 必审会员层级 -->
                 <div class="mb-4">
                   <div class="mb-2 flex items-center gap-2">
-                    <span class="text-sm">必审会员层级</span>
+                    <span class="text-sm">{{ $t('finance.k5q5ri') }}</span>
                     <n-checkbox
                       :checked="selectAllRequiredTiers"
                       @update:checked="handleSelectAllRequiredTiers"
-                    >
-                      全选
-                    </n-checkbox>
+                    >{{ $t('common.selectAll') }}</n-checkbox>
                   </div>
                   <div class="grid grid-cols-4 gap-2">
                     <n-checkbox
@@ -1682,13 +1606,11 @@
                 <!-- 必审会员标签 -->
                 <div class="mb-4">
                   <div class="mb-2 flex items-center gap-2">
-                    <span class="text-sm">必审会员标签</span>
+                    <span class="text-sm">{{ $t('finance.k90wtp') }}</span>
                     <n-checkbox
                       :checked="selectAllRequiredTags"
                       @update:checked="handleSelectAllRequiredTags"
-                    >
-                      全选
-                    </n-checkbox>
+                    >{{ $t('common.selectAll') }}</n-checkbox>
                   </div>
                   <div class="grid grid-cols-4 gap-2">
                     <n-checkbox
@@ -1723,12 +1645,12 @@
 
                 <!-- 必审会员注册时长 -->
                 <div class="mb-4 rounded bg-gray-50 p-3">
-                  <div class="mb-2 font-medium">必审会员注册时长</div>
+                  <div class="mb-2 font-medium">{{ $t('finance.kf11uv') }}</div>
                   <n-radio-group
                     v-model:value="riskControlForm.registrationDurationOption"
                   >
                     <n-space direction="vertical">
-                      <n-radio value="disabled">关闭此条件</n-radio>
+                      <n-radio value="disabled">{{ $t('finance.khv157') }}</n-radio>
                       <n-radio value="24h">24小时以内</n-radio>
                       <n-radio value="3d">3天以内</n-radio>
                       <n-radio value="7d">7天以内</n-radio>
@@ -1739,7 +1661,7 @@
 
                 <!-- 账号提现次数必审条件 -->
                 <div class="mb-4">
-                  <div class="mb-2 font-medium">账号提现次数必审条件</div>
+                  <div class="mb-2 font-medium">{{ $t('finance.k03uyy') }}</div>
                   <div class="space-y-2">
                     <div class="flex items-center gap-2">
                       <n-checkbox
@@ -1747,9 +1669,7 @@
                           riskControlForm.withdrawalAuditTriggers
                             .firstTimeWithdraw
                         "
-                      >
-                        提现账号首次提现
-                      </n-checkbox>
+                      >{{ $t('finance.k1782445247749') }}</n-checkbox>
                     </div>
 
                     <div class="flex items-center gap-2">
@@ -1758,7 +1678,7 @@
                           riskControlForm.withdrawalAuditTriggers
                             .withdrawCountLessThan
                         "
-                        >会员前</n-checkbox
+                        >{{ $t('finance.ktirs4') }}</n-checkbox
                       >
                       <n-input-number
                         v-model:value="
@@ -1769,21 +1689,21 @@
                         size="small"
                         style="width: 80px"
                       />
-                      <span>次提现必须审核</span>
+                      <span>{{ $t('finance.ki12mg') }}</span>
                     </div>
                   </div>
                 </div>
 
                 <!-- 打码和充提差额必审条件 -->
                 <div class="mb-4">
-                  <div class="mb-2 font-medium">打码和充提差额必审条件</div>
+                  <div class="mb-2 font-medium">{{ $t('finance.kzuvac') }}</div>
                   <div class="space-y-2">
                     <div class="flex items-center gap-2">
                       <n-checkbox
                         v-model:checked="
                           riskControlForm.wageringAudit.chargeDiffEnabled
                         "
-                        >近</n-checkbox
+                        >{{ $t('finance.k5ay1p') }}</n-checkbox
                       >
                       <n-input-number
                         v-model:value="
@@ -1809,7 +1729,7 @@
                         v-model:checked="
                           riskControlForm.wageringAudit.codeMultipleEnabled
                         "
-                        >近</n-checkbox
+                        >{{ $t('finance.k5ay1p') }}</n-checkbox
                       >
                       <n-input-number
                         v-model:value="
@@ -1829,7 +1749,7 @@
                         size="small"
                         style="width: 80px"
                       />
-                      <span>倍</span>
+                      <span>{{ $t('finance.kblhtu') }}</span>
                     </div>
 
                     <div class="flex items-center gap-2">
@@ -1868,7 +1788,7 @@
                           riskControlForm.wageringAudit
                             .successWithdrawCountAfterRefund
                         "
-                        >会员已成功提现过</n-checkbox
+                        >{{ $t('finance.kl9rub') }}</n-checkbox
                       >
                       <n-input-number
                         v-model:value="
@@ -1938,7 +1858,7 @@
               <div class="mb-4">
                 <div class="mb-3">
                   <span class="text-sm font-medium text-gray-700"
-                    >风控类型必审条件</span
+                    >{{ $t('finance.kmt8wr') }}</span
                   >
                 </div>
 
@@ -1948,24 +1868,18 @@
                       riskControlForm.riskTypesRequireAudit
                         .depositDisputeNotProcessed
                     "
-                  >
-                    触发派奖监控风控规则且未处理
-                  </n-checkbox>
+                  >{{ $t('finance.k1782445247713') }}</n-checkbox>
                   <n-checkbox
                     v-model:checked="
                       riskControlForm.riskTypesRequireAudit.depositChargeback
                     "
-                  >
-                    触发对赌监控风控规则且未处理
-                  </n-checkbox>
+                  >{{ $t('finance.k1782445247753') }}</n-checkbox>
                   <n-checkbox
                     v-model:checked="
                       riskControlForm.riskTypesRequireAudit
                         .incompleteFirstCharge
                     "
-                  >
-                    未完成首充
-                  </n-checkbox>
+                  >{{ $t('finance.k1782445247714') }}</n-checkbox>
                   <n-checkbox
                     v-model:checked="
                       riskControlForm.riskTypesRequireAudit.cpfMismatch
@@ -1979,7 +1893,7 @@
                       v-model:checked="
                         riskControlForm.riskTypesRequireAudit.canceledOrRejected
                       "
-                      >近</n-checkbox
+                      >{{ $t('finance.k5ay1p') }}</n-checkbox
                     >
                     <n-input-number
                       v-model:value="
@@ -1990,7 +1904,7 @@
                       size="small"
                       style="width: 80px"
                     />
-                    <span>天被取消或被拒绝提现</span>
+                    <span>{{ $t('finance.klpdap') }}</span>
                   </div>
 
                   <div class="flex items-center gap-2">
@@ -2007,7 +1921,7 @@
                       v-model:checked="
                         riskControlForm.riskTypesRequireAudit.manualDeposit
                       "
-                      >近</n-checkbox
+                      >{{ $t('finance.k5ay1p') }}</n-checkbox
                     >
                     <n-input-number
                       v-model:value="
@@ -2017,7 +1931,7 @@
                       size="small"
                       style="width: 80px"
                     />
-                    <span>天有手动加款</span>
+                    <span>{{ $t('finance.kfzb1f') }}</span>
                   </div>
 
                   <div class="flex items-center gap-2">
@@ -2037,7 +1951,7 @@
                       size="small"
                       style="width: 80px"
                     />
-                    <span>个会员账号</span>
+                    <span>{{ $t('finance.kxz8cn') }}</span>
                   </div>
 
                   <div class="flex items-center gap-2">
@@ -2045,7 +1959,7 @@
                       v-model:checked="
                         riskControlForm.riskTypesRequireAudit.systemResolved
                       "
-                      >近</n-checkbox
+                      >{{ $t('finance.k5ay1p') }}</n-checkbox
                     >
                     <n-input-number
                       v-model:value="
@@ -2055,7 +1969,7 @@
                       size="small"
                       style="width: 80px"
                     />
-                    <span>天有系统解除稽核</span>
+                    <span>{{ $t('finance.ki2up8') }}</span>
                   </div>
                 </div>
               </div>
@@ -2066,24 +1980,24 @@
               <div class="mb-4">
                 <div class="mb-3">
                   <span class="text-sm font-medium text-gray-700"
-                    >领取过优惠必审条件</span
+                    >{{ $t('finance.k85nga') }}</span
                   >
                 </div>
 
                 <div class="space-y-3">
                   <div class="flex items-center gap-2">
-                    <span class="text-sm">近</span>
+                    <span class="text-sm">{{ $t('finance.k5ay1p') }}</span>
                     <n-input-number
                       v-model:value="riskControlForm.bonusClaimAuditHours"
                       :min="1"
                       style="width: 100px"
                       size="small"
                     />
-                    <span class="text-sm">小时，领取过以下指定优惠必审核</span>
+                    <span class="text-sm">{{ $t('finance.kbaa2e') }}</span>
                   </div>
 
                   <div class="pl-4">
-                    <div class="mb-2 font-medium">领取指定优惠</div>
+                    <div class="mb-2 font-medium">{{ $t('finance.kwv18b') }}</div>
 
                     <!-- 活动 - Expandable -->
                     <div class="mb-2">
@@ -2116,7 +2030,7 @@
                           v-model:checked="
                             riskControlForm.bonusClaimAudit.activity
                           "
-                          >活动</n-checkbox
+                          >{{ $t('finance.text29') }}</n-checkbox
                         >
                       </div>
 
@@ -2129,21 +2043,21 @@
                             riskControlForm.bonusClaimAudit.activityTypes
                               .recharge
                           "
-                          >充值活动</n-checkbox
+                          >{{ $t('finance.kpx6sd') }}</n-checkbox
                         >
                         <br />
                         <n-checkbox
                           v-model:checked="
                             riskControlForm.bonusClaimAudit.activityTypes.wager
                           "
-                          >打码活动</n-checkbox
+                          >{{ $t('finance.k4lnfh') }}</n-checkbox
                         >
                         <br />
                         <n-checkbox
                           v-model:checked="
                             riskControlForm.bonusClaimAudit.activityTypes.rescue
                           "
-                          >救援金活动</n-checkbox
+                          >{{ $t('finance.kh2xf8') }}</n-checkbox
                         >
                         <br />
                         <n-checkbox
@@ -2151,14 +2065,14 @@
                             riskControlForm.bonusClaimAudit.activityTypes
                               .redPacket
                           "
-                          >红包活动</n-checkbox
+                          >{{ $t('finance.k8ml8o') }}</n-checkbox
                         >
                         <br />
                         <n-checkbox
                           v-model:checked="
                             riskControlForm.bonusClaimAudit.activityTypes.signin
                           "
-                          >签到活动</n-checkbox
+                          >{{ $t('finance.k2dt5p') }}</n-checkbox
                         >
                       </div>
                     </div>
@@ -2167,17 +2081,17 @@
                     <div class="grid grid-cols-3 gap-2">
                       <n-checkbox
                         v-model:checked="riskControlForm.bonusClaimAudit.task"
-                        >任务</n-checkbox
+                        >{{ $t('finance.k1j6jh') }}</n-checkbox
                       >
                       <n-checkbox
                         v-model:checked="riskControlForm.bonusClaimAudit.rebate"
-                        >返水</n-checkbox
+                        >{{ $t('finance.text35') }}</n-checkbox
                       >
                       <n-checkbox
                         v-model:checked="
                           riskControlForm.bonusClaimAudit.cashback
                         "
-                        >返佣</n-checkbox
+                        >{{ $t('finance.kfg6gv') }}</n-checkbox
                       >
                       <n-checkbox
                         v-model:checked="riskControlForm.bonusClaimAudit.vip"
@@ -2187,53 +2101,53 @@
                         v-model:checked="
                           riskControlForm.bonusClaimAudit.interest
                         "
-                        >利息宝</n-checkbox
+                        >{{ $t('finance.text58') }}</n-checkbox
                       >
                       <n-checkbox
                         v-model:checked="riskControlForm.bonusClaimAudit.lucky"
-                        >幸运转盘</n-checkbox
+                        >{{ $t('finance.text104') }}</n-checkbox
                       >
                       <n-checkbox
                         v-model:checked="riskControlForm.bonusClaimAudit.fund"
-                        >公积金</n-checkbox
+                        >{{ $t('finance.text61') }}</n-checkbox
                       >
                       <n-checkbox
                         v-model:checked="riskControlForm.bonusClaimAudit.raffle"
-                        >首盒抽奖</n-checkbox
+                        >{{ $t('finance.kid5e7') }}</n-checkbox
                       >
                       <n-checkbox
                         v-model:checked="
                           riskControlForm.bonusClaimAudit.recharge
                         "
-                        >充值优惠</n-checkbox
+                        >{{ $t('finance.kv6mce') }}</n-checkbox
                       >
                       <n-checkbox
                         v-model:checked="
                           riskControlForm.bonusClaimAudit.promotion
                         "
-                        >推广活动</n-checkbox
+                        >{{ $t('finance.ku9lis') }}</n-checkbox
                       >
                       <n-checkbox
                         v-model:checked="
                           riskControlForm.bonusClaimAudit.investment
                         "
-                        >投资活动</n-checkbox
+                        >{{ $t('finance.kl24aw') }}</n-checkbox
                       >
                       <n-checkbox
                         v-model:checked="
                           riskControlForm.bonusClaimAudit.investmentDeduction
                         "
-                        >投资扣款</n-checkbox
+                        >{{ $t('finance.k08w38') }}</n-checkbox
                       >
                       <n-checkbox
                         v-model:checked="riskControlForm.bonusClaimAudit.agent"
-                        >代理活动</n-checkbox
+                        >{{ $t('finance.kregbs') }}</n-checkbox
                       >
                       <n-checkbox
                         v-model:checked="
                           riskControlForm.bonusClaimAudit.settlement
                         "
-                        >银商结算</n-checkbox
+                        >{{ $t('finance.kk5lqa') }}</n-checkbox
                       >
                     </div>
                   </div>
@@ -2247,12 +2161,12 @@
                 <!-- Tabs for Member Tiers -->
                 <div class="mb-4">
                   <div class="mb-3 flex items-center justify-between">
-                    <span class="font-medium">其他必审条件</span>
+                    <span class="font-medium">{{ $t('finance.conditions1') }}</span>
                     <n-button
                       type="primary"
                       size="small"
                       @click="applyOtherAuditToAllTiers"
-                      >应用到全部层级</n-button
+                      >{{ $t('finance.k3632t') }}</n-button
                     >
                   </div>
 
@@ -2266,9 +2180,7 @@
                           selectedOtherAuditTab === 'all',
                       }"
                       @click="selectedOtherAuditTab = 'all'"
-                    >
-                      全部层级
-                    </div>
+                    >{{ $t('finance.allTier') }}</div>
                     <!-- Dynamic Member Tier Tabs -->
                     <div
                       v-for="tier in memberTierOptions"
@@ -2287,7 +2199,7 @@
                   <div class="space-y-4">
                     <!-- Time-based conditions -->
                     <div class="flex items-center gap-2">
-                      <span>近</span>
+                      <span>{{ $t('finance.k5ay1p') }}</span>
                       <n-input-number
                         v-model:value="currentOtherAuditData.bonusClaimHours"
                         :min="1"
@@ -2297,15 +2209,15 @@
                       <span>小时，优惠累计领取≥</span>
                       <n-input
                         v-model:value="currentOtherAuditData.bonusClaimAmount"
-                        placeholder="请输入领取金额"
+                        placeholder:placeholder="$t('finance.pleaseEnterAmount1')"
                         size="small"
                         style="width: 200px"
                       />
-                      <span>必须审核</span>
+                      <span>{{ $t('finance.k5gtx2') }}</span>
                     </div>
 
                     <div class="flex items-center gap-2">
-                      <span>近</span>
+                      <span>{{ $t('finance.k5ay1p') }}</span>
                       <n-input-number
                         v-model:value="currentOtherAuditData.auditExemptHours"
                         :min="1"
@@ -2315,11 +2227,11 @@
                       <span>小时，免审核金额≥</span>
                       <n-input
                         v-model:value="currentOtherAuditData.auditExemptAmount"
-                        placeholder="请输入免审核金额"
+                        placeholder:placeholder="$t('finance.pleaseEnterAutoApprovedAmount')"
                         size="small"
                         style="width: 200px"
                       />
-                      <span>必须审核</span>
+                      <span>{{ $t('finance.k5gtx2') }}</span>
                     </div>
 
                     <div class="flex items-center gap-2">
@@ -2328,23 +2240,23 @@
                         v-model:value="
                           currentOtherAuditData.singleWithdrawAmount
                         "
-                        placeholder="请输入"
+                        placeholder:placeholder="$t('finance.pleaseEnter5')"
                         size="small"
                         style="width: 200px"
                       />
-                      <span>必须审核</span>
+                      <span>{{ $t('finance.k5gtx2') }}</span>
                     </div>
 
                     <div class="flex items-center gap-2">
-                      <span>指定银行提现</span>
+                      <span>{{ $t('finance.kfb8w8') }}</span>
                       <n-select
                         v-model:value="currentOtherAuditData.specifiedBank"
-                        placeholder="请选择银行"
+                        placeholder:placeholder="$t('finance.pleaseSelectBank')"
                         size="small"
                         style="width: 300px"
                         :options="[]"
                       />
-                      <span>必须审核</span>
+                      <span>{{ $t('finance.k5gtx2') }}</span>
                     </div>
                   </div>
                 </div>
@@ -2354,7 +2266,7 @@
               <div class="mb-4">
                 <div class="mb-3">
                   <span class="text-sm font-medium text-gray-700"
-                    >投注以下游戏必审</span
+                    >{{ $t('finance.ky7ewo') }}</span
                   >
                   <span class="ml-2 text-xs text-gray-500"
                     >(建议勾选高返现容易套利的游戏)</span
@@ -2362,14 +2274,14 @@
                 </div>
 
                 <div class="mb-4 flex items-center gap-2">
-                  <span class="text-sm">近</span>
+                  <span class="text-sm">{{ $t('finance.k5ay1p') }}</span>
                   <n-input-number
                     v-model:value="riskControlForm.mustAuditGamesHours"
                     :min="0"
                     style="width: 100px"
                     size="small"
                   />
-                  <span class="text-sm">小时，内投过以下游戏必审</span>
+                  <span class="text-sm">{{ $t('finance.kelji3') }}</span>
                 </div>
 
                 <!-- Game Platform Selection -->
@@ -2380,9 +2292,9 @@
                     "
                   >
                     <n-space>
-                      <n-radio value="all_platforms">全部平台</n-radio>
-                      <n-radio value="specific_platforms">指定平台</n-radio>
-                      <n-radio value="exclude_platforms">排除勾选平台</n-radio>
+                      <n-radio value="all_platforms">{{ $t('finance.k7b4zs') }}</n-radio>
+                      <n-radio value="specific_platforms">{{ $t('finance.k6sfkf') }}</n-radio>
+                      <n-radio value="exclude_platforms">{{ $t('finance.kkag2o') }}</n-radio>
                     </n-space>
                   </n-radio-group>
 
@@ -2401,12 +2313,12 @@
             </n-tab-pane>
 
             <!-- Exempt Tab -->
-            <n-tab-pane name="exempt-audit" tab="免审条件">
+            <n-tab-pane name="exempt-audit" :tab="$t('finance.autoApprovedConditions')">
               <!-- 免风控审核的情形 -->
               <div class="mb-4">
                 <div class="mb-3 rounded bg-gray-100 p-2">
                   <span class="text-sm font-medium text-gray-700"
-                    >免风控审核的情形</span
+                    >{{ $t('finance.kqo57w') }}</span
                   >
                   <span class="ml-2 text-xs text-gray-500"
                     >(满足以下任意一个条件的会员都自动免风控审核，不填或填0表示不限制)</span
@@ -2417,13 +2329,11 @@
                   <!-- 免审会员层级 -->
                   <div>
                     <div class="mb-2 flex items-center gap-2">
-                      <span class="text-sm font-medium">免审会员层级</span>
+                      <span class="text-sm font-medium">{{ $t('finance.kop5m3') }}</span>
                       <n-checkbox
                         :checked="selectAllExemptTiers"
                         @update:checked="handleSelectAllExemptTiers"
-                      >
-                        全选
-                      </n-checkbox>
+                      >{{ $t('common.selectAll') }}</n-checkbox>
                     </div>
                     <div class="grid grid-cols-4 gap-2">
                       <n-checkbox
@@ -2463,13 +2373,11 @@
                   <!-- 免审会员标签 -->
                   <div>
                     <div class="mb-2 flex items-center gap-2">
-                      <span class="text-sm font-medium">免审会员标签</span>
+                      <span class="text-sm font-medium">{{ $t('finance.kfpdnk') }}</span>
                       <n-checkbox
                         :checked="selectAllExemptTags"
                         @update:checked="handleSelectAllExemptTags"
-                      >
-                        全选
-                      </n-checkbox>
+                      >{{ $t('common.selectAll') }}</n-checkbox>
                     </div>
                     <div class="grid grid-cols-4 gap-2">
                       <n-checkbox
@@ -2509,7 +2417,7 @@
                   <!-- 免审会员注册时长 -->
                   <div>
                     <div class="mb-2">
-                      <span class="text-sm font-medium">免审会员注册时长</span>
+                      <span class="text-sm font-medium">{{ $t('finance.kic8sq') }}</span>
                     </div>
                     <n-radio-group
                       v-model:value="
@@ -2518,7 +2426,7 @@
                       "
                     >
                       <n-space>
-                        <n-radio value="disabled">关闭此条件</n-radio>
+                        <n-radio value="disabled">{{ $t('finance.khv157') }}</n-radio>
                         <n-radio value="超24小时">超24小时</n-radio>
                         <n-radio value="超3天">超3天</n-radio>
                         <n-radio value="超7天">超7天</n-radio>
@@ -2530,7 +2438,7 @@
                   <!-- 免审提现方式 -->
                   <div>
                     <div class="mb-2">
-                      <span class="text-sm font-medium">免审提现方式</span>
+                      <span class="text-sm font-medium">{{ $t('finance.kl040b') }}</span>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                       <n-checkbox
@@ -2538,9 +2446,7 @@
                           riskControlForm.exemptRiskReview.withdrawMethods
                             .firstThirdParty
                         "
-                      >
-                        首次使用三方钱包提现
-                      </n-checkbox>
+                      >{{ $t('finance.k1782445247733') }}</n-checkbox>
                       <n-checkbox
                         v-model:checked="
                           riskControlForm.exemptRiskReview.withdrawMethods
@@ -2554,9 +2460,7 @@
                           riskControlForm.exemptRiskReview.withdrawMethods
                             .everyThirdParty
                         "
-                      >
-                        每次使用三方钱包包提现
-                      </n-checkbox>
+                      >{{ $t('finance.k1782445247778') }}</n-checkbox>
                       <n-checkbox
                         v-model:checked="
                           riskControlForm.exemptRiskReview.withdrawMethods
@@ -2571,7 +2475,7 @@
                   <!-- 免审提现次数 -->
                   <div>
                     <div class="mb-2">
-                      <span class="text-sm font-medium">免审提现次数</span>
+                      <span class="text-sm font-medium">{{ $t('finance.keiovi') }}</span>
                     </div>
                     <div class="flex items-center gap-2">
                       <span>累计提现次数≥</span>
@@ -2583,7 +2487,7 @@
                         style="width: 100px"
                         size="small"
                       />
-                      <span>次</span>
+                      <span>{{ $t('finance.ko2ian') }}</span>
                     </div>
                   </div>
                 </div>
@@ -2596,12 +2500,12 @@
                 <!-- Tabs for Member Tiers -->
                 <div class="mb-4">
                   <div class="mb-3 flex items-center justify-between">
-                    <span class="font-medium">其他免审条件</span>
+                    <span class="font-medium">{{ $t('finance.autoApprovedConditions1') }}</span>
                     <n-button
                       type="primary"
                       size="small"
                       @click="applyOtherExemptToAllTiers"
-                      >应用到全部层级</n-button
+                      >{{ $t('finance.k3632t') }}</n-button
                     >
                   </div>
 
@@ -2615,9 +2519,7 @@
                           selectedExemptTab === 'all',
                       }"
                       @click="selectedExemptTab = 'all'"
-                    >
-                      全部层级
-                    </div>
+                    >{{ $t('finance.allTier') }}</div>
                     <!-- Dynamic Member Tier Tabs -->
                     <div
                       v-for="tier in memberTierOptions"
@@ -2636,7 +2538,7 @@
                   <div class="space-y-4">
                     <!-- Time-based conditions -->
                     <div class="flex items-center gap-2">
-                      <span>近</span>
+                      <span>{{ $t('finance.k5ay1p') }}</span>
                       <n-input-number
                         v-model:value="currentOtherExemptData.claimHours"
                         :min="0"
@@ -2646,16 +2548,16 @@
                       <span>小时，累计领取＜</span>
                       <n-input
                         v-model:value="currentOtherExemptData.claimAmount"
-                        placeholder="请输入领取金额"
+                        placeholder:placeholder="$t('finance.pleaseEnterAmount1')"
                         size="small"
                         style="width: 200px"
                       />
-                      <span>免审核的情形</span>
+                      <span>{{ $t('finance.kdnr8q') }}</span>
                     </div>
 
                     <div class="flex items-center gap-2">
                       <span class="text-red-500">*</span>
-                      <span>近</span>
+                      <span>{{ $t('finance.k5ay1p') }}</span>
                       <n-input-number
                         v-model:value="currentOtherExemptData.exemptHours"
                         :min="0"
@@ -2665,11 +2567,11 @@
                       <span>小时，免审核金额＜</span>
                       <n-input
                         v-model:value="currentOtherExemptData.exemptAmount"
-                        placeholder="请输入免审核金额"
+                        placeholder:placeholder="$t('finance.pleaseEnterAutoApprovedAmount')"
                         size="small"
                         style="width: 200px"
                       />
-                      <span>免审核的情形</span>
+                      <span>{{ $t('finance.kdnr8q') }}</span>
                     </div>
 
                     <div class="flex items-center gap-2">
@@ -2679,11 +2581,11 @@
                         v-model:value="
                           currentOtherExemptData.singleWithdrawAmount
                         "
-                        placeholder="请输入单笔提现金额"
+                        placeholder:placeholder="$t('finance.pleaseEnterSingleWithdrawalAmount')"
                         size="small"
                         style="width: 200px"
                       />
-                      <span>免审核的情形</span>
+                      <span>{{ $t('finance.kdnr8q') }}</span>
                     </div>
                   </div>
                 </div>
@@ -2697,6 +2599,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import {
   ref,
   reactive,
@@ -3233,7 +3137,7 @@ const applyOtherAuditToAllTiers = () => {
   const currentData = riskControlForm.otherAuditConditions[currentTierId];
 
   if (!currentData) {
-    message.warning('请先配置当前层级的条件');
+    message.warning($t('finance.pleaseConfigTierConditions'));
     return;
   }
 
@@ -3245,7 +3149,7 @@ const applyOtherAuditToAllTiers = () => {
     riskControlForm.otherAuditConditions[tier.value] = { ...currentData };
   });
 
-  message.success('已应用到全部层级');
+  message.success($t('finance.alreadyAllTier'));
 };
 
 const applyOtherExemptToAllTiers = () => {
@@ -3253,7 +3157,7 @@ const applyOtherExemptToAllTiers = () => {
   const currentData = riskControlForm.otherExemptConditions[currentTierId];
 
   if (!currentData) {
-    message.warning('请先配置当前层级的条件');
+    message.warning($t('finance.pleaseConfigTierConditions'));
     return;
   }
 
@@ -3265,7 +3169,7 @@ const applyOtherExemptToAllTiers = () => {
     riskControlForm.otherExemptConditions[tier.value] = { ...currentData };
   });
 
-  message.success('已应用到全部层级');
+  message.success($t('finance.alreadyAllTier'));
 };
 
 // ============================================================================
@@ -3349,7 +3253,7 @@ const currentAutoApprovalThirdPartyData = computed(() => {
 
 // Bank options
 const bankOptions = ref([
-  { label: '请选择银行', value: '' },
+  { label: $t('finance.pleaseSelectBank'), value: '' },
   { label: 'Banco do Brasil', value: 'banco_do_brasil' },
   { label: 'Bradesco', value: 'bradesco' },
   { label: 'Caixa', value: 'caixa' },
@@ -3417,7 +3321,7 @@ const applyAutoApprovalOtherAuditToAllTiers = () => {
     );
   });
 
-  message.success('已应用到全部层级');
+  message.success($t('finance.alreadyAllTier'));
 };
 
 const applyAutoApprovalOtherExemptToAllTiers = () => {
@@ -3435,7 +3339,7 @@ const applyAutoApprovalOtherExemptToAllTiers = () => {
     );
   });
 
-  message.success('已应用到全部层级');
+  message.success($t('finance.alreadyAllTier'));
 };
 
 const applyAutoApprovalThirdPartyToAllTiers = () => {
@@ -3453,7 +3357,7 @@ const applyAutoApprovalThirdPartyToAllTiers = () => {
     );
   });
 
-  message.success('已应用到全部层级');
+  message.success($t('finance.alreadyAllTier'));
 };
 
 // ============================================================================
@@ -3511,9 +3415,9 @@ const autoRuleModal = reactive({
 // Options
 const channelTypeOptions = [
   { label: 'PIX', value: 'PIX' },
-  { label: '银行转账', value: 'BANK_TRANSFER' },
-  { label: '数字钱包', value: 'DIGITAL_WALLET' },
-  { label: '加密货币', value: 'CRYPTO' },
+  { label: $t('finance.bankTransfer'), value: 'BANK_TRANSFER' },
+  { label: $t('finance.digitalWallet'), value: 'DIGITAL_WALLET' },
+  { label: $t('finance.text110'), value: 'CRYPTO' },
 ];
 
 const currencyOptions = [
@@ -3523,9 +3427,9 @@ const currencyOptions = [
 ];
 
 const riskLevelOptions = [
-  { label: '低风险', value: 'low' },
-  { label: '中风险', value: 'medium' },
-  { label: '高风险', value: 'high' },
+  { label: $t('finance.risk'), value: 'low' },
+  { label: $t('finance.risk1'), value: 'medium' },
+  { label: $t('finance.risk2'), value: 'high' },
 ];
 
 // Member tiers and tags for risk control
@@ -3538,24 +3442,24 @@ const memberTierOptions = computed(() => {
 });
 
 // User tags options (static for now, could be fetched from API)
-const userTagOptions = [{ label: '默认标签', value: 'default' }];
+const userTagOptions = [{ label: $t('finance.tag'), value: 'default' }];
 
 // Table columns based on screenshot
 const columns: DataTableColumns<WithdrawalChannel> = [
   {
-    title: '提现大类',
+    title: $t('finance.withdrawal4'),
     key: 'type',
     width: 120,
     render: (row) => h('div', { class: 'text-center' }, row.type),
   },
   {
-    title: '提现方式',
+    title: $t('finance.withdrawalMethod'),
     key: 'name',
     width: 120,
     render: (row) => h('div', { class: 'text-center' }, row.name),
   },
   {
-    title: '是否允许提现',
+    title: $t('finance.yesNoWithdrawal'),
     key: 'allowWithdrawal',
     width: 140,
     render: (row) =>
@@ -3569,7 +3473,7 @@ const columns: DataTableColumns<WithdrawalChannel> = [
       ]),
   },
   {
-    title: '是否允许会员用',
+    title: $t('finance.yesNoMember'),
     key: 'allowMemberUse',
     width: 140,
     render: (row) =>
@@ -3582,7 +3486,7 @@ const columns: DataTableColumns<WithdrawalChannel> = [
       ]),
   },
   {
-    title: '是否支持转账现',
+    title: $t('finance.yesNoTransfer'),
     key: 'supportTransfer',
     width: 140,
     render: (row) =>
@@ -3596,7 +3500,7 @@ const columns: DataTableColumns<WithdrawalChannel> = [
       ]),
   },
   {
-    title: '是否支持数字货币提现',
+    title: $t('finance.yesNoDigitalWithdrawal'),
     key: 'supportDigitalCurrency',
     width: 160,
     render: (row) =>
@@ -3610,7 +3514,7 @@ const columns: DataTableColumns<WithdrawalChannel> = [
       ]),
   },
   {
-    title: '允许提现',
+    title: $t('finance.withdrawal3'),
     key: 'withdrawalLimit',
     width: 100,
     render: (row) =>
@@ -3626,19 +3530,19 @@ const columns: DataTableColumns<WithdrawalChannel> = [
       ]),
   },
   {
-    title: '监号数量',
+    title: $t('finance.text109'),
     key: 'monitorCount',
     width: 100,
     render: (row) => h('div', { class: 'text-center' }, row.monitorCount),
   },
   {
-    title: '到账币种',
+    title: $t('finance.receivedCurrency'),
     key: 'currency',
     width: 100,
     render: (row) => h('div', { class: 'text-center' }, row.currency),
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 120,
     render: (row) => {
@@ -3655,7 +3559,7 @@ const columns: DataTableColumns<WithdrawalChannel> = [
     },
   },
   {
-    title: '单笔限额',
+    title: $t('finance.singleLimit'),
     key: 'singleLimit',
     width: 160,
     render: (row) =>
@@ -3664,13 +3568,13 @@ const columns: DataTableColumns<WithdrawalChannel> = [
       ]),
   },
   {
-    title: '手续费',
+    title: $t('finance.fee'),
     key: 'fees',
     width: 160,
     render: (row) => h('div', { class: 'text-center text-sm' }, row.fees),
   },
   {
-    title: '到账',
+    title: $t('finance.received'),
     key: 'arrivalStatus',
     width: 100,
     render: (row) => {
@@ -3689,7 +3593,7 @@ const columns: DataTableColumns<WithdrawalChannel> = [
     },
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 100,
     render: (row) => {
@@ -3716,7 +3620,7 @@ const columns: DataTableColumns<WithdrawalChannel> = [
     },
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 120,
     fixed: 'right',
@@ -3729,7 +3633,7 @@ const columns: DataTableColumns<WithdrawalChannel> = [
             type: 'primary',
             onClick: () => editChannel(row),
           },
-          { default: () => '修改' },
+          { default: () => $t('common.edit') },
         ),
       ]),
   },
@@ -3763,7 +3667,7 @@ const refreshData = async () => {
   } catch (error) {
     console.error('❌ Fetch channels error:', error);
     channelsData.value = [];
-    message.error('获取数据失败');
+    message.error($t('finance.failedToFetchData'));
   } finally {
     loading.value = false;
   }
@@ -4065,7 +3969,7 @@ const updateChannelSetting = async (
       message.success(`${field} 设置已更新 (本地)`);
     }
   } catch (error) {
-    message.error('设置更新失败');
+    message.error($t('finance.settingsFailed'));
   }
 };
 
@@ -4123,7 +4027,7 @@ const handleCloseChannelConfirm = async () => {
     }
   } catch (error) {
     console.error('❌ Error saving channel switch:', error);
-    message.error('操作失败，请重试');
+    message.error($t('finance.actionsFailedPleaseRetry'));
   }
 };
 
@@ -4195,7 +4099,7 @@ const handleAutoApprovalConfirm = async () => {
     }
   } catch (error) {
     console.error('❌ Error saving comprehensive auto approval:', error);
-    message.error('操作失败，请重试');
+    message.error($t('finance.actionsFailedPleaseRetry'));
   }
 };
 
@@ -4302,7 +4206,7 @@ const handleRiskControlConfirm = async () => {
     }
   } catch (error) {
     console.error('❌ Error saving risk control:', error);
-    message.error('操作失败，请重试');
+    message.error($t('finance.actionsFailedPleaseRetry'));
   }
 };
 
@@ -4329,11 +4233,11 @@ const saveChannelSettings = async () => {
           if (index !== -1) {
             channelsData.value[index] = { ...response.data };
           }
-          message.success('通道设置已更新');
+          message.success($t('finance.channelSettingsAlready'));
         } else {
           // Add new channel
           channelsData.value.push({ ...response.data });
-          message.success('新通道已添加');
+          message.success($t('finance.channelAlready'));
         }
 
         channelModal.show = false;
@@ -4350,16 +4254,16 @@ const saveChannelSettings = async () => {
         if (index !== -1) {
           channelsData.value[index] = { ...channelModal.data };
         }
-        message.success('通道设置已更新 (本地)');
+        message.success($t('finance.channelSettingsAlready1'));
       } else {
         channelModal.data.id = Date.now().toString();
         channelsData.value.push({ ...channelModal.data });
-        message.success('新通道已添加 (本地)');
+        message.success($t('finance.channelAlready1'));
       }
       channelModal.show = false;
     }
   } catch (error) {
-    message.error('保存失败');
+    message.error($t('finance.saveFailed'));
   } finally {
     channelModal.saving = false;
   }
@@ -4368,7 +4272,7 @@ const saveChannelSettings = async () => {
 const applyBulkSettings = async () => {
   try {
     if (!bulkSettingsModal.workingHours) {
-      message.error('请选择工作时间');
+      message.error($t('finance.pleaseSelectTime'));
       return;
     }
 
@@ -4390,17 +4294,17 @@ const applyBulkSettings = async () => {
     message.success(`已为 ${targetChannels.length} 个通道设置工作时间`);
     bulkSettingsModal.show = false;
   } catch (error) {
-    message.error('批量设置失败');
+    message.error($t('finance.bulkSettingsFailed'));
   }
 };
 
 const saveAutoRiskSettings = async () => {
   try {
     // TODO: Implement actual API call to save auto risk settings
-    message.success('风险自动减控设置已保存');
+    message.success($t('finance.riskAutoSettingsAlreadySave'));
     autoRuleModal.show = false;
   } catch (error) {
-    message.error('设置保存失败');
+    message.error($t('finance.settingsSaveFailed'));
   }
 };
 

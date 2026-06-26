@@ -6,7 +6,7 @@
 
     <div v-else class="profile-content">
       <!-- Section 1: 用户个人资料字段 -->
-      <n-card title="个人资料" class="mb-4">
+      <n-card :title="$t('user.profile.title')" class="mb-4">
         <div class="profile-fields">
           <!-- Profile Picture Section -->
           <div class="profile-picture-section mb-6">
@@ -30,9 +30,9 @@
                 </n-avatar>
               </div>
               <div class="profile-picture-info">
-                <h3 class="mb-2 text-lg font-medium">个人头像</h3>
+                <h3 class="mb-2 text-lg font-medium">{{ $t('user.profile.profileAvatar') }}</h3>
                 <p class="mb-3 text-sm text-gray-600">
-                  {{ profile.idPhotoUrl ? '已上传头像' : '未上传头像' }}
+                  {{ profile.idPhotoUrl ? $t('user.profile.avatarUploaded') : $t('user.profile.avatarNotUploaded') }}
                 </p>
                 <div class="flex gap-2">
                   <n-upload
@@ -42,7 +42,7 @@
                     @change="handleProfilePhotoUpload"
                   >
                     <n-button size="small" type="primary">
-                      {{ profile.idPhotoUrl ? '更换头像' : '上传头像' }}
+                      {{ profile.idPhotoUrl ? $t('user.profile.changeAvatar') : $t('user.profile.uploadAvatar') }}
                     </n-button>
                   </n-upload>
                   <n-button
@@ -50,7 +50,7 @@
                     size="small"
                     @click="showProfilePhotoPreview = true"
                   >
-                    查看
+                    {{ $t('common.view') }}
                   </n-button>
                 </div>
               </div>
@@ -61,7 +61,7 @@
             <!-- 姓名 -->
             <n-gi>
               <div class="profile-field">
-                <div class="field-label">姓名</div>
+                <div class="field-label">{{ $t('user.profile.name') }}</div>
                 <div class="field-value">
                   <span v-if="!editingField || editingField !== 'name'">
                     {{ profile.name || '--' }}
@@ -82,7 +82,7 @@
                     class="ml-2"
                     @click="handleEditField('name')"
                   >
-                    修改
+                    {{ $t('common.modify') }}
                   </n-button>
                 </div>
               </div>
@@ -91,7 +91,7 @@
             <!-- 身份证号 -->
             <n-gi>
               <div class="profile-field">
-                <div class="field-label">身份证号</div>
+                <div class="field-label">{{ $t('user.profile.idNumber') }}</div>
                 <div class="field-value">
                   <span v-if="!editingField || editingField !== 'idNumber'">
                     {{ maskedIdNumber }}
@@ -112,7 +112,7 @@
                     class="ml-2"
                     @click="toggleIdNumberView"
                   >
-                    {{ showFullIdNumber ? '隐藏' : '查看' }}
+                    {{ showFullIdNumber ? $t('user.profile.hide') : $t('user.profile.view') }}
                   </n-button>
                   <n-button
                     text
@@ -121,7 +121,7 @@
                     class="ml-1"
                     @click="handleEditField('idNumber')"
                   >
-                    修改
+                    {{ $t('common.modify') }}
                   </n-button>
                 </div>
               </div>
@@ -130,7 +130,7 @@
             <!-- 国籍/地区 -->
             <n-gi>
               <div class="profile-field">
-                <div class="field-label">国籍/地区</div>
+                <div class="field-label">{{ $t('user.profile.nationality') }}</div>
                 <div class="field-value">
                   <span v-if="!editingField || editingField !== 'nationality'">
                     {{ profile.nationality || '--' }}
@@ -150,7 +150,7 @@
                     class="ml-2"
                     @click="handleEditField('nationality')"
                   >
-                    修改
+                    {{ $t('common.modify') }}
                   </n-button>
                 </div>
               </div>
@@ -159,7 +159,7 @@
             <!-- 永久居住地 -->
             <n-gi>
               <div class="profile-field">
-                <div class="field-label">永久居住地</div>
+                <div class="field-label">{{ $t('user.profile.permanentResidence') }}</div>
                 <div class="field-value">
                   <span v-if="!editingField || editingField !== 'residence'">
                     {{ profile.residence || '--' }}
@@ -180,7 +180,7 @@
                     class="ml-2"
                     @click="handleEditField('residence')"
                   >
-                    修改
+                    {{ $t('common.modify') }}
                   </n-button>
                 </div>
               </div>
@@ -189,7 +189,7 @@
             <!-- 工作单位 -->
             <n-gi>
               <div class="profile-field">
-                <div class="field-label">工作单位</div>
+                <div class="field-label">{{ $t('user.profile.employer') }}</div>
                 <div class="field-value">
                   <span v-if="!editingField || editingField !== 'employer'">
                     {{ profile.employer || '--' }}
@@ -210,7 +210,7 @@
                     class="ml-2"
                     @click="handleEditField('employer')"
                   >
-                    修改
+                    {{ $t('common.modify') }}
                   </n-button>
                 </div>
               </div>
@@ -219,7 +219,7 @@
             <!-- 职业名称 -->
             <n-gi>
               <div class="profile-field">
-                <div class="field-label">职业名称</div>
+                <div class="field-label">{{ $t('user.profile.occupation') }}</div>
                 <div class="field-value">
                   <span v-if="!editingField || editingField !== 'occupation'">
                     {{ profile.occupation || '--' }}
@@ -240,7 +240,7 @@
                     class="ml-2"
                     @click="handleEditField('occupation')"
                   >
-                    修改
+                    {{ $t('common.modify') }}
                   </n-button>
                 </div>
               </div>
@@ -249,7 +249,7 @@
             <!-- 性别 -->
             <n-gi>
               <div class="profile-field">
-                <div class="field-label">性别</div>
+                <div class="field-label">{{ $t('user.profile.gender') }}</div>
                 <div class="field-value">
                   <span v-if="!editingField || editingField !== 'gender'">
                     {{ profile.gender || '--' }}
@@ -269,7 +269,7 @@
                     class="ml-2"
                     @click="handleEditField('gender')"
                   >
-                    修改
+                    {{ $t('common.modify') }}
                   </n-button>
                 </div>
               </div>
@@ -278,7 +278,7 @@
             <!-- 生日 -->
             <n-gi>
               <div class="profile-field">
-                <div class="field-label">生日</div>
+                <div class="field-label">{{ $t('user.profile.birthday') }}</div>
                 <div class="field-value">
                   <span v-if="!editingField || editingField !== 'birthday'">
                     {{ formatDate(profile.birthday) || '--' }}
@@ -298,7 +298,7 @@
                     class="ml-2"
                     @click="handleEditDateField('birthday')"
                   >
-                    修改
+                    {{ $t('common.modify') }}
                   </n-button>
                 </div>
               </div>
@@ -307,7 +307,7 @@
             <!-- 出生地 -->
             <n-gi>
               <div class="profile-field">
-                <div class="field-label">出生地</div>
+                <div class="field-label">{{ $t('user.profile.placeOfBirth') }}</div>
                 <div class="field-value">
                   <span v-if="!editingField || editingField !== 'placeOfBirth'">
                     {{ profile.placeOfBirth || '--' }}
@@ -328,7 +328,7 @@
                     class="ml-2"
                     @click="handleEditField('placeOfBirth')"
                   >
-                    修改
+                    {{ $t('common.modify') }}
                   </n-button>
                 </div>
               </div>
@@ -337,7 +337,7 @@
             <!-- 当前居住地 -->
             <n-gi>
               <div class="profile-field">
-                <div class="field-label">当前居住地</div>
+                <div class="field-label">{{ $t('user.profile.currentAddress') }}</div>
                 <div class="field-value">
                   <span
                     v-if="!editingField || editingField !== 'currentAddress'"
@@ -360,7 +360,7 @@
                     class="ml-2"
                     @click="handleEditField('currentAddress')"
                   >
-                    修改
+                    {{ $t('common.modify') }}
                   </n-button>
                 </div>
               </div>
@@ -369,7 +369,7 @@
             <!-- 收入来源 -->
             <n-gi>
               <div class="profile-field">
-                <div class="field-label">收入来源</div>
+                <div class="field-label">{{ $t('user.profile.incomeSource') }}</div>
                 <div class="field-value">
                   <span v-if="!editingField || editingField !== 'incomeSource'">
                     {{ profile.incomeSource || '--' }}
@@ -390,7 +390,7 @@
                     class="ml-2"
                     @click="handleEditField('incomeSource')"
                   >
-                    修改
+                    {{ $t('common.modify') }}
                   </n-button>
                 </div>
               </div>
@@ -399,9 +399,9 @@
             <!-- 人脸比对 -->
             <n-gi>
               <div class="profile-field">
-                <div class="field-label">人脸比对</div>
+                <div class="field-label">{{ $t('user.profile.faceMatch') }}</div>
                 <div class="field-value">
-                  <span>{{ profile.faceMatchStatus || '未验证' }}</span>
+                  <span>{{ profile.faceMatchStatus || $t('user.profile.notVerified') }}</span>
                   <n-button
                     text
                     size="small"
@@ -409,7 +409,7 @@
                     class="ml-2"
                     @click="showFaceMatchModal = true"
                   >
-                    查看记录
+                    {{ $t('user.profile.viewRecords') }}
                   </n-button>
                 </div>
               </div>
@@ -418,7 +418,7 @@
             <!-- 手持身份证照片 -->
             <n-gi>
               <div class="profile-field">
-                <div class="field-label">手持身份证照片</div>
+                <div class="field-label">{{ $t('user.profile.idPhotoInHand') }}</div>
                 <div class="field-value">
                   <div class="flex items-center gap-2">
                     <n-avatar
@@ -428,7 +428,7 @@
                       @click="showPhotoPreview = true"
                       class="cursor-pointer"
                     />
-                    <span v-else>未上传</span>
+                    <span v-else>{{ $t('user.profile.notUploaded') }}</span>
                     <n-upload
                       accept="image/*"
                       :max="1"
@@ -436,7 +436,7 @@
                       @change="handlePhotoUpload"
                     >
                       <n-button text size="small" type="primary">
-                        {{ profile.idPhotoUrl ? '重新上传' : '上传' }}
+                        {{ profile.idPhotoUrl ? $t('user.profile.reupload') : $t('user.profile.upload') }}
                       </n-button>
                     </n-upload>
                   </div>
@@ -449,54 +449,54 @@
         <template #action>
           <n-space>
             <n-button size="small" @click="handleRefreshProfile">
-              刷新
+              {{ $t('common.refresh') }}
             </n-button>
             <n-button size="small" type="primary" @click="handleSaveAllProfile">
-              保存所有修改
+              {{ $t('user.profile.saveAllChanges') }}
             </n-button>
           </n-space>
         </template>
       </n-card>
 
       <!-- Section 2: 账户安全状态 -->
-      <n-card title="账户安全状态" class="mb-4">
+      <n-card :title="$t('user.profile.accountSecurity')" class="mb-4">
         <div class="security-status">
           <n-grid :cols="4" :x-gap="16" :y-gap="16">
             <n-gi>
               <div class="security-item">
-                <div class="security-label">手机绑定</div>
+                <div class="security-label">{{ $t('user.profile.phoneBinding') }}</div>
                 <n-tag
                   :type="securityStatus.phoneBinding ? 'success' : 'warning'"
                 >
-                  {{ securityStatus.phoneBinding ? '已绑定' : '未绑定' }}
+                  {{ securityStatus.phoneBinding ? $t('user.profile.bound') : $t('user.profile.notBound') }}
                 </n-tag>
               </div>
             </n-gi>
             <n-gi>
               <div class="security-item">
-                <div class="security-label">谷歌验证</div>
+                <div class="security-label">{{ $t('user.profile.googleAuth') }}</div>
                 <n-tag
                   :type="securityStatus.googleAuth ? 'success' : 'warning'"
                 >
-                  {{ securityStatus.googleAuth ? '已绑定' : '未绑定' }}
+                  {{ securityStatus.googleAuth ? $t('user.profile.bound') : $t('user.profile.notBound') }}
                 </n-tag>
               </div>
             </n-gi>
             <n-gi>
               <div class="security-item">
-                <div class="security-label">生物识别</div>
+                <div class="security-label">{{ $t('user.profile.biometricAuth') }}</div>
                 <n-tag
                   :type="securityStatus.biometricAuth ? 'success' : 'warning'"
                 >
-                  {{ securityStatus.biometricAuth ? '已绑定' : '未绑定' }}
+                  {{ securityStatus.biometricAuth ? $t('user.profile.bound') : $t('user.profile.notBound') }}
                 </n-tag>
               </div>
             </n-gi>
             <n-gi>
               <div class="security-item">
-                <div class="security-label">密钥验证</div>
+                <div class="security-label">{{ $t('user.profile.keyAuth') }}</div>
                 <n-tag :type="securityStatus.keyAuth ? 'success' : 'warning'">
-                  {{ securityStatus.keyAuth ? '已设置' : '未设置' }}
+                  {{ securityStatus.keyAuth ? $t('user.profile.configured') : $t('user.profile.notConfigured') }}
                 </n-tag>
               </div>
             </n-gi>
@@ -509,10 +509,10 @@
     <n-modal
       v-model:show="showFaceMatchModal"
       preset="dialog"
-      title="人脸比对记录"
+      :title="$t('user.profile.faceMatchLogs')"
     >
       <div class="face-match-logs">
-        <n-empty v-if="!faceMatchLogs.length" description="暂无记录" />
+        <n-empty v-if="!faceMatchLogs.length" :description="$t('user.profile.noRecords')" />
         <div v-else class="space-y-4">
           <div
             v-for="log in faceMatchLogs"
@@ -526,7 +526,7 @@
               }}</span>
             </div>
             <div class="mt-1 text-sm text-gray-600">
-              相似度: {{ (log.confidence * 100).toFixed(1) }}% | IP:
+              {{ $t('user.profile.similarity') }}: {{ (log.confidence * 100).toFixed(1) }}% | IP:
               {{ log.ipAddress }}
             </div>
           </div>
@@ -534,23 +534,23 @@
       </div>
 
       <template #action>
-        <n-button @click="showFaceMatchModal = false">关闭</n-button>
+        <n-button @click="showFaceMatchModal = false">{{ $t('common.close') }}</n-button>
       </template>
     </n-modal>
 
     <!-- Photo Preview Modal -->
-    <n-modal v-model:show="showPhotoPreview" preset="dialog" title="身份证照片">
+    <n-modal v-model:show="showPhotoPreview" preset="dialog" :title="$t('user.profile.idPhoto')">
       <div class="photo-preview">
         <img
           v-if="profile.idPhotoUrl"
           :src="profile.idPhotoUrl"
-          alt="身份证照片"
+          :alt="$t('user.profile.idPhoto')"
           class="mx-auto max-h-96 max-w-full"
         />
       </div>
 
       <template #action>
-        <n-button @click="showPhotoPreview = false">关闭</n-button>
+        <n-button @click="showPhotoPreview = false">{{ $t('common.close') }}</n-button>
       </template>
     </n-modal>
 
@@ -558,25 +558,27 @@
     <n-modal
       v-model:show="showProfilePhotoPreview"
       preset="dialog"
-      title="个人头像"
+      :title="$t('user.profile.profilePhoto')"
     >
       <div class="profile-photo-preview">
         <img
           v-if="profile.idPhotoUrl"
           :src="profile.idPhotoUrl"
-          alt="个人头像"
+          :alt="$t('user.profile.profilePhoto')"
           class="mx-auto max-h-96 max-w-full rounded-lg"
         />
       </div>
 
       <template #action>
-        <n-button @click="showProfilePhotoPreview = false">关闭</n-button>
+        <n-button @click="showProfilePhotoPreview = false">{{ $t('common.close') }}</n-button>
       </template>
     </n-modal>
   </div>
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, computed, onMounted } from 'vue';
 import {
   NCard,
@@ -659,21 +661,21 @@ const editingValue = ref('');
 const editingDateValue = ref<number | null>(null);
 
 // Options
-const nationalityOptions = [
-  { label: '中国', value: '中国' },
-  { label: '巴西', value: '巴西' },
-  { label: '美国', value: '美国' },
-  { label: '英国', value: '英国' },
-  { label: '日本', value: '日本' },
-  { label: '韩国', value: '韩国' },
-  { label: '其他', value: '其他' },
-];
+const nationalityOptions = computed(() => [
+  { label: $t('user.profile.nationalityChina'), value: '中国' },
+  { label: $t('user.profile.nationalityBrazil'), value: '巴西' },
+  { label: $t('user.profile.nationalityUsa'), value: '美国' },
+  { label: $t('user.profile.nationalityUk'), value: '英国' },
+  { label: $t('user.profile.nationalityJapan'), value: '日本' },
+  { label: $t('user.profile.nationalityKorea'), value: '韩国' },
+  { label: $t('user.profile.nationalityOther'), value: '其他' },
+]);
 
-const genderOptions = [
-  { label: '男', value: '男' },
-  { label: '女', value: '女' },
-  { label: '其他', value: '其他' },
-];
+const genderOptions = computed(() => [
+  { label: $t('user.profile.genderMale'), value: '男' },
+  { label: $t('user.profile.genderFemale'), value: '女' },
+  { label: $t('user.profile.genderOther'), value: '其他' },
+]);
 
 // Computed
 const maskedIdNumber = computed(() => {
@@ -692,7 +694,7 @@ const loadProfile = async () => {
     const response = await getUserProfileApi(props.userId);
     profile.value = response;
   } catch (error) {
-    message.error('获取个人资料失败');
+    message.error($t('user.profile.loadFailed'));
     console.error('Error loading profile:', error);
   } finally {
     loading.value = false;
@@ -710,7 +712,7 @@ const loadSecurityStatus = async () => {
       keyAuth: response.isWithdrawalPasswordSet || false, // Using withdrawal password as "key auth"
     };
   } catch (error) {
-    message.error('获取安全状态失败');
+    message.error($t('user.profile.loadSecurityFailed'));
     console.error('Error loading security status:', error);
   }
 };
@@ -720,7 +722,7 @@ const loadFaceMatchLogs = async () => {
     const response = await getFaceMatchLogsApi(props.userId);
     faceMatchLogs.value = response;
   } catch (error) {
-    message.error('获取人脸比对记录失败');
+    message.error($t('user.profile.loadFaceMatchFailed'));
     console.error('Error loading face match logs:', error);
   }
 };
@@ -749,9 +751,9 @@ const handleSaveField = async () => {
 
     editingField.value = null;
     editingValue.value = '';
-    message.success('更新成功');
+    message.success($t('user.profile.updateSuccess'));
   } catch (error) {
-    message.error('更新失败');
+    message.error($t('user.profile.updateFailed'));
     console.error('Error updating profile:', error);
   }
 };
@@ -776,9 +778,9 @@ const handleSaveDateField = async () => {
 
     editingField.value = null;
     editingDateValue.value = null;
-    message.success('更新成功');
+    message.success($t('user.profile.updateSuccess'));
   } catch (error) {
-    message.error('更新失败');
+    message.error($t('user.profile.updateFailed'));
     console.error('Error updating profile date:', error);
   }
 };
@@ -799,9 +801,9 @@ const handlePhotoUpload = async ({ file }: { file: UploadFileInfo }) => {
   try {
     const response = await uploadIdPhotoApi(props.userId, file.file);
     profile.value.idPhotoUrl = response.photoUrl;
-    message.success('照片上传成功');
+    message.success($t('user.profile.photoUploadSuccess'));
   } catch (error) {
-    message.error('照片上传失败');
+    message.error($t('user.profile.photoUploadFailed'));
     console.error('Error uploading photo:', error);
   }
 };
@@ -812,9 +814,9 @@ const handleProfilePhotoUpload = async ({ file }: { file: UploadFileInfo }) => {
   try {
     const response = await uploadIdPhotoApi(props.userId, file.file);
     profile.value.idPhotoUrl = response.photoUrl;
-    message.success('头像上传成功');
+    message.success($t('user.profile.avatarUploadSuccess'));
   } catch (error) {
-    message.error('头像上传失败');
+    message.error($t('user.profile.avatarUploadFailed'));
     console.error('Error uploading profile photo:', error);
   }
 };
@@ -829,9 +831,9 @@ const handleSaveAllProfile = async () => {
       gender: updateParams.gender === '' ? undefined : updateParams.gender,
     };
     await updateUserProfileApi(props.userId, params);
-    message.success('保存成功');
+    message.success($t('user.profile.saveSuccess'));
   } catch (error) {
-    message.error('保存失败');
+    message.error($t('user.profile.saveFailed'));
     console.error('Error saving profile:', error);
   }
 };

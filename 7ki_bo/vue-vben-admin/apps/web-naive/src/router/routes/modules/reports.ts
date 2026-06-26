@@ -6,7 +6,7 @@ const routes: RouteRecordRaw[] = [
       icon: 'ic:baseline-bar-chart',
       keepAlive: true,
       order: 400,
-      title: '报表',
+      title: 'page.menu.reports',
     },
     name: 'Reports',
     path: '/reports',
@@ -14,7 +14,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '运营统计',
+          title: 'page.menu.operationsStatistics',
         },
         name: 'OperationsStatistics',
         path: '/reports/operations-statistics',

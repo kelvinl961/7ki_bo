@@ -3,7 +3,7 @@
     v-model:show="visibleModel"
     :mask-closable="false"
     preset="card"
-    :title="isEdit ? '编辑提现账号' : '添加提现账号'"
+    :title="isEdit ? $t('user.withdrawAccount.editTitle') : $t('user.withdrawAccount.addTitle')"
     style="width: 600px"
     size="large"
     @close="handleClose"
@@ -16,80 +16,80 @@
       label-width="120"
       require-mark-placement="right-hanging"
     >
-      <n-form-item label="币种" path="currency">
+      <n-form-item :label="$t('common.currency')" path="currency">
         <n-select
           v-model:value="formData.currency"
-          placeholder="选择币种"
+          :placeholder="$t('user.withdrawAccount.selectCurrency')"
           :options="currencyOptions"
           :disabled="isEdit"
         />
       </n-form-item>
 
-      <n-form-item label="提现方式" path="methodType">
+      <n-form-item :label="$t('user.withdrawAccount.withdrawMethod')" path="methodType">
         <n-select
           v-model:value="formData.methodType"
-          placeholder="选择提现方式"
+          :placeholder="$t('user.withdrawAccount.selectMethod')"
           :options="methodTypeOptions"
           @update:value="handleMethodTypeChange"
         />
       </n-form-item>
 
-      <n-form-item label="账户类型" path="accountType">
+      <n-form-item :label="$t('user.withdrawAccount.accountType')" path="accountType">
         <n-select
           v-model:value="formData.accountType"
-          placeholder="选择账户类型"
+          :placeholder="$t('user.withdrawAccount.selectAccountType')"
           :options="currentAccountTypeOptions"
         />
       </n-form-item>
 
-      <n-form-item label="提现账号/地址" path="accountValue">
+      <n-form-item :label="$t('user.withdrawAccount.withdrawAddress')" path="accountValue">
         <n-input
           v-model:value="formData.accountValue"
-          :placeholder="getAccountValuePlaceholder()"
+          :placeholder="accountValuePlaceholder"
           clearable
         />
       </n-form-item>
 
-      <n-form-item label="银行户名" path="bankHolderName">
+      <n-form-item :label="$t('user.withdrawAccount.bankHolderName')" path="bankHolderName">
         <n-input
           v-model:value="formData.bankHolderName"
-          placeholder="请输入银行账户持有人姓名"
+          :placeholder="$t('user.withdrawAccount.enterBankHolder')"
           clearable
         />
       </n-form-item>
 
       <!-- Bank specific fields -->
       <template v-if="isBankAccountMethod">
-        <n-form-item label="银行代码" path="bankCode">
+        <n-form-item :label="$t('user.withdrawAccount.bankCodeLabel')" path="bankCode">
           <n-input
             v-model:value="formData.bankCode"
-            placeholder="输入银行代码（可选）"
+            :placeholder="$t('user.withdrawAccount.enterBankCode')"
             clearable
           />
         </n-form-item>
 
-        <n-form-item label="银行名称" path="bankName">
+        <n-form-item :label="$t('user.withdrawAccount.bankNameLabel')" path="bankName">
           <n-input
             v-model:value="formData.bankName"
-            placeholder="输入银行名称"
+            :placeholder="$t('user.withdrawAccount.enterBankName')"
             clearable
           />
         </n-form-item>
 
-        <n-form-item label="用户行号/SC码" path="bankRouting">
+        <n-form-item :label="$t('user.withdrawAccount.bankRouting')" path="bankRouting">
           <n-input
             v-model:value="formData.bankRouting"
-            placeholder="输入银行路由代码（可选）"
+            :placeholder="$t('user.withdrawAccount.enterBankRouting')"
             clearable
           />
         </n-form-item>
       </template>
 
-      <n-form-item label="后台备注" path="backendNote">
+      <n-form-item :label="$t('user.withdrawAccount.backendNote')" path="backendNote">
         <n-input
           v-model:value="formData.backendNote"
           type="textarea"
-          placeholder="输入后台备注（可选）"
+          :placeholder="$t('user.withdrawAccount.enterBackendNoteOptional')"
           :rows="3"
         />
       </n-form-item>
@@ -97,9 +97,9 @@
 
     <template #action>
       <div class="flex gap-2">
-        <n-button @click="handleClose">取消</n-button>
+        <n-button @click="handleClose">{{ $t('common.cancel') }}</n-button>
         <n-button type="primary" :loading="loading" @click="handleSubmit">
-          {{ isEdit ? '更新' : '创建' }}
+          {{ isEdit ? $t('common.submit') : $t('common.create') }}
         </n-button>
       </div>
     </template>
@@ -107,6 +107,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, computed, reactive, watch } from 'vue';
 import {
   NModal,
@@ -172,70 +174,88 @@ const formData = reactive({
 });
 
 // Options
-const currencyOptions = [
-  { label: 'BRL (巴西雷亚尔)', value: 'BRL' },
-  { label: 'USD (美元)', value: 'USD' },
-  { label: 'EUR (欧元)', value: 'EUR' },
-];
+const currencyOptions = computed(() => [
+  { label: $t('user.withdrawAccount.currencyBrl'), value: 'BRL' },
+  { label: $t('user.withdrawAccount.currencyUsd'), value: 'USD' },
+  { label: $t('user.withdrawAccount.currencyEur'), value: 'EUR' },
+]);
 
-const methodTypeOptions = [
+const methodTypeOptions = computed(() => [
   { label: 'PIX', value: 'PIX' },
-  { label: '银行转账', value: 'BANK_TRANSFER' },
+  { label: $t('user.withdrawAccount.bankTransfer'), value: 'BANK_TRANSFER' },
   { label: 'TED', value: 'TED' },
   { label: 'DOC', value: 'DOC' },
-];
+]);
 
-const accountTypeOptionsMap = {
-  PIX: [
-    { label: '手机号', value: 'PHONE' },
-    { label: 'CPF', value: 'CPF' },
-    { label: '邮箱', value: 'EMAIL' },
-    { label: '随机密钥', value: 'RANDOM_KEY' },
-  ],
-  BANK_TRANSFER: [{ label: '银行账户', value: 'BANK_ACCOUNT' }],
-  TED: [{ label: '银行账户', value: 'BANK_ACCOUNT' }],
-  DOC: [{ label: '银行账户', value: 'BANK_ACCOUNT' }],
-};
+const pixAccountTypeOptions = computed(() => [
+  { label: $t('user.allMembers.phone'), value: 'PHONE' },
+  { label: 'CPF', value: 'CPF' },
+  { label: $t('user.contact.email'), value: 'EMAIL' },
+  { label: $t('user.withdrawAccount.randomKey'), value: 'RANDOM_KEY' },
+]);
+
+const bankAccountTypeOptions = computed(() => [
+  { label: $t('user.withdrawAccount.bankAccount'), value: 'BANK_ACCOUNT' },
+]);
 
 const currentAccountTypeOptions = computed(() => {
-  return (
-    accountTypeOptionsMap[
-      formData.methodType as keyof typeof accountTypeOptionsMap
-    ] || []
-  );
+  if (formData.methodType === 'PIX') {
+    return pixAccountTypeOptions.value;
+  }
+  if (['BANK_TRANSFER', 'TED', 'DOC'].includes(formData.methodType)) {
+    return bankAccountTypeOptions.value;
+  }
+  return [];
 });
 
 const isBankAccountMethod = computed(() =>
   ['BANK_TRANSFER', 'TED', 'DOC'].includes(formData.methodType),
 );
 
+const accountValuePlaceholder = computed(() => {
+  switch (formData.accountType) {
+    case 'PHONE':
+      return $t('user.withdrawAccount.placeholderPhone');
+    case 'CPF':
+      return $t('user.withdrawAccount.placeholderCpf');
+    case 'EMAIL':
+      return $t('user.withdrawAccount.placeholderEmail');
+    case 'RANDOM_KEY':
+      return $t('user.withdrawAccount.placeholderPixKey');
+    case 'BANK_ACCOUNT':
+      return $t('user.withdrawAccount.placeholderBankAccount');
+    default:
+      return $t('user.withdrawAccount.placeholderAddress');
+  }
+});
+
 // Form rules
-const formRules: FormRules = {
+const formRules = computed<FormRules>(() => ({
   currency: {
     required: true,
-    message: '请选择币种',
+    message: $t('user.withdrawAccount.currencyRequired'),
     trigger: 'blur',
   },
   methodType: {
     required: true,
-    message: '请选择提现方式',
+    message: $t('user.withdrawAccount.methodRequired'),
     trigger: 'blur',
   },
   accountType: {
     required: true,
-    message: '请选择账户类型',
+    message: $t('user.withdrawAccount.accountTypeRequired'),
     trigger: 'blur',
   },
   accountValue: {
     required: true,
-    message: '请输入提现账号/地址',
+    message: $t('user.withdrawAccount.addressRequired'),
     trigger: 'blur',
   },
   bankName: {
     required: false,
     validator: (_rule, value) => {
       if (isBankAccountMethod.value && !String(value || '').trim()) {
-        return new Error('银行转账时银行名称为必填项');
+        return new Error($t('user.withdrawAccount.bankNameRequired'));
       }
       return true;
     },
@@ -245,35 +265,17 @@ const formRules: FormRules = {
     required: true,
     validator: (_rule, value) => {
       if (!String(value || '').trim()) {
-        return new Error('请输入银行户名');
+        return new Error($t('user.withdrawAccount.holderRequired'));
       }
       return true;
     },
     trigger: 'blur',
   },
-};
+}));
 
 // Methods
 const handleMethodTypeChange = () => {
-  // Reset account type when method type changes
   formData.accountType = '';
-};
-
-const getAccountValuePlaceholder = () => {
-  switch (formData.accountType) {
-    case 'PHONE':
-      return '输入手机号码，如: +5511999999999';
-    case 'CPF':
-      return '输入CPF号码，如: 123.456.789-00';
-    case 'EMAIL':
-      return '输入邮箱地址，如: user@example.com';
-    case 'RANDOM_KEY':
-      return '输入PIX随机密钥';
-    case 'BANK_ACCOUNT':
-      return '输入银行账户号码';
-    default:
-      return '输入提现账号/地址';
-  }
 };
 
 const resetForm = () => {
@@ -315,7 +317,7 @@ const handleSubmit = async () => {
     const bankHolderName = formData.bankHolderName.trim();
     const bankName = formData.bankName.trim();
     if (!bankHolderName) {
-      message.error('请输入银行户名');
+      message.error($t('user.withdrawAccount.holderRequired'));
       return;
     }
 
@@ -323,7 +325,6 @@ const handleSubmit = async () => {
     loading.value = true;
 
     if (isEdit.value && props.editData) {
-      // Update existing account
       const updateParams: UpdateWithdrawAccountParams = {
         methodType: formData.methodType,
         accountType: formData.accountType,
@@ -336,9 +337,8 @@ const handleSubmit = async () => {
       };
 
       await updateWithdrawAccountApi(props.editData.id, updateParams);
-      message.success('提现账号更新成功');
+      message.success($t('user.withdrawAccount.updateSuccess'));
     } else {
-      // Create new account
       const createParams: CreateWithdrawAccountParams = {
         userId: props.userId,
         currency: formData.currency,
@@ -353,13 +353,17 @@ const handleSubmit = async () => {
       };
 
       await createWithdrawAccountApi(createParams);
-      message.success('提现账号创建成功');
+      message.success($t('user.withdrawAccount.createSuccess'));
     }
 
     emit('success');
     handleClose();
   } catch (error) {
-    message.error(isEdit.value ? '提现账号更新失败' : '提现账号创建失败');
+    message.error(
+      isEdit.value
+        ? $t('user.withdrawAccount.updateFailed')
+        : $t('user.withdrawAccount.createFailed'),
+    );
     console.error('Submit error:', error);
   } finally {
     loading.value = false;
@@ -371,7 +375,6 @@ const handleClose = () => {
   resetForm();
 };
 
-// Watch for edit data changes
 watch(() => props.editData, loadEditData, { immediate: true });
 watch(
   () => props.visible,

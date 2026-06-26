@@ -4,14 +4,14 @@
     <div class="mb-6">
       <div class="mb-4 flex items-center justify-between">
         <div>
-          <h1 class="text-2xl font-bold text-gray-800">活动中心</h1>
-          <p class="mt-1 text-gray-600">参与活动，赢取丰富奖励</p>
+          <h1 class="text-2xl font-bold text-gray-800">{{ $t('activity.userActivities.title') }}</h1>
+          <p class="mt-1 text-gray-600">{{ $t('activity.userActivities.subtitle') }}</p>
         </div>
         <n-button type="primary" @click="refreshData" :loading="loading">
           <template #icon>
             <n-icon><Refresh /></n-icon>
           </template>
-          刷新
+          {{ $t('activity.userActivities.refresh') }}
         </n-button>
       </div>
 
@@ -19,25 +19,28 @@
       <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
         <n-card>
           <n-statistic
-            label="今日参与"
+            :label="$t('activity.userActivities.todayParticipations')"
             :value="userStats.todayParticipations"
           />
         </n-card>
         <n-card>
           <n-statistic
-            label="总参与次数"
+            :label="$t('activity.userActivities.totalParticipations')"
             :value="userStats.totalParticipations"
           />
         </n-card>
         <n-card>
           <n-statistic
-            label="累计奖励"
+            :label="$t('activity.userActivities.totalRewards')"
             :value="userStats.totalRewardValue"
             :formatter="formatCurrency"
           />
         </n-card>
         <n-card>
-          <n-statistic label="可领取奖励" :value="availableRewards" />
+          <n-statistic
+            :label="$t('activity.userActivities.claimableRewards')"
+            :value="availableRewards"
+          />
         </n-card>
       </div>
     </div>
@@ -47,7 +50,7 @@
       <n-space>
         <n-select
           v-model:value="filters.type"
-          placeholder="选择活动类型"
+          :placeholder="$t('activity.userActivities.selectActivityType')"
           clearable
           style="width: 200px"
           :options="activityTypeOptions"
@@ -55,7 +58,7 @@
         />
         <n-select
           v-model:value="filters.category"
-          placeholder="选择分类"
+          :placeholder="$t('activity.userActivities.selectCategory')"
           clearable
           style="width: 150px"
           :options="categoryOptions"
@@ -63,7 +66,7 @@
         />
         <n-select
           v-model:value="filters.status"
-          placeholder="状态筛选"
+          :placeholder="$t('activity.userActivities.statusFilter')"
           clearable
           style="width: 150px"
           :options="statusOptions"
@@ -75,13 +78,13 @@
     <!-- Activity Cards Grid -->
     <div v-if="loading" class="py-8 text-center">
       <n-spin size="large" />
-      <p class="mt-4 text-gray-500">加载活动数据中...</p>
+      <p class="mt-4 text-gray-500">{{ $t('activity.userActivities.loadingActivities') }}</p>
     </div>
 
     <div v-else-if="filteredActivities.length === 0" class="py-12 text-center">
-      <n-empty description="暂无可参与的活动">
+      <n-empty :description="$t('activity.userActivities.noActivities')">
         <template #extra>
-          <n-button @click="refreshData">重新加载</n-button>
+          <n-button @click="refreshData">{{ $t('activity.userActivities.reload') }}</n-button>
         </template>
       </n-empty>
     </div>
@@ -111,7 +114,7 @@
         <!-- Activity Progress -->
         <div v-if="activity.userStatus" class="mb-4">
           <div class="mb-2 flex items-center justify-between">
-            <span class="text-sm text-gray-600">今日进度</span>
+            <span class="text-sm text-gray-600">{{ $t('activity.userActivities.todayProgress') }}</span>
             <span class="text-sm font-medium">
               {{ activity.userStatus.summary.claimedToday }} /
               {{ getMaxDailyClaims(activity) }}
@@ -130,13 +133,13 @@
             <div class="text-lg font-semibold text-blue-600">
               {{ formatCurrency(getActivityReward(activity)) }}
             </div>
-            <div class="text-xs text-gray-500">奖励金额</div>
+            <div class="text-xs text-gray-500">{{ $t('activity.userActivities.rewardAmount') }}</div>
           </div>
           <div class="text-center">
             <div class="text-lg font-semibold text-green-600">
               {{ activity.userStatus?.summary.claimedTotal || 0 }}
             </div>
-            <div class="text-xs text-gray-500">已领取次数</div>
+            <div class="text-xs text-gray-500">{{ $t('activity.userActivities.claimedCount') }}</div>
           </div>
         </div>
 
@@ -152,17 +155,17 @@
             <template #icon>
               <n-icon><Gift /></n-icon>
             </template>
-            立即领取
+            {{ $t('activity.userActivities.claimNow') }}
           </n-button>
           <n-button
             v-else-if="activity.userStatus?.summary.eligible === false"
             block
             disabled
           >
-            {{ activity.userStatus.summary.reason || '暂不可领取' }}
+            {{ activity.userStatus.summary.reason || $t('activity.userActivities.notClaimable') }}
           </n-button>
           <n-button v-else block @click.stop="openActivityModal(activity)">
-            查看详情
+            {{ $t('activity.userActivities.viewDetails') }}
           </n-button>
         </div>
 
@@ -188,7 +191,7 @@
     <n-modal v-model:show="showClaimResult">
       <n-card
         style="width: 400px"
-        title="领取结果"
+        :title="$t('activity.userActivities.claimResult')"
         :bordered="false"
         size="huge"
         role="dialog"
@@ -199,10 +202,12 @@
             <n-icon size="64" color="#52c41a">
               <CheckmarkCircle />
             </n-icon>
-            <h3 class="mb-2 mt-3 text-lg font-semibold">领取成功！</h3>
+            <h3 class="mb-2 mt-3 text-lg font-semibold">{{ $t('activity.userActivities.claimSuccess') }}</h3>
             <p class="text-gray-600">
-              获得奖励：{{
-                formatCurrency(claimResult.data?.claim.amount || 0)
+              {{
+                $t('activity.userActivities.rewardReceived', [
+                  formatCurrency(claimResult.data?.claim.amount || 0),
+                ])
               }}
             </p>
           </div>
@@ -210,13 +215,13 @@
             <n-icon size="64" color="#f5222d">
               <CloseCircle />
             </n-icon>
-            <h3 class="mb-2 mt-3 text-lg font-semibold">领取失败</h3>
-            <p class="text-gray-600">{{ claimResult?.error || '未知错误' }}</p>
+            <h3 class="mb-2 mt-3 text-lg font-semibold">{{ $t('activity.userActivities.claimFailed') }}</h3>
+            <p class="text-gray-600">{{ claimResult?.error || $t('activity.userActivities.unknownError') }}</p>
           </div>
         </div>
         <template #footer>
           <div class="text-center">
-            <n-button @click="showClaimResult = false">确定</n-button>
+            <n-button @click="showClaimResult = false">{{ $t('activity.userActivities.confirm') }}</n-button>
           </div>
         </template>
       </n-card>
@@ -225,6 +230,7 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue';
 import {
   NCard,
@@ -320,28 +326,28 @@ const availableRewards = computed(() => {
 });
 
 // Options for filters
-const activityTypeOptions = [
-  { label: '充值活动', value: 'recharge' },
-  { label: '签到活动', value: 'checkin' },
-  { label: '打码活动', value: 'wagering' },
-  { label: '救援金', value: 'rescue' },
-  { label: '幸运转盘', value: 'luckyspin' },
-  { label: '红包活动', value: 'redpacket' },
-  { label: '新人活动', value: 'newbie' },
-];
+const activityTypeOptions = computed(() => [
+  { label: $t('activity.userActivities.typeRecharge'), value: 'recharge' },
+  { label: $t('activity.userActivities.typeCheckin'), value: 'checkin' },
+  { label: $t('activity.userActivities.typeWagering'), value: 'wagering' },
+  { label: $t('activity.userActivities.typeRescue'), value: 'rescue' },
+  { label: $t('activity.userActivities.typeLuckySpin'), value: 'luckyspin' },
+  { label: $t('activity.userActivities.typeRedpacket'), value: 'redpacket' },
+  { label: $t('activity.userActivities.typeNewbie'), value: 'newbie' },
+]);
 
-const categoryOptions = [
-  { label: '充值类', value: 'deposit' },
-  { label: '游戏类', value: 'gaming' },
-  { label: '福利类', value: 'welfare' },
-  { label: '推广类', value: 'promotion' },
-];
+const categoryOptions = computed(() => [
+  { label: $t('activity.userActivities.categoryDeposit'), value: 'deposit' },
+  { label: $t('activity.userActivities.categoryGaming'), value: 'gaming' },
+  { label: $t('activity.userActivities.categoryWelfare'), value: 'welfare' },
+  { label: $t('activity.userActivities.categoryPromotion'), value: 'promotion' },
+]);
 
-const statusOptions = [
-  { label: '可领取', value: 'eligible' },
-  { label: '已领取', value: 'claimed' },
-  { label: '未解锁', value: 'locked' },
-];
+const statusOptions = computed(() => [
+  { label: $t('activity.userActivities.statusEligible'), value: 'eligible' },
+  { label: $t('activity.userActivities.statusClaimed'), value: 'claimed' },
+  { label: $t('activity.userActivities.statusLocked'), value: 'locked' },
+]);
 
 // Methods
 const loadActivities = async () => {
@@ -369,7 +375,7 @@ const loadActivities = async () => {
     );
   } catch (error) {
     console.error('Failed to load activities:', error);
-    message.error('加载活动列表失败');
+    message.error($t('activity.userActivities.loadActivitiesFailed'));
   } finally {
     loading.value = false;
   }
@@ -429,12 +435,12 @@ const quickClaim = async (activity: UserActivity) => {
     await refreshActivityStatus(activity.id);
     await loadUserStats();
 
-    message.success('奖励领取成功！');
+    message.success($t('activity.userActivities.claimSuccessToast'));
   } catch (error) {
     console.error('Claim failed:', error);
     claimResult.value = {
       success: false,
-      error: error instanceof Error ? error.message : '领取失败',
+      error: error instanceof Error ? error.message : $t('activity.userActivities.claimFailed'),
     };
     showClaimResult.value = true;
   } finally {
@@ -480,10 +486,10 @@ const getActivityStatusType = (activity: UserActivity) => {
 };
 
 const getActivityStatusText = (activity: UserActivity): string => {
-  if (!activity.userStatus) return '加载中';
-  if (activity.userStatus.summary.eligible) return '可领取';
-  if (activity.userStatus.summary.claimedToday > 0) return '已领取';
-  return '暂不可用';
+  if (!activity.userStatus) return $t('activity.userActivities.loading');
+  if (activity.userStatus.summary.eligible) return $t('activity.userActivities.claimable');
+  if (activity.userStatus.summary.claimedToday > 0) return $t('activity.userActivities.claimed');
+  return $t('activity.userActivities.unavailable');
 };
 
 const getMaxDailyClaims = (activity: UserActivity): number => {
@@ -516,13 +522,15 @@ const getTimeRemaining = (endTime: string): string => {
   const now = new Date();
   const diff = end.getTime() - now.getTime();
 
-  if (diff <= 0) return '已结束';
+  if (diff <= 0) return $t('activity.userActivities.ended');
 
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
   const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 
-  if (days > 0) return `剩余 ${days} 天 ${hours} 小时`;
-  return `剩余 ${hours} 小时`;
+  if (days > 0) {
+    return $t('activity.userActivities.timeRemainingDays', { days, hours });
+  }
+  return $t('activity.userActivities.timeRemainingHours', { hours });
 };
 
 const formatCurrency = (amount: number): string => {

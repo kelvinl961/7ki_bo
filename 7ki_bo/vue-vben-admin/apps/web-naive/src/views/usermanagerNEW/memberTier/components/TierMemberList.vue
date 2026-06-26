@@ -3,16 +3,18 @@
     <!-- Header -->
     <div class="mb-4 flex items-center justify-between">
       <div>
-        <h3 class="text-lg font-semibold">{{ tierName }} - 会员列表</h3>
+        <h3 class="text-lg font-semibold">
+          {{ tierName }} - {{ $t('user.tierMemberList.memberList') }}
+        </h3>
         <p class="text-sm text-gray-600">
-          共 {{ pagination.itemCount }} 名会员
+          {{ $t('user.tierMemberList.memberCount', [paginationState.itemCount]) }}
         </p>
       </div>
       <n-button @click="handleRefresh">
         <template #icon>
           <n-icon><RefreshIcon /></n-icon>
         </template>
-        刷新
+        {{ $t('common.refresh') }}
       </n-button>
     </div>
 
@@ -20,7 +22,7 @@
     <div class="mb-4">
       <n-input
         v-model:value="searchKeyword"
-        placeholder="搜索会员账号、姓名或邮箱..."
+        :placeholder="$t('user.tierMemberList.searchPlaceholder')"
         clearable
         @input="handleSearch"
       >
@@ -46,7 +48,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, h } from 'vue';
+import { $t } from '@vben/locales';
+
+import { ref, reactive, computed, onMounted, h } from 'vue';
 import {
   NDataTable,
   NButton,
@@ -78,31 +82,36 @@ interface Props {
 const props = defineProps<Props>();
 const message = useMessage();
 
-// Reactive data
 const loading = ref(false);
 const tableData = ref<TierMember[]>([]);
 const searchKeyword = ref('');
 
-const pagination: PaginationProps = reactive({
+const paginationState = reactive({
   page: 1,
   pageSize: 10,
   itemCount: 0,
+});
+
+const pagination = computed<PaginationProps>(() => ({
+  page: paginationState.page,
+  pageSize: paginationState.pageSize,
+  itemCount: paginationState.itemCount,
   showSizePicker: true,
   pageSizes: [10, 20, 50],
-  prefix: (info) => `共 ${info.itemCount || 0} 名会员`,
+  prefix: (info) =>
+    $t('user.tierMemberList.memberCount', [info.itemCount || 0]),
   onUpdatePage: (page: number) => {
-    pagination.page = page;
+    paginationState.page = page;
     loadData();
   },
   onUpdatePageSize: (pageSize: number) => {
-    pagination.pageSize = pageSize;
-    pagination.page = 1;
+    paginationState.pageSize = pageSize;
+    paginationState.page = 1;
     loadData();
   },
-});
+}));
 
-// Table columns
-const columns: DataTableColumns<TierMember> = [
+const columns = computed<DataTableColumns<TierMember>>(() => [
   {
     title: 'ID',
     key: 'id',
@@ -110,7 +119,7 @@ const columns: DataTableColumns<TierMember> = [
     align: 'center',
   },
   {
-    title: '会员账号',
+    title: $t('common.memberAccount'),
     key: 'account',
     width: 120,
     render: (row) => {
@@ -121,13 +130,13 @@ const columns: DataTableColumns<TierMember> = [
     },
   },
   {
-    title: '姓名',
+    title: $t('user.tierMemberList.realName'),
     key: 'name',
     width: 100,
     render: (row) => row.name || h('span', { class: 'text-gray-400' }, '-'),
   },
   {
-    title: '邮箱',
+    title: $t('user.tierMemberList.email'),
     key: 'email',
     width: 200,
     ellipsis: {
@@ -135,7 +144,7 @@ const columns: DataTableColumns<TierMember> = [
     },
   },
   {
-    title: '账户余额',
+    title: $t('user.tierMemberList.accountBalance'),
     key: 'balance',
     width: 120,
     align: 'right',
@@ -150,7 +159,7 @@ const columns: DataTableColumns<TierMember> = [
     },
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 100,
     align: 'center',
@@ -162,7 +171,7 @@ const columns: DataTableColumns<TierMember> = [
           {
             icon: () =>
               h(NIcon, { size: 14 }, { default: () => h(BannedIcon) }),
-            default: () => '已封禁',
+            default: () => $t('user.tierMemberList.banned'),
           },
         );
       }
@@ -174,7 +183,7 @@ const columns: DataTableColumns<TierMember> = [
           {
             icon: () =>
               h(NIcon, { size: 14 }, { default: () => h(VerifiedIcon) }),
-            default: () => '已验证',
+            default: () => $t('user.tierMemberList.verified'),
           },
         );
       }
@@ -183,27 +192,31 @@ const columns: DataTableColumns<TierMember> = [
         NTag,
         { type: 'warning', size: 'small' },
         {
-          default: () => '未验证',
+          default: () => $t('user.tierMemberList.unverified'),
         },
       );
     },
   },
   {
-    title: '注册时间',
+    title: $t('user.tierMemberList.registrationTime'),
     key: 'createdAt',
     width: 150,
     render: (row) => {
       const date = new Date(row.createdAt);
-      return h('span', { class: 'text-sm' }, date.toLocaleDateString('zh-CN'));
+      return h('span', { class: 'text-sm' }, date.toLocaleDateString());
     },
   },
   {
-    title: '最后登录',
+    title: $t('user.tierMemberList.lastLogin'),
     key: 'lastLogin',
     width: 150,
     render: (row) => {
       if (!row.lastLogin) {
-        return h('span', { class: 'text-gray-400 text-sm' }, '从未登录');
+        return h(
+          'span',
+          { class: 'text-gray-400 text-sm' },
+          $t('user.tierMemberList.neverLoggedIn'),
+        );
       }
       const date = new Date(row.lastLogin);
       const now = new Date();
@@ -217,42 +230,40 @@ const columns: DataTableColumns<TierMember> = [
       else if (diffDays <= 30) color = 'text-orange-600';
       else color = 'text-red-600';
 
+      let relativeLabel: string;
+      if (diffDays === 0) {
+        relativeLabel = $t('user.tierMemberList.today');
+      } else if (diffDays === 1) {
+        relativeLabel = $t('user.tierMemberList.yesterday');
+      } else {
+        relativeLabel = $t('user.tierMemberList.daysAgo', [diffDays]);
+      }
+
       return h('div', { class: 'text-sm' }, [
-        h('div', { class: color }, date.toLocaleDateString('zh-CN')),
-        h(
-          'div',
-          { class: 'text-xs text-gray-500' },
-          diffDays === 0 ? '今天' : diffDays === 1 ? '昨天' : `${diffDays}天前`,
-        ),
+        h('div', { class: color }, date.toLocaleDateString()),
+        h('div', { class: 'text-xs text-gray-500' }, relativeLabel),
       ]);
     },
   },
-];
+]);
 
-// Methods
 const loadData = async () => {
   if (!props.tierId) return;
 
   loading.value = true;
   try {
     const params: TierMembersParams = {
-      page: pagination.page,
-      pageSize: pagination.pageSize,
+      page: paginationState.page,
+      pageSize: paginationState.pageSize,
       search: searchKeyword.value || undefined,
     };
 
-    console.log('🔍 Loading tier members with params:', params);
     const response = await getTierMembersApi(props.tierId, params);
-    console.log('📦 Raw response:', response);
-    console.log('📊 Response list length:', response.list?.length);
-    console.log('📊 Response pagination:', response.pagination);
 
     tableData.value = response.list || [];
-    pagination.itemCount = response.pagination?.total || 0;
-
-    console.log('✅ Set itemCount to:', pagination.itemCount);
+    paginationState.itemCount = response.pagination?.total || 0;
   } catch (error) {
-    message.error('获取会员列表失败');
+    message.error($t('user.tierMemberList.loadFailed'));
     console.error('Error loading tier members:', error);
   } finally {
     loading.value = false;
@@ -260,7 +271,7 @@ const loadData = async () => {
 };
 
 const handleSearch = () => {
-  pagination.page = 1;
+  paginationState.page = 1;
   loadData();
 };
 
@@ -268,7 +279,6 @@ const handleRefresh = () => {
   loadData();
 };
 
-// Lifecycle
 onMounted(() => {
   loadData();
 });

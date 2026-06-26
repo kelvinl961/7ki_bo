@@ -98,7 +98,7 @@
                   <span class="field-label">最高限额 (BRL)</span>
                 </n-form-item-gi>
                 <n-form-item-gi :span="2" label-width="0">
-                  <span class="field-label">操作</span>
+                  <span class="field-label">{{ $t('common.actions') }}</span>
                 </n-form-item-gi>
               </n-grid>
               <!-- Data rows -->
@@ -179,7 +179,7 @@
                   <span class="field-label">单位</span>
                 </n-form-item-gi>
                 <n-form-item-gi :span="3" label-width="0">
-                  <span class="field-label">操作</span>
+                  <span class="field-label">{{ $t('common.actions') }}</span>
                 </n-form-item-gi>
               </n-grid>
               <!-- Data rows -->
@@ -311,7 +311,7 @@
                 style="width: 100%"
               />
             </n-form-item-gi>
-            <n-form-item-gi label="状态" path="status">
+            <n-form-item-gi :label="$t('common.status')" path="status">
               <n-select
                 v-model:value="advancedFormData.status"
                 :options="channelStatusOptions"
@@ -327,7 +327,7 @@
             />
           </n-form-item>
 
-          <n-form-item label="备注" path="remarks">
+          <n-form-item :label="$t('common.remark')" path="remarks">
             <n-input
               v-model:value="advancedFormData.remarks"
               type="textarea"
@@ -427,7 +427,7 @@
 
     <template #action>
       <div class="flex justify-end gap-3">
-        <n-button @click="$emit('update:visible', false)">取消</n-button>
+        <n-button @click="$emit('update:visible', false)">{{ $t('common.cancel') }}</n-button>
         <n-button type="primary" :loading="loading" @click="handleConfirm"
           >确定</n-button
         >
@@ -471,6 +471,8 @@
 </style>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, watch } from 'vue';
 import {
   NModal,

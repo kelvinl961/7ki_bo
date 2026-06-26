@@ -5,24 +5,24 @@
       <div class="mb-4">
         <n-form inline>
           <!-- Time Granularity Selector -->
-          <n-form-item label="快捷选择">
+          <n-form-item :label="$t('reports.quickSelect')">
             <n-radio-group
               v-model:value="timeGranularity"
               @update:value="onTimeGranularityChange"
             >
-              <n-radio-button value="day">日</n-radio-button>
-              <n-radio-button value="week">周</n-radio-button>
-              <n-radio-button value="month">月</n-radio-button>
+              <n-radio-button value="day">{{ $t('common.day') }}</n-radio-button>
+              <n-radio-button value="week">{{ $t('common.week') }}</n-radio-button>
+              <n-radio-button value="month">{{ $t('common.month') }}</n-radio-button>
             </n-radio-group>
           </n-form-item>
 
           <!-- Date Range Picker -->
-          <n-form-item :label="`日期范围 (${currentTimezone})`">
+          <n-form-item :label="dateRangeLabel">
             <n-date-picker
               v-model:value="dateRange"
               type="daterange"
               :shortcuts="dateShortcuts as any"
-              :placeholder="`选择开始和结束日期 (${currentTimezone})`"
+              :placeholder="dateRangePlaceholder"
               format="yyyy-MM-dd"
               style="width: 300px"
               clearable
@@ -30,11 +30,11 @@
           </n-form-item>
 
           <!-- Currency Selector -->
-          <n-form-item label="币种">
+          <n-form-item :label="$t('common.currency')">
             <n-select
               v-model:value="currency"
               :options="currencyOptions"
-              placeholder="选择币种"
+              :placeholder="$t('reports.selectCurrency')"
               style="width: 120px"
             />
           </n-form-item>
@@ -42,11 +42,11 @@
           <!-- Action Buttons -->
           <n-form-item>
             <n-button type="primary" @click="fetchData" :loading="loading">
-              搜索
+              {{ $t('common.search') }}
             </n-button>
           </n-form-item>
           <n-form-item>
-            <n-button @click="resetFilters"> 重置 </n-button>
+            <n-button @click="resetFilters"> {{ $t('common.reset') }} </n-button>
           </n-form-item>
           <n-form-item>
             <n-button
@@ -54,7 +54,7 @@
               @click="exportToExcel"
               :loading="exporting"
             >
-              导出Excel
+              {{ $t('reports.exportExcel') }}
             </n-button>
           </n-form-item>
         </n-form>
@@ -64,9 +64,9 @@
       <n-card size="small">
         <template #header>
           <n-space justify="space-between">
-            <span>数据列表</span>
+            <span>{{ $t('reports.dataList') }}</span>
             <span style="font-size: 13px; color: #666">
-              共 {{ reportData?.length || 0 }} 条记录
+              {{ $t('reports.totalRecords', [reportData?.length || 0]) }}
             </span>
           </n-space>
         </template>
@@ -74,7 +74,7 @@
         <!-- Loading State -->
         <div v-if="loading" class="py-8 text-center">
           <n-spin size="large" />
-          <p class="mt-4">正在加载数据...</p>
+          <p class="mt-4">{{ $t('reports.loadingData') }}</p>
         </div>
 
         <!-- Error State -->
@@ -115,13 +115,15 @@
         </div>
 
         <!-- Empty State -->
-        <n-empty v-else description="暂无数据" style="padding: 40px 0" />
+        <n-empty v-else :description="$t('common.noData')" style="padding: 40px 0" />
       </n-card>
     </n-card>
   </div>
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, onMounted, onUnmounted, computed, h, watch } from 'vue';
 import {
   NCard,
@@ -179,7 +181,7 @@ const exportTableData = computed(() => {
     rows.push({
       ...(totalData.value as any),
       isTotal: true,
-      date: totalData.value.date || '总计',
+      date: totalData.value.date || $t('common.total'),
     });
   }
   return rows;
@@ -199,7 +201,15 @@ const opsTableMaxHeight = computed(
 );
 
 const paginationPrefix = (info: { itemCount?: number }) =>
-  `共 ${info.itemCount ?? 0} 条`;
+  $t('reports.paginationTotal', [info.itemCount ?? 0]);
+
+const dateRangeLabel = computed(() =>
+  $t('reports.dateRangeWithTimezone', [currentTimezone.value]),
+);
+
+const dateRangePlaceholder = computed(() =>
+  $t('reports.selectStartEndDate', [currentTimezone.value]),
+);
 
 function scrollOpsTableToTop() {
   const scrollEl = document.querySelector(
@@ -275,7 +285,7 @@ const dateShortcuts = computed(() => {
 
   if (timeGranularity.value === 'day') {
     return {
-      今天: (): [number, number] => {
+      [$t('common.today')]: (): [number, number] => {
         const startUTC = convertTimezoneToUTC(
           tzNow.year,
           tzNow.month,
@@ -296,7 +306,7 @@ const dateShortcuts = computed(() => {
         );
         return [startUTC.getTime(), endUTC.getTime()];
       },
-      昨天: (): [number, number] => {
+      [$t('reports.shortcuts.yesterday')]: (): [number, number] => {
         const yesterday = new Date(tzNow.year, tzNow.month - 1, tzNow.day);
         yesterday.setDate(yesterday.getDate() - 1);
         const startUTC = convertTimezoneToUTC(
@@ -319,7 +329,7 @@ const dateShortcuts = computed(() => {
         );
         return [startUTC.getTime(), endUTC.getTime()];
       },
-      最近3天: (): [number, number] => {
+      [$t('reports.shortcuts.last3Days')]: (): [number, number] => {
         const threeDaysAgo = new Date(tzNow.year, tzNow.month - 1, tzNow.day);
         threeDaysAgo.setDate(threeDaysAgo.getDate() - 2);
         const startUTC = convertTimezoneToUTC(
@@ -342,7 +352,7 @@ const dateShortcuts = computed(() => {
         );
         return [startUTC.getTime(), endUTC.getTime()];
       },
-      最近7天: (): [number, number] => {
+      [$t('reports.shortcuts.last7Days')]: (): [number, number] => {
         const sevenDaysAgo = new Date(tzNow.year, tzNow.month - 1, tzNow.day);
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
         const startUTC = convertTimezoneToUTC(
@@ -368,7 +378,7 @@ const dateShortcuts = computed(() => {
     };
   } else if (timeGranularity.value === 'week') {
     return {
-      上周: (): [number, number] => {
+      [$t('reports.shortcuts.lastWeek')]: (): [number, number] => {
         const now = new Date(tzNow.year, tzNow.month - 1, tzNow.day);
         const dayOfWeek = now.getDay();
         const daysFromMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
@@ -396,7 +406,7 @@ const dateShortcuts = computed(() => {
         );
         return [startUTC.getTime(), endUTC.getTime()];
       },
-      上上周: (): [number, number] => {
+      [$t('reports.shortcuts.weekBeforeLast')]: (): [number, number] => {
         const now = new Date(tzNow.year, tzNow.month - 1, tzNow.day);
         const dayOfWeek = now.getDay();
         const daysFromMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
@@ -424,7 +434,7 @@ const dateShortcuts = computed(() => {
         );
         return [startUTC.getTime(), endUTC.getTime()];
       },
-      最近4周: (): [number, number] => {
+      [$t('reports.shortcuts.last4Weeks')]: (): [number, number] => {
         const now = new Date(tzNow.year, tzNow.month - 1, tzNow.day);
         const dayOfWeek = now.getDay();
         const daysFromMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
@@ -455,7 +465,7 @@ const dateShortcuts = computed(() => {
     };
   } else if (timeGranularity.value === 'month') {
     return {
-      本月: (): [number, number] => {
+      [$t('common.thisMonth')]: (): [number, number] => {
         const startUTC = convertTimezoneToUTC(
           tzNow.year,
           tzNow.month,
@@ -476,7 +486,7 @@ const dateShortcuts = computed(() => {
         );
         return [startUTC.getTime(), endUTC.getTime()];
       },
-      上月: (): [number, number] => {
+      [$t('reports.shortcuts.lastMonth')]: (): [number, number] => {
         const lastMonth = tzNow.month === 1 ? 12 : tzNow.month - 1;
         const lastMonthYear = tzNow.month === 1 ? tzNow.year - 1 : tzNow.year;
         const lastDay = new Date(lastMonthYear, lastMonth, 0).getDate();
@@ -500,7 +510,7 @@ const dateShortcuts = computed(() => {
         );
         return [startUTC.getTime(), endUTC.getTime()];
       },
-      最近3个月: (): [number, number] => {
+      [$t('reports.shortcuts.last3Months')]: (): [number, number] => {
         const threeMonthsAgo =
           tzNow.month <= 3 ? tzNow.month + 9 : tzNow.month - 3;
         const threeMonthsAgoYear =
@@ -552,7 +562,7 @@ const operationsTableSummary: DataTableCreateSummary = () => {
   const summaryRow = {
     ...(total as Record<string, any>),
     isTotal: true,
-    date: '总计',
+    date: $t('common.total'),
   };
   const summary: Record<string, { value: unknown }> = {};
 
@@ -561,7 +571,7 @@ const operationsTableSummary: DataTableCreateSummary = () => {
     if (!key) return;
     if (key === 'date') {
       summary[key] = {
-        value: h('span', { style: { fontWeight: 'bold' } }, '总计'),
+        value: h('span', { style: { fontWeight: 'bold' } }, $t('common.total')),
       };
       return;
     }
@@ -672,10 +682,13 @@ const hasDataForCategory = (keys: string[]): boolean => {
 
 // Table columns with category grouping - dynamically hide unused categories
 const columns = computed<DataTableColumns>(() => {
+  const c = (key: string) => $t(`reports.columns.${key}`);
+  const g = (key: string) => $t(`reports.categories.${key}`);
+
   const baseColumns: DataTableColumns = [
     // Fixed columns
     {
-      title: '日期',
+      title: c('date'),
       key: 'date',
       width: 120,
       fixed: 'left',
@@ -715,18 +728,18 @@ const columns = computed<DataTableColumns>(() => {
       },
     },
     {
-      title: '币种',
+      title: $t('common.currency'),
       key: 'currency',
       width: 80,
     },
 
     // 会员(人) category - WITH HEADER
     {
-      title: '会员(人)',
+      title: g('memberPeople'),
       key: 'memberCategory',
       children: [
         {
-          title: '访问量',
+          title: c('visitCount'),
           key: 'visitCount',
           width: 100,
           sorter: true,
@@ -734,7 +747,7 @@ const columns = computed<DataTableColumns>(() => {
             renderNumericCell(row, 'visitCount', true, true), // isCount
         },
         {
-          title: '新增代理',
+          title: c('newAgents'),
           key: 'newAgents',
           width: 100,
           sorter: true,
@@ -742,7 +755,7 @@ const columns = computed<DataTableColumns>(() => {
             renderNumericCell(row, 'newAgents', false, true), // isCount
         },
         {
-          title: '注册',
+          title: c('registrations'),
           key: 'registrations',
           width: 100,
           sorter: true,
@@ -750,7 +763,7 @@ const columns = computed<DataTableColumns>(() => {
             renderNumericCell(row, 'registrations', true, true), // isCount
         },
         {
-          title: '首充',
+          title: c('firstDeposits'),
           key: 'firstDeposits',
           width: 100,
           sorter: true,
@@ -758,7 +771,7 @@ const columns = computed<DataTableColumns>(() => {
             renderNumericCell(row, 'firstDeposits', true, true), // isCount
         },
         {
-          title: '登录',
+          title: c('logins'),
           key: 'logins',
           width: 100,
           sorter: true,
@@ -769,18 +782,18 @@ const columns = computed<DataTableColumns>(() => {
 
     // 充提 category - WITH HEADER
     {
-      title: '充提',
+      title: g('depositWithdraw'),
       key: 'depositWithdrawCategory',
       children: [
         {
-          title: '首充金额',
+          title: c('firstDepositAmount'),
           key: 'firstDepositAmount',
           width: 120,
           sorter: true,
           render: (row: any) => renderNumericCell(row, 'firstDepositAmount'),
         },
         {
-          title: '首冲人均金额',
+          title: c('firstDepositPerCapita'),
           key: 'firstDepositPerCapita',
           width: 130,
           sorter: true,
@@ -790,7 +803,7 @@ const columns = computed<DataTableColumns>(() => {
           },
         },
         {
-          title: '充值总额',
+          title: c('totalDepositAmount'),
           key: 'totalDepositAmount',
           width: 120,
           sorter: true,
@@ -798,7 +811,7 @@ const columns = computed<DataTableColumns>(() => {
             renderNumericCell(row, 'totalDepositAmount', true),
         },
         {
-          title: '手动充值',
+          title: c('manualRechargeAmount'),
           key: 'manualRechargeAmount',
           width: 120,
           sorter: true,
@@ -806,7 +819,7 @@ const columns = computed<DataTableColumns>(() => {
             renderNumericCell(row, 'manualRechargeAmount', true),
         },
         {
-          title: '充值人数',
+          title: c('depositUserCount'),
           key: 'depositUserCount',
           width: 100,
           sorter: true,
@@ -814,7 +827,7 @@ const columns = computed<DataTableColumns>(() => {
             renderNumericCell(row, 'depositUserCount', true, true), // isCount
         },
         {
-          title: '充值次数',
+          title: c('depositCount'),
           key: 'depositCount',
           width: 100,
           sorter: true,
@@ -822,7 +835,7 @@ const columns = computed<DataTableColumns>(() => {
             renderNumericCell(row, 'depositCount', false, true), // isCount
         },
         {
-          title: '提现总额',
+          title: c('totalWithdrawalAmount'),
           key: 'totalWithdrawalAmount',
           width: 120,
           sorter: true,
@@ -830,7 +843,7 @@ const columns = computed<DataTableColumns>(() => {
             renderNumericCell(row, 'totalWithdrawalAmount', true),
         },
         {
-          title: '提现人数',
+          title: c('withdrawalUserCount'),
           key: 'withdrawalUserCount',
           width: 100,
           sorter: true,
@@ -838,7 +851,7 @@ const columns = computed<DataTableColumns>(() => {
             renderNumericCell(row, 'withdrawalUserCount', true, true), // isCount
         },
         {
-          title: '提现次数',
+          title: c('withdrawalCount'),
           key: 'withdrawalCount',
           width: 100,
           sorter: true,
@@ -846,7 +859,7 @@ const columns = computed<DataTableColumns>(() => {
             renderNumericCell(row, 'withdrawalCount', false, true), // isCount
         },
         {
-          title: '充提差额',
+          title: c('depositWithdrawalDiff'),
           key: 'depositWithdrawalDiff',
           width: 120,
           sorter: true,
@@ -867,11 +880,11 @@ const columns = computed<DataTableColumns>(() => {
 
     // 俱乐部 category - WITH HEADER
     {
-      title: '俱乐部',
+      title: g('club'),
       key: 'clubCategory',
       children: [
         {
-          title: '保证金结算收益',
+          title: c('clubDepositSettlementRevenue'),
           key: 'clubDepositSettlementRevenue',
           width: 140,
           sorter: true,
@@ -879,14 +892,14 @@ const columns = computed<DataTableColumns>(() => {
             renderNumericCell(row, 'clubDepositSettlementRevenue'),
         },
         {
-          title: '俱乐部保证金充值',
+          title: c('clubDepositRecharge'),
           key: 'clubDepositRecharge',
           width: 150,
           sorter: true,
           render: (row: any) => renderNumericCell(row, 'clubDepositRecharge'),
         },
         {
-          title: '俱乐部保证金转出',
+          title: c('clubDepositTransferOut'),
           key: 'clubDepositTransferOut',
           width: 150,
           sorter: true,
@@ -894,14 +907,14 @@ const columns = computed<DataTableColumns>(() => {
             renderNumericCell(row, 'clubDepositTransferOut'),
         },
         {
-          title: '俱乐部成员上分',
+          title: c('clubMemberTopUp'),
           key: 'clubMemberTopUp',
           width: 140,
           sorter: true,
           render: (row: any) => renderNumericCell(row, 'clubMemberTopUp'),
         },
         {
-          title: '俱乐部成员下分',
+          title: c('clubMemberWithdraw'),
           key: 'clubMemberWithdraw',
           width: 140,
           sorter: true,
@@ -912,39 +925,39 @@ const columns = computed<DataTableColumns>(() => {
 
     // 信用借款 category - WITH HEADER
     {
-      title: '信用借款',
+      title: g('creditLoan'),
       key: 'creditLoanCategory',
       children: [
         {
-          title: '净放债',
+          title: c('netLending'),
           key: 'netLending',
           width: 100,
           sorter: true,
           render: (row: any) => renderNumericCell(row, 'netLending'),
         },
         {
-          title: '逾期债务',
+          title: c('overdueDebt'),
           key: 'overdueDebt',
           width: 100,
           sorter: true,
           render: (row: any) => renderNumericCell(row, 'overdueDebt'),
         },
         {
-          title: '会员借款',
+          title: c('memberLoan'),
           key: 'memberLoan',
           width: 100,
           sorter: true,
           render: (row: any) => renderNumericCell(row, 'memberLoan'),
         },
         {
-          title: '会员还款',
+          title: c('memberRepayment'),
           key: 'memberRepayment',
           width: 100,
           sorter: true,
           render: (row: any) => renderNumericCell(row, 'memberRepayment'),
         },
         {
-          title: '投注人数',
+          title: c('bettorCount'),
           key: 'bettorCount',
           width: 100,
           sorter: true,
@@ -956,18 +969,18 @@ const columns = computed<DataTableColumns>(() => {
 
     // 游戏 category - WITH HEADER
     {
-      title: '游戏',
+      title: g('game'),
       key: 'gameCategory',
       children: [
         {
-          title: '有效投注',
+          title: c('validBetting'),
           key: 'validBetting',
           width: 120,
           sorter: true,
           render: (row: any) => renderNumericCell(row, 'validBetting', true),
         },
         {
-          title: '杀率',
+          title: c('killRate'),
           key: 'killRate',
           width: 100,
           sorter: true,
@@ -977,7 +990,7 @@ const columns = computed<DataTableColumns>(() => {
           },
         },
         {
-          title: '游戏盈亏',
+          title: c('gameProfitLoss'),
           key: 'gameProfitLoss',
           width: 120,
           sorter: true,
@@ -993,7 +1006,7 @@ const columns = computed<DataTableColumns>(() => {
         },
         */
         {
-          title: '投充比',
+          title: c('betDepositRatio'),
           key: 'betDepositRatio',
           width: 100,
           sorter: true,
@@ -1003,7 +1016,7 @@ const columns = computed<DataTableColumns>(() => {
           },
         },
         {
-          title: '未结算投注',
+          title: c('unsettledBets'),
           key: 'unsettledBets',
           width: 120,
           sorter: true,
@@ -1014,18 +1027,18 @@ const columns = computed<DataTableColumns>(() => {
 
     // 优惠活动 category - WITH HEADER
     {
-      title: '优惠活动',
+      title: g('promotion'),
       key: 'promotionCategory',
       children: [
         {
-          title: '佣金',
+          title: c('commission'),
           key: 'commission',
           width: 100,
           sorter: true,
           render: (row: any) => renderNumericCell(row, 'commission', true),
         },
         {
-          title: '优惠金额',
+          title: c('promotionalAmount'),
           key: 'promotionalAmount',
           width: 120,
           sorter: true,
@@ -1033,42 +1046,42 @@ const columns = computed<DataTableColumns>(() => {
             renderNumericCell(row, 'promotionalAmount', true),
         },
         {
-          title: '放弃奖励',
+          title: c('abandonedRewards'),
           key: 'abandonedRewards',
           width: 100,
           sorter: true,
           render: (row: any) => renderNumericCell(row, 'abandonedRewards'),
         },
         {
-          title: '活动',
+          title: c('activities'),
           key: 'activities',
           width: 100,
           sorter: true,
           render: (row: any) => renderNumericCell(row, 'activities'),
         },
         {
-          title: '任务',
+          title: c('tasks'),
           key: 'tasks',
           width: 100,
           sorter: true,
           render: (row: any) => renderNumericCell(row, 'tasks'),
         },
         {
-          title: '返水',
+          title: c('rebate'),
           key: 'rebate',
           width: 100,
           sorter: true,
           render: (row: any) => renderNumericCell(row, 'rebate'),
         },
         {
-          title: 'VIP奖励',
+          title: c('vipRewards'),
           key: 'vipRewards',
           width: 100,
           sorter: true,
           render: (row: any) => renderNumericCell(row, 'vipRewards'),
         },
         {
-          title: '充值优惠',
+          title: c('depositBonus'),
           key: 'depositBonus',
           width: 100,
           sorter: true,
@@ -1110,11 +1123,11 @@ const columns = computed<DataTableColumns>(() => {
 
     // 存量 category - WITH HEADER
     {
-      title: '存量',
+      title: g('inventory'),
       key: 'inventoryCategory',
       children: [
         {
-          title: '账号余额',
+          title: c('accountBalance'),
           key: 'accountBalance',
           width: 120,
           sorter: true,
@@ -1138,14 +1151,14 @@ const columns = computed<DataTableColumns>(() => {
         },
         */
         {
-          title: '三方余额',
+          title: c('thirdPartyBalance'),
           key: 'thirdPartyBalance',
           width: 100,
           sorter: true,
           render: (row: any) => renderNumericCell(row, 'thirdPartyBalance'),
         },
         {
-          title: '俱乐部保证金',
+          title: c('clubDeposit'),
           key: 'clubDeposit',
           width: 120,
           sorter: true,
@@ -1186,7 +1199,7 @@ const columns = computed<DataTableColumns>(() => {
     },
     */
     {
-      title: '在线充值',
+      title: c('onlineRecharge'),
       key: 'onlineRecharge',
       width: 100,
       sorter: true,
@@ -1209,21 +1222,21 @@ const columns = computed<DataTableColumns>(() => {
     },
     */
     {
-      title: '人工修正',
+      title: c('manualAdjustment'),
       key: 'manualAdjustment',
       width: 100,
       sorter: true,
       render: (row: any) => renderNumericCell(row, 'manualAdjustment'),
     },
     {
-      title: '手动加款',
+      title: c('manualAddFunds'),
       key: 'manualAddFunds',
       width: 100,
       sorter: true,
       render: (row: any) => renderNumericCell(row, 'manualAddFunds'),
     },
     {
-      title: '手动扣除',
+      title: c('manualDeductFunds'),
       key: 'manualDeductFunds',
       width: 100,
       sorter: true,
@@ -1440,7 +1453,7 @@ const resetFilters = () => {
 // Fetch data from API - convert timezone dates to UTC
 const fetchData = async () => {
   if (!dateRange.value || dateRange.value.length !== 2) {
-    message.warning('请选择日期范围');
+    message.warning($t('reports.selectDateRange'));
     return;
   }
 
@@ -1553,12 +1566,13 @@ const fetchData = async () => {
     if (result.success) {
       reportData.value = result.data || [];
       totalData.value = result.total || null;
-      message.success('数据加载成功');
+      message.success($t('reports.dataLoadedSuccess'));
     } else {
-      throw new Error(result.message || '获取数据失败');
+      throw new Error(result.message || $t('reports.fetchDataFailed'));
     }
   } catch (err) {
-    error.value = err instanceof Error ? err.message : '获取数据时发生错误';
+    error.value =
+      err instanceof Error ? err.message : $t('reports.fetchDataError');
     message.error(error.value);
   } finally {
     loading.value = false;
@@ -1568,12 +1582,12 @@ const fetchData = async () => {
 // Export to Excel using reusable utility
 const exportToExcel = async () => {
   if (!dateRange.value || dateRange.value.length !== 2) {
-    message.warning('请先选择日期范围');
+    message.warning($t('reports.selectDateRangeFirst'));
     return;
   }
 
   if (!exportTableData.value || exportTableData.value.length === 0) {
-    message.warning('没有数据可导出，请先搜索数据');
+    message.warning($t('reports.noDataToExport'));
     return;
   }
 
@@ -1587,18 +1601,19 @@ const exportToExcel = async () => {
     const endDate = new Date(dateRange.value[1]);
     endDate.setHours(23, 59, 59, 999);
     const endDateStr = endDate.toISOString().split('T')[0];
-    const filename = `日运营报表_${startDateStr}_至_${endDateStr}`;
+    const filename = $t('reports.exportFilename', [startDateStr, endDateStr]);
 
-    // Use the reusable export utility with table columns and data
     await exportGridData(columns.value as any, exportTableData.value, {
       filename,
-      sheetName: '日运营报表',
+      sheetName: $t('reports.exportSheetName'),
       format: 'xlsx',
     });
   } catch (err) {
     console.error('Export error:', err);
     message.error(
-      '导出失败: ' + (err instanceof Error ? err.message : '未知错误'),
+      $t('reports.exportFailed', [
+        err instanceof Error ? err.message : $t('reports.unknownError'),
+      ]),
     );
   } finally {
     exporting.value = false;

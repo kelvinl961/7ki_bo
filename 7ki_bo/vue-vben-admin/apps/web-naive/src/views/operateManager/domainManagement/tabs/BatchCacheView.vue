@@ -3,26 +3,25 @@
     <!-- Header Tabs -->
     <n-card size="small" style="margin-bottom: 16px">
       <n-tabs v-model:value="activeTab" type="line">
-        <n-tab-pane name="url" tab="URL清理缓存">
+        <n-tab-pane name="url" :tab="$t('operations.domain.batchCacheExt.urlTab')">
           <!-- URL Clear Cache Content -->
           <div style="padding: 16px 0">
             <n-alert type="warning" style="margin-bottom: 16px" size="small">
               <div style="display: flex; align-items: center; gap: 8px">
                 <span style="font-size: 24px">⚠</span>
                 <span
-                  >默认情况下，每一个账号每日可刷新 URL 10000 条，每次最多可提交
-                  1000 条</span
+                  >{{ $t('operations.domain.batchCacheExt.urlLimitWarning') }}/span
                 >
               </div>
             </n-alert>
 
             <n-space vertical :size="16">
               <div>
-                <div style="margin-bottom: 8px; font-weight: 500">URL地址</div>
+                <div style="margin-bottom: 8px; font-weight: 500">{{ $t('operations.domain.batchCacheExt.urlAddress') }}</div>
                 <n-input
                   v-model:value="urlList"
                   type="textarea"
-                  placeholder="请输入待刷新的URL，每行输入一个URL"
+                  :placeholder="$t('operations.domain.batchCacheExt.urlPlaceholder')"
                   :rows="12"
                   :maxlength="50000"
                   show-count
@@ -30,10 +29,10 @@
                 <div style="margin-top: 8px; font-size: 13px; color: #666">
                   <div>
                     •
-                    每行输入一个完整URL，例如：https://www.example.com/image/logo.png
+                    {{ $t('operations.domain.batchCacheExt.urlHint1') }}
                   </div>
-                  <div>• 支持HTTP和HTTPS协议</div>
-                  <div>• 每次最多提交1000条URL</div>
+                  <div>• {{ $t('operations.domain.batchCacheExt.urlHint2') }}</div>
+                  <div>• {{ $t('operations.domain.batchCacheExt.urlHint3') }}</div>
                 </div>
               </div>
 
@@ -45,10 +44,8 @@
                     :loading="isRefreshing"
                     :disabled="!urlList.trim()"
                     @click="handleRefresh"
-                  >
-                    立即刷新
-                  </n-button>
-                  <n-button size="medium" @click="handleClear"> 清空 </n-button>
+                  >{{ $t('operations.domain.batchCacheExt.refreshNow') }}</n-button>
+                  <n-button size="medium" @click="handleClear">{{ $t('operations.domain.batchCacheExt.clear') }}</n-button>
                 </n-space>
               </div>
 
@@ -56,18 +53,18 @@
               <n-card size="small" style="background: #f5f7fa">
                 <n-space :size="24">
                   <div>
-                    <span style="color: #666">今日已使用：</span>
+                    <span style="color: #666">{{ $t('operations.domain.batchCacheExt.usedToday') }}</span>
                     <span style="font-weight: 600; color: #2080f0">{{
                       urlUsage.used
                     }}</span>
-                    <span style="color: #666"> / {{ urlUsage.total }} 条</span>
+                    <span style="color: #666"> / {{ urlUsage.total }}{{ $t('operations.domain.batchCacheExt.itemsUnit') }}</span>
                   </div>
                   <div>
-                    <span style="color: #666">剩余额度：</span>
+                    <span style="color: #666">{{ $t('operations.domain.batchCacheExt.remaining') }}</span>
                     <span style="font-weight: 600; color: #18a058">{{
                       urlUsage.total - urlUsage.used
                     }}</span>
-                    <span style="color: #666"> 条</span>
+                    <span style="color: #666">{{ $t('operations.domain.batchCacheExt.itemsUnit') }}</span>
                   </div>
                 </n-space>
               </n-card>
@@ -75,26 +72,25 @@
           </div>
         </n-tab-pane>
 
-        <n-tab-pane name="directory" tab="目录清理缓存">
+        <n-tab-pane name="directory" :tab="$t('operations.domain.batchCacheExt.directoryTab')">
           <!-- Directory Clear Cache Content -->
           <div style="padding: 16px 0">
             <n-alert type="warning" style="margin-bottom: 16px" size="small">
               <div style="display: flex; align-items: center; gap: 8px">
                 <span style="font-size: 24px">⚠</span>
                 <span
-                  >默认情况下，每一个账号每日可刷新目录 100 个，每次最多可提交
-                  10 个</span
+                  >{{ $t('operations.domain.batchCacheExt.directoryLimitWarning') }}/span
                 >
               </div>
             </n-alert>
 
             <n-space vertical :size="16">
               <div>
-                <div style="margin-bottom: 8px; font-weight: 500">目录地址</div>
+                <div style="margin-bottom: 8px; font-weight: 500">{{ $t('operations.domain.batchCacheExt.directoryAddress') }}</div>
                 <n-input
                   v-model:value="directoryList"
                   type="textarea"
-                  placeholder="请输入待刷新的目录路径，每行输入一个目录"
+                  :placeholder="$t('operations.domain.batchCacheExt.directoryPlaceholder')"
                   :rows="12"
                   :maxlength="10000"
                   show-count
@@ -102,11 +98,11 @@
                 <div style="margin-top: 8px; font-size: 13px; color: #666">
                   <div>
                     •
-                    每行输入一个完整目录路径，例如：https://www.example.com/images/
+                    {{ $t('operations.domain.batchCacheExt.dirHint1') }}
                   </div>
-                  <div>• 目录路径必须以 / 结尾</div>
-                  <div>• 将清除该目录下的所有资源缓存</div>
-                  <div>• 每次最多提交10个目录</div>
+                  <div>• {{ $t('operations.domain.batchCacheExt.dirHint2') }}</div>
+                  <div>• {{ $t('operations.domain.batchCacheExt.dirHint3') }}</div>
+                  <div>• {{ $t('operations.domain.batchCacheExt.dirHint4') }}</div>
                 </div>
               </div>
 
@@ -118,10 +114,8 @@
                     :loading="isRefreshing"
                     :disabled="!directoryList.trim()"
                     @click="handleRefresh"
-                  >
-                    立即刷新
-                  </n-button>
-                  <n-button size="medium" @click="handleClear"> 清空 </n-button>
+                  >{{ $t('operations.domain.batchCacheExt.refreshNow') }}</n-button>
+                  <n-button size="medium" @click="handleClear">{{ $t('operations.domain.batchCacheExt.clear') }}</n-button>
                 </n-space>
               </div>
 
@@ -129,20 +123,20 @@
               <n-card size="small" style="background: #f5f7fa">
                 <n-space :size="24">
                   <div>
-                    <span style="color: #666">今日已使用：</span>
+                    <span style="color: #666">{{ $t('operations.domain.batchCacheExt.usedToday') }}</span>
                     <span style="font-weight: 600; color: #2080f0">{{
                       directoryUsage.used
                     }}</span>
                     <span style="color: #666">
-                      / {{ directoryUsage.total }} 个</span
+                      / {{ directoryUsage.total }}{{ $t('operations.domain.batchCacheExt.dirsUnit') }}</span
                     >
                   </div>
                   <div>
-                    <span style="color: #666">剩余额度：</span>
+                    <span style="color: #666">{{ $t('operations.domain.batchCacheExt.remaining') }}</span>
                     <span style="font-weight: 600; color: #18a058">{{
                       directoryUsage.total - directoryUsage.used
                     }}</span>
-                    <span style="color: #666"> 个</span>
+                    <span style="color: #666">{{ $t('operations.domain.batchCacheExt.dirsUnit') }}</span>
                   </div>
                 </n-space>
               </n-card>
@@ -155,7 +149,7 @@
     <!-- Refresh History -->
     <n-card size="small">
       <template #header>
-        <span style="font-weight: 600">刷新记录</span>
+        <span style="font-weight: 600">{{ $t('operations.domain.batchCacheExt.refreshHistory') }}</span>
       </template>
 
       <n-data-table
@@ -170,6 +164,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, h, onMounted, computed } from 'vue';
 import {
   NCard,
@@ -236,7 +232,7 @@ const paginationConfig = computed(() => ({
 // History Columns
 const historyColumns: DataTableColumn<RefreshHistory>[] = [
   {
-    title: '刷新类型',
+    title: $t('operations.domain.batchCacheExt.refreshType'),
     key: 'type',
     width: 120,
     render(row: RefreshHistory) {
@@ -247,26 +243,26 @@ const historyColumns: DataTableColumn<RefreshHistory>[] = [
           size: 'small',
         },
         {
-          default: () => (row.type === 'URL' ? 'URL刷新' : '目录刷新'),
+          default: () => (row.type === 'URL' ? $t('operations.domain.batchCacheExt.urlRefresh') : $t('operations.domain.batchCacheExt.dirRefresh')),
         },
       );
     },
   },
   {
-    title: '刷新数量',
+    title: $t('operations.domain.batchCacheExt.refreshCount'),
     key: 'count',
     width: 100,
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 100,
     render(row: RefreshHistory) {
       const statusMap: Record<string, { text: string; type: any }> = {
-        PENDING: { text: '等待中', type: 'default' },
-        PROCESSING: { text: '处理中', type: 'info' },
-        SUCCESS: { text: '成功', type: 'success' },
-        FAILED: { text: '失败', type: 'error' },
+        PENDING: { text: $t('operations.domain.batchCacheExt.statusPending'), type: 'default' },
+        PROCESSING: { text: $t('operations.domain.batchCacheExt.statusProcessing'), type: 'info' },
+        SUCCESS: { text: $t('operations.domain.batchCacheExt.statusSuccess'), type: 'success' },
+        FAILED: { text: $t('operations.domain.batchCacheExt.statusFailed'), type: 'error' },
       };
       const status = statusMap[row.status] || {
         text: row.status,
@@ -280,7 +276,7 @@ const historyColumns: DataTableColumn<RefreshHistory>[] = [
     },
   },
   {
-    title: '提交时间',
+    title: $t('operations.domain.batchCacheExt.submitTime'),
     key: 'createdAt',
     width: 180,
     render(row: RefreshHistory) {
@@ -288,7 +284,7 @@ const historyColumns: DataTableColumn<RefreshHistory>[] = [
     },
   },
   {
-    title: '完成时间',
+    title: $t('operations.domain.batchCacheExt.completeTime'),
     key: 'completedAt',
     width: 180,
     render(row: RefreshHistory) {
@@ -298,7 +294,7 @@ const historyColumns: DataTableColumn<RefreshHistory>[] = [
     },
   },
   {
-    title: '操作人',
+    title: $t('common.operator'),
     key: 'operator',
     width: 120,
   },
@@ -310,7 +306,7 @@ const handleRefresh = async () => {
   const content = type === 'url' ? urlList.value : directoryList.value;
 
   if (!content.trim()) {
-    message.warning('请输入要刷新的地址');
+    message.warning($t('operations.domain.batchCacheExt.enterAddress'));
     return;
   }
 
@@ -322,7 +318,7 @@ const handleRefresh = async () => {
 
   if (lines.length > maxCount) {
     message.error(
-      `每次最多提交 ${maxCount} 条${type === 'url' ? 'URL' : '目录'}`,
+      $t('operations.domain.batchCacheExt.maxSubmit', [maxCount, type === 'url' ? 'URL' : $t('operations.domain.batchCacheExt.directoryTab')]),
     );
     return;
   }
@@ -332,7 +328,7 @@ const handleRefresh = async () => {
   const invalidLines = lines.filter((line) => !urlPattern.test(line.trim()));
 
   if (invalidLines.length > 0) {
-    message.error(`发现 ${invalidLines.length} 条无效的地址格式`);
+    message.error($t('operations.domain.batchCacheExt.invalidFormat', [invalidLines.length]));
     return;
   }
 
@@ -340,7 +336,7 @@ const handleRefresh = async () => {
   if (type === 'directory') {
     const invalidDirs = lines.filter((line) => !line.trim().endsWith('/'));
     if (invalidDirs.length > 0) {
-      message.error('目录路径必须以 / 结尾');
+      message.error($t('operations.domain.batchCacheExt.dirMustEndSlash'));
       return;
     }
   }
@@ -352,7 +348,7 @@ const handleRefresh = async () => {
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     message.success(
-      `成功提交 ${lines.length} 条${type === 'url' ? 'URL' : '目录'}刷新任务`,
+      $t('operations.domain.batchCacheExt.submitSuccess', [lines.length, type === 'url' ? $t('operations.domain.batchCacheExt.urlRefresh') : $t('operations.domain.batchCacheExt.dirRefresh')]),
     );
 
     // Update usage
@@ -368,7 +364,7 @@ const handleRefresh = async () => {
     fetchHistory();
   } catch (error: any) {
     console.error('Refresh error:', error);
-    message.error('刷新任务提交失败');
+    message.error($t('operations.domain.batchCacheExt.submitFailed'));
   } finally {
     isRefreshing.value = false;
   }
@@ -380,7 +376,7 @@ const handleClear = () => {
   } else {
     directoryList.value = '';
   }
-  message.success('已清空');
+  message.success($t('operations.domain.batchCacheExt.cleared'));
 };
 
 const fetchHistory = async () => {
@@ -422,7 +418,7 @@ const fetchHistory = async () => {
     pagination.itemCount = mockHistory.length;
   } catch (error: any) {
     console.error('Fetch history error:', error);
-    message.error('获取刷新记录失败');
+    message.error($t('operations.domain.batchCacheExt.fetchHistoryFailed'));
   } finally {
     historyLoading.value = false;
   }

@@ -1,22 +1,26 @@
 <template>
-  <Page description="后台账号管理页面" title="后台账号">
-    <!-- 面包屑导航 -->
+  <Page
+    :description="$t('user.backofficeAccount.pageDescription')"
+    :title="$t('user.backofficeAccount.pageTitle')"
+  >
     <div class="mb-4">
       <n-breadcrumb>
-        <n-breadcrumb-item>账号管理</n-breadcrumb-item>
-        <n-breadcrumb-item>后台账号</n-breadcrumb-item>
+        <n-breadcrumb-item>{{ $t('user.backofficeAccount.breadcrumbAccountMgmt') }}</n-breadcrumb-item>
+        <n-breadcrumb-item>{{
+          $t('user.backofficeAccount.breadcrumbBackoffice')
+        }}</n-breadcrumb-item>
       </n-breadcrumb>
     </div>
 
-    <!-- 筛选器区域 -->
     <n-card class="mb-4">
       <div class="flex flex-wrap items-end gap-4">
-        <!-- 角色筛选 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">角色</label>
+          <label class="mb-2 text-sm font-medium">{{
+            $t('user.backofficeAccount.role')
+          }}</label>
           <n-select
             v-model:value="filterForm.role"
-            placeholder="选择角色"
+            :placeholder="$t('user.backofficeAccount.selectRole')"
             clearable
             style="width: 140px"
             :options="roleOptions"
@@ -24,12 +28,11 @@
           />
         </div>
 
-        <!-- 状态筛选 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">状态</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('common.status') }}</label>
           <n-select
             v-model:value="filterForm.status"
-            placeholder="选择状态"
+            :placeholder="$t('user.backofficeAccount.selectStatus')"
             clearable
             style="width: 140px"
             :options="statusOptions"
@@ -37,24 +40,24 @@
           />
         </div>
 
-        <!-- 搜索框 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">搜索</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('common.search') }}</label>
           <div class="flex gap-2">
             <n-input
               v-model:value="filterForm.search"
-              placeholder="搜索用户名..."
+              :placeholder="$t('user.backofficeAccount.searchUsername')"
               style="width: 240px"
               @keyup.enter="handleFilter"
             />
-            <n-button type="primary" @click="handleFilter"> 搜索 </n-button>
-            <n-button @click="resetFilter"> 重置 </n-button>
+            <n-button type="primary" @click="handleFilter">
+              {{ $t('common.search') }}
+            </n-button>
+            <n-button @click="resetFilter"> {{ $t('common.reset') }} </n-button>
           </div>
         </div>
       </div>
     </n-card>
 
-    <!-- 🚀 NEW: SmartDataGrid Component -->
     <SmartDataGrid
       :data="tableData"
       :columns="columns"
@@ -73,105 +76,108 @@
         <n-card :bordered="false" class="rounded-16px shadow-sm">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
-              <!-- 主要操作按钮 -->
               <div class="flex gap-2">
                 <n-button type="primary" @click="handleAddAccount">
-                  新增账号
+                  {{ $t('user.backofficeAccount.addAccount') }}
                 </n-button>
               </div>
 
-              <!-- 选择信息 -->
               <div class="text-sm text-gray-600">
-                已选择 {{ selectedCount }} 条数据，共
-                {{ paginationReactive.total }} 条
+                {{
+                  $t('user.backofficeAccount.selectedCount', [
+                    selectedCount,
+                    paginationReactive.total,
+                  ])
+                }}
               </div>
             </div>
 
             <div class="flex gap-2">
-              <!-- 批量操作 -->
-              <!-- <n-button 
-                v-if="selectedCount > 0" 
-                type="error" 
-                size="small"
-                @click="handleBulkDelete(selectedRows)"
-              >
-                批量删除 ({{ selectedCount }})
-              </n-button>
-              
-              <!-- 选择控制 -->
-              <n-button size="small" @click="clearSelection">清空选择</n-button>
-              <n-button size="small" @click="selectAll">全选</n-button>
+              <n-button size="small" @click="clearSelection">{{
+                $t('user.backofficeAccount.clearSelection')
+              }}</n-button>
+              <n-button size="small" @click="selectAll">{{
+                $t('common.selectAll')
+              }}</n-button>
             </div>
           </div>
         </n-card>
       </template>
     </SmartDataGrid>
 
-    <!-- 账号详情弹窗 -->
     <n-modal
       v-model:show="showDetailModal"
-      title="账号详情"
+      :title="$t('user.backofficeAccount.accountDetail')"
       preset="dialog"
       style="width: 600px"
     >
       <n-card v-if="currentAccount">
         <n-descriptions bordered :column="2">
-          <n-descriptions-item label="账号ID">
+          <n-descriptions-item :label="$t('user.backofficeAccount.accountId')">
             {{ currentAccount.id }}
           </n-descriptions-item>
-          <n-descriptions-item label="用户名">
+          <n-descriptions-item :label="$t('user.backofficeAccount.username')">
             {{ currentAccount.username }}
           </n-descriptions-item>
-          <n-descriptions-item label="角色">
+          <n-descriptions-item :label="$t('user.backofficeAccount.role')">
             <n-tag :type="getRoleType(currentAccount.role)">
               {{ getRoleLabel(currentAccount.role) }}
             </n-tag>
           </n-descriptions-item>
-          <n-descriptions-item label="状态">
+          <n-descriptions-item :label="$t('common.status')">
             <n-tag :type="currentAccount.isSuspended ? 'error' : 'success'">
-              {{ currentAccount.isSuspended ? '已停用' : '正常' }}
+              {{
+                currentAccount.isSuspended
+                  ? $t('user.backofficeAccount.suspended')
+                  : $t('user.backofficeAccount.normal')
+              }}
             </n-tag>
           </n-descriptions-item>
-          <n-descriptions-item label="创建时间">
+          <n-descriptions-item :label="$t('common.createTime')">
             {{ formatDateTime(currentAccount.createdDate) }}
           </n-descriptions-item>
-          <n-descriptions-item label="最后登录">
+          <n-descriptions-item :label="$t('user.backofficeAccount.lastLogin')">
             {{
               currentAccount.lastLoginDate
                 ? formatDateTime(currentAccount.lastLoginDate)
-                : '从未登录'
+                : $t('user.backofficeAccount.neverLoggedIn')
             }}
           </n-descriptions-item>
-          <n-descriptions-item label="最后登录IP">
-            {{ currentAccount.lastLoginIp || '无' }}
+          <n-descriptions-item :label="$t('user.backofficeAccount.lastLoginIp')">
+            {{ currentAccount.lastLoginIp || $t('user.backofficeAccount.none') }}
           </n-descriptions-item>
-          <n-descriptions-item label="登录失败次数">
-            {{ currentAccount.failedLoginAttempt || 0 }} 次
+          <n-descriptions-item :label="$t('user.backofficeAccount.failedLoginCount')">
+            {{ currentAccount.failedLoginAttempt || 0 }}
+            {{ $t('user.backofficeAccount.times') }}
           </n-descriptions-item>
         </n-descriptions>
 
         <div class="mt-4 flex justify-end gap-2">
-          <n-button @click="showDetailModal = false">关闭</n-button>
+          <n-button @click="showDetailModal = false">{{ $t('common.close') }}</n-button>
           <n-button type="info" @click="handleEditAccount(currentAccount)">
-            编辑
+            {{ $t('common.edit') }}
           </n-button>
           <n-button
             :type="currentAccount.isSuspended ? 'success' : 'warning'"
             @click="handleToggleStatus(currentAccount)"
           >
-            {{ currentAccount.isSuspended ? '启用' : '停用' }}
+            {{
+              currentAccount.isSuspended
+                ? $t('common.enable')
+                : $t('common.disable')
+            }}
           </n-button>
-          <!-- <n-button type="error" @click="handleDeleteAccount(currentAccount)">
-            删除
-          </n-button> -->
         </div>
       </n-card>
     </n-modal>
 
-    <!-- 新增/编辑账号弹窗 -->
     <n-modal
       v-model:show="showEditModal"
-      :title="editMode === 'add' ? '新增账号' : '编辑账号'"
+      :title="
+        editMode === 'add'
+          ? $t('user.backofficeAccount.addAccount')
+          : $t('user.backofficeAccount.editAccount')
+      "
       preset="dialog"
       style="width: 500px"
     >
@@ -182,25 +188,31 @@
         label-placement="left"
         label-width="80px"
       >
-        <n-form-item label="用户名" path="username">
+        <n-form-item :label="$t('user.backofficeAccount.username')" path="username">
           <n-input
             v-model:value="editForm.username"
-            placeholder="请输入用户名"
+            :placeholder="$t('user.backofficeAccount.enterUsername')"
             :disabled="editMode === 'edit'"
           />
         </n-form-item>
-        <n-form-item label="密码" path="password">
+        <n-form-item :label="$t('user.backofficeAccount.password')" path="password">
           <n-input
             v-model:value="editForm.password"
             type="password"
             :placeholder="
-              editMode === 'add' ? '请输入密码' : '留空则不修改密码'
+              editMode === 'add'
+                ? $t('user.backofficeAccount.enterPassword')
+                : $t('user.backofficeAccount.leaveBlankNoChange')
             "
             show-password-on="click"
           />
         </n-form-item>
         <n-form-item
-          :label="editMode === 'add' ? '确认密码' : '确认新密码'"
+          :label="
+            editMode === 'add'
+              ? $t('user.backofficeAccount.confirmPassword')
+              : $t('user.backofficeAccount.confirmNewPassword')
+          "
           path="confirmPassword"
           v-if="editMode === 'add' || !!editForm.password"
         >
@@ -208,34 +220,36 @@
             v-model:value="editForm.confirmPassword"
             type="password"
             :placeholder="
-              editMode === 'add' ? '请再次输入密码' : '请再次输入新密码'
+              editMode === 'add'
+                ? $t('user.backofficeAccount.enterPasswordAgain')
+                : $t('user.backofficeAccount.enterNewPasswordAgain')
             "
             show-password-on="click"
           />
         </n-form-item>
-        <n-form-item label="角色" path="role">
+        <n-form-item :label="$t('user.backofficeAccount.role')" path="role">
           <n-select
             v-model:value="editForm.role"
-            placeholder="请选择角色"
+            :placeholder="$t('user.backofficeAccount.selectRolePlaceholder')"
             :options="roleOptions"
           />
         </n-form-item>
-        <n-form-item label="状态" path="isSuspended">
+        <n-form-item :label="$t('common.status')" path="isSuspended">
           <n-switch
             v-model:value="editForm.isSuspended"
             :checked-value="false"
             :unchecked-value="true"
           >
-            <template #checked>正常</template>
-            <template #unchecked>停用</template>
+            <template #checked>{{ $t('user.backofficeAccount.normal') }}</template>
+            <template #unchecked>{{ $t('common.disable') }}</template>
           </n-switch>
         </n-form-item>
       </n-form>
 
       <div class="mt-4 flex justify-end gap-2">
-        <n-button @click="showEditModal = false">取消</n-button>
+        <n-button @click="showEditModal = false">{{ $t('common.cancel') }}</n-button>
         <n-button type="primary" @click="handleSubmitEdit">
-          {{ editMode === 'add' ? '创建' : '保存' }}
+          {{ editMode === 'add' ? $t('common.create') : $t('common.save') }}
         </n-button>
       </div>
     </n-modal>
@@ -243,8 +257,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, h, defineAsyncComponent } from 'vue';
-// ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
+import { $t } from '@vben/locales';
+
+import { ref, reactive, onMounted, h, computed, defineAsyncComponent } from 'vue';
 const SmartDataGrid = defineAsyncComponent(
   () => import('../../../components/smart/SmartDataGrid/index.vue'),
 );
@@ -280,7 +295,6 @@ import {
 
 const message = useMessage();
 
-// 响应式数据
 const loading = ref(false);
 const showDetailModal = ref(false);
 const showEditModal = ref(false);
@@ -290,14 +304,12 @@ const currentAccount = ref<BackofficeAccount | null>(null);
 const formRef = ref<FormInst | null>(null);
 const editMode = ref<'add' | 'edit'>('add');
 
-// 筛选表单
 const filterForm = reactive({
   role: null as string | null,
   status: null as number | null,
   search: '',
 });
 
-// 编辑表单
 const editForm = reactive({
   username: '',
   password: '',
@@ -306,20 +318,28 @@ const editForm = reactive({
   isSuspended: false,
 });
 
-// 表单验证规则
-const formRules: FormRules = {
+const formRules = computed<FormRules>(() => ({
   username: [
-    { required: true, message: '请输入用户名', trigger: 'blur' },
-    { min: 3, max: 20, message: '用户名长度在3-20个字符', trigger: 'blur' },
+    {
+      required: true,
+      message: $t('user.backofficeAccount.enterUsername'),
+      trigger: 'blur',
+    },
+    {
+      min: 3,
+      max: 20,
+      message: $t('user.backofficeAccount.usernameLength'),
+      trigger: 'blur',
+    },
   ],
   password: [
     {
       validator: (_rule, value) => {
         if (editMode.value === 'add' && !value) {
-          return new Error('请输入密码');
+          return new Error($t('user.backofficeAccount.enterPassword'));
         }
         if (value && value.length < 6) {
-          return new Error('密码长度至少6个字符');
+          return new Error($t('user.backofficeAccount.passwordMinLength'));
         }
         return true;
       },
@@ -330,54 +350,59 @@ const formRules: FormRules = {
     {
       validator: (_rule, value) => {
         if (editMode.value === 'add' && !value) {
-          return new Error('请再次输入密码');
+          return new Error($t('user.backofficeAccount.enterPasswordAgain'));
         }
         if (editMode.value === 'edit' && editForm.password && !value) {
-          return new Error('请再次输入新密码');
+          return new Error($t('user.backofficeAccount.enterNewPasswordAgain'));
         }
         if (editMode.value === 'edit' && !editForm.password && !value) {
           return true;
         }
         if (value !== editForm.password) {
-          return new Error('两次输入的密码不一致');
+          return new Error($t('user.backofficeAccount.passwordMismatch'));
         }
         return true;
       },
       trigger: ['blur', 'input'],
     },
   ],
-  role: [{ required: true, message: '请选择角色', trigger: 'change' }],
-};
+  role: [
+    {
+      required: true,
+      message: $t('user.backofficeAccount.selectRoleRequired'),
+      trigger: 'change',
+    },
+  ],
+}));
 
-// 分页配置 (simplified for SmartDataGrid)
 const paginationReactive = reactive({
   page: 1,
   pageSize: 20,
   total: 0,
 });
 
-// 选项配置
-const roleOptions = [
-  { label: '超级管理员', value: 'SUPER_ADMIN' },
-  { label: '管理员', value: 'ADMIN' },
-  { label: '员工', value: 'STAFF' },
-  { label: '客服', value: 'CUSTOMER_SERVICE' },
-];
+const roleOptions = computed(() => [
+  { label: $t('user.backofficeAccount.roleSuperAdmin'), value: 'SUPER_ADMIN' },
+  { label: $t('user.backofficeAccount.roleAdmin'), value: 'ADMIN' },
+  { label: $t('user.backofficeAccount.roleStaff'), value: 'STAFF' },
+  {
+    label: $t('user.backofficeAccount.roleCustomerService'),
+    value: 'CUSTOMER_SERVICE',
+  },
+]);
 
-const statusOptions = [
-  { label: '正常', value: 1 },
-  { label: '停用', value: 0 },
-];
+const statusOptions = computed(() => [
+  { label: $t('user.backofficeAccount.normal'), value: 1 },
+  { label: $t('common.disable'), value: 0 },
+]);
 
-// 工具函数 - Fixed to handle invalid dates
 const formatDateTime = (dateString: string | null | undefined) => {
-  if (!dateString) return '无';
+  if (!dateString) return $t('user.backofficeAccount.none');
 
   try {
     const date = new Date(dateString);
-    // Check if date is valid
     if (isNaN(date.getTime())) {
-      return '无效日期';
+      return $t('user.backofficeAccount.invalidDate');
     }
     return date.toLocaleString('zh-CN', {
       year: 'numeric',
@@ -390,7 +415,7 @@ const formatDateTime = (dateString: string | null | undefined) => {
     });
   } catch (error) {
     console.warn('Invalid date string:', dateString, error);
-    return '无效日期';
+    return $t('user.backofficeAccount.invalidDate');
   }
 };
 
@@ -411,19 +436,18 @@ const getRoleType = (
 
 const getRoleLabel = (role: string) => {
   const roleMap: Record<string, string> = {
-    SUPER_ADMIN: '超级管理员',
-    ADMIN: '管理员',
-    STAFF: '员工',
-    CUSTOMER_SERVICE: '客服',
+    SUPER_ADMIN: $t('user.backofficeAccount.roleSuperAdmin'),
+    ADMIN: $t('user.backofficeAccount.roleAdmin'),
+    STAFF: $t('user.backofficeAccount.roleStaff'),
+    CUSTOMER_SERVICE: $t('user.backofficeAccount.roleCustomerService'),
   };
   return roleMap[role] || role;
 };
 
-// 表格列配置
-const columns: DataTableColumns<BackofficeAccount> = [
+const columns = computed<DataTableColumns<BackofficeAccount>>(() => [
   { type: 'selection' },
   {
-    title: '账号ID',
+    title: $t('user.backofficeAccount.accountId'),
     key: 'id',
     width: 80,
     render(row) {
@@ -435,29 +459,25 @@ const columns: DataTableColumns<BackofficeAccount> = [
     },
   },
   {
-    title: '用户名',
+    title: $t('user.backofficeAccount.username'),
     key: 'username',
     width: 150,
     ellipsis: { tooltip: true },
   },
   {
-    title: '角色',
+    title: $t('user.backofficeAccount.role'),
     key: 'role',
     width: 120,
     render(row) {
       return h(
         NTag,
-        {
-          type: getRoleType(row.role),
-        },
-        {
-          default: () => getRoleLabel(row.role),
-        },
+        { type: getRoleType(row.role) },
+        { default: () => getRoleLabel(row.role) },
       );
     },
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'isSuspended',
     width: 80,
     render(row) {
@@ -469,7 +489,7 @@ const columns: DataTableColumns<BackofficeAccount> = [
     },
   },
   {
-    title: '创建时间',
+    title: $t('common.createTime'),
     key: 'createdDate',
     width: 160,
     render(row) {
@@ -477,33 +497,32 @@ const columns: DataTableColumns<BackofficeAccount> = [
     },
   },
   {
-    title: '最后登录',
+    title: $t('user.backofficeAccount.lastLogin'),
     key: 'lastLoginDate',
     width: 160,
     render(row) {
-      if (!row.lastLoginDate) return '从未登录';
+      if (!row.lastLoginDate) return $t('user.backofficeAccount.neverLoggedIn');
       const formatted = formatDateTime(row.lastLoginDate);
-      return formatted === '无' || formatted === '无效日期'
-        ? '从未登录'
+      return formatted === $t('user.backofficeAccount.none') ||
+        formatted === $t('user.backofficeAccount.invalidDate')
+        ? $t('user.backofficeAccount.neverLoggedIn')
         : formatted;
     },
   },
   {
-    title: '登录失败次数',
+    title: $t('user.backofficeAccount.failedLoginCount'),
     key: 'failedLoginAttempt',
     width: 120,
     render(row) {
       return h(
         'span',
-        {
-          style: row.failedLoginAttempt > 3 ? 'color: #f56565' : '',
-        },
-        `${row.failedLoginAttempt} 次`,
+        { style: row.failedLoginAttempt > 3 ? 'color: #f56565' : '' },
+        `${row.failedLoginAttempt} ${$t('user.backofficeAccount.times')}`,
       );
     },
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 200,
     render(row) {
@@ -515,7 +534,7 @@ const columns: DataTableColumns<BackofficeAccount> = [
             type: 'primary',
             onClick: () => handleViewDetail(row),
           },
-          { default: () => '详情' },
+          { default: () => $t('common.detail') },
         ),
         h(
           NButton,
@@ -524,14 +543,13 @@ const columns: DataTableColumns<BackofficeAccount> = [
             type: 'info',
             onClick: () => handleEditAccount(row),
           },
-          { default: () => '编辑' },
+          { default: () => $t('common.edit') },
         ),
       ]);
     },
   },
-];
+]);
 
-// 事件处理函数
 const handleFilter = () => {
   paginationReactive.page = 1;
   loadTableData();
@@ -562,21 +580,18 @@ const handlePageSizeChange = (pageSize: number) => {
   loadTableData();
 };
 
-// SmartDataGrid event handlers
 const handleRowClick = (account: BackofficeAccount) => {
-  console.log('Account row clicked:', account);
-  // Optional: Auto-open detail modal on row click
   handleViewDetail(account);
 };
 
 const clearSelection = () => {
   checkedRowKeys.value = [];
-  message.success('已清空选择');
+  message.success($t('user.backofficeAccount.clearedSelection'));
 };
 
 const selectAll = () => {
   checkedRowKeys.value = tableData.value.map((account) => account.id);
-  message.success('已全选');
+  message.success($t('user.backofficeAccount.selectedAll'));
 };
 
 const handleViewDetail = (account: BackofficeAccount) => {
@@ -622,35 +637,38 @@ const handleSubmitEdit = async () => {
         role: editForm.role,
         status: editForm.isSuspended ? 0 : 1,
       });
-      message.success('账号创建成功');
-    } else {
-      // For edit mode, we need the current account ID
-      if (currentAccount.value) {
-        const updatePayload: {
-          role: string;
-          isSuspended: boolean;
-          password?: string;
-        } = {
-          role: editForm.role,
-          isSuspended: editForm.isSuspended,
-        };
-        const newPassword = editForm.password.trim();
-        if (newPassword) {
-          updatePayload.password = newPassword;
-        }
-        await updateBackofficeAccountApi(currentAccount.value.id, {
-          ...updatePayload,
-        });
-        message.success(
-          newPassword ? '账号和密码更新成功' : '账号更新成功',
-        );
+      message.success($t('user.backofficeAccount.accountCreated'));
+    } else if (currentAccount.value) {
+      const updatePayload: {
+        role: string;
+        isSuspended: boolean;
+        password?: string;
+      } = {
+        role: editForm.role,
+        isSuspended: editForm.isSuspended,
+      };
+      const newPassword = editForm.password.trim();
+      if (newPassword) {
+        updatePayload.password = newPassword;
       }
+      await updateBackofficeAccountApi(currentAccount.value.id, {
+        ...updatePayload,
+      });
+      message.success(
+        newPassword
+          ? $t('user.backofficeAccount.accountPasswordUpdated')
+          : $t('user.backofficeAccount.accountUpdated'),
+      );
     }
 
     showEditModal.value = false;
     loadTableData();
   } catch (error) {
-    message.error(editMode.value === 'add' ? '创建账号失败' : '更新账号失败');
+    message.error(
+      editMode.value === 'add'
+        ? $t('user.backofficeAccount.createFailed')
+        : $t('user.backofficeAccount.updateFailed'),
+    );
     console.error('Error submitting edit:', error);
   }
 };
@@ -658,13 +676,13 @@ const handleSubmitEdit = async () => {
 const handleDeleteAccount = async (account: BackofficeAccount) => {
   try {
     await deleteBackofficeAccountApi(account.id);
-    message.success('账号删除成功');
+    message.success($t('user.backofficeAccount.deleteSuccess'));
     loadTableData();
     if (showDetailModal.value && currentAccount.value?.id === account.id) {
       showDetailModal.value = false;
     }
   } catch (error) {
-    message.error('删除账号失败');
+    message.error($t('user.backofficeAccount.deleteFailed'));
     console.error('Error deleting account:', error);
   }
 };
@@ -673,13 +691,19 @@ const handleToggleStatus = async (account: BackofficeAccount) => {
   try {
     const newSuspendedStatus = !account.isSuspended;
     await toggleAccountStatusApi(account.id, newSuspendedStatus);
-    message.success(`账号${newSuspendedStatus ? '停用' : '启用'}成功`);
+    message.success(
+      $t('user.backofficeAccount.toggleSuccess', [
+        newSuspendedStatus
+          ? $t('user.backofficeAccount.toggleDisabled')
+          : $t('user.backofficeAccount.toggleEnabled'),
+      ]),
+    );
     loadTableData();
     if (showDetailModal.value && currentAccount.value?.id === account.id) {
       showDetailModal.value = false;
     }
   } catch (error) {
-    message.error('操作失败');
+    message.error($t('common.operationFailed'));
     console.error('Error toggling status:', error);
   }
 };
@@ -692,27 +716,27 @@ const handleBulkDelete = async (selectedRows?: BackofficeAccount[]) => {
     );
 
   if (accountsToDelete.length === 0) {
-    message.warning('请选择要删除的账号');
+    message.warning($t('user.backofficeAccount.selectToDelete'));
     return;
   }
 
   try {
-    // Delete accounts one by one since no bulk delete endpoint exists
     const promises = accountsToDelete.map((account) =>
       deleteBackofficeAccountApi(Number(account.id)),
     );
 
     await Promise.all(promises);
-    message.success(`成功删除 ${accountsToDelete.length} 个账号`);
+    message.success(
+      $t('user.backofficeAccount.bulkDeleteSuccess', [accountsToDelete.length]),
+    );
     checkedRowKeys.value = [];
     loadTableData();
   } catch (error) {
-    message.error('批量删除失败');
+    message.error($t('user.backofficeAccount.bulkDeleteFailed'));
     console.error('Error bulk deleting accounts:', error);
   }
 };
 
-// 数据加载
 const loadTableData = async () => {
   loading.value = true;
   try {
@@ -730,14 +754,13 @@ const loadTableData = async () => {
     tableData.value = response.list;
     paginationReactive.total = response.pagination.total;
   } catch (error) {
-    message.error('获取账号列表失败');
+    message.error($t('user.backofficeAccount.loadFailed'));
     console.error('Error loading table data:', error);
   } finally {
     loading.value = false;
   }
 };
 
-// 生命周期
 onMounted(() => {
   loadTableData();
 });

@@ -3,7 +3,7 @@
     <div class="flex flex-col">
       <n-select
         :value="field"
-        :placeholder="selectPlaceholder"
+        :placeholder="selectPlaceholderText"
         clearable
         filterable
         :style="{ width: selectWidth }"
@@ -28,6 +28,7 @@
 import { computed } from 'vue';
 import { NSelect, NInput } from 'naive-ui';
 import type { SelectOption } from 'naive-ui';
+import { $t } from '@vben/locales';
 
 export type FieldSearchBarOption = {
   label: string;
@@ -47,11 +48,16 @@ const props = withDefaults(
     valuePlaceholderFallback?: string;
   }>(),
   {
-    selectPlaceholder: '请选择',
+    selectPlaceholder: 'common.pleaseSelect',
     selectWidth: '200px',
     inputWidth: '240px',
-    valuePlaceholderFallback: '搜索值',
+    valuePlaceholderFallback: 'common.searchValue',
   },
+);
+
+const selectPlaceholderText = computed(() => $t(props.selectPlaceholder));
+const valuePlaceholderFallbackText = computed(() =>
+  $t(props.valuePlaceholderFallback),
 );
 
 const emit = defineEmits<{
@@ -66,9 +72,13 @@ const selectOptions = computed<SelectOption[]>(() =>
 );
 
 const inputPlaceholderComputed = computed(() => {
-  if (!props.field) return `请输入${props.valuePlaceholderFallback}`;
+  if (!props.field) {
+    return $t('common.pleaseEnterField', [valuePlaceholderFallbackText.value]);
+  }
   const opt = props.options.find((o) => o.value === props.field);
-  return opt ? `请输入${opt.label}` : `请输入${props.valuePlaceholderFallback}`;
+  return opt
+    ? $t('common.pleaseEnterField', [opt.label])
+    : $t('common.pleaseEnterField', [valuePlaceholderFallbackText.value]);
 });
 
 function onFieldUpdate(newField: string | null) {

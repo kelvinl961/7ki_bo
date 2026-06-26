@@ -9,57 +9,57 @@
       size="medium"
       :show-require-mark="false"
     >
-      <!-- ID（仅显示） -->
+      
       <n-form-item label="ID">
         <n-input
-          :value="formData.id ? formData.id.toString() : '自动生成'"
+          :value="formData.id ? formData.id.toString() : $t('game.virtualBonusPool.autoGenerate')"
           disabled
-          placeholder="自动生成"
+          :placeholder="$t('game.virtualBonusPool.autoGenerate')"
         />
       </n-form-item>
 
-      <!-- 币种 -->
-      <n-form-item label="币种" path="currency">
+      
+      <n-form-item :label="$t('common.currency')" path="currency">
         <n-select
           v-model:value="formData.currency"
-          placeholder="请选择币种"
+          :placeholder="$t('game.virtualBonusPool.selectCurrencyRequired')"
           :options="currencyOptions"
         />
       </n-form-item>
 
-      <!-- 展示方式 -->
-      <n-form-item label="展示方式" path="displayType">
+      
+      <n-form-item :label="$t('game.virtualBonusPool.displayMethod')" path="displayType">
         <n-radio-group v-model:value="formData.displayType" name="displayType">
           <n-space>
-            <n-radio value="single">单独模块</n-radio>
-            <n-radio value="multiple">多个馆馆</n-radio>
+            <n-radio value="single">{{ $t('game.virtualBonusPool.displaySingle') }}</n-radio>
+            <n-radio value="multiple">{{ $t('game.virtualBonusPool.displayMultiple') }}</n-radio>
           </n-space>
         </n-radio-group>
       </n-form-item>
 
-      <!-- 展示位置 -->
-      <n-form-item label="展示位置" path="displayPosition">
+      
+      <n-form-item :label="$t('game.virtualBonusPool.displayPosition')" path="displayPosition">
         <n-select
           v-model:value="formData.displayPosition"
-          placeholder="请选择展示位置"
+          :placeholder="$t('game.virtualBonusPool.selectDisplayPositionRequired')"
           :options="displayPositionOptions"
         />
       </n-form-item>
 
-      <!-- 点击跳转位置 -->
-      <n-form-item label="点击跳转位置" path="clickTarget">
+      
+      <n-form-item :label="$t('game.virtualBonusPool.clickTarget')" path="clickTarget">
         <n-select
           v-model:value="formData.clickTarget"
-          placeholder="请选择跳转位置"
+          :placeholder="$t('game.virtualBonusPool.selectClickTargetRequired')"
           :options="clickTargetOptions"
         />
       </n-form-item>
 
-      <!-- 最大显示金额 -->
-      <n-form-item label="最大显示金额" path="maxAmount">
+      
+      <n-form-item :label="$t('game.virtualBonusPool.maxAmount')" path="maxAmount">
         <n-input-number
           v-model:value="formData.maxAmount"
-          placeholder="请输入最大显示金额"
+          :placeholder="$t('game.virtualBonusPool.enterMaxAmount')"
           style="width: 100%"
           :min="0"
           :precision="2"
@@ -69,11 +69,11 @@
         />
       </n-form-item>
 
-      <!-- 最小显示金额 -->
-      <n-form-item label="最小显示金额" path="minAmount">
+      
+      <n-form-item :label="$t('game.virtualBonusPool.minAmount')" path="minAmount">
         <n-input-number
           v-model:value="formData.minAmount"
-          placeholder="请输入最小显示金额"
+          :placeholder="$t('game.virtualBonusPool.enterMinAmount')"
           style="width: 100%"
           :min="0"
           :precision="2"
@@ -83,11 +83,11 @@
         />
       </n-form-item>
 
-      <!-- 小数点位数 -->
-      <n-form-item label="小数点位数" path="decimalPlaces">
+      
+      <n-form-item :label="$t('game.virtualBonusPool.decimalPlaces')" path="decimalPlaces">
         <n-input-number
           v-model:value="formData.decimalPlaces"
-          placeholder="请输入小数点位数"
+          :placeholder="$t('game.virtualBonusPool.enterDecimalPlaces')"
           style="width: 100%"
           :min="0"
           :max="8"
@@ -98,21 +98,21 @@
         />
       </n-form-item>
 
-      <!-- 金额数字样式 -->
-      <n-form-item label="金额数字样式" path="numberStyle">
+      
+      <n-form-item :label="$t('game.virtualBonusPool.numberStyle')" path="numberStyle">
         <div class="w-full">
           <!-- Media Library Selector -->
           <MediaLibrarySelector
             v-model="formData.numberStyle"
             category="icons"
             :accept-types="['image']"
-            placeholder="选择数字样式图片"
+            :placeholder="$t('game.virtualBonusPool.selectNumberStyle')"
             @file-selected="handleNumberStyleSelected"
           />
 
           <!-- Preview -->
           <div v-if="formData.numberStyle" class="mt-3">
-            <div class="mb-2 text-sm text-gray-600">预览:</div>
+            <div class="mb-2 text-sm text-gray-600">{{ $t('game.virtualBonusPool.preview') }}:</div>
 
             <!-- Image Preview (if it's a URL) -->
             <div
@@ -151,7 +151,7 @@
                   Aa
                 </div>
                 <div class="mt-1 text-xs text-gray-500">
-                  预设样式: {{ formData.numberStyle }}
+                  {{ $t('game.virtualBonusPool.presetStyle') }}: {{ formData.numberStyle }}
                 </div>
               </div>
             </div>
@@ -159,21 +159,21 @@
         </div>
       </n-form-item>
 
-      <!-- 背景风格 -->
-      <n-form-item label="背景风格" path="backgroundStyle">
+      
+      <n-form-item :label="$t('game.virtualBonusPool.backgroundStyle')" path="backgroundStyle">
         <div class="w-full">
           <!-- Media Library Selector -->
           <MediaLibrarySelector
             v-model="formData.backgroundStyle"
             category="backgrounds"
             :accept-types="['image']"
-            placeholder="选择背景风格图片"
+            :placeholder="$t('game.virtualBonusPool.selectBgStyle')"
             @file-selected="handleBackgroundStyleSelected"
           />
 
           <!-- Preview -->
           <div v-if="formData.backgroundStyle" class="mt-3">
-            <div class="mb-2 text-sm text-gray-600">预览:</div>
+            <div class="mb-2 text-sm text-gray-600">{{ $t('game.virtualBonusPool.preview') }}:</div>
 
             <!-- Image Preview (if it's a URL) -->
             <div
@@ -209,17 +209,17 @@
               :style="getPresetBackgroundStyle(formData.backgroundStyle)"
             >
               <div class="text-center text-white">
-                <div class="text-sm font-bold">背景样式</div>
+                <div class="text-sm font-bold">{{ $t('game.virtualBonusPool.bgStyleLabel') }}</div>
                 <div class="mt-1 text-xs opacity-75">
-                  预设: {{ formData.backgroundStyle }}
+                  {{ $t('game.virtualBonusPool.preset') }}: {{ formData.backgroundStyle }}
                 </div>
               </div>
             </div>
           </div>
         </div>
       </n-form-item>
-      <!-- 实时预览 -->
-      <n-form-item label="实时预览">
+      
+      <n-form-item :label="$t('game.virtualBonusPool.livePreview')">
         <div class="live-preview-section">
           <div class="preview-container">
             <div
@@ -241,28 +241,26 @@
           </div>
 
           <div class="preview-controls">
-            <n-button size="small" @click="startCountAnimation">
-              播放动画
-            </n-button>
-            <n-button size="small" @click="resetAnimation"> 重置 </n-button>
+            <n-button size="small" @click="startCountAnimation">{{ $t('game.virtualBonusPool.playAnimation') }}</n-button>
+            <n-button size="small" @click="resetAnimation"> {{ $t('common.reset') }} </n-button>
           </div>
         </div>
       </n-form-item>
 
-      <!-- 状态 -->
-      <n-form-item label="状态" path="status">
+      
+      <n-form-item :label="$t('common.status')" path="status">
         <n-switch v-model:value="formData.status">
-          <template #checked>启用</template>
-          <template #unchecked>禁用</template>
+          <template #checked>{{ $t('common.enable') }}</template>
+          <template #unchecked>{{ $t('common.disabled') }}</template>
         </n-switch>
       </n-form-item>
 
-      <!-- 备注 -->
-      <n-form-item label="备注" path="remark">
+      
+      <n-form-item :label="$t('common.remark')" path="remark">
         <n-input
           v-model:value="formData.remark"
           type="textarea"
-          placeholder="请输入备注信息（最多200字）"
+          :placeholder="$t('game.virtualBonusPool.enterRemarkMax200')"
           :maxlength="200"
           show-count
           :autosize="{ minRows: 3, maxRows: 6 }"
@@ -270,24 +268,24 @@
       </n-form-item>
     </n-form>
 
-    <!-- 底部按钮组 -->
+    
     <div class="form-footer">
       <n-space justify="center" :size="16">
-        <n-button @click="handleCancel" size="medium">取消</n-button>
+        <n-button @click="handleCancel" size="medium">{{ $t('common.cancel') }}</n-button>
         <n-button
           type="primary"
           @click="handleSubmit"
           :loading="submitting"
           size="medium"
-        >
-          确认
-        </n-button>
+        >{{ $t('game.virtualBonusPool.confirm') }}</n-button>
       </n-space>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, watch, onMounted } from 'vue';
 import {
   NForm,
@@ -361,32 +359,32 @@ const formData = reactive({
 
 // Options
 const currencyOptions = [
-  { label: '巴西雷亚尔(BRL)', value: 'BRL' },
-  { label: '美元(USD)', value: 'USD' },
-  { label: '欧元(EUR)', value: 'EUR' },
-  { label: '人民币(CNY)', value: 'CNY' },
-  { label: '日元(JPY)', value: 'JPY' },
+  { label: $t('game.virtualBonusPool.currencyBrl'), value: 'BRL' },
+  { label: $t('game.virtualBonusPool.currencyUsd'), value: 'USD' },
+  { label: $t('game.virtualBonusPool.currencyEur'), value: 'EUR' },
+  { label: $t('game.virtualBonusPool.currencyCny'), value: 'CNY' },
+  { label: $t('game.virtualBonusPool.currencyJpy'), value: 'JPY' },
 ];
 
 const displayPositionOptions = [
-  { label: '热门上方', value: '热门上方' },
-  { label: '热门下方', value: '热门下方' },
-  { label: '首页顶部', value: '首页顶部' },
-  { label: '游戏大厅', value: '游戏大厅' },
-  { label: '个人中心', value: '个人中心' },
+  { label: $t('game.virtualBonusPool.posHotAbove'), value: '热门上方' },
+  { label: $t('game.virtualBonusPool.posHotBelow'), value: '热门下方' },
+  { label: $t('game.virtualBonusPool.posHomeTop'), value: '首页顶部' },
+  { label: $t('game.virtualBonusPool.posGameLobby'), value: '游戏大厅' },
+  { label: $t('game.virtualBonusPool.posProfile'), value: '个人中心' },
 ];
 
 const clickTargetOptions = [
-  { label: '游戏大厅', value: '/games' },
-  { label: '充值页面', value: '/recharge' },
-  { label: '活动页面', value: '/activities' },
-  { label: '个人中心', value: '/profile' },
-  { label: '不跳转', value: '' },
+  { label: $t('game.virtualBonusPool.posGameLobby'), value: '/games' },
+  { label: $t('game.virtualBonusPool.targetRecharge'), value: '/recharge' },
+  { label: $t('game.virtualBonusPool.targetActivities'), value: '/activities' },
+  { label: $t('game.virtualBonusPool.posProfile'), value: '/profile' },
+  { label: $t('game.virtualBonusPool.targetNone'), value: '' },
 ];
 
 const numberStyleOptions = [
   {
-    label: '样式一',
+    label: $t('game.virtualBonusPool.style1'),
     value: 'style1',
     previewStyle: {
       color: '#ff6b35',
@@ -396,7 +394,7 @@ const numberStyleOptions = [
     },
   },
   {
-    label: '样式二',
+    label: $t('game.virtualBonusPool.style2'),
     value: 'style2',
     previewStyle: {
       color: '#4ecdc4',
@@ -406,7 +404,7 @@ const numberStyleOptions = [
     },
   },
   {
-    label: '样式三',
+    label: $t('game.virtualBonusPool.style3'),
     value: 'style3',
     previewStyle: {
       color: '#45b7d1',
@@ -416,7 +414,7 @@ const numberStyleOptions = [
     },
   },
   {
-    label: '样式四',
+    label: $t('game.virtualBonusPool.style4'),
     value: 'style4',
     previewStyle: {
       color: '#f39c12',
@@ -426,7 +424,7 @@ const numberStyleOptions = [
     },
   },
   {
-    label: '样式五',
+    label: $t('game.virtualBonusPool.style5'),
     value: 'style5',
     previewStyle: {
       color: '#e74c3c',
@@ -439,7 +437,7 @@ const numberStyleOptions = [
 
 const backgroundStyleOptions = [
   {
-    label: '样式一',
+    label: $t('game.virtualBonusPool.style1'),
     value: 'style1',
     previewStyle: {
       background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -447,7 +445,7 @@ const backgroundStyleOptions = [
     },
   },
   {
-    label: '样式二',
+    label: $t('game.virtualBonusPool.style2'),
     value: 'style2',
     previewStyle: {
       background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
@@ -455,7 +453,7 @@ const backgroundStyleOptions = [
     },
   },
   {
-    label: '样式三',
+    label: $t('game.virtualBonusPool.style3'),
     value: 'style3',
     previewStyle: {
       background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
@@ -463,7 +461,7 @@ const backgroundStyleOptions = [
     },
   },
   {
-    label: '样式四',
+    label: $t('game.virtualBonusPool.style4'),
     value: 'style4',
     previewStyle: {
       background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
@@ -471,7 +469,7 @@ const backgroundStyleOptions = [
     },
   },
   {
-    label: '样式五',
+    label: $t('game.virtualBonusPool.style5'),
     value: 'style5',
     previewStyle: {
       background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
@@ -483,20 +481,20 @@ const backgroundStyleOptions = [
 // Validation rules
 const rules: FormRules = {
   currency: [
-    { required: true, message: '请选择币种', trigger: ['blur', 'change'] },
+    { required: true, message: $t('game.virtualBonusPool.selectCurrencyRequired'), trigger: ['blur', 'change'] },
   ],
   displayType: [
-    { required: true, message: '请选择展示方式', trigger: ['blur', 'change'] },
+    { required: true, message: $t('game.virtualBonusPool.selectDisplayMethodRequired'), trigger: ['blur', 'change'] },
   ],
   displayPosition: [
-    { required: true, message: '请选择展示位置', trigger: ['blur', 'change'] },
+    { required: true, message: $t('game.virtualBonusPool.selectDisplayPositionRequired'), trigger: ['blur', 'change'] },
   ],
   clickTarget: [
     {
       validator: (rule: any, value: any) => {
         return value !== null && value !== undefined;
       },
-      message: '请选择点击跳转位置',
+      message: $t('game.virtualBonusPool.selectClickTargetRequired'),
       trigger: ['blur', 'change'],
     },
   ],
@@ -504,7 +502,7 @@ const rules: FormRules = {
     {
       required: true,
       type: 'number',
-      message: '请输入最大显示金额',
+      message: $t('game.virtualBonusPool.enterMaxAmountRequired'),
       trigger: ['blur', 'change'],
     },
   ],
@@ -512,7 +510,7 @@ const rules: FormRules = {
     {
       required: true,
       type: 'number',
-      message: '请输入最小显示金额',
+      message: $t('game.virtualBonusPool.enterMinAmountRequired'),
       trigger: ['blur', 'change'],
     },
   ],
@@ -520,7 +518,7 @@ const rules: FormRules = {
     {
       required: true,
       type: 'number',
-      message: '请输入小数点位数',
+      message: $t('game.virtualBonusPool.enterDecimalRequired'),
       trigger: ['blur', 'change'],
     },
   ],
@@ -536,13 +534,13 @@ const handleSubmit = async () => {
     const maxAmount = Number(formData.maxAmount);
 
     if (minAmount >= maxAmount) {
-      message.error('最小显示金额必须小于最大显示金额');
+      message.error($t('game.virtualBonusPool.minLessThanMax'));
       return;
     }
 
     submitting.value = true;
 
-    // 确保提交的数据类型正确，并排除id字段（创建时不需要）
+    
     const { id, ...submitDataWithoutId } = formData;
     const submitData = {
       ...submitDataWithoutId,
@@ -554,7 +552,7 @@ const handleSubmit = async () => {
     emit('submit', submitData);
   } catch (error) {
     console.error('Form validation failed:', error);
-    message.error('请检查表单内容是否正确填写');
+    message.error($t('game.virtualBonusPool.checkFormContent'));
   } finally {
     submitting.value = false;
   }
@@ -568,13 +566,13 @@ const handleCancel = () => {
 
 const selectTemplate = (template: MediaFile) => {
   formData.backgroundStyle = template.url;
-  message.success(`已选择模板: ${template.filename}`);
+  message.success($t('game.virtualBonusPool.templateSelected', [template.filename]));
 };
 
 const handleBackgroundStyleSelected = (file: MediaFile) => {
   console.log('🎯 Background style selected:', file);
   formData.backgroundStyle = file.url;
-  message.success(`已选择背景风格: ${file.filename}`);
+  message.success($t('game.virtualBonusPool.bgStyleSelected', [file.filename]));
 };
 
 // Helper functions for preview
@@ -599,19 +597,19 @@ const getPresetBackgroundStyle = (style: string) => {
 
 const selectNumberStyle = (numberStyle: MediaFile) => {
   formData.numberStyle = numberStyle.url;
-  message.success(`已选择数字样式: ${numberStyle.filename}`);
+  message.success($t('game.virtualBonusPool.numberStyleSelected', [numberStyle.filename]));
 };
 
 const handleNumberStyleSelected = (file: MediaFile) => {
   console.log('🎯 Number style selected:', file);
   formData.numberStyle = file.url;
-  message.success(`已选择数字样式: ${file.filename}`);
+  message.success($t('game.virtualBonusPool.numberStyleSelected', [file.filename]));
 };
 
 const handleNewTemplateSelected = (file: MediaFile) => {
   // When a new template is uploaded, select it
   formData.backgroundStyle = file.url;
-  message.success(`已选择新模板: ${file.filename}`);
+  message.success($t('game.virtualBonusPool.templateSelected', [file.filename]));
 };
 
 const openMediaLibrary = () => {
@@ -682,12 +680,12 @@ const getCurrencySymbol = (currency: string) => {
 
 const getDisplayTypeLabel = (displayType: string) => {
   const typeMap: Record<string, string> = {
-    single: '单独模块',
-    multiple: '多个馆馆',
-    fixed: '固定金额',
-    random: '随机金额',
-    realtime: '实时更新',
-    increment: '递增金额',
+    single: $t('game.virtualBonusPool.displaySingle'),
+    multiple: $t('game.virtualBonusPool.displayMultiple'),
+    fixed: $t('game.virtualBonusPool.fixedAmount'),
+    random: $t('game.virtualBonusPool.randomAmount'),
+    realtime: $t('game.virtualBonusPool.realtimeUpdate'),
+    increment: $t('game.virtualBonusPool.incrementAmount'),
   };
   return typeMap[displayType] || displayType;
 };
@@ -732,7 +730,7 @@ watch(
   () => props.data,
   (newData) => {
     if (newData) {
-      // 确保数字字段正确转换
+      
       Object.assign(formData, {
         ...newData,
         maxAmount:
@@ -789,7 +787,7 @@ onMounted(() => {
   color: #333;
 }
 
-/* 数字样式预览网格 */
+
 .number-style-section {
   width: 100%;
 }
@@ -876,7 +874,7 @@ onMounted(() => {
   font-weight: 500;
 }
 
-/* 背景样式预览网格 */
+
 .background-section {
   width: 100%;
 }
@@ -1016,7 +1014,7 @@ onMounted(() => {
   opacity: 1;
 }
 
-/* 上传区域 */
+
 .upload-item {
   position: relative;
 }
@@ -1069,202 +1067,14 @@ onMounted(() => {
   line-height: 1.2;
 }
 
-/* Current background preview */
-.current-background-preview {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  overflow: hidden;
-}
 
-.preview-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 12px;
-  background: #f5f5f5;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.background-preview-card {
-  position: relative;
-  height: 120px;
-  overflow: hidden;
-}
-
-.preview-background-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.background-preview-card .preview-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: white;
-}
-
-.background-preview-card .preview-text {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 8px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.background-preview-card .preview-amount {
-  font-size: 24px;
-  font-weight: bold;
-  color: #ffd700;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-/* Live Preview Section */
-.live-preview-section {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #f8f9fa;
-}
-
-.preview-container {
-  display: flex;
-  justify-content: center;
-  padding: 1rem;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-}
-
-.bonus-pool-preview {
-  width: 380px;
-  height: 90px;
-  padding: 0.75rem;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-  position: relative;
-  overflow: hidden;
-  color: white;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-}
-
-.pool-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-  opacity: 0.9;
-}
-
-.pool-title {
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-.pool-position {
-  font-size: 0.8rem;
-  opacity: 0.8;
-}
-
-.pool-amount {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-top: 18px;
-  position: relative;
-  min-height: 50px;
-  padding: 8px 16px;
-  border-radius: 8px;
-  width: 70%;
-}
-
-.amount-with-style {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-weight: bold;
-  font-size: 1.5rem;
-  font-family: 'Monaco', 'Consolas', monospace;
-}
-
-.currency {
-  font-size: inherit;
-  font-weight: inherit;
-}
-
-.amount {
-  font-size: inherit;
-  font-weight: inherit;
-  font-family: inherit;
-}
-
-.pool-footer {
-  margin-top: 1rem;
-  font-size: 0.8rem;
-  opacity: 0.8;
-}
-
-.pool-type {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.75rem;
-}
-
-/* Number Style Classes */
-.number-style1 .amount {
-  color: #ff6b35;
-  text-shadow: 0 2px 4px rgba(255, 107, 53, 0.3);
-}
-
-.number-style2 .amount {
-  color: #4ecdc4;
-  text-shadow: 0 2px 4px rgba(78, 205, 196, 0.3);
-}
-
-.number-style3 .amount {
-  color: #45b7d1;
-  text-shadow: 0 2px 4px rgba(69, 183, 209, 0.3);
-}
-
-.number-style4 .amount {
-  color: #f39c12;
-  text-shadow: 0 2px 4px rgba(243, 156, 18, 0.3);
-}
-
-.number-style5 .amount {
-  color: #e74c3c;
-  text-shadow: 0 2px 4px rgba(231, 76, 60, 0.3);
-}
-
-.preview-controls {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  padding: 12px;
-  background: white;
-  border-top: 1px solid #e0e0e0;
-}
-
-/* 底部按钮区域 */
 .form-footer {
   margin-top: 32px;
   padding-top: 24px;
   border-top: 1px solid #f0f0f0;
 }
 
-/* 响应式调整 */
+
 @media (max-width: 768px) {
   .number-style-preview-grid {
     grid-template-columns: repeat(3, 1fr);

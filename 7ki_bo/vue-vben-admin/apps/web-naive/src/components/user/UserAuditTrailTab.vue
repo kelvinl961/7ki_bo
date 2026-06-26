@@ -1,9 +1,9 @@
 <template>
   <div class="user-audit-trail-tab">
     <!-- Enhanced Query Section -->
-    <n-card title="查询条件" class="query-card mb-4">
+    <n-card :title="$t('user.auditTrail.queryConditions')" class="query-card mb-4">
       <template #header-extra>
-        <n-tag type="info" size="small"> 操作日志查询 </n-tag>
+        <n-tag type="info" size="small"> {{ $t('user.auditTrail.operationLogQuery') }} </n-tag>
       </template>
 
       <div
@@ -12,12 +12,12 @@
         <!-- Date Range -->
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium text-gray-700">
-            日期范围
+            {{ $t('user.auditTrail.dateRange') }}
           </label>
           <n-date-picker
             v-model:value="dateRange"
             type="daterange"
-            placeholder="选择日期范围"
+            :placeholder="$t('user.auditTrail.selectDateRange')"
             :shortcuts="dateShortcuts"
             @update:value="handleDateRangeChange"
             clearable
@@ -27,11 +27,11 @@
         <!-- Action Filter -->
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium text-gray-700">
-            操作项目
+            {{ $t('user.auditTrail.actionItem') }}
           </label>
           <n-select
             v-model:value="actionFilter"
-            placeholder="选择操作项目"
+            :placeholder="$t('user.auditTrail.selectActionItem')"
             :options="actionOptions"
             clearable
             @update:value="handleFilterChange"
@@ -41,11 +41,11 @@
         <!-- Module Filter -->
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium text-gray-700">
-            操作模块
+            {{ $t('user.auditTrail.actionModule') }}
           </label>
           <n-select
             v-model:value="moduleFilter"
-            placeholder="选择操作模块"
+            :placeholder="$t('user.auditTrail.selectActionModule')"
             :options="moduleOptions"
             clearable
             @update:value="handleFilterChange"
@@ -55,11 +55,11 @@
         <!-- Result Filter -->
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium text-gray-700">
-            操作结果
+            {{ $t('user.auditTrail.actionResult') }}
           </label>
           <n-select
             v-model:value="resultFilter"
-            placeholder="选择操作结果"
+            :placeholder="$t('user.auditTrail.selectActionResult')"
             :options="resultOptions"
             clearable
             @update:value="handleFilterChange"
@@ -69,11 +69,11 @@
         <!-- Source Filter -->
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium text-gray-700">
-            操作入口
+            {{ $t('user.auditTrail.actionSource') }}
           </label>
           <n-select
             v-model:value="sourceFilter"
-            placeholder="选择操作入口"
+            :placeholder="$t('user.auditTrail.selectActionSource')"
             :options="sourceOptions"
             clearable
             @update:value="handleFilterChange"
@@ -83,11 +83,11 @@
         <!-- Operator Type Filter -->
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium text-gray-700">
-            操作人类型
+            {{ $t('user.auditTrail.operatorType') }}
           </label>
           <n-select
             v-model:value="operatorTypeFilter"
-            placeholder="选择操作人类型"
+            :placeholder="$t('user.auditTrail.selectOperatorType')"
             :options="operatorTypeOptions"
             clearable
             @update:value="handleFilterChange"
@@ -102,32 +102,32 @@
           :loading="loading"
           class="action-button"
         >
-          查询日志
+          {{ $t('user.auditTrail.queryLogs') }}
         </n-button>
-        <n-button @click="handleReset" class="action-button"> 重置 </n-button>
+        <n-button @click="handleReset" class="action-button"> {{ $t('common.reset') }} </n-button>
         <n-button
           @click="loadAuditTrails"
           :disabled="loading"
           class="action-button"
         >
-          刷新
+          {{ $t('common.refresh') }}
         </n-button>
         <n-button
           @click="handleExport"
           :loading="exportLoading"
           class="action-button"
         >
-          导出Excel
+          {{ $t('user.auditTrail.exportExcel') }}
         </n-button>
       </div>
 
       <!-- Query Status -->
       <div v-if="lastQueryInfo" class="mt-4 border-t border-gray-200 pt-3">
         <div class="flex items-center gap-4 text-sm text-gray-600">
-          <span>查询时间: {{ lastQueryInfo.timestamp }}</span>
-          <span>数据范围: {{ lastQueryInfo.dateRange }}</span>
-          <span>记录数: {{ lastQueryInfo.totalCount }}</span>
-          <span>成功率: {{ lastQueryInfo.successRate }}%</span>
+          <span>{{ $t('user.auditTrail.queryTime') }}: {{ lastQueryInfo.timestamp }}</span>
+          <span>{{ $t('user.auditTrail.dataRange') }}: {{ lastQueryInfo.dateRange }}</span>
+          <span>{{ $t('user.auditTrail.recordCount') }}: {{ lastQueryInfo.totalCount }}</span>
+          <span>{{ $t('user.auditTrail.successRate') }}: {{ lastQueryInfo.successRate }}%</span>
         </div>
       </div>
     </n-card>
@@ -135,8 +135,8 @@
     <!-- Statistics Cards -->
     <div v-if="stats" class="mb-6">
       <div class="mb-4 flex items-center justify-between">
-        <h3 class="text-lg font-semibold text-gray-800">统计概览</h3>
-        <n-tag type="success" size="small"> 实时数据 </n-tag>
+        <h3 class="text-lg font-semibold text-gray-800">{{ $t('user.auditTrail.statsOverview') }}</h3>
+        <n-tag type="success" size="small"> {{ $t('user.auditTrail.realtimeData') }} </n-tag>
       </div>
 
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -144,7 +144,7 @@
         <n-card size="small" class="stat-card stat-card-blue">
           <div class="stat-content">
             <div class="stat-info">
-              <div class="stat-label">总操作数</div>
+              <div class="stat-label">{{ $t('user.auditTrail.totalOperations') }}</div>
               <div class="stat-value">{{ stats.totalCount }}</div>
             </div>
           </div>
@@ -154,7 +154,7 @@
         <n-card size="small" class="stat-card stat-card-green">
           <div class="stat-content">
             <div class="stat-info">
-              <div class="stat-label">成功操作</div>
+              <div class="stat-label">{{ $t('user.auditTrail.successOperations') }}</div>
               <div class="stat-value">{{ stats.successCount }}</div>
             </div>
           </div>
@@ -164,7 +164,7 @@
         <n-card size="small" class="stat-card stat-card-red">
           <div class="stat-content">
             <div class="stat-info">
-              <div class="stat-label">失败操作</div>
+              <div class="stat-label">{{ $t('user.auditTrail.failedOperations') }}</div>
               <div class="stat-value">{{ stats.failedCount }}</div>
             </div>
           </div>
@@ -174,7 +174,7 @@
         <n-card size="small" class="stat-card stat-card-purple">
           <div class="stat-content">
             <div class="stat-info">
-              <div class="stat-label">成功率</div>
+              <div class="stat-label">{{ $t('user.auditTrail.successRate') }}</div>
               <div class="stat-value">{{ stats.successRate }}%</div>
             </div>
           </div>
@@ -190,33 +190,32 @@
     <!-- No Data State -->
     <div v-else-if="!hasData" class="py-12 text-center text-gray-500">
       <div class="mb-4 text-4xl"></div>
-      <div class="text-lg font-medium">暂无操作日志</div>
-      <div class="mt-2 text-sm text-gray-400">请选择日期范围后重新查询</div>
+      <div class="text-lg font-medium">{{ $t('user.auditTrail.noLogs') }}</div>
+      <div class="mt-2 text-sm text-gray-400">{{ $t('user.auditTrail.selectDateToQuery') }}</div>
     </div>
 
     <!-- Audit Trail Table -->
     <n-card v-else class="audit-trail-table-card">
       <template #header>
         <div class="flex items-center gap-2">
-          <span class="text-lg font-semibold">操作日志明细</span>
-          <n-tag type="info" size="small"> 按时间降序 </n-tag>
+          <span class="text-lg font-semibold">{{ $t('user.auditTrail.logDetails') }}</span>
+          <n-tag type="info" size="small"> {{ $t('user.auditTrail.sortByTimeDesc') }} </n-tag>
         </div>
       </template>
 
       <template #header-extra>
         <div class="flex items-center gap-3">
           <div class="flex items-center gap-2 text-sm text-gray-600">
-            <span class="font-medium"
-              >共 {{ pagination.itemCount }} 条记录</span
-            >
+            <span class="font-medium">{{
+              $t('user.auditTrail.totalRecords', [pagination.itemCount])
+            }}</span>
             <span class="text-gray-400">|</span>
-            <span
-              >第 {{ pagination.page }} /
-              {{
-                Math.ceil(pagination.itemCount / pagination.pageSize)
-              }}
-              页</span
-            >
+            <span>{{
+              $t('user.auditTrail.pageOf', [
+                pagination.page,
+                Math.ceil(pagination.itemCount / pagination.pageSize),
+              ])
+            }}</span>
           </div>
         </div>
       </template>
@@ -241,49 +240,49 @@
     <n-modal
       v-model:show="showDetailModal"
       preset="card"
-      title="操作日志详情"
+      :title="$t('user.auditTrail.logDetailTitle')"
       style="width: 800px"
     >
       <div v-if="selectedAuditTrail" class="space-y-4">
         <n-descriptions bordered :column="2" size="small">
-          <n-descriptions-item label="操作时间">
+          <n-descriptions-item :label="$t('common.operationTime')">
             {{ formatOperationTime(selectedAuditTrail.operationTime) }}
           </n-descriptions-item>
-          <n-descriptions-item label="用户账号">
+          <n-descriptions-item :label="$t('user.auditTrail.userAccount')">
             {{ selectedAuditTrail.userAccount }}
           </n-descriptions-item>
-          <n-descriptions-item label="操作项目">
+          <n-descriptions-item :label="$t('user.auditTrail.actionItem')">
             {{ getActionLabel(selectedAuditTrail.action) }}
           </n-descriptions-item>
-          <n-descriptions-item label="操作模块">
+          <n-descriptions-item :label="$t('user.auditTrail.actionModule')">
             {{ getModuleLabel(selectedAuditTrail.module) }}
           </n-descriptions-item>
-          <n-descriptions-item label="操作结果">
+          <n-descriptions-item :label="$t('user.auditTrail.actionResult')">
             <n-tag :type="getResultType(selectedAuditTrail.result)">
               {{ getResultLabel(selectedAuditTrail.result) }}
             </n-tag>
           </n-descriptions-item>
-          <n-descriptions-item label="操作入口">
+          <n-descriptions-item :label="$t('user.auditTrail.actionSource')">
             {{ getSourceLabel(selectedAuditTrail.source) }}
           </n-descriptions-item>
-          <n-descriptions-item label="操作人">
+          <n-descriptions-item :label="$t('common.operator')">
             {{ selectedAuditTrail.operatorName || '-' }}
           </n-descriptions-item>
-          <n-descriptions-item label="操作人类型">
+          <n-descriptions-item :label="$t('user.auditTrail.operatorType')">
             {{ getOperatorTypeLabel(selectedAuditTrail.operatorType) }}
           </n-descriptions-item>
-          <n-descriptions-item label="IP地址">
+          <n-descriptions-item :label="$t('user.auditTrail.ipAddress')">
             {{ selectedAuditTrail.ipAddress || '-' }}
           </n-descriptions-item>
-          <n-descriptions-item label="浏览器">
+          <n-descriptions-item :label="$t('user.auditTrail.browser')">
             {{ selectedAuditTrail.browserName || '-' }}
             {{ selectedAuditTrail.browserVersion || '' }}
           </n-descriptions-item>
-          <n-descriptions-item label="操作系统">
+          <n-descriptions-item :label="$t('user.auditTrail.browser')">
             {{ selectedAuditTrail.operatingSystem || '-' }}
             {{ selectedAuditTrail.osVersion || '' }}
           </n-descriptions-item>
-          <n-descriptions-item label="设备信息">
+          <n-descriptions-item :label="$t('user.auditTrail.deviceInfo')">
             {{ selectedAuditTrail.deviceBrand || '-' }}
             {{ selectedAuditTrail.deviceModel || '' }}
           </n-descriptions-item>
@@ -292,7 +291,7 @@
         <n-divider />
 
         <div class="space-y-2">
-          <div class="text-sm font-medium text-gray-700">操作描述</div>
+          <div class="text-sm font-medium text-gray-700">{{ $t('user.auditTrail.actionDescription') }}</div>
           <div class="rounded bg-gray-50 p-2 text-sm text-gray-600">
             {{ selectedAuditTrail.actionDescription }}
           </div>
@@ -303,7 +302,7 @@
           class="grid grid-cols-1 gap-4 md:grid-cols-2"
         >
           <div v-if="selectedAuditTrail.oldValue">
-            <div class="mb-2 text-sm font-medium text-gray-700">变更前</div>
+            <div class="mb-2 text-sm font-medium text-gray-700">{{ $t('user.auditTrail.valueBefore') }}</div>
             <div
               class="rounded border border-red-200 bg-red-50 p-2 text-sm text-gray-600"
             >
@@ -311,7 +310,7 @@
             </div>
           </div>
           <div v-if="selectedAuditTrail.newValue">
-            <div class="mb-2 text-sm font-medium text-gray-700">变更后</div>
+            <div class="mb-2 text-sm font-medium text-gray-700">{{ $t('user.auditTrail.valueAfter') }}</div>
             <div
               class="rounded border border-green-200 bg-green-50 p-2 text-sm text-gray-600"
             >
@@ -321,7 +320,7 @@
         </div>
 
         <div v-if="selectedAuditTrail.errorMessage" class="space-y-2">
-          <div class="text-sm font-medium text-red-700">错误信息</div>
+          <div class="text-sm font-medium text-red-700">{{ $t('user.auditTrail.errorMessage') }}</div>
           <div
             class="rounded border border-red-200 bg-red-50 p-2 text-sm text-red-600"
           >
@@ -331,13 +330,15 @@
       </div>
 
       <template #action>
-        <n-button @click="showDetailModal = false">关闭</n-button>
+        <n-button @click="showDetailModal = false">{{ $t('common.close') }}</n-button>
       </template>
     </n-modal>
   </div>
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, computed, onMounted, h } from 'vue';
 import {
   NCard,
@@ -427,116 +428,108 @@ const hasData = computed(() => {
 // FILTER OPTIONS
 // ===================================
 
-const actionOptions = ref([
-  { label: '登录', value: 'login' },
-  { label: '登出', value: 'logout' },
-  { label: '注册', value: 'register' },
-  { label: '更新资料', value: 'profile_update' },
-  { label: '修改密码', value: 'password_change' },
-  { label: '充值', value: 'deposit' },
-  { label: '提现', value: 'withdrawal' },
-  { label: '下注', value: 'bet_place' },
-  { label: '中奖', value: 'bet_win' },
-  { label: '输注', value: 'bet_lose' },
-  { label: '领取奖金', value: 'bonus_claim' },
-  { label: '上传证件', value: 'document_upload' },
-  { label: '身份验证', value: 'verification' },
-  { label: '账户锁定', value: 'account_lock' },
-  { label: '账户解锁', value: 'account_unlock' },
-  { label: '余额调整', value: 'balance_adjustment' },
+const actionOptions = computed(() => [
+  { label: $t('user.auditTrail.actionLogin'), value: 'login' },
+  { label: $t('user.auditTrail.actionLogout'), value: 'logout' },
+  { label: $t('user.auditTrail.actionRegister'), value: 'register' },
+  { label: $t('user.auditTrail.actionProfileUpdate'), value: 'profile_update' },
+  { label: $t('user.auditTrail.actionPasswordChange'), value: 'password_change' },
+  { label: $t('user.auditTrail.actionDeposit'), value: 'deposit' },
+  { label: $t('user.auditTrail.actionWithdrawal'), value: 'withdrawal' },
+  { label: $t('user.auditTrail.actionBetPlace'), value: 'bet_place' },
+  { label: $t('user.auditTrail.actionBetWin'), value: 'bet_win' },
+  { label: $t('user.auditTrail.actionBetLose'), value: 'bet_lose' },
+  { label: $t('user.auditTrail.actionBonusClaim'), value: 'bonus_claim' },
+  { label: $t('user.auditTrail.actionDocumentUpload'), value: 'document_upload' },
+  { label: $t('user.auditTrail.actionVerification'), value: 'verification' },
+  { label: $t('user.auditTrail.actionAccountLock'), value: 'account_lock' },
+  { label: $t('user.auditTrail.actionAccountUnlock'), value: 'account_unlock' },
+  { label: $t('user.auditTrail.actionBalanceAdjustment'), value: 'balance_adjustment' },
 ]);
 
-const moduleOptions = ref([
-  { label: '账户管理', value: 'account' },
-  { label: '财务管理', value: 'finance' },
-  { label: '游戏管理', value: 'gaming' },
-  { label: '个人资料', value: 'profile' },
-  { label: '安全管理', value: 'security' },
-  { label: '身份验证', value: 'verification' },
-  { label: '优惠活动', value: 'promotion' },
-  { label: '客服支持', value: 'support' },
+const moduleOptions = computed(() => [
+  { label: $t('user.auditTrail.moduleAccount'), value: 'account' },
+  { label: $t('user.auditTrail.moduleFinance'), value: 'finance' },
+  { label: $t('user.auditTrail.moduleGaming'), value: 'gaming' },
+  { label: $t('user.auditTrail.moduleProfile'), value: 'profile' },
+  { label: $t('user.auditTrail.moduleSecurity'), value: 'security' },
+  { label: $t('user.auditTrail.moduleVerification'), value: 'verification' },
+  { label: $t('user.auditTrail.modulePromotion'), value: 'promotion' },
+  { label: $t('user.auditTrail.moduleSupport'), value: 'support' },
 ]);
 
-const resultOptions = ref([
-  { label: '成功', value: 'success' },
-  { label: '失败', value: 'failed' },
-  { label: '处理中', value: 'pending' },
-  { label: '已取消', value: 'cancelled' },
+const resultOptions = computed(() => [
+  { label: $t('user.auditTrail.resultSuccess'), value: 'success' },
+  { label: $t('user.auditTrail.resultFailed'), value: 'failed' },
+  { label: $t('user.auditTrail.resultPending'), value: 'pending' },
+  { label: $t('user.auditTrail.resultCancelled'), value: 'cancelled' },
 ]);
 
-const sourceOptions = ref([
-  { label: '前台', value: 'frontend' },
-  { label: '后台', value: 'backend' },
-  { label: 'API', value: 'api' },
-  { label: '移动端', value: 'mobile' },
-  { label: '管理后台', value: 'admin_panel' },
-  { label: '系统', value: 'system' },
+const sourceOptions = computed(() => [
+  { label: $t('user.auditTrail.sourceFrontend'), value: 'frontend' },
+  { label: $t('user.auditTrail.sourceBackend'), value: 'backend' },
+  { label: $t('user.auditTrail.sourceApi'), value: 'api' },
+  { label: $t('user.auditTrail.sourceMobile'), value: 'mobile' },
+  { label: $t('user.auditTrail.sourceAdminPanel'), value: 'admin_panel' },
+  { label: $t('user.auditTrail.sourceSystem'), value: 'system' },
 ]);
 
-const operatorTypeOptions = ref([
-  { label: '用户', value: 'user' },
-  { label: '管理员', value: 'admin' },
-  { label: '系统', value: 'system' },
+const operatorTypeOptions = computed(() => [
+  { label: $t('user.auditTrail.operatorUser'), value: 'user' },
+  { label: $t('user.auditTrail.operatorAdmin'), value: 'admin' },
+  { label: $t('user.auditTrail.operatorSystem'), value: 'system' },
 ]);
 
 // ===================================
 // DATE SHORTCUTS
 // ===================================
 
-const dateShortcuts = {
-  今天: () => {
-    const today = new Date();
-    const start = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate(),
-    );
-    const end = new Date(start);
-    return [start.getTime(), end.getTime()];
-  },
-  昨天: () => {
-    const today = new Date();
-    const start = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate() - 1,
-    );
-    const end = new Date(start);
-    return [start.getTime(), end.getTime()];
-  },
-  最近7天: () => {
+const dateShortcuts = computed(() => {
+  const last7 = () => {
     const end = new Date();
-    const start = new Date(
-      end.getFullYear(),
-      end.getMonth(),
-      end.getDate() - 6,
-    );
+    const start = new Date(end.getFullYear(), end.getMonth(), end.getDate() - 6);
     return [start.getTime(), end.getTime()];
-  },
-  最近30天: () => {
-    const end = new Date();
-    const start = new Date(
-      end.getFullYear(),
-      end.getMonth(),
-      end.getDate() - 29,
-    );
-    return [start.getTime(), end.getTime()];
-  },
-  本月: () => {
-    const now = new Date();
-    const start = new Date(now.getFullYear(), now.getMonth(), 1);
-    const end = new Date();
-    return [start.getTime(), end.getTime()];
-  },
-};
+  };
+  return {
+    [$t('common.today')]: () => {
+      const today = new Date();
+      const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const end = new Date(start);
+      return [start.getTime(), end.getTime()];
+    },
+    [$t('advancedSearch.yesterday')]: () => {
+      const today = new Date();
+      const start = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+      const end = new Date(start);
+      return [start.getTime(), end.getTime()];
+    },
+    [$t('user.auditTrail.last7Days')]: last7,
+    [$t('user.auditTrail.last30Days')]: () => {
+      const end = new Date();
+      const start = new Date(end.getFullYear(), end.getMonth(), end.getDate() - 29);
+      return [start.getTime(), end.getTime()];
+    },
+    [$t('common.thisMonth')]: () => {
+      const now = new Date();
+      const start = new Date(now.getFullYear(), now.getMonth(), 1);
+      const end = new Date();
+      return [start.getTime(), end.getTime()];
+    },
+  };
+});
+
+const last7DaysShortcut = computed(() => {
+  const shortcuts = dateShortcuts.value;
+  return shortcuts[$t('user.auditTrail.last7Days')] || Object.values(shortcuts)[2];
+});
 
 // ===================================
 // TABLE COLUMNS
 // ===================================
 
-const auditTrailColumns = [
+const auditTrailColumns = computed(() => [
   {
-    title: '操作时间',
+    title: $t('common.operationTime'),
     key: 'operationTime',
     width: 160,
     render: (row: UserAuditTrail) => {
@@ -548,7 +541,7 @@ const auditTrailColumns = [
     },
   },
   {
-    title: '操作项目',
+    title: $t('user.auditTrail.actionItem'),
     key: 'action',
     width: 120,
     render: (row: UserAuditTrail) => {
@@ -556,7 +549,7 @@ const auditTrailColumns = [
     },
   },
   {
-    title: '操作',
+    title: $t('user.auditTrail.actionCol'),
     key: 'actionDescription',
     width: 200,
     ellipsis: {
@@ -567,29 +560,29 @@ const auditTrailColumns = [
     },
   },
   {
-    title: '变更前',
+    title: $t('user.auditTrail.valueBefore'),
     key: 'oldValue',
     width: 150,
     ellipsis: {
       tooltip: true,
     },
     render: (row: UserAuditTrail) => {
-      return row.oldValue || '无';
+      return row.oldValue || $t('user.userDetail.none');
     },
   },
   {
-    title: '变更后',
+    title: $t('user.auditTrail.valueAfter'),
     key: 'newValue',
     width: 150,
     ellipsis: {
       tooltip: true,
     },
     render: (row: UserAuditTrail) => {
-      return row.newValue || '无';
+      return row.newValue || $t('user.userDetail.none');
     },
   },
   {
-    title: '操作结果',
+    title: $t('user.auditTrail.actionResult'),
     key: 'result',
     width: 100,
     render: (row: UserAuditTrail) => {
@@ -597,7 +590,7 @@ const auditTrailColumns = [
     },
   },
   {
-    title: '操作入口',
+    title: $t('user.auditTrail.actionSource'),
     key: 'source',
     width: 120,
     render: (row: UserAuditTrail) => {
@@ -605,15 +598,15 @@ const auditTrailColumns = [
     },
   },
   {
-    title: '操作来源',
+    title: $t('user.auditTrail.actionSourceCol'),
     key: 'operatorName',
     width: 120,
     render: (row: UserAuditTrail) => {
-      return row.operatorName || '会员';
+      return row.operatorName || $t('user.auditTrail.memberOperator');
     },
   },
   {
-    title: '操作人',
+    title: $t('user.auditTrail.operatorCol'),
     key: 'operatorType',
     width: 100,
     render: (row: UserAuditTrail) => {
@@ -621,54 +614,54 @@ const auditTrailColumns = [
     },
   },
   {
-    title: '客户端类型',
+    title: $t('user.auditTrail.clientType'),
     key: 'platform',
     width: 120,
     render: (row: UserAuditTrail) => {
-      return row.platform || '未知';
+      return row.platform || $t('user.userDetail.unknown');
     },
   },
   {
-    title: '浏览器品牌',
+    title: $t('user.auditTrail.browserBrand'),
     key: 'browserName',
     width: 120,
     render: (row: UserAuditTrail) => {
-      return row.browserName || '未知';
+      return row.browserName || $t('user.userDetail.unknown');
     },
   },
   {
-    title: '操作系统',
+    title: $t('user.auditTrail.browser'),
     key: 'operatingSystem',
     width: 120,
     render: (row: UserAuditTrail) => {
-      return row.operatingSystem || '未知';
+      return row.operatingSystem || $t('user.userDetail.unknown');
     },
   },
   {
-    title: '系统版本',
+    title: $t('user.auditTrail.osVersion'),
     key: 'osVersion',
     width: 100,
     render: (row: UserAuditTrail) => {
-      return row.osVersion || '未知';
+      return row.osVersion || $t('user.userDetail.unknown');
     },
   },
   {
-    title: '设备品牌',
+    title: $t('user.auditTrail.deviceBrand'),
     key: 'deviceBrand',
     width: 100,
     render: (row: UserAuditTrail) => {
-      return row.deviceBrand || '未知';
+      return row.deviceBrand || $t('user.userDetail.unknown');
     },
   },
   {
-    title: '设备型号',
+    title: $t('user.auditTrail.deviceModel'),
     key: 'deviceModel',
     width: 120,
     render: (row: UserAuditTrail) => {
-      return row.deviceModel || '未知';
+      return row.deviceModel || $t('user.userDetail.unknown');
     },
   },
-];
+]);
 
 // ===================================
 // METHODS
@@ -752,7 +745,7 @@ const loadAuditTrails = async () => {
       timestamp: new Date().toLocaleString('zh-CN'),
       dateRange: dateRange.value
         ? `${dateRange.value[0]} ~ ${dateRange.value[1]}`
-        : '全部',
+        : $t('user.auditTrail.allData'),
       totalCount: data.total,
       successRate: stats.value?.successRate || '0.00',
     };
@@ -871,7 +864,10 @@ const handleExport = async () => {
     const csvContent = convertToCSV(exportData);
     downloadCSV(
       csvContent,
-      `用户${props.userId}_操作日志_${new Date().toISOString().split('T')[0]}.csv`,
+      $t('user.auditTrail.exportFileName', [
+        String(props.userId),
+        new Date().toISOString().split('T')[0],
+      ]),
     );
 
     console.log('📤 Exported audit trails:', exportData.length);
@@ -936,7 +932,7 @@ const getRowClassName = (row: UserAuditTrail) => {
 onMounted(() => {
   console.log('🎯 UserAuditTrailTab mounted for user:', props.userId);
   // Load with default date range (last 7 days)
-  dateRange.value = dateShortcuts['最近7天']();
+  dateRange.value = last7DaysShortcut.value();
   loadAuditTrails();
 });
 </script>

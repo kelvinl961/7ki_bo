@@ -5,7 +5,7 @@
       <n-space :size="12" align="center">
         <n-input
           v-model:value="filters.search"
-          placeholder="请输入域名"
+          :placeholder="$t('operations.domain.filter.domainInput')"
           clearable
           style="width: 200px"
           size="small"
@@ -14,7 +14,7 @@
 
         <n-select
           v-model:value="filters.cdnProvider"
-          placeholder="全部CDN节点"
+          :placeholder="$t('operations.domain.filter.allCdnNodes')"
           clearable
           style="width: 150px"
           size="small"
@@ -24,7 +24,7 @@
 
         <n-select
           v-model:value="filters.status"
-          placeholder="全部状态"
+          :placeholder="$t('operations.domain.filter.allStatus')"
           clearable
           style="width: 130px"
           size="small"
@@ -32,11 +32,9 @@
           @update:value="fetchDomains"
         />
 
-        <n-button type="primary" size="small" @click="fetchDomains">
-          搜索
-        </n-button>
+        <n-button type="primary" size="small" @click="fetchDomains">{{ $t('common.search') }}</n-button>
 
-        <n-button size="small" @click="resetFilters"> 重置 </n-button>
+        <n-button size="small" @click="resetFilters"> {{ $t('common.reset') }} </n-button>
       </n-space>
     </n-card>
 
@@ -44,13 +42,11 @@
     <n-card size="small" style="margin-bottom: 16px">
       <n-space justify="space-between">
         <n-space>
-          <n-button type="primary" size="small" @click="showCreateModal = true">
-            新增
-          </n-button>
-          <n-button size="small" @click="fetchDomains"> 刷新 </n-button>
+          <n-button type="primary" size="small" @click="showCreateModal = true">{{ $t('common.create') }}</n-button>
+          <n-button size="small" @click="fetchDomains"> {{ $t('common.refresh') }} </n-button>
           <n-select
             v-model:value="selectedBatchAction"
-            placeholder="批量操作"
+            :placeholder="$t('common.batchOperation')"
             style="width: 140px"
             size="small"
             :options="batchActionOptions"
@@ -61,17 +57,13 @@
             size="small"
             :disabled="!selectedRowKeys.length || !selectedBatchAction"
             @click="handleBatchAction"
-          >
-            执行
-          </n-button>
+          >{{ $t('operations.healthCheck.execute') }}</n-button>
         </n-space>
         <n-space align="center" :size="16">
           <span style="font-size: 13px; color: #666">
-            已选择 {{ selectedRowKeys.length }} 条
+            {{ $t('operations.domain.selectedCount', [selectedRowKeys.length]) }}
           </span>
-          <span style="font-size: 13px; color: #666">
-            共 {{ pagination.itemCount || 0 }} 条
-          </span>
+          <span style="font-size: 13px; color: #666">{{ $t('operations.domain.modal.recordsCount', [pagination.itemCount || 0]) }}</span>
         </n-space>
       </n-space>
     </n-card>
@@ -94,8 +86,8 @@
     <BackendApiCreateModal
       v-model:show="showCreateModal"
       use-type="DOWNLOAD_SITE"
-      use-type-label="下载站域名"
-      modal-title="新增下载站域名"
+      :use-type-label="$t('operations.domain.useType.downloadSite')"
+      :modal-title="$t('operations.domain.createDownloadSubdomain')"
       @success="handleCreateSuccess"
     />
 
@@ -103,32 +95,31 @@
     <n-modal
       v-model:show="showSwitchCDNModal"
       preset="dialog"
-      title="更换节点"
-      positive-text="确认"
-      negative-text="取消"
+      :title="$t('operations.domain.modal.switchNodeTitle')"
+      :positive-text="$t('common.confirm')"
+      :negative-text="$t('common.cancel')"
       @positive-click="confirmSwitchCDN"
     >
       <n-space vertical :size="16" style="margin: 20px 0">
         <div>
-          <div style="margin-bottom: 8px; font-weight: 500">当前域名</div>
+          <div style="margin-bottom: 8px; font-weight: 500">{{ $t('operations.domain.modal.currentDomain') }}</div>
           <div style="color: #666">{{ selectedDomain?.domainName }}</div>
         </div>
         <div>
-          <div style="margin-bottom: 8px; font-weight: 500">当前CDN</div>
+          <div style="margin-bottom: 8px; font-weight: 500">{{ $t('operations.domain.modal.currentCdn') }}</div>
           <n-tag :type="'info'" size="small">{{
             selectedDomain?.cdnProvider
           }}</n-tag>
         </div>
         <div>
-          <div style="margin-bottom: 8px; font-weight: 500">
-            目标CDN节点 <span style="color: red">*</span>
+          <div style="margin-bottom: 8px; font-weight: 500">{{ $t('operations.domain.modal.targetCdnRequired') }} <span style="color: red">*</span>
           </div>
           <n-select
             v-model:value="targetCDN"
             :options="
               cdnOptions.filter((o) => o.value !== selectedDomain?.cdnProvider)
             "
-            placeholder="请选择目标CDN节点"
+            :placeholder="$t('operations.domain.modal.selectTargetCdn')"
           />
         </div>
       </n-space>
@@ -138,24 +129,24 @@
     <n-modal
       v-model:show="showBindAgentModal"
       preset="dialog"
-      title="绑定代理"
-      positive-text="确认"
-      negative-text="取消"
+      :title="$t('operations.domain.modal.bindAgentTitle')"
+      :positive-text="$t('common.confirm')"
+      :negative-text="$t('common.cancel')"
       @positive-click="confirmBindAgent"
     >
       <n-space vertical :size="16" style="margin: 20px 0">
         <div>
-          <div style="margin-bottom: 8px; font-weight: 500">域名</div>
+          <div style="margin-bottom: 8px; font-weight: 500">{{ $t('operations.domain.column.domain') }}</div>
           <div style="color: #666">{{ selectedDomain?.domainName }}</div>
         </div>
         <div>
           <div style="margin-bottom: 8px; font-weight: 500">
-            代理账号 <span style="color: red">*</span>
+            {{ $t('operations.domain.modal.agentAccount') }} <span style="color: red">*</span>
           </div>
-          <n-input v-model:value="agentId" placeholder="请输入代理账号" />
+          <n-input v-model:value="agentId" :placeholder="$t('operations.domain.modal.agentAccountPlaceholder')" />
         </div>
         <n-alert type="info" size="small">
-          下载站域名绑定代理优先级：APP内部识别 > 渠道ID强制绑定 > 域名绑定
+          {{ $t('operations.domain.modal.bindAgentHint2') }}: APP > {{ $t('operations.domain.modal.bindAgentPriority2') }} > {{ $t('operations.domain.modal.bindAgentPriority3') }}
         </n-alert>
       </n-space>
     </n-modal>
@@ -163,6 +154,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, h, onMounted, computed } from 'vue';
 import {
   NCard,
@@ -201,7 +194,7 @@ interface Domain {
   verificationStatus: boolean;
   isPromotionDomain?: boolean;
   boundAgentId?: string;
-  备注?: string;
+  remark?: string;
   createdAt: string;
   updatedAt: string;
   operatedBy?: string;
@@ -242,7 +235,7 @@ const paginationConfig = computed(() => ({
   itemCount: pagination.itemCount,
   showSizePicker: true,
   pageSizes: pagination.pageSizes,
-  prefix: ({ itemCount }: { itemCount: number }) => `共 ${itemCount} 条`,
+  prefix: ({ itemCount }: { itemCount: number }) => $t('operations.domain.modal.recordsCount', [itemCount]),
   onChange: (page: number) => {
     pagination.page = page;
     fetchDomains();
@@ -258,9 +251,9 @@ const paginationConfig = computed(() => ({
 const cdnOptions = [
   { label: 'Cloudflare', value: 'CLOUDFLARE' },
   { label: 'AWS', value: 'AWS' },
-  { label: '华为云', value: 'HUAWEI_CLOUD' },
-  { label: '阿里云', value: 'ALIYUN' },
-  { label: '腾讯云', value: 'TENCENT_CLOUD' },
+  { label: $t('operations.domain.cdn.huawei'), value: 'HUAWEI_CLOUD' },
+  { label: $t('operations.certificate.providerAliyun'), value: 'ALIYUN' },
+  { label: $t('operations.certificate.providerTencent'), value: 'TENCENT_CLOUD' },
   { label: 'A8', value: 'A8' },
   { label: 'Wangsu', value: 'WANGSU' },
   { label: 'Funnull', value: 'FUNNULL' },
@@ -268,27 +261,27 @@ const cdnOptions = [
   { label: 'SuperEdge', value: 'SUPEREDGE' },
 ];
 
-const cdnFilterOptions = [{ label: '全部', value: '' }, ...cdnOptions];
+const cdnFilterOptions = [{ label: $t('operations.domain.status.all'), value: '' }, ...cdnOptions];
 
 const statusFilterOptions = [
-  { label: '全部', value: '' },
-  { label: '启用成功', value: 'NORMAL' },
-  { label: '待启用', value: 'DISABLED' },
-  { label: '已过期', value: 'EXPIRED' },
+  { label: $t('operations.domain.status.all'), value: '' },
+  { label: $t('operations.domain.status.enabledSuccess'), value: 'NORMAL' },
+  { label: $t('operations.domain.status.pendingEnable'), value: 'DISABLED' },
+  { label: $t('operations.domain.status.expired'), value: 'EXPIRED' },
 ];
 
 const batchActionOptions = [
-  { label: '批量操作', value: '', disabled: true },
-  { label: '启用', value: 'enable' },
-  { label: '停用', value: 'disable' },
-  { label: '删除', value: 'delete' },
+  { label: $t('common.batchOperation'), value: '', disabled: true },
+  { label: $t('common.enable'), value: 'enable' },
+  { label: $t('common.disable'), value: 'disable' },
+  { label: $t('common.delete'), value: 'delete' },
 ];
 
 // Table Columns
 const columns: DataTableColumn<Domain>[] = [
   { type: 'selection' as const, width: 50 },
   {
-    title: 'CDN平台名称',
+    title: $t('operations.domain.column.cdnPlatformName'),
     key: 'cdnProvider',
     width: 120,
     render(row: Domain) {
@@ -312,7 +305,7 @@ const columns: DataTableColumn<Domain>[] = [
     },
   },
   {
-    title: '生效域名',
+    title: $t('operations.domain.column.effectiveDomain'),
     key: 'domainName',
     width: 220,
     ellipsis: { tooltip: true },
@@ -329,10 +322,10 @@ const columns: DataTableColumn<Domain>[] = [
                 style: 'font-size: 11px; color: #18a058; cursor: pointer;',
                 onClick: () => {
                   navigator.clipboard.writeText(row.domainName);
-                  message.success('已复制');
+                  message.success($t('operations.domain.message.copied'));
                 },
               },
-              '已解析',
+              $t('operations.domain.column.resolved'),
             ),
           ]),
         ],
@@ -340,19 +333,19 @@ const columns: DataTableColumn<Domain>[] = [
     },
   },
   {
-    title: '端口类型',
+    title: $t('operations.domain.column.portType'),
     key: 'portType',
     width: 100,
     render(row: Domain) {
       const portTypeMap: Record<string, string> = {
-        DEFAULT: '默认',
-        FIXED: '固定端口',
+        DEFAULT: $t('operations.domain.status.defaultPort'),
+        FIXED: $t('operations.domain.status.fixed'),
       };
-      return portTypeMap[row.portType || 'DEFAULT'] || '默认';
+      return portTypeMap[row.portType || 'DEFAULT'] || $t('operations.domain.status.defaultPort');
     },
   },
   {
-    title: '端口',
+    title: $t('operations.domain.column.port'),
     key: 'customPort',
     width: 80,
     render(row: Domain) {
@@ -361,11 +354,11 @@ const columns: DataTableColumn<Domain>[] = [
   },
   {
     title: h('div', { style: 'white-space: nowrap;' }, [
-      h('div', {}, '解析说明'),
+      h('div', {}, $t('operations.domain.column.dnsNote')),
       h(
         'div',
         { style: 'font-size: 11px; font-weight: normal; color: #999;' },
-        '(生效状态和同源)',
+        $t('operations.domain.column.dnsNoteHint'),
       ),
     ]) as any,
     key: 'dnsStatus',
@@ -382,7 +375,7 @@ const columns: DataTableColumn<Domain>[] = [
               size: 'small',
             },
             {
-              default: () => (row.verificationStatus ? '已生效' : '待解析'),
+              default: () => (row.verificationStatus ? $t('operations.domain.status.effective') : $t('operations.domain.status.verificationPending')),
             },
           ),
           h(
@@ -401,8 +394,8 @@ const columns: DataTableColumn<Domain>[] = [
   },
   {
     title: h('div', { style: 'white-space: nowrap; text-align: center;' }, [
-      h('div', {}, '出现在其他档别'),
-      h('div', {}, '表'),
+      h('div', {}, $t('operations.domain.column.otherOrg')),
+      h('div', {}, ''),
     ]) as any,
     key: 'isPromotionDomain',
     width: 120,
@@ -417,8 +410,7 @@ const columns: DataTableColumn<Domain>[] = [
   },
   {
     title: h('div', { style: 'white-space: nowrap; text-align: center;' }, [
-      h('div', {}, '强制绑定代理管'),
-      h('div', {}, '理'),
+      h('div', {}, $t('operations.domain.column.forceBindParent')),
     ]) as any,
     key: 'boundAgent',
     width: 130,
@@ -444,21 +436,21 @@ const columns: DataTableColumn<Domain>[] = [
           h(
             'span',
             { style: 'font-size: 12px; color: #999;' },
-            row.boundAgentId || '无',
+            row.boundAgentId || $t('operations.domain.status.none'),
           ),
         ],
       );
     },
   },
   {
-    title: '使用状态',
+    title: $t('operations.domain.column.usageStatus'),
     key: 'status',
     width: 100,
     render(row: Domain) {
       const statusMap: Record<string, { text: string; type: any }> = {
-        NORMAL: { text: '启用成功', type: 'success' },
-        DISABLED: { text: '待启用', type: 'warning' },
-        EXPIRED: { text: '已过期', type: 'error' },
+        NORMAL: { text: $t('operations.domain.status.enabledSuccess'), type: 'success' },
+        DISABLED: { text: $t('operations.domain.status.pendingEnable'), type: 'warning' },
+        EXPIRED: { text: $t('operations.domain.status.expired'), type: 'error' },
       };
       const status = statusMap[row.status] || {
         text: row.status,
@@ -472,8 +464,8 @@ const columns: DataTableColumn<Domain>[] = [
     },
   },
   {
-    title: '备注',
-    key: '备注',
+    title: $t('common.remark'),
+    key: 'remark',
     width: 120,
     ellipsis: { tooltip: true },
     render(row: Domain) {
@@ -485,12 +477,12 @@ const columns: DataTableColumn<Domain>[] = [
             // Open edit remark modal
           },
         },
-        row.备注 || '',
+        row.remark || '',
       );
     },
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 280,
     fixed: 'right' as const,
@@ -504,7 +496,7 @@ const columns: DataTableColumn<Domain>[] = [
             size: 'small',
             onClick: () => handleSwitchCDN(row),
           },
-          { default: () => '更换节点' },
+          { default: () => $t('operations.domain.action.switchNode') },
         ),
         h(
           NButton,
@@ -514,7 +506,7 @@ const columns: DataTableColumn<Domain>[] = [
             size: 'small',
             onClick: () => handleBindAgent(row),
           },
-          { default: () => (row.boundAgentId ? '修改代理' : '绑定代理') },
+          { default: () => (row.boundAgentId ? $t('operations.domain.action.modifyAgent') : $t('operations.domain.action.bindAgent')) },
         ),
         h(
           NButton,
@@ -524,7 +516,7 @@ const columns: DataTableColumn<Domain>[] = [
             size: 'small',
             onClick: () => handleToggleStatus(row),
           },
-          { default: () => (row.status === 'DISABLED' ? '启用' : '停用') },
+          { default: () => (row.status === 'DISABLED' ? $t('common.enable') : $t('common.disable')) },
         ),
         h(
           NButton,
@@ -534,14 +526,14 @@ const columns: DataTableColumn<Domain>[] = [
             size: 'small',
             onClick: () => handleClearCache(row),
           },
-          { default: () => '清缓存' },
+          { default: () => $t('operations.domain.action.clearCache') },
         ),
         h(
           NPopconfirm,
           {
             onPositiveClick: () => handleDelete(row),
-            positiveText: '确认删除',
-            negativeText: '取消',
+            positiveText: $t('operations.domain.modal.confirmDelete'),
+            negativeText: $t('common.cancel'),
             style: { width: '500px' },
           },
           {
@@ -553,15 +545,15 @@ const columns: DataTableColumn<Domain>[] = [
                     style:
                       'font-weight: 600; margin-bottom: 8px; font-size: 16px;',
                   },
-                  '⚠️ 确认删除域名？',
+                  '⚠️ ' + $t('operations.domain.modal.confirmDeleteDomain'),
                 ),
-                h('div', { style: 'color: #666;' }, `域名: ${row.domainName}`),
+                h('div', { style: 'color: #666;' }, `$t('operations.domain.column.domain') + ': ' + row.domainName`),
                 h(
                   'div',
                   {
                     style: 'color: #ff4d4f; margin-top: 8px; font-size: 13px;',
                   },
-                  '删除后将无法恢复，请谨慎操作！',
+                  $t('operations.domain.modal.deleteIrreversible'),
                 ),
               ]),
             trigger: () =>
@@ -572,7 +564,7 @@ const columns: DataTableColumn<Domain>[] = [
                   type: 'error',
                   size: 'small',
                 },
-                { default: () => '删除' },
+                { default: () => $t('common.delete') },
               ),
           },
         ),
@@ -580,7 +572,7 @@ const columns: DataTableColumn<Domain>[] = [
     },
   },
   {
-    title: '操作人',
+    title: $t('common.operator'),
     key: 'operatedBy',
     width: 100,
     render(row: Domain) {
@@ -588,7 +580,7 @@ const columns: DataTableColumn<Domain>[] = [
     },
   },
   {
-    title: '操作时间',
+    title: $t('common.operationTime'),
     key: 'updatedAt',
     width: 160,
     render(row: Domain) {
@@ -623,7 +615,7 @@ const fetchDomains = async () => {
   } catch (error: any) {
     console.error('Fetch domains error:', error);
     message.error(
-      error.response?.data?.message || error.message || '获取域名列表失败',
+      error.response?.data?.message || error.message || $t('operations.domain.message.fetchListFailed'),
     );
   } finally {
     loading.value = false;
@@ -639,7 +631,7 @@ const resetFilters = () => {
 };
 
 const handleCreateSuccess = () => {
-  message.success('域名创建成功');
+  message.success($t('operations.domain.message.createSuccess'));
   fetchDomains();
 };
 
@@ -651,7 +643,7 @@ const handleSwitchCDN = (domain: Domain) => {
 
 const confirmSwitchCDN = async () => {
   if (!targetCDN.value) {
-    message.warning('请选择目标CDN节点');
+    message.warning($t('operations.domain.message.selectTargetCdn'));
     return false;
   }
 
@@ -663,16 +655,16 @@ const confirmSwitchCDN = async () => {
     });
 
     if (response.code === 0) {
-      message.success('CDN节点更换成功');
+      message.success($t('operations.domain.message.cdnChangeSuccess'));
       fetchDomains();
       return true;
     } else {
-      message.error(response.message || 'CDN节点更换失败');
+      message.error(response.message || $t('operations.domain.message.cdnChangeFailed'));
       return false;
     }
   } catch (error: any) {
     console.error('Switch CDN error:', error);
-    message.error(error.response?.data?.message || 'CDN节点更换失败');
+    message.error(error.response?.data?.message || $t('operations.domain.message.cdnChangeFailed'));
     return false;
   }
 };
@@ -685,7 +677,7 @@ const handleBindAgent = (domain: Domain) => {
 
 const confirmBindAgent = async () => {
   if (!agentId.value) {
-    message.warning('请输入代理账号');
+    message.warning($t('operations.domain.message.enterAgentAccount'));
     return false;
   }
 
@@ -696,16 +688,16 @@ const confirmBindAgent = async () => {
     });
 
     if (response.code === 0) {
-      message.success('代理绑定成功');
+      message.success($t('operations.domain.message.agentBindSuccess'));
       fetchDomains();
       return true;
     } else {
-      message.error(response.message || '代理绑定失败');
+      message.error(response.message || $t('operations.domain.message.agentBindFailed'));
       return false;
     }
   } catch (error: any) {
     console.error('Bind agent error:', error);
-    message.error(error.response?.data?.message || '代理绑定失败');
+    message.error(error.response?.data?.message || $t('operations.domain.message.agentBindFailed'));
     return false;
   }
 };
@@ -717,14 +709,14 @@ const handleUnbindAgent = async (domain: Domain) => {
     });
 
     if (response.code === 0) {
-      message.success('代理解绑成功');
+      message.success($t('operations.domain.message.agentUnbindSuccess'));
       fetchDomains();
     } else {
-      message.error(response.message || '代理解绑失败');
+      message.error(response.message || $t('operations.domain.message.agentUnbindFailed'));
     }
   } catch (error: any) {
     console.error('Unbind agent error:', error);
-    message.error(error.response?.data?.message || '代理解绑失败');
+    message.error(error.response?.data?.message || $t('operations.domain.message.agentUnbindFailed'));
   }
 };
 
@@ -735,14 +727,14 @@ const handleTogglePromotion = async (domain: Domain, value: boolean) => {
     });
 
     if (response.code === 0) {
-      message.success(`${value ? '已添加' : '已移除'}到其他档别表`);
+      message.success(value ? $t('operations.domain.message.addedToOtherOrg') : $t('operations.domain.message.removedFromOtherOrg'));
       fetchDomains();
     } else {
-      message.error(response.message || '操作失败');
+      message.error(response.message || $t('operations.domain.message.operationFailed'));
     }
   } catch (error: any) {
     console.error('Toggle promotion error:', error);
-    message.error(error.response?.data?.message || '操作失败');
+    message.error(error.response?.data?.message || $t('operations.domain.message.operationFailed'));
   }
 };
 
@@ -754,15 +746,15 @@ const handleToggleStatus = async (domain: Domain) => {
 
     if (response.code === 0) {
       message.success(
-        `域名${domain.status === 'DISABLED' ? '启用' : '停用'}成功`,
+        domain.status === 'DISABLED' ? $t('operations.domain.message.domainEnableSuccess') : $t('operations.domain.message.domainDisableSuccess'),
       );
       fetchDomains();
     } else {
-      message.error(response.message || '操作失败');
+      message.error(response.message || $t('operations.domain.message.operationFailed'));
     }
   } catch (error: any) {
     console.error('Toggle status error:', error);
-    message.error(error.response?.data?.message || '操作失败');
+    message.error(error.response?.data?.message || $t('operations.domain.message.operationFailed'));
   }
 };
 
@@ -771,13 +763,13 @@ const handleClearCache = async (domain: Domain) => {
     const response = await domainApi.clearCache(domain.id);
 
     if (response.code === 0) {
-      message.success('缓存清理成功');
+      message.success($t('operations.domain.message.cacheClearSuccess'));
     } else {
-      message.error(response.message || '缓存清理失败');
+      message.error(response.message || $t('operations.domain.message.cacheClearFailed'));
     }
   } catch (error: any) {
     console.error('Clear cache error:', error);
-    message.error(error.response?.data?.message || '缓存清理失败');
+    message.error(error.response?.data?.message || $t('operations.domain.message.cacheClearFailed'));
   }
 };
 
@@ -786,14 +778,14 @@ const handleDelete = async (domain: Domain) => {
     const response = await domainApi.deleteDomain(domain.id);
 
     if (response.code === 0) {
-      message.success('域名删除成功');
+      message.success($t('operations.domain.message.domainDeleteSuccess'));
       fetchDomains();
     } else {
-      message.error(response.message || '域名删除失败');
+      message.error(response.message || $t('operations.domain.message.domainDeleteFailed'));
     }
   } catch (error: any) {
     console.error('Delete domain error:', error);
-    message.error(error.response?.data?.message || '域名删除失败');
+    message.error(error.response?.data?.message || $t('operations.domain.message.domainDeleteFailed'));
   }
 };
 
@@ -803,9 +795,7 @@ const handleBatchAction = async () => {
   }
 
   const actionMap: Record<string, string> = {
-    enable: '启用',
-    disable: '停用',
-    delete: '删除',
+    enable: $t('common.enable'), disable: $t('common.disable'), delete: $t('common.delete'),
   };
 
   const actionText = actionMap[selectedBatchAction.value];
@@ -814,20 +804,20 @@ const handleBatchAction = async () => {
     if (selectedBatchAction.value === 'delete') {
       const response = await domainApi.bulkDeleteDomains(selectedRowKeys.value);
       if (response.code === 0) {
-        message.success(`批量${actionText}成功`);
+        message.success($t('operations.domain.message.bulkActionSuccess', [actionText]));
         selectedRowKeys.value = [];
         selectedBatchAction.value = '';
         fetchDomains();
       } else {
-        message.error(response.message || `批量${actionText}失败`);
+        message.error(response.message || $t('operations.domain.message.bulkActionFailed', [actionText]));
       }
     } else {
       // Handle enable/disable batch actions
-      message.info(`批量${actionText}功能开发中`);
+      message.info($t('operations.domain.message.bulkActionDeveloping', [actionText]));
     }
   } catch (error: any) {
     console.error('Batch action error:', error);
-    message.error(error.response?.data?.message || `批量${actionText}失败`);
+    message.error(error.response?.data?.message || $t('operations.domain.message.bulkActionFailed', [actionText]));
   }
 };
 

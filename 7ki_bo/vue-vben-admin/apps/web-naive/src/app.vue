@@ -23,12 +23,14 @@ defineOptions({ name: 'App' });
 
 const { commonTokens } = useNaiveDesignTokens();
 
-const tokenLocale = computed(() =>
-  preferences.app.locale === 'zh-CN' ? zhCN : enUS,
-);
-const tokenDateLocale = computed(() =>
-  preferences.app.locale === 'zh-CN' ? dateZhCN : dateEnUS,
-);
+const tokenLocale = computed(() => {
+  if (preferences.app.locale === 'zh-CN') return zhCN;
+  return enUS;
+});
+const tokenDateLocale = computed(() => {
+  if (preferences.app.locale === 'zh-CN') return dateZhCN;
+  return dateEnUS;
+});
 const tokenTheme = computed(() =>
   preferences.theme.mode === 'dark' ? darkTheme : lightTheme,
 );

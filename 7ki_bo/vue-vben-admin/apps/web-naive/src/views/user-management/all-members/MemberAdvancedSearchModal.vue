@@ -2,7 +2,7 @@
   <n-modal
     :show="show"
     preset="card"
-    title="高级搜索"
+    :title="$t('common.advancedSearch')"
     class="member-adv-modal"
     :style="{ width: 'min(1100px, 99vw)' }"
     :bordered="false"
@@ -20,19 +20,19 @@
         class="adv-form"
       >
       <!-- 会员基本信息 -->
-      <div class="adv-section-title">会员基本信息</div>
+      <div class="adv-section-title">{{ $t('user.advancedSearch.memberBasicInfo') }}</div>
 
       <n-radio-group v-model:value="form.bulkKey" class="adv-bulk-radio-group">
         <div class="adv-bulk-radios">
-          <n-radio value="member.account">会员账号</n-radio>
-          <n-radio value="member.user_id_string">会员ID</n-radio>
-          <n-radio value="member.phone">手机号</n-radio>
-          <n-radio value="inviter.account">邀请人账号</n-radio>
-          <n-radio value="inviter.user_id_string">邀请人ID</n-radio>
-          <n-radio value="parent_agent_id">上级代理ID</n-radio>
-          <n-radio value="inviter.account_parent">上级代理账号</n-radio>
-          <n-radio value="agent.top_id_path">顶层代理ID</n-radio>
-          <n-radio value="top_agent_account">顶层代理账号</n-radio>
+          <n-radio value="member.account">{{ $t('common.memberAccount') }}</n-radio>
+          <n-radio value="member.user_id_string">{{ $t('user.advancedSearch.memberId') }}</n-radio>
+          <n-radio value="member.phone">{{ $t('user.advancedSearch.phone') }}</n-radio>
+          <n-radio value="inviter.account">{{ $t('user.advancedSearch.inviterAccount') }}</n-radio>
+          <n-radio value="inviter.user_id_string">{{ $t('user.advancedSearch.inviterId') }}</n-radio>
+          <n-radio value="parent_agent_id">{{ $t('user.advancedSearch.parentAgentId') }}</n-radio>
+          <n-radio value="inviter.account_parent">{{ $t('user.advancedSearch.parentAgentAccount') }}</n-radio>
+          <n-radio value="agent.top_id_path">{{ $t('user.advancedSearch.topAgentIdPath') }}</n-radio>
+          <n-radio value="top_agent_account">{{ $t('user.advancedSearch.topAgentAccount') }}</n-radio>
         </div>
       </n-radio-group>
 
@@ -40,7 +40,7 @@
         v-model:value="form.bulkValues"
         type="textarea"
         class="adv-bulk-textarea"
-        placeholder="多个账号需英文逗号隔开，最多支持10000个"
+        :placeholder="$t('user.advancedSearch.multiAccountHint')"
         :rows="5"
         size="small"
       />
@@ -52,28 +52,28 @@
         class="adv-grid adv-grid--pane-tidy"
       >
         <n-gi>
-          <n-form-item label="姓名">
+          <n-form-item :label="$t('user.advancedSearch.realName')">
             <n-input
               v-model:value="form.name"
               clearable
               size="small"
-              placeholder="请输入"
+              :placeholder="$t('common.pleaseEnter')"
             />
           </n-form-item>
         </n-gi>
         <n-gi>
-          <n-form-item label="会员标签">
+          <n-form-item :label="$t('user.advancedSearch.memberTags')">
             <n-select
               v-model:value="form.memberTag"
               clearable
               size="small"
-              placeholder="请选择"
+              :placeholder="$t('common.pleaseSelect')"
               :options="memberTagOptions"
             />
           </n-form-item>
         </n-gi>
         <n-gi>
-          <n-form-item label="会员层级">
+          <n-form-item :label="$t('user.advancedSearch.memberLevel')">
             <n-select
               :value="form.memberTierIds"
               multiple
@@ -83,7 +83,7 @@
               :render-label="renderMultiLabel"
               :render-tag="renderMultiFieldTag"
               size="small"
-              placeholder="请选择"
+              :placeholder="$t('common.pleaseSelect')"
               :max-tag-count="1"
               :options="memberTierOptionsWithAll"
               @update:value="(v) => {
@@ -98,7 +98,7 @@
           </n-form-item>
         </n-gi>
         <n-gi>
-          <n-form-item label="VIP等级">
+          <n-form-item :label="$t('user.advancedSearch.vipLevel')">
             <n-select
               :value="form.vipLevelIds"
               multiple
@@ -108,7 +108,7 @@
               :render-label="renderMultiLabel"
               :render-tag="renderMultiFieldTag"
               size="small"
-              placeholder="请选择"
+              :placeholder="$t('common.pleaseSelect')"
               :max-tag-count="1"
               :options="vipLevelOptionsWithAll"
               @update:value="(v) => {
@@ -123,7 +123,7 @@
           </n-form-item>
         </n-gi>
         <n-gi>
-          <n-form-item label="验证方式">
+          <n-form-item :label="$t('user.advancedSearch.verificationMethod')">
             <n-select
               :value="form.verifyMethods"
               multiple
@@ -132,14 +132,14 @@
               :render-label="renderMultiLabel"
               :render-tag="renderMultiFieldTag"
               size="small"
-              placeholder="请选择验证方式"
+              :placeholder="$t('user.advancedSearch.selectVerification')"
               :max-tag-count="1"
-              :options="optionsWithAll(verifyMethodOptions)"
+              :options="verifyMethodOptionsWithAll"
               @update:value="(v) => {
                 const p = form.verifyMethods;
                 form.verifyMethods = normalizeMultiSelectValue(
                   v,
-                  optionRealValues(optionsWithAll(verifyMethodOptions)),
+                  optionRealValues(verifyMethodOptionsWithAll),
                   p,
                 );
               }"
@@ -147,7 +147,7 @@
           </n-form-item>
         </n-gi>
         <n-gi>
-          <n-form-item label="账号状态">
+          <n-form-item :label="$t('user.allMembers.accountStatus')">
             <n-select
               :value="form.accountStatuses"
               multiple
@@ -156,14 +156,14 @@
               :render-label="renderMultiLabel"
               :render-tag="renderMultiFieldTag"
               size="small"
-              placeholder="请选择"
+              :placeholder="$t('common.pleaseSelect')"
               :max-tag-count="1"
-              :options="optionsWithAll(accountStatusOptions)"
+              :options="accountStatusOptionsWithAll"
               @update:value="(v) => {
                 const p = form.accountStatuses;
                 form.accountStatuses = normalizeMultiSelectValue(
                   v,
-                  optionRealValues(optionsWithAll(accountStatusOptions)),
+                  optionRealValues(accountStatusOptionsWithAll),
                   p,
                 );
               }"
@@ -171,7 +171,7 @@
           </n-form-item>
         </n-gi>
         <n-gi>
-          <n-form-item label="注册来源">
+          <n-form-item :label="$t('user.advancedSearch.registerSource')">
             <n-select
               :value="form.regSources"
               multiple
@@ -181,14 +181,14 @@
               :render-label="renderMultiLabel"
               :render-tag="renderMultiFieldTag"
               size="small"
-              placeholder="请选择"
+              :placeholder="$t('common.pleaseSelect')"
               :max-tag-count="1"
-              :options="optionsWithAll(regSourceOptions)"
+              :options="regSourceOptionsWithAll"
               @update:value="(v) => {
                 const p = form.regSources;
                 form.regSources = normalizeMultiSelectValue(
                   v,
-                  optionRealValues(optionsWithAll(regSourceOptions)),
+                  optionRealValues(regSourceOptionsWithAll),
                   p,
                 );
               }"
@@ -196,7 +196,7 @@
           </n-form-item>
         </n-gi>
         <n-gi>
-          <n-form-item label="注册方式">
+          <n-form-item :label="$t('user.advancedSearch.registerMethod')">
             <n-select
               :value="form.regMethods"
               multiple
@@ -205,14 +205,14 @@
               :render-label="renderMultiLabel"
               :render-tag="renderMultiFieldTag"
               size="small"
-              placeholder="请选择"
+              :placeholder="$t('common.pleaseSelect')"
               :max-tag-count="1"
-              :options="optionsWithAll(regMethodOptions)"
+              :options="regMethodOptionsWithAll"
               @update:value="(v) => {
                 const p = form.regMethods;
                 form.regMethods = normalizeMultiSelectValue(
                   v,
-                  optionRealValues(optionsWithAll(regMethodOptions)),
+                  optionRealValues(regMethodOptionsWithAll),
                   p,
                 );
               }"
@@ -220,17 +220,17 @@
           </n-form-item>
         </n-gi>
         <n-gi>
-          <n-form-item label="会员备注">
+          <n-form-item :label="$t('user.advancedSearch.memberRemark')">
             <n-input
               v-model:value="form.memberRemark"
               clearable
               size="small"
-              placeholder="请输入"
+              :placeholder="$t('common.pleaseEnter')"
             />
           </n-form-item>
         </n-gi>
         <n-gi>
-          <n-form-item label="登录方式">
+          <n-form-item :label="$t('user.advancedSearch.loginMethod')">
             <n-select
               :value="form.loginMethods"
               multiple
@@ -239,14 +239,14 @@
               :render-label="renderMultiLabel"
               :render-tag="renderMultiFieldTag"
               size="small"
-              placeholder="请选择"
+              :placeholder="$t('common.pleaseSelect')"
               :max-tag-count="1"
-              :options="optionsWithAll(loginMethodOptions)"
+              :options="loginMethodOptionsWithAll"
               @update:value="(v) => {
                 const p = form.loginMethods;
                 form.loginMethods = normalizeMultiSelectValue(
                   v,
-                  optionRealValues(optionsWithAll(loginMethodOptions)),
+                  optionRealValues(loginMethodOptionsWithAll),
                   p,
                 );
               }"
@@ -254,7 +254,7 @@
           </n-form-item>
         </n-gi>
         <n-gi>
-          <n-form-item label="账号类型">
+          <n-form-item :label="$t('user.advancedSearch.accountType')">
             <n-select
               :value="form.accountTypeUis"
               multiple
@@ -263,14 +263,14 @@
               :render-label="renderMultiLabel"
               :render-tag="renderMultiFieldTag"
               size="small"
-              placeholder="请选择"
+              :placeholder="$t('common.pleaseSelect')"
               :max-tag-count="1"
-              :options="optionsWithAll(accountTypeUiOptions)"
+              :options="accountTypeUiOptionsWithAll"
               @update:value="(v) => {
                 const p = form.accountTypeUis;
                 form.accountTypeUis = normalizeMultiSelectValue(
                   v,
-                  optionRealValues(optionsWithAll(accountTypeUiOptions)),
+                  optionRealValues(accountTypeUiOptionsWithAll),
                   p,
                 );
               }"
@@ -278,7 +278,7 @@
           </n-form-item>
         </n-gi>
         <n-gi>
-          <n-form-item label="在线状态">
+          <n-form-item :label="$t('user.advancedSearch.onlineStatus')">
             <n-select
               :value="form.onlineStatusUis"
               multiple
@@ -287,14 +287,14 @@
               :render-label="renderMultiLabel"
               :render-tag="renderMultiFieldTag"
               size="small"
-              placeholder="请选择"
+              :placeholder="$t('common.pleaseSelect')"
               :max-tag-count="1"
-              :options="optionsWithAll(onlineStatusUiOptions)"
+              :options="onlineStatusUiOptionsWithAll"
               @update:value="(v) => {
                 const p = form.onlineStatusUis;
                 form.onlineStatusUis = normalizeMultiSelectValue(
                   v,
-                  optionRealValues(optionsWithAll(onlineStatusUiOptions)),
+                  optionRealValues(onlineStatusUiOptionsWithAll),
                   p,
                 );
               }"
@@ -302,7 +302,7 @@
           </n-form-item>
         </n-gi>
         <n-gi>
-          <n-form-item label="会员生日">
+          <n-form-item :label="$t('user.advancedSearch.memberBirthday')">
             <n-date-picker
               v-model:value="form.birthday"
               type="date"
@@ -312,19 +312,18 @@
           </n-form-item>
         </n-gi>
         <n-gi>
-          <n-form-item label="同关联账号">
+          <n-form-item :label="$t('user.advancedSearch.linkedAccount')">
             <n-input
               v-model:value="form.associatedAccount"
               clearable
               size="small"
-              placeholder="请输入"
+              :placeholder="$t('common.pleaseEnter')"
             />
           </n-form-item>
         </n-gi>
       </n-grid>
 
-      <!-- 其他信息 -->
-      <div class="adv-section-title adv-section-title--spaced">其他信息</div>
+      <div class="adv-section-title adv-section-title--spaced">{{ $t('user.advancedSearch.otherInfo') }}</div>
 
       <n-tabs
         v-model:value="subTab"
@@ -332,7 +331,7 @@
         size="small"
         class="adv-subtabs"
       >
-        <n-tab-pane name="reg" tab="注册登录信息">
+        <n-tab-pane name="reg" :tab="$t('user.advancedSearch.regLoginInfo')">
           <n-grid
             :cols="2"
             :x-gap="16"
@@ -340,7 +339,7 @@
             class="adv-grid adv-grid--pane adv-grid--pane-tidy adv-grid--reg-login"
           >
             <n-gi>
-              <n-form-item label="注册时间">
+              <n-form-item :label="$t('user.advancedSearch.registerTime')">
                 <n-date-picker
                   v-model:value="form.regTimeRange"
                   type="datetimerange"
@@ -353,12 +352,12 @@
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="注册IP">
+              <n-form-item :label="$t('user.advancedSearch.registerIp')">
                 <n-input v-model:value="form.registrationIp" clearable size="small" />
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="注册域名">
+              <n-form-item :label="$t('user.advancedSearch.registerDomain')">
                 <n-input
                   v-model:value="form.registrationDomain"
                   clearable
@@ -367,12 +366,12 @@
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="注册设备号">
+              <n-form-item :label="$t('user.advancedSearch.registerDeviceId')">
                 <n-input v-model:value="form.deviceId" clearable size="small" />
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="注册设备类型">
+              <n-form-item :label="$t('user.advancedSearch.registerDeviceType')">
                 <div class="adv-twin-select adv-twin-select--reg">
                   <n-select
                     :value="form.regDeviceOs"
@@ -382,14 +381,14 @@
                     :render-label="renderMultiLabel"
                     :render-tag="renderMultiFieldTag"
                     size="small"
-                    placeholder="全部操作系统"
+                    :placeholder="$t('user.advancedSearch.allOs')"
                     :max-tag-count="1"
-                    :options="optionsWithAll(deviceOsOptions)"
+                    :options="deviceOsOptionsWithAll"
                     @update:value="(v) => {
                       const p = form.regDeviceOs;
                       form.regDeviceOs = normalizeMultiSelectValue(
                         v,
-                        optionRealValues(optionsWithAll(deviceOsOptions)),
+                        optionRealValues(deviceOsOptionsWithAll),
                         p,
                       );
                     }"
@@ -402,14 +401,14 @@
                     :render-label="renderMultiLabel"
                     :render-tag="renderMultiFieldTag"
                     size="small"
-                    placeholder="全部注册方式"
+                    :placeholder="$t('user.advancedSearch.allRegisterMethods')"
                     :max-tag-count="1"
-                    :options="optionsWithAll(deviceMethodOptions)"
+                    :options="deviceMethodOptionsWithAll"
                     @update:value="(v) => {
                       const p = form.regDeviceMethod;
                       form.regDeviceMethod = normalizeMultiSelectValue(
                         v,
-                        optionRealValues(optionsWithAll(deviceMethodOptions)),
+                        optionRealValues(deviceMethodOptionsWithAll),
                         p,
                       );
                     }"
@@ -418,7 +417,7 @@
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="注册浏览器指纹">
+              <n-form-item :label="$t('user.advancedSearch.registerBrowserFingerprint')">
                 <n-input
                   v-model:value="form.browserFingerprint"
                   clearable
@@ -427,7 +426,7 @@
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="最后登录时间">
+              <n-form-item :label="$t('user.advancedSearch.lastLoginTime')">
                 <n-date-picker
                   v-model:value="form.lastLoginRange"
                   type="datetimerange"
@@ -437,12 +436,12 @@
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="最后登录IP">
+              <n-form-item :label="$t('user.advancedSearch.lastLoginIp')">
                 <n-input v-model:value="form.lastLoginIp" clearable size="small" />
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="最后登录域名">
+              <n-form-item :label="$t('user.advancedSearch.lastLoginDomain')">
                 <n-input
                   v-model:value="form.lastLoginDomain"
                   clearable
@@ -451,7 +450,7 @@
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="最后登录设备号">
+              <n-form-item :label="$t('user.advancedSearch.lastLoginDeviceId')">
                 <n-input
                   v-model:value="form.lastLoginDeviceId"
                   clearable
@@ -460,7 +459,7 @@
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="最后登录设备类型">
+              <n-form-item :label="$t('user.advancedSearch.lastLoginDeviceType')">
                 <div class="adv-twin-select adv-twin-select--reg">
                   <n-select
                     :value="form.lastLoginDeviceOs"
@@ -470,14 +469,14 @@
                     :render-label="renderMultiLabel"
                     :render-tag="renderMultiFieldTag"
                     size="small"
-                    placeholder="全部操作系统"
+                    :placeholder="$t('user.advancedSearch.allOs')"
                     :max-tag-count="1"
-                    :options="optionsWithAll(deviceOsOptions)"
+                    :options="deviceOsOptionsWithAll"
                     @update:value="(v) => {
                       const p = form.lastLoginDeviceOs;
                       form.lastLoginDeviceOs = normalizeMultiSelectValue(
                         v,
-                        optionRealValues(optionsWithAll(deviceOsOptions)),
+                        optionRealValues(deviceOsOptionsWithAll),
                         p,
                       );
                     }"
@@ -490,14 +489,14 @@
                     :render-label="renderMultiLabel"
                     :render-tag="renderMultiFieldTag"
                     size="small"
-                    placeholder="全部注册方式"
+                    :placeholder="$t('user.advancedSearch.allRegisterMethods')"
                     :max-tag-count="1"
-                    :options="optionsWithAll(deviceMethodOptions)"
+                    :options="deviceMethodOptionsWithAll"
                     @update:value="(v) => {
                       const p = form.lastLoginDeviceMethod;
                       form.lastLoginDeviceMethod = normalizeMultiSelectValue(
                         v,
-                        optionRealValues(optionsWithAll(deviceMethodOptions)),
+                        optionRealValues(deviceMethodOptionsWithAll),
                         p,
                       );
                     }"
@@ -506,7 +505,7 @@
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="最后登录浏览器指纹">
+              <n-form-item :label="$t('user.advancedSearch.lastLoginBrowserFingerprint')">
                 <n-input
                   v-model:value="form.loginLogFingerprint"
                   clearable
@@ -516,20 +515,20 @@
             </n-gi>
             <n-gi>
               <n-form-item
-                label="未登录时间(天)"
+                :label="$t('user.advancedSearch.daysNotLoggedIn')"
                 :show-feedback="false"
               >
                 <div class="adv-range-inline adv-range-inline--reg">
                   <n-input
                     v-model:value="form.daysIdleMinStr"
                     size="small"
-                    placeholder="最小值"
+                    :placeholder="$t('user.advancedSearch.minValue')"
                   />
                   <span class="adv-range-sep">~</span>
                   <n-input
                     v-model:value="form.daysIdleMaxStr"
                     size="small"
-                    placeholder="最大值"
+                    :placeholder="$t('user.advancedSearch.maxValue')"
                   />
                 </div>
               </n-form-item>
@@ -538,7 +537,7 @@
           </n-grid>
         </n-tab-pane>
 
-        <n-tab-pane name="finance" tab="财务信息">
+        <n-tab-pane name="finance" :tab="$t('user.advancedSearch.financeInfo')">
           <n-grid
             :cols="2"
             :x-gap="16"
@@ -546,7 +545,7 @@
             class="adv-grid adv-grid--pane adv-grid--pane-tidy adv-grid--reg-login"
           >
             <n-gi>
-              <n-form-item label="首充时间">
+              <n-form-item :label="$t('user.advancedSearch.firstDepositTime')">
                 <n-date-picker
                   v-model:value="form.firstDepositRange"
                   type="datetimerange"
@@ -559,24 +558,24 @@
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="首充金额">
+              <n-form-item :label="$t('user.advancedSearch.firstDepositAmount')">
                 <div class="adv-range-inline adv-range-inline--reg">
                   <n-input
                     v-model:value="form.firstDepositAmtMin"
                     size="small"
-                    placeholder="最小值"
+                    :placeholder="$t('user.advancedSearch.minValue')"
                   />
                   <span class="adv-range-sep">~</span>
                   <n-input
                     v-model:value="form.firstDepositAmtMax"
                     size="small"
-                    placeholder="最大值"
+                    :placeholder="$t('user.advancedSearch.maxValue')"
                   />
                 </div>
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="最后充值时间">
+              <n-form-item :label="$t('user.advancedSearch.lastDepositTime')">
                 <n-date-picker
                   v-model:value="form.lastDepositRange"
                   type="datetimerange"
@@ -586,7 +585,7 @@
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="是否首充">
+              <n-form-item :label="$t('user.advancedSearch.isFirstDeposit')">
                 <n-select
                   :value="form.hasFirstDeposit"
                   multiple
@@ -595,14 +594,14 @@
                   :render-label="renderMultiLabel"
                   :render-tag="renderMultiFieldTag"
                   size="small"
-                  placeholder="请选择"
+                  :placeholder="$t('common.pleaseSelect')"
                   :max-tag-count="1"
-                  :options="optionsWithAll(hasFirstDepositOptions)"
+                  :options="hasFirstDepositOptionsWithAll"
                   @update:value="(v) => {
                     const p = form.hasFirstDeposit;
                     form.hasFirstDeposit = normalizeMultiSelectValue(
                       v,
-                      optionRealValues(optionsWithAll(hasFirstDepositOptions)),
+                      optionRealValues(hasFirstDepositOptionsWithAll),
                       p,
                     );
                   }"
@@ -610,7 +609,7 @@
               </n-form-item>
             </n-gi>
             <n-gi span="2" class="adv-gi-range">
-              <n-form-item label="最后充值时间">
+              <n-form-item :label="$t('user.advancedSearch.lastDepositTime')">
                 <n-date-picker
                   v-model:value="form.lastDepositRange"
                   type="datetimerange"
@@ -623,7 +622,7 @@
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="最后提现时间">
+              <n-form-item :label="$t('user.advancedSearch.lastWithdrawTime')">
                 <n-date-picker
                   v-model:value="form.lastWithdrawRange"
                   type="datetimerange"
@@ -636,46 +635,46 @@
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="累计充值金额">
+              <n-form-item :label="$t('user.advancedSearch.totalDepositAmount')">
                 <div class="adv-range-inline adv-range-inline--reg">
-                  <n-input v-model:value="form.totalDepMin" size="small" placeholder="最小值" />
+                  <n-input v-model:value="form.totalDepMin" size="small" :placeholder="$t('user.advancedSearch.minValue')" />
                   <span class="adv-range-sep">~</span>
-                  <n-input v-model:value="form.totalDepMax" size="small" placeholder="最大值" />
+                  <n-input v-model:value="form.totalDepMax" size="small" :placeholder="$t('user.advancedSearch.maxValue')" />
                 </div>
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="提现总额">
+              <n-form-item :label="$t('user.advancedSearch.totalWithdrawAmount')">
                 <div class="adv-range-inline adv-range-inline--reg">
-                  <n-input v-model:value="form.totalWdMin" size="small" placeholder="最小值" />
+                  <n-input v-model:value="form.totalWdMin" size="small" :placeholder="$t('user.advancedSearch.minValue')" />
                   <span class="adv-range-sep">~</span>
-                  <n-input v-model:value="form.totalWdMax" size="small" placeholder="最大值" />
+                  <n-input v-model:value="form.totalWdMax" size="small" :placeholder="$t('user.advancedSearch.maxValue')" />
                 </div>
               </n-form-item>
             </n-gi>
             <n-gi>
               <n-form-item
-                label="未充值时间(天)"
+                :label="$t('user.advancedSearch.daysNoRecharge')"
                 :show-feedback="false"
               >
                 <div class="adv-range-inline adv-range-inline--reg">
-                  <n-input v-model:value="form.noRechargeDaysMinStr" size="small" placeholder="最小值" />
+                  <n-input v-model:value="form.noRechargeDaysMinStr" size="small" :placeholder="$t('user.advancedSearch.minValue')" />
                   <span class="adv-range-sep">~</span>
-                  <n-input v-model:value="form.noRechargeDaysMaxStr" size="small" placeholder="最大值" />
+                  <n-input v-model:value="form.noRechargeDaysMaxStr" size="small" :placeholder="$t('user.advancedSearch.maxValue')" />
                 </div>
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="账号余额">
+              <n-form-item :label="$t('user.advancedSearch.accountBalance')">
                 <div class="adv-range-inline adv-range-inline--reg">
-                  <n-input v-model:value="form.balanceMin" size="small" placeholder="最小值" />
+                  <n-input v-model:value="form.balanceMin" size="small" :placeholder="$t('user.advancedSearch.minValue')" />
                   <span class="adv-range-sep">~</span>
-                  <n-input v-model:value="form.balanceMax" size="small" placeholder="最大值" />
+                  <n-input v-model:value="form.balanceMax" size="small" :placeholder="$t('user.advancedSearch.maxValue')" />
                 </div>
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="充值次数">
+              <n-form-item :label="$t('user.advancedSearch.depositCount')">
                 <div class="adv-count-row">
                   <n-select
                     v-model:value="form.depCountOp"
@@ -687,7 +686,7 @@
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="提现次数">
+              <n-form-item :label="$t('user.advancedSearch.withdrawCount')">
                 <div class="adv-count-row">
                   <n-select
                     v-model:value="form.wdCountOp"
@@ -700,11 +699,11 @@
             </n-gi>
             <n-gi />
             <n-gi>
-              <n-form-item label="总充提差额">
+              <n-form-item :label="$t('user.advancedSearch.netDepositWithdraw')">
                 <div class="adv-range-inline adv-range-inline--reg">
-                  <n-input v-model:value="form.netDiffMin" size="small" placeholder="最小值" />
+                  <n-input v-model:value="form.netDiffMin" size="small" :placeholder="$t('user.advancedSearch.minValue')" />
                   <span class="adv-range-sep">~</span>
-                  <n-input v-model:value="form.netDiffMax" size="small" placeholder="最大值" />
+                  <n-input v-model:value="form.netDiffMax" size="small" :placeholder="$t('user.advancedSearch.maxValue')" />
                 </div>
               </n-form-item>
             </n-gi>
@@ -717,14 +716,16 @@
 
     <template #footer>
       <div class="adv-footer">
-        <n-button size="medium" @click="resetForm">重置</n-button>
-        <n-button type="primary" size="medium" @click="apply">搜索</n-button>
+        <n-button size="medium" @click="resetForm">{{ $t('common.reset') }}</n-button>
+        <n-button type="primary" size="medium" @click="apply">{{ $t('common.search') }}</n-button>
       </div>
     </template>
   </n-modal>
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import {
   NModal,
   NTabs,
@@ -742,7 +743,7 @@ import {
   NCheckbox,
   NTag,
 } from 'naive-ui';
-import { ref, reactive, watch, computed, h } from 'vue';
+import { ref, reactive, watch, computed, h, type ComputedRef } from 'vue';
 import type {
   AdminFilterClause,
   MemberAdvancedListBody,
@@ -765,16 +766,20 @@ const memberTierOptions = ref<{ label: string; value: string }[]>([]);
 const vipLevelOptions = ref<{ label: string; value: string }[]>([]);
 
 const memberTierOptionsWithAll = computed(() => [
-  { label: '全部', value: ALL },
+  { label: $t('common.all'), value: ALL },
   ...memberTierOptions.value,
 ]);
 const vipLevelOptionsWithAll = computed(() => [
-  { label: '全部', value: ALL },
+  { label: $t('common.all'), value: ALL },
   ...vipLevelOptions.value,
 ]);
 
 function optionsWithAll(opts: { label: string; value: string }[]) {
-  return [{ label: '全部', value: ALL }, ...opts];
+  return [{ label: $t('common.all'), value: ALL }, ...opts];
+}
+
+function withAllComputed(opts: ComputedRef<{ label: string; value: string }[]>) {
+  return computed(() => optionsWithAll(opts.value));
 }
 
 function optionRealValues(options: { value: string }[]): string[] {
@@ -895,119 +900,130 @@ function renderMultiLabel(
   ]);
 }
 
-const memberTagOptions = [{ label: '默认标签', value: 'default' }];
+const memberTagOptions = computed(() => [
+  { label: $t('user.advancedSearch.defaultTag'), value: 'default' },
+]);
 
-const verifyMethodOptions = [
-  { label: '无验证', value: 'none' },
-  { label: '短信验证', value: 'sms' },
-  { label: '邮箱验证', value: 'email' },
+const verifyMethodOptions = computed(() => [
+  { label: $t('user.advancedSearch.noVerification'), value: 'none' },
+  { label: $t('user.advancedSearch.smsVerification'), value: 'sms' },
+  { label: $t('user.advancedSearch.emailVerification'), value: 'email' },
   { label: 'Facebook', value: 'facebook' },
   { label: 'Google', value: 'google' },
   { label: 'Line', value: 'line' },
   { label: 'Telegram', value: 'telegram' },
   { label: 'Zalo', value: 'zalo' },
-];
+]);
+const verifyMethodOptionsWithAll = withAllComputed(verifyMethodOptions);
 
-const regSourceOptions = [
-  { label: '推广注册', value: 'promo' },
-  { label: '自然注册', value: 'organic' },
-  { label: '渠道投放', value: 'channel' },
-];
+const regSourceOptions = computed(() => [
+  { label: $t('user.advancedSearch.promoRegister'), value: 'promo' },
+  { label: $t('user.advancedSearch.organicRegister'), value: 'organic' },
+  { label: $t('user.advancedSearch.channelRegister'), value: 'channel' },
+]);
+const regSourceOptionsWithAll = withAllComputed(regSourceOptions);
 
-const regMethodOptions = [
-  { label: '账号注册', value: 'account_reg' },
-  { label: 'Facebook注册', value: 'facebook_reg' },
-  { label: 'Google注册', value: 'google_reg' },
-  { label: 'Line注册', value: 'line_reg' },
-  { label: '手机注册', value: 'phone_reg' },
-  { label: '邮箱注册', value: 'email_reg' },
-  { label: 'Telegram机器人注册', value: 'telegram_bot_reg' },
-  { label: 'Telegram注册', value: 'telegram_reg' },
-  { label: 'Zalo注册', value: 'zalo_reg' },
-  { label: 'Telegram游戏注册', value: 'telegram_game_reg' },
-];
+const regMethodOptions = computed(() => [
+  { label: $t('user.advancedSearch.accountRegister'), value: 'account_reg' },
+  { label: $t('user.advancedSearch.facebookReg'), value: 'facebook_reg' },
+  { label: $t('user.advancedSearch.googleReg'), value: 'google_reg' },
+  { label: $t('user.advancedSearch.lineReg'), value: 'line_reg' },
+  { label: $t('user.advancedSearch.phoneReg'), value: 'phone_reg' },
+  { label: $t('user.advancedSearch.emailReg'), value: 'email_reg' },
+  { label: $t('user.advancedSearch.telegramBotReg'), value: 'telegram_bot_reg' },
+  { label: $t('user.advancedSearch.telegramReg'), value: 'telegram_reg' },
+  { label: $t('user.advancedSearch.zaloReg'), value: 'zalo_reg' },
+  { label: $t('user.advancedSearch.telegramGameReg'), value: 'telegram_game_reg' },
+]);
+const regMethodOptionsWithAll = withAllComputed(regMethodOptions);
 
-const loginMethodOptions = [
-  { label: 'Facebook登录', value: 'facebook_login' },
-  { label: 'Google登录', value: 'google_login' },
-  { label: 'Line登录', value: 'line_login' },
-  { label: '账号登录', value: 'account_login' },
-  { label: '邮箱登录', value: 'email_login' },
-  { label: '手机登录', value: 'phone_login' },
-  { label: 'Telegram小程序登录', value: 'telegram_mini_login' },
-  { label: 'Telegram登录', value: 'telegram_login' },
-  { label: 'Zalo登录', value: 'zalo_login' },
-  { label: 'Telegram游戏登录', value: 'telegram_game_login' },
-  { label: '账号登录-PC代理', value: 'account_pc_proxy_login' },
-  { label: '手机登录-PC代理', value: 'phone_pc_proxy_login' },
-  { label: '邮箱登录-PC代理', value: 'email_pc_proxy_login' },
-  { label: '面容ID登录', value: 'face_id_login' },
-  { label: '指纹登录', value: 'fingerprint_login' },
-  { label: '生物识别登录', value: 'biometric_login' },
-  { label: '手势登录', value: 'gesture_login' },
-];
+const loginMethodOptions = computed(() => [
+  { label: $t('user.advancedSearch.facebookLogin'), value: 'facebook_login' },
+  { label: $t('user.advancedSearch.googleLogin'), value: 'google_login' },
+  { label: $t('user.advancedSearch.lineLogin'), value: 'line_login' },
+  { label: $t('user.advancedSearch.accountLogin'), value: 'account_login' },
+  { label: $t('user.advancedSearch.emailLogin'), value: 'email_login' },
+  { label: $t('user.advancedSearch.phoneLogin'), value: 'phone_login' },
+  { label: $t('user.advancedSearch.telegramMiniLogin'), value: 'telegram_mini_login' },
+  { label: $t('user.advancedSearch.telegramLogin'), value: 'telegram_login' },
+  { label: $t('user.advancedSearch.zaloLogin'), value: 'zalo_login' },
+  { label: $t('user.advancedSearch.telegramGameLogin'), value: 'telegram_game_login' },
+  { label: $t('user.advancedSearch.accountPcProxyLogin'), value: 'account_pc_proxy_login' },
+  { label: $t('user.advancedSearch.phonePcProxyLogin'), value: 'phone_pc_proxy_login' },
+  { label: $t('user.advancedSearch.emailPcProxyLogin'), value: 'email_pc_proxy_login' },
+  { label: $t('user.advancedSearch.faceIdLogin'), value: 'face_id_login' },
+  { label: $t('user.advancedSearch.fingerprintLogin'), value: 'fingerprint_login' },
+  { label: $t('user.advancedSearch.biometricLogin'), value: 'biometric_login' },
+  { label: $t('user.advancedSearch.gestureLogin'), value: 'gesture_login' },
+]);
+const loginMethodOptionsWithAll = withAllComputed(loginMethodOptions);
 
-const accountTypeUiOptions = [
-  { label: '正式账号-人人代理', value: 'official_agent_all' },
-  { label: '正式账号-普通会员', value: 'official_member' },
-  { label: '正式账号-专业代理', value: 'official_agent_pro' },
-  { label: '临时账号', value: 'temporary' },
-  { label: '俱乐部账号', value: 'club' },
-];
+const accountTypeUiOptions = computed(() => [
+  { label: $t('user.allMembers.officialAgentAll'), value: 'official_agent_all' },
+  { label: $t('user.allMembers.officialMember'), value: 'official_member' },
+  { label: $t('user.allMembers.officialAgentPro'), value: 'official_agent_pro' },
+  { label: $t('user.allMembers.temporaryAccount'), value: 'temporary' },
+  { label: $t('user.allMembers.clubAccount'), value: 'club' },
+]);
+const accountTypeUiOptionsWithAll = withAllComputed(accountTypeUiOptions);
 
-const onlineStatusUiOptions = [
-  { label: '当前在线', value: 'currently_online' },
-  { label: '大厅会员', value: 'lobby_member' },
-  { label: '自营游戏会员', value: 'self_operated_member' },
-  { label: '三方游戏会员', value: 'third_party_member' },
-  { label: '疑似机器人', value: 'suspected_bot' },
-  { label: '今日在线', value: 'today_online' },
-];
+const onlineStatusUiOptions = computed(() => [
+  { label: $t('user.allMembers.currentlyOnline'), value: 'currently_online' },
+  { label: $t('user.allMembers.lobbyMember'), value: 'lobby_member' },
+  { label: $t('user.allMembers.selfOperatedMember'), value: 'self_operated_member' },
+  { label: $t('user.allMembers.thirdPartyMember'), value: 'third_party_member' },
+  { label: $t('user.allMembers.suspectedBot'), value: 'suspected_bot' },
+  { label: $t('user.allMembers.todayOnline'), value: 'today_online' },
+]);
+const onlineStatusUiOptionsWithAll = withAllComputed(onlineStatusUiOptions);
 
-/** value 与 7ki_api memberAdvancedSearchService 中 token 一致 */
-const deviceOsOptions = [
+const deviceOsOptions = computed(() => [
   { label: 'Windows', value: 'win' },
   { label: 'Mac', value: 'mac' },
   { label: 'Android', value: 'android' },
   { label: 'iOS', value: 'ios' },
-  { label: '其他', value: 'os_other' },
-];
+  { label: $t('user.advancedSearch.osOther'), value: 'os_other' },
+]);
+const deviceOsOptionsWithAll = withAllComputed(deviceOsOptions);
 
-const deviceMethodOptions = [
-  { label: '浏览器', value: 'client_browser' },
-  { label: 'PWA快捷APP', value: 'client_pwa' },
-  { label: '桌面快捷方式', value: 'client_desktop_shortcut' },
-  { label: '马甲包', value: 'client_vest' },
-  { label: 'iOS描述签', value: 'client_ios_profile' },
-  { label: '极速APP', value: 'client_speed_app' },
-  { label: '原生APP', value: 'client_native' },
-  { label: 'Telegram机器人', value: 'client_telegram' },
-];
+const deviceMethodOptions = computed(() => [
+  { label: $t('user.advancedSearch.clientBrowser'), value: 'client_browser' },
+  { label: $t('user.advancedSearch.clientPwa'), value: 'client_pwa' },
+  { label: $t('user.advancedSearch.clientDesktopShortcut'), value: 'client_desktop_shortcut' },
+  { label: $t('user.advancedSearch.clientVest'), value: 'client_vest' },
+  { label: $t('user.advancedSearch.clientIosProfile'), value: 'client_ios_profile' },
+  { label: $t('user.advancedSearch.clientSpeedApp'), value: 'client_speed_app' },
+  { label: $t('user.advancedSearch.clientNative'), value: 'client_native' },
+  { label: $t('user.advancedSearch.clientTelegram'), value: 'client_telegram' },
+]);
+const deviceMethodOptionsWithAll = withAllComputed(deviceMethodOptions);
 
-const hasFirstDepositOptions = [
-  { label: '是', value: 'yes' },
-  { label: '否', value: 'no' },
-];
+const hasFirstDepositOptions = computed(() => [
+  { label: $t('common.yes'), value: 'yes' },
+  { label: $t('common.no'), value: 'no' },
+]);
+const hasFirstDepositOptionsWithAll = withAllComputed(hasFirstDepositOptions);
 
-const accountStatusOptions = [
-  { label: '正常', value: 'NORMAL' },
-  { label: '手动冻结', value: 'MANUAL_FREEZE' },
-  { label: '异常冻结', value: 'ABNORMAL_FREEZE' },
-  { label: '禁止领取优惠', value: 'PROHIBIT_BONUS' },
-  { label: '禁止提现', value: 'PROHIBIT_WITHDRAWAL' },
-  { label: '禁止进入游戏', value: 'PROHIBIT_GAME_ENTRY' },
-  { label: '黑名单', value: 'BLACKLIST' },
-  { label: '边退', value: 'MARGINAL' },
-];
+const accountStatusOptions = computed(() => [
+  { label: $t('user.allMembers.statusNormal'), value: 'NORMAL' },
+  { label: $t('user.advancedSearch.manualFreeze'), value: 'MANUAL_FREEZE' },
+  { label: $t('user.advancedSearch.abnormalFreeze'), value: 'ABNORMAL_FREEZE' },
+  { label: $t('user.advancedSearch.prohibitBonus'), value: 'PROHIBIT_BONUS' },
+  { label: $t('user.advancedSearch.prohibitWithdrawal'), value: 'PROHIBIT_WITHDRAWAL' },
+  { label: $t('user.advancedSearch.prohibitGame'), value: 'PROHIBIT_GAME_ENTRY' },
+  { label: $t('user.advancedSearch.blacklist'), value: 'BLACKLIST' },
+  { label: $t('user.advancedSearch.marginal'), value: 'MARGINAL' },
+]);
+const accountStatusOptionsWithAll = withAllComputed(accountStatusOptions);
 
-const cmpOpOptions = [
+const cmpOpOptions = computed(() => [
   { label: '=', value: 'eq' },
   { label: '>', value: 'gt' },
   { label: '≥', value: 'gte' },
   { label: '<', value: 'lt' },
   { label: '≤', value: 'lte' },
   { label: '≠', value: 'ne' },
-];
+]);
 
 const form = reactive({
   bulkKey: 'member.account',
@@ -1103,51 +1119,51 @@ function migrateAllMultiSelectAllLast() {
   );
   form.verifyMethods = reorderAllTokenLast(
     form.verifyMethods,
-    optionRealValues(optionsWithAll(verifyMethodOptions)),
+    optionRealValues(verifyMethodOptionsWithAll.value),
   );
   form.accountStatuses = reorderAllTokenLast(
     form.accountStatuses,
-    optionRealValues(optionsWithAll(accountStatusOptions)),
+    optionRealValues(accountStatusOptionsWithAll.value),
   );
   form.regSources = reorderAllTokenLast(
     form.regSources,
-    optionRealValues(optionsWithAll(regSourceOptions)),
+    optionRealValues(regSourceOptionsWithAll.value),
   );
   form.regMethods = reorderAllTokenLast(
     form.regMethods,
-    optionRealValues(optionsWithAll(regMethodOptions)),
+    optionRealValues(regMethodOptionsWithAll.value),
   );
   form.loginMethods = reorderAllTokenLast(
     form.loginMethods,
-    optionRealValues(optionsWithAll(loginMethodOptions)),
+    optionRealValues(loginMethodOptionsWithAll.value),
   );
   form.accountTypeUis = reorderAllTokenLast(
     form.accountTypeUis,
-    optionRealValues(optionsWithAll(accountTypeUiOptions)),
+    optionRealValues(accountTypeUiOptionsWithAll.value),
   );
   form.onlineStatusUis = reorderAllTokenLast(
     form.onlineStatusUis,
-    optionRealValues(optionsWithAll(onlineStatusUiOptions)),
+    optionRealValues(onlineStatusUiOptionsWithAll.value),
   );
   form.regDeviceOs = reorderAllTokenLast(
     form.regDeviceOs,
-    optionRealValues(optionsWithAll(deviceOsOptions)),
+    optionRealValues(deviceOsOptionsWithAll.value),
   );
   form.regDeviceMethod = reorderAllTokenLast(
     form.regDeviceMethod,
-    optionRealValues(optionsWithAll(deviceMethodOptions)),
+    optionRealValues(deviceMethodOptionsWithAll.value),
   );
   form.lastLoginDeviceOs = reorderAllTokenLast(
     form.lastLoginDeviceOs,
-    optionRealValues(optionsWithAll(deviceOsOptions)),
+    optionRealValues(deviceOsOptionsWithAll.value),
   );
   form.lastLoginDeviceMethod = reorderAllTokenLast(
     form.lastLoginDeviceMethod,
-    optionRealValues(optionsWithAll(deviceMethodOptions)),
+    optionRealValues(deviceMethodOptionsWithAll.value),
   );
   form.hasFirstDeposit = reorderAllTokenLast(
     form.hasFirstDeposit,
-    optionRealValues(optionsWithAll(hasFirstDepositOptions)),
+    optionRealValues(hasFirstDepositOptionsWithAll.value),
   );
 }
 
@@ -1241,14 +1257,14 @@ function localDayStartEndMs(d: Date): [number, number] {
   return [start.getTime(), end.getTime()];
 }
 
-const datetimerangeShortcuts: Record<string, () => [number, number]> = {
-  今天: () => localDayStartEndMs(new Date()),
-  昨天: () => {
+const datetimerangeShortcuts = computed<Record<string, () => [number, number]>>(() => ({
+  [$t('common.today')]: () => localDayStartEndMs(new Date()),
+  [$t('user.advancedSearch.yesterday')]: () => {
     const t = new Date();
     t.setDate(t.getDate() - 1);
     return localDayStartEndMs(t);
   },
-  本周: () => {
+  [$t('common.thisWeek')]: () => {
     const now = new Date();
     const day = now.getDay();
     const mondayOffset = day === 0 ? -6 : 1 - day;
@@ -1274,7 +1290,7 @@ const datetimerangeShortcuts: Record<string, () => [number, number]> = {
     );
     return [start.getTime(), end.getTime()];
   },
-  本月: () => {
+  [$t('common.thisMonth')]: () => {
     const n = new Date();
     const y = n.getFullYear();
     const m = n.getMonth();
@@ -1283,7 +1299,7 @@ const datetimerangeShortcuts: Record<string, () => [number, number]> = {
     const end = new Date(y, m, lastDay, 23, 59, 59, 0);
     return [start.getTime(), end.getTime()];
   },
-};
+}));
 
 function tsRange(r: [number, number] | null): [string, string] | null {
   if (!r || r.length !== 2) return null;
@@ -1426,9 +1442,7 @@ function apply() {
       });
     }
   }
-  const accountStatusReals = optionRealValues(
-    optionsWithAll(accountStatusOptions),
-  );
+  const accountStatusReals = optionRealValues(accountStatusOptionsWithAll.value);
   const accountStatusesStripped = stripAllToken(form.accountStatuses);
   if (
     accountStatusesStripped.length &&
@@ -1448,7 +1462,7 @@ function apply() {
       });
     }
   }
-  const verifyReals = optionRealValues(optionsWithAll(verifyMethodOptions));
+  const verifyReals = optionRealValues(verifyMethodOptionsWithAll.value);
   if (
     form.verifyMethods?.length &&
     !isNoOpMultiFilter(form.verifyMethods, verifyReals)
@@ -1456,21 +1470,21 @@ function apply() {
     payload.verificationMethods = stripAllToken(form.verifyMethods);
   }
 
-  const regMethodReals = optionRealValues(optionsWithAll(regMethodOptions));
+  const regMethodReals = optionRealValues(regMethodOptionsWithAll.value);
   if (
     form.regMethods?.length &&
     !isNoOpMultiFilter(form.regMethods, regMethodReals)
   ) {
     payload.registrationMethods = stripAllToken(form.regMethods);
   }
-  const loginMethodReals = optionRealValues(optionsWithAll(loginMethodOptions));
+  const loginMethodReals = optionRealValues(loginMethodOptionsWithAll.value);
   if (
     form.loginMethods?.length &&
     !isNoOpMultiFilter(form.loginMethods, loginMethodReals)
   ) {
     payload.loginMethods = stripAllToken(form.loginMethods);
   }
-  const onlineStatusReals = optionRealValues(optionsWithAll(onlineStatusUiOptions));
+  const onlineStatusReals = optionRealValues(onlineStatusUiOptionsWithAll.value);
   if (
     form.onlineStatusUis?.length &&
     !isNoOpMultiFilter(form.onlineStatusUis, onlineStatusReals)
@@ -1487,8 +1501,8 @@ function apply() {
   pushStr(parts, 'member.last_login_ip', 'eq', form.lastLoginIp);
   pushStr(parts, 'member.registration_domain', 'like', form.registrationDomain);
   pushStr(parts, 'member.device_id', 'eq', form.deviceId);
-  const regOsReals = optionRealValues(optionsWithAll(deviceOsOptions));
-  const regDmReals = optionRealValues(optionsWithAll(deviceMethodOptions));
+  const regOsReals = optionRealValues(deviceOsOptionsWithAll.value);
+  const regDmReals = optionRealValues(deviceMethodOptionsWithAll.value);
   if (!isNoOpMultiFilter(form.regDeviceOs, regOsReals)) {
     payload.registrationDeviceOsFilters = stripAllToken(form.regDeviceOs ?? []);
   }
@@ -1540,7 +1554,7 @@ function apply() {
     form.firstDepositAmtMin,
     form.firstDepositAmtMax,
   );
-  const hasFdReals = optionRealValues(optionsWithAll(hasFirstDepositOptions));
+  const hasFdReals = optionRealValues(hasFirstDepositOptionsWithAll.value);
   if (
     form.hasFirstDeposit?.length &&
     !isNoOpMultiFilter(form.hasFirstDeposit, hasFdReals)

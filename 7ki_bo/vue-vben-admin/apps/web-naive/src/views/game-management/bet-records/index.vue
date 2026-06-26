@@ -1,31 +1,26 @@
 <template>
-  <Page title="投注记录" description="游戏投注交易记录查询">
-    <!-- Breadcrumb -->
+  <Page :title="$t('game.betRecords.title')" :description="$t('game.betRecords.desc')">
     <div class="mb-4">
       <n-breadcrumb>
-        <n-breadcrumb-item>游戏管理</n-breadcrumb-item>
-        <n-breadcrumb-item>投注记录</n-breadcrumb-item>
+        <n-breadcrumb-item>{{ $t('page.menu.gameManagement') }}</n-breadcrumb-item>
+        <n-breadcrumb-item>{{ $t('page.menu.betRecords') }}</n-breadcrumb-item>
       </n-breadcrumb>
     </div>
 
-    <!-- Tabs -->
     <n-tabs
       v-model:value="activeTab"
       type="line"
       animated
       @update:value="handleTabChange"
     >
-      <n-tab-pane name="details" tab="投注明细">
-        <!-- Filter Card -->
+      <n-tab-pane name="details" :tab="$t('game.betRecords.detailsTab')">
         <n-card :bordered="false" class="rounded-16px mb-4 shadow-sm">
           <div class="filter-section">
-            <!-- Row 1: Date Range and Basic Filters -->
             <div
               class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4"
             >
-              <!-- Date Range -->
               <div class="filter-item">
-                <n-form-item label="投注时间">
+                <n-form-item :label="$t('game.betRecords.betTime')">
                   <n-date-picker
                     v-model:value="dateRange"
                     type="datetimerange"
@@ -39,12 +34,11 @@
                 </n-form-item>
               </div>
 
-              <!-- Game Provider -->
               <div class="filter-item">
-                <n-form-item label="游戏平台">
+                <n-form-item :label="$t('game.betRecords.gamePlatform')">
                   <n-select
                     v-model:value="filters.gameProvider"
-                    placeholder="请选择游戏平台"
+                    :placeholder="$t('game.betRecords.selectGamePlatform')"
                     clearable
                     size="small"
                     :options="providerOptions"
@@ -53,12 +47,11 @@
                 </n-form-item>
               </div>
 
-              <!-- Game Category -->
               <div class="filter-item">
-                <n-form-item label="游戏类型">
+                <n-form-item :label="$t('game.betRecords.gameType')">
                   <n-select
                     v-model:value="filters.gameCategory"
-                    placeholder="请选择游戏类型"
+                    :placeholder="$t('game.betRecords.selectGameType')"
                     clearable
                     size="small"
                     :options="categoryOptions"
@@ -67,12 +60,11 @@
                 </n-form-item>
               </div>
 
-              <!-- Transaction Type -->
               <div class="filter-item">
-                <n-form-item label="交易类型">
+                <n-form-item :label="$t('game.betRecords.transactionType')">
                   <n-select
                     v-model:value="filters.type"
-                    placeholder="请选择交易类型"
+                    :placeholder="$t('game.betRecords.selectTransactionType')"
                     clearable
                     size="small"
                     :options="typeOptions"
@@ -81,40 +73,36 @@
               </div>
             </div>
 
-            <!-- Row 2: Search Filters -->
             <div
               class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4"
             >
-              <!-- Game Name -->
               <div class="filter-item">
-                <n-form-item label="游戏名称">
+                <n-form-item :label="$t('game.betRecords.gameName')">
                   <n-input
                     v-model:value="filters.gameName"
-                    placeholder="请输入游戏名称"
+                    :placeholder="$t('game.betRecords.enterGameName')"
                     clearable
                     size="small"
                   />
                 </n-form-item>
               </div>
 
-              <!-- User Account -->
               <div class="filter-item">
-                <n-form-item label="会员账号">
+                <n-form-item :label="$t('game.betRecords.memberAccount')">
                   <n-input
                     v-model:value="filters.username"
-                    placeholder="请输入会员账号或ID"
+                    :placeholder="$t('game.betRecordsExtra.enterMemberOrId')"
                     clearable
                     size="small"
                   />
                 </n-form-item>
               </div>
 
-              <!-- Min Amount -->
               <div class="filter-item">
-                <n-form-item label="最小金额">
+                <n-form-item :label="$t('game.betRecordsExtra.minAmount')">
                   <n-input-number
                     v-model:value="filters.minAmount"
-                    placeholder="最小金额"
+                    :placeholder="$t('game.betRecordsExtra.minAmount')"
                     clearable
                     size="small"
                     :precision="2"
@@ -124,12 +112,11 @@
                 </n-form-item>
               </div>
 
-              <!-- Max Amount -->
               <div class="filter-item">
-                <n-form-item label="最大金额">
+                <n-form-item :label="$t('game.betRecordsExtra.maxAmount')">
                   <n-input-number
                     v-model:value="filters.maxAmount"
-                    placeholder="最大金额"
+                    :placeholder="$t('game.betRecordsExtra.maxAmount')"
                     clearable
                     size="small"
                     :precision="2"
@@ -140,7 +127,6 @@
               </div>
             </div>
 
-            <!-- Action Buttons -->
             <div class="flex items-center justify-between">
               <div class="flex flex-wrap items-center gap-2">
                 <n-button
@@ -151,32 +137,31 @@
                   <template #icon>
                     <n-icon><SearchOutline /></n-icon>
                   </template>
-                  搜索
+                  {{ $t('common.search') }}
                 </n-button>
                 <n-button @click="handleReset">
                   <template #icon>
                     <n-icon><RefreshOutline /></n-icon>
                   </template>
-                  重置
+                  {{ $t('common.reset') }}
                 </n-button>
                 <n-button @click="handleExport" :loading="exporting">
                   <template #icon>
                     <n-icon><DownloadOutline /></n-icon>
                   </template>
-                  导出
+                  {{ $t('common.export') }}
                 </n-button>
 
-                <!-- Consolidation Toggle -->
                 <n-divider vertical />
                 <div class="flex items-center gap-2">
-                  <span class="text-sm text-gray-600">合并显示:</span>
+                  <span class="text-sm text-gray-600">{{ $t('game.betRecordsExtra2.mergeDisplay') }}</span>
                   <n-switch
                     v-model:value="consolidateView"
                     @update:value="handleConsolidateChange"
                     size="small"
                   >
-                    <template #checked>按局</template>
-                    <template #unchecked>明细</template>
+                    <template #checked>{{ $t('game.betRecordsExtra2.byRound') }}</template>
+                    <template #unchecked>{{ $t('game.betRecordsExtra2.details') }}</template>
                   </n-switch>
                   <n-tooltip trigger="hover">
                     <template #trigger>
@@ -184,46 +169,44 @@
                         <HelpCircleOutline />
                       </n-icon>
                     </template>
-                    开启后：每局游戏显示为一行（投注+结果）<br />
-                    关闭后：显示所有交易明细（下注、中奖分开）
+                    {{ $t('game.betRecordsExtra2.mergeHintOn') }}<br />{{ $t('game.betRecordsExtra2.mergeHintOff') }}
                   </n-tooltip>
                 </div>
               </div>
               <div class="text-sm text-gray-600">
-                共 {{ paginationReactive.total }} 条记录
+                {{ $t('game.betRecordsExtra.recordCount', [paginationReactive.total]) }}
               </div>
             </div>
           </div>
         </n-card>
 
-        <!-- Statistics Cards -->
         <div
           class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-4"
           v-if="showStatistics"
         >
           <n-card :bordered="false" class="rounded-16px shadow-sm">
-            <n-statistic label="总投注金额" :value="statistics.totalAmount">
+            <n-statistic :label="$t('game.betRecordsExtra.totalBet')" :value="statistics.totalAmount">
               <template #prefix>
                 <n-icon color="#18a058"><TrendingUp /></n-icon>
               </template>
             </n-statistic>
           </n-card>
           <n-card :bordered="false" class="rounded-16px shadow-sm">
-            <n-statistic label="有效投注" :value="statistics.totalValidBet">
+            <n-statistic :label="$t('game.betRecordsExtra.totalValidBet')" :value="statistics.totalValidBet">
               <template #prefix>
                 <n-icon color="#2080f0"><CheckmarkCircle /></n-icon>
               </template>
             </n-statistic>
           </n-card>
           <n-card :bordered="false" class="rounded-16px shadow-sm">
-            <n-statistic label="流水" :value="statistics.totalTurnover">
+            <n-statistic :label="$t('game.betRecordsExtra2.turnover')" :value="statistics.totalTurnover">
               <template #prefix>
                 <n-icon color="#f0a020"><Sync /></n-icon>
               </template>
             </n-statistic>
           </n-card>
           <n-card :bordered="false" class="rounded-16px shadow-sm">
-            <n-statistic label="交易笔数" :value="statistics.count">
+            <n-statistic :label="$t('game.betRecordsExtra2.transactionCount')" :value="statistics.count">
               <template #prefix>
                 <n-icon color="#d03050"><Receipt /></n-icon>
               </template>
@@ -231,7 +214,6 @@
           </n-card>
         </div>
 
-        <!-- Data Table -->
         <SmartDataGrid
           :data="tableData"
           :columns="columns"
@@ -248,18 +230,18 @@
             <n-card :bordered="false" class="rounded-16px mb-4 shadow-sm">
               <div class="flex items-center justify-between">
                 <div class="text-sm">
-                  <span class="font-semibold">页面合计：</span>
-                  投注金额:
+                  <span class="font-semibold">{{ $t('game.betRecordsExtra2.pageTotal') }}</span>
+                  {{ $t('game.betRecords.betAmount') }}:
                   <span class="font-semibold text-gray-800">{{
                     formatCurrency(Math.abs(pageTotals.totalAmount))
                   }}</span>
-                  &nbsp;|&nbsp; 有效投注:
+                  &nbsp;|&nbsp; {{ $t('game.betRecords.validBet') }}:
                   <span class="font-semibold text-gray-800">{{
                     formatCurrency(pageTotals.totalValidBet)
                   }}</span>
-                  &nbsp;|&nbsp; 预扣税:
+                  &nbsp;|&nbsp; {{ $t('game.betRecordsExtra2.withholdingTax') }}:
                   <span class="font-semibold text-gray-500">0.00</span>
-                  &nbsp;|&nbsp; 会员输赢:
+                  &nbsp;|&nbsp; {{ $t('game.betRecords.winLoss') }}:
                   <span
                     :class="
                       pageTotals.totalAmount >= 0
@@ -268,7 +250,7 @@
                     "
                     >{{ formatCurrency(pageTotals.totalAmount) }}</span
                   >
-                  &nbsp;|&nbsp; 流水:
+                  &nbsp;|&nbsp; {{ $t('game.betRecordsExtra2.turnover') }}:
                   <span class="font-semibold text-gray-600">{{
                     formatCurrency(pageTotals.totalTurnover)
                   }}</span>
@@ -279,26 +261,22 @@
         </SmartDataGrid>
       </n-tab-pane>
 
-      <n-tab-pane name="statistics" tab="投注统计">
-        <!-- Statistics Filter Card -->
+      <n-tab-pane name="statistics" :tab="$t('game.betRecordsExtra2.statsTab')">
         <n-card :bordered="false" class="rounded-16px mb-4 shadow-sm">
           <div class="filter-section">
-            <!-- Date Range and Search Filters -->
             <div class="mb-4 flex flex-wrap items-start gap-3">
-              <!-- Date Type Selector -->
               <div class="flex items-center gap-2">
                 <n-radio-group
                   v-model:value="statsDateType"
                   size="small"
                   @update:value="handleStatsDateTypeChange"
                 >
-                  <n-radio value="day">日</n-radio>
-                  <n-radio value="week">周</n-radio>
-                  <n-radio value="month">月</n-radio>
+                  <n-radio value="day">{{ $t('game.statistics.day') }}</n-radio>
+                  <n-radio value="week">{{ $t('game.statistics.week') }}</n-radio>
+                  <n-radio value="month">{{ $t('game.statistics.month') }}</n-radio>
                 </n-radio-group>
               </div>
 
-              <!-- Date Range Picker -->
               <div style="min-width: 300px">
                 <n-date-picker
                   v-model:value="statsDateRange"
@@ -312,11 +290,10 @@
                 />
               </div>
 
-              <!-- Member Account (Required) -->
               <div style="min-width: 200px">
                 <n-input
                   v-model:value="statsFilters.memberAccount"
-                  placeholder="会员账号或ID"
+                  :placeholder="$t('game.betRecordsExtra.enterMemberOrId')"
                   clearable
                   size="small"
                   :input-props="{ style: 'text-align: center' }"
@@ -327,7 +304,6 @@
                 </n-input>
               </div>
 
-              <!-- Search & Reset Buttons -->
               <div class="flex gap-2">
                 <n-button
                   type="primary"
@@ -335,28 +311,27 @@
                   :loading="statsLoading"
                   @click="handleStatsSearch"
                 >
-                  搜索
+                  {{ $t('common.search') }}
                 </n-button>
                 <n-button size="small" @click="handleStatsReset">
-                  重置
+                  {{ $t('common.reset') }}
                 </n-button>
               </div>
             </div>
 
-            <!-- Summary Info -->
             <div
               v-if="statsData.summary"
               class="rounded bg-blue-50 p-2 text-sm text-gray-600"
             >
-              会员账号:
+              {{ $t('game.betRecords.memberAccount') }}:
               <span class="font-semibold text-blue-600">{{
                 statsFilters.memberAccount
               }}</span>
-              &nbsp;|&nbsp; 会员ID:
+              &nbsp;|&nbsp; {{ $t('game.betRecordsExtra2.memberId') }}:
               <span class="font-semibold">{{
                 statsData.userInfo?.userID || '-'
               }}</span>
-              &nbsp;|&nbsp; 会员币种:
+              &nbsp;|&nbsp; {{ $t('game.betRecordsExtra2.memberCurrency') }}:
               <span class="font-semibold">{{
                 statsData.userInfo?.currency || 'BRL'
               }}</span>
@@ -364,15 +339,13 @@
           </div>
         </n-card>
 
-        <!-- Statistics Content -->
         <template v-if="statsData.summary">
-          <!-- Summary by Type Table -->
           <n-card :bordered="false" class="rounded-16px mb-4 shadow-sm">
             <template #header>
               <div class="flex items-center justify-between">
-                <span class="font-semibold">类型汇总</span>
+                <span class="font-semibold">{{ $t('game.betRecordsExtra2.typeSummary') }}</span>
                 <div class="text-sm text-gray-600">
-                  总计 {{ statsData.byType?.length || 0 }} 条记录
+                  {{ $t('game.betRecordsExtra.recordCount', [statsData.byType?.length || 0]) }}
                 </div>
               </div>
             </template>
@@ -388,13 +361,12 @@
             />
           </n-card>
 
-          <!-- Detail by Game Table -->
           <n-card :bordered="false" class="rounded-16px shadow-sm">
             <template #header>
               <div class="flex items-center justify-between">
-                <span class="font-semibold">游戏明细</span>
+                <span class="font-semibold">{{ $t('game.betRecordsExtra2.gameDetails') }}</span>
                 <div class="text-sm text-gray-600">
-                  共 {{ statsGameData.length }} 条记录
+                  {{ $t('game.betRecordsExtra.recordCount', [statsGameData.length]) }}
                 </div>
               </div>
             </template>
@@ -412,7 +384,6 @@
           </n-card>
         </template>
 
-        <!-- Empty State -->
         <n-card v-else :bordered="false" class="rounded-16px shadow-sm">
           <n-empty description="">
             <template #icon>
@@ -420,7 +391,7 @@
             </template>
             <template #extra>
               <div class="text-sm text-gray-500">
-                提示：必须输入会员账号或ID才能查询统计数据
+                {{ $t('game.betRecordsExtra2.statsEmptyHint') }}
               </div>
             </template>
           </n-empty>
@@ -428,7 +399,6 @@
       </n-tab-pane>
     </n-tabs>
 
-    <!-- User Detail Modal -->
     <UserDetailModal
       v-model:visible="showUserDetailModal"
       :user-id="currentUserId"
@@ -438,6 +408,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, onMounted, h } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
@@ -501,13 +473,13 @@ const message = useMessage();
 
 // Game category translation map
 const gameCategoryLabels: Record<string, string> = {
-  arcade: '街机',
-  SLOT: '电子',
-  fishing: '捕鱼',
-  sports: '体育',
-  LIVE: '真人',
-  BLOCKCHAIN: '区块链',
-  card: '棋牌',
+  arcade: $t('game.statisticsExtra.typeArcadeShort'),
+  SLOT: $t('game.statisticsExtra.typeSlotShort'),
+  fishing: $t('game.statisticsExtra.typeHuntingShort'),
+  sports: $t('game.statisticsExtra.typeSportsShort'),
+  LIVE: $t('game.statisticsExtra.typeLiveShort'),
+  BLOCKCHAIN: $t('game.statisticsExtra.typeBlockchainShort'),
+  card: $t('game.statisticsExtra.typeChessShort'),
 };
 
 // Helper function to translate game category
@@ -590,14 +562,14 @@ const typeOptions = ref<Array<{ label: string; value: string }>>([]);
 
 // Date Shortcuts
 const dateShortcuts = {
-  今天: (): [number, number] => {
+  [$t('game.betRecordsExtra2.today')]: (): [number, number] => {
     const now = new Date();
     now.setHours(0, 0, 0, 0);
     const end = new Date();
     end.setHours(23, 59, 59, 999);
     return [now.getTime(), end.getTime()];
   },
-  昨天: (): [number, number] => {
+  [$t('game.betRecordsExtra2.yesterday')]: (): [number, number] => {
     const now = new Date();
     now.setDate(now.getDate() - 1);
     now.setHours(0, 0, 0, 0);
@@ -605,7 +577,7 @@ const dateShortcuts = {
     end.setHours(23, 59, 59, 999);
     return [now.getTime(), end.getTime()];
   },
-  最近7天: (): [number, number] => {
+  [$t('game.betRecordsExtra2.last7Days')]: (): [number, number] => {
     const now = new Date();
     now.setDate(now.getDate() - 6);
     now.setHours(0, 0, 0, 0);
@@ -613,7 +585,7 @@ const dateShortcuts = {
     end.setHours(23, 59, 59, 999);
     return [now.getTime(), end.getTime()];
   },
-  最近30天: (): [number, number] => {
+  [$t('game.betRecordsExtra2.last30Days')]: (): [number, number] => {
     const now = new Date();
     now.setDate(now.getDate() - 29);
     now.setHours(0, 0, 0, 0);
@@ -621,7 +593,7 @@ const dateShortcuts = {
     end.setHours(23, 59, 59, 999);
     return [now.getTime(), end.getTime()];
   },
-  本月: (): [number, number] => {
+  [$t('game.betRecordsExtra2.thisMonth')]: (): [number, number] => {
     const now = new Date();
     now.setDate(1);
     now.setHours(0, 0, 0, 0);
@@ -629,7 +601,7 @@ const dateShortcuts = {
     end.setHours(23, 59, 59, 999);
     return [now.getTime(), end.getTime()];
   },
-  上月: (): [number, number] => {
+  [$t('game.betRecordsExtra2.lastMonth')]: (): [number, number] => {
     const now = new Date();
     now.setMonth(now.getMonth() - 1);
     now.setDate(1);
@@ -643,7 +615,7 @@ const dateShortcuts = {
 // Table Columns
 const columns: DataTableColumns<BetTransactionItem> = [
   {
-    title: '注单编号',
+    title: $t('game.betRecords.betId'),
     key: 'id',
     width: 180,
     fixed: 'left',
@@ -652,7 +624,7 @@ const columns: DataTableColumns<BetTransactionItem> = [
     },
   },
   {
-    title: '会员账号',
+    title: $t('game.betRecords.memberAccount'),
     key: 'user.account',
     width: 120,
     render: (row) => {
@@ -671,7 +643,7 @@ const columns: DataTableColumns<BetTransactionItem> = [
     },
   },
   {
-    title: '会员ID',
+    title: $t('game.betRecordsExtra2.memberId'),
     key: 'user.userID',
     width: 120,
     render: (row) => {
@@ -680,7 +652,7 @@ const columns: DataTableColumns<BetTransactionItem> = [
     },
   },
   {
-    title: '游戏平台',
+    title: $t('game.betRecords.gamePlatform'),
     key: 'gameProvider',
     width: 120,
     render: (row) =>
@@ -691,7 +663,7 @@ const columns: DataTableColumns<BetTransactionItem> = [
       ),
   },
   {
-    title: '游戏类型',
+    title: $t('game.subgame.gameType'),
     key: 'gameCategory',
     width: 100,
     render: (row) =>
@@ -702,7 +674,7 @@ const columns: DataTableColumns<BetTransactionItem> = [
       ),
   },
   {
-    title: '游戏名称',
+    title: $t('game.subgame.gameNameZh'),
     key: 'gameName',
     width: 150,
     ellipsis: {
@@ -710,7 +682,7 @@ const columns: DataTableColumns<BetTransactionItem> = [
     },
   },
   {
-    title: '游戏ID',
+    title: $t('game.subgame.gameId'),
     key: 'gameId',
     width: 120,
     ellipsis: {
@@ -718,7 +690,7 @@ const columns: DataTableColumns<BetTransactionItem> = [
     },
   },
   {
-    title: '局号',
+    title: $t('game.betRecordsExtra.roundNo'),
     key: 'roundId',
     width: 150,
     ellipsis: {
@@ -726,17 +698,17 @@ const columns: DataTableColumns<BetTransactionItem> = [
     },
   },
   {
-    title: '交易类型',
+    title: $t('game.betRecords.transactionType'),
     key: 'type',
     width: 120,
     render: (row) => {
       const typeMap: Record<string, { color: string; label: string }> = {
-        bet_placed: { color: 'warning', label: '下注' },
-        bet_won: { color: 'success', label: '中奖' },
-        bet_lost: { color: 'error', label: '输' },
-        bet_draw: { color: 'info', label: '平局' },
-        bet_cancelled: { color: 'default', label: '取消' },
-        bet_refunded: { color: 'info', label: '退款' },
+        bet_placed: { color: 'warning', label: $t('game.betRecordsExtra2.betPlaced') },
+        bet_won: { color: 'success', label: $t('game.betRecordsExtra2.betWon') },
+        bet_lost: { color: 'error', label: $t('game.betRecordsExtra2.betLost') },
+        bet_draw: { color: 'info', label: $t('game.betRecordsExtra2.betDraw') },
+        bet_cancelled: { color: 'default', label: $t('game.betRecordsExtra2.betCancelled') },
+        bet_refunded: { color: 'info', label: $t('game.betRecordsExtra2.betRefunded') },
       };
       const config = typeMap[row.type] || { color: 'default', label: row.type };
       return h(
@@ -747,7 +719,7 @@ const columns: DataTableColumns<BetTransactionItem> = [
     },
   },
   {
-    title: '投注金额',
+    title: $t('game.betRecords.betAmount'),
     key: 'amount',
     width: 110,
     align: 'right',
@@ -764,7 +736,7 @@ const columns: DataTableColumns<BetTransactionItem> = [
     },
   },
   {
-    title: '有效投注',
+    title: $t('game.betRecords.validBet'),
     key: 'validBet',
     width: 110,
     align: 'right',
@@ -776,14 +748,14 @@ const columns: DataTableColumns<BetTransactionItem> = [
       ),
   },
   {
-    title: '预扣税',
+    title: $t('game.betRecordsExtra2.withholdingTax'),
     key: 'preTax',
     width: 100,
     align: 'right',
     render: () => h('span', { class: 'font-semibold text-gray-500' }, '0.00'),
   },
   {
-    title: '会员输赢',
+    title: $t('game.betRecords.winLoss'),
     key: 'memberWinLoss',
     width: 120,
     align: 'right',
@@ -823,7 +795,7 @@ const columns: DataTableColumns<BetTransactionItem> = [
     },
   },
   {
-    title: '流水',
+    title: $t('game.betRecordsExtra2.turnover'),
     key: 'turnover',
     width: 100,
     align: 'right',
@@ -835,40 +807,40 @@ const columns: DataTableColumns<BetTransactionItem> = [
       ),
   },
   {
-    title: '投注前余额',
+    title: $t('game.betRecords.balanceBefore'),
     key: 'balanceBefore',
     width: 120,
     align: 'right',
     render: (row) => formatCurrency(row.balanceBefore),
   },
   {
-    title: '投注后余额',
+    title: $t('game.betRecords.balanceAfter'),
     key: 'balanceAfter',
     width: 120,
     align: 'right',
     render: (row) => formatCurrency(row.balanceAfter),
   },
   {
-    title: '币种',
+    title: $t('common.currency'),
     key: 'currency',
     width: 80,
     align: 'center',
   },
   {
-    title: '赔率',
+    title: $t('game.betRecordsExtra2.odds'),
     key: 'odds',
     width: 100,
     align: 'right',
     render: (row) => (row.odds ? Number(row.odds).toFixed(2) : '-'),
   },
   {
-    title: '投注时间',
+    title: $t('game.betRecordsExtra2.betTime'),
     key: 'createdAt',
     width: 160,
     render: (row) => formatDateTime(row.createdAt),
   },
   {
-    title: '描述',
+    title: $t('game.betRecordsExtra2.description'),
     key: 'description',
     width: 200,
     ellipsis: {
@@ -1014,7 +986,7 @@ const loadData = async () => {
   } catch (error) {
     console.error('Error loading bet transactions:', error);
     notification.error({
-      content: '加载投注记录失败',
+      content: $t('game.betRecordsExtra2.loadBetRecordsFailedMsg'),
       duration: 3000,
     });
   } finally {
@@ -1045,12 +1017,12 @@ const loadFilterOptions = async () => {
 
     if (types && Array.isArray(types)) {
       const typeLabels: Record<string, string> = {
-        bet_placed: '下注',
-        bet_won: '中奖',
-        bet_lost: '输',
-        bet_draw: '平局',
-        bet_cancelled: '取消',
-        bet_refunded: '退款',
+        bet_placed: $t('game.betRecordsExtra2.betPlaced'),
+        bet_won: $t('game.betRecordsExtra2.betWon'),
+        bet_lost: $t('game.betRecordsExtra2.betLost'),
+        bet_draw: $t('game.betRecordsExtra2.betDraw'),
+        bet_cancelled: $t('game.betRecordsExtra2.betCancelled'),
+        bet_refunded: $t('game.betRecordsExtra2.betRefunded'),
       };
       typeOptions.value = types.map((t) => ({
         label: typeLabels[t] || t,
@@ -1096,11 +1068,11 @@ const handleExport = async () => {
   exporting.value = true;
   try {
     // TODO: Implement export functionality
-    message.info('导出功能开发中...');
+    message.info($t('game.betRecordsExtra2.exportDeveloping'));
   } catch (error) {
     console.error('Error exporting:', error);
     notification.error({
-      content: '导出失败',
+      content: $t('game.betRecords.exportFailed'),
       duration: 3000,
     });
   } finally {
@@ -1137,35 +1109,35 @@ const handleUserClick = (userId: number) => {
 // Statistics Table Columns
 const statsTypeColumns: DataTableColumns<any> = [
   {
-    title: '类型',
+    title: $t('game.betRecordsExtra2.type'),
     key: 'type',
     width: 150,
     render: (row) => {
       // Map game categories to Chinese names
       const categoryMap: Record<string, string> = {
-        SLOT: '电子',
-        FISHING: '捕鱼',
-        fishing: '捕鱼',
-        LIVE: '真人',
-        SPORT: '体育',
-        LOTTERY: '彩票',
-        POKER: '扑克',
-        TABLE: '桌游',
-        ARCADE: '街机',
+        SLOT: $t('game.statisticsExtra.typeSlotShort'),
+        FISHING: $t('game.betRecordsExtra2.typeFishing'),
+        fishing: $t('game.statisticsExtra.typeHuntingShort'),
+        LIVE: $t('game.statisticsExtra.typeLiveShort'),
+        SPORT: $t('game.betRecordsExtra2.typeSport'),
+        LOTTERY: $t('game.statisticsExtra.typeLotteryShort'),
+        POKER: $t('game.betRecordsExtra2.typePoker'),
+        TABLE: $t('game.betRecordsExtra2.typeTable'),
+        ARCADE: $t('game.statisticsExtra.typeArcadeShort'),
       };
       const label = categoryMap[row.type] || row.type || row.category || '-';
       return h(NTag, { type: 'info', size: 'small' }, { default: () => label });
     },
   },
   {
-    title: '总注单量',
+    title: $t('game.betRecordsExtra2.totalBetCount'),
     key: 'count',
     width: 120,
     align: 'right',
     render: (row) => h('span', { class: 'font-semibold' }, row.count || 0),
   },
   {
-    title: '总投注金额',
+    title: $t('game.betRecordsExtra2.totalBetAmount'),
     key: 'totalAmount',
     width: 150,
     align: 'right',
@@ -1177,7 +1149,7 @@ const statsTypeColumns: DataTableColumns<any> = [
       ),
   },
   {
-    title: '总有效投注',
+    title: $t('game.betRecordsExtra2.totalValidBet'),
     key: 'totalValidBet',
     width: 150,
     align: 'right',
@@ -1189,14 +1161,14 @@ const statsTypeColumns: DataTableColumns<any> = [
       ),
   },
   {
-    title: '预扣税',
+    title: $t('game.betRecordsExtra2.withholdingTax'),
     key: 'preTax',
     width: 120,
     align: 'right',
     render: () => h('span', { class: 'font-semibold' }, '0.00'),
   },
   {
-    title: '会员输赢',
+    title: $t('game.betRecords.winLoss'),
     key: 'memberWinLoss',
     width: 150,
     align: 'right',
@@ -1215,7 +1187,7 @@ const statsTypeColumns: DataTableColumns<any> = [
     },
   },
   {
-    title: '占单量',
+    title: $t('game.betRecordsExtra2.orderShare'),
     key: 'occupiedCount',
     width: 120,
     align: 'right',
@@ -1227,7 +1199,7 @@ const statsTypeColumns: DataTableColumns<any> = [
       ),
   },
   {
-    title: '获利比',
+    title: $t('game.betRecordsExtra2.profitRatio'),
     key: 'profitRatio',
     width: 120,
     align: 'right',
@@ -1249,7 +1221,7 @@ const statsTypeColumns: DataTableColumns<any> = [
 
 const statsGameColumns: DataTableColumns<any> = [
   {
-    title: '平台',
+    title: $t('common.platform'),
     key: 'gameProvider',
     width: 100,
     fixed: 'left',
@@ -1261,19 +1233,19 @@ const statsGameColumns: DataTableColumns<any> = [
       ),
   },
   {
-    title: '类别',
+    title: $t('game.betRecordsExtra2.category'),
     key: 'gameCategory',
     width: 100,
     render: (row) => {
       const categoryMap: Record<string, string> = {
-        SLOT: '电子',
-        FISHING: '捕鱼',
-        LIVE: '真人',
-        SPORT: '体育',
-        LOTTERY: '彩票',
-        POKER: '扑克',
-        TABLE: '桌游',
-        ARCADE: '街机',
+        SLOT: $t('game.statisticsExtra.typeSlotShort'),
+        FISHING: $t('game.betRecordsExtra2.typeFishing'),
+        LIVE: $t('game.statisticsExtra.typeLiveShort'),
+        SPORT: $t('game.betRecordsExtra2.typeSport'),
+        LOTTERY: $t('game.statisticsExtra.typeLotteryShort'),
+        POKER: $t('game.betRecordsExtra2.typePoker'),
+        TABLE: $t('game.betRecordsExtra2.typeTable'),
+        ARCADE: $t('game.statisticsExtra.typeArcadeShort'),
       };
       const label = categoryMap[row.gameCategory] || row.gameCategory || '-';
       return h(
@@ -1284,14 +1256,14 @@ const statsGameColumns: DataTableColumns<any> = [
     },
   },
   {
-    title: '游戏名称',
+    title: $t('game.subgame.gameNameZh'),
     key: 'gameName',
     width: 180,
     ellipsis: { tooltip: true },
     render: (row) => h('span', { class: 'font-medium' }, row.gameName || '-'),
   },
   {
-    title: '注单数量',
+    title: $t('game.betRecordsExtra2.betCount'),
     key: 'betCount',
     width: 100,
     align: 'right',
@@ -1299,7 +1271,7 @@ const statsGameColumns: DataTableColumns<any> = [
       h('span', { class: 'font-semibold' }, row.count || row.betCount || 0),
   },
   {
-    title: '投注金额',
+    title: $t('game.betRecords.betAmount'),
     key: 'betAmount',
     width: 140,
     align: 'right',
@@ -1311,7 +1283,7 @@ const statsGameColumns: DataTableColumns<any> = [
       ),
   },
   {
-    title: '有效投注',
+    title: $t('game.betRecords.validBet'),
     key: 'validBet',
     width: 140,
     align: 'right',
@@ -1323,14 +1295,14 @@ const statsGameColumns: DataTableColumns<any> = [
       ),
   },
   {
-    title: '预扣税',
+    title: $t('game.betRecordsExtra2.withholdingTax'),
     key: 'preTax',
     width: 120,
     align: 'right',
     render: () => h('span', { class: 'font-semibold' }, '0.00'),
   },
   {
-    title: '会员输赢',
+    title: $t('game.betRecords.winLoss'),
     key: 'memberWinLoss',
     width: 140,
     align: 'right',
@@ -1349,7 +1321,7 @@ const statsGameColumns: DataTableColumns<any> = [
     },
   },
   {
-    title: '获利比',
+    title: $t('game.betRecordsExtra2.profitRatio'),
     key: 'profitRatio',
     width: 100,
     align: 'right',
@@ -1397,7 +1369,7 @@ const handleStatsDateTypeChange = (value: string) => {
 
 const handleStatsSearch = async () => {
   if (!statsFilters.memberAccount || statsFilters.memberAccount.trim() === '') {
-    message.warning('请输入会员账号');
+    message.warning($t('game.betRecordsExtra2.enterMemberAccount'));
     return;
   }
 
@@ -1474,12 +1446,12 @@ const handleStatsSearch = async () => {
         profitRatio: game.profitRatio || 0,
       }));
 
-      message.success('查询成功');
+      message.success($t('game.betRecordsExtra2.querySuccess'));
     }
   } catch (error) {
     console.error('Error loading bet statistics:', error);
     notification.error({
-      content: '加载投注统计失败',
+      content: $t('game.betRecordsExtra2.loadStatsFailed'),
       duration: 3000,
     });
   } finally {
@@ -1535,7 +1507,7 @@ onMounted(() => {
   const userName = route.query.userName as string;
   if (userAccount) {
     filters.username = userAccount;
-    message.success(`已筛选用户: ${userName || userAccount}`);
+    message.success($t('game.betRecordsExtra2.filteredUser', [userName || userAccount]));
   }
 
   // Set default date range to today for details tab

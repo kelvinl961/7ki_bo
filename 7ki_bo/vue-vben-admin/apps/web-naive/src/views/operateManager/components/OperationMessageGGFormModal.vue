@@ -2,14 +2,14 @@
   <n-modal
     v-model:show="modalShow"
     preset="dialog"
-    :title="isEditing ? '编辑系统公告' : '新增系统公告'"
+    :title="isEditing ? $t('operations.form.editGg') : $t('operations.form.addGg')"
     style="width: 900px"
     :mask-closable="false"
     @after-leave="handleModalClose"
   >
     <n-tabs v-model:value="activeTab" type="line" animated>
       <!-- 基本信息 -->
-      <n-tab-pane name="basic" tab="基本信息">
+      <n-tab-pane name="basic" :tab="$t('operations.form.tabBasic')">
         <n-form
           ref="basicFormRef"
           :model="formData"
@@ -18,54 +18,54 @@
           label-width="auto"
         >
           <div class="grid grid-cols-2 gap-4">
-            <n-form-item label="语言" path="language">
+            <n-form-item :label="$t('operations.messageSettings.language')" path="language">
               <n-select
                 v-model:value="formData.language"
-                placeholder="选择语言"
+                :placeholder="$t('operations.messageSettings.selectLanguage')"
                 :options="languageOptions"
               />
             </n-form-item>
 
-            <n-form-item label="币种" path="currency">
+            <n-form-item :label="$t('common.currency')" path="currency">
               <n-select
                 v-model:value="formData.currency"
-                placeholder="选择币种"
+                :placeholder="$t('operations.messageSettings.selectCurrency')"
                 :options="currencyOptions"
               />
             </n-form-item>
 
-            <n-form-item label="收件人类型" path="receiverType">
+            <n-form-item :label="$t('operations.messageSettings.receiverType')" path="receiverType">
               <n-select
                 v-model:value="formData.receiverType"
-                placeholder="选择收件人类型"
+                :placeholder="$t('operations.messageSettings.selectReceiverType')"
                 :options="receiverTypeOptions"
               />
             </n-form-item>
 
-            <n-form-item label="排序" path="sortOrder">
+            <n-form-item :label="$t('operations.messageSettings.sort')" path="sortOrder">
               <n-input-number
                 v-model:value="formData.sortOrder"
-                placeholder="输入排序数值"
+                :placeholder="$t('operations.form.sortPlaceholder')"
                 :min="0"
                 :max="9999"
               />
             </n-form-item>
           </div>
 
-          <n-form-item label="公告标题" path="title">
+          <n-form-item :label="$t('operations.messageSettings.announcementTitle')" path="title">
             <n-input
               v-model:value="formData.title"
-              placeholder="输入公告标题"
+              :placeholder="$t('operations.form.ggTitlePlaceholder')"
               maxlength="100"
               show-count
             />
           </n-form-item>
 
-          <n-form-item label="公告内容" path="content">
+          <n-form-item :label="$t('operations.messageSettings.announcementContent')" path="content">
             <n-input
               v-model:value="formData.content"
               type="textarea"
-              placeholder="输入公告内容（支持 HTML 和 Emoji）"
+              :placeholder="$t('operations.form.ggContentPlaceholder')"
               :autosize="{ minRows: 6, maxRows: 12 }"
               maxlength="2000"
               show-count
@@ -73,25 +73,25 @@
           </n-form-item>
 
           <div class="grid grid-cols-2 gap-4">
-            <n-form-item label="弹窗入口">
+            <n-form-item :label="$t('operations.messageSettings.popupEntrance')">
               <n-switch
                 v-model:value="formData.popupEntry"
                 :checked-value="true"
                 :unchecked-value="false"
               >
-                <template #checked>启用</template>
-                <template #unchecked>禁用</template>
+                <template #checked>{{ $t('common.enable') }}</template>
+                <template #unchecked>{{ $t('common.disable') }}</template>
               </n-switch>
             </n-form-item>
 
-            <n-form-item label="视频推送">
+            <n-form-item :label="$t('operations.messageSettings.videoPush')">
               <n-switch
                 v-model:value="formData.videoPushEnabled"
                 :checked-value="true"
                 :unchecked-value="false"
               >
-                <template #checked>启用</template>
-                <template #unchecked>禁用</template>
+                <template #checked>{{ $t('common.enable') }}</template>
+                <template #unchecked>{{ $t('common.disable') }}</template>
               </n-switch>
             </n-form-item>
           </div>
@@ -99,7 +99,7 @@
       </n-tab-pane>
 
       <!-- 时间设置 -->
-      <n-tab-pane name="time" tab="时间设置">
+      <n-tab-pane name="time" :tab="$t('operations.form.tabTime')">
         <n-form
           ref="timeFormRef"
           :model="formData"
@@ -108,20 +108,20 @@
           label-width="auto"
         >
           <div class="grid grid-cols-2 gap-4">
-            <n-form-item label="开始时间" path="startTime">
+            <n-form-item :label="$t('operations.messageSettings.startTime')" path="startTime">
               <n-date-picker
                 v-model:value="formData.startTime"
                 type="datetime"
-                placeholder="选择开始时间"
+                :placeholder="$t('operations.messageSettings.startTime')"
                 style="width: 100%"
               />
             </n-form-item>
 
-            <n-form-item label="结束时间" path="endTime">
+            <n-form-item :label="$t('operations.messageSettings.endTime')" path="endTime">
               <n-date-picker
                 v-model:value="formData.endTime"
                 type="datetime"
-                placeholder="选择结束时间"
+                :placeholder="$t('operations.messageSettings.endTime')"
                 style="width: 100%"
               />
             </n-form-item>
@@ -129,31 +129,31 @@
 
           <!-- 时间预设选项 -->
           <div class="mb-4">
-            <label class="mb-2 block text-sm font-medium">快速设置</label>
+            <label class="mb-2 block text-sm font-medium">{{ $t('operations.form.quickSetup') }}</label>
             <n-space>
-              <n-button size="small" @click="setTimeRange(1)">1小时</n-button>
-              <n-button size="small" @click="setTimeRange(6)">6小时</n-button>
-              <n-button size="small" @click="setTimeRange(24)">1天</n-button>
-              <n-button size="small" @click="setTimeRange(168)">7天</n-button>
-              <n-button size="small" @click="setTimeRange(720)">30天</n-button>
+              <n-button size="small" @click="setTimeRange(1)">{{ $t('operations.form.hour1') }}</n-button>
+              <n-button size="small" @click="setTimeRange(6)">{{ $t('operations.form.hour6') }}</n-button>
+              <n-button size="small" @click="setTimeRange(24)">{{ $t('operations.form.day1') }}</n-button>
+              <n-button size="small" @click="setTimeRange(168)">{{ $t('operations.form.day7') }}</n-button>
+              <n-button size="small" @click="setTimeRange(720)">{{ $t('operations.form.day30') }}</n-button>
             </n-space>
           </div>
 
           <n-alert type="info" :show-icon="false">
             <template #header>
-              <span class="font-medium">时间说明</span>
+              <span class="font-medium">{{ $t('operations.form.timeHint') }}</span>
             </template>
             <div class="text-sm">
-              <p>• 开始时间：公告开始显示的时间</p>
-              <p>• 结束时间：公告停止显示的时间</p>
-              <p>• 如果不设置结束时间，将持续显示直到手动停止</p>
+              <p>• {{ $t('operations.form.ggTimeStartHint') }}</p>
+              <p>• {{ $t('operations.form.ggTimeEndHint') }}</p>
+              <p>• {{ $t('operations.form.bannerTimeNoEndHint') }}</p>
             </div>
           </n-alert>
         </n-form>
       </n-tab-pane>
 
       <!-- 显示设置 -->
-      <n-tab-pane name="display" tab="显示设置">
+      <n-tab-pane name="display" :tab="$t('operations.form.tabDisplaySettings')">
         <n-form
           ref="displayFormRef"
           :model="formData"
@@ -161,40 +161,40 @@
           label-width="auto"
         >
           <div class="grid grid-cols-2 gap-4">
-            <n-form-item label="背景颜色">
+            <n-form-item :label="$t('operations.form.bgColor')">
               <n-color-picker
                 v-model:value="formData.displaySettings.backgroundColor"
                 :show-alpha="false"
               />
             </n-form-item>
 
-            <n-form-item label="文字颜色">
+            <n-form-item :label="$t('operations.form.textColor')">
               <n-color-picker
                 v-model:value="formData.displaySettings.textColor"
                 :show-alpha="false"
               />
             </n-form-item>
 
-            <n-form-item label="字体大小">
+            <n-form-item :label="$t('operations.form.fontSize')">
               <n-input-number
                 v-model:value="formData.displaySettings.fontSize"
-                placeholder="字体大小"
+                :placeholder="$t('operations.form.fontSizePlaceholder')"
                 :min="12"
                 :max="48"
                 :step="1"
               />
             </n-form-item>
 
-            <n-form-item label="显示位置">
+            <n-form-item :label="$t('operations.messageSettings.displayPosition')">
               <n-select
                 v-model:value="formData.displaySettings.position"
-                placeholder="选择显示位置"
+                :placeholder="$t('operations.messageSettings.displayPosition')"
                 :options="positionOptions"
               />
             </n-form-item>
           </div>
 
-          <n-form-item label="预览效果">
+          <n-form-item :label="$t('operations.form.previewEffect')">
             <div
               class="preview-container"
               :style="{
@@ -212,10 +212,10 @@
                 class="preview-title"
                 style="font-weight: bold; margin-bottom: 8px"
               >
-                {{ formData.title || '公告标题预览' }}
+                {{ formData.title || $t('operations.form.titlePreview') }}
               </div>
               <div class="preview-content">
-                {{ formData.content || '这里是公告内容预览...' }}
+                {{ formData.content || $t('operations.form.contentPreview') }}
               </div>
             </div>
           </n-form-item>
@@ -223,7 +223,7 @@
       </n-tab-pane>
 
       <!-- 高级设置 -->
-      <n-tab-pane name="advanced" tab="高级设置">
+      <n-tab-pane name="advanced" :tab="$t('operations.form.tabAdvanced')">
         <n-form
           ref="advancedFormRef"
           :model="formData"
@@ -231,18 +231,18 @@
           label-width="auto"
         >
           <div class="grid grid-cols-2 gap-4">
-            <n-form-item label="优先级">
+            <n-form-item :label="$t('operations.messageSettings.priority')">
               <n-select
                 v-model:value="formData.priority"
-                placeholder="选择优先级"
+                :placeholder="$t('operations.form.displayPriority')"
                 :options="priorityOptions"
               />
             </n-form-item>
 
-            <n-form-item label="点击行为">
+            <n-form-item :label="$t('operations.form.clickAction')">
               <n-select
                 v-model:value="formData.clickAction"
-                placeholder="选择点击行为"
+                :placeholder="$t('operations.form.clickAction')"
                 :options="clickActionOptions"
               />
             </n-form-item>
@@ -250,30 +250,30 @@
 
           <n-form-item
             v-if="formData.clickAction === 'redirect'"
-            label="跳转链接"
+            :label="$t('operations.form.redirectUrl')"
           >
             <n-input
               v-model:value="formData.redirectUrl"
-              placeholder="输入跳转链接"
+              :placeholder="$t('operations.form.redirectPlaceholder')"
             />
           </n-form-item>
 
-          <n-form-item label="状态">
+          <n-form-item :label="$t('common.status')">
             <n-switch
               v-model:value="formData.enabled"
               :checked-value="true"
               :unchecked-value="false"
             >
-              <template #checked>启用</template>
-              <template #unchecked>停用</template>
+              <template #checked>{{ $t('common.enable') }}</template>
+              <template #unchecked>{{ $t('common.disable') }}</template>
             </n-switch>
           </n-form-item>
 
-          <n-form-item label="后台备注">
+          <n-form-item :label="$t('operations.messageSettings.backendRemark')">
             <n-input
               v-model:value="formData.remark"
               type="textarea"
-              placeholder="输入后台备注信息"
+              :placeholder="$t('operations.messageSettings.backendRemark')"
               :autosize="{ minRows: 2, maxRows: 4 }"
               maxlength="500"
               show-count
@@ -285,9 +285,9 @@
 
     <template #action>
       <n-space>
-        <n-button @click="handleCancel">取消</n-button>
+        <n-button @click="handleCancel">{{ $t('common.cancel') }}</n-button>
         <n-button type="primary" @click="handleSubmit" :loading="submitting">
-          {{ isEditing ? '更新' : '创建' }}
+          {{ isEditing ? $t('operations.form.update') : $t('operations.form.create') }}
         </n-button>
       </n-space>
     </template>
@@ -295,6 +295,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, computed, watch, nextTick } from 'vue';
 import {
   NModal,
@@ -382,11 +384,11 @@ const isEditing = computed(() => !!props.editingItem);
 
 // 选项配置
 const languageOptions = [
-  { label: '中文', value: 'zh-CN' },
-  { label: '英文', value: 'en-US' },
-  { label: '葡语', value: 'pt-BR' },
-  { label: '西班牙语', value: 'es-ES' },
-  { label: '日语', value: 'ja-JP' },
+  { label: $t('operations.messageSettings.option.langZh'), value: 'zh-CN' },
+  { label: $t('operations.messageSettings.option.langEn'), value: 'en-US' },
+  { label: $t('operations.messageSettings.option.langPt'), value: 'pt-BR' },
+  { label: $t('operations.messageSettings.option.langEs'), value: 'es-ES' },
+  { label: $t('operations.messageSettings.option.langJa'), value: 'ja-JP' },
 ];
 
 const currencyOptions = [
@@ -398,70 +400,70 @@ const currencyOptions = [
 ];
 
 const receiverTypeOptions = [
-  { label: '全部用户', value: 'all' },
-  { label: '会员层级', value: 'vip' },
-  { label: '新用户', value: 'new' },
-  { label: '活跃用户', value: 'active' },
+  { label: $t('operations.messageSettings.option.receiverAll'), value: 'all' },
+  { label: $t('operations.messageSettings.option.receiverVipLevel'), value: 'vip' },
+  { label: $t('operations.messageSettings.option.receiverNew'), value: 'new' },
+  { label: $t('operations.messageSettings.option.receiverActive'), value: 'active' },
 ];
 
 const positionOptions = [
-  { label: '顶部', value: 'top' },
-  { label: '底部', value: 'bottom' },
-  { label: '中部', value: 'center' },
-  { label: '左上角', value: 'top-left' },
-  { label: '右上角', value: 'top-right' },
+  { label: $t('operations.form.posTop'), value: 'top' },
+  { label: $t('operations.form.posBottom'), value: 'bottom' },
+  { label: $t('operations.form.posCenter'), value: 'center' },
+  { label: $t('operations.form.posTopLeft'), value: 'top-left' },
+  { label: $t('operations.form.posTopRight'), value: 'top-right' },
 ];
 
 const priorityOptions = [
-  { label: '低', value: 'low' },
-  { label: '普通', value: 'normal' },
-  { label: '高', value: 'high' },
-  { label: '紧急', value: 'urgent' },
+  { label: $t('operations.form.priorityLow'), value: 'low' },
+  { label: $t('operations.form.priorityNormal'), value: 'normal' },
+  { label: $t('operations.form.priorityHigh'), value: 'high' },
+  { label: $t('operations.form.priorityUrgent'), value: 'urgent' },
 ];
 
 const clickActionOptions = [
-  { label: '无操作', value: 'none' },
-  { label: '页面跳转', value: 'redirect' },
-  { label: '弹出详情', value: 'popup' },
-  { label: '关闭公告', value: 'close' },
+  { label: $t('operations.form.clickNone'), value: 'none' },
+  { label: $t('operations.form.clickRedirect'), value: 'redirect' },
+  { label: $t('operations.form.clickPopup'), value: 'popup' },
+  { label: $t('operations.form.closeAnnouncement'), value: 'close' },
 ];
 
 // 表单验证规则
 const basicRules: FormRules = {
-  language: [{ required: true, message: '请选择语言', trigger: 'change' }],
-  currency: [{ required: true, message: '请选择币种', trigger: 'change' }],
+  language: [{ required: true, message: $t('common.pleaseSelect') + ' ' + $t('operations.language'), trigger: 'change' }],
+  currency: [{ required: true, message: $t('common.pleaseSelect') + ' ' + $t('common.currency'), trigger: 'change' }],
   receiverType: [
-    { required: true, message: '请选择收件人类型', trigger: 'change' },
+    { required: true, message: $t('common.pleaseSelect') + ' ' + $t('operations.messageSettings.receiverType'), trigger: 'change' },
   ],
   title: [
-    { required: true, message: '请输入公告标题', trigger: 'input' },
+    { required: true, message: $t('common.pleaseEnterField', [$t('operations.messageSettings.announcementTitle')]), trigger: 'input' },
     {
       min: 1,
       max: 100,
-      message: '标题长度应在1-100字符之间',
+      message: $t('operations.form.ggTitleLength'),
       trigger: 'input',
     },
   ],
   content: [
-    { required: true, message: '请输入公告内容', trigger: 'input' },
+    { required: true, message: $t('common.pleaseEnterField', [$t('operations.messageSettings.announcementContent')]), trigger: 'input' },
     {
       min: 1,
       max: 2000,
-      message: '内容长度应在1-2000字符之间',
+      message: $t('operations.form.ggContentLength'),
       trigger: 'input',
     },
   ],
   sortOrder: [
     {
       required: true,
-      message: '请输入排序数值',
+      message: $t('common.pleaseEnterField', [$t('common.sort')]),
       trigger: 'change',
       validator: (rule, value) => {
         if (value === null || value === undefined || value === '') {
-          return new Error('请输入排序数值');
+          return new Error($t('operations.form.enterSort'));
         }
         if (value < 0 || value > 9999) {
-          return new Error('排序数值应在0-9999之间');
+          return new Error($t('operations.form.sortRange'));
         }
         return true;
       },
@@ -473,17 +475,17 @@ const timeRules: FormRules = {
   startTime: [
     {
       required: true,
-      message: '请选择开始时间',
+      message: $t('common.pleaseSelect') + ' ' + $t('common.startTime'),
       trigger: 'change',
       validator: (rule, value) => {
         // Check for null, undefined, or empty string, but allow 0 as valid
         if (value === null || value === undefined || value === '') {
-          return new Error('请选择开始时间');
+          return new Error($t('common.pleaseSelect') + ' ' + $t('common.startTime'));
         }
 
         // Check if it's a valid number
         if (isNaN(value) || typeof value !== 'number') {
-          return new Error('请选择有效的开始时间');
+          return new Error($t('operations.form.validStartTime'));
         }
 
         // Check if it's a reasonable timestamp (within 1 year from now)
@@ -492,7 +494,7 @@ const timeRules: FormRules = {
         const oneYearAgo = now - 365 * 24 * 60 * 60 * 1000;
 
         if (value < oneYearAgo || value > oneYearFromNow) {
-          return new Error('开始时间应在合理范围内');
+          return new Error($t('operations.form.startInRange'));
         }
 
         return true;
@@ -553,7 +555,7 @@ const handleSubmit = async () => {
         await basicFormRef.value.validate();
       } catch (validationError) {
         console.error('Basic form validation failed:', validationError);
-        message.error('请检查表单信息');
+        message.error($t('operations.form.checkForm'));
         return;
       }
     }
@@ -564,7 +566,7 @@ const handleSubmit = async () => {
         await timeFormRef.value.validate();
       } catch (validationError) {
         console.error('Time form validation failed:', validationError);
-        message.error('请检查时间设置');
+        message.error($t('operations.form.checkTimeForm'));
         return;
       }
     }
@@ -586,10 +588,10 @@ const handleSubmit = async () => {
     let result;
     if (isEditing.value && props.editingItem) {
       result = await updateGG(props.editingItem.id, submitData);
-      message.success('更新成功');
+      message.success($t('operations.form.updateSuccess'));
     } else {
       result = await createGG(submitData);
-      message.success('创建成功');
+      message.success($t('common.operationSuccess'));
     }
 
     console.log('API response:', result);
@@ -607,7 +609,7 @@ const handleSubmit = async () => {
       error,
     );
 
-    message.success('创建成功');
+    message.success($t('common.operationSuccess'));
     emit('success');
     modalShow.value = false;
   } finally {

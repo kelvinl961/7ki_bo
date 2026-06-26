@@ -1,87 +1,74 @@
 <template>
   <div class="game-statistics-page">
-    <n-card title="游戏类型/渠道" class="mb-4">
-      <!-- Filter Section -->
+    <n-card :title="$t('game.statistics.title')" class="mb-4">
       <div class="mb-4">
         <n-form inline>
-          <!-- Time Granularity -->
-          <n-form-item label="查询">
+          <n-form-item :label="$t('game.statistics.query')">
             <n-radio-group
               v-model:value="timeGranularity"
               @update:value="onTimeGranularityChange"
             >
-              <n-radio-button value="day">日</n-radio-button>
-              <n-radio-button value="week">周</n-radio-button>
-              <n-radio-button value="month">月</n-radio-button>
+              <n-radio-button value="day">{{ $t('game.statistics.day') }}</n-radio-button>
+              <n-radio-button value="week">{{ $t('game.statistics.week') }}</n-radio-button>
+              <n-radio-button value="month">{{ $t('game.statistics.month') }}</n-radio-button>
             </n-radio-group>
           </n-form-item>
 
-          <!-- Date Range Picker -->
           <n-form-item>
             <n-date-picker
               v-model:value="dateRange"
               type="daterange"
               :shortcuts="dateShortcuts as any"
-              placeholder="选择开始和结束日期"
+              :placeholder="$t('game.statistics.selectDateRange')"
               format="yyyy-MM-dd"
               style="width: 300px"
               clearable
             />
           </n-form-item>
 
-          <!-- Game Type Filter -->
-          <n-form-item label="游戏类型">
+          <n-form-item :label="$t('game.statistics.gameType')">
             <n-select
               v-model:value="gameType"
               :options="gameTypeOptions"
-              placeholder="全部"
+              :placeholder="$t('game.statisticsExtra.all')"
               style="width: 150px"
               clearable
             />
           </n-form-item>
 
-          <!-- Action Buttons -->
           <n-form-item>
             <n-space>
-              <n-button type="primary" @click="fetchData" :loading="loading">
-                搜索
+              <n-button type="primary" :loading="loading" @click="fetchData">
+                {{ $t('common.search') }}
               </n-button>
-              <n-button @click="resetFilters"> 重置 </n-button>
-              <n-button
-                type="success"
-                @click="exportToExcel"
-                :loading="exporting"
-              >
-                导出报表
+              <n-button @click="resetFilters">{{ $t('common.reset') }}</n-button>
+              <n-button type="success" :loading="exporting" @click="exportToExcel">
+                {{ $t('game.statistics.exportReport') }}
               </n-button>
             </n-space>
           </n-form-item>
         </n-form>
       </div>
 
-      <!-- Data Table -->
       <n-card size="small">
         <template #header>
           <n-space justify="space-between">
-            <span>游戏类型统计</span>
+            <span>{{ $t('game.statistics.gameTypeStats') }}</span>
             <span style="font-size: 13px; color: #666">
-              共 {{ tableData?.length || 0 }} 条记录
+              {{ $t('game.statisticsExtra.paginationTotal', [tableData?.length || 0]) }}
             </span>
           </n-space>
         </template>
 
-        <!-- Loading State -->
         <div v-if="loading" class="py-8 text-center">
           <n-spin size="large" />
-          <p class="mt-4">正在加载数据...</p>
+          <p class="mt-4">{{ $t('game.statistics.loadingData') }}</p>
         </div>
 
-        <!-- Error State -->
         <div v-else-if="error" class="py-8 text-center">
           <n-alert type="error" :title="error" />
         </div>
 
-        <!-- Data Table -->
         <n-data-table
           v-else-if="tableData && tableData.length > 0"
           :columns="columns"
@@ -95,14 +82,19 @@
           class="game-statistics-table"
         />
 
-        <!-- Empty State -->
-        <n-empty v-else description="暂无数据" style="padding: 40px 0" />
+        <n-empty
+          v-else
+          :description="$t('game.statistics.noData')"
+          style="padding: 40px 0"
+        />
       </n-card>
     </n-card>
   </div>
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, onMounted, computed, h, reactive } from 'vue';
 import {
   NCard,
@@ -149,16 +141,16 @@ const gameType = ref<string | null>(null);
 
 // Game type options
 const gameTypeOptions = [
-  { label: '全部', value: null },
-  { label: '棋牌', value: 'CHESS_CARDS' },
-  { label: '电子', value: 'SLOT' },
-  { label: '区块链', value: 'BLOCKCHAIN' },
-  { label: '真人', value: 'LIVE' },
-  { label: '体育', value: 'SPORTS' },
-  { label: '捕鱼', value: 'HUNTING' },
-  { label: '彩票', value: 'LOTTERY' },
-  { label: '街机', value: 'ARCADE' },
-  { label: '斗鸡', value: 'COCKFIGHT' },
+  { label: $t('game.statisticsExtra.all'), value: null },
+  { label: $t('game.statisticsExtra.typeChessShort'), value: 'CHESS_CARDS' },
+  { label: $t('game.statisticsExtra.typeSlotShort'), value: 'SLOT' },
+  { label: $t('game.statisticsExtra.typeBlockchainShort'), value: 'BLOCKCHAIN' },
+  { label: $t('game.statisticsExtra.typeLiveShort'), value: 'LIVE' },
+  { label: $t('game.statisticsExtra.typeSportsShort'), value: 'SPORTS' },
+  { label: $t('game.statisticsExtra.typeHuntingShort'), value: 'HUNTING' },
+  { label: $t('game.statisticsExtra.typeLotteryShort'), value: 'LOTTERY' },
+  { label: $t('game.statisticsExtra.typeArcadeShort'), value: 'ARCADE' },
+  { label: $t('game.statisticsExtra.typeCockfightShort'), value: 'COCKFIGHT' },
 ];
 
 // Pagination
@@ -168,7 +160,7 @@ const paginationConfig = computed(() => ({
   showSizePicker: true,
   pageSizes: [10, 20, 50, 100],
   itemCount: reportData.value?.length || 0,
-  prefix: (info: { itemCount?: number }) => `共 ${info.itemCount || 0} 条`,
+  prefix: (info) => $t('game.statisticsExtra.paginationTotal', [info.itemCount || 0]),
 }));
 
 // Date shortcuts
@@ -177,18 +169,18 @@ const dateShortcuts = computed(() => {
 
   if (timeGranularity.value === 'day') {
     return {
-      今天: (): [number, number] => {
+      [$t('game.betRecordsExtra2.today')]: (): [number, number] => {
         const start = new Date(today);
         start.setHours(0, 0, 0, 0);
         return [start.getTime(), today.getTime()];
       },
-      昨天: (): [number, number] => {
+      [$t('game.betRecordsExtra2.yesterday')]: (): [number, number] => {
         const yesterday = new Date(today);
         yesterday.setDate(today.getDate() - 1);
         yesterday.setHours(0, 0, 0, 0);
         return [yesterday.getTime(), yesterday.getTime()];
       },
-      最近7天: (): [number, number] => {
+      [$t('game.betRecordsExtra2.last7Days')]: (): [number, number] => {
         const start = new Date(today);
         start.setDate(today.getDate() - 6);
         start.setHours(0, 0, 0, 0);
@@ -197,7 +189,7 @@ const dateShortcuts = computed(() => {
     };
   } else if (timeGranularity.value === 'week') {
     return {
-      上周: (): [number, number] => {
+      [$t('game.statisticsExtra.lastWeek')]: (): [number, number] => {
         const dayOfWeek = today.getDay();
         const daysFromMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
         const lastMonday = new Date(
@@ -214,7 +206,7 @@ const dateShortcuts = computed(() => {
         lastSunday.setHours(0, 0, 0, 0);
         return [lastMonday.getTime(), lastSunday.getTime()];
       },
-      本周: (): [number, number] => {
+      [$t('game.statisticsExtra.thisWeek')]: (): [number, number] => {
         const dayOfWeek = today.getDay();
         const daysFromMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
         const thisMonday = new Date(today);
@@ -225,12 +217,12 @@ const dateShortcuts = computed(() => {
     };
   } else {
     return {
-      本月: (): [number, number] => {
+      [$t('game.betRecordsExtra2.thisMonth')]: (): [number, number] => {
         const start = new Date(today.getFullYear(), today.getMonth(), 1);
         start.setHours(0, 0, 0, 0);
         return [start.getTime(), today.getTime()];
       },
-      上月: (): [number, number] => {
+      [$t('game.betRecordsExtra2.lastMonth')]: (): [number, number] => {
         const start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
         start.setHours(0, 0, 0, 0);
         const end = new Date(today.getFullYear(), today.getMonth(), 0);
@@ -244,33 +236,33 @@ const dateShortcuts = computed(() => {
 // Table columns
 const columns = computed<DataTableColumns<any>>(() => [
   {
-    title: '币种',
+    title: $t('common.currency'),
     key: 'currency',
     width: 100,
     align: 'center',
     fixed: 'left',
   },
   {
-    title: '游戏类型',
+    title: $t('game.subgame.gameType'),
     key: 'gameType',
     width: 120,
     align: 'center',
     render: (row) => {
       if (row.isTotal) {
-        return h('strong', {}, '合计');
+        return h('strong', {}, $t('game.statisticsExtra.totalRow'));
       }
       return row.gameType || '-';
     },
   },
   {
-    title: '平均日投注人数',
+    title: $t('game.statisticsExtra.avgDailyBettors'),
     key: 'avgDailyBettors',
     width: 150,
     align: 'right',
     render: (row) => renderNumericCell(row.avgDailyBettors, row, true),
   },
   {
-    title: '注单数',
+    title: $t('game.statisticsExtra.betCountCol'),
     key: 'betCount',
     width: 120,
     align: 'right',
@@ -278,7 +270,7 @@ const columns = computed<DataTableColumns<any>>(() => [
     render: (row) => renderNumericCell(row.betCount, row, true),
   },
   {
-    title: '有效投注',
+    title: $t('game.betRecords.validBet'),
     key: 'validBet',
     width: 150,
     align: 'right',
@@ -286,7 +278,7 @@ const columns = computed<DataTableColumns<any>>(() => [
     render: (row) => renderNumericCell(row.validBet, row, false),
   },
   {
-    title: '杀率',
+    title: $t('game.statisticsExtra.killRate'),
     key: 'killRate',
     width: 120,
     align: 'right',
@@ -308,7 +300,7 @@ const columns = computed<DataTableColumns<any>>(() => [
     },
   },
   {
-    title: '损益',
+    title: $t('game.statisticsExtra.profitLoss'),
     key: 'profitLoss',
     width: 150,
     align: 'right',
@@ -423,7 +415,7 @@ const resetFilters = () => {
 // Fetch data from API
 const fetchData = async () => {
   if (!dateRange.value || dateRange.value.length !== 2) {
-    message.warning('请选择日期范围');
+    message.warning($t('game.statisticsExtra.selectDateRange'));
     return;
   }
 
@@ -449,12 +441,12 @@ const fetchData = async () => {
     if (response.success) {
       reportData.value = response.data || [];
       totalData.value = response.total || null;
-      message.success('数据加载成功');
+      message.success($t('game.statisticsExtra.loadSuccess'));
     } else {
-      throw new Error(response.message || '获取数据失败');
+      throw new Error(response.message || $t('game.statisticsExtra.fetchFailed'));
     }
   } catch (err) {
-    error.value = err instanceof Error ? err.message : '获取数据时发生错误';
+    error.value = err instanceof Error ? err.message : $t('game.statisticsExtra.fetchError');
     message.error(error.value);
     reportData.value = [];
     totalData.value = null;
@@ -466,12 +458,12 @@ const fetchData = async () => {
 // Export to Excel
 const exportToExcel = async () => {
   if (!dateRange.value || dateRange.value.length !== 2) {
-    message.warning('请先选择日期范围');
+    message.warning($t('game.statisticsExtra.selectDateFirst'));
     return;
   }
 
   if (!tableData.value || tableData.value.length === 0) {
-    message.warning('没有数据可导出，请先搜索数据');
+    message.warning($t('game.statisticsExtra.noDataToExport'));
     return;
   }
 
@@ -490,13 +482,13 @@ const exportToExcel = async () => {
 
     // Prepare data with formatted values
     const exportData = tableData.value.map((row) => ({
-      币种: row.currency || '',
-      游戏类型: row.gameType || '',
-      平均日投注人数: row.avgDailyBettors || 0,
-      注单数: row.betCount || 0,
-      有效投注: row.validBet ? Number(row.validBet).toFixed(2) : '0.00',
-      杀率: row.killRate ? (row.killRate * 100).toFixed(2) + '%' : '0.00%',
-      损益: row.profitLoss ? Number(row.profitLoss).toFixed(2) : '0.00',
+      [$t('common.currency')]: row.currency || '',
+      [$t('game.statistics.gameType')]: row.gameType || '',
+      [$t('game.statisticsExtra.avgDailyBettors')]: row.avgDailyBettors || 0,
+      [$t('game.statisticsExtra.betCountCol')]: row.betCount || 0,
+      [$t('game.betRecords.validBet')]: row.validBet ? Number(row.validBet).toFixed(2) : '0.00',
+      [$t('game.statisticsExtra.killRate')]: row.killRate ? (row.killRate * 100).toFixed(2) + '%' : '0.00%',
+      [$t('game.statisticsExtra.profitLoss')]: row.profitLoss ? Number(row.profitLoss).toFixed(2) : '0.00',
     }));
 
     // Create worksheet
@@ -504,31 +496,31 @@ const exportToExcel = async () => {
 
     // Auto-size columns
     const colWidths = [
-      { wch: 8 }, // 币种
-      { wch: 12 }, // 游戏类型
-      { wch: 18 }, // 平均日投注人数
-      { wch: 10 }, // 注单数
-      { wch: 15 }, // 有效投注
-      { wch: 12 }, // 杀率
-      { wch: 15 }, // 损益
+      { wch: 8 }, 
+      { wch: 12 }, 
+      { wch: 18 }, 
+      { wch: 10 }, 
+      { wch: 15 }, 
+      { wch: 12 }, 
+      { wch: 15 }, 
     ];
     ws['!cols'] = colWidths;
 
     // Create workbook
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, '游戏统计');
+    XLSX.utils.book_append_sheet(wb, ws, $t('game.statisticsExtra.exportSheetName'));
 
     // Generate filename
-    const filename = `游戏统计_${startDateStr}_至_${endDateStr}.xlsx`;
+    const filename = $t('game.statisticsExtra.exportFileName', [startDateStr, endDateStr]);
 
     // Download
     XLSX.writeFile(wb, filename);
 
-    message.success('导出成功！');
+    message.success($t('game.statisticsExtra.exportSuccess'));
   } catch (err: any) {
     console.error('Export error:', err);
-    const errorMsg = err?.message || err?.toString() || '未知错误';
-    message.error('导出失败: ' + errorMsg);
+    const errorMsg = err?.message || err?.toString() || $t('game.statisticsExtra.unknownError');
+    message.error($t('game.statisticsExtra.exportFailed', [errorMsg]));
   } finally {
     exporting.value = false;
   }

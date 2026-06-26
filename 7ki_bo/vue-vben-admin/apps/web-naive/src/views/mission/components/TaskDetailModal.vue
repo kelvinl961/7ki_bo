@@ -31,7 +31,7 @@
             {{ taskDetail.sortOrder }}
           </n-descriptions-item>
 
-          <n-descriptions-item label="状态">
+          <n-descriptions-item :label="$t('common.status')">
             <n-tag :type="taskDetail.isActive ? 'success' : 'error'">
               {{ taskDetail.isActive ? '启用' : '停用' }}
             </n-tag>
@@ -110,7 +110,7 @@
             {{ taskDetail.taskConditions.targetValue }}
           </n-descriptions-item>
 
-          <n-descriptions-item label="创建时间">
+          <n-descriptions-item :label="$t('common.createTime')">
             {{ new Date(taskDetail.createdAt).toLocaleString() }}
           </n-descriptions-item>
 
@@ -159,13 +159,15 @@
 
     <template #footer>
       <n-space justify="end">
-        <n-button @click="handleClose">关闭</n-button>
+        <n-button @click="handleClose">{{ $t('common.close') }}</n-button>
       </n-space>
     </template>
   </n-modal>
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, computed, watch } from 'vue';
 import { useMessage } from 'naive-ui';
 import {

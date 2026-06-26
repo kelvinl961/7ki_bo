@@ -1,0 +1,13 @@
+{
+  "title": "Đại lý",
+  "merchantId": "ID đại lý",
+  "searchPlaceholder": "Tìm kiếm ID/tên đại lý",
+  "createMerchant": "Tạo đại lý mới",
+  "loadFailed": "Không thể tải dh sách đại lý",
+  "idAndNameRequired": "ID và tên đại lý là bắt buộc",
+  "secretKeyRequired": "Secret key là bắt buộc khi tạo đại lý mới",
+  "invalidJson": "Config phải là JSON hợp lệ",
+  "saveFailed": "Lưu thất bại",
+  "deleteFailed": "Xóa thất bại",
+  "confirmDelete": "Xác nhận xóa đại lý này?"
+}

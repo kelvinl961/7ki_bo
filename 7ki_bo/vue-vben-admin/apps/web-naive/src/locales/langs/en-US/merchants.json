@@ -1,0 +1,13 @@
+{
+  "title": "Merchant",
+  "merchantId": "Merchant ID",
+  "searchPlaceholder": "Search merchant ID/name",
+  "createMerchant": "Create Merchant",
+  "loadFailed": "Failed to load merchants",
+  "idAndNameRequired": "Merchant ID and name are required",
+  "secretKeyRequired": "Secret key is required for new merchants",
+  "invalidJson": "Config must be valid JSON",
+  "saveFailed": "Save failed",
+  "deleteFailed": "Delete failed",
+  "confirmDelete": "Confirm delete this merchant?"
+}

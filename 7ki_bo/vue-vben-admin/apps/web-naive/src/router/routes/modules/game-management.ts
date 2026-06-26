@@ -8,7 +8,7 @@ const routes: RouteRecordRaw[] = [
     meta: {
       icon: 'lucide:gamepad-2',
       order: 5,
-      title: '游戏管理',
+      title: 'page.menu.gameManagement',
     },
     name: 'GameManagement',
     path: '/game-management',
@@ -19,7 +19,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('#/views/game-management/index.vue'),
         meta: {
           keepAlive: true,
-          title: '游戏平台管理',
+          title: 'page.menu.gamePlatformManagement',
           fullPathKey: false, // Use path as key instead of fullPath to prevent duplicates
         },
       },
@@ -30,7 +30,7 @@ const routes: RouteRecordRaw[] = [
           import('#/views/game-management/bet-records/index.vue'),
         meta: {
           keepAlive: true,
-          title: '投注记录',
+          title: 'page.menu.betRecords',
         },
       },
       {
@@ -40,7 +40,7 @@ const routes: RouteRecordRaw[] = [
           import('#/views/game-management/game-statistics/index.vue'),
         meta: {
           keepAlive: true,
-          title: '游戏统计',
+          title: 'page.menu.gameStatistics',
         },
       },
     ],

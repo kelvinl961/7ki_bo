@@ -15,7 +15,7 @@
       require-mark-placement="left"
     >
       <!-- Select CDN Node -->
-      <n-form-item label="选择节点" path="cdnProvider" required>
+      <n-form-item :label="$t('operations.domain.createSubdomain.selectNode')" path="cdnProvider" required>
         <n-space :size="12">
           <n-button
             v-for="cdn in cdnOptions"
@@ -49,7 +49,7 @@
       <!-- Select Domain (Only shows after CDN is selected) -->
       <n-form-item
         v-if="formData.cdnProvider"
-        label="选择域名"
+        :label="$t('operations.domain.createSubdomain.selectDomain')"
         path="domainName"
         required
       >
@@ -68,7 +68,7 @@
             </n-space>
             <n-empty
               v-else-if="!loadingDomains"
-              description="该CDN节点下暂无可用域名，请先在域名管理中创建域名"
+              :description="$t('operations.domain.createSubdomain.noDomains')"
               style="padding: 20px 0"
             />
           </n-spin>
@@ -76,7 +76,7 @@
       </n-form-item>
 
       <!-- Domain Purpose (Read-only, auto-filled) -->
-      <n-form-item label="域名用途">
+      <n-form-item :label="$t('operations.domain.createSubdomain.domainPurpose')">
         <n-input :value="useTypeLabel" readonly style="background: #f5f5f5" />
         <template #feedback>
           <n-alert
@@ -85,14 +85,14 @@
             style="margin-top: 8px; padding: 8px 12px"
           >
             <span style="color: #ff4d4f; font-size: 13px">
-              该类型域名对业务至关重要，停用或删除时请慎重操作。随意或错删可能会影响老用户访问和业务稳定性。
+              {{ $t('operations.domain.createSubdomain.purposeWarning') }}
             </span>
           </n-alert>
         </template>
       </n-form-item>
 
       <!-- Active Domain (Dynamic List) - Only shows after domain is selected -->
-      <n-form-item v-if="formData.domainName" label="生效域名">
+      <n-form-item v-if="formData.domainName" :label="$t('operations.domain.createSubdomain.activeDomain')">
         <div style="width: 100%">
           <div
             v-for="(item, index) in activeDomainList"
@@ -102,7 +102,7 @@
             <n-input-group style="flex: 1">
               <n-input
                 v-model:value="item.prefix"
-                placeholder='例如，"@"代表主域名，或"www"、"api"等'
+                :placeholder="$t('operations.domain.createSubdomain.prefixPlaceholder')"
                 style="width: 200px"
               />
               <n-input-group-label>·</n-input-group-label>
@@ -139,13 +139,13 @@
       </n-form-item>
 
       <!-- Domain Settings -->
-      <n-divider style="margin: 24px 0">域名设置</n-divider>
+      <n-divider style="margin: 24px 0">{{ $t('operations.domain.createSubdomain.domainSettings') }}/n-divider>
 
       <!-- Is Promotion Domain -->
-      <n-form-item label="作为推广域名">
+      <n-form-item :label="$t('operations.domain.createSubdomain.asPromotion')">
         <n-space vertical :size="8" style="width: 100%">
           <n-checkbox v-model:checked="formData.isPromotionDomain">
-            将该域名作为前台代理推广专用地址
+            {{ $t('operations.domain.createSubdomain.promotionCheckbox') }}
           </n-checkbox>
           <n-alert
             type="info"
@@ -153,29 +153,22 @@
             style="font-size: 13px; padding: 8px 12px"
           >
             <div style="color: #666">
-              <strong>规则：</strong
-              >必须保持至少一条域名开启该功能。推广域名便于代理推广使用和流量分发。
+              <strong>{{ $t('common.prompt') }}:</strong>{{ $t('operations.domain.createSubdomain.promotionRule') }}
             </div>
           </n-alert>
         </n-space>
       </n-form-item>
 
       <!-- Enabled Entrance -->
-      <n-form-item label="启用入口">
+      <n-form-item :label="$t('operations.domain.createSubdomain.enabledEntrance')">
         <n-space vertical :size="8" style="width: 100%">
           <n-radio-group v-model:value="formData.enabledEntrance">
             <n-space vertical>
               <n-radio value="ALL">
-                <strong>全部（默认）</strong> - 所有用户均可访问，无限制
+                <strong>{{ $t('operations.domain.entrance.all') }}</strong> - {{ $t('operations.domain.createSubdomain.entranceAll').split(' - ')[1] || $t('operations.domain.createSubdomain.entranceAll') }}
               </n-radio>
-              <n-radio value="APP_ONLY">
-                <strong>仅极速APP</strong> - 该域名只能通过极速 APP
-                访问，网页端无法直接访问
-              </n-radio>
-              <n-radio value="H5_PWA">
-                <strong>H5和PWA</strong> - 仅允许 H5 和 PWA
-                访问，但不会出现在轮巡列表
-              </n-radio>
+              <n-radio value="APP_ONLY">{{ $t('operations.domain.createSubdomain.entranceAppOnly') }}</n-radio>
+              <n-radio value="H5_PWA">{{ $t('operations.domain.createSubdomain.entranceH5Pwa') }}</n-radio>
             </n-space>
           </n-radio-group>
           <n-alert
@@ -184,29 +177,20 @@
             style="font-size: 13px; padding: 8px 12px"
           >
             <div style="color: #666">
-              <strong>支持启用入口的CDN节点：</strong
-              >阿里云、Funnull、Cloudflare (CF)、Yundun、Wangsu-CDN、腾讯云、AWS
+              <strong>{{ $t('operations.domain.createSubdomain.entranceCdnSupport') }}</strong> {{ $t('operations.domain.createSubdomain.entranceCdnList') }}
             </div>
           </n-alert>
         </n-space>
       </n-form-item>
 
       <!-- Device Blocking -->
-      <n-form-item label="屏蔽设备">
+      <n-form-item :label="$t('operations.domain.createSubdomain.blockedDevice')">
         <n-space vertical :size="8" style="width: 100%">
           <n-radio-group v-model:value="formData.blockedDevice">
             <n-space vertical>
-              <n-radio value="NONE">
-                <strong>都不屏蔽（默认）</strong> - 所有设备均可访问
-              </n-radio>
-              <n-radio value="BLOCK_MOBILE">
-                <strong>屏蔽手机端</strong> -
-                PC端可访问，移动端（安卓/iOS）不可访问
-              </n-radio>
-              <n-radio value="BLOCK_PC">
-                <strong>屏蔽PC端</strong> -
-                移动端（安卓/iOS）可访问，PC端不可访问
-              </n-radio>
+              <n-radio value="NONE">{{ $t('operations.domain.createSubdomain.deviceNone') }}</n-radio>
+              <n-radio value="BLOCK_MOBILE">{{ $t('operations.domain.createSubdomain.deviceBlockMobile') }}</n-radio>
+              <n-radio value="BLOCK_PC">{{ $t('operations.domain.createSubdomain.deviceBlockPc') }}</n-radio>
             </n-space>
           </n-radio-group>
           <n-alert
@@ -215,19 +199,18 @@
             style="font-size: 13px; padding: 8px 12px"
           >
             <div style="color: #666">
-              <strong>支持屏蔽设备的CDN节点：</strong
-              >阿里云、Funnull、Cloudflare (CF)、Yundun、Wangsu-CDN、腾讯云、AWS
+              <strong>{{ $t('operations.domain.createSubdomain.deviceCdnSupport') }}</strong> {{ $t('operations.domain.createSubdomain.entranceCdnList') }}
             </div>
           </n-alert>
         </n-space>
       </n-form-item>
 
       <!-- Notes -->
-      <n-form-item label="备注">
+      <n-form-item :label="$t('common.remark')">
         <n-input
           v-model:value="formData.notes"
           type="textarea"
-          placeholder="请输入备注"
+          :placeholder="$t('common.pleaseEnterField', [$t('common.remark')])"
           :rows="3"
           :maxlength="200"
           show-count
@@ -236,11 +219,11 @@
       </n-form-item>
 
       <!-- Configuration Recommendations -->
-      <n-form-item label="域名配置参考建议：">
+      <n-form-item :label="$t('operations.domain.createSubdomain.configAdvice')">
         <div style="width: 100%">
           <div style="margin-bottom: 8px">
             <a href="#" style="color: #2080f0; text-decoration: none"
-              >详见: 域名管理教程</a
+              >{{ $t('operations.domain.createSubdomain.seeTutorial') }}/a
             >
           </div>
 
@@ -248,33 +231,27 @@
             <n-scrollbar style="max-height: 300px">
               <div style="font-size: 13px; line-height: 1.8; color: #666">
                 <p style="margin-bottom: 12px">
-                  <strong>（1）多节点组合：</strong
-                  >一定要配置3个或以上节点！因为每个节点都是不同厂商CDN，多个节点组合不仅能自动轮巡和防止封锁，还能独立扛攻击。所以每个功能用途都要配置3个或以上不同CDN厂商，特别是WEB大厅、APP大厅、OSS加速和后端加速域名。
+                  <strong>{{ $t('operations.domain.createSubdomain.tip1Title') }}</strong>{{ $t('operations.domain.createSubdomain.tip1') }}
                 </p>
 
                 <p style="margin-bottom: 12px">
-                  <strong>（2）不是越多越好：</strong
-                  >因为域名需要定期检测网络质量、是否被拦截或封锁，所以同个CDN且同个用途只要添加3-10个子域名就够了，并不是越多越好，避免网络检测浪费太多时间。
+                  <strong>{{ $t('operations.domain.createSubdomain.tip2Title') }}</strong>{{ $t('operations.domain.createSubdomain.tip2') }}
                 </p>
 
                 <p style="margin-bottom: 12px">
-                  <strong>（3）如何备用：</strong
-                  >只要域名没有启用就不会进行解析，也就不会被外部扫描发现，所以备用的域名可以先添加但不启用，等未来再快速启用。
+                  <strong>{{ $t('operations.domain.createSubdomain.tip3Title') }}</strong>{{ $t('operations.domain.createSubdomain.tip3') }}
                 </p>
 
                 <p style="margin-bottom: 12px">
-                  <strong>（4）主域名说明：</strong
-                  >主域名需要先添加到对应的CDN厂家后，且DNS生效后才能创建解析，解析即新增子域名，子域名才是主域名的具体用途，所以添加主域名后一定要到各个功能页面新增子域名才算真正启用。
+                  <strong>{{ $t('operations.domain.createSubdomain.tip4Title') }}</strong>{{ $t('operations.domain.createSubdomain.tip4') }}
                 </p>
 
                 <p style="margin-bottom: 12px">
-                  <strong>（5）子域名说明：</strong
-                  >因为主域名被封锁后子域名也会受影响，所以同个主域名且同个功能用途只添加1-2个子域名即可，避免浪费无用功。
+                  <strong>{{ $t('operations.domain.createSubdomain.tip5Title') }}</strong>{{ $t('operations.domain.createSubdomain.tip5') }}
                 </p>
 
                 <p style="margin-bottom: 0">
-                  <strong>（6）大陆市场特别规则：</strong
-                  >因大陆的长城防火墙规则特殊，所以建议尽量填写较长且复杂的子域名，而默认的www和@短域名可以作为URL跳转。
+                  <strong>{{ $t('operations.domain.createSubdomain.tip6Title') }}</strong>{{ $t('operations.domain.createSubdomain.tip6') }}
                 </p>
               </div>
             </n-scrollbar>
@@ -285,21 +262,21 @@
 
     <template #footer>
       <n-space justify="end">
-        <n-button @click="handleCancel">取消</n-button>
+        <n-button @click="handleCancel">{{ $t('common.cancel') }}</n-button>
         <n-button
           type="primary"
           :loading="submitting"
           :disabled="!formData.cdnProvider || !formData.domainName"
           @click="handleConfirm"
-        >
-          确认
-        </n-button>
+        >{{ $t('common.confirm') }}</n-button>
       </n-space>
     </template>
   </n-modal>
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, watch } from 'vue';
 import {
   NModal,
@@ -349,27 +326,27 @@ const showModal = computed({
 
 // Use prop values or defaults
 const useType = computed(() => props.defaultUseType || 'WEB_HALL');
-const useTypeLabel = computed(() => props.useTypeLabel || 'Web大厅');
-const modalTitle = computed(() => props.modalTitle || '新增Web大厅子域名');
+const useTypeLabel = computed(() => props.useTypeLabel || $t('operations.domain.createSubdomain.defaultWebHall'));
+const modalTitle = computed(() => props.modalTitle || $t('operations.domain.createSubdomain.defaultModalTitle'));
 
 // CDN Options
 const cdnOptions = [
   {
     value: 'CLOUDFLARE',
     label: 'Cloudflare',
-    tag: '机联盟',
+    tag: 'Alliance',
     tagType: 'success' as const,
   },
   {
     value: 'AWS',
     label: 'AWS',
-    tag: '全球',
+    tag: $t('operations.domain.createDomain.badgeGlobal'),
     tagType: 'info' as const,
   },
   {
     value: 'HUAWEI_CLOUD',
-    label: '华为云',
-    tag: '国际',
+    label: $t('operations.domain.cdn.huawei'),
+    tag: $t('operations.domain.createDomain.badgeIntl'),
     tagType: 'warning' as const,
   },
 ];
@@ -406,7 +383,7 @@ const fetchAvailableDomains = async (cdnProvider: string) => {
     availableDomains.value = uniqueDomains;
   } catch (error: any) {
     console.error('Failed to fetch domains:', error);
-    message.warning('获取域名列表失败，请稍后重试');
+    message.warning($t('operations.domain.createSubdomain.fetchDomainsFailed'));
     availableDomains.value = [];
   } finally {
     loadingDomains.value = false;
@@ -445,8 +422,8 @@ const submitting = ref(false);
 
 // Form rules
 const rules: FormRules = {
-  cdnProvider: [{ required: true, message: '请选择节点', trigger: 'change' }],
-  domainName: [{ required: true, message: '请选择域名', trigger: 'change' }],
+  cdnProvider: [{ required: true, message: $t('common.pleaseSelect') + ' ' + $t('operations.domain.createSubdomain.selectNode'), trigger: 'change' }],
+  domainName: [{ required: true, message: $t('common.pleaseSelect') + ' ' + $t('operations.domain.createSubdomain.selectDomain'), trigger: 'change' }],
 };
 
 // Handle CDN selection
@@ -469,7 +446,7 @@ const handleConfirm = async () => {
       .map((item) => {
         const prefix = item.prefix.trim();
         // Empty, "@", or "根域名" all represent root domain
-        if (!prefix || prefix === '@' || prefix === '根域名') {
+        if (!prefix || prefix === '@' || prefix === $t('operations.domain.createSubdomain.rootDomain')) {
           hasRootDomain = true;
           return formData.domainName; // Include it, backend will handle duplicates
         }
@@ -491,7 +468,7 @@ const handleConfirm = async () => {
       cdnProvider: formData.cdnProvider,
       useType: useType.value,
       activeDomain: activeDomains,
-      备注: formData.notes || '',
+      remark: formData.notes || '',
       sslEnabled: true,
       verificationMethod: 'DNS_VALIDATION',
       status: 'NORMAL',
@@ -516,7 +493,7 @@ const handleConfirm = async () => {
     // Check if user only entered "@" (root domain)
     const onlyRootDomain = activeDomainList.value.every((item) => {
       const prefix = item.prefix.trim();
-      return !prefix || prefix === '@' || prefix === '根域名';
+      return !prefix || prefix === '@' || prefix === $t('operations.domain.createSubdomain.rootDomain');
     });
 
     if (code === 0 && subdomains.length > 0) {
@@ -524,39 +501,39 @@ const handleConfirm = async () => {
       if (errors.length > 0) {
         // Partial success
         message.warning(
-          `成功创建 ${subdomains.length} 个子域名，${errors.length} 个失败：${errors.join('; ')}`,
+          $t('operations.domain.createSubdomain.createPartialSuccess', [subdomains.length, errors.length, errors.join('; ')]),
         );
       } else {
         // Full success
-        message.success(`成功创建 ${subdomains.length} 个子域名！`);
+        message.success($t('operations.domain.createSubdomain.createSuccess', [subdomains.length]));
       }
       emit('success');
       handleCancel();
     } else if (code === 0 && subdomains.length === 0 && onlyRootDomain) {
       // User only entered "@" and it already exists (parent domain)
       message.warning(
-        `主域名 ${formData.domainName} 已存在。DNS配置未更新，请在Cloudflare中手动检查。`,
+        $t('operations.domain.message.mainDomainExists', [formData.domainName]),
       );
       handleCancel();
     } else if (code === 0 && subdomains.length === 1 && onlyRootDomain) {
       // DNS was successfully updated for root domain
-      message.success(`✅ 主域名 ${formData.domainName} 的DNS记录已更新！`);
+      message.success($t('operations.domain.message.dnsUpdated', [formData.domainName]));
       emit('success');
       handleCancel();
     } else if (errors.length > 0) {
       // All failed with specific errors
-      message.error(`创建失败：${errors.join('; ')}`);
+      message.error($t('operations.domain.createDomain.createPartial', [0, errors.length, errors.join('; ')]));
     } else {
       // Generic failure
-      message.error(response.message || response.data?.message || '创建失败');
+      message.error(response.message || response.data?.message || $t('operations.domain.createDomain.createFailed'));
     }
   } catch (error: any) {
     console.error('Create subdomain error:', error);
 
     if (error?.errorFields) {
-      message.error('请填写必填项');
+      message.error($t('operations.form.checkForm'));
     } else {
-      message.error(error.message || '创建失败，请重试');
+      message.error(error.message || $t('operations.domain.createDomain.createFailed'));
     }
   } finally {
     submitting.value = false;

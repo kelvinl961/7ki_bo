@@ -7,11 +7,11 @@
     <div v-else class="withdraw-account-content">
       <!-- Header Actions -->
       <div class="mb-4 flex items-center justify-between">
-        <h3 class="text-lg font-medium">提现账号管理</h3>
+        <h3 class="text-lg font-medium">{{ $t('user.withdrawAccount.title') }}</h3>
         <div class="flex gap-2">
-          <n-button @click="handleRefresh"> 刷新 </n-button>
+          <n-button @click="handleRefresh"> {{ $t('common.refresh') }} </n-button>
           <n-button type="primary" @click="handleAddAccount">
-            添加会员提现账号
+            {{ $t('user.withdrawAccount.addMemberAccount') }}
           </n-button>
         </div>
       </div>
@@ -33,23 +33,23 @@
       <n-modal
         v-model:show="showEditNoteModal"
         preset="dialog"
-        title="编辑后台备注"
+        :title="$t('user.withdrawAccount.editBackendNote')"
       >
         <n-input
           v-model:value="editingNote"
           type="textarea"
-          placeholder="输入后台备注"
+          :placeholder="$t('user.withdrawAccount.enterBackendNote')"
           :rows="4"
         />
         <template #action>
           <div class="flex gap-2">
-            <n-button @click="showEditNoteModal = false">取消</n-button>
+            <n-button @click="showEditNoteModal = false">{{ $t('common.cancel') }}</n-button>
             <n-button
               type="primary"
               :loading="noteLoading"
               @click="handleSaveNote"
             >
-              保存
+              {{ $t('common.save') }}
             </n-button>
           </div>
         </template>
@@ -67,7 +67,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, h, onMounted } from 'vue';
+import { $t } from '@vben/locales';
+
+import { ref, reactive, computed, h, onMounted } from 'vue';
 import {
   NCard,
   NButton,
@@ -116,7 +118,7 @@ const pagination = reactive({
   total: 0,
   showSizePicker: true,
   pageSizes: [10, 20, 50],
-  prefix: (info: any) => `共 ${info.itemCount} 条`,
+  prefix: (info: any) => $t('user.withdrawAccount.totalRecords', [info.itemCount]),
   onUpdatePage: (page: number) => {
     pagination.current = page;
     loadAccounts();
@@ -128,10 +130,33 @@ const pagination = reactive({
   },
 });
 
+const getMethodTypeLabel = (methodType: string) => {
+  const typeMap: Record<string, string> = {
+    PIX: 'PIX',
+    BANK_TRANSFER: $t('user.withdrawAccount.bankTransfer'),
+    TED: 'TED',
+    DOC: 'DOC',
+  };
+  return typeMap[methodType] || methodType;
+};
+
+const getAccountTypeLabel = (accountType: string) => {
+  const typeMap: Record<string, string> = {
+    PHONE: $t('user.allMembers.phone'),
+    CPF: 'CPF',
+    EMAIL: $t('user.contact.email'),
+    RANDOM_KEY: $t('user.withdrawAccount.randomKey'),
+    BANK_ACCOUNT: $t('user.withdrawAccount.bankAccount'),
+    'Individual Tax Number': 'CPF',
+    PIX_CPF: 'CPF',
+  };
+  return typeMap[accountType] || accountType;
+};
+
 // Table columns
-const columns: DataTableColumns<WithdrawAccount> = [
+const columns = computed<DataTableColumns<WithdrawAccount>>(() => [
   {
-    title: '币种',
+    title: $t('common.currency'),
     key: 'currency',
     width: 80,
     align: 'center',
@@ -144,68 +169,54 @@ const columns: DataTableColumns<WithdrawAccount> = [
     },
   },
   {
-    title: '提现方式',
+    title: $t('user.withdrawAccount.withdrawMethod'),
     key: 'methodType',
     width: 100,
     render: (row) => {
-      const typeMap = {
-        PIX: 'PIX',
-        BANK_TRANSFER: '银行转账',
-        TED: 'TED',
-        DOC: 'DOC',
-      };
-      const type =
-        typeMap[row.methodType as keyof typeof typeMap] || row.methodType;
       return h(
         NTag,
         { type: 'default', size: 'small' },
-        { default: () => type },
+        { default: () => getMethodTypeLabel(row.methodType) },
       );
     },
   },
   {
-    title: '提现账户类型',
+    title: $t('user.withdrawAccount.accountType'),
     key: 'accountType',
     width: 120,
-    render: (row) => {
-      const typeMap = {
-        PHONE: '手机号',
-        CPF: 'CPF',
-        EMAIL: '邮箱',
-        RANDOM_KEY: '随机密钥',
-        BANK_ACCOUNT: '银行账户',
-        'Individual Tax Number': 'CPF', // Map database value to CPF
-        PIX_CPF: 'CPF', // Alternative format
-      };
-      return (
-        typeMap[row.accountType as keyof typeof typeMap] || row.accountType
-      );
-    },
+    render: (row) => getAccountTypeLabel(row.accountType),
   },
   {
-    title: '提现账号/地址',
+    title: $t('user.withdrawAccount.withdrawAddress'),
     key: 'accountValue',
     width: 200,
     ellipsis: true,
     tooltip: true,
   },
   {
-    title: '银行信息',
+    title: $t('user.withdrawAccount.bankInfo'),
     key: 'bankInfo',
     width: 180,
     render: (row) => {
       if (row.methodType === 'BANK_TRANSFER') {
         return h('div', { class: 'text-sm' }, [
-          row.bankName && h('div', {}, `银行: ${row.bankName}`),
-          row.bankHolderName && h('div', {}, `户名: ${row.bankHolderName}`),
-          row.bankCode && h('div', {}, `代码: ${row.bankCode}`),
+          row.bankName &&
+            h('div', {}, `${$t('user.withdrawAccount.bankName')}: ${row.bankName}`),
+          row.bankHolderName &&
+            h(
+              'div',
+              {},
+              `${$t('user.withdrawAccount.accountHolder')}: ${row.bankHolderName}`,
+            ),
+          row.bankCode &&
+            h('div', {}, `${$t('user.withdrawAccount.bankCode')}: ${row.bankCode}`),
         ]);
       }
       return '-';
     },
   },
   {
-    title: '后台备注',
+    title: $t('user.withdrawAccount.backendNote'),
     key: 'backendNote',
     width: 150,
     ellipsis: true,
@@ -220,21 +231,21 @@ const columns: DataTableColumns<WithdrawAccount> = [
             type: 'primary',
             onClick: () => handleEditNote(row),
           },
-          { default: () => '编辑' },
+          { default: () => $t('common.edit') },
         ),
       ]);
     },
   },
   {
-    title: '添加时间',
+    title: $t('user.withdrawAccount.addedTime'),
     key: 'createdAt',
     width: 160,
     render: (row) => {
-      return new Date(row.createdAt).toLocaleString('zh-CN');
+      return new Date(row.createdAt).toLocaleString();
     },
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 100,
     align: 'center',
@@ -246,12 +257,12 @@ const columns: DataTableColumns<WithdrawAccount> = [
           type: isActive ? 'success' : 'error',
           size: 'small',
         },
-        { default: () => (isActive ? '启用' : '禁用') },
+        { default: () => (isActive ? $t('common.enabled') : $t('common.disabled')) },
       );
     },
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 180,
     align: 'center',
@@ -266,7 +277,7 @@ const columns: DataTableColumns<WithdrawAccount> = [
             type: 'primary',
             onClick: () => handleEditAccount(row),
           },
-          { default: () => '编辑' },
+          { default: () => $t('common.edit') },
         ),
         h(
           NButton,
@@ -276,7 +287,7 @@ const columns: DataTableColumns<WithdrawAccount> = [
             type: isActive ? 'warning' : 'success',
             onClick: () => handleToggleStatus(row),
           },
-          { default: () => (isActive ? '停用' : '启用') },
+          { default: () => (isActive ? $t('common.disable') : $t('common.enable')) },
         ),
         h(
           NPopconfirm,
@@ -284,7 +295,7 @@ const columns: DataTableColumns<WithdrawAccount> = [
             onPositiveClick: () => handleDeleteAccount(row.id),
           },
           {
-            default: () => '确定删除这个提现账号吗？',
+            default: () => $t('user.withdrawAccount.confirmDelete'),
             trigger: () =>
               h(
                 NButton,
@@ -293,14 +304,14 @@ const columns: DataTableColumns<WithdrawAccount> = [
                   size: 'small',
                   type: 'error',
                 },
-                { default: () => '删除' },
+                { default: () => $t('common.delete') },
               ),
           },
         ),
       ]);
     },
   },
-];
+]);
 
 // Methods
 const loadAccounts = async () => {
@@ -315,7 +326,7 @@ const loadAccounts = async () => {
     accountList.value = response.list;
     pagination.total = response.pagination.total;
   } catch (error) {
-    message.error('获取提现账号失败');
+    message.error($t('user.withdrawAccount.loadFailed'));
     console.error('Error loading accounts:', error);
   } finally {
     tableLoading.value = false;
@@ -355,11 +366,11 @@ const handleSaveNote = async () => {
       backendNote: editingNote.value,
     });
 
-    message.success('备注更新成功');
+    message.success($t('user.withdrawAccount.noteUpdateSuccess'));
     showEditNoteModal.value = false;
     loadAccounts();
   } catch (error) {
-    message.error('备注更新失败');
+    message.error($t('user.withdrawAccount.noteUpdateFailed'));
     console.error('Error updating note:', error);
   } finally {
     noteLoading.value = false;
@@ -371,10 +382,16 @@ const handleToggleStatus = async (account: WithdrawAccount) => {
     const newStatus = account.status === 'ACTIVE' ? 'DISABLED' : 'ACTIVE';
     await toggleWithdrawAccountStatusApi(account.id, newStatus);
 
-    message.success(`账号已${newStatus === 'ACTIVE' ? '启用' : '停用'}`);
+    message.success(
+      $t('user.withdrawAccount.statusToggled', [
+        newStatus === 'ACTIVE'
+          ? $t('common.enable')
+          : $t('common.disable'),
+      ]),
+    );
     loadAccounts();
   } catch (error) {
-    message.error('状态切换失败');
+    message.error($t('user.withdrawAccount.statusToggleFailed'));
     console.error('Error toggling status:', error);
   }
 };
@@ -382,10 +399,10 @@ const handleToggleStatus = async (account: WithdrawAccount) => {
 const handleDeleteAccount = async (accountId: string) => {
   try {
     await deleteWithdrawAccountApi(accountId);
-    message.success('提现账号删除成功');
+    message.success($t('user.withdrawAccount.deleteSuccess'));
     loadAccounts();
   } catch (error) {
-    message.error('删除失败');
+    message.error($t('user.withdrawAccount.deleteFailed'));
     console.error('Error deleting account:', error);
   }
 };

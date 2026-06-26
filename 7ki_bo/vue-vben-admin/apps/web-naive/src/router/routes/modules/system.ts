@@ -6,7 +6,7 @@ const routes: RouteRecordRaw[] = [
       icon: 'ic:baseline-settings',
       keepAlive: true,
       order: 1000,
-      title: '系统',
+      title: 'page.menu.system',
     },
     name: 'System',
     path: '/system',
@@ -14,7 +14,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '站点管理',
+          title: 'page.menu.siteManagement',
         },
         name: 'SiteManagement',
         path: '/system/site-management',
@@ -24,7 +24,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '站点账单详情',
+          title: 'page.menu.siteBillDetail',
           hideInMenu: true,
         },
         name: 'SiteBillDetail',

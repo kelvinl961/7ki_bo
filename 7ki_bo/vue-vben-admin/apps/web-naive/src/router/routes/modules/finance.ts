@@ -9,7 +9,7 @@ const routes: RouteRecordRaw[] = [
       icon: 'ic:baseline-account-balance-wallet',
       keepAlive: true,
       order: 350,
-      title: '财务管理',
+      title: 'page.menu.financeManagement',
     },
     name: 'FinanceManagement',
     path: '/finance',
@@ -17,7 +17,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '充值管理',
+          title: 'page.menu.rechargeManagement',
         },
         name: 'RechargeManagement',
         path: '/finance/recharge-management',
@@ -26,7 +26,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '在线充值',
+          title: 'page.menu.onlineRecharge',
         },
         name: 'OnlineRecharge',
         path: '/finance/online-recharge',
@@ -35,7 +35,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '提现管理',
+          title: 'page.menu.withdrawManagement',
         },
         name: 'WithdrawManagement',
         path: '/finance/withdraw-management',
@@ -44,7 +44,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '投注任务(稽核)',
+          title: 'page.menu.wageringAudit',
         },
         name: 'WageringAudit',
         path: '/finance/wagering-audit',

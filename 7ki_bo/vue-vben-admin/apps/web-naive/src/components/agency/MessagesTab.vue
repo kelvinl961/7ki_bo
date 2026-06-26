@@ -1,45 +1,42 @@
 <template>
   <div class="messages-tab">
-    <!-- Message Summary -->
-    <n-card title="消息概览" class="mb-4">
+    <n-card :title="$t('agency.messages.overview')" class="mb-4">
       <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
         <div class="stat-card">
           <div class="stat-value">{{ totalMessages }}</div>
-          <div class="stat-label">总消息数</div>
+          <div class="stat-label">{{ $t('agency.messages.totalMessages') }}</div>
         </div>
         <div class="stat-card">
           <div class="stat-value">{{ unreadMessages }}</div>
-          <div class="stat-label">未读消息</div>
+          <div class="stat-label">{{ $t('agency.messages.unreadMessages') }}</div>
         </div>
         <div class="stat-card">
           <div class="stat-value">{{ systemMessages }}</div>
-          <div class="stat-label">系统消息</div>
+          <div class="stat-label">{{ $t('agency.messages.systemMessages') }}</div>
         </div>
         <div class="stat-card">
           <div class="stat-value">{{ todayMessages }}</div>
-          <div class="stat-label">今日消息</div>
+          <div class="stat-label">{{ $t('agency.messages.todayMessages') }}</div>
         </div>
       </div>
     </n-card>
 
-    <!-- Action Buttons -->
-    <n-card title="操作" class="mb-4">
+    <n-card :title="$t('common.actions')" class="mb-4">
       <div class="flex flex-wrap gap-2">
         <n-button type="primary" @click="handleComposeMessage">
-          发送消息
+          {{ $t('agency.messages.sendMessage') }}
         </n-button>
         <n-button type="info" @click="handleMarkAllRead">
-          全部标记已读
+          {{ $t('agency.messages.markAllRead') }}
         </n-button>
         <n-button type="warning" @click="handleExportMessages">
-          导出消息
+          {{ $t('agency.messages.exportMessages') }}
         </n-button>
-        <n-button @click="handleRefresh"> 刷新 </n-button>
+        <n-button @click="handleRefresh"> {{ $t('common.refresh') }} </n-button>
       </div>
     </n-card>
 
-    <!-- Messages Table -->
-    <n-card title="消息列表">
+    <n-card :title="$t('agency.messages.messageList')">
       <n-data-table
         :columns="columns"
         :data="messages"
@@ -50,11 +47,10 @@
       />
     </n-card>
 
-    <!-- Compose Message Modal -->
     <n-modal
       v-model:show="showComposeModal"
       preset="card"
-      title="发送消息"
+      :title="$t('agency.messages.sendMessage')"
       style="width: 600px"
     >
       <n-form
@@ -64,41 +60,41 @@
         label-placement="left"
         label-width="120px"
       >
-        <n-form-item label="消息类型" path="type">
+        <n-form-item :label="$t('agency.messages.messageType')" path="type">
           <n-select
             v-model:value="messageForm.type"
             :options="messageTypeOptions"
           />
         </n-form-item>
 
-        <n-form-item label="标题" path="title">
+        <n-form-item :label="$t('agency.messages.title')" path="title">
           <n-input
             v-model:value="messageForm.title"
-            placeholder="请输入消息标题"
+            :placeholder="$t('agency.messages.enterTitle')"
           />
         </n-form-item>
 
-        <n-form-item label="内容" path="content">
+        <n-form-item :label="$t('agency.messages.content')" path="content">
           <n-input
             v-model:value="messageForm.content"
             type="textarea"
-            placeholder="请输入消息内容"
+            :placeholder="$t('agency.messages.enterContent')"
             :rows="6"
           />
         </n-form-item>
 
-        <n-form-item label="优先级" path="priority">
+        <n-form-item :label="$t('agency.messages.priority')" path="priority">
           <n-select
             v-model:value="messageForm.priority"
             :options="priorityOptions"
           />
         </n-form-item>
 
-        <n-form-item label="备注" path="remark">
+        <n-form-item :label="$t('common.remark')" path="remark">
           <n-input
             v-model:value="messageForm.remark"
             type="textarea"
-            placeholder="请输入备注信息"
+            :placeholder="$t('agency.withdrawAccount.enterRemark')"
             :rows="3"
           />
         </n-form-item>
@@ -106,13 +102,13 @@
 
       <template #action>
         <div class="flex gap-2">
-          <n-button @click="showComposeModal = false">取消</n-button>
+          <n-button @click="showComposeModal = false">{{ $t('common.cancel') }}</n-button>
           <n-button
             type="primary"
             @click="handleSubmitMessage"
             :loading="submitting"
           >
-            发送
+            {{ $t('agency.messages.send') }}
           </n-button>
         </div>
       </template>
@@ -121,6 +117,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, h, onMounted } from 'vue';
 import {
   NCard,
@@ -135,7 +133,6 @@ import {
   useMessage,
   type DataTableColumns,
 } from 'naive-ui';
-import type { AgentRecord } from '#/api/agency/agent';
 
 interface Props {
   agentId?: number;
@@ -168,51 +165,48 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const message = useMessage();
-
-// Reactive data
 const loading = ref(false);
 const submitting = ref(false);
 const showComposeModal = ref(false);
 const messages = ref<Message[]>([]);
 
-// Mock data
 const mockMessages: Message[] = [
   {
     id: 1,
     type: 'system',
-    title: '系统维护通知',
-    content: '系统将于今晚22:00-24:00进行维护，期间可能影响正常使用。',
+    title: 'System Maintenance',
+    content: 'System maintenance scheduled tonight 22:00-24:00.',
     priority: 'high',
     status: 'unread',
     sender: 'system',
     recipient: 'testagent',
     sendTime: '2024-12-01T10:00:00Z',
-    remark: '重要系统通知',
+    remark: 'Important system notice',
   },
   {
     id: 2,
     type: 'commission',
-    title: '佣金发放通知',
-    content: '您的代理佣金 R$ 500.00 已发放到账户，请注意查收。',
+    title: 'Commission Payout',
+    content: 'Your commission R$ 500.00 has been credited.',
     priority: 'normal',
     status: 'read',
     sender: 'system',
     recipient: 'testagent',
     sendTime: '2024-12-01T11:00:00Z',
     readTime: '2024-12-01T11:30:00Z',
-    remark: '佣金相关',
+    remark: 'Commission related',
   },
   {
     id: 3,
     type: 'activity',
-    title: '新活动上线',
-    content: '新的代理推广活动已上线，参与可获得额外奖励。',
+    title: 'New Activity',
+    content: 'A new agent promotion activity is now live.',
     priority: 'normal',
     status: 'unread',
     sender: 'admin',
     recipient: 'testagent',
     sendTime: '2024-12-01T12:00:00Z',
-    remark: '活动推广',
+    remark: 'Activity promotion',
   },
 ];
 
@@ -224,131 +218,150 @@ const messageForm = reactive<MessageForm>({
   remark: '',
 });
 
-// Options
-const messageTypeOptions = [
-  { label: '系统消息', value: 'system' },
-  { label: '佣金通知', value: 'commission' },
-  { label: '活动通知', value: 'activity' },
-  { label: '安全提醒', value: 'security' },
-  { label: '其他消息', value: 'other' },
-];
+const messageTypeOptions = computed(() => [
+  { label: $t('agency.messages.systemMessage'), value: 'system' },
+  { label: $t('agency.messages.commissionNotice'), value: 'commission' },
+  { label: $t('agency.messages.activityNotice'), value: 'activity' },
+  { label: $t('agency.messages.securityAlert'), value: 'security' },
+  { label: $t('agency.messages.otherMessage'), value: 'other' },
+]);
 
-const priorityOptions = [
-  { label: '低', value: 'low' },
-  { label: '普通', value: 'normal' },
-  { label: '高', value: 'high' },
-  { label: '紧急', value: 'urgent' },
-];
+const priorityOptions = computed(() => [
+  { label: $t('agency.messages.low'), value: 'low' },
+  { label: $t('agency.messages.normal'), value: 'normal' },
+  { label: $t('agency.messages.high'), value: 'high' },
+  { label: $t('agency.messages.urgent'), value: 'urgent' },
+]);
 
-// Pagination
 const pagination = reactive({
   page: 1,
   pageSize: 10,
   itemCount: 0,
   showSizePicker: true,
   pageSizes: [10, 20, 50],
-  prefix: (info: any) => `共 ${info.itemCount} 条`,
+  prefix: (info: { itemCount: number }) =>
+    $t('agency.withdrawAccount.totalRecords', [info.itemCount]),
   onUpdatePage: (page: number) => {
     pagination.page = page;
     loadMessages();
   },
   onUpdatePageSize: (pageSize: number) => {
     pagination.pageSize = pageSize;
-    pagination.current = 1;
+    pagination.page = 1;
     loadMessages();
   },
 });
 
-// Computed
 const totalMessages = computed(() => messages.value.length);
-
 const unreadMessages = computed(
   () => messages.value.filter((msg) => msg.status === 'unread').length,
 );
-
 const systemMessages = computed(
   () => messages.value.filter((msg) => msg.type === 'system').length,
 );
-
 const todayMessages = computed(() => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  return messages.value.filter((msg) => new Date(msg.sendTime) >= today).length;
+  return messages.value.filter((msg) => new Date(msg.sendTime) >= today)
+    .length;
 });
 
-// Table columns
-const columns: DataTableColumns<Message> = [
+const getMessageTypeInfo = (type: string) => {
+  const map: Record<string, { label: string; type: string; icon: string }> = {
+    system: {
+      label: $t('agency.messages.systemMessage'),
+      type: 'info',
+      icon: '⚙️',
+    },
+    commission: {
+      label: $t('agency.messages.commissionNotice'),
+      type: 'success',
+      icon: '💰',
+    },
+    activity: {
+      label: $t('agency.messages.activityNotice'),
+      type: 'warning',
+      icon: '🎁',
+    },
+    security: {
+      label: $t('agency.messages.securityAlert'),
+      type: 'error',
+      icon: '🔒',
+    },
+    other: {
+      label: $t('agency.messages.otherMessage'),
+      type: 'default',
+      icon: '📝',
+    },
+  };
+  return map[type] || { label: type, type: 'default', icon: '❓' };
+};
+
+const columns = computed<DataTableColumns<Message>>(() => [
+  { title: 'ID', key: 'id', width: 80, align: 'center' },
   {
-    title: 'ID',
-    key: 'id',
-    width: 80,
-    align: 'center',
-  },
-  {
-    title: '类型',
+    title: $t('common.type'),
     key: 'type',
     width: 100,
     render: (row) => {
-      const typeMap = {
-        system: { label: '系统消息', type: 'info', icon: '⚙️' },
-        commission: { label: '佣金通知', type: 'success', icon: '💰' },
-        activity: { label: '活动通知', type: 'warning', icon: '🎁' },
-        security: { label: '安全提醒', type: 'error', icon: '🔒' },
-        other: { label: '其他消息', type: 'default', icon: '📝' },
-      };
-      const typeInfo = typeMap[row.type as keyof typeof typeMap] || {
-        label: row.type,
-        type: 'default',
-        icon: '❓',
-      };
+      const typeInfo = getMessageTypeInfo(row.type);
       return h('div', { class: 'flex items-center gap-2' }, [
         h('span', { class: 'text-lg' }, typeInfo.icon),
         h(
           NTag,
-          { type: typeInfo.type, size: 'small' },
+          { type: typeInfo.type as any, size: 'small' },
           { default: () => typeInfo.label },
         ),
       ]);
     },
   },
   {
-    title: '标题',
+    title: $t('agency.messages.title'),
     key: 'title',
     width: 200,
     ellipsis: true,
     tooltip: true,
   },
   {
-    title: '优先级',
+    title: $t('agency.messages.priority'),
     key: 'priority',
     width: 100,
     render: (row) => {
-      const priorityMap = {
-        low: { label: '低', type: 'default' },
-        normal: { label: '普通', type: 'info' },
-        high: { label: '高', type: 'warning' },
-        urgent: { label: '紧急', type: 'error' },
+      const priorityMap: Record<string, { label: string; type: string }> = {
+        low: { label: $t('agency.messages.low'), type: 'default' },
+        normal: { label: $t('agency.messages.normal'), type: 'info' },
+        high: { label: $t('agency.messages.high'), type: 'warning' },
+        urgent: { label: $t('agency.messages.urgent'), type: 'error' },
       };
-      const priority = priorityMap[
-        row.priority as keyof typeof priorityMap
-      ] || { label: row.priority, type: 'default' };
+      const priority = priorityMap[row.priority] || {
+        label: row.priority,
+        type: 'default',
+      };
       return h(
         NTag,
-        { type: priority.type, size: 'small' },
+        { type: priority.type as any, size: 'small' },
         { default: () => priority.label },
       );
     },
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 100,
     render: (row) => {
-      const statusMap = {
-        unread: { label: '未读', type: 'warning', icon: '📬' },
-        read: { label: '已读', type: 'success', icon: '📭' },
+      const statusMap: Record<string, { label: string; type: string; icon: string }> = {
+        unread: {
+          label: $t('agency.messages.unread'),
+          type: 'warning',
+          icon: '📬',
+        },
+        read: {
+          label: $t('agency.messages.read'),
+          type: 'success',
+          icon: '📭',
+        },
       };
-      const status = statusMap[row.status as keyof typeof statusMap] || {
+      const status = statusMap[row.status] || {
         label: row.status,
         type: 'default',
         icon: '❓',
@@ -357,19 +370,19 @@ const columns: DataTableColumns<Message> = [
         h('span', { class: 'text-sm' }, status.icon),
         h(
           NTag,
-          { type: status.type, size: 'small' },
+          { type: status.type as any, size: 'small' },
           { default: () => status.label },
         ),
       ]);
     },
   },
   {
-    title: '发送者',
+    title: $t('agency.messages.sender'),
     key: 'sender',
     width: 120,
   },
   {
-    title: '发送时间',
+    title: $t('agency.messages.sendTime'),
     key: 'sendTime',
     width: 180,
     render: (row) => {
@@ -379,20 +392,20 @@ const columns: DataTableColumns<Message> = [
           ? h(
               'div',
               { class: 'text-xs text-gray-500' },
-              `已读: ${formatDateTime(row.readTime)}`,
+              $t('agency.messages.readAt', [formatDateTime(row.readTime)]),
             )
           : null,
       ]);
     },
   },
   {
-    title: '备注',
+    title: $t('common.remark'),
     key: 'remark',
     ellipsis: true,
     tooltip: true,
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 150,
     fixed: 'right',
@@ -405,7 +418,7 @@ const columns: DataTableColumns<Message> = [
             type: 'info',
             onClick: () => handleViewMessage(row),
           },
-          { default: () => '查看' },
+          { default: () => $t('common.view') },
         ),
         h(
           NButton,
@@ -415,7 +428,10 @@ const columns: DataTableColumns<Message> = [
             onClick: () => handleToggleReadStatus(row),
           },
           {
-            default: () => (row.status === 'unread' ? '标记已读' : '标记未读'),
+            default: () =>
+              row.status === 'unread'
+                ? $t('agency.messages.markRead')
+                : $t('agency.messages.markUnread'),
           },
         ),
         h(
@@ -425,42 +441,39 @@ const columns: DataTableColumns<Message> = [
             type: 'error',
             onClick: () => handleDeleteMessage(row.id),
           },
-          { default: () => '删除' },
+          { default: () => $t('common.delete') },
         ),
       ]);
     },
   },
-];
+]);
 
-// Form validation rules
-const rules = {
+const rules = computed(() => ({
   type: {
     required: true,
-    message: '请选择消息类型',
+    message: $t('agency.messages.selectMessageType'),
     trigger: 'blur',
   },
   title: {
     required: true,
-    message: '请输入消息标题',
+    message: $t('agency.messages.enterTitleRequired'),
     trigger: 'blur',
   },
   content: {
     required: true,
-    message: '请输入消息内容',
+    message: $t('agency.messages.enterContentRequired'),
     trigger: 'blur',
   },
-};
+}));
 
-// Methods
 const loadMessages = async () => {
   loading.value = true;
   try {
-    // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 500));
     messages.value = [...mockMessages];
     pagination.itemCount = messages.value.length;
-  } catch (error) {
-    message.error('加载消息失败');
+  } catch {
+    message.error($t('agency.messages.loadFailed'));
   } finally {
     loading.value = false;
   }
@@ -473,10 +486,7 @@ const handleComposeMessage = () => {
 const handleSubmitMessage = async () => {
   try {
     submitting.value = true;
-
-    // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 1000));
-
     const newMessage: Message = {
       id: Date.now(),
       ...messageForm,
@@ -484,12 +494,9 @@ const handleSubmitMessage = async () => {
       recipient: 'testagent',
       sendTime: new Date().toISOString(),
     };
-
     messages.value.unshift(newMessage);
-    message.success('消息发送成功');
+    message.success($t('agency.messages.sendSuccess'));
     showComposeModal.value = false;
-
-    // Reset form
     Object.assign(messageForm, {
       type: 'system',
       title: '',
@@ -497,10 +504,9 @@ const handleSubmitMessage = async () => {
       priority: 'normal',
       remark: '',
     });
-
     loadMessages();
-  } catch (error) {
-    message.error('发送失败');
+  } catch {
+    message.error($t('agency.messages.sendFailed'));
   } finally {
     submitting.value = false;
   }
@@ -511,7 +517,7 @@ const handleViewMessage = (msg: Message) => {
     msg.status = 'read';
     msg.readTime = new Date().toISOString();
   }
-  message.info(`消息内容: ${msg.content}`);
+  message.info(`${$t('agency.messages.messageContent')}${msg.content}`);
 };
 
 const handleToggleReadStatus = (msg: Message) => {
@@ -522,7 +528,11 @@ const handleToggleReadStatus = (msg: Message) => {
     msg.readTime = undefined;
   }
   message.success(
-    `消息已${msg.status === 'read' ? '标记为已读' : '标记为未读'}`,
+    $t('agency.messages.marked', [
+      msg.status === 'read'
+        ? $t('agency.shared.markedAsRead')
+        : $t('agency.shared.markedAsUnread'),
+    ]),
   );
 };
 
@@ -530,7 +540,7 @@ const handleDeleteMessage = (id: number) => {
   const index = messages.value.findIndex((msg) => msg.id === id);
   if (index !== -1) {
     messages.value.splice(index, 1);
-    message.success('消息删除成功');
+    message.success($t('agency.messages.deleteSuccess'));
     loadMessages();
   }
 };
@@ -542,20 +552,20 @@ const handleMarkAllRead = () => {
       msg.readTime = new Date().toISOString();
     }
   });
-  message.success('全部消息已标记为已读');
+  message.success($t('agency.messages.allMarkedRead'));
 };
 
 const handleExportMessages = () => {
-  message.info('导出消息功能开发中...');
+  message.info($t('agency.messages.exportDeveloping'));
 };
 
 const handleRefresh = () => {
   loadMessages();
-  message.success('已刷新');
+  message.success($t('agency.messages.refreshed'));
 };
 
 const formatDateTime = (dateString: string) => {
-  return new Date(dateString).toLocaleString('zh-CN');
+  return new Date(dateString).toLocaleString();
 };
 
 onMounted(() => {

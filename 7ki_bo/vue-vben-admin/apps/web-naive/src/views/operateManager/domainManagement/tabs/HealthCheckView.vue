@@ -8,7 +8,7 @@
           <n-space :size="12" align="center">
             <n-select
               v-model:value="filters.domainType"
-              placeholder="全部域名"
+              :placeholder="$t('operations.healthCheck.allDomains')"
               style="width: 160px"
               size="small"
               :options="domainTypeOptions"
@@ -17,7 +17,7 @@
 
             <n-input
               v-model:value="filters.search"
-              placeholder="请输入域名"
+              :placeholder="$t('operations.domain.filter.domainInput')"
               clearable
               style="width: 180px"
               size="small"
@@ -26,7 +26,7 @@
 
             <n-select
               v-model:value="filters.status"
-              placeholder="检测状态"
+              :placeholder="$t('operations.healthCheck.checkStatus')"
               clearable
               style="width: 140px"
               size="small"
@@ -36,18 +36,16 @@
 
             <n-select
               v-model:value="filters.region"
-              placeholder="中国"
+              :placeholder="$t('operations.domain.status.china')"
               style="width: 120px"
               size="small"
               :options="regionOptions"
               @update:value="fetchHealthData"
             />
 
-            <n-button type="primary" size="small" @click="fetchHealthData">
-              搜索
-            </n-button>
+            <n-button type="primary" size="small" @click="fetchHealthData">{{ $t('common.search') }}</n-button>
 
-            <n-button size="small" @click="resetFilters"> 重置 </n-button>
+            <n-button size="small" @click="resetFilters"> {{ $t('common.reset') }} </n-button>
           </n-space>
         </n-card>
 
@@ -61,17 +59,14 @@
             <span style="font-size: 13px; color: #666">
               {{
                 selectedDomainIdForMap
-                  ? `地图显示: ${healthData.find((h) => h.id === selectedDomainIdForMap)?.domainName}`
-                  : '地图显示: 全部域名'
+                  ? $t('operations.healthCheck.mapShow', [healthData.find((h) => h.id === selectedDomainIdForMap)?.domainName || '']) : $t('operations.healthCheck.mapShowAll')
               }}
             </span>
             <n-button
               v-if="selectedDomainIdForMap"
               size="small"
               @click="handleResetMapView"
-            >
-              显示全部域名
-            </n-button>
+            >{{ $t('operations.healthCheck.showAllDomains') }}</n-button>
           </n-space>
           <n-data-table
             v-model:checked-row-keys="selectedRowKeys"
@@ -91,10 +86,10 @@
         <n-card size="small">
           <n-space justify="space-between" align="center">
             <n-space>
-              <span style="font-size: 13px; color: #666">全当操作</span>
+              <span style="font-size: 13px; color: #666">{{ $t('operations.healthCheck.batchAction') }}</span>
               <n-select
                 v-model:value="selectedBatchAction"
-                placeholder="批量操作"
+                :placeholder="$t('common.batchOperation')"
                 style="width: 140px"
                 size="small"
                 :options="batchActionOptions"
@@ -104,20 +99,17 @@
                 size="small"
                 :disabled="!selectedRowKeys.length || !selectedBatchAction"
                 @click="handleBatchDetect"
-              >
-                执行
-              </n-button>
+              >{{ $t('operations.healthCheck.execute') }}</n-button>
             </n-space>
             <n-space align="center">
               <span style="font-size: 13px; color: #666">
-                已选择 {{ selectedRowKeys.length }} 条
+                {{ $t('operations.domain.selectedCount', [selectedRowKeys.length]) }}
               </span>
               <span style="font-size: 13px; color: #666">
-                共 {{ pagination.itemCount }} 条数据
+                {{ $t('operations.healthCheck.recordData', [pagination.itemCount]) }}
               </span>
               <span style="font-size: 13px; color: #666">
-                前往 1 页 共
-                {{ Math.ceil(pagination.itemCount / pagination.pageSize) }} 条
+                {{ $t('operations.healthCheck.gotoPage', [Math.ceil(pagination.itemCount / pagination.pageSize)]) }}
               </span>
               <n-select
                 v-model:value="pagination.pageSize"
@@ -152,31 +144,31 @@
                   <div
                     style="width: 20px; height: 14px; background: #66bb6a"
                   ></div>
-                  <span style="font-size: 13px">正常 (&lt; 500ms)</span>
+                  <span style="font-size: 13px">{{ $t('operations.healthCheck.latencyNormal') }}</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px">
                   <div
                     style="width: 20px; height: 14px; background: #fdd835"
                   ></div>
-                  <span style="font-size: 13px">一般 (500-1000ms)</span>
+                  <span style="font-size: 13px">{{ $t('operations.healthCheck.latencyFair') }}</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px">
                   <div
                     style="width: 20px; height: 14px; background: #ff9800"
                   ></div>
-                  <span style="font-size: 13px">缓慢 (&gt; 1000ms)</span>
+                  <span style="font-size: 13px">{{ $t('operations.healthCheck.latencySlow') }}</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px">
                   <div
                     style="width: 20px; height: 14px; background: #d32f2f"
                   ></div>
-                  <span style="font-size: 13px">失败</span>
+                  <span style="font-size: 13px">{{ $t('common.failed') }}</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px">
                   <div
                     style="width: 20px; height: 14px; background: #ccc"
                   ></div>
-                  <span style="font-size: 13px">无数据</span>
+                  <span style="font-size: 13px">{{ $t('operations.healthCheck.noData') }}</span>
                 </div>
               </n-space>
 
@@ -190,7 +182,7 @@
                 "
               >
                 <span style="font-size: 14px; font-weight: 500"
-                  >今日检测次数：</span
+                  >{{ $t('operations.healthCheck.todayChecks') }}</span
                 >
                 <span style="font-size: 14px; color: #2080f0">
                   {{ todayUsage.used }}/{{ todayUsage.total }}
@@ -204,7 +196,7 @@
                   margin-top: 8px;
                 "
               >
-                <span style="font-size: 14px; font-weight: 500">拨测点</span>
+                <span style="font-size: 14px; font-weight: 500">{{ $t('operations.healthCheck.probePoint') }}</span>
                 <span style="font-size: 14px; color: #2080f0">
                   {{ monitorPoints.active }}/{{ monitorPoints.total }}
                 </span>
@@ -219,7 +211,7 @@
     <n-modal
       v-model:show="showDetailModal"
       preset="card"
-      title="检测详情"
+      :title="$t('operations.healthCheck.detailTitle')"
       style="width: 90%; max-width: 1400px"
       :bordered="false"
       size="huge"
@@ -228,7 +220,7 @@
         <div style="margin-bottom: 16px">
           <n-space align="center" :size="16">
             <span style="font-size: 14px; font-weight: 500"
-              >域名：{{ selectedDomain?.domainName }}</span
+              >{{ $t('operations.healthCheck.domainLabel', [selectedDomain?.domainName || '']) }}</span
             >
             <n-tag
               :type="getHealthType(selectedDomain?.healthScore || 0)"
@@ -237,14 +229,14 @@
               {{ getHealthText(selectedDomain?.healthScore || 0) }}
             </n-tag>
             <span style="font-size: 14px"
-              >健康值：{{ selectedDomain?.healthScore }}%</span
+              >{{ $t('operations.healthCheck.healthLabel', [selectedDomain?.healthScore || 0]) }}</span
             >
           </n-space>
         </div>
 
         <!-- Detection Tabs -->
         <n-tabs v-model:value="detailTab" type="line" size="small">
-          <n-tab-pane name="all" tab="全部">
+          <n-tab-pane name="all" :tab="$t('common.all')">
             <n-data-table
               :columns="detailColumns"
               :data="detailData"
@@ -254,20 +246,20 @@
               :scroll-x="1400"
             />
           </n-tab-pane>
-          <n-tab-pane name="success" tab="访问成功">
+          <n-tab-pane name="success" :tab="$t('operations.healthCheck.tabSuccess')">
             <n-data-table
               :columns="detailColumns"
-              :data="detailData.filter((d) => d.status === '正常')"
+              :data="detailData.filter((d) => d.status === $t('operations.healthCheck.statusNormal'))"
               :pagination="false"
               size="small"
               :max-height="400"
               :scroll-x="1400"
             />
           </n-tab-pane>
-          <n-tab-pane name="failed" tab="访问失败">
+          <n-tab-pane name="failed" :tab="$t('operations.healthCheck.tabFailed')">
             <n-data-table
               :columns="detailColumns"
-              :data="detailData.filter((d) => d.status === '失败')"
+              :data="detailData.filter((d) => d.status === $t('operations.healthCheck.statusFailed'))"
               :pagination="false"
               size="small"
               :max-height="400"
@@ -279,7 +271,7 @@
         <n-alert type="warning" style="margin-top: 16px" size="small">
           <div style="font-size: 13px">
             <div style="font-weight: 500; margin-bottom: 4px">
-              检测节点响应无法优化的IP地址如下（DNS污染），建议更换域名：
+              {{ $t('operations.healthCheck.dnsPollutionHint') }}
             </div>
             <div>127.0.0.1 127.0.0.2 0.0.0.0</div>
           </div>
@@ -288,7 +280,7 @@
 
       <template #footer>
         <n-space justify="end">
-          <n-button @click="showDetailModal = false">关闭</n-button>
+          <n-button @click="showDetailModal = false">{{ $t('common.close') }}</n-button>
         </n-space>
       </template>
     </n-modal>
@@ -296,6 +288,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, h, onMounted, onBeforeUnmount, computed } from 'vue';
 import { requestClient } from '#/api/request';
 import L from 'leaflet';
@@ -373,7 +367,7 @@ const filters = reactive({
   domainType: '',
   search: '',
   status: '',
-  region: '中国',
+  region: 'CHINA',
 });
 
 // Pagination
@@ -398,40 +392,40 @@ const selectedBatchAction = ref('');
 
 // Options
 const domainTypeOptions = [
-  { label: '全部域名', value: '' },
-  { label: 'Web大厅域名', value: 'WEB_HALL' },
-  { label: 'APP大厅域名', value: 'APP_HALL' },
-  { label: '后端加速域名', value: 'BACKEND_API' },
-  { label: 'APP更新', value: 'APP_UPDATE' },
-  { label: 'OSS加速域名', value: 'OSS_ACCELERATION' },
-  { label: '下载站域名', value: 'DOWNLOAD_SITE' },
+  { label: $t('operations.healthCheck.allDomains'), value: '' },
+  { label: $t('operations.domain.useType.webHallDomain'), value: 'WEB_HALL' },
+  { label: $t('operations.domain.useType.appHallDomain'), value: 'APP_HALL' },
+  { label: $t('operations.domain.useType.backendApi'), value: 'BACKEND_API' },
+  { label: $t('operations.domain.useType.appUpdate'), value: 'APP_UPDATE' },
+  { label: $t('operations.domain.useType.ossAcceleration'), value: 'OSS_ACCELERATION' },
+  { label: $t('operations.domain.useType.downloadSite'), value: 'DOWNLOAD_SITE' },
 ];
 
 const statusOptions = [
-  { label: '全部状态', value: '' },
-  { label: '优', value: 'EXCELLENT' },
-  { label: '良', value: 'GOOD' },
-  { label: '差', value: 'POOR' },
+  { label: $t('operations.domain.filter.allStatus'), value: '' },
+  { label: $t('operations.domain.status.excellent'), value: 'EXCELLENT' },
+  { label: $t('operations.domain.status.good'), value: 'GOOD' },
+  { label: $t('operations.domain.status.poor'), value: 'POOR' },
 ];
 
 const regionOptions = [
-  { label: '全球', value: 'GLOBAL' },
-  { label: '中国', value: 'CHINA' },
-  { label: '亚洲', value: 'ASIA' },
-  { label: '欧洲', value: 'EUROPE' },
-  { label: '北美', value: 'NORTH_AMERICA' },
-  { label: '南美', value: 'SOUTH_AMERICA' },
+  { label: $t('operations.domain.status.global'), value: 'GLOBAL' },
+  { label: $t('operations.domain.status.china'), value: 'CHINA' },
+  { label: $t('operations.domain.status.asia'), value: 'ASIA' },
+  { label: $t('operations.domain.status.europe'), value: 'EUROPE' },
+  { label: $t('operations.domain.status.northAmerica'), value: 'NORTH_AMERICA' },
+  { label: $t('operations.domain.status.southAmerica'), value: 'SOUTH_AMERICA' },
 ];
 
 const batchActionOptions = [
-  { label: '批量操作', value: '', disabled: true },
-  { label: '手动检测', value: 'detect' },
+  { label: $t('common.batchOperation'), value: '', disabled: true },
+  { label: $t('operations.domain.action.manualDetect'), value: 'detect' },
 ];
 
 const pageSizeOptions = [
-  { label: '100条/页', value: 100 },
-  { label: '50条/页', value: 50 },
-  { label: '20条/页', value: 20 },
+  { label: $t('operations.domain.perPage', [100]), value: 100 },
+  { label: $t('operations.domain.perPage', [50]), value: 50 },
+  { label: $t('operations.domain.perPage', [20]), value: 20 },
 ];
 
 // Helper functions
@@ -443,10 +437,10 @@ const getHealthType = (score: number) => {
 };
 
 const getHealthText = (score: number) => {
-  if (score >= 85) return '优';
-  if (score >= 70) return '良';
-  if (score >= 60) return '中';
-  return '差';
+  if (score >= 85) return $t('operations.domain.status.excellent');
+  if (score >= 70) return $t('operations.domain.status.good');
+  if (score >= 60) return $t('operations.healthCheck.statusMedium');
+  return $t('operations.domain.status.poor');
 };
 
 const getHealthColor = (score: number) => {
@@ -460,7 +454,7 @@ const getHealthColor = (score: number) => {
 const columns: DataTableColumn<HealthRecord>[] = [
   { type: 'selection' as const, width: 50 },
   {
-    title: '域名',
+    title: $t('operations.domain.column.domain'),
     key: 'domainName',
     width: 240,
     ellipsis: { tooltip: true },
@@ -485,7 +479,7 @@ const columns: DataTableColumn<HealthRecord>[] = [
               text: true,
               onClick: () => {
                 navigator.clipboard.writeText(row.domainName);
-                message.success('已复制');
+                message.success($t('operations.domain.message.copied'));
               },
             },
             { default: () => '' },
@@ -495,7 +489,7 @@ const columns: DataTableColumn<HealthRecord>[] = [
     },
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 80,
     render(row: HealthRecord) {
@@ -512,7 +506,7 @@ const columns: DataTableColumn<HealthRecord>[] = [
     },
   },
   {
-    title: '健康值',
+    title: $t('operations.domain.column.healthValue'),
     key: 'healthScore',
     width: 150,
     sorter: (a: HealthRecord, b: HealthRecord) => a.healthScore - b.healthScore,
@@ -535,7 +529,7 @@ const columns: DataTableColumn<HealthRecord>[] = [
                 {
                   style: 'color: #f5222d; font-size: 12px;',
                 },
-                '建议更换域名',
+                $t('operations.healthCheck.suggestChangeDomain'),
               )
             : null,
         ].filter(Boolean),
@@ -543,7 +537,7 @@ const columns: DataTableColumn<HealthRecord>[] = [
     },
   },
   {
-    title: '检测时间',
+    title: $t('operations.domain.column.checkTime'),
     key: 'lastCheckTime',
     width: 180,
     render(row: HealthRecord) {
@@ -551,7 +545,7 @@ const columns: DataTableColumn<HealthRecord>[] = [
     },
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 150,
     render(row: HealthRecord) {
@@ -564,7 +558,7 @@ const columns: DataTableColumn<HealthRecord>[] = [
             size: 'small',
             onClick: () => handleShowDetail(row),
           },
-          { default: () => '详情' },
+          { default: () => $t('common.detail') },
         ),
         h(
           NButton,
@@ -574,7 +568,7 @@ const columns: DataTableColumn<HealthRecord>[] = [
             size: 'small',
             onClick: () => handleManualDetect(row),
           },
-          { default: () => '检测' },
+          { default: () => $t('operations.healthCheck.detect') },
         ),
       ]);
     },
@@ -584,7 +578,7 @@ const columns: DataTableColumn<HealthRecord>[] = [
 // Detail Columns
 const detailColumns: DataTableColumn<MonitorDetail>[] = [
   {
-    title: '监测点',
+    title: $t('operations.domain.column.monitorPoint'),
     key: 'monitorPoint',
     width: 120,
     fixed: 'left' as const,
@@ -603,7 +597,7 @@ const detailColumns: DataTableColumn<MonitorDetail>[] = [
     },
   },
   {
-    title: '响应IP',
+    title: $t('operations.domain.column.responseIp'),
     key: 'responseIP',
     width: 140,
     render(row: MonitorDetail) {
@@ -635,20 +629,20 @@ const detailColumns: DataTableColumn<MonitorDetail>[] = [
     },
   },
   {
-    title: 'IP位置',
+    title: $t('operations.domain.column.ipLocation'),
     key: 'ipLocation',
     width: 180,
     ellipsis: { tooltip: true },
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 80,
     render(row: MonitorDetail) {
       return h(
         NTag,
         {
-          type: row.status === '正常' ? 'success' : 'error',
+          type: row.status === $t('operations.healthCheck.statusNormal') ? 'success' : 'error',
           size: 'small',
         },
         {
@@ -658,7 +652,7 @@ const detailColumns: DataTableColumn<MonitorDetail>[] = [
     },
   },
   {
-    title: '总耗时',
+    title: $t('operations.domain.column.totalTime'),
     key: 'totalTime',
     width: 100,
     render(row: MonitorDetail) {
@@ -671,13 +665,13 @@ const detailColumns: DataTableColumn<MonitorDetail>[] = [
       );
     },
   },
-  { title: '解析', key: 'dnsTime', width: 90 },
-  { title: '连接', key: 'connectTime', width: 90 },
-  { title: '下载', key: 'downloadTime', width: 90 },
-  { title: '重定向', key: 'redirectTime', width: 90 },
+  { title: $t('operations.domain.column.dns'), key: 'dnsTime', width: 90 },
+  { title: $t('operations.domain.column.connect'), key: 'connectTime', width: 90 },
+  { title: $t('common.download'), key: 'downloadTime', width: 90 },
+  { title: $t('operations.domain.column.redirect'), key: 'redirectTime', width: 90 },
   { title: 'Head', key: 'headTime', width: 90 },
   {
-    title: '响应图片',
+    title: $t('operations.domain.column.responseImage'),
     key: 'responseImage',
     width: 100,
     render(row: MonitorDetail) {
@@ -762,11 +756,11 @@ const fetchHealthData = async () => {
         total: 0,
       };
 
-      message.info('暂无健康检测数据。请先创建域名并等待初始同步完成。');
+      message.info($t('operations.healthCheck.noDataYet'));
     }
   } catch (error: any) {
     console.error('Fetch health data error:', error);
-    message.error('获取检测数据失败: ' + (error.message || '未知错误'));
+    message.error($t('operations.healthCheck.fetchFailed', [error.message || $t('common.operationFailed')]));
 
     // Set empty state on error
     healthData.value = [];
@@ -780,7 +774,7 @@ const resetFilters = () => {
   filters.domainType = '';
   filters.search = '';
   filters.status = '';
-  filters.region = '中国';
+  filters.region = 'CHINA';
   pagination.page = 1;
   fetchHealthData();
 };
@@ -833,15 +827,15 @@ const handleShowDetail = async (domain: HealthRecord) => {
       }));
 
       if (detailData.value.length === 0) {
-        message.info('该域名暂无详细监测数据');
+        message.info($t('operations.healthCheck.noDetailData'));
       }
     } else {
       detailData.value = [];
-      message.warning('获取详细数据失败');
+      message.warning($t('operations.healthCheck.fetchDetailFailed'));
     }
   } catch (error: any) {
     console.error('Fetch detail data error:', error);
-    message.error('获取详细数据失败');
+    message.error($t('operations.healthCheck.fetchDetailFailed'));
     detailData.value = [];
   }
 
@@ -851,7 +845,7 @@ const handleShowDetail = async (domain: HealthRecord) => {
 const handleManualDetect = async (domain: HealthRecord) => {
   try {
     const loadingMsg = message.loading(
-      `正在执行实时检测 ${domain.domainName}...`,
+      $t('operations.healthCheck.detecting', [domain.domainName]),
       { duration: 0 },
     );
 
@@ -874,9 +868,7 @@ const handleManualDetect = async (domain: HealthRecord) => {
       const totalLocations = checkData.totalLocations || 0;
 
       message.success(
-        `检测完成！${domain.domainName}\n` +
-          `健康值: ${healthScore}%\n` +
-          `检测点: ${totalLocations} 个位置`,
+        $t('operations.healthCheck.detectComplete', [domain.domainName, healthScore, totalLocations]),
         { duration: 3000 },
       );
 
@@ -889,31 +881,31 @@ const handleManualDetect = async (domain: HealthRecord) => {
         initMap();
       }, 500);
     } else {
-      message.error(`检测失败: ${result.message || '未知错误'}`);
+      message.error($t('operations.healthCheck.detectFailed', [result.message || $t('operations.unknownError')]));
     }
   } catch (error: any) {
     console.error('Manual detect error:', error);
-    message.error('检测失败: ' + (error.message || '未知错误'));
+    message.error($t('operations.healthCheck.detectFailed', [error.message || $t('operations.unknownError')]));
   }
 };
 
 const handleBatchDetect = async () => {
   if (!selectedRowKeys.value.length) {
-    message.warning('请选择要检测的域名');
+    message.warning($t('operations.healthCheck.selectDomains'));
     return;
   }
 
   try {
-    message.loading(`正在批量检测 ${selectedRowKeys.value.length} 个域名...`);
+    message.loading($t('operations.healthCheck.batchDetecting', [selectedRowKeys.value.length]));
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 2000));
-    message.success('批量检测完成');
+    message.success($t('operations.domain.message.batchDetectComplete'));
     selectedRowKeys.value = [];
     selectedBatchAction.value = '';
     fetchHealthData();
   } catch (error: any) {
     console.error('Batch detect error:', error);
-    message.error('批量检测失败');
+    message.error($t('operations.domain.message.batchDetectFailed'));
   }
 };
 
@@ -922,10 +914,10 @@ const locationCoordinates: Record<
   string,
   { lat: number; lng: number; name: string }
 > = {
-  'CN-Beijing': { lat: 39.9042, lng: 116.4074, name: '北京' },
-  'CN-Shanghai': { lat: 31.2304, lng: 121.4737, name: '上海' },
-  'CN-Guangzhou': { lat: 23.1291, lng: 113.2644, name: '广州' },
-  'CN-Chengdu': { lat: 30.5728, lng: 104.0668, name: '成都' },
+  'CN-Beijing': { lat: 39.9042, lng: 116.4074, name: $t('operations.healthCheck.cityBeijing') },
+  'CN-Shanghai': { lat: 31.2304, lng: 121.4737, name: $t('operations.healthCheck.cityShanghai') },
+  'CN-Guangzhou': { lat: 23.1291, lng: 113.2644, name: $t('operations.healthCheck.cityGuangzhou') },
+  'CN-Chengdu': { lat: 30.5728, lng: 104.0668, name: $t('operations.healthCheck.cityChengdu') },
   'US-California': { lat: 37.7749, lng: -122.4194, name: 'California' },
   'US-Virginia': { lat: 37.4316, lng: -78.6569, name: 'Virginia' },
   'EU-Frankfurt': { lat: 50.1109, lng: 8.6821, name: 'Frankfurt' },
@@ -978,7 +970,7 @@ const fetchLocationHealth = async (domainId?: number | null) => {
         locationHealthData.value = {};
         locationMap.forEach((check, location) => {
           locationHealthData.value[location] = {
-            status: check.checkStatus || '正常',
+            status: check.checkStatus || $t('operations.healthCheck.statusNormal'),
             responseTime: check.totalTime || 0,
             count: 1,
           };
@@ -1029,7 +1021,7 @@ const fetchLocationHealth = async (domainId?: number | null) => {
           if (!locationStats[loc]) {
             locationStats[loc] = {
               totalTime: check.totalTime || 0,
-              status: check.checkStatus || '正常',
+              status: check.checkStatus || $t('operations.healthCheck.statusNormal'),
               count: 1,
             };
           } else {
@@ -1040,8 +1032,8 @@ const fetchLocationHealth = async (domainId?: number | null) => {
               (locationStats[loc].count + 1);
             locationStats[loc].count++;
             // If ANY domain fails, mark location as failed
-            if (check.checkStatus === '失败') {
-              locationStats[loc].status = '失败';
+            if (check.checkStatus === $t('operations.healthCheck.statusFailed')) {
+              locationStats[loc].status = $t('operations.healthCheck.statusFailed');
             }
           }
         });
@@ -1073,7 +1065,7 @@ const getLocationColor = (location: string): string => {
   const health = locationHealthData.value[location];
   if (!health || health.count === 0) return '#ccc'; // Gray for no data
 
-  if (health.status === '失败') return '#d32f2f'; // Red for failed
+  if (health.status === $t('operations.healthCheck.statusFailed')) return '#d32f2f'; // Red for failed
   if (health.responseTime > 1000) return '#ff9800'; // Orange for slow
   if (health.responseTime > 500) return '#fdd835'; // Yellow for medium
   return '#66bb6a'; // Green for good
@@ -1126,14 +1118,13 @@ const initMap = () => {
     // Tooltip content
     const responseTime = health
       ? `${(health.responseTime / 1000).toFixed(3)}s`
-      : '无数据';
-    const status = health ? health.status : '未检测';
+      : $t('operations.healthCheck.noData');
+    const status = health ? health.status : $t('operations.healthCheck.notDetected');
 
     marker.bindTooltip(
       `<div style="text-align: center;">
         <strong>${location.name}</strong><br/>
-        状态: ${status}<br/>
-        响应: ${responseTime}
+        ${$t('operations.healthCheck.statusLabel')}: ${status}<br/>${$t('operations.healthCheck.responseLabel')}: ${responseTime}
       </div>`,
       {
         permanent: false,
@@ -1143,7 +1134,7 @@ const initMap = () => {
     );
 
     // Add pulsing effect for healthy locations
-    if (health && health.status !== '失败') {
+    if (health && health.status !== $t('operations.healthCheck.statusFailed')) {
       const pulseMarker = L.circleMarker([location.lat, location.lng], {
         radius: 12,
         fillColor: 'transparent',

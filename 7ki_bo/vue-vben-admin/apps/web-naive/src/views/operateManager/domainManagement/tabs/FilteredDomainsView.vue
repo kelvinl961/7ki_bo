@@ -5,6 +5,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 import { defineAsyncComponent } from 'vue';
 const AllDomainsView = defineAsyncComponent(
@@ -21,7 +23,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  title: '域名列表',
+  title: $t('operations.domain.listTitle'),
 });
 </script>
 

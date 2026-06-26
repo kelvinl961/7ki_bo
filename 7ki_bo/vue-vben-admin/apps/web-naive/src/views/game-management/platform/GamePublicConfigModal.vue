@@ -3,68 +3,68 @@
     <n-modal
       :show="show"
       preset="card"
-      title="游戏公共配置"
+      :title="$t('game.publicConfig.title')"
       style="width: 900px"
       :mask-closable="false"
       @update:show="handleUpdateShow"
     >
       <n-tabs v-model:value="activeTab" type="line" animated>
-        <!-- Tab 1: 游戏相关设置 -->
-        <n-tab-pane name="game-settings" tab="游戏相关设置">
+        
+        <n-tab-pane name="game-settings" :tab="$t('game.publicConfig.gameSettingsTab')">
           <n-space vertical :size="16" class="pt-4">
-            <!-- 返回大厅按钮 -->
+            
             <div class="setting-row">
-              <div class="setting-label">返回大厅按钮</div>
+              <div class="setting-label">{{ $t('game.publicConfig.backToLobby') }}</div>
               <n-radio-group
                 v-model:value="config.lobby_return_mode"
                 class="setting-control"
               >
                 <n-space>
-                  <n-radio value="confirm">二次弹窗确认(默认)</n-radio>
-                  <n-radio value="direct">直接返回</n-radio>
+                  <n-radio value="confirm">{{ $t('game.publicConfig.backConfirm') }}</n-radio>
+                  <n-radio value="direct">{{ $t('game.publicConfig.backDirect') }}</n-radio>
                 </n-space>
               </n-radio-group>
             </div>
 
-            <!-- 已首充才能进入游戏 -->
+            
             <div class="setting-row">
               <div class="setting-label">
-                已首充才能进入游戏(未充值无法进入)
+                {{ $t('game.publicConfig.firstDepositRequired') }}
               </div>
               <n-radio-group
                 v-model:value="config.deposit_requirement"
                 class="setting-control"
               >
                 <n-space>
-                  <n-radio value="disabled">不限制(默认)</n-radio>
-                  <n-radio value="enabled">开启</n-radio>
+                  <n-radio value="disabled">{{ $t('game.publicConfig.noLimit') }}</n-radio>
+                  <n-radio value="enabled">{{ $t('game.publicConfig.enabled') }}</n-radio>
                 </n-space>
               </n-radio-group>
             </div>
 
-            <!-- 游戏名只显示一行 -->
+            
             <div class="setting-row">
               <div class="setting-label">
-                游戏名只显示一行, 超过使用省略号展示
+                {{ $t('game.publicConfig.gameNameSingleLine') }}
               </div>
               <n-radio-group
                 v-model:value="config.game_name_display"
                 class="setting-control"
               >
                 <n-space>
-                  <n-radio value="multi_line">关闭(默认)</n-radio>
-                  <n-radio value="single_line">开启</n-radio>
+                  <n-radio value="multi_line">{{ $t('game.publicConfig.multiLine') }}</n-radio>
+                  <n-radio value="single_line">{{ $t('game.publicConfig.singleLine') }}</n-radio>
                 </n-space>
               </n-radio-group>
             </div>
           </n-space>
         </n-tab-pane>
 
-        <!-- Tab 2: 强制下载APP设置 -->
-        <n-tab-pane name="app-download" tab="强制下载APP设置">
+        
+        <n-tab-pane name="app-download" :tab="$t('game.publicConfig.appDownloadTab')">
           <n-space vertical :size="16" class="pt-4">
             <div class="setting-row">
-              <div class="setting-label">启用强制下载</div>
+              <div class="setting-label">{{ $t('game.publicConfig.forceDownload') }}</div>
               <n-switch
                 v-model:value="config.force_download_enabled"
                 class="setting-control"
@@ -72,10 +72,10 @@
             </div>
 
             <div class="setting-row">
-              <div class="setting-label">下载链接</div>
+              <div class="setting-label">{{ $t('game.publicConfig.downloadLink') }}</div>
               <n-input
                 v-model:value="config.download_url"
-                placeholder="请输入APP下载链接"
+                :placeholder="$t('game.publicConfig.enterDownloadLink')"
                 :disabled="!config.force_download_enabled"
                 class="setting-control"
                 style="max-width: 500px"
@@ -84,18 +84,18 @@
           </n-space>
         </n-tab-pane>
 
-        <!-- Tab 3: WG体育赔率设置 -->
-        <n-tab-pane name="wg-sports" tab="WG体育赔率设置">
+        
+        <n-tab-pane name="wg-sports" :tab="$t('game.publicConfig.wgSportsTab')">
           <n-space vertical :size="16" class="pt-4">
             <div class="setting-row">
-              <div class="setting-label">赔率模式</div>
+              <div class="setting-label">{{ $t('game.publicConfig.oddsMode') }}</div>
               <n-radio-group
                 v-model:value="config.wg_sports_odds_mode"
                 class="setting-control"
               >
                 <n-space vertical>
-                  <n-radio value="standard">标准赔率</n-radio>
-                  <n-radio value="custom">自定义赔率</n-radio>
+                  <n-radio value="standard">{{ $t('game.publicConfig.standardOdds') }}</n-radio>
+                  <n-radio value="custom">{{ $t('game.publicConfig.customOdds') }}</n-radio>
                 </n-space>
               </n-radio-group>
             </div>
@@ -104,13 +104,13 @@
               v-if="config.wg_sports_odds_mode === 'custom'"
               class="setting-row"
             >
-              <div class="setting-label">自定义赔率值</div>
+              <div class="setting-label">{{ $t('game.publicConfig.customOddsValue') }}</div>
               <n-input-number
                 v-model:value="config.wg_sports_odds_value"
                 :min="0"
                 :max="100"
                 :step="0.1"
-                placeholder="请输入赔率值"
+                :placeholder="$t('game.publicConfig.enterOddsValue')"
                 class="setting-control"
                 style="width: 200px"
               />
@@ -121,10 +121,8 @@
 
       <template #footer>
         <div class="flex justify-end gap-3">
-          <n-button @click="handleCancel">取消</n-button>
-          <n-button type="primary" :loading="saving" @click="handleConfirm">
-            确认
-          </n-button>
+          <n-button @click="handleCancel">{{ $t('common.cancel') }}</n-button>
+          <n-button type="primary" :loading="saving" @click="handleConfirm">{{ $t('game.virtualBonusPool.confirm') }}</n-button>
         </div>
       </template>
     </n-modal>
@@ -132,6 +130,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, watch } from 'vue';
 import {
   NModal,
@@ -211,7 +211,7 @@ const loadConfig = async () => {
       };
     }
   } catch (error: any) {
-    message.error(error.message || '加载配置失败');
+    message.error(error.message || $t('game.publicConfig.loadFailed'));
   }
 };
 
@@ -219,10 +219,10 @@ const handleConfirm = async () => {
   saving.value = true;
   try {
     await updateGamePublicConfig(config.value);
-    message.success('保存成功');
+    message.success($t('game.publicConfig.saveSuccess'));
     emit('update:show', false);
   } catch (error: any) {
-    message.error(error.message || '保存失败');
+    message.error(error.message || $t('game.publicConfig.saveFailed'));
   } finally {
     saving.value = false;
   }

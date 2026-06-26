@@ -4,15 +4,15 @@
     <div v-if="!isDecrypted" class="security-section">
       <n-result
         status="info"
-        title="需安全码解密"
-        description="请输入安全码以查看联系方式信息"
+        :title="$t('user.contact.securityCodeRequired')"
+        :description="$t('user.contact.enterSecurityCodeDesc')"
       >
         <template #footer>
           <n-space>
             <n-input
               v-model:value="securityCode"
               type="password"
-              placeholder="请输入安全码"
+              :placeholder="$t('user.contact.enterSecurityCode')"
               :loading="verifying"
               @keyup.enter="handleVerifyCode"
             />
@@ -21,7 +21,7 @@
               :loading="verifying"
               @click="handleVerifyCode"
             >
-              解密查看
+              {{ $t('user.contact.decryptView') }}
             </n-button>
           </n-space>
         </template>
@@ -31,7 +31,7 @@
     <!-- Contact Information (Decrypted) -->
     <div v-else class="contact-content">
       <!-- Section 1: Contact Information -->
-      <n-card title="联系方式（原户信息）" class="mb-4">
+      <n-card :title="$t('user.contact.contactInfoOriginal')" class="mb-4">
         <div class="contact-fields">
           <n-grid :cols="3" :x-gap="16" :y-gap="16">
             <n-gi v-for="field in contactFields" :key="field.key">
@@ -56,7 +56,7 @@
                     class="ml-2"
                     @click="handleEditField(field.key)"
                   >
-                    修改
+                    {{ $t('common.modify') }}
                   </n-button>
                 </div>
               </div>
@@ -67,21 +67,21 @@
         <template #action>
           <n-space>
             <n-button size="small" @click="handleRefreshContacts">
-              刷新
+              {{ $t('common.refresh') }}
             </n-button>
             <n-button
               size="small"
               type="primary"
               @click="handleSaveAllContacts"
             >
-              保存所有修改
+              {{ $t('user.contact.saveAllChanges') }}
             </n-button>
           </n-space>
         </template>
       </n-card>
 
       <!-- Section 2: Third-Party Bindings -->
-      <n-card title="绑定第三方快捷登录记录" class="mb-4">
+      <n-card :title="$t('user.contact.thirdPartyBindings')" class="mb-4">
         <n-data-table
           :columns="bindingColumns"
           :data="bindings"
@@ -94,14 +94,14 @@
         <template #action>
           <n-space>
             <n-button size="small" @click="handleRefreshBindings">
-              刷新
+              {{ $t('common.refresh') }}
             </n-button>
             <n-button
               size="small"
               type="primary"
               @click="showAddBindingModal = true"
             >
-              添加绑定
+              {{ $t('user.contact.addBinding') }}
             </n-button>
           </n-space>
         </template>
@@ -112,33 +112,33 @@
     <n-modal
       v-model:show="showAddBindingModal"
       preset="dialog"
-      title="添加第三方绑定"
+      :title="$t('user.contact.addThirdPartyBinding')"
     >
       <n-form ref="bindingFormRef" :model="bindingForm" :rules="bindingRules">
-        <n-form-item label="平台名称" path="platformName">
+        <n-form-item :label="$t('user.contact.platformName')" path="platformName">
           <n-select
             v-model:value="bindingForm.platformName"
-            placeholder="选择平台"
+            :placeholder="$t('user.contact.selectPlatform')"
             :options="platformOptions"
           />
         </n-form-item>
-        <n-form-item label="第三方账号" path="thirdPartyId">
+        <n-form-item :label="$t('user.contact.thirdPartyAccount')" path="thirdPartyId">
           <n-input
             v-model:value="bindingForm.thirdPartyId"
-            placeholder="请输入第三方账号"
+            :placeholder="$t('user.contact.enterThirdPartyAccount')"
           />
         </n-form-item>
       </n-form>
 
       <template #action>
         <div class="flex gap-2">
-          <n-button @click="showAddBindingModal = false">取消</n-button>
+          <n-button @click="showAddBindingModal = false">{{ $t('common.cancel') }}</n-button>
           <n-button
             type="primary"
             :loading="addingBinding"
             @click="handleAddBinding"
           >
-            添加
+            {{ $t('common.add') }}
           </n-button>
         </div>
       </template>
@@ -147,6 +147,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, onMounted, h } from 'vue';
 import {
   NCard,
@@ -223,7 +225,7 @@ const bindingsPagination = reactive({
   total: 0,
   showSizePicker: true,
   pageSizes: [10, 20, 50],
-  prefix: (info: any) => `共 ${info.itemCount} 条`,
+  prefix: (info: any) => $t('user.withdrawAccount.totalRecords', [info.itemCount]),
   onUpdatePage: (page: number) => {
     bindingsPagination.current = page;
     loadBindings();
@@ -243,22 +245,22 @@ const bindingForm = reactive<CreateThirdPartyBindingParams>({
 });
 
 // Contact fields configuration
-const contactFields = [
-  { key: 'whatsapp', label: '微信' },
+const contactFields = computed(() => [
+  { key: 'whatsapp', label: $t('user.contact.wechat') },
   { key: 'facebook', label: 'Facebook' },
   { key: 'line', label: 'Line' },
   { key: 'threads', label: 'Threads' },
-  { key: 'email', label: '邮箱' },
+  { key: 'email', label: $t('user.contact.email') },
   { key: 'telegram', label: 'Telegram' },
   { key: 'twitter', label: 'Twitter' },
   { key: 'instagram', label: 'Instagram' },
   { key: 'zalo', label: 'Zalo' },
-  { key: 'phone', label: '手机号' },
-];
+  { key: 'phone', label: $t('user.contact.phone') },
+]);
 
 // Platform options
-const platformOptions = [
-  { label: '微信', value: 'WeChat' },
+const platformOptions = computed(() => [
+  { label: $t('user.contact.wechat'), value: 'WeChat' },
   { label: 'Facebook', value: 'Facebook' },
   { label: 'Google', value: 'Google' },
   { label: 'Twitter', value: 'Twitter' },
@@ -266,37 +268,47 @@ const platformOptions = [
   { label: 'Telegram', value: 'Telegram' },
   { label: 'Apple', value: 'Apple' },
   { label: 'QQ', value: 'QQ' },
-];
+]);
 
 // Form rules
-const bindingRules: FormRules = {
-  platformName: [{ required: true, message: '请选择平台', trigger: 'change' }],
-  thirdPartyId: [
-    { required: true, message: '请输入第三方账号', trigger: 'blur' },
+const bindingRules = computed<FormRules>(() => ({
+  platformName: [
+    {
+      required: true,
+      message: $t('user.contact.selectPlatformRequired'),
+      trigger: 'change',
+    },
   ],
-};
+  thirdPartyId: [
+    {
+      required: true,
+      message: $t('user.contact.enterThirdPartyAccount'),
+      trigger: 'blur',
+    },
+  ],
+}));
 
 // Table columns
-const bindingColumns: DataTableColumns<ThirdPartyBinding> = [
+const bindingColumns = computed<DataTableColumns<ThirdPartyBinding>>(() => [
   {
-    title: '绑定时间',
+    title: $t('user.contact.boundAt'),
     key: 'boundAt',
     width: 180,
-    render: (row) => new Date(row.boundAt).toLocaleString('zh-CN'),
+    render: (row) => new Date(row.boundAt).toLocaleString(),
   },
   {
-    title: '三方平台名称',
+    title: $t('user.contact.thirdPartyPlatform'),
     key: 'platformName',
     width: 150,
   },
   {
-    title: '三方帐号',
+    title: $t('user.contact.thirdPartyAccountCol'),
     key: 'thirdPartyId',
     width: 200,
     ellipsis: { tooltip: true },
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 100,
     render: (row) =>
@@ -306,7 +318,7 @@ const bindingColumns: DataTableColumns<ThirdPartyBinding> = [
           onPositiveClick: () => handleRemoveBinding(row.id),
         },
         {
-          default: () => '确定解绑此账号？',
+          default: () => $t('user.contact.confirmUnbind'),
           trigger: () =>
             h(
               NButton,
@@ -315,24 +327,22 @@ const bindingColumns: DataTableColumns<ThirdPartyBinding> = [
                 type: 'error',
                 text: true,
               },
-              { default: () => '解绑' },
+              { default: () => $t('user.contact.unbind') },
             ),
         },
       ),
   },
-];
+]);
 
 // Methods
 const handleVerifyCode = async () => {
   if (!securityCode.value.trim()) {
-    message.error('请输入安全码');
+    message.error($t('user.contact.enterCodeRequired'));
     return;
   }
 
   verifying.value = true;
   try {
-    // For demo purposes, accept any non-empty code
-    // In production, this should verify against the actual security code
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     if (securityCode.value === '123456') {
@@ -340,10 +350,10 @@ const handleVerifyCode = async () => {
       await loadContacts();
       await loadBindings();
     } else {
-      message.error('安全码错误');
+      message.error($t('user.contact.wrongCode'));
     }
-  } catch (error) {
-    message.error('验证失败');
+  } catch {
+    message.error($t('user.contact.verifyFailed'));
   } finally {
     verifying.value = false;
   }
@@ -355,7 +365,7 @@ const loadContacts = async () => {
     const response = await getUserContactsApi(props.userId);
     contacts.value = response;
   } catch (error) {
-    message.error('获取联系方式失败');
+    message.error($t('user.contact.loadFailed'));
     console.error('Error loading contacts:', error);
   } finally {
     loading.value = false;
@@ -375,7 +385,7 @@ const loadBindings = async () => {
     bindings.value = response.list;
     bindingsPagination.total = response.pagination.total;
   } catch (error) {
-    message.error('获取绑定记录失败');
+    message.error($t('user.contact.loadBindingsFailed'));
     console.error('Error loading bindings:', error);
   } finally {
     bindingsLoading.value = false;
@@ -401,9 +411,9 @@ const handleSaveField = async () => {
 
     editingField.value = null;
     editingValue.value = '';
-    message.success('更新成功');
+    message.success($t('user.contact.updateSuccess'));
   } catch (error) {
-    message.error('更新失败');
+    message.error($t('user.contact.updateFailed'));
     console.error('Error updating contact:', error);
   }
 };
@@ -417,9 +427,9 @@ const handleSaveAllContacts = async () => {
   try {
     const { userId, ...updateParams } = contacts.value;
     await updateUserContactsApi(props.userId, updateParams);
-    message.success('保存成功');
+    message.success($t('user.contact.saveSuccess'));
   } catch (error) {
-    message.error('保存失败');
+    message.error($t('user.contact.saveFailed'));
     console.error('Error saving contacts:', error);
   }
 };
@@ -445,10 +455,10 @@ const handleAddBinding = async () => {
       thirdPartyId: '',
     });
 
-    message.success('添加绑定成功');
+    message.success($t('user.contact.addBindingSuccess'));
     await loadBindings();
   } catch (error) {
-    message.error('添加绑定失败');
+    message.error($t('user.contact.addBindingFailed'));
     console.error('Error adding binding:', error);
   } finally {
     addingBinding.value = false;
@@ -458,18 +468,15 @@ const handleAddBinding = async () => {
 const handleRemoveBinding = async (bindingId: string) => {
   try {
     await removeThirdPartyBindingApi(props.userId, bindingId);
-    message.success('解绑成功');
+    message.success($t('user.contact.unbindSuccess'));
     await loadBindings();
   } catch (error) {
-    message.error('解绑失败');
+    message.error($t('user.contact.unbindFailed'));
     console.error('Error removing binding:', error);
   }
 };
 
-// Lifecycle
 onMounted(() => {
-  // For demo purposes, auto-decrypt with demo code
-  // In production, this should require actual security verification
   if (process.env.NODE_ENV === 'development') {
     isDecrypted.value = true;
     loadContacts();

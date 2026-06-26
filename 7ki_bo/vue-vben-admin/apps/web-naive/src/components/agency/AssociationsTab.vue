@@ -1,43 +1,50 @@
 <template>
   <div class="associations-tab">
-    <!-- Associations Summary -->
-    <n-card title="关联账号概览" class="mb-4">
+    <n-card :title="$t('agency.associations.overview')" class="mb-4">
       <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
         <div class="stat-card">
           <div class="stat-value">{{ totalAssociations }}</div>
-          <div class="stat-label">总关联数</div>
+          <div class="stat-label">
+            {{ $t('agency.associations.totalAssociations') }}
+          </div>
         </div>
         <div class="stat-card">
           <div class="stat-value">{{ activeAssociations }}</div>
-          <div class="stat-label">活跃关联</div>
+          <div class="stat-label">
+            {{ $t('agency.associations.activeAssociations') }}
+          </div>
         </div>
         <div class="stat-card">
           <div class="stat-value">{{ verifiedAssociations }}</div>
-          <div class="stat-label">已验证关联</div>
+          <div class="stat-label">
+            {{ $t('agency.associations.verifiedAssociations') }}
+          </div>
         </div>
         <div class="stat-card">
           <div class="stat-value">{{ pendingAssociations }}</div>
-          <div class="stat-label">待验证关联</div>
+          <div class="stat-label">
+            {{ $t('agency.associations.pendingAssociations') }}
+          </div>
         </div>
       </div>
     </n-card>
 
-    <!-- Action Buttons -->
-    <n-card title="操作" class="mb-4">
+    <n-card :title="$t('common.actions')" class="mb-4">
       <div class="flex flex-wrap gap-2">
         <n-button type="primary" @click="handleAddAssociation">
-          添加关联
+          {{ $t('agency.associations.addAssociation') }}
         </n-button>
-        <n-button type="info" @click="handleBatchVerify"> 批量验证 </n-button>
+        <n-button type="info" @click="handleBatchVerify">
+          {{ $t('agency.associations.batchVerify') }}
+        </n-button>
         <n-button type="warning" @click="handleExportAssociations">
-          导出关联
+          {{ $t('agency.associations.exportAssociations') }}
         </n-button>
-        <n-button @click="handleRefresh"> 刷新 </n-button>
+        <n-button @click="handleRefresh"> {{ $t('common.refresh') }} </n-button>
       </div>
     </n-card>
 
-    <!-- Associations Table -->
-    <n-card title="关联账号列表">
+    <n-card :title="$t('agency.associations.associationList')">
       <n-data-table
         :columns="columns"
         :data="associations"
@@ -48,11 +55,10 @@
       />
     </n-card>
 
-    <!-- Add/Edit Association Modal -->
     <n-modal
       v-model:show="showAssociationModal"
       preset="card"
-      title="关联账号"
+      :title="$t('agency.associations.associationTitle')"
       style="width: 600px"
     >
       <n-form
@@ -62,48 +68,60 @@
         label-placement="left"
         label-width="120px"
       >
-        <n-form-item label="关联类型" path="type">
+        <n-form-item
+          :label="$t('agency.associations.associationType')"
+          path="type"
+        >
           <n-select
             v-model:value="associationForm.type"
             :options="associationTypeOptions"
           />
         </n-form-item>
 
-        <n-form-item label="关联账号" path="account">
+        <n-form-item
+          :label="$t('agency.associations.associationAccount')"
+          path="account"
+        >
           <n-input
             v-model:value="associationForm.account"
-            placeholder="请输入关联账号"
+            :placeholder="$t('agency.associations.enterAssociationAccount')"
           />
         </n-form-item>
 
-        <n-form-item label="关联平台" path="platform">
+        <n-form-item
+          :label="$t('agency.associations.associationPlatform')"
+          path="platform"
+        >
           <n-input
             v-model:value="associationForm.platform"
-            placeholder="请输入关联平台"
+            :placeholder="$t('agency.associations.enterAssociationPlatform')"
           />
         </n-form-item>
 
-        <n-form-item label="关联原因" path="reason">
+        <n-form-item
+          :label="$t('agency.associations.associationReason')"
+          path="reason"
+        >
           <n-input
             v-model:value="associationForm.reason"
             type="textarea"
-            placeholder="请输入关联原因"
+            :placeholder="$t('agency.associations.enterAssociationReason')"
             :rows="3"
           />
         </n-form-item>
 
-        <n-form-item label="状态" path="status">
+        <n-form-item :label="$t('common.status')" path="status">
           <n-select
             v-model:value="associationForm.status"
             :options="statusOptions"
           />
         </n-form-item>
 
-        <n-form-item label="备注" path="remark">
+        <n-form-item :label="$t('common.remark')" path="remark">
           <n-input
             v-model:value="associationForm.remark"
             type="textarea"
-            placeholder="请输入备注信息"
+            :placeholder="$t('agency.withdrawAccount.enterRemark')"
             :rows="3"
           />
         </n-form-item>
@@ -111,13 +129,13 @@
 
       <template #action>
         <div class="flex gap-2">
-          <n-button @click="showAssociationModal = false">取消</n-button>
+          <n-button @click="showAssociationModal = false">{{ $t('common.cancel') }}</n-button>
           <n-button
             type="primary"
             @click="handleSubmitAssociation"
             :loading="submitting"
           >
-            {{ isEdit ? '更新' : '添加' }}
+            {{ isEdit ? $t('agency.shared.update') : $t('common.add') }}
           </n-button>
         </div>
       </template>
@@ -126,6 +144,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, h, onMounted } from 'vue';
 import {
   NCard,
@@ -140,7 +160,6 @@ import {
   useMessage,
   type DataTableColumns,
 } from 'naive-ui';
-import type { AgentRecord } from '#/api/agency/agent';
 
 interface Props {
   agentId?: number;
@@ -172,24 +191,21 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const message = useMessage();
-
-// Reactive data
 const loading = ref(false);
 const submitting = ref(false);
 const showAssociationModal = ref(false);
 const isEdit = ref(false);
 const currentAssociationId = ref<number | null>(null);
 
-// Mock data
 const associations = ref<Association[]>([
   {
     id: 1,
     type: 'bank',
     account: '6222021234567890123',
-    platform: '中国工商银行',
-    reason: '主要银行账户关联',
+    platform: 'ICBC',
+    reason: 'Primary bank account',
     status: 'active',
-    remark: '用于提现和充值',
+    remark: 'Withdrawal and deposit',
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',
   },
@@ -197,10 +213,10 @@ const associations = ref<Association[]>([
     id: 2,
     type: 'alipay',
     account: 'zhangsan@alipay.com',
-    platform: '支付宝',
-    reason: '移动支付关联',
+    platform: 'Alipay',
+    reason: 'Mobile payment',
     status: 'active',
-    remark: '日常小额交易',
+    remark: 'Daily transactions',
     createdAt: '2024-01-02T00:00:00Z',
     updatedAt: '2024-01-02T00:00:00Z',
   },
@@ -208,10 +224,10 @@ const associations = ref<Association[]>([
     id: 3,
     type: 'wechat',
     account: 'zhangsan_wechat',
-    platform: '微信支付',
-    reason: '社交支付关联',
+    platform: 'WeChat Pay',
+    reason: 'Social payment',
     status: 'pending',
-    remark: '待验证身份',
+    remark: 'Pending verification',
     createdAt: '2024-01-03T00:00:00Z',
     updatedAt: '2024-01-03T00:00:00Z',
   },
@@ -226,155 +242,171 @@ const associationForm = reactive<AssociationForm>({
   remark: '',
 });
 
-// Options
-const associationTypeOptions = [
-  { label: '银行账户', value: 'bank' },
-  { label: '支付宝', value: 'alipay' },
-  { label: '微信支付', value: 'wechat' },
-  { label: '其他平台', value: 'other' },
-];
+const associationTypeOptions = computed(() => [
+  { label: $t('agency.associations.bankAccount'), value: 'bank' },
+  { label: $t('agency.associations.alipay'), value: 'alipay' },
+  { label: $t('agency.associations.wechatPay'), value: 'wechat' },
+  { label: $t('agency.associations.otherPlatform'), value: 'other' },
+]);
 
-const statusOptions = [
-  { label: '活跃', value: 'active' },
-  { label: '停用', value: 'inactive' },
-  { label: '待验证', value: 'pending' },
-];
+const statusOptions = computed(() => [
+  { label: $t('agency.associations.active'), value: 'active' },
+  { label: $t('agency.associations.inactive'), value: 'inactive' },
+  { label: $t('agency.associations.pending'), value: 'pending' },
+]);
 
-// Pagination
 const pagination = reactive({
   page: 1,
   pageSize: 10,
   itemCount: 0,
   showSizePicker: true,
   pageSizes: [10, 20, 50],
-  prefix: (info: any) => `共 ${info.itemCount} 条`,
+  prefix: (info: { itemCount: number }) =>
+    $t('agency.associations.totalRecords', [info.itemCount]),
   onUpdatePage: (page: number) => {
     pagination.page = page;
     loadAssociations();
   },
   onUpdatePageSize: (pageSize: number) => {
     pagination.pageSize = pageSize;
-    pagination.current = 1;
+    pagination.page = 1;
     loadAssociations();
   },
 });
 
-// Computed
 const totalAssociations = computed(() => associations.value.length);
-
 const activeAssociations = computed(
   () => associations.value.filter((assoc) => assoc.status === 'active').length,
 );
-
 const verifiedAssociations = computed(
   () => associations.value.filter((assoc) => assoc.status === 'active').length,
 );
-
 const pendingAssociations = computed(
   () => associations.value.filter((assoc) => assoc.status === 'pending').length,
 );
 
-// Table columns
-const columns: DataTableColumns<Association> = [
+const getTypeInfo = (type: string) => {
+  const map: Record<string, { label: string; type: string; icon: string }> = {
+    bank: {
+      label: $t('agency.associations.bankAccount'),
+      type: 'info',
+      icon: '🏦',
+    },
+    alipay: {
+      label: $t('agency.associations.alipay'),
+      type: 'success',
+      icon: '💳',
+    },
+    wechat: {
+      label: $t('agency.associations.wechatPay'),
+      type: 'success',
+      icon: '💬',
+    },
+    other: {
+      label: $t('agency.associations.otherPlatform'),
+      type: 'default',
+      icon: '🔗',
+    },
+  };
+  return map[type] || { label: type, type: 'default', icon: '❓' };
+};
+
+const getStatusInfo = (status: string) => {
+  const map: Record<string, { label: string; type: string; icon: string }> = {
+    active: {
+      label: $t('agency.associations.active'),
+      type: 'success',
+      icon: '✅',
+    },
+    inactive: {
+      label: $t('agency.associations.inactive'),
+      type: 'error',
+      icon: '❌',
+    },
+    pending: {
+      label: $t('agency.associations.pending'),
+      type: 'warning',
+      icon: '⏳',
+    },
+  };
+  return map[status] || { label: status, type: 'default', icon: '❓' };
+};
+
+const columns = computed<DataTableColumns<Association>>(() => [
+  { title: 'ID', key: 'id', width: 80, align: 'center' },
   {
-    title: 'ID',
-    key: 'id',
-    width: 80,
-    align: 'center',
-  },
-  {
-    title: '关联类型',
+    title: $t('agency.associations.associationType'),
     key: 'type',
     width: 120,
     render: (row) => {
-      const typeMap = {
-        bank: { label: '银行账户', type: 'info', icon: '🏦' },
-        alipay: { label: '支付宝', type: 'success', icon: '💳' },
-        wechat: { label: '微信支付', type: 'success', icon: '💬' },
-        other: { label: '其他平台', type: 'default', icon: '🔗' },
-      };
-      const typeInfo = typeMap[row.type as keyof typeof typeMap] || {
-        label: row.type,
-        type: 'default',
-        icon: '❓',
-      };
+      const typeInfo = getTypeInfo(row.type);
       return h('div', { class: 'flex items-center gap-2' }, [
         h('span', { class: 'text-lg' }, typeInfo.icon),
         h(
           NTag,
-          { type: typeInfo.type, size: 'small' },
+          { type: typeInfo.type as any, size: 'small' },
           { default: () => typeInfo.label },
         ),
       ]);
     },
   },
   {
-    title: '关联账号',
+    title: $t('agency.associations.associationAccount'),
     key: 'account',
     width: 200,
     ellipsis: true,
     tooltip: true,
   },
   {
-    title: '关联平台',
+    title: $t('agency.associations.associationPlatform'),
     key: 'platform',
     width: 150,
   },
   {
-    title: '关联原因',
+    title: $t('agency.associations.associationReason'),
     key: 'reason',
     width: 200,
     ellipsis: true,
     tooltip: true,
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 100,
     render: (row) => {
-      const statusMap = {
-        active: { label: '活跃', type: 'success', icon: '✅' },
-        inactive: { label: '停用', type: 'error', icon: '❌' },
-        pending: { label: '待验证', type: 'warning', icon: '⏳' },
-      };
-      const status = statusMap[row.status as keyof typeof statusMap] || {
-        label: row.status,
-        type: 'default',
-        icon: '❓',
-      };
+      const status = getStatusInfo(row.status);
       return h('div', { class: 'flex items-center justify-center gap-1' }, [
         h('span', { class: 'text-sm' }, status.icon),
         h(
           NTag,
-          { type: status.type, size: 'small' },
+          { type: status.type as any, size: 'small' },
           { default: () => status.label },
         ),
       ]);
     },
   },
   {
-    title: '创建时间',
+    title: $t('common.createTime'),
     key: 'createdAt',
     width: 180,
-    render: (row) => {
-      return h('div', { class: 'text-sm' }, [
+    render: (row) =>
+      h('div', { class: 'text-sm' }, [
         h('div', { class: 'font-medium' }, formatDateTime(row.createdAt)),
-      ]);
-    },
+      ]),
   },
   {
-    title: '备注',
+    title: $t('common.remark'),
     key: 'remark',
     ellipsis: true,
     tooltip: true,
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 150,
     fixed: 'right',
-    render: (row) => {
-      return h('div', { class: 'flex gap-1' }, [
+    render: (row) =>
+      h('div', { class: 'flex gap-1' }, [
         h(
           NButton,
           {
@@ -382,7 +414,7 @@ const columns: DataTableColumns<Association> = [
             type: 'primary',
             onClick: () => handleEditAssociation(row),
           },
-          { default: () => '编辑' },
+          { default: () => $t('common.edit') },
         ),
         h(
           NButton,
@@ -391,7 +423,12 @@ const columns: DataTableColumns<Association> = [
             type: row.status === 'active' ? 'warning' : 'success',
             onClick: () => handleToggleStatus(row),
           },
-          { default: () => (row.status === 'active' ? '停用' : '启用') },
+          {
+            default: () =>
+              row.status === 'active'
+                ? $t('common.disable')
+                : $t('common.enable'),
+          },
         ),
         h(
           NButton,
@@ -400,46 +437,42 @@ const columns: DataTableColumns<Association> = [
             type: 'error',
             onClick: () => handleDeleteAssociation(row.id),
           },
-          { default: () => '删除' },
+          { default: () => $t('common.delete') },
         ),
-      ]);
-    },
+      ]),
   },
-];
+]);
 
-// Form validation rules
-const rules = {
+const rules = computed(() => ({
   type: {
     required: true,
-    message: '请选择关联类型',
+    message: $t('agency.associations.selectAssociationType'),
     trigger: 'blur',
   },
   account: {
     required: true,
-    message: '请输入关联账号',
+    message: $t('agency.associations.enterAssociationAccountRequired'),
     trigger: 'blur',
   },
   platform: {
     required: true,
-    message: '请输入关联平台',
+    message: $t('agency.associations.enterAssociationPlatformRequired'),
     trigger: 'blur',
   },
   reason: {
     required: true,
-    message: '请输入关联原因',
+    message: $t('agency.associations.enterAssociationReasonRequired'),
     trigger: 'blur',
   },
-};
+}));
 
-// Methods
 const loadAssociations = async () => {
   loading.value = true;
   try {
-    // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 500));
     pagination.itemCount = associations.value.length;
-  } catch (error) {
-    message.error('加载关联账号失败');
+  } catch {
+    message.error($t('agency.associations.loadFailed'));
   } finally {
     loading.value = false;
   }
@@ -469,9 +502,7 @@ const handleEditAssociation = (association: Association) => {
 const handleSubmitAssociation = async () => {
   try {
     submitting.value = true;
-
     if (isEdit.value && currentAssociationId.value) {
-      // Update existing association
       const index = associations.value.findIndex(
         (assoc) => assoc.id === currentAssociationId.value,
       );
@@ -481,23 +512,20 @@ const handleSubmitAssociation = async () => {
           updatedAt: new Date().toISOString(),
         });
       }
-      message.success('关联账号更新成功');
+      message.success($t('agency.associations.updateSuccess'));
     } else {
-      // Add new association
-      const newAssociation: Association = {
+      associations.value.push({
         id: Date.now(),
         ...associationForm,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-      };
-      associations.value.push(newAssociation);
-      message.success('关联账号添加成功');
+      });
+      message.success($t('agency.associations.addSuccess'));
     }
-
     showAssociationModal.value = false;
     loadAssociations();
-  } catch (error) {
-    message.error('操作失败');
+  } catch {
+    message.error($t('agency.associations.opFailed'));
   } finally {
     submitting.value = false;
   }
@@ -507,7 +535,11 @@ const handleToggleStatus = (association: Association) => {
   association.status = association.status === 'active' ? 'inactive' : 'active';
   association.updatedAt = new Date().toISOString();
   message.success(
-    `关联账号已${association.status === 'active' ? '启用' : '停用'}`,
+    $t('agency.associations.statusUpdated', [
+      association.status === 'active'
+        ? $t('common.enable')
+        : $t('common.disable'),
+    ]),
   );
 };
 
@@ -515,22 +547,22 @@ const handleDeleteAssociation = (id: number) => {
   const index = associations.value.findIndex((assoc) => assoc.id === id);
   if (index !== -1) {
     associations.value.splice(index, 1);
-    message.success('关联账号删除成功');
+    message.success($t('agency.associations.deleteSuccess'));
     loadAssociations();
   }
 };
 
 const handleBatchVerify = () => {
-  message.info('批量验证功能开发中...');
+  message.info($t('agency.associations.batchVerifyDeveloping'));
 };
 
 const handleExportAssociations = () => {
-  message.info('导出关联账号功能开发中...');
+  message.info($t('agency.associations.exportDeveloping'));
 };
 
 const handleRefresh = () => {
   loadAssociations();
-  message.success('已刷新');
+  message.success($t('agency.associations.refreshed'));
 };
 
 const resetForm = () => {
@@ -545,7 +577,7 @@ const resetForm = () => {
 };
 
 const formatDateTime = (dateString: string) => {
-  return new Date(dateString).toLocaleString('zh-CN');
+  return new Date(dateString).toLocaleString();
 };
 
 onMounted(() => {

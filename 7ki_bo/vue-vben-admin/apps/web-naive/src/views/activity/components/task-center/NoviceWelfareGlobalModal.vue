@@ -2,7 +2,7 @@
   <n-modal
     v-model:show="showModal"
     preset="dialog"
-    title="新人福利设置"
+    :title="$t('activity.noviceWelfareGlobal.k65b0')"
     style="width: 800px; max-height: 90vh"
     class="global-settings-modal"
   >
@@ -16,271 +16,265 @@
         class="global-form"
       >
         <!-- 选择币种 -->
-        <n-form-item label="选择币种">
+        <n-form-item :label="$t('activity.providentFundSetting.k9009')">
           <div class="checkbox-group">
             <n-checkbox
               v-model:checked="formData.currencySelectAll"
               @update:checked="handleCurrencySelectAll"
-            >
-              全选
-            </n-checkbox>
-            <n-checkbox v-model:checked="formData.currencyBRL">
-              巴西(BRL)
-            </n-checkbox>
+            >{{ $t('activity.formModal.k51683') }}</n-checkbox>
+            <n-checkbox v-model:checked="formData.currencyBRL">{{ $t('activity.noviceWelfareGlobal.k5df4BRL') }}</n-checkbox>
           </div>
         </n-form-item>
 
         <!-- 参与会员 -->
-        <n-form-item label="参与会员">
+        <n-form-item :label="$t('activity.detailModal.k53c2')">
           <div class="member-groups">
             <n-checkbox
               v-model:checked="formData.memberGroupsSelectAll"
               @update:checked="handleMemberGroupsSelectAll"
-            >
-              全选
-            </n-checkbox>
+            >{{ $t('activity.formModal.k51683') }}</n-checkbox>
             <div class="member-grid">
               <n-checkbox v-model:checked="formData.memberGroups.defaultLevel"
-                >默认层级</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k9ed8') }}</n-checkbox
               >
               <n-checkbox v-model:checked="formData.memberGroups.yellowLevel"
-                >黄用层级</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k9ec4') }}</n-checkbox
               >
               <n-checkbox v-model:checked="formData.memberGroups.fiveYuan"
-                >五元玩家</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k4e94') }}</n-checkbox
               >
               <n-checkbox v-model:checked="formData.memberGroups.tenYuan"
-                >十元玩家</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k5341') }}</n-checkbox
               >
               <n-checkbox v-model:checked="formData.memberGroups.thirtyYuan"
-                >三十元玩家</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k4e09') }}</n-checkbox
               >
               <n-checkbox v-model:checked="formData.memberGroups.fiftyYuan"
-                >五十元玩家</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k4e942') }}</n-checkbox
               >
               <n-checkbox v-model:checked="formData.memberGroups.oneHundredYuan"
-                >一百元玩家</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k4e00') }}</n-checkbox
               >
               <n-checkbox
                 v-model:checked="formData.memberGroups.threeHundredYuan"
-                >三百元玩家</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k4e092') }}</n-checkbox
               >
               <n-checkbox
                 v-model:checked="formData.memberGroups.oneThousandYuan"
-                >一千元玩家</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k4e002') }}</n-checkbox
               >
               <n-checkbox
                 v-model:checked="formData.memberGroups.threeThousandYuan"
-                >三千元玩家</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k4e093') }}</n-checkbox
               >
               <n-checkbox
                 v-model:checked="formData.memberGroups.fiveThousandYuan"
-                >五千元玩家</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k4e943') }}</n-checkbox
               >
               <n-checkbox
                 v-model:checked="formData.memberGroups.tenThousandYuan"
-                >一万元玩家</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k4e003') }}</n-checkbox
               >
               <n-checkbox
                 v-model:checked="formData.memberGroups.thirtyThousandYuan"
-                >三万元玩家</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k4e094') }}</n-checkbox
               >
               <n-checkbox
                 v-model:checked="formData.memberGroups.fiftyThousandYuan"
-                >五万元玩家</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k4e944') }}</n-checkbox
               >
               <n-checkbox
                 v-model:checked="formData.memberGroups.oneHundredThousandYuan"
-                >十万元玩家</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k53412') }}</n-checkbox
               >
               <n-checkbox v-model:checked="formData.memberGroups.millionYuan"
-                >百万土豪</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k767e') }}</n-checkbox
               >
               <n-checkbox v-model:checked="formData.memberGroups.childrenPlay"
-                >刷子玩家</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k5237') }}</n-checkbox
               >
               <n-checkbox v-model:checked="formData.memberGroups.chainPlay"
-                >可链玩家</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k53ef') }}</n-checkbox
               >
               <n-checkbox v-model:checked="formData.memberGroups.badgePlay"
-                >恶意玩家</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k6076') }}</n-checkbox
               >
               <n-checkbox v-model:checked="formData.memberGroups.profitPlay"
-                >套利玩家</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k5957') }}</n-checkbox
               >
               <n-checkbox
                 v-model:checked="formData.memberGroups.otherHighProfile"
-                >其他高性玩家</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k5176') }}</n-checkbox
               >
               <n-checkbox v-model:checked="formData.memberGroups.deadUser"
-                >死亡用户</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k6b7b') }}</n-checkbox
               >
               <n-checkbox v-model:checked="formData.memberGroups.fixedAgent"
-                >固定代理</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k56fa') }}</n-checkbox
               >
               <n-checkbox v-model:checked="formData.memberGroups.manualExport"
-                >手动出款专用</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k624b') }}</n-checkbox
               >
               <n-checkbox v-model:checked="formData.memberGroups.testLevel"
-                >测试专用层级</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k6d4b') }}</n-checkbox
               >
             </div>
           </div>
         </n-form-item>
 
         <!-- 任务时长 -->
-        <n-form-item label="任务时长">
+        <n-form-item :label="$t('activity.noviceWelfareGlobal.k4efb')">
           <n-radio-group v-model:value="formData.taskDuration">
             <n-space>
-              <n-radio value="LONG_TERM">长期</n-radio>
-              <n-radio value="LIMITED_TIME">限时</n-radio>
+              <n-radio value="LONG_TERM">{{ $t('activity.noviceWelfareGlobal.k957f') }}</n-radio>
+              <n-radio value="LIMITED_TIME">{{ $t('activity.noviceWelfareGlobal.k9650') }}</n-radio>
             </n-space>
           </n-radio-group>
         </n-form-item>
 
         <!-- 领取方式 -->
-        <n-form-item label="领取方式">
+        <n-form-item :label="$t('activity.rewardReport.k9886')">
           <n-radio-group v-model:value="formData.claimMethod">
             <n-space>
-              <n-radio value="MANUAL">手动领取</n-radio>
-              <n-radio value="AUTO_DISPATCH">系统立即自动派发</n-radio>
+              <n-radio value="MANUAL">{{ $t('activity.rewardReport.k624b') }}</n-radio>
+              <n-radio value="AUTO_DISPATCH">{{ $t('activity.formModal.k7cfb2') }}</n-radio>
             </n-space>
           </n-radio-group>
         </n-form-item>
 
         <!-- 领取时间 -->
-        <n-form-item label="领取时间">
+        <n-form-item :label="$t('activity.rewardReport.k98862')">
           <n-radio-group v-model:value="formData.claimTime">
             <n-space>
-              <n-radio value="NEXT_DAY">次日</n-radio>
-              <n-radio value="REAL_TIME">当天实时(影响留存)</n-radio>
+              <n-radio value="NEXT_DAY">{{ $t('activity.noviceWelfareGlobal.k6b21') }}</n-radio>
+              <n-radio value="REAL_TIME">{{ $t('activity.noviceWelfareGlobal.k5f53k5f71') }}</n-radio>
             </n-space>
           </n-radio-group>
         </n-form-item>
 
         <!-- 领取入口 -->
-        <n-form-item label="领取入口">
+        <n-form-item :label="$t('activity.luckyWheelPublicConfig.k98862')">
           <div class="claim-entries">
             <div class="entry-group">
               <n-checkbox v-model:checked="formData.claimAndroidApp"
-                >Android_APP可领取</n-checkbox
+                >{{ $t('activity.formModal.androidAPP') }}</n-checkbox
               >
               <n-checkbox v-model:checked="formData.claimIOSApp"
-                >iOS_APP可领取</n-checkbox
+                >{{ $t('activity.formModal.iOSAPP') }}</n-checkbox
               >
             </div>
             <div class="entry-group">
               <n-checkbox v-model:checked="formData.claimOriginalApp"
-                >原生APP</n-checkbox
+                >{{ $t('activity.formModal.k539f') }}</n-checkbox
               >
               <n-checkbox v-model:checked="formData.claimPolarApp"
-                >极速APP</n-checkbox
+                >{{ $t('activity.formModal.k6781') }}</n-checkbox
               >
               <n-checkbox v-model:checked="formData.claimMarketBag"
-                >马甲包</n-checkbox
+                >{{ $t('activity.formModal.k9a6c') }}</n-checkbox
               >
               <n-checkbox v-model:checked="formData.claimPWAFastApp"
-                >PWA快捷APP</n-checkbox
+                >{{ $t('activity.formModal.pWAAPP') }}</n-checkbox
               >
               <n-checkbox v-model:checked="formData.claimIOSRedirect"
-                >iOS描述版</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.iOS') }}</n-checkbox
               >
             </div>
             <div class="entry-group">
               <n-checkbox v-model:checked="formData.claimSameDeviceOnce"
-                >同登录设备号只能领取1次</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k540c') }}</n-checkbox
               >
             </div>
             <div class="entry-group">
               <n-checkbox v-model:checked="formData.claimPCWeb"
-                >PC可领取</n-checkbox
+                >{{ $t('activity.formModal.pC') }}</n-checkbox
               >
               <n-checkbox v-model:checked="formData.claimAndroidH5"
-                >Android_H5可领取</n-checkbox
+                >{{ $t('activity.formModal.androidH5') }}</n-checkbox
               >
               <n-checkbox v-model:checked="formData.claimIOSH5"
-                >iOS_H5可领取</n-checkbox
+                >{{ $t('activity.formModal.iOSH5') }}</n-checkbox
               >
               <n-checkbox v-model:checked="formData.claimTGApp"
-                >TG_APP可领取</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.tGAPP') }}</n-checkbox
               >
             </div>
             <div class="entry-group">
               <n-checkbox v-model:checked="formData.claimSameDeviceBindingOnce"
-                >同网络器绑定号只能领取1次</n-checkbox
+                >{{ $t('activity.noviceWelfareGlobal.k540c2') }}</n-checkbox
               >
             </div>
           </div>
         </n-form-item>
 
         <!-- 更多领取限制 -->
-        <n-form-item label="更多领取限制">
+        <n-form-item :label="$t('activity.luckyWheelPublicConfig.k66f4')">
           <div class="restrictions-grid">
             <n-checkbox v-model:checked="formData.requirePhoneVerification"
-              >完成短信验证才能领取</n-checkbox
+              >{{ $t('activity.noviceWelfareGlobal.k5b8c') }}</n-checkbox
             >
             <n-checkbox v-model:checked="formData.requireEmailVerification"
-              >完成邮箱验证才能领取</n-checkbox
+              >{{ $t('activity.formModal.k5b8c2') }}</n-checkbox
             >
             <n-checkbox v-model:checked="formData.requireBirthdaySet"
-              >完成生日设置才能领取</n-checkbox
+              >{{ $t('activity.formModal.k5b8c5') }}</n-checkbox
             >
             <n-checkbox v-model:checked="formData.requireBankBinding"
-              >完成银行卡绑定才能领取</n-checkbox
+              >{{ $t('activity.formModal.k5b8c3') }}</n-checkbox
             >
             <n-checkbox v-model:checked="formData.requireCityBinding"
-              >绑定城市扣税才能领取</n-checkbox
+              >{{ $t('activity.noviceWelfareGlobal.k7ed1') }}</n-checkbox
             >
             <n-checkbox v-model:checked="formData.requireThirdPartyWallet"
-              >绑定三方钱包才能领取</n-checkbox
+              >{{ $t('activity.formModal.k7ed12') }}</n-checkbox
             >
             <n-checkbox v-model:checked="formData.requirePaymentMethod"
-              >绑定收款方式才能领取</n-checkbox
+              >{{ $t('activity.formModal.k7ed13') }}</n-checkbox
             >
             <n-checkbox v-model:checked="formData.requireRealNameAuth"
-              >填写真实姓名才能领取</n-checkbox
+              >{{ $t('activity.formModal.k586b') }}</n-checkbox
             >
             <n-checkbox v-model:checked="formData.requireBiometricAuth"
-              >绑定生物识别才可领取</n-checkbox
+              >{{ $t('activity.noviceWelfareGlobal.k7ed12') }}</n-checkbox
             >
             <n-checkbox v-model:checked="formData.requireKycVerification"
-              >完成KYC认证才可领取</n-checkbox
+              >{{ $t('activity.noviceWelfareGlobal.k5b8c2') }}</n-checkbox
             >
             <n-checkbox v-model:checked="formData.sameNameOnlyOnce"
-              >同姓名只能领取1次</n-checkbox
+              >{{ $t('activity.noviceWelfareGlobal.k540c3') }}</n-checkbox
             >
             <n-checkbox v-model:checked="formData.requireFirstRecharge"
-              >完成首充才能领取</n-checkbox
+              >{{ $t('activity.noviceWelfareGlobal.k5b8c3') }}</n-checkbox
             >
             <n-checkbox v-model:checked="formData.sameIpOnce"
-              >同登录IP号只能领取1次</n-checkbox
+              >{{ $t('activity.noviceWelfareGlobal.k540c4') }}</n-checkbox
             >
             <n-checkbox v-model:checked="formData.onlyRegisteredDevices"
-              >仅注册设备号可领取</n-checkbox
+              >{{ $t('activity.noviceWelfareGlobal.k4ec5') }}</n-checkbox
             >
           </div>
         </n-form-item>
 
         <!-- 登录前弹窗方式 -->
-        <n-form-item label="登录前弹窗方式">
+        <n-form-item :label="$t('activity.formModal.k767b')">
           <n-select
             v-model:value="formData.loginBeforePopupMethod"
             :options="popupMethodOptions"
-            placeholder="请选择登录前弹窗方式"
+            :placeholder="$t('activity.noviceWelfareGlobal.k8bf7')"
           />
         </n-form-item>
 
         <!-- 登录后弹窗方式 -->
-        <n-form-item label="登录后弹窗方式">
+        <n-form-item :label="$t('activity.formModal.k767b2')">
           <n-select
             v-model:value="formData.loginAfterPopupMethod"
             :options="popupMethodOptions"
-            placeholder="请选择登录后弹窗方式"
+            :placeholder="$t('activity.noviceWelfareGlobal.k8bf72')"
           />
         </n-form-item>
 
         <!-- 稽核倍数 -->
-        <n-form-item label="稽核倍数">
+        <n-form-item :label="$t('activity.formModal.k7a3d2')">
           <n-input-number
             v-model:value="formData.auditMultiplier"
             :min="0"
@@ -292,42 +286,42 @@
         </n-form-item>
 
         <!-- 奖金稽核指定平台 -->
-        <n-form-item label="奖金稽核指定平台">
+        <n-form-item :label="$t('activity.distributeReward.k5956')">
           <n-radio-group v-model:value="formData.bonusAuditPlatformRestriction">
             <n-space>
-              <n-radio value="UNLIMITED">不限制</n-radio>
-              <n-radio value="SPECIFIED_ONLY">仅限指定平台</n-radio>
-              <n-radio value="EXCLUDE_SPECIFIED">排除指定平台</n-radio>
+              <n-radio value="UNLIMITED">{{ $t('activity.formModal.k4e0d4') }}</n-radio>
+              <n-radio value="SPECIFIED_ONLY">{{ $t('activity.noviceWelfareGlobal.k4ec52') }}</n-radio>
+              <n-radio value="EXCLUDE_SPECIFIED">{{ $t('activity.noviceWelfareGlobal.k6392') }}</n-radio>
             </n-space>
           </n-radio-group>
         </n-form-item>
 
         <!-- 奖金提现方式限制 -->
-        <n-form-item label="奖金提现方式限制">
+        <n-form-item :label="$t('activity.formModal.k595611')">
           <n-radio-group
             v-model:value="formData.bonusWithdrawalMethodRestriction"
           >
             <n-space>
-              <n-radio value="UNLIMITED">不限制</n-radio>
-              <n-radio value="SPECIFIED_ONLY">仅限指定方式</n-radio>
+              <n-radio value="UNLIMITED">{{ $t('activity.formModal.k4e0d4') }}</n-radio>
+              <n-radio value="SPECIFIED_ONLY">{{ $t('activity.noviceWelfareGlobal.k4ec53') }}</n-radio>
             </n-space>
           </n-radio-group>
         </n-form-item>
 
         <!-- 规则说明 -->
-        <n-form-item label="规则说明">
+        <n-form-item :label="$t('activity.formModal.k89c4')">
           <div class="rule-description">
             <n-radio-group v-model:value="formData.ruleDescriptionType">
               <n-space vertical>
-                <n-radio value="CUSTOM">自定义</n-radio>
-                <n-radio value="SYSTEM_TRANSLATE">系统翻译</n-radio>
+                <n-radio value="CUSTOM">{{ $t('activity.detailModal.k81ea') }}</n-radio>
+                <n-radio value="SYSTEM_TRANSLATE">{{ $t('activity.noviceWelfareGlobal.k7cfb') }}</n-radio>
               </n-space>
             </n-radio-group>
             <n-input
               v-if="formData.ruleDescriptionType === 'CUSTOM'"
               v-model:value="formData.ruleDescriptionCustomText"
               type="textarea"
-              placeholder="请输入自定义规则说明..."
+              :placeholder="$t('activity.noviceWelfareGlobal.k8bf73')"
               :rows="6"
               class="mt-4"
             />
@@ -338,16 +332,16 @@
 
     <template #action>
       <n-space>
-        <n-button @click="handleCancel">取消</n-button>
-        <n-button type="primary" :loading="submitting" @click="handleSubmit">
-          确认
-        </n-button>
+        <n-button @click="handleCancel">{{ $t('activity.activityList.k53d6') }}</n-button>
+        <n-button type="primary" :loading="submitting" @click="handleSubmit">{{ $t('activity.noviceWelfareGlobal.k786e') }}</n-button>
       </n-space>
     </template>
   </n-modal>
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, computed, watch, reactive } from 'vue';
 import {
   NModal,
@@ -392,9 +386,9 @@ const showModal = computed({
 
 // Popup method options
 const popupMethodOptions = [
-  { label: '高频弹窗', value: 'HIGH_FREQUENCY' },
-  { label: '不弹窗', value: 'NO_POPUP' },
-  { label: '自定义', value: 'CUSTOM' },
+  { label: $t('activity.formModal.k9ad8'), value: 'HIGH_FREQUENCY' },
+  { label: $t('activity.formModal.k4e0d'), value: 'NO_POPUP' },
+  { label: $t('activity.detailModal.k81ea'), value: 'CUSTOM' },
 ];
 
 // Form data matching the screenshot
@@ -483,7 +477,7 @@ const formData = reactive({
   // Rule Description
   ruleDescriptionType: 'CUSTOM',
   ruleDescriptionCustomText:
-    '1.每个新注册的账号都可以完成以上任务，完成任务后可获得一定金额奖金，难度越高，奖励越多；\n2.满足条件即可直接领取，可在iOS_APP、Android_APP、iOS_H5、Android_H5、PC任意一端直接领取，过期作废（即未主动领取视为自愿放弃）；\n3.因本任务赠送的奖金较高，所以赠送的奖金需10.00倍流水（即稽核，打码或有效投注）才能提现；\n4.本任务仅限账号本人进行正常的人为操作，禁止租借、使用外挂、机器人、不同账号对打、互刷、套利、接口、协议、利用漏洞、群控或其他技术手段参与，否则取消或扣除相关，冻结、甚至拉入黑名单；\n5.为避免文字理解差异，平台将保留本活动最终解释权。',
+    $t('activity.rulePreviews.noviceWelfare'),
 });
 
 // Handle currency select all
@@ -522,12 +516,12 @@ const handleSubmit = async () => {
 
     await updateGlobalTaskSettings(submitData);
 
-    message.success('新人福利全局设置保存成功');
+    message.success($t('activity.noviceWelfareGlobal.k65b02'));
     showModal.value = false;
     emit('submit');
   } catch (error: any) {
     console.error('Global settings submission failed:', error);
-    message.error(error.message || '保存设置失败，请重试');
+    message.error(error.message || $t('activity.common.saveSettingsFailed'));
   } finally {
     submitting.value = false;
   }
@@ -578,7 +572,7 @@ watch(showModal, async (newValue) => {
       }
     } catch (error) {
       console.error('Failed to load settings:', error);
-      message.warning('加载设置失败，使用默认值');
+      message.warning($t('activity.noviceWelfareGlobal.k52a0k4f7f'));
     }
   }
 });

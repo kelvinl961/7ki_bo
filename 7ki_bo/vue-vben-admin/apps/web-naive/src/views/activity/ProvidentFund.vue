@@ -1,46 +1,44 @@
 <template>
   <div class="provident-fund-page">
-    <Page title="公积金" description="用户每次充值后获得对应比例的公积金奖励，需完成对应倍数的打码后才可取出领取；仅统计公积金开关开启后的充值。">
+    <Page :title="$t('activity.rewardReport.k516c')" :description="$t('activity.providentFund.k7528k9700k4ec5')">
       <n-card>
         <n-tabs v-model:value="activeTab" type="line" class="mb-4">
-          <n-tab-pane name="details" tab="公积金明细" />
-          <n-tab-pane name="wagering" tab="投注要求" />
-          <n-tab-pane name="withdrawals" tab="取出记录" />
+          <n-tab-pane name="details" :tab="$t('activity.providentFund.k516c')" />
+          <n-tab-pane name="wagering" :tab="$t('activity.providentFund.k6295')" />
+          <n-tab-pane name="withdrawals" :tab="$t('activity.providentFund.k53d6')" />
         </n-tabs>
 
         <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
           <n-space align="center" wrap>
-            <span class="text-sm text-gray-600">公积金开关</span>
+            <span class="text-sm text-gray-600">{{ $t('activity.providentFund.k516c2') }}</span>
             <n-switch
               :value="pfEnabled"
               :loading="switchLoading"
               @update:value="onSwitch"
             />
             <n-text v-if="pfEnabledAt" depth="3" class="text-xs">
-              开启时间：{{ formatTs(pfEnabledAt) }}
+              {{ $t('activity.common.enabledAt') }}{{ formatTs(pfEnabledAt) }}
             </n-text>
           </n-space>
           <n-space>
-            <n-button type="primary" @click="showSettings = true">公积金设置</n-button>
-            <n-button v-if="activeTab === 'details'" secondary @click="exportDetails">
-              导出报表
-            </n-button>
+            <n-button type="primary" @click="showSettings = true">{{ $t('activity.providentFund.k516c3') }}</n-button>
+            <n-button v-if="activeTab === 'details'" secondary @click="exportDetails">{{ $t('activity.luckyWheel.k5bfc') }}</n-button>
           </n-space>
         </div>
 
         <n-form class="mb-4" :show-feedback="false" label-placement="left" label-width="auto">
           <n-grid :cols="24" :x-gap="12" :y-gap="8">
             <n-gi :span="6">
-              <n-form-item label="时间">
+              <n-form-item :label="$t('activity.luckyWheel.k65f6')">
                 <n-space>
-                  <n-button size="small" @click="setQuickRange('day')">日</n-button>
-                  <n-button size="small" @click="setQuickRange('week')">周</n-button>
-                  <n-button size="small" @click="setQuickRange('month')">月</n-button>
+                  <n-button size="small" @click="setQuickRange('day')">{{ $t('activity.statistics.k65e5') }}</n-button>
+                  <n-button size="small" @click="setQuickRange('week')">{{ $t('activity.providentFund.k5468') }}</n-button>
+                  <n-button size="small" @click="setQuickRange('month')">{{ $t('activity.providentFund.k6708') }}</n-button>
                 </n-space>
               </n-form-item>
             </n-gi>
             <n-gi :span="12">
-              <n-form-item label="范围">
+              <n-form-item :label="$t('activity.luckyWheel.k8303')">
                 <n-date-picker
                   v-model:value="dateRange"
                   type="datetimerange"
@@ -50,26 +48,26 @@
               </n-form-item>
             </n-gi>
             <n-gi :span="6">
-              <n-form-item label="会员账号">
-                <n-input v-model:value="filters.account" clearable placeholder="请输入会员账号" />
+              <n-form-item :label="$t('activity.rewardReport.k4f1a3')">
+                <n-input v-model:value="filters.account" clearable :placeholder="$t('activity.luckyWheelAddLuckyValue.k8bf7')" />
               </n-form-item>
             </n-gi>
             <n-gi :span="6">
-              <n-form-item label="活动币种">
+              <n-form-item :label="$t('activity.providentFund.k6d3b')">
                 <n-select
                   v-model:value="filters.currency"
                   clearable
-                  placeholder="全部"
+                  :placeholder="$t('activity.common.allPlaceholder')"
                   :options="currencyOptions"
                 />
               </n-form-item>
             </n-gi>
             <n-gi :span="6" v-if="activeTab === 'wagering'">
-              <n-form-item label="投注状态">
+              <n-form-item :label="$t('activity.providentFund.k62952')">
                 <n-select
                   v-model:value="filters.status"
                   clearable
-                  placeholder="全部"
+                  :placeholder="$t('activity.common.allPlaceholder')"
                   :options="statusOptions"
                 />
               </n-form-item>
@@ -77,8 +75,8 @@
             <n-gi :span="6">
               <n-form-item :show-label="false">
                 <n-space>
-                  <n-button type="primary" @click="reloadActive">搜索</n-button>
-                  <n-button @click="resetFilters">重置</n-button>
+                  <n-button type="primary" @click="reloadActive">{{ $t('activity.rewardReport.k641c') }}</n-button>
+                  <n-button @click="resetFilters">{{ $t('activity.recordModal.k91cd') }}</n-button>
                 </n-space>
               </n-form-item>
             </n-gi>
@@ -103,7 +101,7 @@
       <ProvidentFundSettingModal
         v-model:show="showSettings"
         mode="edit"
-        title-text="公积金设置"
+        :title-text="$t('activity.common.pfSettingsTitle')"
         :initial-snapshot="settingsSnapshot ?? defaultProvidentFundSnapshot()"
         @saved="onSettingsSaved"
       />
@@ -112,6 +110,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, watch, h } from 'vue';
 import {
   NCard,
@@ -167,8 +167,8 @@ const filters = reactive({
 const currencyOptions = [{ label: 'BRL', value: 'BRL' }];
 
 const statusOptions = [
-  { label: '进行中', value: 'IN_PROGRESS' },
-  { label: '已完成', value: 'COMPLETED' },
+  { label: $t('activity.detailModal.k8fdb'), value: 'IN_PROGRESS' },
+  { label: $t('activity.recordModal.k5df2'), value: 'COMPLETED' },
 ];
 
 const loading = ref(false);
@@ -179,7 +179,7 @@ const pagination = reactive({
   itemCount: 0,
   showSizePicker: true,
   pageSizes: [10, 20, 50],
-  prefix: (info: any) => `共 ${info.itemCount} 条`,
+  prefix: (info: any) => $t('activity.totalRecords', [info.itemCount]),
 });
 
 function toFiniteNumber(v: unknown): number | null {
@@ -267,9 +267,9 @@ async function onSwitch(v: boolean) {
     const r = await putProvidentFundAdminSwitchApi(v);
     pfEnabled.value = r.enabled;
     pfEnabledAt.value = r.enabledAt;
-    message.success(v ? '已开启公积金统计' : '已关闭公积金');
+    message.success(v ? $t('activity.common.pfEnabledOn') : $t('activity.common.pfDisabled'));
   } catch {
-    message.error('开关更新失败');
+    message.error($t('activity.luckyWheel.k5f00'));
   } finally {
     switchLoading.value = false;
   }
@@ -322,7 +322,7 @@ async function reloadActive() {
     }
   } catch (e) {
     console.error(e);
-    message.error('加载失败');
+    message.error($t('activity.rewardReport.k52a03'));
   } finally {
     loading.value = false;
   }
@@ -356,9 +356,9 @@ async function exportDetails() {
     a.download = 'provident-fund-details.csv';
     a.click();
     URL.revokeObjectURL(url);
-    message.success('导出已开始');
+    message.success($t('activity.providentFund.k5bfc'));
   } catch {
-    message.error('导出失败');
+    message.error($t('activity.statistics.k5bfc3'));
   }
 }
 
@@ -368,47 +368,47 @@ async function onSettingsSaved() {
 
 function resetCycleLabel(v: string) {
   const m: Record<string, string> = {
-    none: '不限制',
-    monthly: '每月',
-    quarterly: '每季度',
-    semi_annual: '每半年',
-    annual: '每年',
+    none: $t('activity.cycles.none'),
+    monthly: $t('activity.cycles.monthly'),
+    quarterly: $t('activity.cycles.quarterly'),
+    semi_annual: $t('activity.cycles.semi_annual'),
+    annual: $t('activity.cycles.annual'),
   };
   return m[v] || v || '--';
 }
 
 const detailColumns: DataTableColumns<any> = [
   {
-    title: '会员ID',
+    title: $t('activity.rewardReport.k4f1a2'),
     key: 'userId',
     width: 100,
     render: (row) =>
       h('span', { style: 'color:#2080f0;cursor:pointer' }, String(row.userId)),
   },
-  { title: '会员账号', key: 'memberAccount', width: 120, ellipsis: { tooltip: true } },
-  { title: '币种', key: 'currency', width: 80 },
-  { title: '充值金额', key: 'rechargeAmount', width: 100 },
-  { title: '赠送比例', key: 'giftRatioPercent', width: 90, render: (r) => `${r.giftRatioPercent}%` },
-  { title: '赠送前公积金', key: 'balanceBefore', width: 120 },
-  { title: '赠送公积金', key: 'giftAmount', width: 110 },
-  { title: '赠送后公积金', key: 'balanceAfter', width: 120 },
+  { title: $t('activity.rewardReport.k4f1a3'), key: 'memberAccount', width: 120, ellipsis: { tooltip: true } },
+  { title: $t('activity.luckyWheel.k5e01'), key: 'currency', width: 80 },
+  { title: $t('activity.formModal.k5145'), key: 'rechargeAmount', width: 100 },
+  { title: $t('activity.providentFund.k8d60'), key: 'giftRatioPercent', width: 90, render: (r) => `${r.giftRatioPercent}%` },
+  { title: $t('activity.providentFund.k8d602'), key: 'balanceBefore', width: 120 },
+  { title: $t('activity.providentFund.k8d603'), key: 'giftAmount', width: 110 },
+  { title: $t('activity.providentFund.k8d604'), key: 'balanceAfter', width: 120 },
   {
-    title: '已赠送/封顶次数',
+    title: $t('activity.providentFund.k5df2k5c01'),
     key: 'times',
     width: 130,
     render: (r) =>
       r.giftTimesCap != null ? `${r.giftTimesCurrent ?? ''}/${r.giftTimesCap}` : '--',
   },
   {
-    title: '公积金封顶',
+    title: $t('activity.providentFund.k516c4'),
     key: 'cumulativeCap',
     width: 110,
     render: (r) => (r.cumulativeCap != null ? r.cumulativeCap : '--'),
   },
-  { title: '投注倍数', key: 'betMultiple', width: 90 },
-  { title: '新增投注量', key: 'newBetRequirement', width: 110 },
+  { title: $t('activity.providentFund.k62953'), key: 'betMultiple', width: 90 },
+  { title: $t('activity.providentFund.k65b0'), key: 'newBetRequirement', width: 110 },
   {
-    title: '更新时间',
+    title: $t('activity.detailModal.k66f4'),
     key: 'createdAt',
     width: 170,
     render: (r) => formatTs(r.createdAt),
@@ -417,20 +417,20 @@ const detailColumns: DataTableColumns<any> = [
 
 const wageringColumns: DataTableColumns<any> = [
   {
-    title: '会员ID',
+    title: $t('activity.rewardReport.k4f1a2'),
     key: 'userId',
     width: 90,
     render: (row) => h('span', { style: 'color:#2080f0' }, String(row.userId)),
   },
-  { title: '会员账号', key: 'memberAccount', width: 120, ellipsis: { tooltip: true } },
-  { title: '币种', key: 'currency', width: 70 },
-  { title: '重置周期', key: 'resetCycle', width: 100, render: (r) => resetCycleLabel(r.resetCycle) },
-  { title: '公积金奖金', key: 'bonusAmount', width: 110 },
-  { title: '总要求投注', key: 'totalRequiredBet', width: 110 },
-  { title: '已投注', key: 'wageredBet', width: 90 },
-  { title: '剩余投注', key: 'remainingBet', width: 90 },
+  { title: $t('activity.rewardReport.k4f1a3'), key: 'memberAccount', width: 120, ellipsis: { tooltip: true } },
+  { title: $t('activity.luckyWheel.k5e01'), key: 'currency', width: 70 },
+  { title: $t('activity.providentFundSetting.k91cd'), key: 'resetCycle', width: 100, render: (r) => resetCycleLabel(r.resetCycle) },
+  { title: $t('activity.providentFund.k516c5'), key: 'bonusAmount', width: 110 },
+  { title: $t('activity.providentFund.k603b'), key: 'totalRequiredBet', width: 110 },
+  { title: $t('activity.providentFund.k5df23'), key: 'wageredBet', width: 90 },
+  { title: $t('activity.providentFund.k5269'), key: 'remainingBet', width: 90 },
   {
-    title: '限制平台',
+    title: $t('activity.providentFund.k9650'),
     key: 'platformLabels',
     width: 120,
     ellipsis: { tooltip: true },
@@ -442,18 +442,18 @@ const wageringColumns: DataTableColumns<any> = [
     },
   },
   {
-    title: '投注状态',
+    title: $t('activity.providentFund.k62952'),
     key: 'bettingStatus',
     width: 100,
     render: (r) =>
       h(
         'span',
         { style: { color: r.bettingStatus === 'COMPLETED' ? '#18a058' : '#2080f0' } },
-        r.bettingStatus === 'COMPLETED' ? '已完成' : '进行中',
+        r.bettingStatus === 'COMPLETED' ? $t('activity.statuses.completed') : $t('activity.statuses.inProgress'),
       ),
   },
   {
-    title: '操作',
+    title: $t('activity.rewardReport.k64cd'),
     key: 'actions',
     width: 120,
     render: (r) =>
@@ -466,11 +466,11 @@ const wageringColumns: DataTableColumns<any> = [
           disabled: r.bettingStatus === 'COMPLETED',
           onClick: () => doForce(r),
         },
-        { default: () => '强制解除' },
+        { default: () => $t('activity.providentFund.k5f3a') },
       ),
   },
   {
-    title: '创建时间',
+    title: $t('activity.providentFund.k521b'),
     key: 'firstOccurrenceAt',
     width: 170,
     render: (r) => formatTs(r.firstOccurrenceAt),
@@ -478,11 +478,11 @@ const wageringColumns: DataTableColumns<any> = [
 ];
 
 const withdrawalColumns: DataTableColumns<any> = [
-  { title: '会员ID', key: 'userId', width: 90 },
-  { title: '会员账号', key: 'memberAccount', width: 140, ellipsis: { tooltip: true } },
-  { title: '币种', key: 'currency', width: 80 },
-  { title: '取出金额', key: 'amount', width: 110 },
-  { title: '领取时间', key: 'claimedAt', width: 180, render: (r) => formatTs(r.claimedAt) },
+  { title: $t('activity.rewardReport.k4f1a2'), key: 'userId', width: 90 },
+  { title: $t('activity.rewardReport.k4f1a3'), key: 'memberAccount', width: 140, ellipsis: { tooltip: true } },
+  { title: $t('activity.luckyWheel.k5e01'), key: 'currency', width: 80 },
+  { title: $t('activity.providentFund.k53d62'), key: 'amount', width: 110 },
+  { title: $t('activity.rewardReport.k98862'), key: 'claimedAt', width: 180, render: (r) => formatTs(r.claimedAt) },
 ];
 
 const activeColumns = computed(() => {
@@ -494,10 +494,10 @@ const activeColumns = computed(() => {
 async function doForce(row: any) {
   try {
     await forceReleaseProvidentFundWageringApi(row.id);
-    message.success('已强制解除');
+    message.success($t('activity.providentFund.k5df22'));
     reloadActive();
   } catch {
-    message.error('操作失败');
+    message.error($t('activity.providentFund.k64cd'));
   }
 }
 

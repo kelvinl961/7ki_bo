@@ -1,10 +1,10 @@
 <template>
-  <Page title="投注任务(稽核)" description="稽核投注任务记录查询与管理">
+  <Page :title="$t('finance.wageringTaskAudit')" :description="$t('finance.auditWageringTaskRecordsQueryManagement')">
     <!-- Breadcrumb -->
     <div class="mb-4">
       <n-breadcrumb>
-        <n-breadcrumb-item>财务管理</n-breadcrumb-item>
-        <n-breadcrumb-item>投注任务(稽核)</n-breadcrumb-item>
+        <n-breadcrumb-item>{{ $t('finance.k2tg5p') }}</n-breadcrumb-item>
+        <n-breadcrumb-item>{{ $t('page.menu.wageringAudit') }}</n-breadcrumb-item>
       </n-breadcrumb>
     </div>
 
@@ -15,7 +15,7 @@
       animated
       @update:value="handleTabChange"
     >
-      <n-tab-pane name="details" tab="投注任务明细">
+      <n-tab-pane name="details" :tab="$t('finance.wageringTask1')">
         <!-- Filter Card -->
         <n-card :bordered="false" class="rounded-16px mb-4 shadow-sm">
           <div class="filter-section">
@@ -25,7 +25,7 @@
             >
               <!-- Date Range -->
               <div class="filter-item">
-                <n-form-item label="创建时间">
+                <n-form-item :label="$t('finance.createTime')">
                   <n-date-picker
                     v-model:value="dateRange"
                     type="datetimerange"
@@ -40,10 +40,10 @@
 
               <!-- Source Type -->
               <div class="filter-item">
-                <n-form-item label="触发模式">
+                <n-form-item :label="$t('finance.trigger')">
                   <n-select
                     v-model:value="filters.sourceType"
-                    placeholder="请选择触发模式"
+                    placeholder:placeholder="$t('finance.pleaseSelectTrigger')"
                     clearable
                     size="small"
                     :options="sourceTypeOptions"
@@ -54,10 +54,10 @@
 
               <!-- Status -->
               <div class="filter-item">
-                <n-form-item label="稽核状态">
+                <n-form-item :label="$t('finance.auditStatus')">
                   <n-select
                     v-model:value="filters.status"
-                    placeholder="请选择状态"
+                    placeholder:placeholder="$t('finance.pleaseSelectStatus')"
                     clearable
                     size="small"
                     :options="statusOptions"
@@ -67,10 +67,10 @@
 
               <!-- User Account -->
               <div class="filter-item">
-                <n-form-item label="会员账号">
+                <n-form-item :label="$t('finance.memberAccount2')">
                   <n-input
                     v-model:value="filters.username"
-                    placeholder="请输入会员账号"
+                    placeholder:placeholder="$t('finance.pleaseEnterMemberAccount')"
                     clearable
                     size="small"
                   />
@@ -84,10 +84,10 @@
             >
               <!-- Min Required Amount -->
               <div class="filter-item">
-                <n-form-item label="最小稽核金额">
+                <n-form-item :label="$t('finance.minAuditAmount')">
                   <n-input-number
                     v-model:value="filters.minRequiredAmount"
-                    placeholder="最小稽核金额"
+                    placeholder:placeholder="$t('finance.minAuditAmount')"
                     clearable
                     size="small"
                     :precision="2"
@@ -99,10 +99,10 @@
 
               <!-- Max Required Amount -->
               <div class="filter-item">
-                <n-form-item label="最大稽核金额">
+                <n-form-item :label="$t('finance.maxAuditAmount')">
                   <n-input-number
                     v-model:value="filters.maxRequiredAmount"
-                    placeholder="最大稽核金额"
+                    placeholder:placeholder="$t('finance.maxAuditAmount')"
                     clearable
                     size="small"
                     :precision="2"
@@ -123,25 +123,19 @@
                 >
                   <template #icon>
                     <n-icon><SearchOutline /></n-icon>
-                  </template>
-                  搜索
-                </n-button>
+                  </template>{{ $t('common.search') }}</n-button>
                 <n-button @click="handleReset">
                   <template #icon>
                     <n-icon><RefreshOutline /></n-icon>
-                  </template>
-                  重置
-                </n-button>
+                  </template>{{ $t('common.reset') }}</n-button>
                 <n-button @click="handleExport" :loading="exporting">
                   <template #icon>
                     <n-icon><DownloadOutline /></n-icon>
-                  </template>
-                  导出
-                </n-button>
-                <n-button @click="openAutoReleaseModal"> 自动解除设置 </n-button>
+                  </template>{{ $t('common.export') }}</n-button>
+                <n-button @click="openAutoReleaseModal">{{ $t('finance.autoSettings') }}</n-button>
               </div>
               <div class="text-sm text-gray-600">
-                共 {{ paginationReactive.total }} 条记录
+                {{ $t('finance.totalRecordsWithCount', { count: paginationReactive.total }) }}
               </div>
             </div>
           </div>
@@ -153,7 +147,7 @@
           v-if="showStatistics"
         >
           <n-card :bordered="false" class="rounded-16px shadow-sm">
-            <n-statistic label="总源金额" :value="statistics.totalSourceAmount">
+            <n-statistic :label="$t('finance.amount4')" :value="statistics.totalSourceAmount">
               <template #prefix>
                 <n-icon color="#18a058"><Cash /></n-icon>
               </template>
@@ -161,7 +155,7 @@
           </n-card>
           <n-card :bordered="false" class="rounded-16px shadow-sm">
             <n-statistic
-              label="总稽核金额"
+              :label="$t('finance.auditAmount1')"
               :value="statistics.totalRequiredBet"
             >
               <template #prefix>
@@ -170,14 +164,14 @@
             </n-statistic>
           </n-card>
           <n-card :bordered="false" class="rounded-16px shadow-sm">
-            <n-statistic label="已完成" :value="statistics.totalCurrentBet">
+            <n-statistic :label="$t('finance.alreadyComplete')" :value="statistics.totalCurrentBet">
               <template #prefix>
                 <n-icon color="#f0a020"><CheckmarkCircle /></n-icon>
               </template>
             </n-statistic>
           </n-card>
           <n-card :bordered="false" class="rounded-16px shadow-sm">
-            <n-statistic label="剩余" :value="statistics.totalRemaining">
+            <n-statistic :label="$t('finance.text28')" :value="statistics.totalRemaining">
               <template #prefix>
                 <n-icon color="#d03050"><Hourglass /></n-icon>
               </template>
@@ -202,20 +196,20 @@
             <n-card :bordered="false" class="rounded-16px mb-4 shadow-sm">
               <div class="flex items-center justify-between">
                 <div class="text-sm">
-                  <span class="font-semibold">页面合计：</span>
-                  源金额:
+                  <span class="font-semibold">{{ $t('finance.pageTotal') }}:</span>
+                  {{ $t('finance.amount4') }}:
                   <span class="font-semibold text-blue-600">{{
                     formatCurrency(pageTotals.totalSourceAmount)
                   }}</span>
-                  &nbsp;|&nbsp; 稽核金额:
+                  &nbsp;|&nbsp; {{ $t('finance.auditAmount1') }}:
                   <span class="font-semibold text-green-600">{{
                     formatCurrency(pageTotals.totalRequiredBet)
                   }}</span>
-                  &nbsp;|&nbsp; 已完成:
+                  &nbsp;|&nbsp; {{ $t('finance.alreadyComplete') }}:
                   <span class="font-semibold text-orange-600">{{
                     formatCurrency(pageTotals.totalCurrentBet)
                   }}</span>
-                  &nbsp;|&nbsp; 剩余:
+                  &nbsp;|&nbsp; {{ $t('finance.text28') }}:
                   <span class="font-semibold text-red-600">{{
                     formatCurrency(pageTotals.totalRemaining)
                   }}</span>
@@ -226,11 +220,11 @@
         </SmartDataGrid>
       </n-tab-pane>
 
-      <n-tab-pane name="statistics" tab="稽核统计">
+      <n-tab-pane name="statistics" :tab="$t('finance.auditStatistics')">
         <n-card :bordered="false" class="rounded-16px shadow-sm">
-          <n-empty description="稽核统计功能开发中...">
+          <n-empty :description="$t('finance.auditStatisticsFeatureInDevelopment')">
             <template #extra>
-              <n-button size="small"> 敬请期待 </n-button>
+              <n-button size="small">{{ $t('finance.kggcbb') }}</n-button>
             </template>
           </n-empty>
         </n-card>
@@ -240,12 +234,12 @@
     <n-modal
       v-model:show="showAutoReleaseModal"
       preset="card"
-      title="自动解除设置"
+      :title="$t('finance.autoSettings')"
       style="width: 520px"
       :mask-closable="false"
     >
       <div class="flex flex-col gap-4">
-        <n-form-item label="BRL会员额度" required>
+        <n-form-item :label="$t('finance.bRLMember')" required>
           <div class="flex w-full items-center gap-2">
             <n-input-number
               v-model:value="autoReleaseThreshold"
@@ -265,14 +259,12 @@
           关闭自动解除。建议低于各游戏最低准入额度。范围 0.00–999,999.99，最多两位小数。
         </p>
         <div class="flex justify-end gap-2">
-          <n-button @click="closeAutoReleaseModal">取消</n-button>
+          <n-button @click="closeAutoReleaseModal">{{ $t('common.cancel') }}</n-button>
           <n-button
             type="primary"
             :loading="autoReleaseSaving"
             @click="handleSaveAutoRelease"
-          >
-            确认
-          </n-button>
+          >{{ $t('common.confirm') }}</n-button>
         </div>
       </div>
     </n-modal>
@@ -288,74 +280,74 @@
     <n-modal
       v-model:show="showDetailModal"
       preset="card"
-      title="投注任务详情"
+      :title="$t('finance.wageringTaskDetails')"
       style="width: 98vw; max-width: 900px"
       :mask-closable="true"
       @close="currentDetailRow = null"
     >
       <template v-if="currentDetailRow">
         <!-- 会员个人信息 -->
-        <n-card title="会员个人信息" size="small" class="mb-4">
+        <n-card :title="$t('finance.memberInfo1')" size="small" class="mb-4">
           <n-descriptions :column="2" label-placement="left" label-style="width: 120px">
-            <n-descriptions-item label="会员ID">{{ currentDetailRow.user?.id ?? '-' }}</n-descriptions-item>
-            <n-descriptions-item label="品牌名称(ID)">-</n-descriptions-item>
-            <n-descriptions-item label="会员账号">{{ currentDetailRow.user?.account ?? '-' }}</n-descriptions-item>
-            <n-descriptions-item label="真实姓名">{{ currentDetailRow.user?.name ?? '-' }}</n-descriptions-item>
-            <n-descriptions-item label="会员层级">-</n-descriptions-item>
-            <n-descriptions-item label="会员币种">-</n-descriptions-item>
-            <n-descriptions-item label="VIP等级">-</n-descriptions-item>
+            <n-descriptions-item :label="$t('finance.memberId')">{{ currentDetailRow.user?.id ?? '-' }}</n-descriptions-item>
+            <n-descriptions-item :label="$t('finance.iD1')">-</n-descriptions-item>
+            <n-descriptions-item :label="$t('finance.memberAccount2')">{{ currentDetailRow.user?.account ?? '-' }}</n-descriptions-item>
+            <n-descriptions-item :label="$t('finance.text69')">{{ currentDetailRow.user?.name ?? '-' }}</n-descriptions-item>
+            <n-descriptions-item :label="$t('finance.memberTier')">-</n-descriptions-item>
+            <n-descriptions-item :label="$t('finance.memberCurrency')">-</n-descriptions-item>
+            <n-descriptions-item :label="$t('finance.vIPLevel')">-</n-descriptions-item>
           </n-descriptions>
         </n-card>
 
         <!-- 投注任务(稽核)信息 -->
-        <n-card title="投注任务(稽核)信息" size="small" class="mb-4">
+        <n-card :title="$t('finance.wageringTaskAuditInfo')" size="small" class="mb-4">
           <n-descriptions :column="2" label-placement="left" label-style="width: 140px">
-            <n-descriptions-item label="任务创建时间">{{ formatDateTime(currentDetailRow.createdAt) }}</n-descriptions-item>
-            <n-descriptions-item label="提现模式">-</n-descriptions-item>
-            <n-descriptions-item label="类型">{{ getSourceTypeLabel(currentDetailRow.sourceType) }}</n-descriptions-item>
-            <n-descriptions-item label="类型细项">{{ translateSourceDescription(currentDetailRow.sourceDescription) }}</n-descriptions-item>
-            <n-descriptions-item label="优惠名称">-</n-descriptions-item>
-            <n-descriptions-item label="金额">
+            <n-descriptions-item :label="$t('finance.taskCreateTime')">{{ formatDateTime(currentDetailRow.createdAt) }}</n-descriptions-item>
+            <n-descriptions-item :label="$t('finance.withdrawal2')">-</n-descriptions-item>
+            <n-descriptions-item :label="$t('finance.type')">{{ getSourceTypeLabel(currentDetailRow.sourceType) }}</n-descriptions-item>
+            <n-descriptions-item :label="$t('finance.text89')">{{ translateSourceDescription(currentDetailRow.sourceDescription) }}</n-descriptions-item>
+            <n-descriptions-item :label="$t('finance.text90')">-</n-descriptions-item>
+            <n-descriptions-item :label="$t('common.amount')">
               <span class="inline-flex items-center gap-1">
                 {{ formatCurrency(currentDetailRow.sourceAmount) }}
-                <n-button text type="primary" size="tiny" @click="copyDetailValue(formatCurrency(currentDetailRow.sourceAmount))">复制</n-button>
+                <n-button text type="primary" size="tiny" @click="copyDetailValue(formatCurrency(currentDetailRow.sourceAmount))">{{ $t('finance.copy') }}</n-button>
               </span>
             </n-descriptions-item>
-            <n-descriptions-item label="要求倍数">{{ currentDetailRow.multiplier }}</n-descriptions-item>
-            <n-descriptions-item label="需有效投注">
+            <n-descriptions-item :label="$t('finance.text91')">{{ currentDetailRow.multiplier }}</n-descriptions-item>
+            <n-descriptions-item :label="$t('finance.hasWagering')">
               <span class="inline-flex items-center gap-1">
                 {{ formatCurrency(currentDetailRow.requiredBetAmount) }}
-                <n-button text type="primary" size="tiny" @click="copyDetailValue(formatCurrency(currentDetailRow.requiredBetAmount))">复制</n-button>
+                <n-button text type="primary" size="tiny" @click="copyDetailValue(formatCurrency(currentDetailRow.requiredBetAmount))">{{ $t('finance.copy') }}</n-button>
               </span>
             </n-descriptions-item>
-            <n-descriptions-item label="已完成投注">{{ formatCurrency(currentDetailRow.currentBetAmount) }}</n-descriptions-item>
-            <n-descriptions-item label="未完成投注">
+            <n-descriptions-item :label="$t('finance.alreadyCompleteWagering')">{{ formatCurrency(currentDetailRow.currentBetAmount) }}</n-descriptions-item>
+            <n-descriptions-item :label="$t('finance.notCompleteWagering')">
               <span class="inline-flex items-center gap-1">
                 {{ formatCurrency(currentDetailRow.remainingBetAmount) }}
-                <n-button text type="primary" size="tiny" @click="copyDetailValue(formatCurrency(currentDetailRow.remainingBetAmount))">复制</n-button>
+                <n-button text type="primary" size="tiny" @click="copyDetailValue(formatCurrency(currentDetailRow.remainingBetAmount))">{{ $t('finance.copy') }}</n-button>
               </span>
             </n-descriptions-item>
-            <n-descriptions-item label="自动解除额度">{{
+            <n-descriptions-item :label="$t('finance.auto2')">{{
               displayAutoReleaseThreshold
             }}</n-descriptions-item>
-            <n-descriptions-item label="任务状态">{{ getStatusLabel(currentDetailRow.status) }}</n-descriptions-item>
-            <n-descriptions-item label="操作人">-</n-descriptions-item>
-            <n-descriptions-item label="操作时间">{{ formatDateTime(currentDetailRow.createdAt) }}</n-descriptions-item>
+            <n-descriptions-item :label="$t('finance.taskStatus')">{{ getStatusLabel(currentDetailRow.status) }}</n-descriptions-item>
+            <n-descriptions-item :label="$t('finance.operator')">-</n-descriptions-item>
+            <n-descriptions-item :label="$t('finance.actionsTime')">{{ formatDateTime(currentDetailRow.createdAt) }}</n-descriptions-item>
           </n-descriptions>
         </n-card>
 
         <!-- 仅限以下指定游戏 -->
-        <n-card title="仅限以下指定游戏" size="small">
-          <p class="text-gray-500 text-sm mb-3">（即仅限以下游戏计入投注任务）</p>
+        <n-card :title="$t('finance.only1')" size="small">
+          <p class="text-gray-500 text-sm mb-3">{{ $t('finance.kax80y') }}</p>
           <div class="mb-3 flex gap-2">
             <n-input
               v-model:value="detailGameSearch"
-              placeholder="请输入子游戏名称"
+              placeholder:placeholder="$t('finance.pleaseEnter4')"
               size="small"
               clearable
               style="max-width: 240px"
             />
-            <n-button size="small">搜索</n-button>
+            <n-button size="small">{{ $t('common.search') }}</n-button>
           </div>
           <div v-if="detailEligiblePlatforms.length" class="flex flex-wrap gap-2">
             <n-tag
@@ -368,7 +360,7 @@
               <template v-if="p.contributionRate != null"> ({{ p.contributionRate }}%)</template>
             </n-tag>
           </div>
-          <div v-else class="text-gray-400 text-sm">暂无指定游戏限制</div>
+          <div v-else class="text-gray-400 text-sm">{{ $t('finance.kea7nw') }}</div>
         </n-card>
       </template>
     </n-modal>
@@ -376,6 +368,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, onMounted, h } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
@@ -548,7 +542,7 @@ const dateShortcuts = {
 // Table Columns
 const columns: DataTableColumns<WageringAuditItem> = [
   {
-    title: '稽核ID',
+    title: $t('finance.auditID'),
     key: 'id',
     width: 180,
     fixed: 'left',
@@ -557,7 +551,7 @@ const columns: DataTableColumns<WageringAuditItem> = [
     },
   },
   {
-    title: '会员账号',
+    title: $t('finance.memberAccount2'),
     key: 'user.account',
     width: 120,
     render: (row) =>
@@ -571,13 +565,13 @@ const columns: DataTableColumns<WageringAuditItem> = [
       ),
   },
   {
-    title: '会员ID',
+    title: $t('finance.memberId'),
     key: 'user.userID',
     width: 120,
     render: (row) => row.user.userID || '-',
   },
   {
-    title: '触发模式',
+    title: $t('finance.trigger'),
     key: 'sourceType',
     width: 120,
     render: (row) => {
@@ -657,7 +651,7 @@ const columns: DataTableColumns<WageringAuditItem> = [
     },
   },
   {
-    title: '来源描述',
+    title: $t('finance.text107'),
     key: 'sourceDescription',
     width: 200,
     ellipsis: {
@@ -666,7 +660,7 @@ const columns: DataTableColumns<WageringAuditItem> = [
     render: (row) => translateSourceDescription(row.sourceDescription),
   },
   {
-    title: '来源ID',
+    title: $t('finance.iD'),
     key: 'sourceId',
     width: 150,
     ellipsis: {
@@ -674,7 +668,7 @@ const columns: DataTableColumns<WageringAuditItem> = [
     },
   },
   {
-    title: '源金额',
+    title: $t('finance.amount'),
     key: 'sourceAmount',
     width: 120,
     align: 'right',
@@ -686,14 +680,14 @@ const columns: DataTableColumns<WageringAuditItem> = [
       ),
   },
   {
-    title: '稽核倍数',
+    title: $t('finance.audit1'),
     key: 'multiplier',
     width: 100,
     align: 'right',
     render: (row) => `${row.multiplier}x`,
   },
   {
-    title: '稽核金额',
+    title: $t('finance.auditAmount'),
     key: 'requiredBetAmount',
     width: 120,
     align: 'right',
@@ -705,7 +699,7 @@ const columns: DataTableColumns<WageringAuditItem> = [
       ),
   },
   {
-    title: '已完成',
+    title: $t('finance.alreadyComplete'),
     key: 'currentBetAmount',
     width: 120,
     align: 'right',
@@ -717,7 +711,7 @@ const columns: DataTableColumns<WageringAuditItem> = [
       ),
   },
   {
-    title: '剩余',
+    title: $t('finance.text28'),
     key: 'remainingBetAmount',
     width: 120,
     align: 'right',
@@ -729,7 +723,7 @@ const columns: DataTableColumns<WageringAuditItem> = [
       ),
   },
   {
-    title: '进度',
+    title: $t('finance.text39'),
     key: 'progressPercentage',
     width: 150,
     render: (row) => {
@@ -749,22 +743,22 @@ const columns: DataTableColumns<WageringAuditItem> = [
     },
   },
   {
-    title: '优先级',
+    title: $t('finance.text62'),
     key: 'priority',
     width: 80,
     align: 'center',
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 100,
     render: (row) => {
       const statusMap: Record<string, { color: string; label: string }> = {
-        pending: { color: 'default', label: '待处理' },
-        active: { color: 'info', label: '进行中' },
-        completed: { color: 'success', label: '已完成' },
-        expired: { color: 'warning', label: '已过期' },
-        cancelled: { color: 'error', label: '已取消' },
+        pending: { color: 'default', label: $t('finance.pending') },
+        active: { color: 'info', label: $t('finance.text63') },
+        completed: { color: 'success', label: $t('finance.alreadyComplete') },
+        expired: { color: 'warning', label: $t('finance.expired') },
+        cancelled: { color: 'error', label: $t('finance.cancelled') },
       };
       const config = statusMap[row.status] || {
         color: 'default',
@@ -778,31 +772,31 @@ const columns: DataTableColumns<WageringAuditItem> = [
     },
   },
   {
-    title: '创建时间',
+    title: $t('finance.createTime'),
     key: 'createdAt',
     width: 160,
     render: (row) => formatDateTime(row.createdAt),
   },
   {
-    title: '激活时间',
+    title: $t('finance.time2'),
     key: 'activatedAt',
     width: 160,
     render: (row) => (row.activatedAt ? formatDateTime(row.activatedAt) : '-'),
   },
   {
-    title: '完成时间',
+    title: $t('finance.completeTime'),
     key: 'completedAt',
     width: 160,
     render: (row) => (row.completedAt ? formatDateTime(row.completedAt) : '-'),
   },
   {
-    title: '过期时间',
+    title: $t('finance.time3'),
     key: 'expiresAt',
     width: 160,
     render: (row) => (row.expiresAt ? formatDateTime(row.expiresAt) : '-'),
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 220,
     fixed: 'right',
@@ -817,7 +811,7 @@ const columns: DataTableColumns<WageringAuditItem> = [
             quaternary: true,
             onClick: () => handleOpenDetail(row),
           },
-          { default: () => '详情' },
+          { default: () => $t('common.detail') },
         ),
       ];
 
@@ -832,7 +826,7 @@ const columns: DataTableColumns<WageringAuditItem> = [
               secondary: true,
               onClick: () => handleCancelAudit(row),
             },
-            { default: () => '清除' },
+            { default: () => $t('finance.text40') },
           ),
           h(
             NButton,
@@ -841,7 +835,7 @@ const columns: DataTableColumns<WageringAuditItem> = [
               size: 'small',
               onClick: () => handleCompleteAudit(row),
             },
-            { default: () => '完成' },
+            { default: () => $t('finance.complete') },
           ),
         );
       }
@@ -882,7 +876,7 @@ const loadData = async () => {
   } catch (error) {
     console.error('Error loading wagering audits:', error);
     notification.error({
-      content: '加载稽核记录失败',
+      content: $t('finance.loadingAuditRecordsFailed'),
       duration: 3000,
     });
   } finally {
@@ -1028,11 +1022,11 @@ const handleExport = async () => {
   exporting.value = true;
   try {
     // TODO: Implement export functionality
-    message.info('导出功能开发中...');
+    message.info($t('finance.exportFeatureInDevelopment1'));
   } catch (error) {
     console.error('Error exporting:', error);
     notification.error({
-      content: '导出失败',
+      content: $t('finance.exportFailed'),
       duration: 3000,
     });
   } finally {
@@ -1127,9 +1121,9 @@ const getStatusLabel = (status: string): string => {
 const copyDetailValue = async (text: string) => {
   try {
     await navigator.clipboard.writeText(text);
-    message.success('已复制');
+    message.success($t('finance.already'));
   } catch {
-    message.error('复制失败');
+    message.error($t('finance.failed2'));
   }
 };
 
@@ -1158,24 +1152,24 @@ const handleOpenDetail = (row: WageringAuditItem) => {
 
 const handleCancelAudit = async (row: WageringAuditItem) => {
   dialog.warning({
-    title: '清除稽核',
+    title: $t('finance.audit3'),
     content: `确定要清除稽核 ${row.id} 吗？此操作不可撤销。`,
-    positiveText: '确定',
-    negativeText: '取消',
+    positiveText: $t('finance.confirm3'),
+    negativeText: $t('common.cancel'),
     onPositiveClick: async () => {
       try {
         const reason = `管理员手动清除稽核 - 用户: ${row.user.account}`;
         const response = await cancelAuditApi(row.id, reason);
 
         if (response.success) {
-          message.success('稽核已清除');
+          message.success($t('finance.auditAlready'));
           await loadData();
         } else {
           message.error(response.message || '清除失败');
         }
       } catch (error) {
         console.error('Error cancelling audit:', error);
-        message.error('清除稽核失败');
+        message.error($t('finance.auditFailed'));
       }
     },
   });
@@ -1183,24 +1177,24 @@ const handleCancelAudit = async (row: WageringAuditItem) => {
 
 const handleCompleteAudit = async (row: WageringAuditItem) => {
   dialog.info({
-    title: '完成稽核',
+    title: $t('finance.completeAudit'),
     content: `确定要强制完成稽核 ${row.id} 吗？`,
-    positiveText: '确定',
-    negativeText: '取消',
+    positiveText: $t('finance.confirm3'),
+    negativeText: $t('common.cancel'),
     onPositiveClick: async () => {
       try {
         const reason = `管理员手动完成稽核 - 用户: ${row.user.account}`;
         const response = await forceCompleteAuditApi(row.id, reason);
 
         if (response.success) {
-          message.success('稽核已完成');
+          message.success($t('finance.auditAlreadyComplete'));
           await loadData();
         } else {
           message.error(response.message || '完成失败');
         }
       } catch (error) {
         console.error('Error completing audit:', error);
-        message.error('完成稽核失败');
+        message.error($t('finance.completeAuditFailed'));
       }
     },
   });
@@ -1363,7 +1357,7 @@ const handleSaveAutoRelease = async () => {
     autoReleaseThreshold.value === null ||
     Number.isNaN(autoReleaseThreshold.value)
   ) {
-    message.warning('请输入有效额度');
+    message.warning($t('finance.pleaseEnterHas'));
     return;
   }
   autoReleaseSaving.value = true;
@@ -1372,7 +1366,7 @@ const handleSaveAutoRelease = async () => {
       currency: 'BRL',
       thresholdAmount: autoReleaseThreshold.value,
     });
-    message.success('已保存');
+    message.success($t('finance.alreadySave'));
     showAutoReleaseModal.value = false;
     await refreshAutomaticReleaseThreshold();
   } catch (e: unknown) {

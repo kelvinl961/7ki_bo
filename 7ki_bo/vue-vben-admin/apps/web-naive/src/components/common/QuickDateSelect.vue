@@ -1,15 +1,16 @@
 <template>
   <div class="quick-date-select">
     <n-radio-group :value="modelValue" @update:value="handleChange">
-      <n-radio-button value="day">日</n-radio-button>
-      <n-radio-button value="week">周</n-radio-button>
-      <n-radio-button value="month">月</n-radio-button>
+      <n-radio-button value="day">{{ $t('common.day') }}</n-radio-button>
+      <n-radio-button value="week">{{ $t('common.week') }}</n-radio-button>
+      <n-radio-button value="month">{{ $t('common.month') }}</n-radio-button>
     </n-radio-group>
   </div>
 </template>
 
 <script setup lang="ts">
 import { NRadioGroup, NRadioButton } from 'naive-ui';
+import { $t } from '@vben/locales';
 
 interface Props {
   modelValue: 'day' | 'week' | 'month' | null;

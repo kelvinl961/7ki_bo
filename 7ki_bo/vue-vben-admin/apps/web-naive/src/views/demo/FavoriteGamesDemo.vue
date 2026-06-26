@@ -75,7 +75,7 @@
         <div v-if="favoriteGames.length === 0" class="empty-state">
           <n-empty description="暂无收藏游戏">
             <template #extra>
-              <n-button type="primary" @click="handleRefresh"> 刷新 </n-button>
+              <n-button type="primary" @click="handleRefresh"> {{ $t('common.refresh') }} </n-button>
             </template>
           </n-empty>
         </div>
@@ -144,6 +144,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, onMounted } from 'vue';
 import { useMessage } from 'naive-ui';
 import { useFavoriteGames } from '#/composables/useFavoriteGames';

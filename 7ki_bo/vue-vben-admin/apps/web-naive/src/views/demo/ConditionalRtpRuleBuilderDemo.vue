@@ -1,18 +1,17 @@
 <template>
   <div class="merchant-rtp-page">
     <n-card :bordered="false" class="mb-4">
-      <n-alert type="info" title="说明" class="mb-4">
+      <n-alert type="info" :title="$t('demo.conditionalRtp.descriptionTitle')" class="mb-4">
         <template #default>
           <ul>
-            <li>✅ First-Match：从上到下匹配到的第一条规则生效</li>
-            <li>✅ 规则类型：仅入金 / 仅活动领奖（每条规则独立）</li>
-            <li>✅ 支持条件：未入金 / 入金金额阈值、可选「所选活动历史累计已领奖 &gt; 阈值」、游戏范围</li>
-            <li>✅ 支持：保存/加载后端条件RTP配置（演示联动）</li>
+            <li>{{ $t('demo.conditionalRtp.bulletFirstMatch') }}</li>
+            <li>{{ $t('demo.conditionalRtp.bulletRuleTypes') }}</li>
+            <li>{{ $t('demo.conditionalRtp.bulletConditions') }}</li>
+            <li>{{ $t('demo.conditionalRtp.bulletSaveLoad') }}</li>
             <li>
-              ✅ HG 可选「取消 RTP」：规则里 <code>hgPlayerAction: cancelRtp</code>，注册/入金命中后自动调厂商
-              <code>/api/v2/player/cancelRtp</code>（无需手动 BO）
+              {{ $t('demo.conditionalRtp.bulletHgCancel') }}
             </li>
-            <li>✅ 可同时选 <strong>AG + HG</strong>：保存为 <code>applyVendors</code>，自动应用会依次调用两厂商（双厂商时 RTP 须同时满足 AG 与 HG set 规则）</li>
+            <li>{{ $t('demo.conditionalRtp.bulletDualVendor') }}</li>
           </ul>
         </template>
       </n-alert>
@@ -25,28 +24,28 @@
         label-width="auto"
         require-mark-placement="right-hanging"
       >
-        <n-form-item label="规则类型" path="ruleType">
+        <n-form-item :label="$t('demo.conditionalRtp.ruleType')" path="ruleType">
           <n-select
             v-model:value="formData.ruleType"
             :options="ruleTypeOptions"
-            placeholder="请选择规则类型"
+            :placeholder="$t('demo.conditionalRtp.ruleTypePlaceholder')"
           />
           <template #feedback>
-            每条规则只做一件事：要么仅入金，要么仅活动领奖累计。
+            {{ $t('demo.conditionalRtp.ruleTypeFeedback') }}
           </template>
         </n-form-item>
 
-        <n-form-item v-if="formData.ruleType === 'DEPOSIT_ONLY'" label="入金条件" path="depositCondition">
+        <n-form-item v-if="formData.ruleType === 'DEPOSIT_ONLY'" :label="$t('demo.conditionalRtp.depositCondition')" path="depositCondition">
           <n-select
             v-model:value="formData.depositCondition"
             :options="depositConditionOptions"
-            placeholder="请选择"
+            :placeholder="$t('common.pleaseSelect')"
           />
         </n-form-item>
 
         <n-form-item
           v-if="formData.ruleType !== 'ACTIVITY_CLAIM_ONLY' && formData.depositCondition === 'GTE_AMOUNT'"
-          label="累计入金金额 >= 阈值"
+          :label="$t('demo.conditionalRtp.depositMinAmount')"
           path="depositMinAmount"
         >
           <n-input-number
@@ -60,7 +59,7 @@
 
         <n-form-item
           v-if="formData.ruleType === 'ACTIVITY_CLAIM_ONLY'"
-          label="累计已领奖（所选活动）"
+          :label="$t('demo.conditionalRtp.activityRewardRule')"
           path="activityRewardRule"
         >
           <n-space vertical :size="8" class="w-full max-w-2xl">
@@ -70,7 +69,7 @@
               filterable
               :options="activityOptions"
               :loading="activitiesLoading"
-              placeholder="可多选活动（与下方阈值同时设置才生效）"
+              :placeholder="$t('demo.conditionalRtp.activityIdsPlaceholder')"
               max-tag-count="responsive"
             />
             <n-input-number
@@ -79,21 +78,21 @@
               :max="100000000"
               :precision="2"
               clearable
-              placeholder="用户在这些活动中「历史累计」已领奖总额须严格大于此金额"
+              :placeholder="$t('demo.conditionalRtp.activityRewardPlaceholder')"
               class="w-full max-w-md"
             />
           </n-space>
           <template #feedback>
-            按 promotion 库 <code>activity_rewards</code> 汇总：同一用户在所选活动下所有已发放记录金额相加（多活动则再相加）。领奖成功后会自动触发条件 RTP 重算。
+            {{ $t('demo.conditionalRtp.activityRewardFeedback') }}
           </template>
         </n-form-item>
 
-        <n-form-item label="对接厂商" path="applyVendors">
+        <n-form-item :label="$t('demo.conditionalRtp.integrationVendor')" path="applyVendors">
           <n-select
             v-model:value="formData.applyVendors"
             multiple
             :options="vendorOptions"
-            placeholder="可选 1–2 个（AG / HG）"
+            :placeholder="$t('demo.conditionalRtp.vendorPlaceholder')"
             :disabled="vendorOptions.length === 0"
             max-tag-count="responsive"
             @update:value="onApplyVendorsChange"
@@ -102,20 +101,20 @@
 
         <n-form-item
           v-if="formData.applyVendors.includes('HG')"
-          label="HG 动作"
+          :label="$t('demo.conditionalRtp.hgAction')"
           path="hgPlayerAction"
         >
           <n-radio-group v-model:value="formData.hgPlayerAction" name="hgPlayerAction">
             <n-space vertical>
-              <n-radio value="setRtp">设置个人 RTP（setRtp）</n-radio>
-              <n-radio value="cancelRtp">取消个人 RTP（cancelRtp / v2）</n-radio>
+              <n-radio value="setRtp">{{ $t('demo.conditionalRtp.hgSetRtp') }}</n-radio>
+              <n-radio value="cancelRtp">{{ $t('demo.conditionalRtp.hgCancelRtp') }}</n-radio>
             </n-space>
           </n-radio-group>
         </n-form-item>
 
         <n-form-item
           v-if="formData.applyVendors.includes('HG') && formData.hgPlayerAction === 'setRtp'"
-          label="RTP类型"
+          :label="$t('demo.conditionalRtp.rtpType')"
           path="gamePattern"
         >
           <n-select
@@ -127,7 +126,7 @@
 
         <n-form-item
           v-if="formData.applyVendors.includes('HG') && formData.hgPlayerAction === 'setRtp'"
-          label="游戏类型"
+          :label="$t('demo.conditionalRtp.gameType')"
           path="gameType"
         >
           <n-select
@@ -139,7 +138,7 @@
 
         <n-form-item
           v-if="formData.applyVendors.includes('HG') && formData.hgPlayerAction === 'setRtp'"
-          label="单局最高倍数"
+          :label="$t('demo.conditionalRtp.maxMultiple')"
           path="maxMultiple"
         >
           <n-input-number
@@ -148,14 +147,14 @@
             :max="10000"
             :precision="0"
             clearable
-            placeholder="留空默认 100"
+            :placeholder="$t('demo.conditionalRtp.maxMultiplePlaceholder')"
             class="w-full max-w-md"
           />
         </n-form-item>
 
         <n-form-item
           v-if="formData.applyVendors.includes('HG') && formData.hgPlayerAction === 'setRtp'"
-          label="单局最高赢取"
+          :label="$t('demo.conditionalRtp.maxWin')"
           path="maxWinPoints"
         >
           <n-input-number
@@ -164,34 +163,34 @@
             :max="100000000"
             :precision="0"
             clearable
-            placeholder="留空默认 1000000"
+            :placeholder="$t('demo.conditionalRtp.maxWinPlaceholder')"
             class="w-full max-w-md"
           />
         </n-form-item>
 
         <n-form-item
           v-if="!(formData.applyVendors.includes('HG') && formData.hgPlayerAction === 'cancelRtp')"
-          label="RTP值"
+          :label="$t('demo.conditionalRtp.rtpValue')"
           path="rtp"
         >
           <n-select
             v-model:value="formData.rtp"
             :options="rtpOptionsEffective"
-            placeholder="选择 RTP"
+            :placeholder="$t('demo.conditionalRtp.selectRtp')"
             filterable
           />
           <template #feedback>
             {{
               formData.applyVendors.includes('AG') && formData.applyVendors.includes('HG')
-                ? '双厂商：须同时在 AG（0 或 10–97）与 HG 白名单内'
+                ? $t('demo.conditionalRtp.rtpFeedbackDual')
                 : formData.applyVendors.includes('HG')
-                  ? 'HG 白名单档位；权限不同可能仅支持部分区间'
-                  : 'AG：0、10–97'
+                  ? $t('demo.conditionalRtp.rtpFeedbackHg')
+                  : $t('demo.conditionalRtp.rtpFeedbackAg')
             }}
           </template>
         </n-form-item>
 
-        <n-form-item label="游戏范围" path="games">
+        <n-form-item :label="$t('demo.conditionalRtp.gameScope')" path="games">
           <n-select
             v-model:value="formData.games"
             multiple
@@ -200,13 +199,13 @@
             clearable
             :options="gameOptions"
             :loading="gamesLoading"
-            placeholder="选择游戏（可多选），或选择 ALL"
+            :placeholder="$t('demo.conditionalRtp.gameScopePlaceholder')"
             :remote-method="handleSearchGames"
             @update:value="handleGameSelect"
             max-tag-count="responsive"
           />
           <template #feedback>
-            含 ALL 为全部 slots；多选时单次最多 50 个 gameid。HG 取消 RTP 同样需要 gameid 列表
+            {{ $t('demo.conditionalRtp.gameScopeFeedback') }}
           </template>
         </n-form-item>
 
@@ -217,10 +216,10 @@
               @click="handleAddRule"
               :loading="submitting"
             >
-              添加规则
+              {{ $t('demo.conditionalRtp.addRule') }}
             </n-button>
             <n-button @click="handleResetForm" :disabled="submitting">
-              重置表单
+              {{ $t('demo.conditionalRtp.resetForm') }}
             </n-button>
           </n-space>
         </n-form-item>
@@ -234,10 +233,10 @@
           :disabled="submitting"
           :loading="loadingFromBackend"
         >
-          加载后端配置
+          {{ $t('demo.conditionalRtp.loadBackend') }}
         </n-button>
         <n-button size="small" @click="handleTemplateA" :disabled="submitting">
-          模板：未入金
+          {{ $t('demo.conditionalRtp.templateNoDeposit') }}
         </n-button>
         <n-button
           size="small"
@@ -245,7 +244,7 @@
           @click="handleTemplateB"
           :disabled="submitting"
         >
-          模板：入金>=阈值
+          {{ $t('demo.conditionalRtp.templateDepositThreshold') }}
         </n-button>
         <n-button
           size="small"
@@ -253,7 +252,7 @@
           @click="handleClearRules"
           :disabled="submitting"
         >
-          清空全部规则
+          {{ $t('demo.conditionalRtp.clearAllRules') }}
         </n-button>
         <n-button
           size="small"
@@ -262,14 +261,14 @@
           :disabled="submitting || rulesList.length === 0"
           :loading="savingToBackend"
         >
-          保存到后端
+          {{ $t('demo.conditionalRtp.saveBackend') }}
         </n-button>
       </div>
     </n-card>
 
-    <n-card :bordered="false" class="mb-4" title="规则列表（First-Match）">
+    <n-card :bordered="false" class="mb-4" :title="$t('demo.conditionalRtp.rulesListTitle')">
       <template #header-extra>
-        <n-tag type="info" size="small">规则数：{{ rulesList.length }}</n-tag>
+        <n-tag type="info" size="small">{{ $t('demo.conditionalRtp.rulesCount', { count: rulesList.length }) }}</n-tag>
       </template>
 
       <n-data-table
@@ -281,14 +280,16 @@
       />
 
       <div v-if="rulesList.length === 0" class="mt-4 p-6 border-2 border-dashed border-slate-300 rounded-2xl text-center bg-white">
-        <div class="text-slate-700 font-semibold">暂无规则</div>
-        <div class="text-sm text-slate-500 mt-2">使用上方表单添加第一条规则</div>
+        <div class="text-slate-700 font-semibold">{{ $t('demo.conditionalRtp.noRules') }}</div>
+        <div class="text-sm text-slate-500 mt-2">{{ $t('demo.conditionalRtp.noRulesHint') }}</div>
       </div>
     </n-card>
   </div>
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { computed, onMounted, reactive, ref, h, watch } from 'vue';
 import {
   useMessage,

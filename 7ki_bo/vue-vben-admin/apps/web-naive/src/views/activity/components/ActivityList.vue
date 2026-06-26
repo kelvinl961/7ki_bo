@@ -10,54 +10,54 @@
         label-width="auto"
         class="mb-4"
       >
-        <n-form-item label="活动名称">
+        <n-form-item :label="$t('activity.rewardReport.k6d3b')">
           <n-input
             v-model:value="filterForm.keyword"
-            placeholder="请输入活动名称"
+            :placeholder="$t('activity.formModal.k8bf7')"
             clearable
             @keyup.enter="handleSearch"
           />
         </n-form-item>
 
-        <n-form-item label="活动分类">
+        <n-form-item :label="$t('activity.detailModal.k6d3b2')">
           <n-select
             v-model:value="filterForm.category"
-            placeholder="请选择活动分类"
+            :placeholder="$t('activity.activityList.k8bf7')"
             :options="categoryOptions"
             clearable
           />
         </n-form-item>
 
-        <n-form-item label="活动状态">
+        <n-form-item :label="$t('activity.detailModal.k6d3b4')">
           <n-select
             v-model:value="filterForm.status"
-            placeholder="请选择活动状态"
+            :placeholder="$t('activity.activityList.k8bf72')"
             :options="statusOptions"
             clearable
           />
         </n-form-item>
 
-        <n-form-item label="币种">
+        <n-form-item :label="$t('activity.luckyWheel.k5e01')">
           <n-select
             v-model:value="filterForm.currencyScope"
-            placeholder="请选择币种"
+            :placeholder="$t('activity.activityList.k8bf73')"
             :options="currencyOptions"
             clearable
           />
         </n-form-item>
 
-        <n-form-item label="操作人">
+        <n-form-item :label="$t('activity.activityList.k64cd')">
           <n-input
             v-model:value="filterForm.lastModifiedBy"
-            placeholder="请输入操作人"
+            :placeholder="$t('activity.activityList.k8bf74')"
             clearable
           />
         </n-form-item>
 
         <n-form-item>
           <n-space>
-            <n-button type="primary" @click="handleSearch"> 搜索 </n-button>
-            <n-button @click="handleReset"> 重置 </n-button>
+            <n-button type="primary" @click="handleSearch">{{ $t('activity.rewardReport.k641c') }}</n-button>
+            <n-button @click="handleReset">{{ $t('activity.recordModal.k91cd') }}</n-button>
           </n-space>
         </n-form-item>
       </n-form>
@@ -84,15 +84,12 @@
             <div class="flex items-center gap-4">
               <!-- 主要操作按钮 -->
               <div class="flex gap-2">
-                <n-button type="primary" @click="handleCreate">
-                  新增活动
-                </n-button>
+                <n-button type="primary" @click="handleCreate">{{ $t('activity.formModal.k65b05') }}</n-button>
               </div>
 
               <!-- 选择信息 -->
               <div class="text-sm text-gray-600">
-                已选择 {{ selectedCount }} 条数据，共
-                {{ paginationReactive.total }} 条
+                {{ $t('activity.common.selectedCount', [selectedCount, paginationReactive.total]) }}
               </div>
             </div>
 
@@ -104,12 +101,12 @@
                 size="small"
                 @click="handleBatchDelete(selectedRows)"
               >
-                批量删除 ({{ selectedCount }})
+                {{ $t('activity.labels.batchDelete') }} ({{ selectedCount }})
               </n-button>
 
               <!-- 选择控制 -->
-              <n-button size="small" @click="clearSelection">清空选择</n-button>
-              <n-button size="small" @click="selectAll">全选</n-button>
+              <n-button size="small" @click="clearSelection">{{ $t('activity.activityList.k6e05') }}</n-button>
+              <n-button size="small" @click="selectAll">{{ $t('activity.formModal.k51683') }}</n-button>
             </div>
           </div>
         </n-card>
@@ -145,6 +142,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import {
   ref,
   reactive,
@@ -266,7 +265,7 @@ const columns = computed<DataTableColumns<Activity>>(() => [
     width: 50,
   },
   {
-    title: '排序',
+    title: $t('activity.detailModal.k6392'),
     key: 'displayOrder',
     width: 120,
     sorter: true,
@@ -290,7 +289,7 @@ const columns = computed<DataTableColumns<Activity>>(() => [
     width: 80,
   },
   {
-    title: '活动名称',
+    title: $t('activity.rewardReport.k6d3b'),
     key: 'title',
     width: 200,
     ellipsis: {
@@ -298,36 +297,36 @@ const columns = computed<DataTableColumns<Activity>>(() => [
     },
   },
   {
-    title: '活动分类',
+    title: $t('activity.detailModal.k6d3b2'),
     key: 'category',
     width: 120,
     render: (row) => {
       // Map English values to Chinese labels
       const categoryMap: { [key: string]: string } = {
-        comprehensive: '综合',
-        chess_cards: '棋牌',
-        hunting: '捕鱼',
-        slot: '电子',
-        live: '真人',
-        sports: '体育',
-        cockfight: '斗鸡',
-        lottery: '彩票',
-        video: '视频',
-        esports: '电竞',
-        table: '桌面',
-        arcade: '街机',
-        simulation: '模拟',
-        other: '其他',
-        recharge: '充值',
-        betting: '打码',
-        signin: '签到',
-        invite: '邀请',
-        newuser: '新人礼金',
-        redpacket: '红包',
-        custom: '自定义',
+        comprehensive: $t('activity.categories.comprehensive'),
+        chess_cards: $t('activity.categories.chess_cards'),
+        hunting: $t('activity.categories.hunting'),
+        slot: $t('activity.categories.slot'),
+        live: $t('activity.categories.live'),
+        sports: $t('activity.categories.sports'),
+        cockfight: $t('activity.categories.cockfight'),
+        lottery: $t('activity.categories.lottery'),
+        video: $t('activity.categories.video'),
+        esports: $t('activity.categories.esports'),
+        table: $t('activity.categories.table'),
+        arcade: $t('activity.categories.arcade'),
+        simulation: $t('activity.categories.simulation'),
+        other: $t('activity.categories.other'),
+        recharge: $t('activity.categories.recharge'),
+        betting: $t('activity.categories.betting'),
+        signin: $t('activity.categories.signin'),
+        invite: $t('activity.categories.invite'),
+        newuser: $t('activity.categories.newuser'),
+        redpacket: $t('activity.categories.redpacket'),
+        custom: $t('activity.categories.custom'),
       };
       const chineseLabel =
-        categoryMap[row.category] || row.category || '未分类';
+        categoryMap[row.category] || row.category || $t('activity.statuses.uncategorized');
       return h(
         NTag,
         { type: 'info', size: 'small' },
@@ -336,32 +335,32 @@ const columns = computed<DataTableColumns<Activity>>(() => [
     },
   },
   {
-    title: '活动类型',
+    title: $t('activity.activityList.k6d3b2'),
     key: 'type',
     width: 140,
     render: (row) => {
       // Map English values to Chinese labels
       const typeMap: { [key: string]: string } = {
-        recharge: '充值',
-        wagering: '打码',
-        rescue: '救援金',
-        checkin: '签到',
-        luckyspin: '幸运转盘',
-        luckywager: '幸运注单',
-        redpacket: '红包',
-        investment: '投资',
-        promotion: '推广',
-        agent: '代理',
-        collect: '集字',
-        guessing: '竞猜',
-        newbie: '新人彩金',
-        referral: '推荐奖励',
-        soft: '软一刀',
-        new: '新一刀',
-        ranking: '相行榜',
-        custom: '自定义',
+        recharge: $t('activity.types.recharge'),
+        wagering: $t('activity.types.wagering'),
+        rescue: $t('activity.types.rescue'),
+        checkin: $t('activity.types.checkin'),
+        luckyspin: $t('activity.types.luckyspin'),
+        luckywager: $t('activity.types.luckywager'),
+        redpacket: $t('activity.types.redpacket'),
+        investment: $t('activity.types.investment'),
+        promotion: $t('activity.types.promotion'),
+        agent: $t('activity.types.agent'),
+        collect: $t('activity.types.collect'),
+        guessing: $t('activity.types.guessing'),
+        newbie: $t('activity.types.newbie'),
+        referral: $t('activity.types.referral'),
+        soft: $t('activity.types.soft'),
+        new: $t('activity.types.new'),
+        ranking: $t('activity.types.ranking'),
+        custom: $t('activity.types.custom'),
       };
-      const chineseLabel = typeMap[row.type] || row.type || '未知类型';
+      const chineseLabel = typeMap[row.type] || row.type || $t('activity.statuses.unknownType');
       return h(
         NTag,
         { type: 'default', size: 'small' },
@@ -370,7 +369,7 @@ const columns = computed<DataTableColumns<Activity>>(() => [
     },
   },
   {
-    title: '参与会员',
+    title: $t('activity.detailModal.k53c2'),
     key: 'memberScope',
     width: 120,
     render: (row) => {
@@ -382,7 +381,7 @@ const columns = computed<DataTableColumns<Activity>>(() => [
   },
 
   {
-    title: '活动时间',
+    title: $t('activity.activityList.k6d3b3'),
     key: 'startsAt',
     width: 200,
     render: (row) => {
@@ -407,33 +406,33 @@ const columns = computed<DataTableColumns<Activity>>(() => [
           isNaN(startsAt.getTime()) ||
           isNaN(endsAt.getTime())
         ) {
-          return '未设置时间';
+          return $t('activity.activityList.k672a2');
         }
 
         return h('div', {}, [
-          h('div', {}, `开始：${startsAt.toLocaleString('zh-CN')}`),
-          h('div', {}, `结束：${endsAt.toLocaleString('zh-CN')}`),
+          h('div', {}, $t('activity.common.startLabel', [startsAt.toLocaleString()])),
+          h('div', {}, $t('activity.common.endLabel', [endsAt.toLocaleString()])),
         ]);
       } catch (error) {
-        return '时间格式错误';
+        return $t('activity.activityList.k65f6');
       }
     },
   },
 
   {
-    title: '状态',
+    title: $t('activity.activityList.k72b6'),
     key: 'status',
     width: 100,
     render: (row) => {
       const statusConfig = {
-        draft: { type: 'warning', text: '草稿' },
-        active: { type: 'success', text: '进行中' },
-        paused: { type: 'error', text: '已暂停' },
-        archived: { type: 'default', text: '已归档' },
+        draft: { type: 'warning', text: $t('activity.detailModal.k8349') },
+        active: { type: 'success', text: $t('activity.detailModal.k8fdb') },
+        paused: { type: 'error', text: $t('activity.detailModal.k5df24') },
+        archived: { type: 'default', text: $t('activity.detailModal.k5df25') },
       };
       const config = statusConfig[row.status as keyof typeof statusConfig] || {
         type: 'default',
-        text: '未知状态',
+        text: $t('activity.activityList.k672a'),
       };
       return h(
         NTag,
@@ -444,16 +443,16 @@ const columns = computed<DataTableColumns<Activity>>(() => [
   },
 
   {
-    title: '操作人',
+    title: $t('activity.activityList.k64cd'),
     key: 'createdBy',
     width: 120,
     ellipsis: {
       tooltip: true,
     },
-    render: (row) => row.createdBy || '系统',
+    render: (row) => row.createdBy || $t('activity.statuses.system'),
   },
   {
-    title: '更新时间',
+    title: $t('activity.detailModal.k66f4'),
     key: 'updatedAt',
     width: 160,
     render: (row) => {
@@ -473,14 +472,14 @@ const columns = computed<DataTableColumns<Activity>>(() => [
             return date.toLocaleString('zh-CN');
           }
         }
-        return '未设置';
+        return $t('activity.detailModal.k672a');
       } catch (error) {
-        return '时间格式错误';
+        return $t('activity.activityList.k65f6');
       }
     },
   },
   {
-    title: '操作',
+    title: $t('activity.rewardReport.k64cd'),
     key: 'actions',
     width: 280,
     fixed: 'right',
@@ -502,9 +501,9 @@ const columns = computed<DataTableColumns<Activity>>(() => [
                       type: 'primary',
                       onClick: () => handleView(row),
                     },
-                    { default: () => '查看' },
+                    { default: () => $t('activity.activityList.k67e5') },
                   ),
-                default: () => '查看详情',
+                default: () => $t('activity.activityList.k67e52'),
               },
             ),
             h(
@@ -519,9 +518,9 @@ const columns = computed<DataTableColumns<Activity>>(() => [
                       type: 'info',
                       onClick: () => handleEdit(row),
                     },
-                    { default: () => '编辑' },
+                    { default: () => $t('activity.activityList.k7f16') },
                   ),
-                default: () => '编辑',
+                default: () => $t('activity.activityList.k7f16'),
               },
             ),
             h(
@@ -536,9 +535,9 @@ const columns = computed<DataTableColumns<Activity>>(() => [
                       type: 'warning',
                       onClick: () => handleViewRecords(row),
                     },
-                    { default: () => '记录' },
+                    { default: () => $t('activity.activityList.k8bb0') },
                   ),
-                default: () => '浏览记录',
+                default: () => $t('activity.activityList.k6d4f'),
               },
             ),
             h(
@@ -553,9 +552,9 @@ const columns = computed<DataTableColumns<Activity>>(() => [
                       type: 'success',
                       onClick: () => handleDistributeReward(row),
                     },
-                    { default: () => '派发奖励' },
+                    { default: () => $t('activity.activityList.k6d3e') },
                   ),
-                default: () => '手动派发奖励给指定会员',
+                default: () => $t('activity.activityList.k624b'),
               },
             ),
             h(
@@ -575,11 +574,11 @@ const columns = computed<DataTableColumns<Activity>>(() => [
                     },
                     {
                       default: () =>
-                        row.status === 'active' ? '关闭' : '开启',
+                        row.status === 'active' ? $t('activity.labels.disable') : $t('activity.labels.enable'),
                     },
                   ),
                 default: () =>
-                  `确定${row.status === 'active' ? '关闭' : '开启'}此活动吗？`,
+                  `确定${row.status === 'active' ? $t('activity.labels.disable') : $t('activity.labels.enable')}此活动吗？`,
               },
             ),
             h(
@@ -595,9 +594,9 @@ const columns = computed<DataTableColumns<Activity>>(() => [
                       size: 'small',
                       type: 'error',
                     },
-                    { default: () => '删除' },
+                    { default: () => $t('activity.activityList.k52202') },
                   ),
-                default: () => '确定要删除此活动吗？',
+                default: () => $t('activity.activityList.k786e'),
               },
             ),
           ],
@@ -650,11 +649,11 @@ const fetchActivityList = async () => {
         activity.locales?.[0]?.title;
       const configTitle = activity.config?.title;
       const resolvedTitle =
-        (localeTitle && localeTitle !== '未设置标题' ? localeTitle : null) ||
-        (configTitle && configTitle !== '未设置标题' ? configTitle : null) ||
+        (localeTitle && localeTitle !== $t('activity.detailModal.k672a2') ? localeTitle : null) ||
+        (configTitle && configTitle !== $t('activity.detailModal.k672a2') ? configTitle : null) ||
         localeTitle ||
         configTitle ||
-        '未设置标题';
+        $t('activity.detailModal.k672a2');
 
       return {
         ...activity,
@@ -682,7 +681,7 @@ const fetchActivityList = async () => {
       (a, b) => (a.displayOrder || 0) - (b.displayOrder || 0),
     );
   } catch (error) {
-    message.error('获取活动列表失败');
+    message.error($t('activity.activityList.k83b7'));
     console.error('❌ Error fetching activity list:', error);
     console.error('❌ Error details:', {
       message: error.message,
@@ -750,10 +749,10 @@ const handleDelete = async (item: Activity) => {
     await deleteActivity(item.id);
     // Optimistic UI update
     tableData.value = tableData.value.filter((row) => row.id !== item.id);
-    message.success('活动删除成功');
+    message.success($t('activity.activityList.k6d3b'));
     // No background refresh needed - optimistic update is sufficient
   } catch (error) {
-    message.error('删除活动失败');
+    message.error($t('activity.activityList.k5220'));
     console.error('Error deleting activity:', error);
   }
 };
@@ -784,7 +783,7 @@ const handleStatusToggle = async (item: Activity) => {
     await updateActivityStatus(item.id, { status: newStatus });
 
     message.success(
-      `活动状态已更新为${newStatus === 'active' ? '开启' : '暂停'}`,
+      $t('activity.labels.statusUpdated', [newStatus === 'active' ? $t('activity.labels.enable') : $t('activity.activityList.k5df2')]),
     );
 
     // Remove loading state
@@ -807,7 +806,7 @@ const handleStatusToggle = async (item: Activity) => {
       };
     }
 
-    message.error('更新活动状态失败');
+    message.error($t('activity.activityList.k66f4'));
     console.error('Error updating activity status:', error);
   }
 };
@@ -820,15 +819,15 @@ const handleBatchDelete = (selectedRows?: Activity[]) => {
     );
 
   if (activitiesToDelete.length === 0) {
-    message.warning('请先选择要删除的活动');
+    message.warning($t('activity.activityList.k8bf75'));
     return;
   }
 
   dialog.warning({
-    title: '确认删除',
-    content: `确定要删除选中的 ${activitiesToDelete.length} 个活动吗？`,
-    positiveText: '确定',
-    negativeText: '取消',
+    title: $t('activity.activityList.k786e2'),
+    content: $t('activity.labels.confirmBatchDelete', [activitiesToDelete.length]),
+    positiveText: $t('common.confirm'),
+    negativeText: $t('common.cancel'),
     onPositiveClick: async () => {
       try {
         const ids = activitiesToDelete.map((activity) => activity.id as number);
@@ -837,11 +836,11 @@ const handleBatchDelete = (selectedRows?: Activity[]) => {
         tableData.value = tableData.value.filter(
           (row) => !ids.includes(row.id as number),
         );
-        message.success('批量删除成功');
+        message.success($t('activity.activityList.k6279'));
         checkedRowKeys.value = [];
         // No background refresh needed - optimistic update is sufficient
       } catch (error) {
-        message.error('批量删除失败');
+        message.error($t('activity.activityList.k62792'));
         console.error('Error batch deleting activities:', error);
       }
     },
@@ -886,9 +885,9 @@ const handleDisplayOrderChange = async (row: Activity, value: number) => {
       (a, b) => (a.displayOrder || 0) - (b.displayOrder || 0),
     );
 
-    message.success(`已更新活动 ${activityId} 的排序为 ${value}`);
+    message.success($t('activity.labels.sortUpdated', [activityId, value]));
   } catch (error) {
-    message.error('更新排序失败');
+    message.error($t('activity.activityList.k66f42'));
     console.error('Error updating display order:', error);
   } finally {
     savingDisplayOrder.value = false;

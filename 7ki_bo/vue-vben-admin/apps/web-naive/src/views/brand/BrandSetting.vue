@@ -7,20 +7,21 @@
         size="large"
         :on-update:value="handleTabChange"
       >
-        <n-tab-pane name="logoSetting" tab="LOGO及图片设置">
+        <n-tab-pane name="logoSetting" :tab="$t('brand.logoAndImageSetting')">
           <BrandLogoSetting />
         </n-tab-pane>
 
-        <n-tab-pane name="basicSetting" tab="基础设置"> </n-tab-pane>
+        <n-tab-pane name="basicSetting" :tab="$t('brand.basicSetting')"> </n-tab-pane>
       </n-tabs>
     </n-card>
   </div>
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, onMounted, defineAsyncComponent } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-// ✅ PERFORMANCE FIX: Lazy load tab component - it only loads when tab is opened
 const BrandLogoSetting = defineAsyncComponent(
   () => import('./BrandLogoSetting.vue'),
 );
@@ -30,9 +31,7 @@ const router = useRouter();
 
 const activeTab = ref('logoSetting');
 
-// Handle tab change
 const handleTabChange = (value: string) => {
-  // Update URL with tab parameter
   router.push({
     path: route.path,
     query: {
@@ -42,7 +41,6 @@ const handleTabChange = (value: string) => {
   });
 };
 
-// Initialize tab from URL parameter
 onMounted(() => {
   const tabFromUrl = route.query.activeName as string;
   if (tabFromUrl) {

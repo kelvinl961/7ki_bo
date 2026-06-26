@@ -1,8 +1,8 @@
 <template>
   <div class="rtp-control-container">
-    <n-card title="个人RTP调控" :bordered="false">
+    <n-card :title="$t('user.rtpControl.personalRtpControl')" :bordered="false">
       <template #header-extra>
-        <n-button size="small" @click="handleReset">重置</n-button>
+        <n-button size="small" @click="handleReset">{{ $t('common.reset') }}</n-button>
       </template>
 
       <n-form
@@ -13,21 +13,21 @@
         label-width="150"
         require-mark-placement="right-hanging"
       >
-        <n-form-item label="第三方渠道" path="rtpVendor">
+        <n-form-item :label="$t('user.rtpControl.thirdPartyChannel')" path="rtpVendor">
           <n-select
             v-model:value="formData.rtpVendor"
             :options="vendorSelectOptions"
-            placeholder="选择对接厂商"
+            :placeholder="$t('user.rtpControl.selectVendor')"
             :disabled="vendorSelectOptions.length === 0"
           />
        
         </n-form-item>
 
-        <n-form-item label="RTP值" path="Rtp">
+        <n-form-item :label="$t('user.rtpControl.rtpValue')" path="Rtp">
           <n-select
             v-model:value="formData.Rtp"
             :options="rtpSelectOptions"
-            placeholder="选择RTP值"
+            :placeholder="$t('user.rtpControl.selectRtpValue')"
             filterable
           />
           <template #feedback>{{ rtpFeedback }}</template>
@@ -35,7 +35,7 @@
 
        
 
-        <n-form-item v-if="isHg" label="RTP类型" path="gamePattern">
+        <n-form-item v-if="isHg" :label="$t('user.rtpControl.rtpType')" path="gamePattern">
           <n-select
             v-model:value="formData.gamePattern"
             :options="hgPatternOptions"
@@ -43,11 +43,11 @@
             :disabled="hgSetRtpLocked"
           />
           <template v-if="hgSetRtpLocked" #feedback>
-            设置非 0 RTP 后必填（对应厂商 game_pattern）
+            {{ $t('user.rtpControl.hgPatternRequired') }}
           </template>
         </n-form-item>
 
-        <n-form-item v-if="isHg" label="游戏类型" path="gameType">
+        <n-form-item v-if="isHg" :label="$t('user.rtpControl.gameType')" path="gameType">
           <n-select
             v-model:value="formData.gameType"
             :options="hgGameTypeOptions"
@@ -55,60 +55,60 @@
             :disabled="hgSetRtpLocked"
           />
           <template v-if="hgSetRtpLocked" #feedback>
-            设置非 0 RTP 后必填（game_type）
+            {{ $t('user.rtpControl.hgGameTypeRequired') }}
           </template>
         </n-form-item>
 
-        <n-form-item v-if="isHg" label="单局最高倍数" path="maxMultiple">
+        <n-form-item v-if="isHg" :label="$t('user.rtpControl.maxMultiplePerRound')" path="maxMultiple">
           <n-input-number
             v-model:value="formData.maxMultiple"
             :min="0"
             :max="10000"
             :precision="0"
             clearable
-            placeholder="留空默认 100；非 0 时 1–10000"
+            :placeholder="$t('user.rtpControl.maxMultiplePlaceholder')"
             class="w-full max-w-md"
             :disabled="hgSetRtpLocked"
           />
         </n-form-item>
 
-        <n-form-item v-if="isHg" label="单局最高赢取" path="maxWinPoints">
+        <n-form-item v-if="isHg" :label="$t('user.rtpControl.maxWinPerRound')" path="maxWinPoints">
           <n-input-number
             v-model:value="formData.maxWinPoints"
             :min="0"
             :max="100000000"
             :precision="0"
             clearable
-            placeholder="留空默认 1000000；非 0 时 1–100000000"
+            :placeholder="$t('user.rtpControl.maxWinPlaceholder')"
             class="w-full max-w-md"
             :disabled="hgSetRtpLocked"
           />
         </n-form-item>
 
-        <n-form-item v-if="isHg" label="解除RTP管控" path="removeRtp">
+        <n-form-item v-if="isHg" :label="$t('user.rtpControl.removeRtpControl')" path="removeRtp">
           <n-select
             v-model:value="formData.removeRtp"
             :options="hgRemoveRtpOptions"
             clearable
-            placeholder="不设置则不解控"
+            :placeholder="$t('user.rtpControl.removeRtpPlaceholder')"
             :disabled="hgSetRtpLocked"
           />
         </n-form-item>
 
-        <n-form-item v-if="isHg" label="RTP上限" path="personWinMaxRtp">
+        <n-form-item v-if="isHg" :label="$t('user.rtpControl.rtpUpperLimit')" path="personWinMaxRtp">
           <n-input-number
             v-model:value="formData.personWinMaxRtp"
             :min="0"
             :max="1000"
             :precision="0"
             clearable
-            placeholder="留空默认 1000；非 0 时 1–1000"
+            :placeholder="$t('user.rtpControl.rtpUpperPlaceholder')"
             class="w-full max-w-md"
             :disabled="hgSetRtpLocked"
           />
         </n-form-item>
 
-        <n-form-item v-if="isHg" label="游戏" path="GameId">
+        <n-form-item v-if="isHg" :label="$t('common.game')" path="GameId">
           <n-select
             v-model:value="formData.GameId"
             multiple
@@ -117,7 +117,7 @@
             :options="gameOptions"
             :loading="gamesLoading"
             :remote-method="handleSearchGames"
-            placeholder="搜索并选择游戏，或 ALL"
+            :placeholder="$t('user.rtpControl.searchSelectGames')"
             clearable
             max-tag-count="responsive"
             @update:value="handleGameSelect"
@@ -134,18 +134,18 @@
               @click="handleSubmit"
               :disabled="!canSubmit || vendorSelectOptions.length === 0"
             >
-              设置RTP
+              {{ $t('user.rtpControl.setRtp') }}
             </n-button>
-            <n-button @click="handleReset"> 重置表单 </n-button>
+            <n-button @click="handleReset">{{ $t('user.rtpControl.resetForm') }}</n-button>
           </div>
         </n-form-item>
       </n-form>
     </n-card>
 
     <!-- 历史记录 -->
-    <n-card title="RTP设置历史" :bordered="false" class="mt-4">
+    <n-card :title="$t('user.rtpControl.rtpHistory')" :bordered="false" class="mt-4">
       <template #header-extra>
-        <n-button size="small" @click="loadHistory">刷新</n-button>
+        <n-button size="small" @click="loadHistory">{{ $t('common.refresh') }}</n-button>
       </template>
 
       <n-data-table
@@ -163,6 +163,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, onMounted, h, watch } from 'vue';
 import {
   NCard,
@@ -222,28 +224,28 @@ const HG_RTP_WHITELIST = new Set([
   10, 20, 30, 40, 50, 60, 70, 80, 85, 90, 91, 92, 93, 94, 95, 96, 97,
 ]);
 
-const hgPatternOptions = [
-  { label: '1 波动型', value: 1 },
-  { label: '2 仿正型', value: 2 },
-  { label: '3 混合型', value: 3 },
-  { label: '4 稳定型', value: 4 },
-  { label: '5 高中奖率', value: 5 },
-];
-const HG_PATTERN_LABEL_MAP: Record<number, string> = {
-  1: '1 波动型',
-  2: '2 仿正型',
-  3: '3 混合型',
-  4: '4 稳定型',
-  5: '5 高中奖率',
-};
+const hgPatternOptions = computed(() => [
+  { label: $t('user.rtpControl.patternVolatile'), value: 1 },
+  { label: $t('user.rtpControl.patternImitation'), value: 2 },
+  { label: $t('user.rtpControl.patternMixed'), value: 3 },
+  { label: $t('user.rtpControl.patternStable'), value: 4 },
+  { label: $t('user.rtpControl.patternHighWin'), value: 5 },
+]);
+const hgPatternLabelMap = computed<Record<number, string>>(() => ({
+  1: $t('user.rtpControl.patternVolatile'),
+  2: $t('user.rtpControl.patternImitation'),
+  3: $t('user.rtpControl.patternMixed'),
+  4: $t('user.rtpControl.patternStable'),
+  5: $t('user.rtpControl.patternHighWin'),
+}));
 
-const hgGameTypeOptions = [
-  { label: '0 拉霸/电子游戏', value: 0 },
-  { label: '1 Mini游戏', value: 1 },
-  { label: '2 视讯游戏', value: 2 },
-  { label: '3 捕鱼游戏', value: 3 },
-  { label: '4 彩票游戏', value: 4 },
-];
+const hgGameTypeOptions = computed(() => [
+  { label: $t('user.rtpControl.gameTypeSlots'), value: 0 },
+  { label: $t('user.rtpControl.gameTypeMini'), value: 1 },
+  { label: $t('user.rtpControl.gameTypeLive'), value: 2 },
+  { label: $t('user.rtpControl.gameTypeFishing'), value: 3 },
+  { label: $t('user.rtpControl.gameTypeLottery'), value: 4 },
+]);
 
 const hgRtpSelectOptions = [...HG_RTP_WHITELIST].sort((a, b) => a - b).map((v) => ({
   label: String(v),
@@ -285,7 +287,7 @@ const currentSearchQuery = ref('');
 const rtpSelectOptions = computed(() => {
   if (formData.rtpVendor === 'hg') {
     return [
-      { label: '0（取消 → cancelRtp）', value: 0 },
+      { label: $t('user.rtpControl.cancelRtpOption'), value: 0 },
       ...hgRtpSelectOptions,
     ];
   }
@@ -295,10 +297,10 @@ const rtpSelectOptions = computed(() => {
 const rtpFeedback = computed(() => {
   if (formData.rtpVendor === 'hg') {
     return formData.Rtp === 0
-      ? '取消：见下方蓝色说明，并填写「游戏」gameid'
-      : '设置：走 /api/v1/player/setRtp；下方 HG 参数已启用';
+      ? $t('user.rtpControl.cancelRtpHint')
+      : $t('user.rtpControl.setRtpHint');
   }
-  return '默认渠道：0 表示取消；其它为 10–97';
+  return $t('user.rtpControl.defaultRtpHint');
 });
 
 watch(
@@ -329,7 +331,7 @@ watch(
 
 const vendorSelectOptions = computed(() =>
   rtpVendors.value.map((v) => ({
-    label: 'HG 厂商',
+    label: $t('user.rtpControl.hgVendor'),
     value: v.id,
   })),
 );
@@ -340,7 +342,7 @@ const loadInitialGames = async () => {
   try {
     const result = await searchGamesWithPagination('', 1);
     gameOptions.value = [
-      { label: 'ALL（全部slots游戏）', value: 'ALL' },
+      { label: $t('user.rtpControl.allSlotsGames'), value: 'ALL' },
       ...result.map((game: { gameName: string; gameId: string }) => ({
         label: game.gameName,
         value: String(game.gameId),
@@ -365,7 +367,7 @@ const handleSearchGames = async (query: string) => {
   try {
     const result = await searchGamesWithPagination(query, 1);
     gameOptions.value = [
-      { label: 'ALL（全部slots游戏）', value: 'ALL' },
+      { label: $t('user.rtpControl.allSlotsGames'), value: 'ALL' },
       ...result.map((game: { gameName: string; gameId: string }) => ({
         label: game.gameName,
         value: String(game.gameId),
@@ -426,7 +428,7 @@ const handleGameSelect = (value: string[]) => {
 const rules: any = {
   rtpVendor: {
     required: true,
-    message: '请选择第三方渠道',
+    message: $t('user.rtpControl.selectChannelRequired'),
     trigger: 'change',
   },
   gamePattern: {
@@ -434,7 +436,7 @@ const rules: any = {
     validator: (_rule: unknown, value: number) => {
       if (!isHg.value || formData.Rtp === null || formData.Rtp === 0) return true;
       if (value == null || ![1, 2, 3, 4, 5].includes(value)) {
-        return new Error('请选择 game_pattern（1–5）');
+        return new Error($t('user.rtpControl.gamePatternRequired'));
       }
       return true;
     },
@@ -444,7 +446,7 @@ const rules: any = {
     validator: (_rule: unknown, value: number) => {
       if (!isHg.value || formData.Rtp === null || formData.Rtp === 0) return true;
       if (value == null || ![0, 1, 2, 3, 4].includes(value)) {
-        return new Error('请选择 game_type（0–4）');
+        return new Error($t('user.rtpControl.gameTypeRequired'));
       }
       return true;
     },
@@ -456,7 +458,7 @@ const rules: any = {
       if (value == null) return true;
       const n = Math.round(Number(value));
       if (n !== 0 && (n < 1 || n > 10_000)) {
-        return new Error('须为 0 或 1–10000');
+        return new Error($t('user.rtpControl.maxMultipleRange'));
       }
       return true;
     },
@@ -468,7 +470,7 @@ const rules: any = {
       if (value == null) return true;
       const n = Math.round(Number(value));
       if (n !== 0 && (n < 1 || n > 100_000_000)) {
-        return new Error('须为 0 或 1–100000000');
+        return new Error($t('user.rtpControl.maxWinRange'));
       }
       return true;
     },
@@ -480,7 +482,7 @@ const rules: any = {
       if (value == null) return true;
       return HG_RTP_WHITELIST.has(value)
         ? true
-        : new Error('remove_rtp 须在 HG 白名单内');
+        : new Error($t('user.rtpControl.removeRtpWhitelist'));
     },
   },
   personWinMaxRtp: {
@@ -490,7 +492,7 @@ const rules: any = {
       if (value == null) return true;
       const n = Math.round(Number(value));
       if (n !== 0 && (n < 1 || n > 1000)) {
-        return new Error('须为 0 或 1–1000');
+        return new Error($t('user.rtpControl.personWinMaxRtpRange'));
       }
       return true;
     },
@@ -498,17 +500,17 @@ const rules: any = {
   Rtp: {
     required: true,
     type: 'number',
-    message: '请选择RTP值',
+    message: $t('user.rtpControl.selectRtpRequired'),
     trigger: 'change',
     validator: (_rule: unknown, value: number) => {
-      if (value == null) return new Error('请选择RTP值');
+      if (value == null) return new Error($t('user.rtpControl.selectRtpRequired'));
       if (isHg.value && value !== 0 && !HG_RTP_WHITELIST.has(value)) {
-        return new Error('当前 RTP 不在 HG 白名单内');
+        return new Error($t('user.rtpControl.rtpNotInWhitelist'));
       }
       if (!isHg.value) {
         if (value === 0) return true;
         if (value >= 10 && value <= 97) return true;
-        return new Error('AG RTP 须为 0 或 10–97');
+        return new Error($t('user.rtpControl.agRtpRange'));
       }
       return true;
     },
@@ -517,9 +519,9 @@ const rules: any = {
     trigger: 'change',
     validator: (_rule: unknown, value: string[]) => {
       if (!isHg.value) return true;
-      if (!value?.length) return new Error('请选择游戏范围');
+      if (!value?.length) return new Error($t('user.rtpControl.selectGameScopeRequired'));
       if (!value.includes('ALL') && value.length > 50) {
-        return new Error('单次最多 50 个 gameid');
+        return new Error($t('user.rtpControl.maxGameIds'));
       }
       return true;
     },
@@ -548,22 +550,22 @@ const pagination = reactive({
 const getConditional = (row: any) => row?.response?._metadata?.conditionalRtp;
 const getMatchedRule = (row: any) => getConditional(row)?.matchedRule;
 
-const RULE_TYPE_LABELS: Record<string, string> = {
-  DEPOSIT_ONLY: '仅存款',
-  ACTIVITY_CLAIM_ONLY: '仅活动领取',
-  COMBINED: '组合条件',
-};
+const ruleTypeLabelMap = computed<Record<string, string>>(() => ({
+  DEPOSIT_ONLY: $t('user.rtpControl.ruleDepositOnly'),
+  ACTIVITY_CLAIM_ONLY: $t('user.rtpControl.ruleActivityOnly'),
+  COMBINED: $t('user.rtpControl.ruleCombined'),
+}));
 
-const TRIGGER_REASON_LABELS: Record<string, string> = {
-  deposit: '存款触发',
-  registration: '注册触发',
-  activity_claim: '活动领取触发',
-};
+const triggerReasonLabelMap = computed<Record<string, string>>(() => ({
+  deposit: $t('user.rtpControl.triggerDeposit'),
+  registration: $t('user.rtpControl.triggerRegistration'),
+  activity_claim: $t('user.rtpControl.triggerActivity'),
+}));
 
-const DEPOSIT_CONDITION_LABELS: Record<string, string> = {
-  NO_DEPOSIT: '未存款',
-  GTE_AMOUNT: '存款大于等于',
-};
+const depositConditionLabelMap = computed<Record<string, string>>(() => ({
+  NO_DEPOSIT: $t('user.rtpControl.condNoDeposit'),
+  GTE_AMOUNT: $t('user.rtpControl.condGteAmount'),
+}));
 
 const renderTypeSummary = (row: any) => {
   const c = getConditional(row);
@@ -571,18 +573,18 @@ const renderTypeSummary = (row: any) => {
   const actionText =
     row?.rtp === 0 ||
     String(row?.response?.action || '').toLowerCase().includes('cancelrtp')
-      ? '取消个人RTP'
-      : '个人RTP设置';
+      ? $t('user.rtpControl.cancelPersonalRtp')
+      : $t('user.rtpControl.personalRtpSetting');
   if (!c && !r) return '—';
   const ruleType = r?.ruleType
-    ? (RULE_TYPE_LABELS[String(r.ruleType)] ?? String(r.ruleType))
+    ? (ruleTypeLabelMap.value[String(r.ruleType)] ?? String(r.ruleType))
     : '—';
   const trigger = c?.triggerReason
-    ? (TRIGGER_REASON_LABELS[String(c.triggerReason)] ??
+    ? (triggerReasonLabelMap.value[String(c.triggerReason)] ??
       String(c.triggerReason))
     : '—';
   const depositCond = r?.depositCondition
-    ? (DEPOSIT_CONDITION_LABELS[String(r.depositCondition)] ??
+    ? (depositConditionLabelMap.value[String(r.depositCondition)] ??
       String(r.depositCondition))
     : '';
   const depositMin =
@@ -590,20 +592,20 @@ const renderTypeSummary = (row: any) => {
       ? String(r.depositMinAmount)
       : '';
   const parts = [
-    `操作:${actionText}`,
-    `类型:${ruleType}`,
-    `触发:${trigger}`,
+    `${$t('user.rtpControl.actionLabel')}:${actionText}`,
+    `${$t('user.rtpControl.typeLabel')}:${ruleType}`,
+    `${$t('user.rtpControl.triggerLabel')}:${trigger}`,
     depositCond
-      ? `存款条件:${depositCond}${depositMin ? `(${depositMin})` : ''}`
+      ? `${$t('user.rtpControl.depositCondLabel')}:${depositCond}${depositMin ? `(${depositMin})` : ''}`
       : '',
   ].filter(Boolean);
   return parts.join('\n');
 };
 
 // History table columns
-const historyColumns: DataTableColumns<any> = [
+const historyColumns = computed<DataTableColumns<any>>(() => [
   {
-    title: '设置时间',
+    title: $t('user.rtpControl.setTime'),
     key: 'createdAt',
     width: 100,
     render: (row) => {
@@ -611,7 +613,7 @@ const historyColumns: DataTableColumns<any> = [
     },
   },
   {
-    title: '玩家ID',
+    title: $t('user.rtpControl.playerId'),
     key: 'userIds',
     width: 80,
     ellipsis: {
@@ -619,7 +621,7 @@ const historyColumns: DataTableColumns<any> = [
     },
   },
   {
-    title: '渠道',
+    title: $t('user.rtpControl.channel'),
     key: 'rtpVendor',
     width:50,
     ellipsis: { tooltip: true },
@@ -631,7 +633,7 @@ const historyColumns: DataTableColumns<any> = [
     },
   },
   {
-    title: '类型(明细)',
+    title: $t('user.rtpControl.typeDetail'),
     key: 'conditionalType',
     width: 80,
     render: (row) =>
@@ -649,7 +651,7 @@ const historyColumns: DataTableColumns<any> = [
       ),
   },
   {
-    title: 'RTP值',
+    title: $t('user.rtpControl.rtpValue'),
     key: 'rtp',
     width: 30,
     align: 'center',
@@ -662,7 +664,7 @@ const historyColumns: DataTableColumns<any> = [
     },
   },
   {
-    title: 'RTP类型',
+    title: $t('user.rtpControl.rtpType'),
     key: 'rtpPattern',
     width: 50,
     align: 'center',
@@ -676,11 +678,11 @@ const historyColumns: DataTableColumns<any> = [
         return '—';
       }
       const patternNum = Number(patternRaw);
-      return HG_PATTERN_LABEL_MAP[patternNum] ?? String(patternRaw);
+      return hgPatternLabelMap.value[patternNum] ?? String(patternRaw);
     },
   },
   {
-    title: '最大赢钱倍数',
+    title: $t('user.rtpControl.maxWinMultiplier'),
     key: 'personWinMaxMult',
     width: 50,
     align: 'center',
@@ -691,7 +693,7 @@ const historyColumns: DataTableColumns<any> = [
     },
   },
   {
-    title: '最大赢钱数',
+    title: $t('user.rtpControl.maxWinAmount'),
     key: 'personWinMaxScore',
     width: 50,
     align: 'center',
@@ -703,18 +705,18 @@ const historyColumns: DataTableColumns<any> = [
     },
   },
   {
-    title: '操作人',
+    title: $t('common.operator'),
     key: 'operator',
     width: 56,
     ellipsis: { tooltip: true },
     render: (row) => {
       const operator = row.operator == null ? '' : String(row.operator).trim();
-      if (/^System(?:\([^)]*\))?$/i.test(operator)) return '系统';
+      if (/^System(?:\([^)]*\))?$/i.test(operator)) return $t('user.rtpControl.systemOperator');
       return operator || '-';
     },
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 50,
     align: 'center',
@@ -723,9 +725,9 @@ const historyColumns: DataTableColumns<any> = [
         string,
         { type: 'success' | 'error' | 'warning'; text: string }
       > = {
-        success: { type: 'success', text: '成功' },
-        failed: { type: 'error', text: '失败' },
-        pending: { type: 'warning', text: '处理中' },
+        success: { type: 'success', text: $t('common.success') },
+        failed: { type: 'error', text: $t('common.failed') },
+        pending: { type: 'warning', text: $t('user.userDetail.processing') },
       };
       const status = statusMap[row.status] || {
         type: 'warning',
@@ -738,7 +740,7 @@ const historyColumns: DataTableColumns<any> = [
       );
     },
   },
-];
+]);
 
 // Computed
 const canSubmit = computed(() => {
@@ -761,7 +763,7 @@ const handleSubmit = async () => {
   if (!formRef.value) return;
 
   if (!props.userDetail?.account) {
-    message.error('无法获取玩家账号');
+    message.error($t('user.rtpControl.cannotGetAccount'));
     return;
   }
 
@@ -813,13 +815,19 @@ const handleSubmit = async () => {
     const result = await setPlayerRtpApi(payload);
 
     message.success(
-      `RTP设置成功！影响的玩家数: ${result.data?.PidList?.length || 0}`,
+      $t('user.rtpControl.setRtpSuccess', [
+        String(result.data?.PidList?.length || 0),
+      ]),
     );
 
     pagination.page = 1;
     await loadHistory();
   } catch (error: any) {
-    message.error(`RTP设置失败: ${error?.message || '未知错误'}`);
+    message.error(
+      $t('user.rtpControl.setRtpFailed', [
+        error?.message || $t('user.userDetail.unknown'),
+      ]),
+    );
     console.error('Set RTP error:', error);
   } finally {
     loading.value = false;
@@ -944,7 +952,7 @@ const loadRtpVendors = async () => {
     const vendors = await getPlayerRtpVendorsApi();
     rtpVendors.value = vendors.filter((v) => v.id?.toLowerCase() === 'hg');
     if (rtpVendors.value.length === 0) {
-      message.warning('未配置可用 HG RTP 渠道');
+      message.warning($t('user.rtpControl.noHgChannel'));
       formData.rtpVendor = null;
       return;
     }
@@ -953,7 +961,7 @@ const loadRtpVendors = async () => {
     }
   } catch (error) {
     console.error('Load RTP vendors error:', error);
-    message.error('加载 RTP 渠道列表失败');
+    message.error($t('user.rtpControl.loadChannelsFailed'));
   }
 };
 

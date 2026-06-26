@@ -1,19 +1,19 @@
 <template>
-  <Page title="三方埋点" description="管理 Web/App 埋点与三方统计代码接入配置">
+  <Page :title="$t('operations.tracking.title')" :description="$t('operations.tracking.description')">
     <n-space vertical :size="16">
       <n-alert type="warning" :show-icon="false">
-        <template #header>埋点说明</template>
+        <template #header>{{ $t('operations.tracking.noticeTitle') }}</template>
         <div class="leading-6">
           <div>
-            三方埋点（Google / Facebook/Meta / TikTok / Kwai）均为 Pixel 接入，存在折损属正常。
+            {{ $t('operations.tracking.notice1') }}
           </div>
           <div>
-            充值到账类事件依赖 websocket 推送，用户后台运行、断网或关闭 App 时，到账事件可能无法及时上报。
+            {{ $t('operations.tracking.notice2') }}
           </div>
           <div>
-            广告平台存在归因策略，未通过广告归因进入的转化通常不会计入广告后台。
+            {{ $t('operations.tracking.notice3') }}
           </div>
-          <div>埋点用于广告优化，不可作为财务结算依据。</div>
+          <div>{{ $t('operations.tracking.notice4') }}</div>
         </div>
       </n-alert>
 
@@ -22,19 +22,19 @@
           v-model:value="filters.scope"
           @update:value="handleFilterChange"
         >
-          <n-tab-pane name="web" tab="Web埋点" />
-          <n-tab-pane name="app" tab="APP埋点" />
-          <n-tab-pane name="third_party_code" tab="三方统计代码" />
+          <n-tab-pane name="web" :tab="$t('operations.tracking.tabWeb')" />
+          <n-tab-pane name="app" :tab="$t('operations.tracking.tabApp')" />
+          <n-tab-pane name="third_party_code" :tab="$t('operations.tracking.tabThirdPartyCode')" />
         </n-tabs>
 
         <div v-if="filters.scope === 'app'" class="app-tracking-panel">
           <div class="app-tip-row">
             <div class="app-tip-text">
-              <span class="app-tip-prefix">重要提示：</span>
-              埋点配置有时延，APP埋点需要重新打包，且会受上下架发布周期和设备状态影响。
-              <a class="app-tip-link" href="javascript:void(0)">点我介绍</a>
+              <span class="app-tip-prefix">{{ $t('operations.tracking.appTipPrefix') }}</span>
+              {{ $t('operations.tracking.appTip') }}
+              <a class="app-tip-link" href="javascript:void(0)">{{ $t('operations.tracking.appTipLink') }}</a>
             </div>
-            <n-button type="primary" size="small">修改</n-button>
+            <n-button type="primary" size="small">{{ $t('common.modify') }}</n-button>
           </div>
 
           <div class="app-content">
@@ -56,9 +56,9 @@
                 <span class="app-provider-desc">{{ appGuideActiveProviderMeta?.description }}</span>
               </div>
               <div class="app-provider-instruction">
-                请在{{ appGuideActiveProviderMeta?.label }}后台创建应用后，下载
+                {{ $t('operations.tracking.appInstruction', [appGuideActiveProviderMeta?.label || '', '']) }}
                 <strong>{{ appGuideActiveProviderMeta?.credentialFile }}</strong>
-                ，并将内容复制粘贴到下方输入框。
+                
               </div>
 
               <div class="app-format-tabs">
@@ -85,7 +85,7 @@
                 v-model:value="filters.provider"
                 clearable
                 :options="providerSelectOptions"
-                placeholder="平台"
+                :placeholder="$t('operations.tracking.platform')"
                 style="width: 180px"
                 @update:value="handleFilterChange"
               />
@@ -93,19 +93,19 @@
                 v-model:value="filters.isEnabled"
                 clearable
                 :options="statusOptions"
-                placeholder="状态"
+                :placeholder="$t('common.status')"
                 style="width: 120px"
                 @update:value="handleFilterChange"
               />
               <n-input
                 v-model:value="filters.keyword"
                 clearable
-                placeholder="搜索渠道名称/备注"
+                :placeholder="$t('operations.tracking.searchChannel')"
                 style="width: 240px"
                 @keyup.enter="handleFilterChange"
               />
             </n-space>
-            <n-button type="primary" @click="openCreateModal">新增</n-button>
+            <n-button type="primary" @click="openCreateModal">{{ $t('common.create') }}</n-button>
           </div>
 
           <n-data-table
@@ -134,7 +134,7 @@
     <n-modal
       v-model:show="modalState.visible"
       preset="card"
-      :title="modalState.editingId ? '编辑' : '新增'"
+      :title="modalState.editingId ? $t('operations.tracking.edit') : $t('operations.tracking.create')"
       style="width: 960px"
       :mask-closable="false"
     >
@@ -147,33 +147,33 @@
       >
         <n-grid :cols="2" :x-gap="16">
           <n-gi :span="2">
-            <n-form-item label="推广渠道/代理链接" path="channelName">
+            <n-form-item :label="$t('operations.tracking.channelAgentLink')" path="channelName">
               <n-input
                 v-model:value="formState.channelName"
-                placeholder="请输入推广渠道/代理链接"
+                :placeholder="$t('operations.tracking.channelAgentLinkPlaceholder')"
               />
             </n-form-item>
           </n-gi>
 
           <template v-if="formState.scope !== 'third_party_code'">
             <n-gi :span="2">
-              <n-form-item label="埋点类型" path="trackingType">
+              <n-form-item :label="$t('operations.tracking.trackingType')" path="trackingType">
                 <n-space>
                   <n-radio-group v-model:value="formState.trackingType">
                     <n-space>
-                      <n-radio value="s2s_api">转化API（S2S埋点）</n-radio>
-                      <n-radio value="browser">浏览器（Web埋点）</n-radio>
+                      <n-radio value="s2s_api">{{ $t('operations.tracking.s2sApi') }}</n-radio>
+                      <n-radio value="browser">{{ $t('operations.tracking.browserWeb') }}</n-radio>
                     </n-space>
                   </n-radio-group>
                 </n-space>
             </n-form-item>
             </n-gi>
             <n-gi :span="2">
-              <n-form-item label="回传方式配置" path="callbackMode">
+              <n-form-item :label="$t('operations.tracking.callbackConfig')" path="callbackMode">
                 <n-radio-group v-model:value="formState.callbackMode">
                   <n-space>
-                    <n-radio value="system">系统推荐（主流方案）</n-radio>
-                    <n-radio value="custom">自定义（需专业知识）</n-radio>
+                    <n-radio value="system">{{ $t('operations.tracking.systemRecommend') }}</n-radio>
+                    <n-radio value="custom">{{ $t('operations.tracking.customExpert') }}</n-radio>
                   </n-space>
                 </n-radio-group>
               </n-form-item>
@@ -188,15 +188,15 @@
                 :bordered="true"
               />
               <div class="mt-3 text-xs leading-6 text-[#ff4d4f]">
-                <div>提示:</div>
+                <div>{{ $t('operations.tracking.tip') }}</div>
                 <div class="text-[#666]">
-                  充值事件：包含首充、逻辑为全部充值事件（首充+复充），每次充值成功都会上报1次
+                  {{ $t('operations.tracking.depositEventTip') }}
                 </div>
                 <div class="text-[#666]">
-                  首充：账号第一次充值，充值成功后，会同时上报 firstrecharge（自定义事件）, StartTrial（标准事件）, deposit（自定义事件）, Purchase（标准事件）
+                  {{ $t('operations.tracking.firstDepositTip') }}
                 </div>
                 <div class="text-[#666]">
-                  复充：不含首充，充值成功后，会同时上报 recharge（复充）, deposit（自定义事件）, Purchase（标准事件）
+                  {{ $t('operations.tracking.repeatDepositTip') }}
                 </div>
               </div>
             </n-gi>
@@ -212,7 +212,7 @@
                   <n-select
                     v-model:value="mapping.targetEventName"
                     :options="targetEventOptions"
-                    placeholder="请选择标准事件"
+                    :placeholder="$t('operations.tracking.selectStandardEvent')"
                     style="width: 340px"
                   />
                 </n-form-item>
@@ -223,7 +223,7 @@
               <n-form-item :label="providerPixelIdLabel" path="pixelId">
                 <n-input
                   v-model:value="formState.pixelId"
-                  :placeholder="`请输入${providerPixelIdLabel}, 例如:1253619738841000`"
+                  :placeholder="$t('operations.tracking.pixelIdPlaceholder', [providerPixelIdLabel])"
                 />
               </n-form-item>
             </n-gi>
@@ -232,7 +232,7 @@
               <n-form-item label="Access_Token" path="accessToken">
                 <n-input
                   v-model:value="formState.accessToken"
-                  placeholder="请输入Access_Token"
+                  :placeholder="$t('operations.tracking.accessTokenPlaceholder')"
                 />
               </n-form-item>
             </n-gi>
@@ -240,12 +240,12 @@
 
           <template v-else>
             <n-gi :span="2">
-              <n-form-item label="三方统计代码" path="customScript">
+              <n-form-item :label="$t('operations.tracking.thirdPartyScript')" path="customScript">
                 <n-input
                   v-model:value="formState.customScript"
                   type="textarea"
                   :autosize="{ minRows: 8, maxRows: 14 }"
-                  placeholder="粘贴 GTM / 统计脚本代码"
+                  :placeholder="$t('operations.tracking.scriptPlaceholder')"
                 />
               </n-form-item>
             </n-gi>
@@ -256,9 +256,9 @@
 
       <template #footer>
         <div class="flex justify-center gap-3">
-          <n-button @click="closeModal">取消</n-button>
+          <n-button @click="closeModal">{{ $t('common.cancel') }}</n-button>
           <n-button type="primary" :loading="modalState.submitting" @click="submitForm">
-            确认
+            {{ $t('common.confirm') }}
           </n-button>
         </div>
       </template>
@@ -267,6 +267,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { computed, h, onMounted, reactive, ref, watch } from 'vue';
 import type { DataTableColumns, FormInst, FormRules } from 'naive-ui';
 import {
@@ -335,31 +337,31 @@ const appGuideProviders = [
   {
     key: 'firebase',
     label: 'Firebase',
-    description: '（https://firebase.google.com/ Google旗下的一款实时数据分析平台）',
+    description: $t('operations.tracking.providerDescFirebase'),
     credentialFile: 'google-services.json',
   },
   {
     key: 'appsflyer',
     label: 'Appsflyer',
-    description: '（移动归因与广告效果分析平台）',
+    description: $t('operations.tracking.providerDescAppsflyer'),
     credentialFile: 'appsflyer-dev-key.txt',
   },
   {
     key: 'one_signal',
     label: 'OneSignal',
-    description: '（推送触达与行为统计平台）',
+    description: $t('operations.tracking.providerDescOneSignal'),
     credentialFile: 'onesignal-app-id.txt',
   },
   {
     key: 'facebook_pixel',
     label: 'Facebook pixel',
-    description: '（Meta广告转化回传与优化）',
+    description: $t('operations.tracking.providerDescFacebook'),
     credentialFile: 'facebook-app-config.json',
   },
   {
     key: 'adjust',
     label: 'Adjust',
-    description: '（App归因与反作弊监测平台）',
+    description: $t('operations.tracking.providerDescAdjust'),
     credentialFile: 'adjust-app-token.txt',
   },
 ] as const;
@@ -412,7 +414,7 @@ const formState = reactive<ThirdPartyTrackingUpsertPayload>({
 });
 
 const formRules: FormRules = {
-  channelName: [{ message: '请输入渠道名称', required: true, trigger: ['blur', 'input'] }],
+  channelName: [{ message: $t('operations.tracking.validateChannelName'), required: true, trigger: ['blur', 'input'] }],
   customScript: [
     {
       required: true,
@@ -423,7 +425,7 @@ const formRules: FormRules = {
         }
         return Boolean(value && value.trim());
       },
-      message: '三方统计代码模式请填写脚本',
+      message: $t('operations.tracking.validateScript'),
     },
   ],
   pixelId: [
@@ -436,7 +438,7 @@ const formRules: FormRules = {
         }
         return Boolean(value && value.trim());
       },
-      message: '请输入 Pixel ID',
+      message: $t('operations.tracking.validatePixelId'),
     },
   ],
   provider: [
@@ -449,7 +451,7 @@ const formRules: FormRules = {
         }
         return Boolean(formState.provider);
       },
-      message: '请选择埋点平台',
+      message: $t('operations.tracking.validateProvider'),
     },
   ],
   accessToken: [
@@ -462,14 +464,14 @@ const formRules: FormRules = {
         }
         return Boolean(value && value.trim());
       },
-      message: '请输入 Access_Token',
+      message: $t('operations.tracking.validateAccessToken'),
     },
   ],
 };
 
 const statusOptions = [
-  { label: '启用', value: 'enabled' },
-  { label: '停用', value: 'disabled' },
+  { label: $t('common.enable'), value: 'enabled' },
+  { label: $t('common.disable'), value: 'disabled' },
 ];
 
 const providerLabelMap = computed(() => {
@@ -493,60 +495,60 @@ const systemTemplateMappings = ref<ThirdPartyTrackingMapping[]>([]);
 const templateEventNameMap = ref<Record<string, string>>({});
 const REQUIRED_EVENT_KEYS = ['register', 'rechargeClick', 'firstrecharge', 'deposit'];
 const WG_EVENT_NAME_MAP: Record<string, string> = {
-  deposit: '充值事件（deposit）',
-  deposit_custom: '充值事件（自定义）',
-  firstrecharge: '首充到账（firstrecharge）',
-  firstrecharge_custom: '首充到账（自定义）',
-  rechargeClick: '提交充值/发起结账/点击充值(rechargeClick)',
-  recharge_custom: '复充（自定义）',
-  register: '注册成功(register)',
+  deposit: $t('operations.tracking.eventDeposit'),
+  deposit_custom: $t('operations.tracking.eventDepositCustom'),
+  firstrecharge: $t('operations.tracking.eventFirstRecharge'),
+  firstrecharge_custom: $t('operations.tracking.eventFirstRechargeCustom'),
+  rechargeClick: $t('operations.tracking.eventRechargeClick'),
+  recharge_custom: $t('operations.tracking.eventRechargeCustom'),
+  register: $t('operations.tracking.eventRegister'),
 };
 const FACEBOOK_DEFAULT_SYSTEM_MAPPINGS: ThirdPartyTrackingMapping[] = [
   {
     eventKey: 'register',
-    eventName: '注册成功(register)',
+    eventName: $t('operations.tracking.eventRegister'),
     isRequired: true,
     sortOrder: 0,
     targetEventName: 'CompleteRegistration',
   },
   {
     eventKey: 'rechargeClick',
-    eventName: '提交充值/发起结账/点击充值(rechargeClick)',
+    eventName: $t('operations.tracking.eventRechargeClick'),
     isRequired: true,
     sortOrder: 1,
     targetEventName: 'InitiateCheckout',
   },
   {
     eventKey: 'firstrecharge',
-    eventName: '首充到账（firstrecharge）',
+    eventName: $t('operations.tracking.eventFirstRecharge'),
     isRequired: true,
     sortOrder: 2,
     targetEventName: 'StartTrial',
   },
   {
     eventKey: 'deposit',
-    eventName: '充值事件（deposit）',
+    eventName: $t('operations.tracking.eventDeposit'),
     isRequired: true,
     sortOrder: 3,
     targetEventName: 'Purchase',
   },
   {
     eventKey: 'firstrecharge_custom',
-    eventName: '首充到账（自定义）',
+    eventName: $t('operations.tracking.eventFirstRechargeCustom'),
     isRequired: false,
     sortOrder: 4,
     targetEventName: 'firstrecharge',
   },
   {
     eventKey: 'recharge_custom',
-    eventName: '复充（自定义）',
+    eventName: $t('operations.tracking.eventRechargeCustom'),
     isRequired: false,
     sortOrder: 5,
     targetEventName: 'recharge',
   },
   {
     eventKey: 'deposit_custom',
-    eventName: '充值事件（自定义）',
+    eventName: $t('operations.tracking.eventDepositCustom'),
     isRequired: false,
     sortOrder: 6,
     targetEventName: 'deposit',
@@ -562,7 +564,7 @@ const targetEventOptions = computed(() => {
 });
 
 const providerTableHeaderLabel = computed(() => {
-  const label = activeProviderDefinition.value?.label || '平台';
+  const label = activeProviderDefinition.value?.label || $t('operations.tracking.platform');
   return label
     .replace('/Meta Pixel', '')
     .replace(' Pixel', '')
@@ -624,12 +626,12 @@ const displayMappings = computed(() => {
 const mappingColumns = computed<DataTableColumns<ThirdPartyTrackingMapping>>(() => {
   return [
     {
-      title: 'WG事件',
+      title: $t('operations.tracking.wgEvent'),
       key: 'eventName',
       width: 420,
     },
     {
-      title: providerTableHeaderLabel.value || '平台',
+      title: providerTableHeaderLabel.value || $t('operations.tracking.platform'),
       key: 'targetEventName',
       render: (row) => row.targetEventName,
     },
@@ -638,34 +640,34 @@ const mappingColumns = computed<DataTableColumns<ThirdPartyTrackingMapping>>(() 
 
 const columns = computed<DataTableColumns<ThirdPartyTrackingConfig>>(() => [
   {
-    title: '渠道名称',
+    title: $t('operations.tracking.channelName'),
     key: 'channelName',
     width: 200,
   },
   {
-    title: '埋点类型',
+    title: $t('operations.tracking.trackingScope'),
     key: 'scope',
     width: 100,
     render: (row) => {
       const scopeLabel: Record<TrackingScope, string> = {
-        app: 'APP埋点',
-        third_party_code: '三方统计代码',
-        web: 'Web埋点',
+        app: $t('operations.tracking.scopeApp'),
+        third_party_code: $t('operations.tracking.scopeThirdParty'),
+        web: $t('operations.tracking.scopeWeb'),
       };
       return scopeLabel[row.scope] || row.scope;
     },
   },
   {
-    title: '埋点方式',
+    title: $t('operations.tracking.trackingMethod'),
     key: 'provider',
     width: 180,
     render: (row) => providerLabelMap.value.get(row.provider || '') || '-',
   },
   {
-    title: '回传配置',
+    title: $t('operations.tracking.callbackMode'),
     key: 'callbackMode',
     width: 150,
-    render: (row) => (row.callbackMode === 'system' ? '系统推荐' : '自定义'),
+    render: (row) => (row.callbackMode === 'system' ? $t('operations.tracking.systemMode') : $t('operations.tracking.customMode')),
   },
   {
     title: 'Pixel ID',
@@ -675,24 +677,24 @@ const columns = computed<DataTableColumns<ThirdPartyTrackingConfig>>(() => [
     render: (row) => row.pixelId || '-',
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'isEnabled',
     width: 90,
     render: (row) =>
       h(
         NTag,
         { type: row.isEnabled ? 'success' : 'error', size: 'small' },
-        { default: () => (row.isEnabled ? '启用' : '停用') },
+        { default: () => (row.isEnabled ? $t('common.enable') : $t('common.disable')) },
       ),
   },
   {
-    title: '更新时间',
+    title: $t('operations.tracking.updatedAt'),
     key: 'updatedAt',
     width: 180,
     render: (row) => new Date(row.updatedAt).toLocaleString('zh-CN'),
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 250,
     render: (row) =>
@@ -705,7 +707,7 @@ const columns = computed<DataTableColumns<ThirdPartyTrackingConfig>>(() => [
             ghost: true,
             onClick: () => openEditModal(row.id),
           },
-          { default: () => '编辑' },
+          { default: () => $t('common.edit') },
         ),
         h(
           NButton,
@@ -713,7 +715,7 @@ const columns = computed<DataTableColumns<ThirdPartyTrackingConfig>>(() => [
             size: 'small',
             onClick: () => handleToggleStatus(row),
           },
-          { default: () => (row.isEnabled ? '停用' : '启用') },
+          { default: () => (row.isEnabled ? $t('common.disable') : $t('common.enable')) },
         ),
         h(
           NButton,
@@ -723,7 +725,7 @@ const columns = computed<DataTableColumns<ThirdPartyTrackingConfig>>(() => [
             ghost: true,
             onClick: () => handleDelete(row.id),
           },
-          { default: () => '删除' },
+          { default: () => $t('common.delete') },
         ),
       ]),
   },
@@ -798,7 +800,7 @@ async function loadList() {
     pagination.total = response?.data?.pagination?.total || 0;
   } catch (error) {
     console.error('Failed to load third-party tracking list:', error);
-    message.error('加载三方埋点列表失败');
+    message.error($t('operations.tracking.loadListFailed'));
   } finally {
     loading.value = false;
   }
@@ -826,7 +828,7 @@ async function openEditModal(id: number) {
     const response: any = await getThirdPartyTrackingConfigDetailApi(id);
     const detail = response?.data;
     if (!detail) {
-      message.error('获取配置详情失败');
+      message.error($t('operations.tracking.fetchDetailFailed'));
       return;
     }
 
@@ -856,7 +858,7 @@ async function openEditModal(id: number) {
     }
   } catch (error) {
     console.error('Failed to load detail:', error);
-    message.error('加载配置详情失败');
+    message.error($t('operations.tracking.loadDetailFailed'));
   }
 }
 
@@ -891,7 +893,7 @@ async function submitForm() {
     formState.scope !== 'third_party_code' &&
     mappings.length !== REQUIRED_EVENT_KEYS.length
   ) {
-    message.error('自定义模式请完整选择4个标准事件映射');
+    message.error($t('operations.tracking.customMappingRequired'));
     return;
   }
 
@@ -915,17 +917,17 @@ async function submitForm() {
 
     if (modalState.editingId) {
       await updateThirdPartyTrackingConfigApi(modalState.editingId, payload);
-      message.success('配置更新成功');
+      message.success($t('operations.tracking.updateSuccess'));
     } else {
       await createThirdPartyTrackingConfigApi(payload);
-      message.success('配置创建成功');
+      message.success($t('operations.tracking.createSuccess'));
     }
 
     modalState.visible = false;
     loadList();
   } catch (error) {
     console.error('Failed to submit form:', error);
-    message.error('保存失败');
+    message.error($t('operations.tracking.saveFailed'));
   } finally {
     modalState.submitting = false;
   }
@@ -933,20 +935,20 @@ async function submitForm() {
 
 function handleToggleStatus(row: ThirdPartyTrackingConfig) {
   const nextStatus = !row.isEnabled;
-  const label = nextStatus ? '启用' : '停用';
+  const label = nextStatus ? $t('common.enable') : $t('common.disable');
   dialog.warning({
-    title: `确认${label}`,
-    content: `确认要${label}该埋点配置吗？`,
-    positiveText: '确认',
-    negativeText: '取消',
+    title: $t('operations.tracking.confirmToggle', [label]),
+    content: $t('operations.tracking.confirmToggleContent', [label]),
+    positiveText: $t('common.confirm'),
+    negativeText: $t('common.cancel'),
     async onPositiveClick() {
       try {
         await toggleThirdPartyTrackingStatusApi(row.id, nextStatus);
-        message.success(`${label}成功`);
+        message.success($t('operations.tracking.toggleSuccess', [label]));
         loadList();
       } catch (error) {
         console.error('Failed to toggle status:', error);
-        message.error(`${label}失败`);
+        message.error($t('operations.tracking.toggleFailed', [label]));
       }
     },
   });
@@ -954,18 +956,18 @@ function handleToggleStatus(row: ThirdPartyTrackingConfig) {
 
 function handleDelete(id: number) {
   dialog.error({
-    title: '确认删除',
-    content: '删除后不可恢复，是否继续？',
-    positiveText: '删除',
-    negativeText: '取消',
+    title: $t('operations.tracking.confirmDelete'),
+    content: $t('operations.tracking.deleteIrreversible'),
+    positiveText: $t('common.delete'),
+    negativeText: $t('common.cancel'),
     async onPositiveClick() {
       try {
         await deleteThirdPartyTrackingConfigApi(id);
-        message.success('删除成功');
+        message.success($t('common.deleteSuccess'));
         loadList();
       } catch (error) {
         console.error('Failed to delete config:', error);
-        message.error('删除失败');
+        message.error($t('operations.domain.message.deleteFailed'));
       }
     },
   });

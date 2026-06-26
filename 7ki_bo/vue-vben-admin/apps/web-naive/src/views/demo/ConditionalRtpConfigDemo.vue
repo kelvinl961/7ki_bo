@@ -35,7 +35,7 @@
                 <n-select
                   v-model:value="newRule.depositCondition"
                   :options="depositConditionOptions"
-                  placeholder="请选择"
+                  :placeholder="$t('common.pleaseSelect')"
                 />
               </n-form-item>
 
@@ -85,7 +85,7 @@
               <n-button type="primary" :loading="submitting" @click="handleAddRule">
                 添加到规则列表
               </n-button>
-              <n-button @click="handleResetNewRule" :disabled="submitting">重置</n-button>
+              <n-button @click="handleResetNewRule" :disabled="submitting">{{ $t('common.reset') }}</n-button>
             </div>
           </n-form>
         </n-card>
@@ -181,6 +181,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { computed, h, onMounted, reactive, ref } from 'vue';
 import { useMessage } from 'naive-ui';
 import {

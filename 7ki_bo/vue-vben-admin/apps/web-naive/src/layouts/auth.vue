@@ -11,8 +11,6 @@ import { $t } from '#/locales';
     :logo="''"
     :page-description="$t('authentication.pageDesc')"
     :page-title="$t('authentication.pageTitle')"
-  >
-    <!-- 自定义工具栏 -->
-    <!-- <template #toolbar></template> -->
-  </AuthPageLayout>
+    :toolbar="false"
+  />
 </template>

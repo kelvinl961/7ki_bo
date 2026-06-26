@@ -5,24 +5,18 @@
       <n-card :bordered="false" class="rounded-16px shadow-sm">
         <div class="mb-4 flex items-center justify-between">
           <div>
-            <h2 class="text-xl font-semibold text-gray-800">代付统计</h2>
-            <p class="mt-1 text-sm text-gray-600">
-              查看对应三方代付出款的成功总数、成功率
-            </p>
+            <h2 class="text-xl font-semibold text-gray-800">{{ $t('finance.paymentStatistics') }}</h2>
+            <p class="mt-1 text-sm text-gray-600">{{ $t('finance.viewPayoutStatsDesc') }}</p>
           </div>
           <div class="flex gap-3">
             <n-button type="primary" @click="fetchData" :loading="loading">
               <template #icon>
                 <n-icon><ReloadOutline /></n-icon>
-              </template>
-              刷新
-            </n-button>
+              </template>{{ $t('common.refresh') }}</n-button>
             <n-button type="info" @click="exportReport">
               <template #icon>
                 <n-icon><DownloadOutline /></n-icon>
-              </template>
-              导出报表
-            </n-button>
+              </template>{{ $t('common.exportReport') }}</n-button>
           </div>
         </div>
 
@@ -32,12 +26,12 @@
         >
           <!-- Date Range -->
           <div class="filter-item">
-            <n-form-item label="统计时间">
+            <n-form-item :label="$t('finance.statisticsTime')">
               <n-date-picker
                 v-model:value="filters.dateRange"
                 type="daterange"
                 format="yyyy-MM-dd"
-                placeholder="选择时间范围"
+                placeholder:placeholder="$t('finance.selectTimeRange')"
                 clearable
                 size="small"
                 class="w-full"
@@ -47,10 +41,10 @@
 
           <!-- Third Party Provider -->
           <div class="filter-item">
-            <n-form-item label="三方代付">
+            <n-form-item :label="$t('finance.thirdPartyPayout')">
               <n-select
                 v-model:value="filters.provider"
-                placeholder="选择代付商"
+                placeholder:placeholder="$t('finance.selectPayoutProvider')"
                 clearable
                 size="small"
                 :options="providerOptions"
@@ -60,10 +54,10 @@
 
           <!-- Currency -->
           <div class="filter-item">
-            <n-form-item label="币种">
+            <n-form-item :label="$t('common.currency')">
               <n-select
                 v-model:value="filters.currency"
-                placeholder="选择币种"
+                placeholder:placeholder="$t('finance.selectCurrency')"
                 clearable
                 size="small"
                 :options="currencyOptions"
@@ -73,10 +67,10 @@
 
           <!-- Member Account -->
           <div class="filter-item">
-            <n-form-item label="会员账号">
+            <n-form-item :label="$t('finance.memberAccount2')">
               <n-input
                 v-model:value="filters.memberAccount"
-                placeholder="请输入会员账号"
+                placeholder:placeholder="$t('finance.pleaseEnterMemberAccount')"
                 clearable
                 size="small"
               />
@@ -85,10 +79,10 @@
 
           <!-- Withdrawal Count Filter -->
           <div class="filter-item">
-            <n-form-item label="会员提现次数">
+            <n-form-item :label="$t('finance.memberWithdrawalCount')">
               <n-select
                 v-model:value="filters.withdrawalTimes"
-                placeholder="选择提现次数"
+                placeholder:placeholder="$t('finance.selectWithdrawalCount')"
                 clearable
                 size="small"
                 :options="withdrawalCountOptions"
@@ -105,10 +99,8 @@
             >
               <template #icon
                 ><n-icon><SearchOutline /></n-icon
-              ></template>
-              搜索
-            </n-button>
-            <n-button @click="resetFilters" size="small">重置</n-button>
+              ></template>{{ $t('common.search') }}</n-button>
+            <n-button @click="resetFilters" size="small">{{ $t('common.reset') }}</n-button>
           </div>
         </div>
       </n-card>
@@ -117,7 +109,7 @@
     <!-- Statistics Overview -->
     <div class="statistics-overview mt-4">
       <n-card :bordered="false" class="rounded-16px shadow-sm">
-        <h3 class="mb-4 text-lg font-semibold">统计概览</h3>
+        <h3 class="mb-4 text-lg font-semibold">{{ $t('finance.k2tvtn') }}</h3>
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           <div class="stat-card">
             <n-card size="small">
@@ -125,7 +117,7 @@
                 <div class="text-3xl font-bold text-blue-600">
                   {{ statistics.totalOrders }}
                 </div>
-                <div class="mt-1 text-sm text-gray-600">总订单数</div>
+                <div class="mt-1 text-sm text-gray-600">{{ $t('finance.totalOrders') }}</div>
               </div>
             </n-card>
           </div>
@@ -135,7 +127,7 @@
                 <div class="text-3xl font-bold text-green-600">
                   {{ statistics.successOrders }}
                 </div>
-                <div class="mt-1 text-sm text-gray-600">成功订单数</div>
+                <div class="mt-1 text-sm text-gray-600">{{ $t('finance.successOrders') }}</div>
               </div>
             </n-card>
           </div>
@@ -145,7 +137,7 @@
                 <div class="text-3xl font-bold text-orange-600">
                   {{ statistics.successRate }}%
                 </div>
-                <div class="mt-1 text-sm text-gray-600">成功率</div>
+                <div class="mt-1 text-sm text-gray-600">{{ $t('finance.successRate') }}</div>
               </div>
             </n-card>
           </div>
@@ -155,7 +147,7 @@
                 <div class="text-3xl font-bold text-purple-600">
                   {{ statistics.totalAmount }}
                 </div>
-                <div class="mt-1 text-sm text-gray-600">总金额</div>
+                <div class="mt-1 text-sm text-gray-600">{{ $t('finance.totalAmount') }}</div>
               </div>
             </n-card>
           </div>
@@ -186,25 +178,19 @@
                 <n-button type="primary" @click="fetchData" :loading="loading">
                   <template #icon>
                     <n-icon><ReloadOutline /></n-icon>
-                  </template>
-                  刷新
-                </n-button>
+                  </template>{{ $t('common.refresh') }}</n-button>
                 <n-button type="info" @click="exportReport">
                   <template #icon>
                     <n-icon><DownloadOutline /></n-icon>
-                  </template>
-                  导出报表
-                </n-button>
+                  </template>{{ $t('common.exportReport') }}</n-button>
               </div>
 
               <!-- 标题和统计信息 -->
               <div class="flex items-center gap-4">
-                <h3 class="text-lg font-semibold">详细统计</h3>
+                <h3 class="text-lg font-semibold">{{ $t('finance.k5xehw') }}</h3>
                 <div class="text-sm text-gray-600">
                   共 {{ paginationReactive.total }} 条统计记录
-                  <n-tag type="info" size="small" class="ml-2">
-                    代付统计
-                  </n-tag>
+                  <n-tag type="info" size="small" class="ml-2">{{ $t('finance.paymentStatistics') }}</n-tag>
                 </div>
               </div>
             </div>
@@ -216,6 +202,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, onMounted, h } from 'vue';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 import { defineAsyncComponent } from 'vue';
@@ -315,12 +303,12 @@ const handleRowClick = (_row: PaymentStatistic) => {
 
 // Options
 const providerOptions = [
-  { label: 'PIX支付', value: 'pix' },
-  { label: 'PIX自动', value: 'pix_auto' },
-  { label: '银行转账', value: 'bank_transfer' },
-  { label: '人工代付', value: 'manual' },
-  { label: '第三方代付', value: 'third_party' },
-  { label: '未知渠道', value: 'unknown' },
+  { label: $t('finance.pixPayment'), value: 'pix' },
+  { label: $t('finance.pixAuto'), value: 'pix_auto' },
+  { label: $t('finance.bankTransfer'), value: 'bank_transfer' },
+  { label: $t('finance.manualPayout1'), value: 'manual' },
+  { label: $t('finance.thirdPartyPayout1'), value: 'third_party' },
+  { label: $t('finance.unknownChannel'), value: 'unknown' },
 ];
 
 const currencyOptions = [
@@ -330,34 +318,34 @@ const currencyOptions = [
 ];
 
 const withdrawalCountOptions = [
-  { label: '全部会员', value: 'all' },
-  { label: '首次提现', value: 'first' },
-  { label: '多次提现', value: 'multiple' },
+  { label: $t('finance.allMembers'), value: 'all' },
+  { label: $t('finance.firstWithdrawal'), value: 'first' },
+  { label: $t('finance.multipleWithdrawals'), value: 'multiple' },
 ];
 
 // Table columns
 const columns: DataTableColumns<PaymentStatistic> = [
   {
-    title: '日期',
+    title: $t('finance.date'),
     key: 'date',
     width: 120,
     render: (row) => h('div', { class: 'text-center' }, row.date),
   },
   {
-    title: '三方代付',
+    title: $t('finance.thirdPartyPayout'),
     key: 'providerName',
     width: 150,
     render: (row) =>
       h('div', { class: 'text-center font-medium' }, row.providerName),
   },
   {
-    title: '币种',
+    title: $t('common.currency'),
     key: 'currency',
     width: 80,
     render: (row) => h('div', { class: 'text-center' }, row.currency),
   },
   {
-    title: '总订单数',
+    title: $t('finance.totalOrders'),
     key: 'totalOrders',
     width: 100,
     render: (row) =>
@@ -368,7 +356,7 @@ const columns: DataTableColumns<PaymentStatistic> = [
       ),
   },
   {
-    title: '成功订单数',
+    title: $t('finance.successOrders'),
     key: 'successOrders',
     width: 120,
     render: (row) =>
@@ -379,7 +367,7 @@ const columns: DataTableColumns<PaymentStatistic> = [
       ),
   },
   {
-    title: '失败订单数',
+    title: $t('finance.failedOrders'),
     key: 'failedOrders',
     width: 120,
     render: (row) =>
@@ -390,7 +378,7 @@ const columns: DataTableColumns<PaymentStatistic> = [
       ),
   },
   {
-    title: '成功率',
+    title: $t('finance.successRate'),
     key: 'successRate',
     width: 120,
     render: (row) =>
@@ -410,7 +398,7 @@ const columns: DataTableColumns<PaymentStatistic> = [
       ]),
   },
   {
-    title: '总金额',
+    title: $t('finance.totalAmount'),
     key: 'totalAmount',
     width: 120,
     render: (row) =>
@@ -421,7 +409,7 @@ const columns: DataTableColumns<PaymentStatistic> = [
       ),
   },
   {
-    title: '成功金额',
+    title: $t('finance.successAmount'),
     key: 'successAmount',
     width: 120,
     render: (row) =>
@@ -432,13 +420,13 @@ const columns: DataTableColumns<PaymentStatistic> = [
       ),
   },
   {
-    title: '平均处理时间',
+    title: $t('finance.averageProcessingTime'),
     key: 'avgProcessingTime',
     width: 120,
     render: (row) => h('div', { class: 'text-center' }, row.avgProcessingTime),
   },
   {
-    title: '会员提现统计',
+    title: $t('finance.memberWithdrawalStats'),
     key: 'memberStats',
     width: 150,
     render: (row) =>
@@ -516,7 +504,7 @@ const fetchData = async () => {
     }
   } catch (error) {
     console.error('Fetch data error:', error);
-    message.error('获取数据失败');
+    message.error($t('finance.failedToFetchData'));
   } finally {
     loading.value = false;
   }
@@ -567,13 +555,13 @@ const exportReport = async () => {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-      message.success('导出成功');
+      message.success($t('finance.exportSuccessful'));
     } else {
-      message.warning('导出数据为空');
+      message.warning($t('finance.exportData'));
     }
   } catch (error) {
     console.error('Export error:', error);
-    message.error('导出失败');
+    message.error($t('finance.exportFailed'));
   }
 };
 

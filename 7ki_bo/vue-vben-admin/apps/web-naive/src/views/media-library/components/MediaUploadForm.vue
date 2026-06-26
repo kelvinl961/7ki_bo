@@ -7,7 +7,7 @@
       label-placement="top"
     >
       <!-- File Upload -->
-      <n-form-item label="选择文件" path="file">
+      <n-form-item :label="$t('media.selectFile')" path="file">
         <n-upload
           ref="uploadRef"
           :file-list="fileList"
@@ -22,9 +22,9 @@
           <n-upload-dragger>
             <div class="upload-dragger-content">
               <div class="upload-icon">📁</div>
-              <div class="upload-text">点击或拖拽文件到该区域上传</div>
+              <div class="upload-text">{{ $t('media.uploadHint') }}</div>
               <div class="upload-hint">
-                支持格式:
+                {{ $t('media.supportedFormats') }}
                 {{
                   Array.isArray(acceptTypes)
                     ? acceptTypes.join(', ')
@@ -37,40 +37,40 @@
       </n-form-item>
 
       <!-- Filename -->
-      <n-form-item label="显示名称" path="filename">
+      <n-form-item :label="$t('media.displayName')" path="filename">
         <n-input
           v-model:value="formData.filename"
-          placeholder="输入显示名称"
+          :placeholder="$t('media.displayNamePlaceholder')"
           maxlength="100"
           show-count
         />
       </n-form-item>
 
       <!-- Category -->
-      <n-form-item label="分类" path="category">
+      <n-form-item :label="$t('media.category')" path="category">
         <n-select
           v-model:value="formData.category"
-          placeholder="选择文件分类"
+          :placeholder="$t('media.selectFileCategory')"
           :options="categoryOptions"
         />
       </n-form-item>
 
       <!-- Alt Text (for images) -->
-      <n-form-item v-if="isImageFile" label="替代文本" path="alt">
+      <n-form-item v-if="isImageFile" :label="$t('media.altText')" path="alt">
         <n-input
           v-model:value="formData.alt"
-          placeholder="用于无障碍访问的替代文本"
+          :placeholder="$t('media.altTextPlaceholder')"
           maxlength="100"
           show-count
         />
       </n-form-item>
 
       <!-- Description -->
-      <n-form-item label="描述" path="description">
+      <n-form-item :label="$t('common.description')" path="description">
         <n-input
           v-model:value="formData.description"
           type="textarea"
-          placeholder="文件描述（可选）"
+          :placeholder="$t('media.descriptionOptional')"
           :autosize="{ minRows: 3, maxRows: 5 }"
           maxlength="200"
           show-count
@@ -78,38 +78,40 @@
       </n-form-item>
 
       <!-- Tags -->
-      <n-form-item label="标签" path="tags">
+      <n-form-item :label="$t('media.tags')" path="tags">
         <n-dynamic-tags v-model:value="formData.tags" />
       </n-form-item>
 
       <!-- Public -->
-      <n-form-item label="访问权限" path="isPublic">
+      <n-form-item :label="$t('media.accessPermission')" path="isPublic">
         <n-switch v-model:value="formData.isPublic">
-          <template #checked>公开</template>
-          <template #unchecked>私有</template>
+          <template #checked>{{ $t('media.public') }}</template>
+          <template #unchecked>{{ $t('media.private') }}</template>
         </n-switch>
         <div class="mt-1 text-xs text-gray-500">
-          公开文件可以被其他用户在选择器中看到
+          {{ $t('media.publicHint') }}
         </div>
       </n-form-item>
     </n-form>
 
     <!-- Actions -->
     <div class="mt-6 flex justify-end gap-3">
-      <n-button @click="handleCancel">取消</n-button>
+      <n-button @click="handleCancel">{{ $t('common.cancel') }}</n-button>
       <n-button
         type="primary"
         @click="handleSubmit"
         :loading="submitting"
         :disabled="!selectedFile"
       >
-        上传
+        {{ $t('common.upload') }}
       </n-button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, watch } from 'vue';
 import {
   NForm,
@@ -168,34 +170,40 @@ const formData = reactive({
   isPublic: true,
 });
 
-// Helper function
+const categoryMap = computed<Record<string, string>>(() => ({
+  backgrounds: $t('media.catBackgrounds'),
+  banners: $t('media.catBanners'),
+  icons: $t('media.catIcons'),
+  logos: $t('media.catLogos'),
+  templates: $t('media.catTemplates'),
+  avatars: $t('media.catAvatars'),
+  documents: $t('media.catDocuments'),
+  videos: $t('media.catVideos'),
+  audio: $t('media.catAudio'),
+  other: $t('media.catOther'),
+}));
+
 const getCategoryDisplayName = (category: string): string => {
-  const categoryMap: Record<string, string> = {
-    backgrounds: '背景图',
-    banners: '横幅',
-    icons: '图标',
-    logos: '标志',
-    templates: '模板',
-    avatars: '头像',
-    documents: '文档',
-    videos: '视频',
-    audio: '音频',
-    other: '其他',
-  };
-  return categoryMap[category] || category;
+  return categoryMap.value[category] || category;
 };
 
 // Validation rules
-const rules: FormRules = {
-  filename: [{ required: true, message: '请输入显示名称', trigger: 'blur' }],
-  category: [{ required: true, message: '请选择文件分类', trigger: 'change' }],
-};
+const rules = computed<FormRules>(() => ({
+  filename: [
+    { required: true, message: $t('media.displayNameRequired'), trigger: 'blur' },
+  ],
+  category: [
+    { required: true, message: $t('media.categoryRequired'), trigger: 'change' },
+  ],
+}));
 
 // Options
-const categoryOptions = MEDIA_CATEGORIES.map((cat) => ({
-  label: getCategoryDisplayName(cat),
-  value: cat,
-}));
+const categoryOptions = computed(() =>
+  MEDIA_CATEGORIES.map((cat) => ({
+    label: getCategoryDisplayName(cat),
+    value: cat,
+  })),
+);
 
 // Computed
 const isImageFile = computed(() => {
@@ -265,7 +273,7 @@ const detectCategory = (file: File): string => {
 
 const handleSubmit = async () => {
   if (!selectedFile.value) {
-    message.error('请选择要上传的文件');
+    message.error($t('media.selectUploadFile'));
     return;
   }
 
@@ -275,7 +283,7 @@ const handleSubmit = async () => {
     submitting.value = true;
 
     if (!formData.category) {
-      message.error('请选择文件分类');
+      message.error($t('media.categoryRequired'));
       return;
     }
 
@@ -293,15 +301,15 @@ const handleSubmit = async () => {
     // Handle different response formats
     if (response && response.success && response.data) {
       // Format: {success: true, data: {...}, message: "..."}
-      message.success(response.message || '文件上传成功');
+      message.success(response.message || $t('media.uploadSuccess'));
       emit('success', response.data);
     } else if (response && response.data) {
       // Format: {data: {...}, message: "..."}
-      message.success(response.message || '文件上传成功');
+      message.success(response.message || $t('media.uploadSuccess'));
       emit('success', response.data);
     } else if (response && typeof response === 'object' && 'id' in response) {
       // Format: direct file object
-      message.success('文件上传成功');
+      message.success($t('media.uploadSuccess'));
       emit('success', response as any);
     } else {
       console.warn('⚠️ Unexpected response format:', response);
@@ -309,7 +317,7 @@ const handleSubmit = async () => {
     }
   } catch (error) {
     console.error('Upload error:', error);
-    message.error('上传失败，请重试');
+    message.error($t('media.uploadFailed'));
   } finally {
     submitting.value = false;
   }

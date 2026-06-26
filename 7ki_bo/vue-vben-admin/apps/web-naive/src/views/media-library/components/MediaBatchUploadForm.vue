@@ -7,7 +7,7 @@
       label-placement="top"
     >
       <!-- File Upload -->
-      <n-form-item label="选择文件" path="files">
+      <n-form-item :label="$t('media.selectFile')" path="files">
         <n-upload
           ref="uploadRef"
           :file-list="fileList"
@@ -23,46 +23,46 @@
           <n-upload-dragger>
             <div class="upload-dragger-content">
               <div class="upload-icon">📁</div>
-              <div class="upload-text">点击或拖拽多个文件到该区域上传</div>
+              <div class="upload-text">{{ $t('media.batchUploadHint') }}</div>
               <div class="upload-hint">
-                支持格式:
+                {{ $t('media.supportedFormats') }}
                 {{
                   Array.isArray(acceptTypes)
                     ? acceptTypes.join(', ')
                     : acceptTypes
                 }}
               </div>
-              <div class="upload-hint">最多可同时上传 20 个文件</div>
+              <div class="upload-hint">{{ $t('media.maxFiles') }}</div>
             </div>
           </n-upload-dragger>
         </n-upload>
       </n-form-item>
 
       <!-- Category -->
-      <n-form-item label="分类" path="category">
+      <n-form-item :label="$t('media.category')" path="category">
         <n-select
           v-model:value="formData.category"
-          placeholder="选择文件分类"
+          :placeholder="$t('media.selectFileCategory')"
           :options="categoryOptions"
         />
       </n-form-item>
 
       <!-- Alt Text (for images) -->
-      <n-form-item v-if="hasImageFiles" label="替代文本" path="alt">
+      <n-form-item v-if="hasImageFiles" :label="$t('media.altText')" path="alt">
         <n-input
           v-model:value="formData.alt"
-          placeholder="用于无障碍访问的替代文本（将应用到所有图片文件）"
+          :placeholder="$t('media.altTextBatch')"
           maxlength="100"
           show-count
         />
       </n-form-item>
 
       <!-- Description -->
-      <n-form-item label="描述" path="description">
+      <n-form-item :label="$t('common.description')" path="description">
         <n-input
           v-model:value="formData.description"
           type="textarea"
-          placeholder="文件描述（将应用到所有文件）"
+          :placeholder="$t('media.descriptionBatch')"
           :autosize="{ minRows: 3, maxRows: 5 }"
           maxlength="200"
           show-count
@@ -70,18 +70,18 @@
       </n-form-item>
 
       <!-- Tags -->
-      <n-form-item label="标签" path="tags">
+      <n-form-item :label="$t('media.tags')" path="tags">
         <n-dynamic-tags v-model:value="formData.tags" />
       </n-form-item>
 
       <!-- Public -->
-      <n-form-item label="访问权限" path="isPublic">
+      <n-form-item :label="$t('media.accessPermission')" path="isPublic">
         <n-switch v-model:value="formData.isPublic">
-          <template #checked>公开</template>
-          <template #unchecked>私有</template>
+          <template #checked>{{ $t('media.public') }}</template>
+          <template #unchecked>{{ $t('media.private') }}</template>
         </n-switch>
         <div class="mt-1 text-xs text-gray-500">
-          公开文件可以被其他用户在选择器中看到
+          {{ $t('media.publicHint') }}
         </div>
       </n-form-item>
 
@@ -94,13 +94,13 @@
           :status="uploadProgress === 100 ? 'success' : 'normal'"
         />
         <div class="progress-text">
-          正在上传 {{ uploadedCount }}/{{ totalFiles }} 个文件...
+          {{ $t('media.uploadingProgress', [uploadedCount, totalFiles]) }}
         </div>
       </div>
 
       <!-- Upload Results -->
       <div v-if="uploadResults.length > 0" class="upload-results">
-        <h4 class="mb-3 text-lg font-medium">上传结果</h4>
+        <h4 class="mb-3 text-lg font-medium">{{ $t('media.uploadResult') }}</h4>
         <div class="results-grid">
           <div
             v-for="result in uploadResults"
@@ -122,20 +122,22 @@
 
     <!-- Actions -->
     <div class="mt-6 flex justify-end gap-3">
-      <n-button @click="handleCancel">取消</n-button>
+      <n-button @click="handleCancel">{{ $t('common.cancel') }}</n-button>
       <n-button
         type="primary"
         @click="handleSubmit"
         :loading="uploading"
         :disabled="!selectedFiles.length"
       >
-        {{ uploading ? '上传中...' : `上传 ${selectedFiles.length} 个文件` }}
+        {{ uploadButtonLabel }}
       </n-button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, watch } from 'vue';
 import {
   NForm,
@@ -203,22 +205,48 @@ const formData = reactive({
 const fileList = ref<UploadFileInfo[]>([]);
 const selectedFiles = ref<File[]>([]);
 
+const categoryMap = computed<Record<string, string>>(() => ({
+  backgrounds: $t('media.catBackgrounds'),
+  banners: $t('media.catBanners'),
+  icons: $t('media.catIcons'),
+  logos: $t('media.catLogos'),
+  templates: $t('media.catTemplates'),
+  avatars: $t('media.catAvatars'),
+  documents: $t('media.catDocuments'),
+  videos: $t('media.catVideos'),
+  audio: $t('media.catAudio'),
+  other: $t('media.catOther'),
+}));
+
+const getCategoryDisplayName = (category: string): string => {
+  return categoryMap.value[category] || category;
+};
+
 // Computed
 const hasImageFiles = computed(() => {
   return selectedFiles.value.some((file) => file.type.startsWith('image/'));
 });
 
-const categoryOptions = computed(() => [
-  ...MEDIA_CATEGORIES.map((cat) => ({
+const categoryOptions = computed(() =>
+  MEDIA_CATEGORIES.map((cat) => ({
     label: getCategoryDisplayName(cat),
     value: cat,
   })),
-]);
+);
+
+const uploadButtonLabel = computed(() => {
+  if (uploading.value) {
+    return $t('media.uploading');
+  }
+  return $t('media.uploadCount', [selectedFiles.value.length]);
+});
 
 // Validation rules
-const rules: FormRules = {
-  category: [{ required: true, message: '请选择文件分类', trigger: 'change' }],
-};
+const rules = computed<FormRules>(() => ({
+  category: [
+    { required: true, message: $t('media.categoryRequired'), trigger: 'change' },
+  ],
+}));
 
 // Methods
 const handleFileListChange = (newFileList: UploadFileInfo[]) => {
@@ -228,25 +256,9 @@ const handleFileListChange = (newFileList: UploadFileInfo[]) => {
     .map((file) => file.file!);
 };
 
-const getCategoryDisplayName = (category: string): string => {
-  const categoryMap: Record<string, string> = {
-    backgrounds: '背景图',
-    banners: '横幅',
-    icons: '图标',
-    logos: '标志',
-    templates: '模板',
-    avatars: '头像',
-    documents: '文档',
-    videos: '视频',
-    audio: '音频',
-    other: '其他',
-  };
-  return categoryMap[category] || category;
-};
-
 const handleSubmit = async () => {
   if (selectedFiles.value.length === 0) {
-    message.error('请选择要上传的文件');
+    message.error($t('media.selectUploadFile'));
     return;
   }
 
@@ -254,7 +266,7 @@ const handleSubmit = async () => {
     await formRef.value?.validate();
 
     if (!formData.category) {
-      message.error('请选择文件分类');
+      message.error($t('media.categoryRequired'));
       return;
     }
 
@@ -305,7 +317,7 @@ const handleSubmit = async () => {
       const successResults = response.data.map((file: MediaFile) => ({
         success: true,
         filename: file.filename,
-        message: '上传成功',
+        message: $t('media.uploadItemSuccess'),
         id: file.id,
       }));
 
@@ -319,14 +331,14 @@ const handleSubmit = async () => {
       uploadResults.value = [...successResults, ...errorResults];
       uploadedCount.value = successResults.length;
 
-      message.success(response.message || '批量上传完成');
+      message.success(response.message || $t('media.batchUploadComplete'));
       emit('success', response.data);
     } else {
       throw new Error('Upload failed - unexpected response format');
     }
   } catch (error) {
     console.error('Batch upload error:', error);
-    message.error('批量上传失败，请重试');
+    message.error($t('media.batchUploadFailed'));
   } finally {
     uploading.value = false;
   }

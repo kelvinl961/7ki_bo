@@ -7,7 +7,7 @@
           <template #icon>
             <span>+</span>
           </template>
-          新增客服
+          {{ $t('operations.customerService.addService') }}
         </n-button>
       </n-space>
 
@@ -26,7 +26,7 @@
     <n-modal
       v-model:show="showModal"
       preset="card"
-      :title="editingId ? '编辑客服' : '新增客服'"
+      :title="editingId ? $t('operations.customerService.editService') : $t('operations.customerService.addService')"
       style="width: 800px"
       :mask-closable="false"
     >
@@ -36,16 +36,16 @@
         :rules="formRules"
         label-placement="top"
       >
-        <n-form-item label="币种（支持多选）" path="currencies">
+        <n-form-item :label="$t('operations.customerService.currencies')" path="currencies">
           <n-select
             v-model:value="formData.currencies"
             multiple
             :options="currencyOptions"
-            placeholder="选择币种"
+            :placeholder="$t('operations.customerService.selectCurrency')"
           />
         </n-form-item>
 
-        <n-form-item label="IM选择" path="imType">
+        <n-form-item :label="$t('operations.customerService.imSelect')" path="imType">
           <n-space vertical style="width: 100%">
             <n-radio-group v-model:value="formData.imType">
               <n-space>
@@ -111,7 +111,7 @@
                 </n-radio>
                 <n-radio value="CUSTOM">
                   <n-space align="center" :size="8">
-                    <n-button size="small">+ 自定义</n-button>
+                    <n-button size="small">+ {{ $t('operations.customerService.customIm') }}</n-button>
                   </n-space>
                 </n-radio>
               </n-space>
@@ -124,23 +124,23 @@
               accept="image/*"
               @before-upload="handleUpload"
             >
-              上传自定义IM图标 (144px × 144px)
+              {{ $t('operations.customerService.uploadCustomIcon') }}
             </n-upload>
           </n-space>
         </n-form-item>
 
-        <n-form-item label="客服昵称" path="serviceName">
+        <n-form-item :label="$t('operations.customerService.serviceNickname')" path="serviceName">
           <n-input
             v-model:value="formData.serviceName"
-            placeholder="输入客服昵称（如：AAA）"
+            :placeholder="$t('operations.customerService.nicknamePlaceholder')"
             maxlength="255"
           />
         </n-form-item>
 
-        <n-form-item label="客服账号" path="serviceAccount">
+        <n-form-item :label="$t('operations.customerService.serviceAccount')" path="serviceAccount">
           <n-input
             v-model:value="formData.serviceAccount"
-            placeholder="输入客服账号（如：abc123）"
+            :placeholder="$t('operations.customerService.accountPlaceholder')"
             maxlength="255"
           />
           <div class="mt-2 text-sm text-gray-500">
@@ -148,42 +148,42 @@
           </div>
         </n-form-item>
 
-        <n-form-item label="自动生成链接" v-if="formData.imType !== 'CUSTOM'">
+        <n-form-item :label="$t('operations.customerService.autoGenerateLink')" v-if="formData.imType !== 'CUSTOM'">
           <n-input
             :value="generatedLink"
             disabled
-            placeholder="链接将根据IM类型和账号自动生成"
+            :placeholder="$t('operations.customerService.linkAutoGenerate')"
           />
         </n-form-item>
 
         <template v-if="formData.imType === 'CUSTOM'">
-          <n-form-item label="Android链接" path="androidLink">
+          <n-form-item :label="$t('operations.customerService.androidLink')" path="androidLink">
             <n-input
               v-model:value="formData.androidLink"
-              placeholder="输入Android链接"
+              :placeholder="$t('operations.customerService.enterAndroidLink')"
             />
           </n-form-item>
 
-          <n-form-item label="iOS链接" path="iosLink">
+          <n-form-item :label="$t('operations.customerService.iosLink')" path="iosLink">
             <n-input
               v-model:value="formData.iosLink"
-              placeholder="输入iOS链接"
+              :placeholder="$t('operations.customerService.enterIosLink')"
             />
           </n-form-item>
 
-          <n-form-item label="PC链接" path="pcLink">
-            <n-input v-model:value="formData.pcLink" placeholder="输入PC链接" />
+          <n-form-item :label="$t('operations.customerService.pcLink')" path="pcLink">
+            <n-input v-model:value="formData.pcLink" :placeholder="$t('operations.customerService.enterPcLink')" />
           </n-form-item>
         </template>
 
-        <n-form-item label="会员层级（支持多选）" path="memberLevels">
+        <n-form-item :label="$t('operations.customerService.memberLevels')" path="memberLevels">
           <n-spin :show="loadingMemberTiers">
             <n-checkbox-group
               v-model:value="formData.memberLevels"
               @update:value="handleMemberTierChange"
             >
               <n-space vertical>
-                <n-checkbox value="ALL">全部层级</n-checkbox>
+                <n-checkbox value="ALL">{{ $t('operations.customerService.allLevels') }}</n-checkbox>
                 <n-space wrap>
                   <n-checkbox
                     v-for="tier in memberTierOptions"
@@ -198,16 +198,16 @@
           </n-spin>
         </n-form-item>
 
-        <n-form-item label="是否启用">
+        <n-form-item :label="$t('operations.customerService.isEnabled')">
           <n-switch v-model:value="formData.isEnabled" />
         </n-form-item>
       </n-form>
 
       <template #footer>
         <n-space justify="end">
-          <n-button @click="showModal = false">取消</n-button>
+          <n-button @click="showModal = false">{{ $t('common.cancel') }}</n-button>
           <n-button type="primary" @click="submitForm" :loading="saving">
-            确认
+            {{ $t('common.confirm') }}
           </n-button>
         </n-space>
       </template>
@@ -216,6 +216,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, computed, h, onMounted, nextTick } from 'vue';
 import {
   NSpace,
@@ -302,35 +304,22 @@ const formData = ref<CustomerServiceIMConfig>({
 });
 
 // Form validation rules
-const formRules = {
-  imType: { required: true, message: '请选择IM类型' },
-  serviceName: { required: true, message: '请输入客服昵称' },
-  serviceAccount: { required: true, message: '请输入客服账号' },
-};
+const formRules = computed(() => ({
+  imType: { required: true, message: $t('common.pleaseSelect') },
+  serviceName: { required: true, message: $t('operations.customerService.nicknamePlaceholder') },
+  serviceAccount: { required: true, message: $t('operations.customerService.accountPlaceholder') },
+}));
 
-// Currency options - only BRL
-const currencyOptions = [{ label: '巴西雷亚尔 (BRL)', value: 'BRL' }];
+const currencyOptions = computed(() => [
+  { label: $t('operations.customerService.brazilianReal'), value: 'BRL' },
+]);
 
 // IM type description
 const imTypeDescription = computed(() => {
-  switch (formData.value.imType) {
-    case 'LINE':
-      return '若选择系统自带的IM，账号则自动生成链接';
-    case 'TELEGRAM':
-      return '若选择系统自带的IM，账号则自动生成链接';
-    case 'WHATSAPP':
-      return '若选择系统自带的IM，账号则自动生成链接';
-    case 'WECHAT':
-      return '若选择系统自带的IM，账号则自动生成链接';
-    case 'SKYPE':
-      return '若选择系统自带的IM，账号则自动生成链接';
-    case 'FACEBOOK':
-      return '若选择系统自带的IM，账号则自动生成链接';
-    case 'CUSTOM':
-      return '若自定义IM，需自行输入链接';
-    default:
-      return '';
+  if (formData.value.imType === 'CUSTOM') {
+    return $t('operations.customerService.customImLink');
   }
+  return $t('operations.customerService.imAutoLink');
 });
 
 // Computed property for auto-generated link
@@ -378,41 +367,39 @@ const columns = computed<DataTableColumns<CustomerServiceIMConfig>>(() => [
     },
   },
   {
-    title: '昵称',
+    title: $t('operations.customerService.nickname'),
     key: 'serviceName',
     width: 150,
   },
   {
-    title: '账号',
+    title: $t('operations.customerService.account'),
     key: 'serviceAccount',
     width: 200,
   },
   {
-    title: '币种',
+    title: $t('common.currency'),
     key: 'currencies',
     width: 150,
     render: (row) => {
       if (!row.currencies || row.currencies.length === 0) {
-        return '全部';
+        return $t('common.all');
       }
       return row.currencies.join(', ');
     },
   },
   {
-    title: '会员层级',
+    title: $t('operations.customerService.memberLevels'),
     key: 'memberLevels',
     width: 200,
     render: (row) => {
       if (!row.memberLevels || row.memberLevels.length === 0) {
-        return '全部层级';
+        return $t('operations.customerService.allLevels');
       }
-      // If "ALL" is in the array, show "全部层级"
       if (row.memberLevels.includes('ALL')) {
-        return '全部层级';
+        return $t('operations.customerService.allLevels');
       }
-      // Map tier IDs to tier names
       const tierNames = row.memberLevels.map((tierId: string) => {
-        if (tierId === 'ALL') return '全部层级';
+        if (tierId === 'ALL') return $t('operations.customerService.allLevels');
         const tier = memberTierOptions.value.find(
           (t) => t.value === String(tierId),
         );
@@ -422,17 +409,17 @@ const columns = computed<DataTableColumns<CustomerServiceIMConfig>>(() => [
     },
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'isEnabled',
     width: 100,
     render: (row) => {
       return h(NTag, { type: row.isEnabled ? 'success' : 'error' }, () =>
-        row.isEnabled ? '启用' : '禁用',
+        row.isEnabled ? $t('common.enable') : $t('common.disable'),
       );
     },
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 200,
     render: (row) => {
@@ -443,7 +430,7 @@ const columns = computed<DataTableColumns<CustomerServiceIMConfig>>(() => [
             size: 'small',
             onClick: () => showEditModal(row.id!),
           },
-          () => '修改',
+          () => $t('common.modify'),
         ),
         h(
           NPopconfirm,
@@ -452,8 +439,8 @@ const columns = computed<DataTableColumns<CustomerServiceIMConfig>>(() => [
           },
           {
             trigger: () =>
-              h(NButton, { size: 'small', type: 'error' }, () => '删除'),
-            default: () => '确定删除此客服配置吗？',
+              h(NButton, { size: 'small', type: 'error' }, () => $t('common.delete')),
+            default: () => $t('operations.customerService.confirmDeleteService'),
           },
         ),
       ]);
@@ -476,7 +463,7 @@ const loadMemberTiers = async () => {
     }));
   } catch (error: any) {
     console.error('Failed to load member tiers:', error);
-    message.warning('加载会员层级失败，请稍后重试');
+    message.warning($t('operations.customerService.loadMemberTiersFailed'));
   } finally {
     loadingMemberTiers.value = false;
   }
@@ -503,7 +490,7 @@ const loadList = async () => {
       customerServiceList.value = [];
     }
   } catch (error: any) {
-    message.error(error.message || '加载客服列表失败');
+    message.error(error.message || $t('operations.customerService.loadListFailed'));
     customerServiceList.value = [];
   } finally {
     loading.value = false;
@@ -566,11 +553,15 @@ const submitForm = async () => {
       await createCustomerServiceIMConfig(formData.value);
     }
 
-    message.success(editingId.value ? '更新成功' : '创建成功');
+    message.success(
+      editingId.value
+        ? $t('operations.customerService.updateSuccess')
+        : $t('operations.customerService.createSuccess'),
+    );
     showModal.value = false;
     await loadList();
   } catch (error: any) {
-    message.error(error.message || '操作失败');
+    message.error(error.message || $t('common.operationFailed'));
   } finally {
     saving.value = false;
   }
@@ -580,10 +571,10 @@ const submitForm = async () => {
 const handleDelete = async (id: number) => {
   try {
     await deleteCustomerServiceIMConfig(id);
-    message.success('删除成功');
+    message.success($t('common.deleteSuccess'));
     await loadList();
   } catch (error: any) {
-    message.error(error.message || '删除失败');
+    message.error(error.message || $t('common.operationFailed'));
   }
 };
 
@@ -627,7 +618,7 @@ const handleMemberTierChange = (value: string[]) => {
 // Handle upload
 const handleUpload = (options: any) => {
   // Implement upload logic here
-  message.info('上传功能待实现');
+  message.info($t('operations.customerService.uploadPending'));
   return false;
 };
 

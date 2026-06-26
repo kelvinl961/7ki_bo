@@ -3,10 +3,8 @@
     <!-- Header -->
     <n-card size="small" style="margin-bottom: 16px">
       <n-space justify="space-between" align="center">
-        <span style="font-size: 16px; font-weight: 600">流量统计</span>
-        <n-button type="primary" size="small" @click="handleExport">
-          导出报表
-        </n-button>
+        <span style="font-size: 16px; font-weight: 600">{{ $t('operations.domain.trafficStats.title') }}</span>
+        <n-button type="primary" size="small" @click="handleExport">{{ $t('common.exportReport') }}</n-button>
       </n-space>
     </n-card>
 
@@ -26,7 +24,7 @@
     <n-modal
       v-model:show="showDomainDetailModal"
       preset="card"
-      title="子域名详情"
+      :title="$t('operations.domain.trafficStats.subdomainDetail')"
       style="width: 80%; max-width: 1200px"
       :bordered="false"
       size="huge"
@@ -35,10 +33,10 @@
         <div style="margin-bottom: 16px">
           <n-space align="center">
             <span style="font-size: 14px; font-weight: 500"
-              >月份：{{ selectedMonth }}</span
+              >{{ $t('operations.domain.trafficStats.monthLabel', [selectedMonth]) }}</span
             >
             <span style="font-size: 14px; font-weight: 500"
-              >子域名数量：{{ selectedDomainCount }}</span
+              >{{ $t('operations.domain.trafficStats.subdomainCount', [selectedDomainCount]) }}</span
             >
           </n-space>
         </div>
@@ -53,7 +51,7 @@
 
       <template #footer>
         <n-space justify="end">
-          <n-button @click="showDomainDetailModal = false">关闭</n-button>
+          <n-button @click="showDomainDetailModal = false">{{ $t('common.close') }}</n-button>
         </n-space>
       </template>
     </n-modal>
@@ -61,6 +59,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, h, onMounted, computed } from 'vue';
 import { requestClient } from '#/api/request';
 import {
@@ -133,7 +133,7 @@ const paginationConfig = computed(() => ({
 // Table Columns
 const columns: DataTableColumn<TrafficStats>[] = [
   {
-    title: '日期',
+    title: $t('operations.domain.column.date'),
     key: 'date',
     width: 100,
     fixed: 'left' as const,
@@ -153,7 +153,7 @@ const columns: DataTableColumn<TrafficStats>[] = [
     },
   },
   {
-    title: '总费用(BRL)',
+    title: $t('operations.domain.trafficStats.totalCostBrl'),
     key: 'totalCost',
     width: 100,
     render(row: TrafficStats) {
@@ -163,14 +163,14 @@ const columns: DataTableColumn<TrafficStats>[] = [
   {
     title: () =>
       h('div', {}, [
-        h('span', {}, 'CDN节点 '),
+        h('span', {}, $t('operations.domain.trafficStats.cdnNodeCount') + ' '),
         h(
           NTooltip,
           {},
           {
             trigger: () =>
               h('span', { style: 'color: #2080f0; cursor: help;' }, 'ⓘ'),
-            default: () => '本月启用的 CDN 节点数量',
+            default: () => $t('operations.domain.trafficStats.cdnNodeTooltip'),
           },
         ),
       ]) as any,
@@ -178,7 +178,7 @@ const columns: DataTableColumn<TrafficStats>[] = [
     width: 100,
   },
   {
-    title: '节点费用(BRL)',
+    title: $t('operations.domain.trafficStats.nodeCostBrl'),
     key: 'nodeCost',
     width: 110,
     render(row: TrafficStats) {
@@ -188,14 +188,14 @@ const columns: DataTableColumn<TrafficStats>[] = [
   {
     title: () =>
       h('div', {}, [
-        h('span', {}, '免费流量(GB) '),
+        h('span', {}, $t('operations.domain.trafficStats.freeTrafficGb') + ' '),
         h(
           NTooltip,
           {},
           {
             trigger: () =>
               h('span', { style: 'color: #2080f0; cursor: help;' }, 'ⓘ'),
-            default: () => '平台赠送的免费流量',
+            default: () => $t('operations.domain.trafficStats.freeTrafficTooltip'),
           },
         ),
       ]) as any,
@@ -206,7 +206,7 @@ const columns: DataTableColumn<TrafficStats>[] = [
     },
   },
   {
-    title: '已使用(GB)',
+    title: $t('operations.domain.trafficStats.usedGb'),
     key: 'usedTraffic',
     width: 110,
     render(row: TrafficStats) {
@@ -217,7 +217,7 @@ const columns: DataTableColumn<TrafficStats>[] = [
           style: 'color: #2080f0; text-decoration: none;',
           onClick: (e: Event) => {
             e.preventDefault();
-            message.info('查看流量详情');
+            message.info($t('operations.domain.trafficStats.viewTrafficDetail'));
           },
         },
         row.usedTraffic.toFixed(2),
@@ -225,7 +225,7 @@ const columns: DataTableColumn<TrafficStats>[] = [
     },
   },
   {
-    title: '超出用量(GB)',
+    title: $t('operations.domain.trafficStats.exceededGb'),
     key: 'excessTraffic',
     width: 130,
     render(row: TrafficStats) {
@@ -233,7 +233,7 @@ const columns: DataTableColumn<TrafficStats>[] = [
     },
   },
   {
-    title: '超出单价(1GB/月)',
+    title: $t('operations.domain.trafficStats.exceededUnitPrice'),
     key: 'excessUnitPrice',
     width: 160,
     render(row: TrafficStats) {
@@ -241,7 +241,7 @@ const columns: DataTableColumn<TrafficStats>[] = [
     },
   },
   {
-    title: '超出费用(BRL)',
+    title: $t('operations.domain.trafficStats.exceededCostBrl'),
     key: 'excessCost',
     width: 120,
     render(row: TrafficStats) {
@@ -251,14 +251,14 @@ const columns: DataTableColumn<TrafficStats>[] = [
   {
     title: () =>
       h('div', {}, [
-        h('span', {}, '免费子域名(个) '),
+        h('span', {}, $t('operations.domain.trafficStats.freeSubdomains') + ' '),
         h(
           NTooltip,
           {},
           {
             trigger: () =>
               h('span', { style: 'color: #2080f0; cursor: help;' }, 'ⓘ'),
-            default: () => '本月免费子域名额度数量',
+            default: () => $t('operations.domain.trafficStats.freeSubdomainTooltip'),
           },
         ),
       ]) as any,
@@ -268,14 +268,14 @@ const columns: DataTableColumn<TrafficStats>[] = [
   {
     title: () =>
       h('div', {}, [
-        h('span', {}, '子域名(个) '),
+        h('span', {}, $t('operations.domain.trafficStats.subdomainCountCol') + ' '),
         h(
           NTooltip,
           {},
           {
             trigger: () =>
               h('span', { style: 'color: #2080f0; cursor: help;' }, 'ⓘ'),
-            default: () => '实际使用的子域名数量',
+            default: () => $t('operations.domain.trafficStats.subdomainUsedTooltip'),
           },
         ),
       ]) as any,
@@ -297,12 +297,12 @@ const columns: DataTableColumn<TrafficStats>[] = [
     },
   },
   {
-    title: '超出数量(个)',
+    title: $t('operations.domain.trafficStats.exceededCount'),
     key: 'excessDomainCount',
     width: 120,
   },
   {
-    title: '超出单价(个/月)',
+    title: $t('operations.domain.trafficStats.exceededUnitPriceItem'),
     key: 'domainUnitPrice',
     width: 140,
     render(row: TrafficStats) {
@@ -310,7 +310,7 @@ const columns: DataTableColumn<TrafficStats>[] = [
     },
   },
   {
-    title: '超出费用(BRL)',
+    title: $t('operations.domain.trafficStats.exceededCostBrl'),
     key: 'domainExcessCost',
     width: 120,
     render(row: TrafficStats) {
@@ -320,14 +320,14 @@ const columns: DataTableColumn<TrafficStats>[] = [
   {
     title: () =>
       h('div', {}, [
-        h('span', {}, '独立IP(个) '),
+        h('span', {}, $t('operations.domain.trafficStats.independentIp') + ' '),
         h(
           NTooltip,
           {},
           {
             trigger: () =>
               h('span', { style: 'color: #2080f0; cursor: help;' }, 'ⓘ'),
-            default: () => '独立IP数量',
+            default: () => $t('operations.domain.trafficStats.ipCountTooltip'),
           },
         ),
       ]) as any,
@@ -335,7 +335,7 @@ const columns: DataTableColumn<TrafficStats>[] = [
     width: 120,
   },
   {
-    title: 'IP费用(1个/月)',
+    title: $t('operations.domain.trafficStats.ipCostMonthly'),
     key: 'independentIPCost',
     width: 140,
     render(row: TrafficStats) {
@@ -343,7 +343,7 @@ const columns: DataTableColumn<TrafficStats>[] = [
     },
   },
   {
-    title: 'IP费用',
+    title: $t('operations.domain.trafficStats.ipCost'),
     key: 'ipUsage',
     width: 100,
     render(row: TrafficStats) {
@@ -354,11 +354,11 @@ const columns: DataTableColumn<TrafficStats>[] = [
 
 // Domain Detail Columns
 const domainDetailColumns: DataTableColumn<DomainDetail>[] = [
-  { title: '域名', key: 'domainName', width: 240 },
-  { title: 'CDN提供商', key: 'cdnProvider', width: 140 },
-  { title: '状态', key: 'status', width: 100 },
+  { title: $t('operations.domain.column.domain'), key: 'domainName', width: 240 },
+  { title: $t('operations.domain.column.cdnProvider'), key: 'cdnProvider', width: 140 },
+  { title: $t('common.status'), key: 'status', width: 100 },
   {
-    title: '流量使用(GB)',
+    title: $t('operations.domain.column.trafficUsage'),
     key: 'traffic',
     width: 140,
     render(row: DomainDetail) {
@@ -366,7 +366,7 @@ const domainDetailColumns: DataTableColumn<DomainDetail>[] = [
     },
   },
   {
-    title: '创建时间',
+    title: $t('common.createTime'),
     key: 'createdAt',
     width: 180,
     render(row: DomainDetail) {
@@ -461,16 +461,16 @@ const fetchStatsData = async () => {
       statsData.value = formattedData.length > 0 ? formattedData : [];
 
       if (formattedData.length === 0) {
-        message.info('暂无流量统计数据');
+        message.info($t('operations.domain.trafficStats.noStats'));
       }
     } else {
       // No data available
       statsData.value = [];
-      message.info('暂无流量统计数据');
+      message.info($t('operations.domain.trafficStats.noStats'));
     }
   } catch (error: any) {
     console.error('Fetch stats data error:', error);
-    message.error('获取统计数据失败');
+    message.error($t('operations.domain.message.fetchStatsFailed'));
     statsData.value = [];
   } finally {
     loading.value = false;
@@ -478,7 +478,7 @@ const fetchStatsData = async () => {
 };
 
 const handleDateClick = (row: TrafficStats) => {
-  message.info(`查看 ${row.date} 的详细数据`);
+  message.info($t('operations.domain.trafficStats.viewDateDetail', [row.date]));
 };
 
 const handleShowDomainDetail = async (row: TrafficStats) => {
@@ -527,12 +527,12 @@ const handleShowDomainDetail = async (row: TrafficStats) => {
         traffic: Number(d.traffic.toFixed(2)),
         status:
           d.status === 'NORMAL'
-            ? '正常'
+            ? $t('operations.domain.trafficStats.statusNormal')
             : d.status === 'DISABLED'
-              ? '停用'
+              ? $t('operations.domain.trafficStats.statusDisabled')
               : d.status === 'EXPIRED'
-                ? '已过期'
-                : '异常',
+                ? $t('operations.domain.trafficStats.statusExpired')
+                : $t('operations.domain.trafficStats.statusAbnormal'),
       }));
 
       domainDetailData.value = formattedDomains;
@@ -540,11 +540,11 @@ const handleShowDomainDetail = async (row: TrafficStats) => {
     } else {
       domainDetailData.value = [];
       pagination.itemCount = 0;
-      message.warning('暂无该月域名数据');
+      message.warning($t('operations.domain.message.noDomainData'));
     }
   } catch (error: any) {
     console.error('Fetch domain detail error:', error);
-    message.error('获取域名详情失败');
+    message.error($t('operations.domain.message.fetchDomainDetailFailed'));
     domainDetailData.value = [];
     pagination.itemCount = 0;
   }
@@ -553,7 +553,7 @@ const handleShowDomainDetail = async (row: TrafficStats) => {
 };
 
 const handleExport = () => {
-  message.success('导出报表功能开发中');
+  message.success($t('operations.domain.message.exportDeveloping'));
   // Implement export functionality here
 };
 

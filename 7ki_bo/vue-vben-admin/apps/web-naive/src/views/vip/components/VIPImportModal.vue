@@ -2,19 +2,19 @@
   <n-modal
     v-model:show="showModal"
     preset="dialog"
-    title="导入VIP等级"
+    :title="$t('vip.importVipLevel')"
     :style="{ width: '600px' }"
     :closable="false"
     :mask-closable="false"
   >
     <div class="vip-import-modal">
       <n-alert type="info" class="mb-4">
-        <template #header>导入说明</template>
+        <template #header>{{ $t('vip.importInstructions') }}</template>
         <div>
-          <p>1. 支持Excel (.xlsx, .xls) 和CSV (.csv) 文件格式</p>
-          <p>2. 文件大小不超过10MB</p>
-          <p>3. 请确保文件包含必要的字段：等级、名称、颜色等</p>
-          <p>4. 导入前请备份现有数据</p>
+          <p>{{ $t('vip.importStep1') }}</p>
+          <p>{{ $t('vip.importStep2') }}</p>
+          <p>{{ $t('vip.importStep3') }}</p>
+          <p>{{ $t('vip.importStep4') }}</p>
         </div>
       </n-alert>
 
@@ -25,7 +25,7 @@
         label-placement="left"
         label-width="100px"
       >
-        <n-form-item label="选择文件" path="file">
+        <n-form-item :label="$t('vip.selectFile')" path="file">
           <n-upload
             ref="uploadRef"
             :file-list="fileList"
@@ -47,39 +47,39 @@
                 </n-icon>
               </div>
               <n-text style="font-size: 16px">
-                点击或拖拽文件到此区域上传
+                {{ $t('vip.uploadFileHint') }}
               </n-text>
               <n-p depth="3" style="margin: 8px 0 0 0">
-                支持 Excel (.xlsx, .xls) 和 CSV (.csv) 格式
+                {{ $t('vip.uploadExcelCsvHint') }}
               </n-p>
             </n-upload-dragger>
           </n-upload>
         </n-form-item>
 
-        <n-form-item label="导入模式" path="importMode">
+        <n-form-item :label="$t('vip.importMode')" path="importMode">
           <n-radio-group v-model:value="formData.importMode">
             <n-space direction="vertical">
               <n-radio value="append">
                 <div>
-                  <div>追加模式</div>
+                  <div>{{ $t('vip.appendMode') }}</div>
                   <div class="text-sm text-gray-500">
-                    在现有数据基础上添加新的VIP等级
+                    {{ $t('vip.appendModeDesc') }}
                   </div>
                 </div>
               </n-radio>
               <n-radio value="overwrite">
                 <div>
-                  <div>覆盖模式</div>
+                  <div>{{ $t('vip.overwriteMode') }}</div>
                   <div class="text-sm text-gray-500">
-                    清空现有数据后导入新的VIP等级
+                    {{ $t('vip.overwriteModeDesc') }}
                   </div>
                 </div>
               </n-radio>
               <n-radio value="update">
                 <div>
-                  <div>更新模式</div>
+                  <div>{{ $t('vip.updateMode') }}</div>
                   <div class="text-sm text-gray-500">
-                    根据等级编号更新现有VIP等级
+                    {{ $t('vip.updateModeDesc') }}
                   </div>
                 </div>
               </n-radio>
@@ -87,11 +87,11 @@
           </n-radio-group>
         </n-form-item>
 
-        <n-form-item label="错误处理" path="errorHandling">
+        <n-form-item :label="$t('vip.errorHandling')" path="errorHandling">
           <n-select
             v-model:value="formData.errorHandling"
             :options="errorHandlingOptions"
-            placeholder="请选择错误处理方式"
+            :placeholder="$t('vip.selectErrorHandling')"
           />
         </n-form-item>
       </n-form>
@@ -99,12 +99,12 @@
       <n-divider />
 
       <div class="mb-4">
-        <n-text strong>模板下载</n-text>
+        <n-text strong>{{ $t('vip.templateDownload') }}</n-text>
         <n-p depth="3" class="mt-2">
-          如果您是首次导入，建议先下载模板文件，按照模板格式填写数据后再导入。
+          {{ $t('vip.templateDownloadHint') }}
         </n-p>
         <n-button type="primary" ghost @click="handleDownloadTemplate">
-          下载Excel模板
+          {{ $t('vip.downloadExcelTemplate') }}
         </n-button>
       </div>
 
@@ -112,9 +112,9 @@
 
       <!-- 预览区域 -->
       <div v-if="previewData.length > 0" class="preview-section">
-        <n-text strong>数据预览</n-text>
+        <n-text strong>{{ $t('vip.dataPreview') }}</n-text>
         <n-p depth="3" class="mt-2">
-          检测到 {{ previewData.length }} 条VIP等级数据，请确认后导入。
+          {{ $t('vip.previewDetected', [previewData.length]) }}
         </n-p>
 
         <n-data-table
@@ -129,14 +129,14 @@
 
     <template #action>
       <n-space>
-        <n-button @click="handleCancel">取消</n-button>
+        <n-button @click="handleCancel">{{ $t('common.cancel') }}</n-button>
         <n-button
           type="primary"
           :loading="submitLoading"
           :disabled="!formData.file"
           @click="handleSubmit"
         >
-          开始导入
+          {{ $t('vip.startImport') }}
         </n-button>
       </n-space>
     </template>
@@ -144,6 +144,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed } from 'vue';
 import type {
   FormInst,
@@ -185,61 +187,59 @@ const emit = defineEmits<Emits>();
 
 const message = useMessage();
 
-// 响应式数据
 const formRef = ref<FormInst>();
 const uploadRef = ref();
 const submitLoading = ref(false);
 const fileList = ref<UploadFileInfo[]>([]);
 const previewData = ref<any[]>([]);
 
-// 计算属性
 const showModal = computed({
   get: () => props.show,
   set: (value) => emit('update:show', value),
 });
 
-// 表单数据
 const formData = reactive({
   file: null as File | null,
   importMode: 'append' as 'append' | 'overwrite' | 'update',
   errorHandling: 'skip' as 'skip' | 'stop' | 'log',
 });
 
-// 选项配置
-const errorHandlingOptions = [
-  { label: '跳过错误行继续导入', value: 'skip' },
-  { label: '遇到错误停止导入', value: 'stop' },
-  { label: '记录错误但继续导入', value: 'log' },
-];
+const errorHandlingOptions = computed(() => [
+  { label: $t('vip.skipErrorRows'), value: 'skip' },
+  { label: $t('vip.stopOnError'), value: 'stop' },
+  { label: $t('vip.logErrorsContinue'), value: 'log' },
+]);
 
-// 预览表格列配置
-const previewColumns: DataTableColumns<any> = [
-  { title: '等级', key: 'level', width: 80 },
-  { title: '名称', key: 'name', width: 120 },
-  { title: '颜色', key: 'color', width: 100 },
-  { title: '币种', key: 'currency', width: 80 },
-  { title: '晋级奖金', key: 'upgradeBonus', width: 100 },
-  { title: '月返水', key: 'monthlyRebate', width: 80 },
-  { title: '状态', key: 'isActive', width: 80 },
-];
+const previewColumns = computed<DataTableColumns<any>>(() => [
+  { title: $t('vip.previewColLevel'), key: 'level', width: 80 },
+  { title: $t('vip.previewColName'), key: 'name', width: 120 },
+  { title: $t('vip.previewColColor'), key: 'color', width: 100 },
+  { title: $t('vip.previewColCurrency'), key: 'currency', width: 80 },
+  { title: $t('vip.previewColUpgradeBonus'), key: 'upgradeBonus', width: 100 },
+  { title: $t('vip.previewColMonthlyRebate'), key: 'monthlyRebate', width: 80 },
+  { title: $t('vip.previewColStatus'), key: 'isActive', width: 80 },
+]);
 
-// 表单验证规则
-const rules: FormRules = {
-  file: [{ required: true, message: '请选择要导入的文件', trigger: 'change' }],
+const rules = computed<FormRules>(() => ({
+  file: [
+    { required: true, message: $t('vip.selectImportFile'), trigger: 'change' },
+  ],
   importMode: [
-    { required: true, message: '请选择导入模式', trigger: 'change' },
+    { required: true, message: $t('vip.selectImportMode'), trigger: 'change' },
   ],
   errorHandling: [
-    { required: true, message: '请选择错误处理方式', trigger: 'change' },
+    {
+      required: true,
+      message: $t('vip.selectErrorHandlingRequired'),
+      trigger: 'change',
+    },
   ],
-};
+}));
 
-// 文件处理
 const handleBeforeUpload = (data: { file: UploadFileInfo }) => {
   const file = data.file.file;
   if (!file) return false;
 
-  // 检查文件类型
   const allowedTypes = [
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     'application/vnd.ms-excel',
@@ -247,17 +247,16 @@ const handleBeforeUpload = (data: { file: UploadFileInfo }) => {
   ];
 
   if (!allowedTypes.includes(file.type)) {
-    message.error('只支持Excel和CSV文件格式');
+    message.error($t('vip.excelCsvOnly'));
     return false;
   }
 
-  // 检查文件大小 (10MB)
   if (file.size > 10 * 1024 * 1024) {
-    message.error('文件大小不能超过10MB');
+    message.error($t('vip.fileSizeLimit'));
     return false;
   }
 
-  return false; // 阻止自动上传
+  return false;
 };
 
 const handleFileChange = (options: { fileList: UploadFileInfo[] }) => {
@@ -280,11 +279,8 @@ const handleFileRemove = () => {
   previewData.value = [];
 };
 
-// 文件预览
-const handleFilePreview = async (file: File) => {
+const handleFilePreview = async (_file: File) => {
   try {
-    // 这里应该调用实际的文件解析API
-    // 模拟预览数据
     const mockPreviewData = [
       {
         level: 1,
@@ -316,34 +312,32 @@ const handleFilePreview = async (file: File) => {
     ];
 
     previewData.value = mockPreviewData;
-    message.success('文件解析成功，请查看预览数据');
+    message.success($t('vip.fileParseSuccess'));
   } catch (error) {
-    message.error('文件解析失败，请检查文件格式');
+    message.error($t('vip.fileParseFailed'));
     console.error('File preview error:', error);
   }
 };
 
-// 下载模板
 const handleDownloadTemplate = () => {
-  // 创建模板数据
   const templateData = [
     [
-      '等级',
-      '名称',
-      '颜色',
-      '币种',
-      '当月充值',
-      '当月投注',
-      '积分要求',
-      '晋级奖金',
-      '月返水',
-      '周任务值',
-      '日任务值',
-      '提现额度',
-      '提现次数',
-      '客服优先级',
-      '状态',
-      '显示顺序',
+      $t('vip.previewColLevel'),
+      $t('vip.previewColName'),
+      $t('vip.previewColColor'),
+      $t('vip.previewColCurrency'),
+      $t('vip.monthlyDeposit'),
+      $t('vip.templateColMonthlyBet'),
+      $t('vip.templateColPointsRequirement'),
+      $t('vip.previewColUpgradeBonus'),
+      $t('vip.previewColMonthlyRebate'),
+      $t('vip.templateColWeeklyTaskValue'),
+      $t('vip.templateColDailyTaskValue'),
+      $t('vip.templateColWithdrawalLimit'),
+      $t('vip.templateColWithdrawalTimes'),
+      $t('vip.templateColCustomerServicePriority'),
+      $t('vip.previewColStatus'),
+      $t('vip.displayOrder'),
     ],
     [
       1,
@@ -359,8 +353,8 @@ const handleDownloadTemplate = () => {
       10,
       10000,
       3,
-      '否',
-      '启用',
+      $t('vip.templateValueNo'),
+      $t('vip.templateValueEnabled'),
       1,
     ],
     [
@@ -377,8 +371,8 @@ const handleDownloadTemplate = () => {
       20,
       20000,
       5,
-      '否',
-      '启用',
+      $t('vip.templateValueNo'),
+      $t('vip.templateValueEnabled'),
       2,
     ],
     [
@@ -395,55 +389,49 @@ const handleDownloadTemplate = () => {
       30,
       50000,
       10,
-      '是',
-      '启用',
+      $t('vip.templateValueYes'),
+      $t('vip.templateValueEnabled'),
       3,
     ],
   ];
 
-  // 创建CSV内容
   const csvContent = templateData.map((row) => row.join(',')).join('\n');
 
-  // 创建并下载文件
   const blob = new Blob(['\ufeff' + csvContent], {
     type: 'text/csv;charset=utf-8;',
   });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
-  link.download = 'VIP等级导入模板.csv';
+  link.download = $t('vip.importTemplateFilename');
   link.click();
   URL.revokeObjectURL(link.href);
 
-  message.success('模板下载成功');
+  message.success($t('vip.templateDownloadSuccess'));
 };
 
-// 事件处理
 const handleSubmit = async () => {
   try {
     await formRef.value?.validate();
 
     if (!formData.file) {
-      message.error('请选择要导入的文件');
+      message.error($t('vip.selectImportFile'));
       return;
     }
 
     submitLoading.value = true;
 
-    // 这里应该调用实际的导入API
-    // 模拟导入过程
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    message.success('VIP等级导入成功');
+    message.success($t('vip.importSuccess'));
     emit('success');
     showModal.value = false;
 
-    // 重置表单
     resetForm();
   } catch (error) {
     if (error instanceof Error) {
-      message.error(error.message || 'VIP等级导入失败');
+      message.error(error.message || $t('vip.importFailed'));
     } else {
-      message.error('表单验证失败，请检查输入');
+      message.error($t('vip.formValidationFailed'));
     }
     console.error('Error importing VIP levels:', error);
   } finally {
@@ -456,7 +444,6 @@ const handleCancel = () => {
   resetForm();
 };
 
-// 重置表单
 const resetForm = () => {
   formRef.value?.restoreValidation();
   formData.file = null;
@@ -493,7 +480,6 @@ const resetForm = () => {
   max-height: 200px;
 }
 
-/* 滚动条样式 */
 .vip-import-modal::-webkit-scrollbar {
   width: 6px;
 }

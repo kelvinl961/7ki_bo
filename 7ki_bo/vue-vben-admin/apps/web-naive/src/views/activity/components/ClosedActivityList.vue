@@ -10,45 +10,45 @@
         label-width="auto"
         class="mb-4"
       >
-        <n-form-item label="活动名称">
+        <n-form-item :label="$t('activity.rewardReport.k6d3b')">
           <n-input
             v-model:value="filterForm.keyword"
-            placeholder="请输入活动名称"
+            :placeholder="$t('activity.formModal.k8bf7')"
             clearable
             @keyup.enter="handleSearch"
           />
         </n-form-item>
 
-        <n-form-item label="活动分类">
+        <n-form-item :label="$t('activity.detailModal.k6d3b2')">
           <n-select
             v-model:value="filterForm.category"
-            placeholder="请选择活动分类"
+            :placeholder="$t('activity.activityList.k8bf7')"
             :options="categoryOptions"
             clearable
           />
         </n-form-item>
 
-        <n-form-item label="币种">
+        <n-form-item :label="$t('activity.luckyWheel.k5e01')">
           <n-select
             v-model:value="filterForm.currencyScope"
-            placeholder="请选择币种"
+            :placeholder="$t('activity.activityList.k8bf73')"
             :options="currencyOptions"
             clearable
           />
         </n-form-item>
 
-        <n-form-item label="操作人">
+        <n-form-item :label="$t('activity.activityList.k64cd')">
           <n-input
             v-model:value="filterForm.lastModifiedBy"
-            placeholder="请输入操作人"
+            :placeholder="$t('activity.activityList.k8bf74')"
             clearable
           />
         </n-form-item>
 
         <n-form-item>
           <n-space>
-            <n-button type="primary" @click="handleSearch"> 搜索 </n-button>
-            <n-button @click="handleReset"> 重置 </n-button>
+            <n-button type="primary" @click="handleSearch">{{ $t('activity.rewardReport.k641c') }}</n-button>
+            <n-button @click="handleReset">{{ $t('activity.recordModal.k91cd') }}</n-button>
           </n-space>
         </n-form-item>
       </n-form>
@@ -71,15 +71,15 @@
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
               <!-- 统计信息 -->
-              <n-statistic label="已关闭活动" :value="closedCount" />
-              <n-statistic label="已结束活动" :value="endedCount" />
-              <n-statistic label="总参与人数" :value="totalParticipants" />
-              <n-statistic label="总奖励金额" :value="totalRewards" />
+              <n-statistic :label="$t('activity.center.k5df2')" :value="closedCount" />
+              <n-statistic :label="$t('activity.activityList.k5df2')" :value="endedCount" />
+              <n-statistic :label="$t('activity.recordModal.k603b')" :value="totalParticipants" />
+              <n-statistic :label="$t('activity.recordModal.k603b2')" :value="totalRewards" />
             </div>
 
             <div class="flex items-center gap-2">
               <div class="text-sm text-gray-600">
-                共 {{ paginationReactive.total }} 条记录
+                {{ $t('activity.common.totalRecordsLabel', [paginationReactive.total]) }}
               </div>
             </div>
           </div>
@@ -102,6 +102,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import {
   ref,
   reactive,
@@ -214,7 +216,7 @@ const currencyOptions = CURRENCY_OPTIONS.map((item) => ({
 // 表格列配置
 const columns = computed<DataTableColumns<Activity>>(() => [
   {
-    title: '排序',
+    title: $t('activity.detailModal.k6392'),
     key: 'displayOrder',
     width: 80,
     sorter: true,
@@ -225,7 +227,7 @@ const columns = computed<DataTableColumns<Activity>>(() => [
     width: 80,
   },
   {
-    title: '活动名称',
+    title: $t('activity.rewardReport.k6d3b'),
     key: 'title',
     width: 200,
     ellipsis: {
@@ -233,21 +235,21 @@ const columns = computed<DataTableColumns<Activity>>(() => [
     },
   },
   {
-    title: '活动分类',
+    title: $t('activity.detailModal.k6d3b2'),
     key: 'category',
     width: 120,
     render: (row) =>
       h(NTag, { type: 'info', size: 'small' }, { default: () => row.category }),
   },
   {
-    title: '活动子种类',
+    title: $t('activity.detailModal.k6d3b3'),
     key: 'type',
     width: 140,
     render: (row) =>
       h(NTag, { type: 'default', size: 'small' }, { default: () => row.type }),
   },
   {
-    title: '参与会员',
+    title: $t('activity.detailModal.k53c2'),
     key: 'memberScope',
     width: 120,
     render: (row) => {
@@ -258,13 +260,13 @@ const columns = computed<DataTableColumns<Activity>>(() => [
     },
   },
   {
-    title: '赠送金额',
+    title: $t('activity.detailModal.k8d60'),
     key: 'claimLimit',
     width: 120,
     render: (row) => `${row.claimLimit} ${row.currencyScope}`,
   },
   {
-    title: '活动参与端',
+    title: $t('activity.activityList.k6d3b6'),
     key: 'platforms',
     width: 140,
     render: (row) =>
@@ -284,31 +286,31 @@ const columns = computed<DataTableColumns<Activity>>(() => [
       ),
   },
   {
-    title: '活动时间',
+    title: $t('activity.activityList.k6d3b3'),
     key: 'startAt',
     width: 200,
     render: (row) =>
       h('div', {}, [
-        h('div', {}, `开始：${new Date(row.startAt).toLocaleString()}`),
-        h('div', {}, `结束：${new Date(row.endAt).toLocaleString()}`),
+        h('div', {}, $t('activity.common.startLabel', [new Date(row.startAt).toLocaleString()])),
+        h('div', {}, $t('activity.common.endLabel', [new Date(row.endAt).toLocaleString()])),
       ]),
   },
   {
-    title: '参与统计',
+    title: $t('activity.activityList.k53c2'),
     key: 'currentParticipants',
     width: 120,
     render: (row) =>
       h('div', {}, [
-        h('div', { class: 'text-sm' }, `参与：${row.currentParticipants}`),
+        h('div', { class: 'text-sm' }, $t('activity.common.participateLabel', [row.currentParticipants])),
         h(
           'div',
           { class: 'text-sm text-gray-500' },
-          `限制：${row.maxParticipants || '无限制'}`,
+          $t('activity.common.limitLabel', [row.maxParticipants || $t('activity.common.unlimited')]),
         ),
       ]),
   },
   {
-    title: '奖励统计',
+    title: $t('activity.activityList.k5956'),
     key: 'totalReward',
     width: 120,
     render: (row) =>
@@ -322,13 +324,13 @@ const columns = computed<DataTableColumns<Activity>>(() => [
       ]),
   },
   {
-    title: '状态',
+    title: $t('activity.activityList.k72b6'),
     key: 'status',
     width: 100,
     render: (row) => {
       const statusConfig = {
-        CLOSED: { type: 'error', text: '已关闭' },
-        ENDED: { type: 'default', text: '已结束' },
+        CLOSED: { type: 'error', text: $t('activity.detailModal.k5df23') },
+        ENDED: { type: 'default', text: $t('activity.detailModal.k5df22') },
       };
       const config = statusConfig[row.status as keyof typeof statusConfig];
       return h(
@@ -339,7 +341,7 @@ const columns = computed<DataTableColumns<Activity>>(() => [
     },
   },
   {
-    title: '操作人',
+    title: $t('activity.activityList.k64cd'),
     key: 'lastModifiedBy',
     width: 120,
     ellipsis: {
@@ -347,13 +349,13 @@ const columns = computed<DataTableColumns<Activity>>(() => [
     },
   },
   {
-    title: '更新时间',
+    title: $t('activity.detailModal.k66f4'),
     key: 'updatedAt',
     width: 160,
     render: (row) => new Date(row.updatedAt).toLocaleString(),
   },
   {
-    title: '操作',
+    title: $t('activity.rewardReport.k64cd'),
     key: 'actions',
     width: 180,
     fixed: 'right',
@@ -375,9 +377,9 @@ const columns = computed<DataTableColumns<Activity>>(() => [
                       type: 'primary',
                       onClick: () => handleView(row),
                     },
-                    { default: () => '查看' },
+                    { default: () => $t('activity.activityList.k67e5') },
                   ),
-                default: () => '查看详情',
+                default: () => $t('activity.activityList.k67e52'),
               },
             ),
             h(
@@ -392,9 +394,9 @@ const columns = computed<DataTableColumns<Activity>>(() => [
                       type: 'warning',
                       onClick: () => handleViewRecords(row),
                     },
-                    { default: () => '记录' },
+                    { default: () => $t('activity.activityList.k8bb0') },
                   ),
-                default: () => '浏览记录',
+                default: () => $t('activity.activityList.k6d4f'),
               },
             ),
             h(
@@ -409,9 +411,9 @@ const columns = computed<DataTableColumns<Activity>>(() => [
                       type: 'info',
                       onClick: () => handleClone(row),
                     },
-                    { default: () => '复制' },
+                    { default: () => $t('activity.activityList.k590d') },
                   ),
-                default: () => '复制活动',
+                default: () => $t('activity.activityList.k590d2'),
               },
             ),
           ],
@@ -437,7 +439,7 @@ const fetchActivityList = async () => {
     );
     paginationReactive.total = response.pagination.total;
   } catch (error) {
-    message.error('获取活动列表失败');
+    message.error($t('activity.activityList.k83b7'));
     console.error('Error fetching activity list:', error);
   } finally {
     loading.value = false;
@@ -479,15 +481,15 @@ const handleViewRecords = (item: Activity) => {
 
 const handleClone = async (item: Activity) => {
   try {
-    const title = `${item.title} - 复制`;
+    const title = $t('activity.common.copyTitle', [item.title]);
     const startAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 明天开始
     const endAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(); // 7天后结束
 
     await cloneActivity(item.id, { title, startAt, endAt });
-    message.success('活动复制成功');
+    message.success($t('activity.activityList.k6d3b4'));
     fetchActivityList();
   } catch (error) {
-    message.error('活动复制失败');
+    message.error($t('activity.activityList.k6d3b5'));
     console.error('Error cloning activity:', error);
   }
 };

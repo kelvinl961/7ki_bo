@@ -1,15 +1,15 @@
 <template>
   <div class="h-full bg-gray-50 p-6">
     <div class="mb-4">
-      <h1 class="mb-2 text-2xl font-semibold text-gray-900">版式个性化</h1>
+      <h1 class="mb-2 text-2xl font-semibold text-gray-900">{{ $t('operations.layout.title') }}</h1>
       <p class="text-sm text-gray-600">
-        当前阶段仅配置「我的页面样式」。保存后资源约 10 分钟生效。其余版式项（Banner、弹窗、Lobby
-        等）已在接口与数据结构预留，后续开放界面即可扩展。
+        {{ $t('operations.layout.description') }}
+        
       </p>
     </div>
 
     <n-alert type="info" class="mb-4" :bordered="false">
-      点击「修改」选择我的页样式后，可使用「生成预览」参考效果（嵌入站点若受限请以客户端为准）。
+      {{ $t('operations.layout.editHint') }}
     </n-alert>
 
     <!-- 必须与品牌皮肤同一 brandCode，否则之前会加载「全局最新一条」版式，保存写到错误行 -->
@@ -17,16 +17,16 @@
       v-if="brandSkinSelectOptions.length > 0"
       class="mb-4 flex flex-wrap items-center gap-3 rounded-lg border bg-white p-4 shadow-sm"
     >
-      <span class="text-sm font-medium text-gray-700">当前品牌</span>
+      <span class="text-sm font-medium text-gray-700">{{ $t('operations.layout.currentBrand') }}</span>
       <n-select
         v-model:value="selectedBrandCode"
         class="min-w-[280px]"
         :options="brandSkinSelectOptions"
-        placeholder="请选择品牌"
+        :placeholder="$t('operations.layout.selectBrand')"
         @update:value="handleBrandCodeChange"
       />
       <span class="text-xs text-gray-500">
-        版式配置按品牌维度读写；路由可加 ?brandCode=xxx 预选。
+        {{ $t('operations.layout.brandHint') }}
       </span>
     </div>
 
@@ -40,15 +40,15 @@
               >
                 <div class="min-w-0 flex-1 space-y-2">
                   <p class="text-sm text-gray-600">
-                    <span class="font-medium text-gray-800">品牌名称(ID)：</span>
+                    <span class="font-medium text-gray-800">{{ $t('operations.layout.brandNameId') }}</span>
                     <span>{{ brandNameIdDisplay }}</span>
                   </p>
                   <p class="text-sm text-gray-600">
-                    <span class="font-medium text-gray-800">皮肤样式：</span>
+                    <span class="font-medium text-gray-800">{{ $t('operations.layout.skinStyle') }}</span>
                     <span>{{ skinTemplateStyleDisplay }}</span>
                   </p>
                   <p class="text-xs text-gray-500">
-                    当前版式标识：{{ layoutSkinKey }}
+                    {{ $t('operations.layout.layoutKey') }}{{ layoutSkinKey }}
                   </p>
                 </div>
                 <div class="ml-auto shrink-0 self-start pt-0.5">
@@ -60,7 +60,7 @@
                     class="min-w-[5.5rem] shadow-sm"
                     @click="enterEditMode"
                   >
-                    修改
+                    {{ $t('common.modify') }}
                   </n-button>
                   <n-button
                     v-else
@@ -68,27 +68,27 @@
                     quaternary
                     @click="cancelEdit"
                   >
-                    退出编辑
+                    {{ $t('operations.layout.exitEdit') }}
                   </n-button>
                 </div>
               </div>
 
               <!-- 顶部导航广告图开关 -->
               <div class="rounded-lg border bg-gray-50 p-6">
-                <h4 class="text-md mb-3 font-medium text-gray-900">广告图</h4>
+                <h4 class="text-md mb-3 font-medium text-gray-900">{{ $t('operations.layout.adBanner') }}</h4>
                 <p class="mb-4 text-sm text-gray-600">
-                  控制大厅顶部导航广告图区域是否展示（关闭后客户端隐藏该区域）。
+                  {{ $t('operations.layout.adBannerDesc') }}
                 </p>
                 <div
                   v-if="!isEditMode"
                   class="text-sm font-medium text-gray-800"
                 >
-                  {{ layoutConfig.topNavAdEnabled ? '已开启' : '已关闭' }}
+                  {{ layoutConfig.topNavAdEnabled ? $t('operations.layout.opened') : $t('operations.layout.closed') }}
                 </div>
                 <div v-else class="flex items-center gap-3">
                   <n-switch v-model:value="layoutConfig.topNavAdEnabled" />
                   <span class="text-sm text-gray-600">{{
-                    layoutConfig.topNavAdEnabled ? '开启' : '关闭'
+                    layoutConfig.topNavAdEnabled ? $t('operations.layout.open') : $t('operations.layout.close')
                   }}</span>
                 </div>
               </div>
@@ -96,7 +96,7 @@
               <!-- My Page Style Section（其余 layout 字段仍随保存提交） -->
               <div class="rounded-lg border bg-gray-50 p-6">
                 <h4 class="text-md mb-4 font-medium text-gray-900">
-                  我的页面样式
+                  {{ $t('operations.layout.myPageStyle') }}
                   <span v-if="!isEditMode">{{ myPageStyleDisplayName }}</span>
                   <span v-if="isEditMode" class="ml-2 text-blue-500">✓</span>
                 </h4>
@@ -108,7 +108,7 @@
                   >
                     <img
                       :src="currentMyPageTemplateUrl"
-                      alt="我的页面模板预览"
+                      :alt="$t('operations.layout.myPagePreview')"
                       class="h-auto w-full object-cover object-top"
                     />
                   </div>
@@ -156,12 +156,12 @@
                 v-if="isEditMode"
                 class="flex flex-wrap justify-center gap-3 border-t pt-6"
               >
-                <n-button size="large" @click="cancelEdit">取消</n-button>
+                <n-button size="large" @click="cancelEdit">{{ $t('common.cancel') }}</n-button>
                 <n-button size="large" type="warning" @click="generatePreview">
-                  生成预览
+                  {{ $t('operations.layout.generatePreview') }}
                 </n-button>
                 <n-button type="primary" size="large" @click="saveConfig">
-                  保存
+                  {{ $t('common.save') }}
                 </n-button>
               </div>
             </div>
@@ -170,10 +170,10 @@
       <!-- Right Panel - Mobile Preview -->
       <div class="w-100 rounded-lg border bg-white p-4 shadow-sm">
         <div class="mb-4 flex flex-col items-center gap-2">
-          <h3 class="text-center text-lg font-medium text-gray-900">预览</h3>
-          <n-button type="warning" @click="generatePreview">生成预览</n-button>
+          <h3 class="text-center text-lg font-medium text-gray-900">{{ $t('operations.layout.preview') }}</h3>
+          <n-button type="warning" @click="generatePreview">{{ $t('operations.layout.generatePreview') }}</n-button>
           <p class="text-center text-xs text-gray-500">
-            预览仅供参考，不代表实际大厅效果；保存后约 10 分钟生效。
+            {{ $t('operations.layout.previewHint') }}
           </p>
         </div>
 
@@ -204,12 +204,12 @@
                   <button
                     class="rounded bg-white bg-opacity-20 px-3 py-1 text-sm text-white"
                   >
-                    登录
+                    {{ $t('operations.layout.login') }}
                   </button>
                   <button
                     class="rounded bg-white px-3 py-1 text-sm text-blue-600"
                   >
-                    注册
+                    {{ $t('operations.layout.register') }}
                   </button>
                 </div>
               </div>
@@ -222,7 +222,7 @@
                   >
                     <span class="text-xs text-white">🎁</span>
                   </div>
-                  <span class="text-xs text-gray-600">优惠</span>
+                  <span class="text-xs text-gray-600">{{ $t('operations.layout.promotion') }}</span>
                 </div>
                 <div class="text-center">
                   <div
@@ -230,7 +230,7 @@
                   >
                     <span class="text-xs text-white">💰</span>
                   </div>
-                  <span class="text-xs text-gray-600">充值</span>
+                  <span class="text-xs text-gray-600">{{ $t('operations.layout.deposit') }}</span>
                 </div>
                 <div class="text-center">
                   <div
@@ -238,7 +238,7 @@
                   >
                     <span class="text-xs text-white">👥</span>
                   </div>
-                  <span class="text-xs text-gray-600">代理</span>
+                  <span class="text-xs text-gray-600">{{ $t('operations.layout.agent') }}</span>
                 </div>
                 <div class="text-center">
                   <div
@@ -246,13 +246,13 @@
                   >
                     <span class="text-xs text-white">👤</span>
                   </div>
-                  <span class="text-xs text-gray-600">我的</span>
+                  <span class="text-xs text-gray-600">{{ $t('operations.layout.profile') }}</span>
                 </div>
               </div>
 
               <!-- Game Cards -->
               <div class="space-y-3 p-4">
-                <h4 class="font-medium text-gray-800">热门游戏</h4>
+                <h4 class="font-medium text-gray-800">{{ $t('operations.layout.hotGames') }}</h4>
                 <div class="grid grid-cols-3 gap-3">
                   <div
                     class="flex h-16 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-pink-500"
@@ -262,12 +262,12 @@
                   <div
                     class="flex h-16 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500"
                   >
-                    <span class="text-sm font-bold text-white">捕鱼</span>
+                    <span class="text-sm font-bold text-white">{{ $t('operations.layout.fishing') }}</span>
                   </div>
                   <div
                     class="flex h-16 items-center justify-center rounded-lg bg-gradient-to-br from-green-500 to-emerald-500"
                   >
-                    <span class="text-sm font-bold text-white">体育</span>
+                    <span class="text-sm font-bold text-white">{{ $t('operations.layout.sports') }}</span>
                   </div>
                 </div>
               </div>
@@ -278,7 +278,7 @@
                   class="flex h-16 items-center justify-center rounded-lg bg-gradient-to-r from-green-400 to-blue-500"
                 >
                   <span class="text-sm font-medium text-white"
-                    >自营广告横幅</span
+                    >{{ $t('operations.layout.selfPromoBanner') }}</span
                   >
                 </div>
               </div>
@@ -304,7 +304,7 @@
                     </div>
                     <div v-else class="mb-1 h-6 w-6 rounded bg-gray-200"></div>
                     <span class="text-xs text-gray-600">{{
-                      button.label || '按钮'
+                      button.label || $t('operations.layout.button')
                     }}</span>
                   </div>
                 </div>
@@ -321,22 +321,22 @@
     <n-modal
       v-model:show="showEditModal"
       preset="dialog"
-      title="修改皮肤样式名称"
+      :title="$t('operations.layout.editSkinName')"
     >
       <div class="space-y-4">
         <n-form>
-          <n-form-item label="样式名称">
+          <n-form-item :label="$t('operations.layout.styleName')">
             <n-input
               v-model:value="editingSkinName"
-              placeholder="请输入皮肤样式名称"
+              :placeholder="$t('operations.layout.styleNamePlaceholder')"
             />
           </n-form-item>
         </n-form>
       </div>
       <template #action>
         <n-space>
-          <n-button @click="showEditModal = false">取消</n-button>
-          <n-button type="primary" @click="saveSkinName">保存</n-button>
+          <n-button @click="showEditModal = false">{{ $t('common.cancel') }}</n-button>
+          <n-button type="primary" @click="saveSkinName">{{ $t('common.save') }}</n-button>
         </n-space>
       </template>
     </n-modal>
@@ -345,7 +345,7 @@
     <n-modal
       v-model:show="iconSelectorShow"
       preset="card"
-      title="选择图标"
+      :title="$t('operations.layout.selectIcon')"
       style="width: 600px; max-height: 70vh"
     >
       <div class="max-h-96 overflow-y-auto">
@@ -374,8 +374,8 @@
       </div>
       <template #footer>
         <n-space justify="end">
-          <n-button @click="iconSelectorShow = false">取消</n-button>
-          <n-button type="primary" @click="confirmIconSelection">确定</n-button>
+          <n-button @click="iconSelectorShow = false">{{ $t('common.cancel') }}</n-button>
+          <n-button type="primary" @click="confirmIconSelection">{{ $t('operations.layout.confirm') }}</n-button>
         </n-space>
       </template>
     </n-modal>
@@ -384,30 +384,30 @@
     <n-modal
       v-model:show="showIconUploadModal"
       preset="card"
-      title="上传图标"
+      :title="$t('operations.layout.uploadIcon')"
       style="width: 500px"
     >
       <div class="space-y-4">
         <n-form>
-          <n-form-item label="图标标识">
+          <n-form-item :label="$t('operations.layout.iconKey')">
             <n-input
               v-model:value="uploadForm.iconKey"
-              placeholder="例如: home, promotion"
+              :placeholder="$t('operations.layout.iconKeyPlaceholder')"
             />
           </n-form-item>
-          <n-form-item label="图标名称">
+          <n-form-item :label="$t('operations.layout.iconName')">
             <n-input
               v-model:value="uploadForm.iconLabel"
-              placeholder="例如: 首页, 优惠"
+              :placeholder="$t('operations.layout.iconNamePlaceholder')"
             />
           </n-form-item>
-          <n-form-item label="分类">
+          <n-form-item :label="$t('operations.layout.category')">
             <n-input
               v-model:value="uploadForm.category"
-              placeholder="例如: navigation, action"
+              :placeholder="$t('operations.layout.categoryPlaceholder')"
             />
           </n-form-item>
-          <n-form-item label="图标文件">
+          <n-form-item :label="$t('operations.layout.iconFile')">
             <n-upload
               ref="uploadRef"
               :max="1"
@@ -416,24 +416,24 @@
               accept="*/*"
               :default-upload="false"
             >
-              <n-button>选择图片文件</n-button>
+              <n-button>{{ $t('operations.layout.selectImageFile') }}</n-button>
             </n-upload>
           </n-form-item>
         </n-form>
         <div v-if="uploadPreview" class="text-center">
           <img
             :src="uploadPreview"
-            alt="预览"
+            :alt="$t('operations.layout.previewAlt')"
             class="mx-auto h-16 w-16 rounded border object-contain"
           />
-          <p class="mt-2 text-xs text-gray-500">图标预览</p>
+          <p class="mt-2 text-xs text-gray-500">{{ $t('operations.layout.iconPreview') }}</p>
         </div>
       </div>
       <template #footer>
         <n-space justify="end">
-          <n-button @click="closeUploadModal">取消</n-button>
+          <n-button @click="closeUploadModal">{{ $t('common.cancel') }}</n-button>
           <n-button type="primary" @click="uploadIcon" :loading="uploading"
-            >上传</n-button
+            >{{ $t('common.upload') }}</n-button
           >
         </n-space>
       </template>
@@ -442,6 +442,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 /**
  * 阶段一：仅「我的页面样式」提供编辑 UI。
  * `layoutConfig` 与保存请求仍携带完整字段（默认值或接口回填），便于后端落库与后续开放更多项。
@@ -496,7 +498,7 @@ const selectedBrandCode = ref<string | null>(null);
 const { getSkinColorLabel } = useSkinColorOptions();
 
 // Reactive data
-const currentSkinName = ref('欧规美规-Rollex样式');
+const currentSkinName = ref('');
 const selfPromotionEnabled = ref(false);
 const showEditModal = ref(false);
 const editingSkinName = ref('');
@@ -571,7 +573,7 @@ function resetLayoutDraftForNewBrand() {
     noWalletGuideEnabled: false,
     topNavAdEnabled: true,
   });
-  currentSkinName.value = '欧规美规-Rollex样式';
+  currentSkinName.value = 'Rollex';
   selfPromotionEnabled.value = false;
   buttonConfig.beforeLogin = Array.from({ length: 5 }, () => ({
     icon: '',
@@ -649,13 +651,13 @@ const layoutSkinKey = computed(() => {
 /** 版式模板中文名（如 comprehensive_v1 → 综合版1）+ 配色名 */
 const skinTemplateStyleDisplay = computed(() => {
   const info = brandSkinInfo.value;
-  if (!info) return '未设置';
+  if (!info) return $t('operations.layout.notSet');
   const templateLabel = getLayoutStyleLabel(info.skinStyle, info.skinTemplate);
   const color = info.colorName?.trim();
-  if (!templateLabel || templateLabel === '-' || templateLabel === '未设置') {
-    return color && color !== '未知颜色' ? color : '未设置';
+  if (!templateLabel || templateLabel === '-' || templateLabel === $t('operations.layout.notSet')) {
+    return color && color !== $t('operations.layout.unknownColor') ? color : $t('operations.layout.notSet');
   }
-  if (color && color !== '未知颜色') {
+  if (color && color !== $t('operations.layout.unknownColor')) {
     return `${templateLabel} · ${color}`;
   }
   return templateLabel;
@@ -683,9 +685,9 @@ const saveSkinName = () => {
   if (editingSkinName.value.trim()) {
     currentSkinName.value = editingSkinName.value.trim();
     showEditModal.value = false;
-    message.success('皮肤样式名称已更新');
+    message.success($t('operations.layout.skinNameUpdated'));
   } else {
-    message.error('请输入有效的样式名称');
+    message.error($t('operations.layout.invalidStyleName'));
   }
 };
 
@@ -693,14 +695,14 @@ const enterEditMode = () => {
   // Backup current config for cancel functionality
   originalLayoutConfig.value = { ...layoutConfig };
   isEditMode.value = true;
-  message.info('进入编辑模式');
+  message.info($t('operations.layout.enterEditMode'));
 };
 
 const cancelEdit = () => {
   // Restore original config
   Object.assign(layoutConfig, originalLayoutConfig.value);
   isEditMode.value = false;
-  message.info('已取消编辑');
+  message.info($t('operations.layout.cancelEdit'));
 };
 
 const saveConfig = async () => {
@@ -711,7 +713,7 @@ const saveConfig = async () => {
     console.log('✅ saveConfig completed successfully');
   } catch (error) {
     console.error('❌ Error saving config:', error);
-    message.error('保存失败，请重试');
+    message.error($t('operations.layout.saveFailedRetry'));
   }
 };
 
@@ -731,7 +733,7 @@ const enterButtonEditMode = () => {
   originalButtonConfig.value = JSON.parse(JSON.stringify(buttonConfig));
   isButtonEditMode.value = true;
   showValidationError.value = false;
-  message.info('进入按钮编辑模式');
+  message.info($t('operations.layout.enterButtonEdit'));
 };
 
 const cancelButtonEdit = () => {
@@ -739,7 +741,7 @@ const cancelButtonEdit = () => {
   Object.assign(buttonConfig, originalButtonConfig.value);
   isButtonEditMode.value = false;
   showValidationError.value = false;
-  message.info('已取消编辑');
+  message.info($t('operations.layout.cancelEdit'));
 };
 
 const openIconSelector = (group: string, index: number) => {
@@ -839,13 +841,13 @@ const generatePreview = () => {
     const sep = base.includes('?') ? '&' : '?';
     previewIframe.value.src = `${base}${sep}_pv=${Date.now()}`;
   }
-  message.success('已刷新预览（若目标站限制嵌入，请以实际客户端为准）');
+  message.success($t('operations.layout.previewRefreshed'));
 };
 
 const saveButtonConfig = async () => {
   if (!validateButtonConfig()) {
     showValidationError.value = true;
-    message.error('请设置完整按钮再做模板配置');
+    message.error($t('operations.layout.completeButtonsFirst'));
     return;
   }
 
@@ -855,7 +857,7 @@ const saveButtonConfig = async () => {
     updatePreview();
   } catch (error) {
     console.error('Error saving button config:', error);
-    message.error('保存失败，请重试');
+    message.error($t('operations.layout.saveFailedRetry'));
   }
 };
 
@@ -868,11 +870,11 @@ const getActiveButtons = () => {
   return hasConfiguredButtons
     ? buttonConfig.beforeLogin
     : [
-        { icon: 'home', label: '首页' },
-        { icon: 'promotion', label: '优惠' },
-        { icon: 'deposit', label: '充值' },
-        { icon: 'service', label: '客服' },
-        { icon: 'profile', label: '我的' },
+        { icon: 'home', label: $t('operations.layout.home') },
+        { icon: 'promotion', label: $t('operations.layout.promotion') },
+        { icon: 'deposit', label: $t('operations.layout.deposit') },
+        { icon: 'service', label: $t('operations.layout.service') },
+        { icon: 'profile', label: $t('operations.layout.profile') },
       ];
 };
 
@@ -895,7 +897,7 @@ const handleFileChange = (data: any) => {
       reader.readAsDataURL(file);
     } else {
       console.error('Invalid file object:', file);
-      message.error('文件对象无效');
+      message.error($t('operations.layout.invalidFile'));
     }
   } else {
     // No files selected - clear preview and form
@@ -919,7 +921,7 @@ const uploadIcon = async () => {
   });
 
   if (!uploadForm.iconKey || !uploadForm.iconLabel || !uploadForm.file) {
-    message.error('请填写完整信息并选择图片文件');
+    message.error($t('operations.layout.completeUploadInfo'));
     return;
   }
 
@@ -937,15 +939,15 @@ const uploadIcon = async () => {
     const response = await LayoutDesignApi.uploadIcon(formData);
 
     if (response.success) {
-      message.success('图标上传成功');
+      message.success($t('operations.layout.iconUploadSuccess'));
       await loadAvailableIcons(); // Reload icons list
       closeUploadModal();
     } else {
-      message.error(response.message || '上传失败');
+      message.error(response.message || $t('operations.layout.uploadFailedRetry'));
     }
   } catch (error) {
     console.error('Upload error:', error);
-    message.error('上传失败，请重试');
+    message.error($t('operations.layout.uploadFailedRetry'));
   } finally {
     uploading.value = false;
   }
@@ -980,7 +982,7 @@ const loadAvailableIcons = async () => {
     }
   } catch (error) {
     console.error('Failed to load available icons:', error);
-    message.error('加载图标失败');
+    message.error($t('operations.layout.loadIconsFailed'));
   }
 };
 
@@ -1049,13 +1051,13 @@ const loadBrandSkinConfig = async (brandCode?: string) => {
 
       console.log('🎨 Found brand skin config:', brandSkin);
 
-      const colorName = getSkinColorLabel(brandSkin.skinColor) || '未知颜色';
+      const colorName = getSkinColorLabel(brandSkin.skinColor) || $t('operations.layout.unknownColor');
 
       brandSkinInfo.value = {
         brandName: brandSkin.brandName,
         brandCode: brandSkin.brandCode,
-        skinStyle: brandSkin.skinStyle || '未设置',
-        skinColor: brandSkin.skinColor || '未设置',
+        skinStyle: brandSkin.skinStyle || $t('operations.layout.notSet'),
+        skinColor: brandSkin.skinColor || $t('operations.layout.notSet'),
         colorName,
         skinTemplate: brandSkin.skinTemplate || '',
       };
@@ -1092,7 +1094,7 @@ const loadExistingConfig = async () => {
       console.log(' Found existing config:', existingConfig);
 
       // Populate the form with existing data
-      currentSkinName.value = existingConfig.skinName || '欧规美规-Rollex样式';
+      currentSkinName.value = existingConfig.skinName || 'Rollex';
       selfPromotionEnabled.value = existingConfig.selfPromotionEnabled || false;
 
       // Update layout configuration
@@ -1276,18 +1278,18 @@ const saveLayoutConfig = async () => {
 
     if (response.success) {
       console.log('✅ Layout config saved successfully!');
-      message.success('布局配置保存成功');
+      message.success($t('operations.layout.layoutSaveSuccess'));
       isEditMode.value = false;
       isButtonEditMode.value = false;
       await loadExistingConfig();
       await loadBrandSkinConfig(selectedBrandCode.value ?? bc);
     } else {
       console.error('❌ Save failed - response not successful:', response);
-      message.error('保存失败：' + (response.message || '未知错误'));
+      message.error($t('operations.layout.saveFailedUnknown', [response.message || $t('common.operationFailed')]));
     }
   } catch (error) {
     console.error('❌ Failed to save layout config:', error);
-    message.error('保存失败，请重试');
+    message.error($t('operations.layout.saveFailedRetry'));
   }
 };
 

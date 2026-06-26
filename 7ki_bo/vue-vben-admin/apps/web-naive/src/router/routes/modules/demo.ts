@@ -6,7 +6,7 @@ const routes: RouteRecordRaw[] = [
       icon: 'ic:baseline-science',
       keepAlive: true,
       order: 999,
-      title: '功能演示',
+      title: 'page.menu.featureDemo',
     },
     name: 'Demo',
     path: '/demo',
@@ -14,7 +14,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '商户RTP调控',
+          title: 'page.menu.merchantRtpControl',
         },
         name: 'MerchantRtpControl',
         path: '/demo/merchant-rtp-control',
@@ -23,7 +23,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '条件RTP配置（演示）',
+          title: 'page.menu.conditionalRtpDemo',
         },
         name: 'ConditionalRtpRuleBuilderDemo',
         path: '/demo/conditional-rtp-config',

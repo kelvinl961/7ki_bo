@@ -1,10 +1,9 @@
 <template>
   <div>
     <n-alert type="info" style="margin-bottom: 16px">
-      配置该代理模式的阶梯返佣规则，每个层级可以设置不同的门槛和比例。
+      {{ $t('agency.tierEditor.description') }}
     </n-alert>
 
-    <!-- 操作按钮 -->
     <div
       style="
         margin-bottom: 16px;
@@ -13,16 +12,17 @@
         align-items: center;
       "
     >
-      <h3>返佣层级配置</h3>
-      <n-button type="primary" @click="handleAddTier">新增层级</n-button>
+      <h3>{{ $t('agency.tierEditor.tierConfig') }}</h3>
+      <n-button type="primary" @click="handleAddTier">{{
+        $t('agency.tierEditor.addTier')
+      }}</n-button>
     </div>
 
-    <!-- 层级列表 -->
     <n-space vertical :size="16">
       <n-card
         v-for="(tier, index) in tiers"
         :key="index"
-        :title="`第${tier.levelNo}级`"
+        :title="$t('agency.tierEditor.tierLevel', [tier.levelNo])"
         size="small"
       >
         <template #header-extra>
@@ -32,7 +32,7 @@
             text
             @click="handleRemoveTier(index)"
           >
-            删除
+            {{ $t('common.delete') }}
           </n-button>
         </template>
 
@@ -44,21 +44,21 @@
         >
           <n-grid :cols="3" :x-gap="16">
             <n-gi>
-              <n-form-item label="层级序号">
+              <n-form-item :label="$t('agency.tierEditor.levelNo')">
                 <n-input-number
                   v-model:value="tier.levelNo"
                   :min="1"
                   :max="10"
-                  placeholder="层级序号"
+                  :placeholder="$t('agency.tierEditor.levelNo')"
                 />
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="指标类型">
+              <n-form-item :label="$t('agency.tierEditor.metricType')">
                 <n-select
                   v-model:value="tier.metricType"
                   :options="metricTypeOptions"
-                  placeholder="选择指标类型"
+                  :placeholder="$t('agency.tierEditor.selectMetric')"
                 />
               </n-form-item>
             </n-gi>
@@ -66,22 +66,22 @@
 
           <n-grid :cols="2" :x-gap="16">
             <n-gi>
-              <n-form-item label="门槛下限">
+              <n-form-item :label="$t('agency.tierEditor.thresholdMin')">
                 <n-input-number
                   v-model:value="tier.rangeMin"
                   :min="0"
                   :precision="2"
-                  placeholder="最小值"
+                  :placeholder="$t('agency.agentList.minValue')"
                 />
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="门槛上限">
+              <n-form-item :label="$t('agency.tierEditor.thresholdMax')">
                 <n-input-number
                   v-model:value="tier.rangeMax"
                   :min="0"
                   :precision="2"
-                  placeholder="最大值（不填表示无上限）"
+                  :placeholder="$t('agency.tierEditor.thresholdMaxHint')"
                 />
               </n-form-item>
             </n-gi>
@@ -89,85 +89,91 @@
 
           <n-grid :cols="3" :x-gap="16">
             <n-gi>
-              <n-form-item label="返佣比例(%)">
+              <n-form-item :label="$t('agency.tierEditor.rebateRate')">
                 <n-input-number
                   v-model:value="tier.ratePercent"
                   :min="0"
                   :max="100"
                   :precision="4"
-                  placeholder="返佣比例"
+                  :placeholder="$t('agency.tierEditor.rebateRate')"
                 />
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="单级封顶">
+              <n-form-item :label="$t('agency.tierEditor.tierCap')">
                 <n-input-number
                   v-model:value="tier.capAmount"
                   :min="0"
                   :precision="2"
-                  placeholder="单级最大返佣金额"
+                  :placeholder="$t('agency.tierEditor.tierCapHint')"
                 />
               </n-form-item>
             </n-gi>
             <n-gi>
-              <n-form-item label="超出部分额外比例(%)">
+              <n-form-item :label="$t('agency.tierEditor.extraRate')">
                 <n-input-number
                   v-model:value="tier.extraRate"
                   :min="0"
                   :max="100"
                   :precision="4"
-                  placeholder="超出部分额外返佣比例"
+                  :placeholder="$t('agency.tierEditor.extraRateHint')"
                 />
               </n-form-item>
             </n-gi>
           </n-grid>
 
-          <n-form-item label="复杂规则配置">
+          <n-form-item :label="$t('agency.tierEditor.complexRules')">
             <n-input
               v-model:value="tier.ruleJsonText"
               type="textarea"
               :rows="3"
-              placeholder="JSON格式的复杂规则配置（可选）"
+              :placeholder="$t('agency.tierEditor.complexRulesPlaceholder')"
             />
           </n-form-item>
         </n-form>
       </n-card>
     </n-space>
 
-    <!-- 空状态 -->
     <n-empty
       v-if="tiers.length === 0"
-      description="暂无层级配置，点击上方按钮新增"
+      :description="$t('agency.tierEditor.emptyState')"
       style="margin: 40px 0"
     />
 
-    <!-- 预览区域 -->
-    <n-card v-if="tiers.length > 0" title="配置预览" style="margin-top: 24px">
+    <n-card
+      v-if="tiers.length > 0"
+      :title="$t('agency.tierEditor.preview')"
+      style="margin-top: 24px"
+    >
       <n-table :single-line="false" size="small">
         <thead>
           <tr>
-            <th>层级</th>
-            <th>指标类型</th>
-            <th>门槛范围</th>
-            <th>返佣比例</th>
-            <th>单级封顶</th>
-            <th>额外比例</th>
+            <th>{{ $t('agency.tierEditor.tierCol') }}</th>
+            <th>{{ $t('agency.tierEditor.metricType') }}</th>
+            <th>{{ $t('agency.tierEditor.thresholdRange') }}</th>
+            <th>{{ $t('agency.tierEditor.rebateRate') }}</th>
+            <th>{{ $t('agency.tierEditor.tierCap') }}</th>
+            <th>{{ $t('agency.tierEditor.extraRateCol') }}</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="tier in sortedTiers" :key="tier.levelNo">
-            <td>第{{ tier.levelNo }}级</td>
+            <td>{{ $t('agency.tierEditor.tierLevel', [tier.levelNo]) }}</td>
             <td>{{ getMetricTypeLabel(tier.metricType) }}</td>
-            <td>{{ tier.rangeMin || 0 }} - {{ tier.rangeMax || '∞' }}</td>
+            <td>
+              {{ tier.rangeMin || 0 }} -
+              {{ tier.rangeMax ?? $t('agency.tierEditor.unlimited') }}
+            </td>
             <td>{{ tier.ratePercent || 0 }}%</td>
-            <td>{{ tier.capAmount || '无限制' }}</td>
+            <td>
+              {{ tier.capAmount ?? $t('agency.tierEditor.unlimited') }}
+            </td>
             <td>{{ tier.extraRate || 0 }}%</td>
           </tr>
         </tbody>
       </n-table>
     </n-card>
 
-    <!-- 操作按钮 -->
     <div
       style="
         display: flex;
@@ -176,16 +182,18 @@
         margin-top: 24px;
       "
     >
-      <n-button @click="$emit('close')">取消</n-button>
+      <n-button @click="$emit('close')">{{ $t('common.cancel') }}</n-button>
       <n-button type="primary" @click="handleSave" :loading="saveLoading">
-        保存配置
+        {{ $t('agency.tierEditor.saveConfig') }}
       </n-button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue';
+import { $t } from '@vben/locales';
+
+import { ref, computed, onMounted } from 'vue';
 import { useMessage } from 'naive-ui';
 import { agentModeApi, type AgentModeTier } from '#/api/agency/agent-mode';
 
@@ -203,28 +211,24 @@ const emit = defineEmits<Emits>();
 
 const message = useMessage();
 
-// 响应式数据
 const tiers = ref<(AgentModeTier & { ruleJsonText?: string })[]>([]);
 const saveLoading = ref(false);
 const loadLoading = ref(false);
 
-// 指标类型选项
-const metricTypeOptions = [
-  { label: '有效投注', value: 'VALID_BET' },
-  { label: '净盈利', value: 'NET_PROFIT' },
-  { label: '存款', value: 'DEPOSIT' },
-  { label: '充值', value: 'RECHARGE' },
-  { label: '组合', value: 'COMPOSITE' },
-];
+const metricTypeOptions = computed(() => [
+  { label: $t('agency.tierEditor.metricValidBet'), value: 'VALID_BET' },
+  { label: $t('agency.tierEditor.metricNetProfit'), value: 'NET_PROFIT' },
+  { label: $t('agency.tierEditor.metricDeposit'), value: 'DEPOSIT' },
+  { label: $t('agency.tierEditor.metricRecharge'), value: 'RECHARGE' },
+  { label: $t('agency.tierEditor.metricComposite'), value: 'COMPOSITE' },
+]);
 
-// 计算属性
 const sortedTiers = computed(() => {
   return [...tiers.value].sort((a, b) => a.levelNo - b.levelNo);
 });
 
-// 方法
 const getMetricTypeLabel = (type: string) => {
-  const option = metricTypeOptions.find((opt) => opt.value === type);
+  const option = metricTypeOptions.value.find((opt) => opt.value === type);
   return option?.label || type;
 };
 
@@ -241,8 +245,8 @@ const loadTiers = async () => {
       }));
     }
   } catch (error) {
-    console.error('加载层级配置失败:', error);
-    message.error('加载层级配置失败');
+    console.error('Failed to load tier config:', error);
+    message.error($t('agency.tierEditor.loadFailed'));
   } finally {
     loadLoading.value = false;
   }
@@ -271,30 +275,28 @@ const handleRemoveTier = (index: number) => {
 };
 
 const validateTiers = (): boolean => {
-  // 验证层级序号唯一性
   const levelNos = tiers.value.map((t) => t.levelNo);
   const uniqueLevelNos = new Set(levelNos);
   if (levelNos.length !== uniqueLevelNos.size) {
-    message.error('层级序号不能重复');
+    message.error($t('agency.tierEditor.duplicateLevel'));
     return false;
   }
 
-  // 验证必填字段
   for (const tier of tiers.value) {
     if (!tier.levelNo || tier.levelNo < 1) {
-      message.error('层级序号必须大于0');
+      message.error($t('agency.tierEditor.levelMustPositive'));
       return false;
     }
     if (!tier.metricType) {
-      message.error('请选择指标类型');
+      message.error($t('agency.tierEditor.selectMetricRequired'));
       return false;
     }
     if (tier.rangeMin === undefined || tier.rangeMin < 0) {
-      message.error('门槛下限不能为空且必须大于等于0');
+      message.error($t('agency.tierEditor.thresholdMinRequired'));
       return false;
     }
     if (tier.rangeMax !== undefined && tier.rangeMax < tier.rangeMin) {
-      message.error('门槛上限不能小于下限');
+      message.error($t('agency.tierEditor.thresholdMaxInvalid'));
       return false;
     }
     if (
@@ -302,7 +304,7 @@ const validateTiers = (): boolean => {
       tier.ratePercent < 0 ||
       tier.ratePercent > 100
     ) {
-      message.error('返佣比例必须在0-100之间');
+      message.error($t('agency.tierEditor.rebateRateRange'));
       return false;
     }
   }
@@ -317,7 +319,6 @@ const handleSave = async () => {
 
   saveLoading.value = true;
   try {
-    // 处理 JSON 规则
     const processedTiers: AgentModeTier[] = tiers.value.map((tier) => {
       const result: AgentModeTier = {
         levelNo: tier.levelNo,
@@ -329,12 +330,13 @@ const handleSave = async () => {
         extraRate: tier.extraRate,
       };
 
-      // 处理 JSON 规则
       if (tier.ruleJsonText && tier.ruleJsonText.trim()) {
         try {
           result.ruleJson = JSON.parse(tier.ruleJsonText);
-        } catch (error) {
-          throw new Error(`第${tier.levelNo}级的复杂规则JSON格式错误`);
+        } catch {
+          throw new Error(
+            $t('agency.tierEditor.jsonError', [String(tier.levelNo)]),
+          );
         }
       }
 
@@ -342,18 +344,19 @@ const handleSave = async () => {
     });
 
     await agentModeApi.updateAgentModeTiers(props.modeId, processedTiers);
-    message.success('保存成功');
+    message.success($t('agency.tierEditor.saveSuccess'));
     emit('updated');
     emit('close');
   } catch (error) {
-    console.error('保存失败:', error);
-    message.error(error instanceof Error ? error.message : '保存失败');
+    console.error('Save failed:', error);
+    message.error(
+      error instanceof Error ? error.message : $t('agency.tierEditor.saveFailed'),
+    );
   } finally {
     saveLoading.value = false;
   }
 };
 
-// 组件挂载时加载数据
 onMounted(() => {
   loadTiers();
 });

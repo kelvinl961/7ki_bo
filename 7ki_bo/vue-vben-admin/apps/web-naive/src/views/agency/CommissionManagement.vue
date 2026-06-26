@@ -10,12 +10,12 @@
           margin-bottom: 16px;
         "
       >
-        <n-button type="primary" @click="openRulesModal"> 佣金设置 </n-button>
+        <n-button type="primary" @click="openRulesModal"> {{ $t('agency.commission.settings') }} </n-button>
       </div>
 
       <n-tabs v-model:value="activeTab" type="line" animated>
         <!-- 1. 待审核 -->
-        <n-tab-pane name="pending" tab="待审核">
+        <n-tab-pane name="pending" :tab="$t('agency.commission.pending')">
           <div
             style="
               display: flex;
@@ -30,10 +30,10 @@
               size="small"
               @update:value="pendingTabDates.onPresetChange"
             >
-              <n-radio-button value="today">今日</n-radio-button>
-              <n-radio-button value="yesterday">昨天</n-radio-button>
-              <n-radio-button value="thisWeek">本周</n-radio-button>
-              <n-radio-button value="lastWeek">上周</n-radio-button>
+              <n-radio-button value="today">{{ $t('common.today') }}</n-radio-button>
+              <n-radio-button value="yesterday">{{ $t('agency.commission.yesterday') }}</n-radio-button>
+              <n-radio-button value="thisWeek">{{ $t('common.thisWeek') }}</n-radio-button>
+              <n-radio-button value="lastWeek">{{ $t('agency.commission.lastWeek') }}</n-radio-button>
             </n-radio-group>
             <n-date-picker
               v-model:value="pendingTabDates.state.dateRange"
@@ -41,50 +41,50 @@
               :timezone="COMMISSION_REPORT_TIMEZONE"
               clearable
               :shortcuts="commissionDateShortcuts"
-              placeholder="选择开始和结束日期"
+              :placeholder="$t('agency.commission.selectDateRange')"
               format="yyyy-MM-dd"
               style="width: 320px"
               @update:value="pendingTabDates.onRangeUpdate"
             />
             <n-input
               v-model:value="pendingFilters.agentAccount"
-              placeholder="代理账号"
+              :placeholder="$t('agency.commission.agentAccount')"
               style="width: 200px"
               clearable
             />
             <n-input
               v-model:value="pendingFilters.agentId"
-              placeholder="代理ID"
+              :placeholder="$t('agency.commission.agentId')"
               style="width: 200px"
               clearable
             />
             <n-select
               v-model:value="pendingFilters.currency"
-              placeholder="币种"
+              :placeholder="$t('common.currency')"
               style="width: 150px"
               :options="currencyOptions"
               clearable
             />
-            <n-button type="primary" @click="searchPending">搜索</n-button>
-            <n-button @click="resetPendingFilters">重置</n-button>
+            <n-button type="primary" @click="searchPending">{{ $t('common.search') }}</n-button>
+            <n-button @click="resetPendingFilters">{{ $t('common.reset') }}</n-button>
           </div>
 
           <div style="display: flex; gap: 8px; margin-bottom: 16px">
             <n-button type="success" @click="batchApproveAll"
-              >全部通过</n-button
+              >{{ $t('agency.commission.approveAll') }}</n-button
             >
-            <n-button type="error" @click="batchRejectAll">全部拒绝</n-button>
+            <n-button type="error" @click="batchRejectAll">{{ $t('agency.commission.rejectAll') }}</n-button>
             <n-button
               type="warning"
               :disabled="selectedPendingKeys.length === 0"
               @click="batchApprove"
-              >批量通过 ({{ selectedPendingKeys.length }})</n-button
+              >{{ $t('agency.commission.batchApprove') }} ({{ selectedPendingKeys.length }})</n-button
             >
             <n-button
               type="error"
               :disabled="selectedPendingKeys.length === 0"
               @click="batchReject"
-              >批量拒绝 ({{ selectedPendingKeys.length }})</n-button
+              >{{ $t('agency.commission.batchReject') }} ({{ selectedPendingKeys.length }})</n-button
             >
           </div>
 
@@ -113,7 +113,7 @@
         </n-tab-pane>
 
         <!-- 2. 待领取 -->
-        <n-tab-pane name="ready" tab="待领取">
+        <n-tab-pane name="ready" :tab="$t('agency.commission.ready')">
           <div
             style="
               display: flex;
@@ -128,10 +128,10 @@
               size="small"
               @update:value="readyTabDates.onPresetChange"
             >
-              <n-radio-button value="today">今日</n-radio-button>
-              <n-radio-button value="yesterday">昨天</n-radio-button>
-              <n-radio-button value="thisWeek">本周</n-radio-button>
-              <n-radio-button value="lastWeek">上周</n-radio-button>
+              <n-radio-button value="today">{{ $t('common.today') }}</n-radio-button>
+              <n-radio-button value="yesterday">{{ $t('agency.commission.yesterday') }}</n-radio-button>
+              <n-radio-button value="thisWeek">{{ $t('common.thisWeek') }}</n-radio-button>
+              <n-radio-button value="lastWeek">{{ $t('agency.commission.lastWeek') }}</n-radio-button>
             </n-radio-group>
             <n-date-picker
               v-model:value="readyTabDates.state.dateRange"
@@ -139,19 +139,19 @@
               :timezone="COMMISSION_REPORT_TIMEZONE"
               clearable
               :shortcuts="commissionDateShortcuts"
-              placeholder="选择开始和结束日期"
+              :placeholder="$t('agency.commission.selectDateRange')"
               format="yyyy-MM-dd"
               style="width: 320px"
               @update:value="readyTabDates.onRangeUpdate"
             />
             <n-input
               v-model:value="readyFilters.agentAccount"
-              placeholder="代理账号"
+              :placeholder="$t('agency.commission.agentAccount')"
               style="width: 200px"
               clearable
             />
-            <n-button type="primary" @click="searchReady">搜索</n-button>
-            <n-button @click="resetReadyFilters">重置</n-button>
+            <n-button type="primary" @click="searchReady">{{ $t('common.search') }}</n-button>
+            <n-button @click="resetReadyFilters">{{ $t('common.reset') }}</n-button>
           </div>
 
           <div style="display: flex; gap: 8px; margin-bottom: 16px">
@@ -159,7 +159,7 @@
               type="warning"
               :disabled="selectedReadyKeys.length === 0"
               @click="batchWithdraw"
-              >批量撤回 ({{ selectedReadyKeys.length }})</n-button
+              >{{ $t('agency.commission.batchWithdraw') }} ({{ selectedReadyKeys.length }})</n-button
             >
           </div>
 
@@ -188,7 +188,7 @@
         </n-tab-pane>
 
         <!-- 3. 已撤回 -->
-        <n-tab-pane name="withdrawn" tab="已撤回">
+        <n-tab-pane name="withdrawn" :tab="$t('agency.commission.withdrawn')">
           <div
             style="
               display: flex;
@@ -203,10 +203,10 @@
               size="small"
               @update:value="withdrawnTabDates.onPresetChange"
             >
-              <n-radio-button value="today">今日</n-radio-button>
-              <n-radio-button value="yesterday">昨天</n-radio-button>
-              <n-radio-button value="thisWeek">本周</n-radio-button>
-              <n-radio-button value="lastWeek">上周</n-radio-button>
+              <n-radio-button value="today">{{ $t('common.today') }}</n-radio-button>
+              <n-radio-button value="yesterday">{{ $t('agency.commission.yesterday') }}</n-radio-button>
+              <n-radio-button value="thisWeek">{{ $t('common.thisWeek') }}</n-radio-button>
+              <n-radio-button value="lastWeek">{{ $t('agency.commission.lastWeek') }}</n-radio-button>
             </n-radio-group>
             <n-date-picker
               v-model:value="withdrawnTabDates.state.dateRange"
@@ -214,19 +214,19 @@
               :timezone="COMMISSION_REPORT_TIMEZONE"
               clearable
               :shortcuts="commissionDateShortcuts"
-              placeholder="选择开始和结束日期"
+              :placeholder="$t('agency.commission.selectDateRange')"
               format="yyyy-MM-dd"
               style="width: 320px"
               @update:value="withdrawnTabDates.onRangeUpdate"
             />
             <n-input
               v-model:value="withdrawnFilters.agentAccount"
-              placeholder="代理账号"
+              :placeholder="$t('agency.commission.agentAccount')"
               style="width: 200px"
               clearable
             />
-            <n-button type="primary" @click="searchWithdrawn">搜索</n-button>
-            <n-button @click="resetWithdrawnFilters">重置</n-button>
+            <n-button type="primary" @click="searchWithdrawn">{{ $t('common.search') }}</n-button>
+            <n-button @click="resetWithdrawnFilters">{{ $t('common.reset') }}</n-button>
           </div>
 
           <div style="display: flex; gap: 8px; margin-bottom: 16px">
@@ -234,13 +234,13 @@
               type="success"
               :disabled="selectedWithdrawnKeys.length === 0"
               @click="batchApproveWithdrawn"
-              >批量通过 ({{ selectedWithdrawnKeys.length }})</n-button
+              >{{ $t('agency.commission.batchApprove') }} ({{ selectedWithdrawnKeys.length }})</n-button
             >
             <n-button
               type="error"
               :disabled="selectedWithdrawnKeys.length === 0"
               @click="batchRejectWithdrawn"
-              >批量拒绝 ({{ selectedWithdrawnKeys.length }})</n-button
+              >{{ $t('agency.commission.batchReject') }} ({{ selectedWithdrawnKeys.length }})</n-button
             >
           </div>
 
@@ -269,7 +269,7 @@
         </n-tab-pane>
 
         <!-- 4. 已拒绝 -->
-        <n-tab-pane name="rejected" tab="已拒绝">
+        <n-tab-pane name="rejected" :tab="$t('agency.commission.rejected')">
           <div
             style="
               display: flex;
@@ -284,10 +284,10 @@
               size="small"
               @update:value="rejectedTabDates.onPresetChange"
             >
-              <n-radio-button value="today">今日</n-radio-button>
-              <n-radio-button value="yesterday">昨天</n-radio-button>
-              <n-radio-button value="thisWeek">本周</n-radio-button>
-              <n-radio-button value="lastWeek">上周</n-radio-button>
+              <n-radio-button value="today">{{ $t('common.today') }}</n-radio-button>
+              <n-radio-button value="yesterday">{{ $t('agency.commission.yesterday') }}</n-radio-button>
+              <n-radio-button value="thisWeek">{{ $t('common.thisWeek') }}</n-radio-button>
+              <n-radio-button value="lastWeek">{{ $t('agency.commission.lastWeek') }}</n-radio-button>
             </n-radio-group>
             <n-date-picker
               v-model:value="rejectedTabDates.state.dateRange"
@@ -295,19 +295,19 @@
               :timezone="COMMISSION_REPORT_TIMEZONE"
               clearable
               :shortcuts="commissionDateShortcuts"
-              placeholder="选择开始和结束日期"
+              :placeholder="$t('agency.commission.selectDateRange')"
               format="yyyy-MM-dd"
               style="width: 320px"
               @update:value="rejectedTabDates.onRangeUpdate"
             />
             <n-input
               v-model:value="rejectedFilters.agentAccount"
-              placeholder="代理账号"
+              :placeholder="$t('agency.commission.agentAccount')"
               style="width: 200px"
               clearable
             />
-            <n-button type="primary" @click="searchRejected">搜索</n-button>
-            <n-button @click="resetRejectedFilters">重置</n-button>
+            <n-button type="primary" @click="searchRejected">{{ $t('common.search') }}</n-button>
+            <n-button @click="resetRejectedFilters">{{ $t('common.reset') }}</n-button>
           </div>
 
           <n-data-table
@@ -333,7 +333,7 @@
         </n-tab-pane>
 
         <!-- 5. 领取记录 -->
-        <n-tab-pane name="claimed" tab="领取记录">
+        <n-tab-pane name="claimed" :tab="$t('agency.commission.claimed')">
           <div
             style="
               display: flex;
@@ -348,10 +348,10 @@
               size="small"
               @update:value="claimedTabDates.onPresetChange"
             >
-              <n-radio-button value="today">今日</n-radio-button>
-              <n-radio-button value="yesterday">昨天</n-radio-button>
-              <n-radio-button value="thisWeek">本周</n-radio-button>
-              <n-radio-button value="lastWeek">上周</n-radio-button>
+              <n-radio-button value="today">{{ $t('common.today') }}</n-radio-button>
+              <n-radio-button value="yesterday">{{ $t('agency.commission.yesterday') }}</n-radio-button>
+              <n-radio-button value="thisWeek">{{ $t('common.thisWeek') }}</n-radio-button>
+              <n-radio-button value="lastWeek">{{ $t('agency.commission.lastWeek') }}</n-radio-button>
             </n-radio-group>
             <n-date-picker
               v-model:value="claimedTabDates.state.dateRange"
@@ -359,19 +359,19 @@
               :timezone="COMMISSION_REPORT_TIMEZONE"
               clearable
               :shortcuts="commissionDateShortcuts"
-              placeholder="选择开始和结束日期"
+              :placeholder="$t('agency.commission.selectDateRange')"
               format="yyyy-MM-dd"
               style="width: 320px"
               @update:value="claimedTabDates.onRangeUpdate"
             />
             <n-input
               v-model:value="claimedFilters.agentAccount"
-              placeholder="代理账号"
+              :placeholder="$t('agency.commission.agentAccount')"
               style="width: 200px"
               clearable
             />
-            <n-button type="primary" @click="searchClaimed">搜索</n-button>
-            <n-button @click="resetClaimedFilters">重置</n-button>
+            <n-button type="primary" @click="searchClaimed">{{ $t('common.search') }}</n-button>
+            <n-button @click="resetClaimedFilters">{{ $t('common.reset') }}</n-button>
           </div>
 
           <n-data-table
@@ -397,7 +397,7 @@
         </n-tab-pane>
 
         <!-- 6. 全部记录 -->
-        <n-tab-pane name="all" tab="全部记录">
+        <n-tab-pane name="all" :tab="$t('agency.commission.allRecords')">
           <div
             style="
               display: flex;
@@ -412,10 +412,10 @@
               size="small"
               @update:value="allTabDates.onPresetChange"
             >
-              <n-radio-button value="today">今日</n-radio-button>
-              <n-radio-button value="yesterday">昨天</n-radio-button>
-              <n-radio-button value="thisWeek">本周</n-radio-button>
-              <n-radio-button value="lastWeek">上周</n-radio-button>
+              <n-radio-button value="today">{{ $t('common.today') }}</n-radio-button>
+              <n-radio-button value="yesterday">{{ $t('agency.commission.yesterday') }}</n-radio-button>
+              <n-radio-button value="thisWeek">{{ $t('common.thisWeek') }}</n-radio-button>
+              <n-radio-button value="lastWeek">{{ $t('agency.commission.lastWeek') }}</n-radio-button>
             </n-radio-group>
             <n-date-picker
               v-model:value="allTabDates.state.dateRange"
@@ -423,26 +423,26 @@
               :timezone="COMMISSION_REPORT_TIMEZONE"
               clearable
               :shortcuts="commissionDateShortcuts"
-              placeholder="选择开始和结束日期"
+              :placeholder="$t('agency.commission.selectDateRange')"
               format="yyyy-MM-dd"
               style="width: 320px"
               @update:value="allTabDates.onRangeUpdate"
             />
             <n-input
               v-model:value="allFilters.agentAccount"
-              placeholder="代理账号"
+              :placeholder="$t('agency.commission.agentAccount')"
               style="width: 200px"
               clearable
             />
             <n-select
               v-model:value="allFilters.status"
-              placeholder="状态"
+              :placeholder="$t('common.status')"
               style="width: 150px"
               :options="statusOptions"
               clearable
             />
-            <n-button type="primary" @click="searchAll">搜索</n-button>
-            <n-button @click="resetAllFilters">重置</n-button>
+            <n-button type="primary" @click="searchAll">{{ $t('common.search') }}</n-button>
+            <n-button @click="resetAllFilters">{{ $t('common.reset') }}</n-button>
           </div>
 
           <n-data-table
@@ -473,7 +473,7 @@
     <n-modal
       v-model:show="rulesModalVisible"
       preset="card"
-      title="佣金人工审核规则"
+      :title="$t('agency.commission.auditRules')"
       style="width: 600px"
       :mask-closable="false"
     >
@@ -489,7 +489,7 @@
           "
         >
           <span style="min-width: 120px; color: #666">{{ currency.name }}</span>
-          <span style="min-width: 80px">佣金金额≥</span>
+          <span style="min-width: 80px">{{ $t('agency.commission.amountGte') }}</span>
           <n-input-number
             v-model:value="(settingsForm as any)[currency.code]"
             :min="0"
@@ -509,22 +509,22 @@
         "
       >
         <div style="font-weight: 500; margin-bottom: 8px">
-          佣金人工审核规则:
+          {{ $t('agency.commission.auditRuleDesc') }}
         </div>
         <div style="color: #666; line-height: 1.6">
-          1.若佣金结算之后的佣金超过设置的金额, 将被人工审核；<br />
-          2.0表示不限制。
+          {{ $t('agency.commission.auditRule1') }}<br />
+          {{ $t('agency.commission.auditRule2') }}
         </div>
       </div>
 
       <template #footer>
         <div style="display: flex; justify-content: flex-end; gap: 12px">
-          <n-button @click="rulesModalVisible = false">取消</n-button>
+          <n-button @click="rulesModalVisible = false">{{ $t('common.cancel') }}</n-button>
           <n-button
             type="primary"
             @click="saveSettings"
             :loading="settingsSaving"
-            >确认</n-button
+            >{{ $t('common.confirm') }}</n-button
           >
         </div>
       </template>
@@ -534,7 +534,7 @@
     <n-modal
       v-model:show="approveModalVisible"
       preset="card"
-      title="通过审核"
+      :title="$t('agency.commission.approveTitle')"
       style="width: 500px"
       :mask-closable="false"
     >
@@ -544,16 +544,16 @@
         label-placement="left"
         label-width="100px"
       >
-        <n-form-item label="代理账号">
+        <n-form-item :label="$t('agency.commission.agentAccount')">
           <n-input :value="currentRecord?.agentAccount" disabled />
         </n-form-item>
-        <n-form-item label="原始佣金">
+        <n-form-item :label="$t('agency.commission.originalCommission')">
           <n-input
             :value="formatCurrency(currentRecord?.commissionAmount)"
             disabled
           />
         </n-form-item>
-        <n-form-item label="修改后佣金" required>
+        <n-form-item :label="$t('agency.commission.modifiedCommission')" required>
           <n-input-number
             v-model:value="approveForm.adjustedAmount"
             :min="0"
@@ -561,20 +561,20 @@
             style="width: 100%"
           />
         </n-form-item>
-        <n-form-item label="备注">
+        <n-form-item :label="$t('common.remark')">
           <n-input
             v-model:value="approveForm.remark"
             type="textarea"
             :rows="3"
-            placeholder="请输入备注"
+            :placeholder="$t('agency.commission.enterRemark')"
           />
         </n-form-item>
       </n-form>
       <template #footer>
         <div style="display: flex; justify-content: flex-end; gap: 12px">
-          <n-button @click="approveModalVisible = false">取消</n-button>
+          <n-button @click="approveModalVisible = false">{{ $t('common.cancel') }}</n-button>
           <n-button type="primary" @click="confirmApprove" :loading="approving"
-            >确认通过</n-button
+            >{{ $t('agency.commission.confirmApprove') }}</n-button
           >
         </div>
       </template>
@@ -584,7 +584,7 @@
     <n-modal
       v-model:show="rejectModalVisible"
       preset="card"
-      title="拒绝佣金"
+      :title="$t('agency.commission.rejectTitle')"
       style="width: 500px"
       :mask-closable="false"
     >
@@ -594,29 +594,29 @@
         label-placement="left"
         label-width="100px"
       >
-        <n-form-item label="代理账号">
+        <n-form-item :label="$t('agency.commission.agentAccount')">
           <n-input :value="currentRecord?.agentAccount" disabled />
         </n-form-item>
-        <n-form-item label="佣金金额">
+        <n-form-item :label="$t('agency.commission.commissionAmount')">
           <n-input
             :value="formatCurrency(currentRecord?.commissionAmount)"
             disabled
           />
         </n-form-item>
-        <n-form-item label="拒绝原因" required>
+        <n-form-item :label="$t('agency.commission.rejectReason')" required>
           <n-input
             v-model:value="rejectForm.reason"
             type="textarea"
             :rows="3"
-            placeholder="请输入拒绝原因"
+            :placeholder="$t('agency.commission.enterRejectReason')"
           />
         </n-form-item>
       </n-form>
       <template #footer>
         <div style="display: flex; justify-content: flex-end; gap: 12px">
-          <n-button @click="rejectModalVisible = false">取消</n-button>
+          <n-button @click="rejectModalVisible = false">{{ $t('common.cancel') }}</n-button>
           <n-button type="error" @click="confirmReject" :loading="rejecting"
-            >确认拒绝</n-button
+            >{{ $t('agency.commission.confirmReject') }}</n-button
           >
         </div>
       </template>
@@ -626,7 +626,7 @@
     <n-modal
       v-model:show="remarkModalVisible"
       preset="card"
-      title="添加备注"
+      :title="$t('agency.commission.addRemark')"
       style="width: 500px"
       :mask-closable="false"
     >
@@ -636,23 +636,23 @@
         label-placement="left"
         label-width="100px"
       >
-        <n-form-item label="备注内容" required>
+        <n-form-item :label="$t('agency.commission.remarkContent')" required>
           <n-input
             v-model:value="remarkForm.remark"
             type="textarea"
             :rows="4"
-            placeholder="请输入备注内容"
+            :placeholder="$t('agency.commission.enterRemark')"
           />
         </n-form-item>
       </n-form>
       <template #footer>
         <div style="display: flex; justify-content: flex-end; gap: 12px">
-          <n-button @click="remarkModalVisible = false">取消</n-button>
+          <n-button @click="remarkModalVisible = false">{{ $t('common.cancel') }}</n-button>
           <n-button
             type="primary"
             @click="confirmRemark"
             :loading="remarkSaving"
-            >保存</n-button
+            >{{ $t('common.save') }}</n-button
           >
         </div>
       </template>
@@ -661,7 +661,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch, h } from 'vue';
+import { $t } from '@vben/locales';
+
+import { ref, reactive, onMounted, watch, h, computed } from 'vue';
 import { Page } from '@vben/common-ui';
 import {
   NCard,
@@ -697,20 +699,30 @@ const dialog = useDialog();
 const activeTab = ref('pending');
 
 // Currency options
-const currencyOptions = [
+const currencyOptions = computed(() => [
   { label: 'BRL', value: 'BRL' },
   { label: 'ZMW', value: 'ZMW' },
   { label: 'USDT', value: 'USDT' },
-];
+]);
 
-// Status options
-const statusOptions = [
-  { label: '待审核', value: 'PENDING' },
-  { label: '待领取', value: 'READY' },
-  { label: '已撤回', value: 'WITHDRAWN' },
-  { label: '已拒绝', value: 'REJECTED' },
-  { label: '已领取', value: 'CLAIMED' },
-];
+const statusOptions = computed(() => [
+  { label: $t('agency.commission.pending'), value: 'PENDING' },
+  { label: $t('agency.commission.ready'), value: 'READY' },
+  { label: $t('agency.commission.withdrawn'), value: 'WITHDRAWN' },
+  { label: $t('agency.commission.rejected'), value: 'REJECTED' },
+  { label: $t('agency.commission.claimedStatus'), value: 'CLAIMED' },
+]);
+
+const currencyList = computed(() => [
+  { code: 'BRL', name: $t('agency.commission.currencyBrl') },
+]);
+
+const commissionDateShortcuts = computed(() => ({
+  [$t('common.today')]: () => getTodayRange(),
+  [$t('agency.commission.yesterday')]: () => getYesterdayRange(),
+  [$t('common.thisWeek')]: () => getWeekRange(),
+  [$t('agency.commission.lastWeek')]: () => getLastWeekRange(),
+}));
 
 // Format currency
 const formatCurrency = (amount: number, currency: string = 'BRL') => {
@@ -740,7 +752,7 @@ const settingsForm = reactive({
   BRL: 0,
 });
 
-const currencyList = [{ code: 'BRL', name: '巴西雷亚尔(BRL)' }];
+
 
 const fetchSettings = async () => {
   settingsLoading.value = true;
@@ -762,7 +774,7 @@ const fetchSettings = async () => {
     }
   } catch (error) {
     console.error('Failed to fetch settings:', error);
-    message.error('加载设置失败');
+    message.error($t('agency.commission.loadSettingsFailed'));
     // Use default value
     settingsForm.BRL = 0;
   } finally {
@@ -784,15 +796,15 @@ const saveSettings = async () => {
     console.log('Save settings response:', response);
 
     if (response.success) {
-      message.success('保存成功');
+      message.success($t('common.saveSuccess'));
       rulesModalVisible.value = false;
       fetchSettings();
     } else {
-      message.error(response.message || '保存失败');
+      message.error(response.message || $t('agency.commission.saveFailed'));
     }
   } catch (error: any) {
     console.error('Failed to save settings:', error);
-    message.error(error.message || '保存失败');
+    message.error(error.message || $t('agency.commission.saveFailed'));
   } finally {
     settingsSaving.value = false;
   }
@@ -903,12 +915,7 @@ function getLastWeekRange(): [number, number] {
   return [start.getTime(), end.getTime()];
 }
 
-const commissionDateShortcuts: Record<string, () => [number, number]> = {
-  今日: () => getTodayRange(),
-  昨天: () => getYesterdayRange(),
-  本周: () => getWeekRange(),
-  上周: () => getLastWeekRange(),
-};
+
 
 type CommissionDatePreset = 'today' | 'yesterday' | 'thisWeek' | 'lastWeek';
 
@@ -1027,33 +1034,33 @@ const remarkForm = reactive({
   remark: '',
 });
 
-const pendingColumns: DataTableColumns<any> = [
+const pendingColumns = computed<DataTableColumns<any>>(() => [
   {
     type: 'selection',
   },
   {
-    title: '币种',
+    title: $t('common.currency'),
     key: 'currency',
     width: 80,
   },
   {
-    title: '订单号',
+    title: $t('common.orderNo'),
     key: 'orderNo',
     width: 180,
   },
   {
-    title: '结算日期',
+    title: $t('agency.commission.settlementDate'),
     key: 'settlementDate',
     width: 160,
     render: (row) => formatDate(row.settlementDate),
   },
   {
-    title: '代理ID',
+    title: $t('agency.commission.agentId'),
     key: 'agentId',
     width: 100,
   },
   {
-    title: '代理账号',
+    title: $t('agency.commission.agentAccount'),
     key: 'agentAccount',
     width: 120,
     render: (row) => {
@@ -1069,17 +1076,17 @@ const pendingColumns: DataTableColumns<any> = [
     },
   },
   {
-    title: '代理模式',
+    title: $t('agency.commission.agentMode'),
     key: 'agentMode',
     width: 100,
   },
   {
-    title: '结算周期',
+    title: $t('agency.commission.settlementPeriod'),
     key: 'settlementCycle',
     width: 100,
   },
   {
-    title: '佣金',
+    title: $t('agency.commission.commission'),
     key: 'commissionAmount',
     width: 120,
     align: 'right',
@@ -1096,7 +1103,7 @@ const pendingColumns: DataTableColumns<any> = [
     },
   },
   {
-    title: '后台备注',
+    title: $t('agency.commission.backendRemark'),
     key: 'remark',
     width: 150,
     ellipsis: {
@@ -1104,18 +1111,18 @@ const pendingColumns: DataTableColumns<any> = [
     },
   },
   {
-    title: '操作人',
+    title: $t('common.operator'),
     key: 'operator',
     width: 100,
   },
   {
-    title: '操作时间',
+    title: $t('common.operationTime'),
     key: 'operatedAt',
     width: 160,
     render: (row) => formatDate(row.operatedAt),
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 180,
     fixed: 'right',
@@ -1128,7 +1135,7 @@ const pendingColumns: DataTableColumns<any> = [
             type: 'success',
             onClick: () => handleApprove(row),
           },
-          { default: () => '通过' },
+          { default: () => $t('agency.commission.approve') },
         ),
         h(
           NButton,
@@ -1137,7 +1144,7 @@ const pendingColumns: DataTableColumns<any> = [
             type: 'error',
             onClick: () => handleReject(row),
           },
-          { default: () => '拒绝' },
+          { default: () => $t('agency.commission.reject') },
         ),
         h(
           NButton,
@@ -1145,12 +1152,12 @@ const pendingColumns: DataTableColumns<any> = [
             size: 'small',
             onClick: () => handleRemark(row),
           },
-          { default: () => '备注' },
+          { default: () => $t('agency.commission.remark') },
         ),
       ]);
     },
   },
-];
+]);
 
 /** 兼容 request 拦截器解包后的 { list, total } 与未解包的 { data: { list, total } } */
 function normalizeCommissionRecordsResponse(response: unknown): {
@@ -1193,7 +1200,7 @@ const fetchPendingData = async () => {
     pendingPagination.itemCount = total;
   } catch (error) {
     console.error('Failed to fetch pending data:', error);
-    message.error('获取数据失败');
+    message.error($t('agency.commission.loadDataFailed'));
   } finally {
     pendingLoading.value = false;
   }
@@ -1229,12 +1236,12 @@ const confirmApprove = async () => {
       `/commission-management/records/${currentRecord.value.id}/approve`,
       approveForm,
     );
-    message.success('审核通过');
+    message.success($t('agency.commission.approved'));
     approveModalVisible.value = false;
     fetchPendingData();
   } catch (error) {
     console.error('Failed to approve:', error);
-    message.error('操作失败');
+    message.error($t('common.operationFailed'));
   } finally {
     approving.value = false;
   }
@@ -1248,7 +1255,7 @@ const handleReject = (record: any) => {
 
 const confirmReject = async () => {
   if (!currentRecord.value || !rejectForm.reason) {
-    message.warning('请输入拒绝原因');
+    message.warning($t('agency.commission.enterRejectReasonWarning'));
     return;
   }
   rejecting.value = true;
@@ -1257,12 +1264,12 @@ const confirmReject = async () => {
       `/commission-management/records/${currentRecord.value.id}/reject`,
       rejectForm,
     );
-    message.success('已拒绝');
+    message.success($t('agency.commission.rejectedMsg'));
     rejectModalVisible.value = false;
     fetchPendingData();
   } catch (error) {
     console.error('Failed to reject:', error);
-    message.error('操作失败');
+    message.error($t('common.operationFailed'));
   } finally {
     rejecting.value = false;
   }
@@ -1282,12 +1289,12 @@ const confirmRemark = async () => {
       `/commission-management/records/${currentRecord.value.id}/remark`,
       remarkForm,
     );
-    message.success('备注已保存');
+    message.success($t('agency.commission.remarkSaved'));
     remarkModalVisible.value = false;
     fetchPendingData();
   } catch (error) {
     console.error('Failed to save remark:', error);
-    message.error('保存失败');
+    message.error($t('agency.commission.saveFailed'));
   } finally {
     remarkSaving.value = false;
   }
@@ -1295,10 +1302,10 @@ const confirmRemark = async () => {
 
 const batchApprove = () => {
   dialog.warning({
-    title: '批量通过',
-    content: `确定要通过选中的 ${selectedPendingKeys.value.length} 条记录吗？`,
-    positiveText: '确定',
-    negativeText: '取消',
+    title: $t('agency.commission.batchApproveTitle'),
+    content: $t('agency.commission.batchApproveContent', [String(selectedPendingKeys.value.length)]),
+    positiveText: $t('common.confirm'),
+    negativeText: $t('common.cancel'),
     onPositiveClick: async () => {
       try {
         await requestClient.post(
@@ -1307,12 +1314,12 @@ const batchApprove = () => {
             ids: selectedPendingKeys.value,
           },
         );
-        message.success('批量通过成功');
+        message.success($t('agency.commission.batchApproveSuccess'));
         selectedPendingKeys.value = [];
         fetchPendingData();
       } catch (error) {
         console.error('Failed to batch approve:', error);
-        message.error('批量操作失败');
+        message.error($t('agency.commission.batchOpFailed'));
       }
     },
   });
@@ -1320,10 +1327,10 @@ const batchApprove = () => {
 
 const batchReject = () => {
   dialog.warning({
-    title: '批量拒绝',
-    content: `确定要拒绝选中的 ${selectedPendingKeys.value.length} 条记录吗？此操作不可撤销！`,
-    positiveText: '确定',
-    negativeText: '取消',
+    title: $t('agency.commission.batchRejectTitle'),
+    content: $t('agency.commission.batchRejectContent', [String(selectedPendingKeys.value.length)]),
+    positiveText: $t('common.confirm'),
+    negativeText: $t('common.cancel'),
     onPositiveClick: async () => {
       try {
         await requestClient.post(
@@ -1332,12 +1339,12 @@ const batchReject = () => {
             ids: selectedPendingKeys.value,
           },
         );
-        message.success('批量拒绝成功');
+        message.success($t('agency.commission.batchRejectSuccess'));
         selectedPendingKeys.value = [];
         fetchPendingData();
       } catch (error) {
         console.error('Failed to batch reject:', error);
-        message.error('批量操作失败');
+        message.error($t('agency.commission.batchOpFailed'));
       }
     },
   });
@@ -1345,21 +1352,21 @@ const batchReject = () => {
 
 const batchApproveAll = () => {
   dialog.warning({
-    title: '全部通过',
-    content: '确定要通过当前待审核的所有记录吗？请谨慎操作！',
-    positiveText: '确定',
-    negativeText: '取消',
+    title: $t('agency.commission.approveAllTitle'),
+    content: $t('agency.commission.approveAllContent'),
+    positiveText: $t('common.confirm'),
+    negativeText: $t('common.cancel'),
     onPositiveClick: async () => {
       try {
         await requestClient.post(
           '/commission-management/records/approve-all',
           pendingFilters,
         );
-        message.success('全部通过成功');
+        message.success($t('agency.commission.approveAllSuccess'));
         fetchPendingData();
       } catch (error) {
         console.error('Failed to approve all:', error);
-        message.error('操作失败');
+        message.error($t('common.operationFailed'));
       }
     },
   });
@@ -1367,21 +1374,21 @@ const batchApproveAll = () => {
 
 const batchRejectAll = () => {
   dialog.error({
-    title: '全部拒绝',
-    content: '确定要拒绝当前待审核的所有记录吗？此操作不可撤销，请谨慎操作！',
-    positiveText: '确定',
-    negativeText: '取消',
+    title: $t('agency.commission.rejectAllTitle'),
+    content: $t('agency.commission.rejectAllContent'),
+    positiveText: $t('common.confirm'),
+    negativeText: $t('common.cancel'),
     onPositiveClick: async () => {
       try {
         await requestClient.post(
           '/commission-management/records/reject-all',
           pendingFilters,
         );
-        message.success('全部拒绝成功');
+        message.success($t('agency.commission.rejectAllSuccess'));
         fetchPendingData();
       } catch (error) {
         console.error('Failed to reject all:', error);
-        message.error('操作失败');
+        message.error($t('common.operationFailed'));
       }
     },
   });
@@ -1407,46 +1414,46 @@ const readyFilters = reactive({
 });
 const readyTabDates = bindCommissionTabDates(readyFilters);
 
-const readyColumns: DataTableColumns<any> = [
+const readyColumns = computed<DataTableColumns<any>>(() => [
   {
     type: 'selection',
   },
   {
-    title: '币种',
+    title: $t('common.currency'),
     key: 'currency',
     width: 80,
   },
   {
-    title: '订单号',
+    title: $t('common.orderNo'),
     key: 'orderNo',
     width: 180,
   },
   {
-    title: '结算日期',
+    title: $t('agency.commission.settlementDate'),
     key: 'settlementDate',
     width: 160,
     render: (row) => formatDate(row.settlementDate),
   },
   {
-    title: '代理账号',
+    title: $t('agency.commission.agentAccount'),
     key: 'agentAccount',
     width: 120,
   },
   {
-    title: '佣金',
+    title: $t('agency.commission.commission'),
     key: 'commissionAmount',
     width: 120,
     align: 'right',
     render: (row) => formatCurrency(row.commissionAmount, row.currency),
   },
   {
-    title: '操作时间',
+    title: $t('common.operationTime'),
     key: 'operatedAt',
     width: 160,
     render: (row) => formatDate(row.operatedAt),
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 100,
     fixed: 'right',
@@ -1457,7 +1464,7 @@ const readyColumns: DataTableColumns<any> = [
           onPositiveClick: () => handleWithdraw(row.id),
         },
         {
-          default: () => '确定要撤回此佣金吗？',
+          default: () => $t('agency.commission.confirmWithdraw'),
           trigger: () =>
             h(
               NButton,
@@ -1465,13 +1472,13 @@ const readyColumns: DataTableColumns<any> = [
                 size: 'small',
                 type: 'warning',
               },
-              { default: () => '撤回' },
+              { default: () => $t('agency.commission.withdraw') },
             ),
         },
       );
     },
   },
-];
+]);
 
 const fetchReadyData = async () => {
   readyLoading.value = true;
@@ -1490,7 +1497,7 @@ const fetchReadyData = async () => {
     readyPagination.itemCount = total;
   } catch (error) {
     console.error('Failed to fetch ready data:', error);
-    message.error('获取数据失败');
+    message.error($t('agency.commission.loadDataFailed'));
   } finally {
     readyLoading.value = false;
   }
@@ -1512,20 +1519,20 @@ const resetReadyFilters = () => {
 const handleWithdraw = async (id: number) => {
   try {
     await requestClient.post(`/commission-management/records/${id}/withdraw`);
-    message.success('撤回成功');
+    message.success($t('agency.commission.withdrawSuccess'));
     fetchReadyData();
   } catch (error) {
     console.error('Failed to withdraw:', error);
-    message.error('撤回失败');
+    message.error($t('agency.commission.withdrawFailed'));
   }
 };
 
 const batchWithdraw = () => {
   dialog.warning({
-    title: '批量撤回',
-    content: `确定要撤回选中的 ${selectedReadyKeys.value.length} 条记录吗？`,
-    positiveText: '确定',
-    negativeText: '取消',
+    title: $t('agency.commission.batchWithdrawTitle'),
+    content: $t('agency.commission.batchWithdrawContent', [String(selectedReadyKeys.value.length)]),
+    positiveText: $t('common.confirm'),
+    negativeText: $t('common.cancel'),
     onPositiveClick: async () => {
       try {
         await requestClient.post(
@@ -1534,12 +1541,12 @@ const batchWithdraw = () => {
             ids: selectedReadyKeys.value,
           },
         );
-        message.success('批量撤回成功');
+        message.success($t('agency.commission.batchWithdrawSuccess'));
         selectedReadyKeys.value = [];
         fetchReadyData();
       } catch (error) {
         console.error('Failed to batch withdraw:', error);
-        message.error('批量操作失败');
+        message.error($t('agency.commission.batchOpFailed'));
       }
     },
   });
@@ -1565,40 +1572,40 @@ const withdrawnFilters = reactive({
 });
 const withdrawnTabDates = bindCommissionTabDates(withdrawnFilters);
 
-const withdrawnColumns: DataTableColumns<any> = [
+const withdrawnColumns = computed<DataTableColumns<any>>(() => [
   {
     type: 'selection',
   },
   {
-    title: '币种',
+    title: $t('common.currency'),
     key: 'currency',
     width: 80,
   },
   {
-    title: '订单号',
+    title: $t('common.orderNo'),
     key: 'orderNo',
     width: 180,
   },
   {
-    title: '代理账号',
+    title: $t('agency.commission.agentAccount'),
     key: 'agentAccount',
     width: 120,
   },
   {
-    title: '佣金',
+    title: $t('agency.commission.commission'),
     key: 'commissionAmount',
     width: 120,
     align: 'right',
     render: (row) => formatCurrency(row.commissionAmount, row.currency),
   },
   {
-    title: '撤回时间',
+    title: $t('agency.commission.withdrawTime'),
     key: 'withdrawnAt',
     width: 160,
     render: (row) => formatDate(row.withdrawnAt),
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 150,
     fixed: 'right',
@@ -1611,7 +1618,7 @@ const withdrawnColumns: DataTableColumns<any> = [
             type: 'success',
             onClick: () => handleApproveWithdrawn(row),
           },
-          { default: () => '通过' },
+          { default: () => $t('agency.commission.approve') },
         ),
         h(
           NButton,
@@ -1620,12 +1627,12 @@ const withdrawnColumns: DataTableColumns<any> = [
             type: 'error',
             onClick: () => handleRejectWithdrawn(row),
           },
-          { default: () => '拒绝' },
+          { default: () => $t('agency.commission.reject') },
         ),
       ]);
     },
   },
-];
+]);
 
 const fetchWithdrawnData = async () => {
   withdrawnLoading.value = true;
@@ -1644,7 +1651,7 @@ const fetchWithdrawnData = async () => {
     withdrawnPagination.itemCount = total;
   } catch (error) {
     console.error('Failed to fetch withdrawn data:', error);
-    message.error('获取数据失败');
+    message.error($t('agency.commission.loadDataFailed'));
   } finally {
     withdrawnLoading.value = false;
   }
@@ -1678,10 +1685,10 @@ const handleRejectWithdrawn = (record: any) => {
 
 const batchApproveWithdrawn = () => {
   dialog.warning({
-    title: '批量通过',
-    content: `确定要通过选中的 ${selectedWithdrawnKeys.value.length} 条记录吗？`,
-    positiveText: '确定',
-    negativeText: '取消',
+    title: $t('agency.commission.batchApproveTitle'),
+    content: $t('agency.commission.batchApproveContent', [String(selectedWithdrawnKeys.value.length)]),
+    positiveText: $t('common.confirm'),
+    negativeText: $t('common.cancel'),
     onPositiveClick: async () => {
       try {
         await requestClient.post(
@@ -1690,12 +1697,12 @@ const batchApproveWithdrawn = () => {
             ids: selectedWithdrawnKeys.value,
           },
         );
-        message.success('批量通过成功');
+        message.success($t('agency.commission.batchApproveSuccess'));
         selectedWithdrawnKeys.value = [];
         fetchWithdrawnData();
       } catch (error) {
         console.error('Failed to batch approve:', error);
-        message.error('批量操作失败');
+        message.error($t('agency.commission.batchOpFailed'));
       }
     },
   });
@@ -1703,10 +1710,10 @@ const batchApproveWithdrawn = () => {
 
 const batchRejectWithdrawn = () => {
   dialog.warning({
-    title: '批量拒绝',
-    content: `确定要拒绝选中的 ${selectedWithdrawnKeys.value.length} 条记录吗？`,
-    positiveText: '确定',
-    negativeText: '取消',
+    title: $t('agency.commission.batchRejectTitle'),
+    content: $t('agency.commission.batchRejectContent', [String(selectedWithdrawnKeys.value.length)]),
+    positiveText: $t('common.confirm'),
+    negativeText: $t('common.cancel'),
     onPositiveClick: async () => {
       try {
         await requestClient.post(
@@ -1715,12 +1722,12 @@ const batchRejectWithdrawn = () => {
             ids: selectedWithdrawnKeys.value,
           },
         );
-        message.success('批量拒绝成功');
+        message.success($t('agency.commission.batchRejectSuccess'));
         selectedWithdrawnKeys.value = [];
         fetchWithdrawnData();
       } catch (error) {
         console.error('Failed to batch reject:', error);
-        message.error('批量操作失败');
+        message.error($t('agency.commission.batchOpFailed'));
       }
     },
   });
@@ -1745,31 +1752,31 @@ const rejectedFilters = reactive({
 });
 const rejectedTabDates = bindCommissionTabDates(rejectedFilters);
 
-const rejectedColumns: DataTableColumns<any> = [
+const rejectedColumns = computed<DataTableColumns<any>>(() => [
   {
-    title: '币种',
+    title: $t('common.currency'),
     key: 'currency',
     width: 80,
   },
   {
-    title: '订单号',
+    title: $t('common.orderNo'),
     key: 'orderNo',
     width: 180,
   },
   {
-    title: '代理账号',
+    title: $t('agency.commission.agentAccount'),
     key: 'agentAccount',
     width: 120,
   },
   {
-    title: '佣金',
+    title: $t('agency.commission.commission'),
     key: 'commissionAmount',
     width: 120,
     align: 'right',
     render: (row) => formatCurrency(row.commissionAmount, row.currency),
   },
   {
-    title: '拒绝原因',
+    title: $t('agency.commission.rejectReasonCol'),
     key: 'rejectReason',
     width: 200,
     ellipsis: {
@@ -1777,12 +1784,12 @@ const rejectedColumns: DataTableColumns<any> = [
     },
   },
   {
-    title: '拒绝时间',
+    title: $t('agency.commission.rejectTime'),
     key: 'rejectedAt',
     width: 160,
     render: (row) => formatDate(row.rejectedAt),
   },
-];
+]);
 
 const fetchRejectedData = async () => {
   rejectedLoading.value = true;
@@ -1801,7 +1808,7 @@ const fetchRejectedData = async () => {
     rejectedPagination.itemCount = total;
   } catch (error) {
     console.error('Failed to fetch rejected data:', error);
-    message.error('获取数据失败');
+    message.error($t('agency.commission.loadDataFailed'));
   } finally {
     rejectedLoading.value = false;
   }
@@ -1839,36 +1846,36 @@ const claimedFilters = reactive({
 });
 const claimedTabDates = bindCommissionTabDates(claimedFilters);
 
-const claimedColumns: DataTableColumns<any> = [
+const claimedColumns = computed<DataTableColumns<any>>(() => [
   {
-    title: '币种',
+    title: $t('common.currency'),
     key: 'currency',
     width: 80,
   },
   {
-    title: '订单号',
+    title: $t('common.orderNo'),
     key: 'orderNo',
     width: 180,
   },
   {
-    title: '代理账号',
+    title: $t('agency.commission.agentAccount'),
     key: 'agentAccount',
     width: 120,
   },
   {
-    title: '佣金',
+    title: $t('agency.commission.commission'),
     key: 'commissionAmount',
     width: 120,
     align: 'right',
     render: (row) => formatCurrency(row.commissionAmount, row.currency),
   },
   {
-    title: '领取时间',
+    title: $t('agency.commission.claimTime'),
     key: 'claimedAt',
     width: 160,
     render: (row) => formatDate(row.claimedAt),
   },
-];
+]);
 
 const fetchClaimedData = async () => {
   claimedLoading.value = true;
@@ -1887,7 +1894,7 @@ const fetchClaimedData = async () => {
     claimedPagination.itemCount = total;
   } catch (error) {
     console.error('Failed to fetch claimed data:', error);
-    message.error('获取数据失败');
+    message.error($t('agency.commission.loadDataFailed'));
   } finally {
     claimedLoading.value = false;
   }
@@ -1926,45 +1933,45 @@ const allFilters = reactive({
 });
 const allTabDates = bindCommissionTabDates(allFilters);
 
-const allColumns: DataTableColumns<any> = [
+const allColumns = computed<DataTableColumns<any>>(() => [
   {
-    title: '币种',
+    title: $t('common.currency'),
     key: 'currency',
     width: 80,
   },
   {
-    title: '订单号',
+    title: $t('common.orderNo'),
     key: 'orderNo',
     width: 180,
   },
   {
-    title: '代理账号',
+    title: $t('agency.commission.agentAccount'),
     key: 'agentAccount',
     width: 120,
   },
   {
-    title: '佣金',
+    title: $t('agency.commission.commission'),
     key: 'commissionAmount',
     width: 120,
     align: 'right',
     render: (row) => formatCurrency(row.commissionAmount, row.currency),
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 100,
     render: (row) => {
       const statusMap: Record<string, { type: any; text: string }> = {
-        PENDING: { type: 'warning', text: '待审核' },
-        PENDING_AUDIT: { type: 'warning', text: '待审核' },
-        READY: { type: 'info', text: '待领取' },
-        RELEASED: { type: 'info', text: '待领取' },
-        WITHDRAWN: { type: 'default', text: '已撤回' },
-        CANCELLED: { type: 'default', text: '已撤回' },
-        REJECTED: { type: 'error', text: '已拒绝' },
-        NOT_ELIGIBLE: { type: 'error', text: '已拒绝' },
-        CLAIMED: { type: 'success', text: '已领取' },
-        FAILED: { type: 'error', text: '失败' },
+        PENDING: { type: 'warning', text: $t('agency.commission.pending') },
+        PENDING_AUDIT: { type: 'warning', text: $t('agency.commission.pending') },
+        READY: { type: 'info', text: $t('agency.commission.ready') },
+        RELEASED: { type: 'info', text: $t('agency.commission.ready') },
+        WITHDRAWN: { type: 'default', text: $t('agency.commission.withdrawn') },
+        CANCELLED: { type: 'default', text: $t('agency.commission.withdrawn') },
+        REJECTED: { type: 'error', text: $t('agency.commission.rejected') },
+        NOT_ELIGIBLE: { type: 'error', text: $t('agency.commission.rejected') },
+        CLAIMED: { type: 'success', text: $t('agency.commission.claimedStatus') },
+        FAILED: { type: 'error', text: $t('common.failed') },
       };
       const status = statusMap[row.status] || {
         type: 'default',
@@ -1974,12 +1981,12 @@ const allColumns: DataTableColumns<any> = [
     },
   },
   {
-    title: '操作时间',
+    title: $t('common.operationTime'),
     key: 'operatedAt',
     width: 160,
     render: (row) => formatDate(row.operatedAt),
   },
-];
+]);
 
 const fetchAllData = async () => {
   allLoading.value = true;
@@ -1997,7 +2004,7 @@ const fetchAllData = async () => {
     allPagination.itemCount = total;
   } catch (error) {
     console.error('Failed to fetch all data:', error);
-    message.error('获取数据失败');
+    message.error($t('agency.commission.loadDataFailed'));
   } finally {
     allLoading.value = false;
   }
@@ -2020,12 +2027,12 @@ const resetAllFilters = () => {
 // Helper functions
 const viewAgentDetail = (agentId: number) => {
   // TODO: Implement agent detail view
-  message.info('查看代理详情: ' + agentId);
+  message.info($t('agency.commission.viewAgentDetail') + agentId);
 };
 
 const viewCommissionDetail = (recordId: number) => {
   // TODO: Implement commission detail view
-  message.info('查看佣金详情: ' + recordId);
+  message.info($t('agency.commission.viewCommissionDetail') + recordId);
 };
 
 // Initialize

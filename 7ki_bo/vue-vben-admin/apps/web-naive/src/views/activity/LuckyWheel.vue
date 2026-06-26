@@ -1,27 +1,27 @@
 <template>
   <div class="lucky-wheel-page">
-    <Page title="幸运转盘" description="管理转盘配置、幸运值记录与中奖数据">
+    <Page :title="$t('activity.rewardReport.k5e78')" :description="$t('activity.luckyWheel.k7ba1k5e78')">
       <n-card>
         <n-tabs v-model:value="activeTab" type="line" class="mb-4" @update:value="onTabChange">
-          <n-tab-pane name="wheels" tab="转盘列表" />
-          <n-tab-pane name="lucky-value-records" tab="幸运值记录" />
-          <n-tab-pane name="remaining-lucky-value" tab="剩余幸运值" />
-          <n-tab-pane name="winning-records" tab="中奖记录" />
-          <n-tab-pane name="physical-orders" tab="实物订单" />
+          <n-tab-pane name="wheels" :tab="$t('activity.luckyWheel.k8f6c')" />
+          <n-tab-pane name="lucky-value-records" :tab="$t('activity.luckyWheel.k5e78')" />
+          <n-tab-pane name="remaining-lucky-value" :tab="$t('activity.luckyWheel.k5269')" />
+          <n-tab-pane name="winning-records" :tab="$t('activity.luckyWheel.k4e2d')" />
+          <n-tab-pane name="physical-orders" :tab="$t('activity.luckyWheel.k5b9e')" />
         </n-tabs>
 
         <!-- 顶部操作栏 -->
         <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
           <n-space align="center" wrap>
             <template v-if="activeTab === 'wheels'">
-              <span class="text-sm text-gray-600">转盘开关</span>
+              <span class="text-sm text-gray-600">{{ $t('activity.luckyWheelEdit.k8f6c2') }}</span>
               <n-switch
                 :value="lwEnabled"
                 :loading="switchLoading"
                 @update:value="onGlobalSwitch"
               />
               <n-text v-if="lwEnabledAt" depth="3" class="text-xs">
-                开启时间：{{ formatTs(lwEnabledAt) }}
+                {{ $t('activity.common.enabledAt') }}{{ formatTs(lwEnabledAt) }}
               </n-text>
             </template>
           </n-space>
@@ -30,24 +30,18 @@
               v-if="activeTab === 'wheels'"
               type="primary"
               @click="showPublicConfig = true"
-            >
-              + 转盘公共配置
-            </n-button>
+            >{{ $t('activity.luckyWheel.k8f6c3') }}</n-button>
             <n-button
               v-if="showAddLuckyValueBtn"
               type="primary"
               @click="showAddLuckyValue = true"
-            >
-              新增幸运值
-            </n-button>
+            >{{ $t('activity.luckyWheelAddLuckyValue.k65b0') }}</n-button>
             <n-button
               v-if="showExportBtn"
               secondary
               :loading="exportLoading"
               @click="handleExport"
-            >
-              导出报表
-            </n-button>
+            >{{ $t('activity.luckyWheel.k5bfc') }}</n-button>
           </n-space>
         </div>
 
@@ -57,21 +51,21 @@
             <!-- 转盘列表 -->
             <template v-if="activeTab === 'wheels'">
               <n-gi :span="6">
-                <n-form-item label="转盘类型">
+                <n-form-item :label="$t('activity.luckyWheelEdit.k8f6c')">
                   <n-select
                     v-model:value="filters.wheelType"
                     clearable
-                    placeholder="全部转盘类型"
+                    :placeholder="$t('activity.luckyWheel.k5168')"
                     :options="wheelTypeFilterOptions"
                   />
                 </n-form-item>
               </n-gi>
               <n-gi :span="6">
-                <n-form-item label="状态">
+                <n-form-item :label="$t('activity.activityList.k72b6')">
                   <n-select
                     v-model:value="filters.enabled"
                     clearable
-                    placeholder="全部状态"
+                    :placeholder="$t('activity.luckyWheel.k51682')"
                     :options="enabledFilterOptions"
                   />
                 </n-form-item>
@@ -87,7 +81,7 @@
               "
             >
               <n-gi :span="6" v-if="activeTab === 'physical-orders'">
-                <n-form-item label="时间">
+                <n-form-item :label="$t('activity.luckyWheel.k65f6')">
                   <n-select
                     v-model:value="filters.timeField"
                     :options="physicalOrderTimeFieldOptions"
@@ -95,7 +89,7 @@
                 </n-form-item>
               </n-gi>
               <n-gi :span="activeTab === 'physical-orders' ? 10 : 12">
-                <n-form-item :label="activeTab === 'physical-orders' ? ' ' : '时间'">
+                <n-form-item :label="activeTab === 'physical-orders' ? ' ' : $t('activity.common.timeLabel')">
                   <n-space align="center" wrap>
                     <QuickDateSelect
                       v-model="dateQuickSelect"
@@ -117,7 +111,7 @@
               v-if="activeTab !== 'wheels'"
               :span="8"
             >
-              <n-form-item label="会员">
+              <n-form-item :label="$t('activity.common.memberLabel')">
                 <n-input-group>
                   <n-select
                     v-model:value="filters.memberSearchType"
@@ -135,11 +129,11 @@
 
             <!-- 幸运值记录：变动类型 -->
             <n-gi v-if="activeTab === 'lucky-value-records'" :span="6">
-              <n-form-item label="变动类型">
+              <n-form-item :label="$t('activity.luckyWheel.k53d8')">
                 <n-select
                   v-model:value="filters.changeType"
                   clearable
-                  placeholder="变动类型"
+                  :placeholder="$t('activity.luckyWheel.k53d8')"
                   :options="luckyValueChangeTypeOptions"
                 />
               </n-form-item>
@@ -148,7 +142,7 @@
             <!-- 剩余幸运值：指标范围 -->
             <template v-if="activeTab === 'remaining-lucky-value'">
               <n-gi :span="6">
-                <n-form-item label="幸运值">
+                <n-form-item :label="$t('activity.rewardReport.k5e782')">
                   <n-select
                     v-model:value="filters.remainingMetric"
                     :options="remainingMetricOptions"
@@ -156,12 +150,12 @@
                 </n-form-item>
               </n-gi>
               <n-gi :span="8">
-                <n-form-item label="范围">
+                <n-form-item :label="$t('activity.luckyWheel.k8303')">
                   <n-space align="center">
                     <n-input-number
                       v-model:value="filters.metricMin"
                       :show-button="false"
-                      placeholder="最小值"
+                      :placeholder="$t('activity.luckyWheel.k6700')"
                       clearable
                       style="width: 120px"
                     />
@@ -169,7 +163,7 @@
                     <n-input-number
                       v-model:value="filters.metricMax"
                       :show-button="false"
-                      placeholder="最大值"
+                      :placeholder="$t('activity.luckyWheel.k67002')"
                       clearable
                       style="width: 120px"
                     />
@@ -181,22 +175,22 @@
             <!-- 中奖记录：奖励类型 + 转盘 -->
             <template v-if="activeTab === 'winning-records'">
               <n-gi :span="8">
-                <n-form-item label="奖励类型">
+                <n-form-item :label="$t('activity.rewardReport.k5956')">
                   <n-select
                     v-model:value="filters.rewardTypes"
                     multiple
                     clearable
-                    placeholder="奖励类型"
+                    :placeholder="$t('activity.rewardReport.k5956')"
                     :options="winningRewardTypeOptions"
                   />
                 </n-form-item>
               </n-gi>
               <n-gi :span="6">
-                <n-form-item label="转盘">
+                <n-form-item :label="$t('activity.luckyWheel.k8f6c2')">
                   <n-select
                     v-model:value="filters.wheelType"
                     clearable
-                    placeholder="全部类型"
+                    :placeholder="$t('activity.luckyWheel.k51683')"
                     :options="wheelTypeFilterOptions"
                   />
                 </n-form-item>
@@ -206,17 +200,17 @@
             <!-- 实物订单：状态 + 操作人 -->
             <template v-if="activeTab === 'physical-orders'">
               <n-gi :span="6">
-                <n-form-item label="订单状态">
+                <n-form-item :label="$t('activity.luckyWheel.k8ba22')">
                   <n-select
                     v-model:value="filters.orderStatus"
                     clearable
-                    placeholder="全部状态"
+                    :placeholder="$t('activity.luckyWheel.k51682')"
                     :options="physicalOrderStatusOptions"
                   />
                 </n-form-item>
               </n-gi>
               <n-gi :span="8">
-                <n-form-item label="人员">
+                <n-form-item :label="$t('activity.luckyWheel.k4eba')">
                   <n-input-group>
                     <n-select
                       v-model:value="filters.operatorSearchType"
@@ -236,8 +230,8 @@
             <n-gi :span="6">
               <n-form-item :show-label="false">
                 <n-space>
-                  <n-button type="primary" @click="reloadActive">搜索</n-button>
-                  <n-button @click="resetFilters">重置</n-button>
+                  <n-button type="primary" @click="reloadActive">{{ $t('activity.rewardReport.k641c') }}</n-button>
+                  <n-button @click="resetFilters">{{ $t('activity.recordModal.k91cd') }}</n-button>
                 </n-space>
               </n-form-item>
             </n-gi>
@@ -269,20 +263,18 @@
             :checked="isAllCurrentPageSelected"
             :indeterminate="isCurrentPageIndeterminate"
             @update:checked="toggleSelectCurrentPage"
-          >
-            全选当前页
-          </n-checkbox>
-          <n-checkbox v-model:checked="selectAllResults">全选所有结果</n-checkbox>
+          >{{ $t('activity.luckyWheel.k51684') }}</n-checkbox>
+          <n-checkbox v-model:checked="selectAllResults">{{ $t('activity.luckyWheel.k51685') }}</n-checkbox>
           <n-select
             v-model:value="bulkAction"
             :options="bulkActionOptions"
-            placeholder="批量操作"
+            :placeholder="$t('activity.common.batchOperation')"
             clearable
             style="width: 140px"
             @update:value="handleBulkAction"
           />
           <span class="text-sm text-gray-500">
-            已选择 {{ selectedCount }} 条数据 共 {{ pagination.itemCount }} 条
+            {{ $t('activity.common.selectedCountShort', [selectedCount, pagination.itemCount]) }}
           </span>
         </div>
       </n-card>
@@ -309,6 +301,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { computed, h, onMounted, reactive, ref, watch } from 'vue';
 import {
   NCard,
@@ -344,15 +338,15 @@ import LuckyWheelPublicConfigModal from './components/LuckyWheelPublicConfigModa
 import LuckyWheelEditModal from './components/LuckyWheelEditModal.vue';
 import LuckyWheelAddLuckyValueModal from './components/LuckyWheelAddLuckyValueModal.vue';
 import {
-  BULK_ACTION_OPTIONS,
-  LUCKY_VALUE_CHANGE_TYPE_OPTIONS,
-  MEMBER_SEARCH_OPTIONS,
-  OPERATOR_SEARCH_OPTIONS,
-  PHYSICAL_ORDER_STATUS_OPTIONS,
-  PHYSICAL_ORDER_TIME_FIELD_OPTIONS,
-  REMAINING_VALUE_METRIC_OPTIONS,
-  WHEEL_TYPE_FILTER_OPTIONS,
-  WINNING_REWARD_TYPE_OPTIONS,
+  BULK_ACTION_OPTION_KEYS,
+  LUCKY_VALUE_CHANGE_TYPE_OPTION_KEYS,
+  MEMBER_SEARCH_OPTION_KEYS,
+  OPERATOR_SEARCH_OPTION_KEYS,
+  PHYSICAL_ORDER_STATUS_OPTION_KEYS,
+  PHYSICAL_ORDER_TIME_FIELD_OPTION_KEYS,
+  REMAINING_VALUE_METRIC_OPTION_KEYS,
+  WHEEL_TYPE_FILTER_OPTION_KEYS,
+  WINNING_REWARD_TYPE_OPTION_KEYS,
 } from './components/luckyWheelUiConstants';
 import {
   type LuckyWheelItem,
@@ -420,20 +414,36 @@ const sortState = reactive({
   sortOrder: '' as '' | 'asc' | 'desc',
 });
 
-const memberSearchOptions = [...MEMBER_SEARCH_OPTIONS];
-const operatorSearchOptions = [...OPERATOR_SEARCH_OPTIONS];
-const luckyValueChangeTypeOptions = LUCKY_VALUE_CHANGE_TYPE_OPTIONS;
-const remainingMetricOptions = [...REMAINING_VALUE_METRIC_OPTIONS];
-const winningRewardTypeOptions = WINNING_REWARD_TYPE_OPTIONS;
-const wheelTypeFilterOptions = WHEEL_TYPE_FILTER_OPTIONS;
-const physicalOrderStatusOptions = PHYSICAL_ORDER_STATUS_OPTIONS;
-const physicalOrderTimeFieldOptions = PHYSICAL_ORDER_TIME_FIELD_OPTIONS;
-const bulkActionOptions = BULK_ACTION_OPTIONS;
+function mapLabelOptions<T extends { labelKey: string; value: unknown }>(
+  keys: readonly T[] | T[],
+) {
+  return keys.map((k) => ({ label: $t(k.labelKey), value: k.value }));
+}
+
+const memberSearchOptions = computed(() => mapLabelOptions(MEMBER_SEARCH_OPTION_KEYS));
+const operatorSearchOptions = computed(() => mapLabelOptions(OPERATOR_SEARCH_OPTION_KEYS));
+const luckyValueChangeTypeOptions = computed(() =>
+  mapLabelOptions(LUCKY_VALUE_CHANGE_TYPE_OPTION_KEYS),
+);
+const remainingMetricOptions = computed(() =>
+  mapLabelOptions(REMAINING_VALUE_METRIC_OPTION_KEYS),
+);
+const winningRewardTypeOptions = computed(() =>
+  mapLabelOptions(WINNING_REWARD_TYPE_OPTION_KEYS),
+);
+const wheelTypeFilterOptions = computed(() => mapLabelOptions(WHEEL_TYPE_FILTER_OPTION_KEYS));
+const physicalOrderStatusOptions = computed(() =>
+  mapLabelOptions(PHYSICAL_ORDER_STATUS_OPTION_KEYS),
+);
+const physicalOrderTimeFieldOptions = computed(() =>
+  mapLabelOptions(PHYSICAL_ORDER_TIME_FIELD_OPTION_KEYS),
+);
+const bulkActionOptions = computed(() => mapLabelOptions(BULK_ACTION_OPTION_KEYS));
 
 const enabledFilterOptions = [
-  { label: '全部状态', value: null },
-  { label: '开启', value: true },
-  { label: '关闭', value: false },
+  { label: $t('activity.luckyWheel.k51682'), value: null },
+  { label: $t('activity.activityList.k5f00'), value: true },
+  { label: $t('activity.activityList.k5173'), value: false },
 ];
 
 const showAddLuckyValueBtn = computed(
@@ -467,7 +477,7 @@ const pagination = reactive({
   itemCount: 0,
   showSizePicker: true,
   pageSizes: [10, 20, 50],
-  prefix: (info: any) => `共 ${info.itemCount} 条`,
+  prefix: (info: any) => $t('activity.totalRecords', [info.itemCount]),
 });
 
 const filteredWheels = computed(() => {
@@ -501,11 +511,15 @@ const selectedCount = computed(() =>
 );
 
 const memberKeywordPlaceholder = computed(() =>
-  filters.memberSearchType === 'memberId' ? '请输入会员ID' : '请输入会员账号',
+  filters.memberSearchType === 'memberId'
+    ? $t('activity.luckyWheelUi.pleaseEnterMemberId')
+    : $t('activity.luckyWheelUi.pleaseEnterMemberAccount'),
 );
 
 const operatorKeywordPlaceholder = computed(() =>
-  filters.operatorSearchType === 'recipient' ? '请输入收件人' : '请输入操作人',
+  filters.operatorSearchType === 'operator'
+    ? $t('activity.luckyWheelUi.pleaseEnterOperator')
+    : $t('activity.luckyWheelUi.pleaseEnterRecipient'),
 );
 
 function rowKey(row: any) {
@@ -669,9 +683,9 @@ async function onGlobalSwitch(v: boolean) {
     const r = await putLuckyWheelAdminSwitchApi(v);
     lwEnabled.value = r.enabled;
     lwEnabledAt.value = r.enabledAt;
-    message.success(v ? '已开启幸运转盘' : '已关闭幸运转盘');
+    message.success(v ? $t('activity.common.lwEnabledOn') : $t('activity.common.lwDisabled'));
   } catch {
-    message.error('开关更新失败');
+    message.error($t('activity.luckyWheel.k5f00'));
   } finally {
     switchLoading.value = false;
   }
@@ -682,9 +696,9 @@ async function onWheelSwitch(row: LuckyWheelItem, enabled: boolean) {
     const updated = await putLuckyWheelItemSwitchApi(row.id, enabled);
     const idx = wheels.value.findIndex((w) => w.id === row.id);
     if (idx >= 0) wheels.value[idx] = { ...wheels.value[idx], ...updated };
-    message.success(enabled ? '转盘已开启' : '转盘已关闭');
+    message.success(enabled ? $t('activity.common.wheelEnabled') : $t('activity.common.wheelDisabled'));
   } catch {
-    message.error('转盘开关更新失败');
+    message.error($t('activity.luckyWheel.k8f6c5'));
     await reloadActive();
   }
 }
@@ -696,31 +710,31 @@ function openEdit(row: LuckyWheelItem, readOnly = false) {
 }
 
 const wheelColumns = computed<DataTableColumns<LuckyWheelItem>>(() => [
-  { title: '币种', key: 'currency', width: 70, render: (r) => displayValue(r.currency) },
-  { title: '转盘名称', key: 'name', width: 120, render: (r) => displayValue(r.name) },
+  { title: $t('activity.luckyWheel.k5e01'), key: 'currency', width: 70, render: (r) => displayValue(r.currency) },
+  { title: $t('activity.luckyWheelEdit.k8f6c3'), key: 'name', width: 120, render: (r) => displayValue(r.name) },
   {
-    title: '转盘类型',
+    title: $t('activity.luckyWheelEdit.k8f6c'),
     key: 'wheelType',
     width: 120,
     render: (row) => wheelTypeLabel(row.wheelType),
   },
-  { title: '奖项数量', key: 'prizeCount', width: 90, render: (r) => displayValue(r.prizeCount) },
+  { title: $t('activity.luckyWheelEdit.k5956'), key: 'prizeCount', width: 90, render: (r) => displayValue(r.prizeCount) },
   {
-    title: '消耗幸运值',
+    title: $t('activity.luckyWheelEdit.k6d88'),
     key: 'luckyValueCost',
     width: 100,
     render: (r) => displayValue(r.luckyValueCost),
   },
   {
-    title: '是否公开概率和成本',
+    title: $t('activity.luckyWheelEdit.k662f'),
     key: 'showProbabilityAndCost',
     width: 140,
-    render: (row) => (row.showProbabilityAndCost === 'show' ? '展示' : '不展示'),
+    render: (row) => (row.showProbabilityAndCost === 'show' ? $t('activity.common.showLabel') : $t('activity.common.hideLabel')),
   },
-  { title: '真实成本', key: 'realCost', width: 90, render: (r) => displayValue(r.realCost) },
-  { title: '展示成本', key: 'displayCost', width: 90, render: (r) => displayValue(r.displayCost) },
+  { title: $t('activity.luckyWheelEdit.k771f'), key: 'realCost', width: 90, render: (r) => displayValue(r.realCost) },
+  { title: $t('activity.luckyWheelEdit.k5c55'), key: 'displayCost', width: 90, render: (r) => displayValue(r.displayCost) },
   {
-    title: '转盘开关',
+    title: $t('activity.luckyWheelEdit.k8f6c2'),
     key: 'enabled',
     width: 100,
     render: (row) =>
@@ -730,14 +744,14 @@ const wheelColumns = computed<DataTableColumns<LuckyWheelItem>>(() => [
       }),
   },
   {
-    title: '操作',
+    title: $t('activity.rewardReport.k64cd'),
     key: 'actions',
     width: 180,
     fixed: 'right',
     render: (row) =>
       h(NSpace, { size: 8 }, () => [
-        h(NButton, { text: true, type: 'primary', onClick: () => openEdit(row, false) }, { default: () => '修改' }),
-        h(NButton, { text: true, type: 'info', onClick: () => openEdit(row, true) }, { default: () => '详情' }),
+        h(NButton, { text: true, type: 'primary', onClick: () => openEdit(row, false) }, { default: () => $t('activity.luckyWheelEdit.k4fee') }),
+        h(NButton, { text: true, type: 'info', onClick: () => openEdit(row, true) }, { default: () => $t('activity.rewardReport.k8be6') }),
         h(NButton, {
           text: true,
           type: 'default',
@@ -747,89 +761,89 @@ const wheelColumns = computed<DataTableColumns<LuckyWheelItem>>(() => [
             onTabChange();
             reloadActive();
           },
-        }, { default: () => '记录' }),
+        }, { default: () => $t('activity.activityList.k8bb0') }),
       ]),
   },
-  { title: '操作人', key: 'updatedBy', width: 90, render: (r) => displayValue(r.updatedBy) },
-  { title: '操作时间', key: 'updatedAt', width: 160, render: (r) => formatTs(r.updatedAt) },
+  { title: $t('activity.activityList.k64cd'), key: 'updatedBy', width: 90, render: (r) => displayValue(r.updatedBy) },
+  { title: $t('activity.noviceWelfare.k64cd'), key: 'updatedAt', width: 160, render: (r) => formatTs(r.updatedAt) },
 ]);
 
 const luckyValueRecordColumns = computed<DataTableColumns<any>>(() => [
-  { title: '会员币种', key: 'currency', width: 80, render: (r) => displayValue(r.currency) },
-  { title: '会员ID', key: 'memberId', width: 90, render: (r) => displayValue(r.memberId) },
-  { title: '会员账号', key: 'account', width: 120, render: (r) => displayValue(r.account) },
-  { title: '优惠来源', key: 'promotionSource', width: 100, render: (r) => displayValue(r.promotionSource) },
-  { title: '优惠类型', key: 'promotionType', width: 100, render: (r) => displayValue(r.promotionType) },
-  { title: '变动类型', key: 'changeType', width: 90, render: (r) => displayValue(r.changeType) },
-  { title: '变动前', key: 'balanceBefore', width: 90, render: (r) => displayValue(r.balanceBefore) },
-  { title: '变动幸运值', key: 'changeAmount', width: 110, ...sortable('changeAmount'), render: (r) => displayValue(r.changeAmount) },
-  { title: '变动后', key: 'balanceAfter', width: 90, render: (r) => displayValue(r.balanceAfter) },
-  { title: '幸运值周期', key: 'luckyValuePeriod', width: 100, render: (r) => displayValue(r.luckyValuePeriod) },
-  { title: '过期时间', key: 'expireAt', width: 150, render: (r) => formatTs(r.expireAt) },
-  { title: '前台备注', key: 'frontendRemark', width: 120, render: (r) => displayValue(r.frontendRemark) },
-  { title: '后台备注', key: 'backendRemark', width: 120, render: (r) => displayValue(r.backendRemark) },
-  { title: '变动时间', key: 'createdAt', width: 150, render: (r) => formatTs(r.createdAt) },
+  { title: $t('activity.rewardReport.k4f1a'), key: 'currency', width: 80, render: (r) => displayValue(r.currency) },
+  { title: $t('activity.rewardReport.k4f1a2'), key: 'memberId', width: 90, render: (r) => displayValue(r.memberId) },
+  { title: $t('activity.rewardReport.k4f1a3'), key: 'account', width: 120, render: (r) => displayValue(r.account) },
+  { title: $t('activity.rewardReport.k4f18'), key: 'promotionSource', width: 100, render: (r) => displayValue(r.promotionSource) },
+  { title: $t('activity.formModal.k4f182'), key: 'promotionType', width: 100, render: (r) => displayValue(r.promotionType) },
+  { title: $t('activity.luckyWheel.k53d8'), key: 'changeType', width: 90, render: (r) => displayValue(r.changeType) },
+  { title: $t('activity.luckyWheel.k53d82'), key: 'balanceBefore', width: 90, render: (r) => displayValue(r.balanceBefore) },
+  { title: $t('activity.luckyWheelAddLuckyValue.k53d8'), key: 'changeAmount', width: 110, ...sortable('changeAmount'), render: (r) => displayValue(r.changeAmount) },
+  { title: $t('activity.luckyWheel.k53d83'), key: 'balanceAfter', width: 90, render: (r) => displayValue(r.balanceAfter) },
+  { title: $t('activity.luckyWheel.k5e782'), key: 'luckyValuePeriod', width: 100, render: (r) => displayValue(r.luckyValuePeriod) },
+  { title: $t('activity.luckyWheel.k8fc7'), key: 'expireAt', width: 150, render: (r) => formatTs(r.expireAt) },
+  { title: $t('activity.distributeReward.k524d'), key: 'frontendRemark', width: 120, render: (r) => displayValue(r.frontendRemark) },
+  { title: $t('activity.distributeReward.k540e'), key: 'backendRemark', width: 120, render: (r) => displayValue(r.backendRemark) },
+  { title: $t('activity.luckyWheel.k53d84'), key: 'createdAt', width: 150, render: (r) => formatTs(r.createdAt) },
 ]);
 
 const remainingColumns = computed<DataTableColumns<any>>(() => [
   { type: 'selection' },
-  { title: '会员币种', key: 'currency', width: 80, render: (r) => displayValue(r.currency) },
-  { title: '会员ID', key: 'memberId', width: 90, render: (r) => displayValue(r.memberId) },
-  { title: '会员账号', key: 'account', width: 120, render: (r) => displayValue(r.account) },
-  { title: '更新时间', key: 'updatedAt', width: 150, render: (r) => formatTs(r.updatedAt) },
-  { title: '获得幸运值', key: 'earnedLuckyValue', width: 110, ...sortable('earnedLuckyValue'), render: (r) => displayValue(r.earnedLuckyValue) },
-  { title: '消耗幸运值', key: 'consumedLuckyValue', width: 110, ...sortable('consumedLuckyValue'), render: (r) => displayValue(r.consumedLuckyValue) },
-  { title: '过期幸运值', key: 'expiredLuckyValue', width: 110, ...sortable('expiredLuckyValue'), render: (r) => displayValue(r.expiredLuckyValue) },
-  { title: '扣除幸运值', key: 'deductedLuckyValue', width: 110, ...sortable('deductedLuckyValue'), render: (r) => displayValue(r.deductedLuckyValue) },
-  { title: '剩余幸运值', key: 'remainingLuckyValue', width: 110, ...sortable('remainingLuckyValue'), render: (r) => displayValue(r.remainingLuckyValue) },
+  { title: $t('activity.rewardReport.k4f1a'), key: 'currency', width: 80, render: (r) => displayValue(r.currency) },
+  { title: $t('activity.rewardReport.k4f1a2'), key: 'memberId', width: 90, render: (r) => displayValue(r.memberId) },
+  { title: $t('activity.rewardReport.k4f1a3'), key: 'account', width: 120, render: (r) => displayValue(r.account) },
+  { title: $t('activity.detailModal.k66f4'), key: 'updatedAt', width: 150, render: (r) => formatTs(r.updatedAt) },
+  { title: $t('activity.luckyWheelPublicConfig.k83b7'), key: 'earnedLuckyValue', width: 110, ...sortable('earnedLuckyValue'), render: (r) => displayValue(r.earnedLuckyValue) },
+  { title: $t('activity.luckyWheelEdit.k6d88'), key: 'consumedLuckyValue', width: 110, ...sortable('consumedLuckyValue'), render: (r) => displayValue(r.consumedLuckyValue) },
+  { title: $t('activity.luckyWheel.k8fc72'), key: 'expiredLuckyValue', width: 110, ...sortable('expiredLuckyValue'), render: (r) => displayValue(r.expiredLuckyValue) },
+  { title: $t('activity.luckyWheel.k6263'), key: 'deductedLuckyValue', width: 110, ...sortable('deductedLuckyValue'), render: (r) => displayValue(r.deductedLuckyValue) },
+  { title: $t('activity.luckyWheel.k5269'), key: 'remainingLuckyValue', width: 110, ...sortable('remainingLuckyValue'), render: (r) => displayValue(r.remainingLuckyValue) },
   {
-    title: '操作',
+    title: $t('activity.rewardReport.k64cd'),
     key: 'actions',
     width: 80,
-    render: () => h(NButton, { text: true, type: 'primary', disabled: true }, { default: () => '详情' }),
+    render: () => h(NButton, { text: true, type: 'primary', disabled: true }, { default: () => $t('activity.rewardReport.k8be6') }),
   },
-  { title: '操作人', key: 'operator', width: 90, render: (r) => displayValue(r.operator) },
+  { title: $t('activity.activityList.k64cd'), key: 'operator', width: 90, render: (r) => displayValue(r.operator) },
 ]);
 
 const winningColumns = computed<DataTableColumns<any>>(() => [
-  { title: '会员币种', key: 'currency', width: 80, render: (r) => displayValue(r.currency) },
-  { title: '会员ID', key: 'memberId', width: 90, render: (r) => displayValue(r.memberId) },
-  { title: '会员账号', key: 'account', width: 120, render: (r) => displayValue(r.account) },
-  { title: '转盘名称', key: 'wheelName', width: 110, render: (r) => displayValue(r.wheelName) },
-  { title: '转盘类型', key: 'wheelType', width: 100, ...sortable('wheelType'), render: (r) => displayValue(r.wheelTypeLabel ?? r.wheelType) },
-  { title: '消耗幸运值', key: 'luckyValueCost', width: 100, ...sortable('luckyValueCost'), render: (r) => displayValue(r.luckyValueCost) },
-  { title: '奖励类型', key: 'rewardType', width: 100, render: (r) => displayValue(r.rewardType) },
-  { title: '奖励Icon', key: 'prizeIcon', width: 80, render: (r) => renderPrizeIcon(r.prizeIcon) },
-  { title: '奖励', key: 'reward', width: 90, ...sortable('reward'), render: (r) => displayValue(r.reward) },
-  { title: '中奖时间', key: 'wonAt', width: 150, render: (r) => formatTs(r.wonAt) },
+  { title: $t('activity.rewardReport.k4f1a'), key: 'currency', width: 80, render: (r) => displayValue(r.currency) },
+  { title: $t('activity.rewardReport.k4f1a2'), key: 'memberId', width: 90, render: (r) => displayValue(r.memberId) },
+  { title: $t('activity.rewardReport.k4f1a3'), key: 'account', width: 120, render: (r) => displayValue(r.account) },
+  { title: $t('activity.luckyWheelEdit.k8f6c3'), key: 'wheelName', width: 110, render: (r) => displayValue(r.wheelName) },
+  { title: $t('activity.luckyWheelEdit.k8f6c'), key: 'wheelType', width: 100, ...sortable('wheelType'), render: (r) => displayValue(r.wheelTypeLabel ?? r.wheelType) },
+  { title: $t('activity.luckyWheelEdit.k6d88'), key: 'luckyValueCost', width: 100, ...sortable('luckyValueCost'), render: (r) => displayValue(r.luckyValueCost) },
+  { title: $t('activity.rewardReport.k5956'), key: 'rewardType', width: 100, render: (r) => displayValue(r.rewardType) },
+  { title: $t('activity.luckyWheel.k5956'), key: 'prizeIcon', width: 80, render: (r) => renderPrizeIcon(r.prizeIcon) },
+  { title: $t('activity.luckyWheelEdit.k59564'), key: 'reward', width: 90, ...sortable('reward'), render: (r) => displayValue(r.reward) },
+  { title: $t('activity.luckyWheel.k4e2d2'), key: 'wonAt', width: 150, render: (r) => formatTs(r.wonAt) },
 ]);
 
 const physicalOrderColumns = computed<DataTableColumns<any>>(() => [
   { type: 'selection' },
-  { title: '订单编号', key: 'orderNo', width: 140, render: (r) => displayValue(r.orderNo) },
-  { title: '会员币种', key: 'currency', width: 80, render: (r) => displayValue(r.currency) },
-  { title: '会员ID', key: 'memberId', width: 90, render: (r) => displayValue(r.memberId) },
-  { title: '会员账号', key: 'account', width: 120, render: (r) => displayValue(r.account) },
-  { title: '奖品icon', key: 'prizeIcon', width: 80, render: (r) => renderPrizeIcon(r.prizeIcon) },
-  { title: '奖品', key: 'prizeName', width: 110, render: (r) => displayValue(r.prizeName) },
-  { title: '中奖时间', key: 'wonAt', width: 150, render: (r) => formatTs(r.wonAt) },
-  { title: '收货姓名', key: 'receiverName', width: 100, render: (r) => displayValue(r.receiverName) },
-  { title: '收货地址', key: 'receiverAddress', width: 160, render: (r) => displayValue(r.receiverAddress) },
-  { title: '联系电话', key: 'receiverPhone', width: 120, render: (r) => displayValue(r.receiverPhone) },
-  { title: '订单状态', key: 'status', width: 90, ...sortable('status'), render: (r) => displayValue(r.statusLabel ?? r.status) },
-  { title: '快递单号', key: 'trackingNo', width: 130, render: (r) => displayValue(r.trackingNo) },
-  { title: '快递公司', key: 'courierCompany', width: 100, render: (r) => displayValue(r.courierCompany) },
-  { title: '发货时间', key: 'shippedAt', width: 150, render: (r) => formatTs(r.shippedAt) },
-  { title: '前台备注', key: 'frontendRemark', width: 120, render: (r) => displayValue(r.frontendRemark) },
-  { title: '后台备注', key: 'backendRemark', width: 120, render: (r) => displayValue(r.backendRemark) },
+  { title: $t('activity.luckyWheel.k8ba2'), key: 'orderNo', width: 140, render: (r) => displayValue(r.orderNo) },
+  { title: $t('activity.rewardReport.k4f1a'), key: 'currency', width: 80, render: (r) => displayValue(r.currency) },
+  { title: $t('activity.rewardReport.k4f1a2'), key: 'memberId', width: 90, render: (r) => displayValue(r.memberId) },
+  { title: $t('activity.rewardReport.k4f1a3'), key: 'account', width: 120, render: (r) => displayValue(r.account) },
+  { title: $t('activity.luckyWheel.k59562'), key: 'prizeIcon', width: 80, render: (r) => renderPrizeIcon(r.prizeIcon) },
+  { title: $t('activity.formModal.k595612'), key: 'prizeName', width: 110, render: (r) => displayValue(r.prizeName) },
+  { title: $t('activity.luckyWheel.k4e2d2'), key: 'wonAt', width: 150, render: (r) => formatTs(r.wonAt) },
+  { title: $t('activity.luckyWheel.k6536'), key: 'receiverName', width: 100, render: (r) => displayValue(r.receiverName) },
+  { title: $t('activity.luckyWheel.k65362'), key: 'receiverAddress', width: 160, render: (r) => displayValue(r.receiverAddress) },
+  { title: $t('activity.luckyWheel.k8054'), key: 'receiverPhone', width: 120, render: (r) => displayValue(r.receiverPhone) },
+  { title: $t('activity.luckyWheel.k8ba22'), key: 'status', width: 90, ...sortable('status'), render: (r) => displayValue(r.statusLabel ?? r.status) },
+  { title: $t('activity.luckyWheel.k5feb'), key: 'trackingNo', width: 130, render: (r) => displayValue(r.trackingNo) },
+  { title: $t('activity.luckyWheel.k5feb2'), key: 'courierCompany', width: 100, render: (r) => displayValue(r.courierCompany) },
+  { title: $t('activity.luckyWheel.k53d1'), key: 'shippedAt', width: 150, render: (r) => formatTs(r.shippedAt) },
+  { title: $t('activity.distributeReward.k524d'), key: 'frontendRemark', width: 120, render: (r) => displayValue(r.frontendRemark) },
+  { title: $t('activity.distributeReward.k540e'), key: 'backendRemark', width: 120, render: (r) => displayValue(r.backendRemark) },
   {
-    title: '操作',
+    title: $t('activity.rewardReport.k64cd'),
     key: 'actions',
     width: 80,
-    render: () => h(NButton, { text: true, type: 'primary', disabled: true }, { default: () => '详情' }),
+    render: () => h(NButton, { text: true, type: 'primary', disabled: true }, { default: () => $t('activity.rewardReport.k8be6') }),
   },
-  { title: '操作人', key: 'operator', width: 90, render: (r) => displayValue(r.operator) },
-  { title: '操作时间', key: 'operatedAt', width: 150, render: (r) => formatTs(r.operatedAt) },
+  { title: $t('activity.activityList.k64cd'), key: 'operator', width: 90, render: (r) => displayValue(r.operator) },
+  { title: $t('activity.noviceWelfare.k64cd'), key: 'operatedAt', width: 150, render: (r) => formatTs(r.operatedAt) },
 ]);
 
 const activeColumns = computed(() => {
@@ -979,9 +993,9 @@ async function handleExport() {
     a.download = `lucky-wheel-${activeTab.value}.csv`;
     a.click();
     URL.revokeObjectURL(url);
-    message.success('导出成功');
+    message.success($t('activity.statistics.k5bfc2'));
   } catch {
-    message.error('导出失败，请确认 API 已接入');
+    message.error($t('activity.luckyWheel.k5bfck8bf7APIk5df2'));
   } finally {
     exportLoading.value = false;
   }

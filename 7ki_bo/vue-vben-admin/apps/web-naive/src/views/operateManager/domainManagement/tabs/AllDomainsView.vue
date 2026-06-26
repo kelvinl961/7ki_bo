@@ -4,7 +4,7 @@
     <n-grid :cols="4" :x-gap="16" style="margin-bottom: 16px">
       <n-gi>
         <n-card size="small">
-          <n-statistic label="总域名数" :value="stats.total" />
+          <n-statistic :label="$t('operations.domain.stats.totalDomains')" :value="stats.total" />
         </n-card>
       </n-gi>
       <n-gi>
@@ -19,7 +19,7 @@
       </n-gi>
       <n-gi>
         <n-card size="small">
-          <n-statistic label="已验证" :value="stats.verified" />
+          <n-statistic :label="$t('operations.domain.stats.verified')" :value="stats.verified" />
         </n-card>
       </n-gi>
     </n-grid>
@@ -30,7 +30,7 @@
         <n-select
           v-model:value="filters.cdnProvider"
           :options="cdnProviderOptions"
-          placeholder="CDN节点"
+          :placeholder="$t('operations.domain.filter.cdnNode')"
           clearable
           style="width: 150px"
           size="small"
@@ -39,7 +39,7 @@
         <n-select
           v-model:value="filters.status"
           :options="statusOptions"
-          placeholder="主域名状态"
+          :placeholder="$t('operations.domain.filter.mainDomainStatus')"
           clearable
           style="width: 140px"
           size="small"
@@ -47,18 +47,16 @@
 
         <n-input
           v-model:value="filters.search"
-          placeholder="域名搜索"
+          :placeholder="$t('operations.domain.filter.domainSearch')"
           clearable
           style="width: 200px"
           size="small"
           @keyup.enter="fetchDomains"
         />
 
-        <n-button type="primary" size="small" @click="fetchDomains">
-          搜索
-        </n-button>
+        <n-button type="primary" size="small" @click="fetchDomains">{{ $t('common.search') }}</n-button>
 
-        <n-button size="small" @click="resetFilters"> 重置 </n-button>
+        <n-button size="small" @click="resetFilters"> {{ $t('common.reset') }} </n-button>
       </n-space>
     </n-card>
 
@@ -66,22 +64,18 @@
     <n-card size="small" style="margin-bottom: 16px">
       <n-space justify="space-between">
         <n-space>
-          <n-button type="primary" size="small" @click="showCreateModal = true">
-            新增
-          </n-button>
+          <n-button type="primary" size="small" @click="showCreateModal = true">{{ $t('common.create') }}</n-button>
           <n-button
             size="small"
             :disabled="selectedRowKeys.length === 0"
             @click="handleBulkDelete"
-          >
-            批量删除
-          </n-button>
-          <n-button size="small" @click="fetchDomains"> 刷新 </n-button>
+          >{{ $t('operations.domain.action.bulkDelete') }}</n-button>
+          <n-button size="small" @click="fetchDomains"> {{ $t('common.refresh') }} </n-button>
         </n-space>
         <span style="font-size: 13px; color: #666">
-          共 {{ pagination.itemCount || 0 }} 条记录
+          {{ $t('operations.domain.recordCount', [pagination.itemCount || 0]) }}
           <span v-if="selectedRowKeys.length > 0" style="margin-left: 8px">
-            已选择 {{ selectedRowKeys.length }} 条
+            {{ $t('operations.domain.selectedCount', [selectedRowKeys.length]) }}
           </span>
         </span>
       </n-space>
@@ -112,25 +106,24 @@
     <n-modal
       v-model:show="showSwitchCDNModal"
       preset="dialog"
-      title="更换CDN节点"
-      positive-text="确认"
-      negative-text="取消"
+      :title="$t('operations.domain.modal.switchCdnTitle')"
+      :positive-text="$t('common.confirm')"
+      :negative-text="$t('common.cancel')"
       @positive-click="confirmSwitchCDN"
     >
       <n-space vertical :size="16" style="margin: 20px 0">
         <div>
-          <div style="margin-bottom: 8px; font-weight: 500">当前域名</div>
+          <div style="margin-bottom: 8px; font-weight: 500">{{ $t('operations.domain.modal.currentDomain') }}</div>
           <div style="color: #666">{{ selectedDomain?.domainName }}</div>
         </div>
         <div>
-          <div style="margin-bottom: 8px; font-weight: 500">当前CDN</div>
+          <div style="margin-bottom: 8px; font-weight: 500">{{ $t('operations.domain.modal.currentCdn') }}</div>
           <n-tag :type="'info'" size="small">{{
             selectedDomain?.cdnProvider
           }}</n-tag>
         </div>
         <div>
-          <div style="margin-bottom: 8px; font-weight: 500">
-            目标CDN节点 <span style="color: red">*</span>
+          <div style="margin-bottom: 8px; font-weight: 500">{{ $t('operations.domain.modal.targetCdnRequired') }} <span style="color: red">*</span>
           </div>
           <n-select
             v-model:value="targetCDN"
@@ -139,19 +132,18 @@
                 (o) => o.value && o.value !== selectedDomain?.cdnProvider,
               )
             "
-            placeholder="请选择目标CDN节点"
+            :placeholder="$t('operations.domain.modal.selectTargetCdn')"
           />
         </div>
         <n-alert type="warning" :show-icon="false" style="margin-top: 12px">
           <div style="font-size: 13px; line-height: 1.8">
-            <div style="font-weight: 500; margin-bottom: 8px">功能说明：</div>
+            <div style="font-weight: 500; margin-bottom: 8px">{{ $t('operations.domain.modal.featureDescription') }}</div>
             <div>
-              •
-              仅限域名已托管DNS厂商（阿里云与Cloudflare），切换过程无感知，预计5-10分钟域名生效
+              • {{ $t('operations.domain.modal.cdnSwitchHint') }}
             </div>
-            <div style="margin-top: 8px; font-weight: 500">支持CDN节点：</div>
+            <div style="margin-top: 8px; font-weight: 500">{{ $t('operations.domain.modal.supportedCdn') }}</div>
             <div>
-              Cloudflare、AWS、网宿、火山云、阿里云、腾讯云、华为云、SuperEdge、Funnull、云盾
+              {{ $t('operations.domain.modal.cdnList') }}
             </div>
           </div>
         </n-alert>
@@ -162,34 +154,34 @@
     <n-modal
       v-model:show="showBindAgentModal"
       preset="dialog"
-      title="绑定代理"
-      positive-text="确认"
-      negative-text="取消"
+      :title="$t('operations.domain.modal.bindAgentTitle')"
+      :positive-text="$t('common.confirm')"
+      :negative-text="$t('common.cancel')"
       @positive-click="confirmBindAgent"
     >
       <n-space vertical :size="16" style="margin: 20px 0">
         <div>
-          <div style="margin-bottom: 8px; font-weight: 500">当前域名</div>
+          <div style="margin-bottom: 8px; font-weight: 500">{{ $t('operations.domain.modal.currentDomain') }}</div>
           <div style="color: #666">{{ selectedDomain?.domainName }}</div>
         </div>
         <div>
-          <div style="margin-bottom: 8px; font-weight: 500">代理ID</div>
+          <div style="margin-bottom: 8px; font-weight: 500">{{ $t('operations.layout.agent') }}ID</div>
           <n-input
             v-model:value="agentId"
-            placeholder="请输入代理ID（留空则解绑）"
+            :placeholder="$t('operations.domain.modal.agentIdPlaceholder')"
             clearable
           />
         </div>
         <n-alert type="info" :show-icon="false">
           <div style="font-size: 13px">
-            <div>• 为特定域名分配代理，以便管理流量和推广策略</div>
-            <div>• 上级归属判定优先级：</div>
+            <div>• {{ $t('operations.domain.modal.bindAgentHint1') }}</div>
+            <div>• {{ $t('operations.domain.modal.bindAgentHint2') }}</div>
             <div style="padding-left: 16px">
-              1. 推广链接的上级（最高优先级）
+              {{ $t('operations.domain.modal.bindAgentPriority1') }}
             </div>
-            <div style="padding-left: 16px">2. 渠道ID配置的强制绑定上级</div>
+            <div style="padding-left: 16px">{{ $t('operations.domain.modal.bindAgentPriority2') }}</div>
             <div style="padding-left: 16px">
-              3. 域名管理中配置的强制绑定上级
+              {{ $t('operations.domain.modal.bindAgentPriority3') }}
             </div>
           </div>
         </n-alert>
@@ -201,7 +193,7 @@
       v-model:show="showSubdomainModal"
       :mask-closable="false"
       preset="card"
-      title="子域名"
+      :title="$t('operations.domain.modal.subdomainTitle')"
       style="width: 900px"
     >
       <n-spin :show="subdomainLoading">
@@ -215,9 +207,7 @@
       </n-spin>
       <template #footer>
         <div style="display: flex; justify-content: flex-end">
-          <n-button type="primary" @click="showSubdomainModal = false">
-            关闭
-          </n-button>
+          <n-button type="primary" @click="showSubdomainModal = false">{{ $t('common.close') }}</n-button>
         </div>
       </template>
     </n-modal>
@@ -225,6 +215,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, h, onMounted, reactive, computed } from 'vue';
 import {
   NButton,
@@ -263,7 +255,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  title: '域名管理',
+  title: $t('operations.domain.title'),
 });
 
 const message = useMessage();
@@ -334,26 +326,26 @@ const expandedRows = ref<Record<number, boolean>>({});
 
 // Options
 const cdnProviderOptions: SelectOption[] = [
-  { label: '全部', value: '' },
+  { label: $t('operations.domain.status.all'), value: '' },
   { label: 'Cloudflare (CF)', value: 'CLOUDFLARE' },
   { label: 'AWS (A8)', value: 'AWS' },
-  { label: '网宿 (Wangsu)', value: 'WANGSU' },
-  { label: '火山云 (Volcengine)', value: 'VOLCENGINE' },
-  { label: '阿里云 (Aliyun)', value: 'ALIYUN' },
-  { label: '腾讯云 (Tencent)', value: 'TENCENT_CLOUD' },
-  { label: '华为云 (Huawei)', value: 'HUAWEI_CLOUD' },
+  { label: 'Wangsu', value: 'WANGSU' },
+  { label: 'Volcengine', value: 'VOLCENGINE' },
+  { label: 'Aliyun', value: 'ALIYUN' },
+  { label: 'Tencent Cloud', value: 'TENCENT_CLOUD' },
+  { label: $t('operations.domain.cdn.huawei'), value: 'HUAWEI_CLOUD' },
   { label: 'SuperEdge', value: 'SUPEREDGE' },
   { label: 'Funnull', value: 'FUNNULL' },
-  { label: '云盾 (Yundun)', value: 'YUNDUN' },
+  { label: 'Yundun', value: 'YUNDUN' },
 ];
 
 const statusOptions: SelectOption[] = [
-  { label: '全部', value: '' },
-  { label: '正常', value: 'NORMAL' },
-  { label: '已过期', value: 'EXPIRED' },
-  { label: '即将过期', value: 'EXPIRING_SOON' },
-  { label: '验证中', value: 'VERIFICATION_PENDING' },
-  { label: '已停用', value: 'DISABLED' },
+  { label: $t('operations.domain.status.all'), value: '' },
+  { label: $t('operations.domain.status.normal'), value: 'NORMAL' },
+  { label: $t('operations.domain.status.expired'), value: 'EXPIRED' },
+  { label: $t('operations.domain.status.expiringSoon'), value: 'EXPIRING_SOON' },
+  { label: $t('operations.domain.status.verificationPending'), value: 'VERIFICATION_PENDING' },
+  { label: $t('operations.domain.status.disabled'), value: 'DISABLED' },
 ];
 
 // Table Columns (computed to react to expandedRows changes)
@@ -362,7 +354,7 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
     type: 'selection' as const,
   },
   {
-    title: 'CDN节点名称',
+    title: $t('operations.domain.column.cdnNodeName'),
     key: 'cdnProvider',
     width: 130,
     render(row: Domain) {
@@ -381,7 +373,7 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
     },
   },
   {
-    title: '主域名(子域名数)',
+    title: $t('operations.domain.column.mainDomain'),
     key: 'domainName',
     width: 220,
     render(row: Domain) {
@@ -422,15 +414,15 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
     },
   },
   {
-    title: '验证方式',
+    title: $t('operations.domain.column.verificationMethod'),
     key: 'verificationMethod',
     width: 280,
     render(row: Domain) {
       const methodMap: Record<string, string> = {
-        DNS_VALIDATION: 'DNS验证',
-        WHEN_DNS_COMPLETED: '当DNS完成为',
-        HTTP_VALIDATION: 'HTTP验证',
-        EMAIL_VALIDATION: '邮箱验证',
+        DNS_VALIDATION: $t('operations.domain.verification.dns'),
+        WHEN_DNS_COMPLETED: $t('operations.domain.verification.whenDnsCompleted'),
+        HTTP_VALIDATION: $t('operations.domain.verification.http'),
+        EMAIL_VALIDATION: $t('operations.domain.verification.email'),
       };
 
       const nameservers = Array.isArray(row.nameservers) ? row.nameservers : [];
@@ -458,7 +450,7 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
                     expandedRows.value[row.id] = !expandedRows.value[row.id];
                   },
                 },
-                { default: () => (isExpanded ? '收起' : '展开') },
+                { default: () => (isExpanded ? $t('operations.domain.action.collapse') : $t('operations.domain.action.expand')) },
               ),
           ]),
           isExpanded &&
@@ -491,7 +483,7 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
                         size: 'tiny',
                         onClick: () => {
                           navigator.clipboard.writeText(ns);
-                          message.success('已复制');
+                          message.success($t('operations.domain.message.copied'));
                         },
                       },
                       { default: () => '' },
@@ -505,18 +497,18 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
     },
   },
   {
-    title: '主域名状态',
+    title: $t('operations.domain.column.mainDomainStatus'),
     key: 'status',
     width: 160,
     render(row: Domain) {
       const statusMap: Record<string, { type: string; text: string }> = {
-        NORMAL: { type: 'success', text: '正常' },
-        VERIFICATION_PENDING: { type: 'warning', text: '验证中' },
-        DISABLED: { type: 'error', text: '已禁用' },
-        EXPIRED: { type: 'default', text: '已过期' },
+        NORMAL: { type: 'success', text: $t('operations.domain.status.normal') },
+        VERIFICATION_PENDING: { type: 'warning', text: $t('operations.domain.status.verificationPending') },
+        DISABLED: { type: 'error', text: $t('operations.domain.status.disabled') },
+        EXPIRED: { type: 'default', text: $t('operations.domain.status.expired') },
       };
       const status = statusMap[row.status] ||
-        statusMap.NORMAL || { type: 'success', text: '正常' };
+        statusMap.NORMAL || { type: 'success', text: $t('operations.domain.status.normal') };
 
       // Show verification button for pending domains
       if (row.status === 'VERIFICATION_PENDING') {
@@ -540,7 +532,7 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
               h(
                 'span',
                 { style: 'color: #999; font-size: 12px;' },
-                '验证中...',
+                $t('operations.domain.action.verifying'),
               ),
             ],
           );
@@ -574,7 +566,7 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
                 onClick: () => handleVerifyDomain(row),
               },
               {
-                default: () => '点击验证',
+                default: () => $t('operations.domain.action.verifyClick'),
               },
             ),
           ],
@@ -589,7 +581,7 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
     },
   },
   {
-    title: '域名过期日',
+    title: $t('operations.domain.column.domainExpiry'),
     key: 'expiryDate',
     width: 140,
     render(row: Domain) {
@@ -599,7 +591,7 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
     },
   },
   {
-    title: '证书过期日',
+    title: $t('operations.domain.column.certExpiry'),
     key: 'certificateExpiryDate',
     width: 140,
     render(row: Domain) {
@@ -609,24 +601,24 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
     },
   },
   {
-    title: '使用场景',
+    title: $t('operations.domain.column.usageScenario'),
     key: 'usageScenario',
     width: 120,
     render(row: Domain) {
-      return row.usageScenario || '全部';
+      return row.usageScenario || $t('operations.domain.status.all');
     },
   },
   {
-    title: '备注',
+    title: $t('common.remark'),
     key: 'remark',
     width: 200,
     ellipsis: { tooltip: true },
     render(row: Domain) {
-      return row.备注 || '-';
+      return row.remark || '-';
     },
   },
   {
-    title: '操作人',
+    title: $t('common.operator'),
     key: 'operatedBy',
     width: 100,
     render(row: any) {
@@ -634,7 +626,7 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
     },
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 300,
     fixed: 'right' as const,
@@ -647,7 +639,7 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
             size: 'small',
             onClick: () => handleSwitchCDN(row),
           },
-          () => '更换节点',
+          () => $t('operations.domain.action.switchNode'),
         ),
         h(
           NButton,
@@ -655,7 +647,7 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
             size: 'small',
             onClick: () => handleBindAgent(row),
           },
-          () => '绑定代理',
+          () => $t('operations.domain.action.bindAgent'),
         ),
         h(
           NButton,
@@ -664,7 +656,7 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
             type: isDisabled ? 'success' : 'warning',
             onClick: () => handleToggleStatus(row),
           },
-          () => (isDisabled ? '启用' : '停用'),
+          () => (isDisabled ? $t('common.enable') : $t('common.disable')),
         ),
         h(
           NButton,
@@ -672,14 +664,14 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
             size: 'small',
             onClick: () => handleClearCache(row),
           },
-          () => '清缓存',
+          () => $t('operations.domain.action.clearCache'),
         ),
         h(
           NPopconfirm,
           {
             onPositiveClick: () => handleDelete(row.id),
-            positiveText: '确认删除',
-            negativeText: '取消',
+            positiveText: $t('operations.domain.modal.confirmDelete'),
+            negativeText: $t('common.cancel'),
             style: { width: '500px' },
           },
           {
@@ -691,15 +683,15 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
                     style:
                       'font-weight: 600; margin-bottom: 8px; font-size: 16px;',
                   },
-                  '确认删除域名？',
+                  $t('operations.domain.modal.confirmDeleteDomain'),
                 ),
-                h('div', { style: 'color: #666;' }, `域名: ${row.domainName}`),
+                h('div', { style: 'color: #666;' }, `$t('operations.domain.column.domain') + ': ' + row.domainName`),
                 h(
                   'div',
                   {
                     style: 'color: #ff4d4f; margin-top: 8px; font-size: 13px;',
                   },
-                  '删除后将无法恢复，请谨慎操作！',
+                  $t('operations.domain.modal.deleteIrreversible'),
                 ),
               ]),
             trigger: () =>
@@ -709,7 +701,7 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
                   size: 'small',
                   type: 'error',
                 },
-                () => '删除',
+                () => $t('common.delete'),
               ),
           },
         ),
@@ -721,13 +713,13 @@ const columns = computed<DataTableColumn<Domain>[]>(() => [
 // Subdomain Columns
 const subdomainColumns: DataTableColumn<Domain>[] = [
   {
-    title: '子域名',
+    title: $t('operations.domain.column.subdomain'),
     key: 'domainName',
     width: 250,
     ellipsis: { tooltip: true },
   },
   {
-    title: 'CDN节点名称',
+    title: $t('operations.domain.column.cdnNodeName'),
     key: 'cdnProvider',
     width: 150,
     render(row: Domain) {
@@ -746,24 +738,24 @@ const subdomainColumns: DataTableColumn<Domain>[] = [
     },
   },
   {
-    title: '域名用途',
+    title: $t('operations.domain.column.domainPurpose'),
     key: 'useType',
     width: 150,
     render(row: Domain) {
       const useTypeMap: Record<string, string> = {
-        WEB_HALL: 'Web大厅',
-        APP_HALL: 'APP大厅',
-        DOWNLOAD_SITE: '下载站',
-        BACKEND_API: '后端加速域名',
-        OSS_ACCELERATION: 'OSS加速',
-        TRANSFER_PAGE: '中转页',
-        APP_UPDATE: 'APP更新',
+        WEB_HALL: $t('operations.domain.useType.webHall'),
+        APP_HALL: $t('operations.domain.useType.appHall'),
+        DOWNLOAD_SITE: $t('operations.domain.useType.downloadSite'),
+        BACKEND_API: $t('operations.domain.useType.backendApi'),
+        OSS_ACCELERATION: $t('operations.domain.useType.ossAcceleration'),
+        TRANSFER_PAGE: $t('operations.domain.useType.transferPage'),
+        APP_UPDATE: $t('operations.domain.useType.appUpdate'),
       };
       return useTypeMap[row.useType || ''] || row.useType || '-';
     },
   },
   {
-    title: '使用状态',
+    title: $t('operations.domain.column.usageStatus'),
     key: 'status',
     width: 120,
     render(row: Domain) {
@@ -774,7 +766,7 @@ const subdomainColumns: DataTableColumn<Domain>[] = [
           type: isDisabled ? 'error' : 'success',
           size: 'small',
         },
-        () => (isDisabled ? '已停用' : '启用成功'),
+        () => (isDisabled ? $t('operations.messageSettings.option.statusDisabled') : $t('operations.domain.status.enabledSuccess')),
       );
     },
   },
@@ -816,7 +808,7 @@ const fetchDomains = async () => {
     // Fetch subdomain counts for each parent domain
     fetchSubdomainCounts();
   } catch (error: any) {
-    message.error('获取域名列表失败');
+    message.error($t('operations.domain.message.fetchListFailed'));
     console.error('Fetch domains error:', error);
     console.error('Error response:', error.response?.data);
   } finally {
@@ -883,7 +875,7 @@ const handleShowSubdomains = async (domain: Domain) => {
     const responseData = response.data?.data || response;
     subdomains.value = responseData.list || responseData.domains || [];
   } catch (error: any) {
-    message.error('获取子域名失败');
+    message.error($t('operations.domain.message.fetchSubdomainsFailed'));
     console.error('Fetch subdomains error:', error);
   } finally {
     subdomainLoading.value = false;
@@ -905,26 +897,26 @@ const handleCheck = (keys: (string | number)[]) => {
 };
 
 const handleCreateSuccess = () => {
-  message.success('域名创建成功');
+  message.success($t('operations.domain.message.createSuccess'));
   fetchDomains();
 };
 
 const handleDelete = async (id: number) => {
   try {
     await domainApi.deleteDomain(id);
-    message.success('删除成功');
+    message.success($t('common.deleteSuccess'));
     fetchDomains();
   } catch (error) {
-    message.error('删除失败');
+    message.error($t('operations.domain.message.deleteFailed'));
   }
 };
 
 const handleBulkDelete = () => {
   if (selectedRowKeys.value.length === 0) {
-    message.warning('请选择要删除的域名');
+    message.warning($t('operations.domain.message.selectDomainsToDelete'));
     return;
   }
-  message.info('批量删除功能开发中');
+  message.info($t('operations.domain.message.bulkDeleteDeveloping'));
 };
 
 // Switch CDN
@@ -936,7 +928,7 @@ const handleSwitchCDN = (row: Domain) => {
 
 const confirmSwitchCDN = async () => {
   if (!selectedDomain.value || !targetCDN.value) {
-    message.warning('请选择目标CDN节点');
+    message.warning($t('operations.domain.message.selectTargetCdn'));
     return;
   }
 
@@ -947,11 +939,11 @@ const confirmSwitchCDN = async () => {
       migrateData: false,
       updateDNS: true,
     });
-    message.success('CDN节点切换成功，预计5-30分钟生效');
+    message.success($t('operations.domain.message.cdnSwitchSuccess'));
     showSwitchCDNModal.value = false;
     fetchDomains();
   } catch (error: any) {
-    message.error(error.response?.data?.message || '切换CDN节点失败');
+    message.error(error.response?.data?.message || $t('operations.domain.message.cdnSwitchFailed'));
   } finally {
     loading.value = false;
   }
@@ -974,11 +966,11 @@ const confirmBindAgent = async () => {
     await domainApi.updateDomain(selectedDomain.value.id, {
       boundAgentId: agentId.value || null,
     } as any);
-    message.success(agentId.value ? '代理绑定成功' : '代理解绑成功');
+    message.success(agentId.value ? $t('operations.domain.message.agentBindSuccess') : $t('operations.domain.message.agentUnbindSuccess'));
     showBindAgentModal.value = false;
     fetchDomains();
   } catch (error: any) {
-    message.error(error.response?.data?.message || '绑定代理失败');
+    message.error(error.response?.data?.message || $t('operations.domain.message.agentBindFailed'));
   } finally {
     loading.value = false;
   }
@@ -997,18 +989,18 @@ const handleVerifyDomain = async (domain: Domain) => {
     const result = response.data || response;
 
     if (result.code === 0) {
-      message.success(result.data.message || '验证完成');
+      message.success(result.data.message || $t('operations.domain.message.verifyComplete'));
       // Refresh domains to show updated status
       fetchDomains();
     } else {
-      message.warning(result.message || '验证失败');
+      message.warning(result.message || $t('operations.domain.message.verifyFailed'));
     }
   } catch (error: any) {
     if (error.response?.status === 429) {
       // Rate limit error
-      message.warning(error.response?.data?.message || '请稍后再试');
+      message.warning(error.response?.data?.message || $t('operations.domain.message.tryAgainLater'));
     } else {
-      message.error(error.response?.data?.message || '验证失败');
+      message.error(error.response?.data?.message || $t('operations.domain.message.verifyFailed'));
     }
   } finally {
     isVerifying.value[domain.id] = false;
@@ -1018,17 +1010,17 @@ const handleVerifyDomain = async (domain: Domain) => {
 // Toggle Enable/Disable
 const handleToggleStatus = async (row: Domain) => {
   const newStatus = row.status === 'DISABLED' ? 'NORMAL' : 'DISABLED';
-  const action = newStatus === 'DISABLED' ? '停用' : '启用';
+  const action = newStatus === 'DISABLED' ? $t('common.disable') : $t('common.enable');
 
   loading.value = true;
   try {
     await domainApi.updateDomain(row.id, {
       status: newStatus,
     } as any);
-    message.success(`域名${action}成功`);
+    message.success($t('operations.domain.message.domainEnableSuccess'));
     fetchDomains();
   } catch (error: any) {
-    message.error(error.response?.data?.message || `域名${action}失败`);
+    message.error(error.response?.data?.message || $t('operations.domain.message.operationFailed'));
   } finally {
     loading.value = false;
   }
@@ -1039,9 +1031,9 @@ const handleClearCache = async (row: Domain) => {
   loading.value = true;
   try {
     await domainApi.clearCache(row.id);
-    message.success('缓存清理成功');
+    message.success($t('operations.domain.message.cacheClearSuccess'));
   } catch (error: any) {
-    message.error(error.response?.data?.message || '清理缓存失败');
+    message.error(error.response?.data?.message || $t('operations.domain.message.cacheClearFailed'));
   } finally {
     loading.value = false;
   }

@@ -1,0 +1,172 @@
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const root = path.join(__dirname, '..', 'src', 'views', 'game-management');
+
+function walk(dir, acc = []) {
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    const p = path.join(dir, e.name);
+    if (e.isDirectory()) walk(p, acc);
+    else if (e.name.endsWith('.vue')) acc.push(p);
+  }
+  return acc;
+}
+
+const replacements = [
+  // GameImportDialog
+  [/\? '预览导入数据'/g, "? $t('game.importDialog.previewTitle')"],
+  [/: '预览导入数据'/g, ": $t('game.importDialog.previewTitle')"],
+  [/\? '导入结果'/g, "? $t('game.importDialog.resultTitle')"],
+  [/: '导入结果'/g, ": $t('game.importDialog.resultTitle')"],
+  [/发现 \{\{ previewData\.errors\.length \}\} 个数据错误，请检查并修正：/g, "{{ $t('game.importDialog.errorsFound', [previewData.errors.length]) }}"],
+  [/第\{\{ error\.row \}\}行 \{\{ error\.field \}\}：\{\{ error\.message \}\}/g, "{{ $t('game.importDialog.rowFieldError', [error.row, error.field, error.message]) }}"],
+  [/label="总数据"/g, ':label="$t(\'game.importDialog.totalData\')"'],
+  [/label="有效数据"/g, ':label="$t(\'game.importDialog.validData\')"'],
+  [/label="错误数据"/g, ':label="$t(\'game.importDialog.errorData\')"'],
+  [/>\s*返回上传\s*</g, '>{{ $t(\'game.importDialog.backToUpload\') }}<'],
+  [/开始导入 \(\{\{ previewData\.summary\.valid \}\}条\)/g, "{{ $t('game.importDialog.startImport', [previewData.summary.valid]) }}"],
+  [/<p class="mb-2">导入完成！<\/p>/g, '<p class="mb-2">{{ $t(\'game.importDialog.importDone\') }}</p>'],
+  [/<span>总计：\{\{ importResults\.summary\.total \}\}<\/span>/g, '<span>{{ $t(\'game.importDialog.total\') }}: {{ importResults.summary.total }}</span>'],
+  [/>\s*成功：\{\{ importResults\.summary\.success \}\}</g, '>{{ $t(\'game.importDialog.success\') }}: {{ importResults.summary.success }}<'],
+  [/>\s*失败：\{\{ importResults\.summary\.error \}\}</g, '>{{ $t(\'game.importDialog.failed\') }}: {{ importResults.summary.error }}<'],
+  [/>\s*跳过：\{\{ importResults\.summary\.skipped \}\}</g, '>{{ $t(\'game.importDialog.skipped\') }}: {{ importResults.summary.skipped }}<'],
+  [/>\s*解析文件\s*</g, '>{{ $t(\'game.importDialog.parseFile\') }}<'],
+  [/return new Error\('请选择所属平台'\)/g, "return new Error($t('game.importDialog.selectPlatformRequired'))"],
+  [/message: '请选择默认币种'/g, "message: $t('game.importDialog.selectDefaultCurrency')"],
+  [/return new Error\('请选择默认币种'\)/g, "return new Error($t('game.importDialog.selectDefaultCurrency'))"],
+  [/message: '请选择要导入的文件'/g, "message: $t('game.importDialog.selectFileRequired')"],
+  [/return new Error\('请选择要导入的文件'\)/g, "return new Error($t('game.importDialog.selectFileRequired'))"],
+  [/\{ title: '行号', key: 'no'/g, "{ title: $t('game.importDialog.rowNo'), key: 'no'"],
+  [/\{ title: '行号', key: 'row'/g, "{ title: $t('game.importDialog.rowNo'), key: 'row'"],
+  [/title: '图标链接'/g, "title: $t('game.importDialog.iconUrl')"],
+  [/text: '成功'/g, "text: $t('game.importDialog.statusSuccess')"],
+  [/text: '失败'/g, "text: $t('game.importDialog.statusFailed')"],
+  [/text: '跳过'/g, "text: $t('game.importDialog.statusSkipped')"],
+  [/text: '未知'/g, "text: $t('game.importDialog.statusUnknown')"],
+  [/\{ title: '消息', key: 'message'/g, "{ title: $t('game.importDialog.message'), key: 'message'"],
+  [/content: '模板下载成功'/g, "content: $t('game.importDialog.templateDownloadSuccess')"],
+  [/content: '下载模板失败'/g, "content: $t('game.importDialog.templateDownloadFailed')"],
+  [/throw new Error\('文件为空或无法解析'\)/g, "throw new Error($t('game.importDialog.fileEmpty'))"],
+  [/content: error\?\.message \|\| '解析文件失败'/g, "content: error?.message || $t('game.importDialog.parseFailed')"],
+  [/content: error\?\.message \|\| '导入失败'/g, "content: error?.message || $t('game.importDialog.importFailed')"],
+  // ApiImportDialog
+  [/title="接口导入子游戏"/g, ':title="$t(\'game.apiImport.title\')"'],
+  [/tab="cURL 命令"/g, ':tab="$t(\'game.apiImport.curlTab\')"'],
+  [/tab="请求设置"/g, ':tab="$t(\'game.apiImport.requestTab\')"'],
+  [/placeholder="粘贴从 Postman\/浏览器复制的 cURL 命令"/g, ':placeholder="$t(\'game.apiImport.pasteCurl\')"'],
+  [/>\s*解析 cURL\s*</g, '>{{ $t(\'game.apiImport.parseCurl\') }}<'],
+  [/>\s*解析并测试\s*</g, '>{{ $t(\'game.apiImport.parseAndTest\') }}<'],
+  [/支持 -X、-H\/--header、-d\/--data\/--data-raw、--compressed[\s\S]*?等常见参数。解析后会填充到“请求设置”。/g, "{{ $t('game.apiImport.curlHint') }}"],
+  [/label="HTTP 方法"/g, ':label="$t(\'game.apiImport.httpMethod\')"'],
+  [/label="平台"/g, ':label="$t(\'game.apiImport.platform\')"'],
+  [/placeholder="例如: PG Soft \/ CQ9 \/ JILI"/g, ':placeholder="$t(\'game.apiImport.vendorPlaceholder\')"'],
+  [/label="基础域名"/g, ':label="$t(\'game.apiImport.baseDomain\')"'],
+  [/placeholder="例如: https:\/\/apis\.msh\.best"/g, ':placeholder="$t(\'game.apiImport.baseDomainPlaceholder\')"'],
+  [/placeholder="例如: \/ley\/gamelist"/g, ':placeholder="$t(\'game.apiImport.endpointPlaceholder\')"'],
+  [/label="接口地址"/g, ':label="$t(\'game.apiImport.apiUrl\')"'],
+  [/placeholder="自动拼接: 基础域名 \+ Endpoint"/g, ':placeholder="$t(\'game.apiImport.apiUrlPlaceholder\')"'],
+  [/label="根数组路径"/g, ':label="$t(\'game.apiImport.rootArrayPath\')"'],
+  [/placeholder="响应中列表路径，如 data\.list 或 results"/g, ':placeholder="$t(\'game.apiImport.rootArrayPlaceholder\')"'],
+  // platform index
+  [/\{ label: '真人', value: 'LIVE' \}/g, "{ label: $t('game.statisticsExtra.typeLiveShort'), value: 'LIVE' }"],
+  [/\{ label: '电子', value: 'SLOT' \}/g, "{ label: $t('game.statisticsExtra.typeSlotShort'), value: 'SLOT' }"],
+  [/\{ label: '体育', value: 'SPORTS' \}/g, "{ label: $t('game.statisticsExtra.typeSportsShort'), value: 'SPORTS' }"],
+  [/\{ label: '彩票', value: 'LOTTERY' \}/g, "{ label: $t('game.statisticsExtra.typeLotteryShort'), value: 'LOTTERY' }"],
+  [/\{ label: '棋牌', value: 'CHESS_CARDS' \}/g, "{ label: $t('game.statisticsExtra.typeChessShort'), value: 'CHESS_CARDS' }"],
+  [/\{ label: '电竞', value: 'ESPORTS' \}/g, "{ label: $t('game.platformExtra2.typeEsports'), value: 'ESPORTS' }"],
+  [/\{ label: '捕鱼', value: 'HUNTING' \}/g, "{ label: $t('game.statisticsExtra.typeHuntingShort'), value: 'HUNTING' }"],
+  [/\{ label: '街机', value: 'ARCADE' \}/g, "{ label: $t('game.statisticsExtra.typeArcadeShort'), value: 'ARCADE' }"],
+  [/\{ label: '模拟', value: 'SIMULATION' \}/g, "{ label: $t('game.platformExtra2.typeSimulation'), value: 'SIMULATION' }"],
+  [/\{ label: '斗鸡', value: 'COCKFIGHT' \}/g, "{ label: $t('game.statisticsExtra.typeCockfightShort'), value: 'COCKFIGHT' }"],
+  [/\{ label: '区块链', value: 'BLOCKCHAIN' \}/g, "{ label: $t('game.statisticsExtra.typeBlockchainShort'), value: 'BLOCKCHAIN' }"],
+  [/\{ label: '禁用', value: false \}/g, "{ label: $t('common.disabled'), value: false }"],
+  [/message: '请输入平台ID'/g, "message: $t('game.platform.enterPlatformId')"],
+  [/message: '平台ID长度为2-20个字符'/g, "message: $t('game.platformExtra2.platformIdLength')"],
+  [/message: '请输入平台名称'/g, "message: $t('game.platform.enterPlatformName')"],
+  [/message: '平台名称长度为2-50个字符'/g, "message: $t('game.platformExtra2.platformNameLength')"],
+  [/\{ title: '平台ID', key: 'platformId'/g, "{ title: $t('game.platform.platformId'), key: 'platformId'"],
+  [/alt: '平台Logo'/g, "alt: $t('game.platform.platformIcon')"],
+  [/h\('span', \{ class: 'text-gray-400' \}, '无Logo'\)/g, "h('span', { class: 'text-gray-400' }, $t('game.platformExtra2.noLogo'))"],
+  [/LIVE: '真人'/g, "LIVE: $t('game.statisticsExtra.typeLiveShort')"],
+  [/SLOT: '电子'/g, "SLOT: $t('game.statisticsExtra.typeSlotShort')"],
+  [/SPORTS: '体育'/g, "SPORTS: $t('game.statisticsExtra.typeSportsShort')"],
+  [/LOTTERY: '彩票'/g, "LOTTERY: $t('game.statisticsExtra.typeLotteryShort')"],
+  [/CHESS_CARDS: '棋牌'/g, "CHESS_CARDS: $t('game.statisticsExtra.typeChessShort')"],
+  [/ESPORTS: '电竞'/g, "ESPORTS: $t('game.platformExtra2.typeEsports')"],
+  [/HUNTING: '捕鱼'/g, "HUNTING: $t('game.statisticsExtra.typeHuntingShort')"],
+  [/ARCADE: '街机'/g, "ARCADE: $t('game.statisticsExtra.typeArcadeShort')"],
+  [/SIMULATION: '模拟'/g, "SIMULATION: $t('game.platformExtra2.typeSimulation')"],
+  [/COCKFIGHT: '斗鸡'/g, "COCKFIGHT: $t('game.statisticsExtra.typeCockfightShort')"],
+  [/title: '平台图片'/g, "title: $t('game.platformExtra2.platformImage')"],
+  [/alt: '平台图片'/g, "alt: $t('game.platformExtra2.platformImage')"],
+  [/h\('span', \{ class: 'text-gray-400' \}, '无图片'\)/g, "h('span', { class: 'text-gray-400' }, $t('game.platformExtra2.noImage'))"],
+  [/title: '平台开关'/g, "title: $t('game.platformExtra2.platformSwitch')"],
+  [/title: '子游戏数量'/g, "title: $t('game.platformExtra2.subgameCount')"],
+  [/title: '最低准入'/g, "title: $t('game.platformExtra.minEntry')"],
+  [/\{ default: \(\) => '管理' \}/g, "{ default: () => $t('game.platformExtra2.manage') }"],
+  [/message\.warning\('请选择要删除的平台'\)/g, "message.warning($t('game.platformExtra2.selectPlatformsToDelete'))"],
+  [/message\.success\(`已成功删除 \$\{selectedRows\.length\} 个平台`\)/g, "message.success($t('game.platformExtra2.deletedPlatformsCount', [selectedRows.length]))"],
+  // bet-records template
+  [/合并显示:/g, "{{ $t('game.betRecordsExtra2.mergeDisplay') }}"],
+  [/<template #checked>按局<\/template>/g, '<template #checked>{{ $t(\'game.betRecordsExtra2.byRound\') }}</template>'],
+  [/<template #unchecked>明细<\/template>/g, '<template #unchecked>{{ $t(\'game.betRecordsExtra2.details\') }}</template>'],
+  [/开启后：每局游戏显示为一行（投注\+结果）<br \/>[\s\S]*?关闭后：显示所有交易明细（下注、中奖分开）/g, "{{ $t('game.betRecordsExtra2.mergeHintOn') }}<br />{{ $t('game.betRecordsExtra2.mergeHintOff') }}"],
+  [/共 \{\{ paginationReactive\.total \}\} 条记录/g, "{{ $t('game.betRecordsExtra.recordCount', [paginationReactive.total]) }}"],
+  [/页面合计：/g, "{{ $t('game.betRecordsExtra2.pageTotal') }}"],
+  [/投注金额:/g, "{{ $t('game.betRecords.betAmount') }}:"],
+  [/有效投注:/g, "{{ $t('game.betRecords.validBet') }}:"],
+  [/预扣税:/g, "{{ $t('game.betRecordsExtra2.withholdingTax') }}:"],
+  [/会员输赢:/g, "{{ $t('game.betRecords.winLoss') }}:"],
+  [/流水:/g, "{{ $t('game.betRecordsExtra2.turnover') }}:"],
+  [/tab="投注统计"/g, ':tab="$t(\'game.betRecordsExtra2.statsTab\')"'],
+  [/>\s*搜索\s*</g, '>{{ $t(\'common.search\') }}<'],
+  [/>\s*重置\s*</g, '>{{ $t(\'common.reset\') }}<'],
+  [/游戏明细/g, "{{ $t('game.betRecordsExtra2.gameDetails') }}"],
+  [/共 \{\{ statsGameData\.length \}\} 条记录/g, "{{ $t('game.betRecordsExtra.recordCount', [statsGameData.length]) }}"],
+  [/title: '注单编号'/g, "title: $t('game.betRecords.betId')"],
+  [/title: '会员账号'/g, "title: $t('game.betRecords.memberAccount')"],
+  [/title: '会员ID'/g, "title: $t('game.betRecordsExtra2.memberId')"],
+  [/title: '游戏平台'/g, "title: $t('game.betRecords.gamePlatform')"],
+  [/title: '局号'/g, "title: $t('game.betRecordsExtra.roundNo')"],
+  [/title: '交易类型'/g, "title: $t('game.betRecords.transactionType')"],
+  [/label: '下注'/g, "label: $t('game.betRecordsExtra2.betPlaced')"],
+  [/label: '中奖'/g, "label: $t('game.betRecordsExtra2.betWon')"],
+  [/label: '输'/g, "label: $t('game.betRecordsExtra2.betLost')"],
+  [/label: '平局'/g, "label: $t('game.betRecordsExtra2.betDraw')"],
+  [/label: '取消'/g, "label: $t('game.betRecordsExtra2.betCancelled')"],
+  [/label: '退款'/g, "label: $t('game.betRecordsExtra2.betRefunded')"],
+  [/title: '投注金额'/g, "title: $t('game.betRecords.betAmount')"],
+  [/title: '有效投注'/g, "title: $t('game.betRecords.validBet')"],
+  [/title: '预扣税'/g, "title: $t('game.betRecordsExtra2.withholdingTax')"],
+  [/title: '会员输赢'/g, "title: $t('game.betRecords.winLoss')"],
+  [/title: '流水'/g, "title: $t('game.betRecordsExtra2.turnover')"],
+  [/title: '投注前余额'/g, "title: $t('game.betRecords.balanceBefore')"],
+  [/title: '投注后余额'/g, "title: $t('game.betRecords.balanceAfter')"],
+  [/title: '赔率'/g, "title: $t('game.betRecordsExtra2.odds')"],
+  [/arcade: '街机'/g, "arcade: $t('game.statisticsExtra.typeArcadeShort')"],
+  [/SLOT: '电子'/g, "SLOT: $t('game.statisticsExtra.typeSlotShort')"],
+  [/fishing: '捕鱼'/g, "fishing: $t('game.statisticsExtra.typeHuntingShort')"],
+  [/sports: '体育'/g, "sports: $t('game.statisticsExtra.typeSportsShort')"],
+  [/LIVE: '真人'/g, "LIVE: $t('game.statisticsExtra.typeLiveShort')"],
+  [/BLOCKCHAIN: '区块链'/g, "BLOCKCHAIN: $t('game.statisticsExtra.typeBlockchainShort')"],
+  [/card: '棋牌'/g, "card: $t('game.statisticsExtra.typeChessShort')"],
+  [/  今天:/g, "  [$t('game.betRecordsExtra2.today')]:"],
+  [/  昨天:/g, "  [$t('game.betRecordsExtra2.yesterday')]:"],
+  [/  最近7天:/g, "  [$t('game.betRecordsExtra2.last7Days')]:"],
+  [/  最近30天:/g, "  [$t('game.betRecordsExtra2.last30Days')]:"],
+  [/  本月:/g, "  [$t('game.betRecordsExtra2.thisMonth')]:"],
+  [/  上月:/g, "  [$t('game.betRecordsExtra2.lastMonth')]:"],
+];
+
+for (const fp of walk(root)) {
+  let c = fs.readFileSync(fp, 'utf8');
+  if (!c.includes("from '@vben/locales'") && /[\u4e00-\u9fff]/.test(c)) {
+    c = c.replace(/^import /m, "import { $t } from '@vben/locales';\n\nimport ");
+  }
+  for (const [a, b] of replacements) c = c.replace(a, b);
+  fs.writeFileSync(fp, c);
+  console.log('pass5', path.relative(root, fp));
+}
+console.log('pass5 done');

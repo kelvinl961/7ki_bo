@@ -22,20 +22,20 @@
           size="medium"
         >
           <section class="pf-section">
-            <div class="pf-section__title">基础规则</div>
-            <n-form-item label="公积金名称" path="nameMode" required>
+            <div class="pf-section__title">{{ $t('activity.providentFundSetting.k57fa') }}</div>
+            <n-form-item :label="$t('activity.providentFundSetting.k516c')" path="nameMode" required>
               <n-space vertical :size="10">
                 <n-radio-group
                   v-model:value="form.nameMode"
                   name="pf-name-mode"
                   class="pf-radio-row"
                 >
-                  <n-radio value="system">系统自带</n-radio>
-                  <n-radio value="custom">自定义</n-radio>
+                  <n-radio value="system">{{ $t('activity.formModal.k7cfb') }}</n-radio>
+                  <n-radio value="custom">{{ $t('activity.detailModal.k81ea') }}</n-radio>
                 </n-radio-group>
                 <n-input
                   v-model:value="form.displayName"
-                  placeholder="公积金"
+                  :placeholder="$t('activity.rewardReport.k516c')"
                   :disabled="form.nameMode === 'system'"
                   class="pf-input-name"
                   clearable
@@ -43,7 +43,7 @@
               </n-space>
             </n-form-item>
 
-            <n-form-item label="选择币种" required>
+            <n-form-item :label="$t('activity.providentFundSetting.k9009')" required>
               <n-checkbox-group v-model:value="form.currencies">
                 <div class="pf-currency-group">
                   <n-checkbox
@@ -56,13 +56,13 @@
               </n-checkbox-group>
             </n-form-item>
 
-            <n-form-item label="获得公积金充值要求">
+            <n-form-item :label="$t('activity.providentFundSetting.k83b7')">
               <div class="pf-deposit-table-wrap">
                 <table class="pf-deposit-table">
                   <thead>
                     <tr>
-                      <th>币种</th>
-                      <th>单笔充值 ≥</th>
+                      <th>{{ $t('activity.luckyWheel.k5e01') }}</th>
+                      <th>{{ $t('activity.providentFundSetting.k5355') }}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -82,18 +82,16 @@
                       </td>
                     </tr>
                     <tr v-if="form.currencies.length === 0">
-                      <td colspan="2" class="pf-deposit-empty">
-                        请先勾选币种
-                      </td>
+                      <td colspan="2" class="pf-deposit-empty">{{ $t('activity.providentFundSetting.k8bf7') }}</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
             </n-form-item>
 
-            <n-form-item label="赠送方式" required>
+            <n-form-item :label="$t('activity.providentFundSetting.k8d60')" required>
               <div class="pf-inline-field">
-                <span class="pf-inline-field__hint">每笔充值，赠送比例</span>
+                <span class="pf-inline-field__hint">{{ $t('activity.providentFundSetting.k6bcfk8d60') }}</span>
                 <n-input-number
                   v-model:value="form.giftRatioPercent"
                   :min="0"
@@ -107,9 +105,7 @@
 
             <n-form-item>
               <template #label>
-                <span class="pf-label-with-tip">
-                  累计赠送封顶
-                  <n-tooltip trigger="hover">
+                <span class="pf-label-with-tip">{{ $t('activity.providentFundSetting.k7d2f') }}<n-tooltip trigger="hover">
                     <template #trigger>
                       <n-icon
                         size="16"
@@ -117,9 +113,7 @@
                       >
                         <HelpCircleOutline />
                       </n-icon>
-                    </template>
-                    累计赠送达到该上限后，后续充值不再赠送公积金（0 表示不封顶，以业务规则为准）
-                  </n-tooltip>
+                    </template>{{ $t('activity.providentFundSetting.k7d2fk540e0k8868k4ee5') }}</n-tooltip>
                 </span>
               </template>
               <n-input-number
@@ -132,9 +126,7 @@
 
             <n-form-item>
               <template #label>
-                <span class="pf-label-with-tip">
-                  赠送次数
-                  <n-tooltip trigger="hover">
+                <span class="pf-label-with-tip">{{ $t('activity.providentFundSetting.k8d602') }}<n-tooltip trigger="hover">
                     <template #trigger>
                       <n-icon
                         size="16"
@@ -142,9 +134,7 @@
                       >
                         <HelpCircleOutline />
                       </n-icon>
-                    </template>
-                    每位用户可获赠次数上限（0 表示不限制次数，以业务规则为准）
-                  </n-tooltip>
+                    </template>{{ $t('activity.providentFundSetting.k6bcf0k8868k4ee5') }}</n-tooltip>
                 </span>
               </template>
               <n-input-number
@@ -157,11 +147,11 @@
           </section>
 
           <n-divider dashed class="pf-divider">
-            <span class="pf-divider__text">取出条件</span>
+            <span class="pf-divider__text">{{ $t('activity.providentFundSetting.k53d6') }}</span>
           </n-divider>
 
           <section class="pf-section pf-section--tight">
-            <n-form-item label="有赠送公积金的充值要求投注倍数" required>
+            <n-form-item :label="$t('activity.providentFundSetting.k6709')" required>
               <n-input-number
                 v-model:value="form.betMultipleWithGift"
                 :min="0"
@@ -171,7 +161,7 @@
               />
             </n-form-item>
 
-            <n-form-item label="无赠送公积金的充值要求投注倍数" required>
+            <n-form-item :label="$t('activity.providentFundSetting.k65e0')" required>
               <n-input-number
                 v-model:value="form.betMultipleWithoutGift"
                 :min="0"
@@ -181,15 +171,15 @@
               />
             </n-form-item>
 
-            <n-form-item label="打码限定平台" class="pf-form-item-platform">
+            <n-form-item :label="$t('activity.providentFundSetting.k6253')" class="pf-form-item-platform">
               <n-space vertical :size="14" class="pf-platform-block">
                 <n-radio-group
                   v-model:value="form.platformRestriction"
                   class="pf-radio-row"
                 >
-                  <n-radio value="all_platforms">不限制</n-radio>
-                  <n-radio value="specific_platforms">指定平台</n-radio>
-                  <n-radio value="exclude_platforms">排除勾选平台</n-radio>
+                  <n-radio value="all_platforms">{{ $t('activity.formModal.k4e0d4') }}</n-radio>
+                  <n-radio value="specific_platforms">{{ $t('activity.formModal.k6307') }}</n-radio>
+                  <n-radio value="exclude_platforms">{{ $t('activity.formModal.k6392') }}</n-radio>
                 </n-radio-group>
                 <div
                   v-if="
@@ -209,24 +199,22 @@
           </section>
 
           <n-divider dashed class="pf-divider">
-            <span class="pf-divider__text">周期与派发</span>
+            <span class="pf-divider__text">{{ $t('activity.providentFundSetting.k5468') }}</span>
           </n-divider>
 
           <section class="pf-section pf-section--tight">
-            <n-form-item label="重置周期">
+            <n-form-item :label="$t('activity.providentFundSetting.k91cd')">
               <n-radio-group v-model:value="form.resetCycle" class="pf-radio-row">
-                <n-radio value="monthly">每月</n-radio>
-                <n-radio value="quarterly">每季度</n-radio>
-                <n-radio value="semi_annual">每半年</n-radio>
-                <n-radio value="annual">每年</n-radio>
-                <n-radio value="none">不限制</n-radio>
+                <n-radio value="monthly">{{ $t('activity.formModal.k6bcf6') }}</n-radio>
+                <n-radio value="quarterly">{{ $t('activity.providentFundSetting.k6bcf') }}</n-radio>
+                <n-radio value="semi_annual">{{ $t('activity.providentFundSetting.k6bcf2') }}</n-radio>
+                <n-radio value="annual">{{ $t('activity.providentFundSetting.k6bcf3') }}</n-radio>
+                <n-radio value="none">{{ $t('activity.formModal.k4e0d4') }}</n-radio>
               </n-radio-group>
             </n-form-item>
             <n-form-item>
               <template #label>
-                <span class="pf-label-with-tip">
-                  同周期能否多次参与
-                  <n-tooltip trigger="hover">
+                <span class="pf-label-with-tip">{{ $t('activity.providentFundSetting.k540c') }}<n-tooltip trigger="hover">
                     <template #trigger>
                       <n-icon size="16" class="pf-tip-icon">
                         <HelpCircleOutline />
@@ -241,73 +229,51 @@
                 v-model:value="form.sameCycleParticipation"
                 class="pf-radio-row"
               >
-                <n-radio value="once_per_cycle">只能参与一次</n-radio>
-                <n-radio value="repeat_after_completion">
-                  完成后可再次参与
-                </n-radio>
+                <n-radio value="once_per_cycle">{{ $t('activity.providentFundSetting.k53ea') }}</n-radio>
+                <n-radio value="repeat_after_completion">{{ $t('activity.providentFundSetting.k5b8c') }}</n-radio>
               </n-radio-group>
             </n-form-item>
-            <n-form-item label="派发方式">
+            <n-form-item :label="$t('activity.formModal.k6d3e')">
               <n-radio-group
                 v-model:value="form.distributionMethod"
                 class="pf-radio-row"
               >
-                <n-radio value="player_claim_expire">玩家自领-过期作废</n-radio>
-                <n-radio value="player_claim_auto">玩家自领-过期自动派发</n-radio>
+                <n-radio value="player_claim_expire">{{ $t('activity.formModal.k73a9k8fc7') }}</n-radio>
+                <n-radio value="player_claim_auto">{{ $t('activity.formModal.k73a9k8fc72') }}</n-radio>
               </n-radio-group>
             </n-form-item>
           </section>
 
           <section class="pf-section pf-section--tight">
-            <div class="pf-section__title pf-section__title--inline">领取入口</div>
-            <n-form-item label="充值成功后直接弹窗">
+            <div class="pf-section__title pf-section__title--inline">{{ $t('activity.luckyWheelPublicConfig.k98862') }}</div>
+            <n-form-item :label="$t('activity.formModal.k51452')">
               <n-switch v-model:value="form.claimPopupAfterRecharge" />
             </n-form-item>
-            <n-form-item label="终端可领取">
+            <n-form-item :label="$t('activity.luckyWheelPublicConfig.k7ec8')">
               <n-space vertical :size="10">
-                <n-checkbox v-model:checked="form.claimEntrance.pc">
-                  PC可领取
-                </n-checkbox>
-                <n-checkbox v-model:checked="form.claimEntrance.androidH5">
-                  Android H5可领取
-                </n-checkbox>
-                <n-checkbox v-model:checked="form.claimEntrance.iosH5">
-                  iOS H5可领取
-                </n-checkbox>
+                <n-checkbox v-model:checked="form.claimEntrance.pc">{{ $t('activity.formModal.pC') }}</n-checkbox>
+                <n-checkbox v-model:checked="form.claimEntrance.androidH5">{{ $t('activity.luckyWheelPublicConfig.androidH5') }}</n-checkbox>
+                <n-checkbox v-model:checked="form.claimEntrance.iosH5">{{ $t('activity.luckyWheelPublicConfig.iOSH5') }}</n-checkbox>
                 <div class="pf-claim-app-block">
-                  <n-checkbox v-model:checked="form.claimEntrance.androidApp">
-                    Android APP可领取
-                  </n-checkbox>
-                  <n-checkbox v-model:checked="form.claimEntrance.iosApp">
-                    iOS APP可领取
-                  </n-checkbox>
+                  <n-checkbox v-model:checked="form.claimEntrance.androidApp">{{ $t('activity.luckyWheelPublicConfig.androidAPP') }}</n-checkbox>
+                  <n-checkbox v-model:checked="form.claimEntrance.iosApp">{{ $t('activity.luckyWheelPublicConfig.iOSAPP') }}</n-checkbox>
                   <div class="pf-claim-app-sub">
-                    <n-checkbox v-model:checked="form.claimEntrance.appNative">
-                      原生APP
-                    </n-checkbox>
-                    <n-checkbox v-model:checked="form.claimEntrance.appSpeed">
-                      极速APP
-                    </n-checkbox>
-                    <n-checkbox v-model:checked="form.claimEntrance.appShell">
-                      马甲包
-                    </n-checkbox>
-                    <n-checkbox v-model:checked="form.claimEntrance.appPwa">
-                      PWA快捷APP
-                    </n-checkbox>
-                    <n-checkbox v-model:checked="form.claimEntrance.appIosSigned">
-                      iOS描述签
-                    </n-checkbox>
+                    <n-checkbox v-model:checked="form.claimEntrance.appNative">{{ $t('activity.formModal.k539f') }}</n-checkbox>
+                    <n-checkbox v-model:checked="form.claimEntrance.appSpeed">{{ $t('activity.formModal.k6781') }}</n-checkbox>
+                    <n-checkbox v-model:checked="form.claimEntrance.appShell">{{ $t('activity.formModal.k9a6c') }}</n-checkbox>
+                    <n-checkbox v-model:checked="form.claimEntrance.appPwa">{{ $t('activity.formModal.pWAAPP') }}</n-checkbox>
+                    <n-checkbox v-model:checked="form.claimEntrance.appIosSigned">{{ $t('activity.luckyWheelPublicConfig.iOS') }}</n-checkbox>
                   </div>
                 </div>
               </n-space>
             </n-form-item>
-            <n-form-item label="领取次数限制">
+            <n-form-item :label="$t('activity.luckyWheelPublicConfig.k9886')">
               <n-space vertical :size="12">
                 <n-space align="center" :size="10" wrap>
                   <n-checkbox
                     v-model:checked="form.claimEntrance.sameDeviceLimitEnabled"
                   />
-                  <span class="pf-inline-field__hint">同登录设备号只能领取</span>
+                  <span class="pf-inline-field__hint">{{ $t('activity.luckyWheelPublicConfig.k540c3') }}</span>
                   <n-input-number
                     v-model:value="form.claimEntrance.sameDeviceLimitCount"
                     :min="1"
@@ -317,7 +283,7 @@
                     class="pf-input-xs"
                     :disabled="!form.claimEntrance.sameDeviceLimitEnabled"
                   />
-                  <span class="pf-inline-field__hint">次</span>
+                  <span class="pf-inline-field__hint">{{ $t('activity.luckyWheelPublicConfig.k6b21') }}</span>
                 </n-space>
                 <n-space align="center" :size="10" wrap>
                   <n-checkbox
@@ -325,7 +291,7 @@
                       form.claimEntrance.sameFingerprintLimitEnabled
                     "
                   />
-                  <span class="pf-inline-field__hint">同浏览器指纹只能领取</span>
+                  <span class="pf-inline-field__hint">{{ $t('activity.luckyWheelPublicConfig.k540c4') }}</span>
                   <n-input-number
                     v-model:value="form.claimEntrance.sameFingerprintLimitCount"
                     :min="1"
@@ -335,14 +301,14 @@
                     class="pf-input-xs"
                     :disabled="!form.claimEntrance.sameFingerprintLimitEnabled"
                   />
-                  <span class="pf-inline-field__hint">次</span>
+                  <span class="pf-inline-field__hint">{{ $t('activity.luckyWheelPublicConfig.k6b21') }}</span>
                 </n-space>
               </n-space>
             </n-form-item>
           </section>
 
           <n-divider dashed class="pf-divider">
-            <span class="pf-divider__text">更多领取限制</span>
+            <span class="pf-divider__text">{{ $t('activity.luckyWheelPublicConfig.k66f4') }}</span>
           </n-divider>
           <section class="pf-section pf-section--tight">
             <div class="pf-checkbox-grid">
@@ -355,12 +321,12 @@
                 {{ opt.label }}
               </n-checkbox>
             </div>
-            <n-form-item label="同IP领取限制" class="pf-mt">
+            <n-form-item :label="$t('activity.luckyWheelPublicConfig.k540c')" class="pf-mt">
               <n-space align="center" :size="10" wrap>
                 <n-checkbox
                   v-model:checked="form.moreRestrictionLimits.sameIpLimitEnabled"
                 />
-                <span class="pf-inline-field__hint">同登录IP只能领取</span>
+                <span class="pf-inline-field__hint">{{ $t('activity.luckyWheelPublicConfig.k540c5') }}</span>
                 <n-input-number
                   v-model:value="form.moreRestrictionLimits.sameIpLimitMax"
                   :min="1"
@@ -370,17 +336,17 @@
                   class="pf-input-xs"
                   :disabled="!form.moreRestrictionLimits.sameIpLimitEnabled"
                 />
-                <span class="pf-inline-field__hint">次</span>
+                <span class="pf-inline-field__hint">{{ $t('activity.luckyWheelPublicConfig.k6b21') }}</span>
               </n-space>
             </n-form-item>
-            <n-form-item label="近期充值笔数">
+            <n-form-item :label="$t('activity.luckyWheelPublicConfig.k8fd1')">
               <n-space align="center" :size="8" wrap>
                 <n-checkbox
                   v-model:checked="
                     form.moreRestrictionLimits.recentDaysMinRechargeCountEnabled
                   "
                 />
-                <span class="pf-inline-field__hint">最近</span>
+                <span class="pf-inline-field__hint">{{ $t('activity.luckyWheelPublicConfig.k6700') }}</span>
                 <n-input-number
                   v-model:value="
                     form.moreRestrictionLimits.recentDaysForRechargeRules
@@ -395,7 +361,7 @@
                     !form.moreRestrictionLimits.recentDaysMinRechargeAmountEnabled
                   "
                 />
-                <span class="pf-inline-field__hint">天内充值次数 ≥</span>
+                <span class="pf-inline-field__hint">{{ $t('activity.luckyWheelPublicConfig.k5929') }}</span>
                 <n-input-number
                   v-model:value="
                     form.moreRestrictionLimits.recentDaysMinRechargeCount
@@ -409,17 +375,17 @@
                     !form.moreRestrictionLimits.recentDaysMinRechargeCountEnabled
                   "
                 />
-                <span class="pf-inline-field__hint">次才能领取</span>
+                <span class="pf-inline-field__hint">{{ $t('activity.luckyWheelPublicConfig.k6b212') }}</span>
               </n-space>
             </n-form-item>
-            <n-form-item label="近期充值金额 (BRL)">
+            <n-form-item :label="$t('activity.providentFundSetting.k8fd1BRL')">
               <n-space align="center" :size="8" wrap>
                 <n-checkbox
                   v-model:checked="
                     form.moreRestrictionLimits.recentDaysMinRechargeAmountEnabled
                   "
                 />
-                <span class="pf-inline-field__hint">最近</span>
+                <span class="pf-inline-field__hint">{{ $t('activity.luckyWheelPublicConfig.k6700') }}</span>
                 <n-input-number
                   v-model:value="
                     form.moreRestrictionLimits.recentDaysForRechargeRules
@@ -434,7 +400,7 @@
                     !form.moreRestrictionLimits.recentDaysMinRechargeAmountEnabled
                   "
                 />
-                <span class="pf-inline-field__hint">天内充值金额 ≥</span>
+                <span class="pf-inline-field__hint">{{ $t('activity.luckyWheelPublicConfig.k59292') }}</span>
                 <n-input-number
                   v-model:value="
                     form.moreRestrictionLimits.recentDaysMinRechargeAmount
@@ -447,24 +413,22 @@
                     !form.moreRestrictionLimits.recentDaysMinRechargeAmountEnabled
                   "
                 />
-                <span class="pf-inline-field__hint">才能领取</span>
+                <span class="pf-inline-field__hint">{{ $t('activity.luckyWheelPublicConfig.k624d') }}</span>
               </n-space>
             </n-form-item>
           </section>
 
           <n-divider dashed class="pf-divider">
-            <span class="pf-divider__text">领取层级</span>
+            <span class="pf-divider__text">{{ $t('activity.providentFundSetting.k9886') }}</span>
           </n-divider>
           <section class="pf-section pf-section--tight">
-            <n-form-item label="可领取层级" required>
+            <n-form-item :label="$t('activity.providentFundSetting.k53ef')" required>
               <n-space vertical :size="10" class="pf-claim-levels-wrap">
                 <n-checkbox
                   :checked="allClaimLevelsSelected"
                   @update:checked="onToggleAllClaimLevels"
                   :disabled="tiersLoading || claimLevelOptions.length === 0"
-                >
-                  全选
-                </n-checkbox>
+                >{{ $t('activity.formModal.k51683') }}</n-checkbox>
                 <div class="pf-checkbox-grid">
                   <n-checkbox
                     v-for="opt in claimLevelOptions"
@@ -476,40 +440,38 @@
                     {{ opt.label }}
                   </n-checkbox>
                 </div>
-                <span v-if="tiersLoading" class="pf-inline-field__hint">正在加载会员层级...</span>
+                <span v-if="tiersLoading" class="pf-inline-field__hint">{{ $t('activity.providentFundSetting.k6b63') }}</span>
                 <span
                   v-else-if="claimLevelOptions.length === 0"
                   class="pf-inline-field__hint"
-                >
-                  暂无可用会员层级，请先在会员层级管理配置
-                </span>
+                >{{ $t('activity.formModal.k6682k8bf7') }}</span>
               </n-space>
             </n-form-item>
           </section>
 
           <n-divider dashed class="pf-divider">
-            <span class="pf-divider__text">规则说明</span>
+            <span class="pf-divider__text">{{ $t('activity.formModal.k89c4') }}</span>
           </n-divider>
           <section class="pf-section pf-section--tight">
-            <n-form-item label="前台展示">
+            <n-form-item :label="$t('activity.providentFundSetting.k524d')">
               <n-space vertical :size="12" style="width: 100%">
                 <n-radio-group
                   v-model:value="form.ruleDescriptionMode"
                   class="pf-radio-row"
                 >
-                  <n-radio value="system">系统自带</n-radio>
-                  <n-radio value="custom">自定义</n-radio>
+                  <n-radio value="system">{{ $t('activity.formModal.k7cfb') }}</n-radio>
+                  <n-radio value="custom">{{ $t('activity.detailModal.k81ea') }}</n-radio>
                 </n-radio-group>
                 <n-input
                   v-if="form.ruleDescriptionMode === 'custom'"
                   v-model:value="form.ruleDescriptionCustom"
                   type="textarea"
                   :rows="10"
-                  placeholder="填写前台展示的公积金规则说明（支持换行）"
+                  :placeholder="$t('activity.providentFundSetting.k586bk652f')"
                   class="pf-rule-textarea"
                 />
                 <div v-else class="pf-system-rule-preview">
-                  <div class="pf-system-rule-preview__label">系统默认说明预览</div>
+                  <div class="pf-system-rule-preview__label">{{ $t('activity.providentFundSetting.k7cfb') }}</div>
                   <pre class="pf-system-rule-preview__body">{{ systemRulePreview }}</pre>
                 </div>
               </n-space>
@@ -522,17 +484,13 @@
     <template #footer>
       <div class="pf-footer">
         <n-space justify="end" :size="12">
-          <n-button class="pf-btn-cancel" @click="visible = false">
-            取消
-          </n-button>
+          <n-button class="pf-btn-cancel" @click="visible = false">{{ $t('activity.activityList.k53d6') }}</n-button>
           <n-button
             type="primary"
             class="pf-btn-save"
             :loading="saving"
             @click="handleSave"
-          >
-            保存
-          </n-button>
+          >{{ $t('activity.luckyWheelEdit.k4fdd') }}</n-button>
         </n-space>
       </div>
     </template>
@@ -540,6 +498,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, watch, computed } from 'vue';
 import {
   NModal,
@@ -579,11 +539,7 @@ import { getActiveMemberTiersApi } from '#/api/core/memberTier';
 const claimLevelOptions = ref<{ id: string; label: string }[]>([]);
 const moreRestrictionToggleOptions = MORE_RESTRICTION_TOGGLE_OPTIONS;
 
-const SYSTEM_RULE_PREVIEW = `1. 每笔充值按活动比例计入公积金（币种 BRL）。
-2. 取出公积金需完成对应打码倍数；有赠送与无赠送时倍数可能不同。
-3. 活动期内领取次数、累计赠送等以实际配置为准。
-4. 支持 PC、H5、Android / iOS APP 等终端（以「领取入口」配置为准）。
-5. 防刷、风控与人工审核以平台规则为准。`;
+const SYSTEM_RULE_PREVIEW = $t('activity.rulePreviews.providentFund');
 
 const props = withDefaults(
   defineProps<{
@@ -619,7 +575,7 @@ const systemRulePreview = computed(() => SYSTEM_RULE_PREVIEW);
 
 const modalTitle = computed(() => {
   if (props.titleText) return props.titleText;
-  return props.mode === 'edit' ? '编辑公积金' : '新增公积金';
+  return props.mode === 'edit' ? $t('activity.common.editPf') : $t('activity.common.addPf');
 });
 
 const allDynamicClaimLevelIds = computed(() =>
@@ -631,7 +587,7 @@ const currencyOptions = ['BRL'] as const;
 
 const form = reactive({
   nameMode: 'system' as 'system' | 'custom',
-  displayName: '公积金',
+  displayName: $t('activity.common.pfDisplayName'),
   currencies: ['BRL'] as string[],
   depositMinByCurrency: {} as Record<string, number | null>,
   giftRatioPercent: 100,
@@ -765,7 +721,7 @@ watch(
   () => form.nameMode,
   (mode) => {
     if (mode === 'system') {
-      form.displayName = '公积金';
+      form.displayName = $t('activity.common.pfDisplayName');
     }
   },
 );
@@ -809,7 +765,7 @@ async function loadClaimLevelOptions() {
     const tiers = await getActiveMemberTiersApi();
     claimLevelOptions.value = tiers.map((tier) => ({
       id: String(tier.id),
-      label: tier.tierName || tier.tierCode || `层级${tier.id}`,
+      label: tier.tierName || tier.tierCode || $t('activity.common.tierLabel', [tier.id]),
     }));
     if (!form.claimLevels.length && claimLevelOptions.value.length > 0) {
       form.claimLevels = [...allDynamicClaimLevelIds.value];
@@ -819,7 +775,7 @@ async function loadClaimLevelOptions() {
     }
   } catch (e) {
     console.error(e);
-    message.error('加载会员层级失败');
+    message.error($t('activity.luckyWheelPublicConfig.k52a0'));
     claimLevelOptions.value = [];
   } finally {
     tiersLoading.value = false;
@@ -857,15 +813,15 @@ async function handleSave() {
       form.platformRestriction === 'exclude_platforms') &&
     !platformSelectionValid.value
   ) {
-    message.warning('请完善打码限定平台选择');
+    message.warning($t('activity.providentFundSetting.k8bf72'));
     return;
   }
   if (!form.claimLevels.length) {
-    message.warning('请至少勾选一个领取层级');
+    message.warning($t('activity.providentFundSetting.k8bf73'));
     return;
   }
   if (!form.currencies.length) {
-    message.warning('请至少选择一个币种');
+    message.warning($t('activity.providentFundSetting.k8bf74'));
     return;
   }
   saving.value = true;
@@ -879,11 +835,11 @@ async function handleSave() {
       await new Promise((r) => setTimeout(r, 200));
     }
     emit('saved', snapshot);
-    message.success('保存成功');
+    message.success($t('activity.luckyWheelEdit.k4fdd2'));
     visible.value = false;
   } catch (e) {
     console.error(e);
-    message.error('保存失败');
+    message.error($t('activity.luckyWheelEdit.k4fdd3'));
   } finally {
     saving.value = false;
   }

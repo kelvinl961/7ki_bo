@@ -8,6 +8,8 @@ import { $t } from '@vben/locales';
 
 import { useAuthStore } from '#/store';
 
+import AuthLanguageModal from '#/components/auth/AuthLanguageModal.vue';
+
 defineOptions({ name: 'Login' });
 
 const authStore = useAuthStore();
@@ -44,9 +46,14 @@ const formSchema = computed((): VbenFormSchema[] => {
 </script>
 
 <template>
-  <AuthenticationLogin
-    :form-schema="formSchema"
-    :loading="authStore.loginLoading"
-    @submit="authStore.authLogin"
-  />
+  <div>
+    <AuthenticationLogin
+      :form-schema="formSchema"
+      :loading="authStore.loginLoading"
+      @submit="authStore.authLogin"
+    />
+    <div class="mt-4 flex justify-center">
+      <AuthLanguageModal inline />
+    </div>
+  </div>
 </template>

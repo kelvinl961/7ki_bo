@@ -1,12 +1,12 @@
 <template>
   <div class="activity-setting-manager">
     <n-card>
-      <n-empty description="活跃度设置功能开发中...">
+      <n-empty :description="$t('activity.activitySetting.k6d3b')">
         <template #icon>
           <SettingsOutline size="48" />
         </template>
         <template #extra>
-          <n-button size="small" @click="handleComingSoon"> 敬请期待 </n-button>
+          <n-button size="small" @click="handleComingSoon">{{ $t('activity.shareManagement.k656c') }}</n-button>
         </template>
       </n-empty>
     </n-card>
@@ -14,13 +14,15 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { NCard, NEmpty, NButton, useMessage } from 'naive-ui';
 import { SettingsOutline } from '@vicons/ionicons5';
 
 const message = useMessage();
 
 const handleComingSoon = () => {
-  message.info('活跃度设置功能即将上线，敬请期待！');
+  message.info($t('activity.activitySetting.k6d3bk656c'));
 };
 </script>
 

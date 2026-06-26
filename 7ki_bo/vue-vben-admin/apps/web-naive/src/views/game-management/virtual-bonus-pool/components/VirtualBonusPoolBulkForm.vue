@@ -1,18 +1,18 @@
 <template>
   <div>
     <div class="mb-4">
-      <n-alert type="info" title="批量修改说明">
+      <n-alert type="info" :title="$t('game.virtualBonusPool.bulkEditHint')">
         <p>
-          当前选中了
-          <strong>{{ selectedItems.length }}</strong> 个虚拟彩金池配置。
+          {{ $t('game.virtualBonusPool.bulkEditDesc1') }}
+          <strong>{{ selectedItems.length }}</strong> {{ $t('game.virtualBonusPool.bulkEditDesc2') }}
         </p>
-        <p>只需填写要修改的字段，未填写的字段将保持原值不变。</p>
+        <p>{{ $t('game.virtualBonusPool.bulkEditDesc3') }}</p>
       </n-alert>
     </div>
 
-    <!-- 选中项目预览 -->
+    
     <div class="mb-6">
-      <n-card title="选中的项目" size="small">
+      <n-card :title="$t('game.virtualBonusPool.selectedItems')" size="small">
         <div class="selected-items-grid">
           <div
             v-for="item in selectedItems"
@@ -35,68 +35,68 @@
       size="medium"
     >
       <n-grid :cols="2" :x-gap="16" :y-gap="16">
-        <!-- 展示形式 -->
-        <n-form-item-gi label="展示形式">
+        
+        <n-form-item-gi :label="$t('game.virtualBonusPool.displayForm')">
           <n-checkbox
             v-model:checked="enableFields.displayType"
             @update:checked="handleFieldToggle('displayType', $event)"
           >
-            修改展示形式
+            {{ $t('game.virtualBonusPool.modifyDisplayType') }}
           </n-checkbox>
           <n-select
             v-model:value="formData.displayType"
-            placeholder="选择展示形式"
+            :placeholder="$t('game.virtualBonusPool.selectDisplayType')"
             :options="displayTypeOptions"
             :disabled="!enableFields.displayType"
             class="mt-2"
           />
         </n-form-item-gi>
 
-        <!-- 金额数字样式 -->
-        <n-form-item-gi label="金额数字样式">
+        
+        <n-form-item-gi :label="$t('game.virtualBonusPool.numberStyle')">
           <n-checkbox
             v-model:checked="enableFields.numberStyle"
             @update:checked="handleFieldToggle('numberStyle', $event)"
           >
-            修改数字样式
+            {{ $t('game.virtualBonusPool.modifyNumberStyle') }}
           </n-checkbox>
           <n-select
             v-model:value="formData.numberStyle"
-            placeholder="选择数字样式"
+            :placeholder="$t('game.virtualBonusPool.selectNumberStyle')"
             :options="numberStyleOptions"
             :disabled="!enableFields.numberStyle"
             class="mt-2"
           />
         </n-form-item-gi>
 
-        <!-- 背景风格 -->
-        <n-form-item-gi label="背景风格">
+        
+        <n-form-item-gi :label="$t('game.virtualBonusPool.backgroundStyle')">
           <n-checkbox
             v-model:checked="enableFields.backgroundStyle"
             @update:checked="handleFieldToggle('backgroundStyle', $event)"
           >
-            修改背景风格
+            {{ $t('game.virtualBonusPool.modifyBgStyle') }}
           </n-checkbox>
           <n-select
             v-model:value="formData.backgroundStyle"
-            placeholder="选择背景风格"
+            :placeholder="$t('game.virtualBonusPool.selectBgStyle')"
             :options="backgroundStyleOptions"
             :disabled="!enableFields.backgroundStyle"
             class="mt-2"
           />
         </n-form-item-gi>
 
-        <!-- 小数点位数 -->
-        <n-form-item-gi label="小数点位数">
+        
+        <n-form-item-gi :label="$t('game.virtualBonusPool.decimalPlaces')">
           <n-checkbox
             v-model:checked="enableFields.decimalPlaces"
             @update:checked="handleFieldToggle('decimalPlaces', $event)"
           >
-            修改小数点位数
+            {{ $t('game.virtualBonusPool.modifyDecimalPlaces') }}
           </n-checkbox>
           <n-input-number
             v-model:value="formData.decimalPlaces"
-            placeholder="小数点位数"
+            :placeholder="$t('game.virtualBonusPool.enterDecimalPlaces')"
             style="width: 100%"
             :min="0"
             :max="8"
@@ -107,13 +107,13 @@
           />
         </n-form-item-gi>
 
-        <!-- 状态 -->
-        <n-form-item-gi label="状态">
+        
+        <n-form-item-gi :label="$t('common.status')">
           <n-checkbox
             v-model:checked="enableFields.status"
             @update:checked="handleFieldToggle('status', $event)"
           >
-            修改状态
+            {{ $t('game.virtualBonusPool.modifyStatus') }}
           </n-checkbox>
           <div class="mt-2">
             <n-switch
@@ -121,24 +121,24 @@
               :disabled="!enableFields.status"
             />
             <span class="ml-2 text-sm text-gray-600">
-              {{ formData.status ? '启用' : '禁用' }}
+              {{ formData.status ? $t('common.enabled') : $t('common.disabled') }}
             </span>
           </div>
         </n-form-item-gi>
 
-        <!-- 最大展示金额调整 -->
-        <n-form-item-gi label="最大金额调整">
+        
+        <n-form-item-gi :label="$t('game.virtualBonusPool.maxAmountAdjust')">
           <n-checkbox
             v-model:checked="enableFields.maxAmountAdjustment"
             @update:checked="handleFieldToggle('maxAmountAdjustment', $event)"
           >
-            调整最大金额
+            {{ $t('game.virtualBonusPool.adjustMaxAmount') }}
           </n-checkbox>
           <div class="mt-2" v-if="enableFields.maxAmountAdjustment">
             <n-radio-group v-model:value="formData.maxAmountAdjustmentType">
-              <n-radio value="multiply">乘以倍数</n-radio>
-              <n-radio value="add">增加固定值</n-radio>
-              <n-radio value="set">设置为固定值</n-radio>
+              <n-radio value="multiply">{{ $t('game.virtualBonusPool.multiply') }}</n-radio>
+              <n-radio value="add">{{ $t('game.virtualBonusPool.addFixed') }}</n-radio>
+              <n-radio value="set">{{ $t('game.virtualBonusPool.setFixed') }}</n-radio>
             </n-radio-group>
             <n-input-number
               v-model:value="formData.maxAmountAdjustmentValue"
@@ -151,19 +151,19 @@
           </div>
         </n-form-item-gi>
 
-        <!-- 最小展示金额调整 -->
-        <n-form-item-gi label="最小金额调整">
+        
+        <n-form-item-gi :label="$t('game.virtualBonusPool.minAmountAdjust')">
           <n-checkbox
             v-model:checked="enableFields.minAmountAdjustment"
             @update:checked="handleFieldToggle('minAmountAdjustment', $event)"
           >
-            调整最小金额
+            {{ $t('game.virtualBonusPool.adjustMinAmount') }}
           </n-checkbox>
           <div class="mt-2" v-if="enableFields.minAmountAdjustment">
             <n-radio-group v-model:value="formData.minAmountAdjustmentType">
-              <n-radio value="multiply">乘以倍数</n-radio>
-              <n-radio value="add">增加固定值</n-radio>
-              <n-radio value="set">设置为固定值</n-radio>
+              <n-radio value="multiply">{{ $t('game.virtualBonusPool.multiply') }}</n-radio>
+              <n-radio value="add">{{ $t('game.virtualBonusPool.addFixed') }}</n-radio>
+              <n-radio value="set">{{ $t('game.virtualBonusPool.setFixed') }}</n-radio>
             </n-radio-group>
             <n-input-number
               v-model:value="formData.minAmountAdjustmentValue"
@@ -176,18 +176,18 @@
           </div>
         </n-form-item-gi>
 
-        <!-- 备注 -->
-        <n-form-item-gi label="备注" :span="2">
+        
+        <n-form-item-gi :label="$t('common.remark')" :span="2">
           <n-checkbox
             v-model:checked="enableFields.remark"
             @update:checked="handleFieldToggle('remark', $event)"
           >
-            修改备注
+            {{ $t('game.virtualBonusPool.modifyRemark') }}
           </n-checkbox>
           <n-input
             v-model:value="formData.remark"
             type="textarea"
-            placeholder="输入新的备注信息"
+            :placeholder="$t('game.virtualBonusPool.enterNewRemark')"
             :autosize="{ minRows: 3, maxRows: 6 }"
             :disabled="!enableFields.remark"
             class="mt-2"
@@ -196,9 +196,9 @@
       </n-grid>
     </n-form>
 
-    <!-- 预览变更 -->
+    
     <div v-if="hasEnabledFields" class="mt-6">
-      <n-card title="变更预览" size="small">
+      <n-card :title="$t('game.virtualBonusPool.changePreview')" size="small">
         <div class="changes-preview">
           <div
             v-for="(field, key) in enabledChanges"
@@ -215,20 +215,22 @@
     </div>
 
     <div class="mt-6 flex justify-end gap-3">
-      <n-button @click="handleCancel">取消</n-button>
+      <n-button @click="handleCancel">{{ $t('common.cancel') }}</n-button>
       <n-button
         type="primary"
         @click="handleSubmit"
         :loading="submitting"
         :disabled="!hasEnabledFields"
       >
-        应用批量修改
+        {{ $t('game.virtualBonusPool.applyBulkEdit') }}
       </n-button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed } from 'vue';
 import {
   NForm,
@@ -297,24 +299,24 @@ const formData = reactive({
 
 // Options
 const displayTypeOptions = [
-  { label: '固定金额', value: 'fixed' },
-  { label: '随机金额', value: 'random' },
-  { label: '实时更新', value: 'realtime' },
-  { label: '递增金额', value: 'increment' },
+  { label: $t('game.virtualBonusPool.fixedAmount'), value: 'fixed' },
+  { label: $t('game.virtualBonusPool.randomAmount'), value: 'random' },
+  { label: $t('game.virtualBonusPool.realtimeUpdate'), value: 'realtime' },
+  { label: $t('game.virtualBonusPool.incrementAmount'), value: 'increment' },
 ];
 
 const numberStyleOptions = [
-  { label: '样式一', value: 'style1' },
-  { label: '样式二', value: 'style2' },
-  { label: '样式三', value: 'style3' },
-  { label: '样式四', value: 'style4' },
+  { label: $t('game.virtualBonusPool.style1'), value: 'style1' },
+  { label: $t('game.virtualBonusPool.style2'), value: 'style2' },
+  { label: $t('game.virtualBonusPool.style3'), value: 'style3' },
+  { label: $t('game.virtualBonusPool.style4'), value: 'style4' },
 ];
 
 const backgroundStyleOptions = [
-  { label: '样式一', value: 'style1' },
-  { label: '样式二', value: 'style2' },
-  { label: '样式三', value: 'style3' },
-  { label: '样式四', value: 'style4' },
+  { label: $t('game.virtualBonusPool.style1'), value: 'style1' },
+  { label: $t('game.virtualBonusPool.style2'), value: 'style2' },
+  { label: $t('game.virtualBonusPool.style3'), value: 'style3' },
+  { label: $t('game.virtualBonusPool.style4'), value: 'style4' },
 ];
 
 // Computed
@@ -361,26 +363,26 @@ const getAmountPlaceholder = (type: 'max' | 'min') => {
       : formData.minAmountAdjustmentType;
   switch (adjustmentType) {
     case 'multiply':
-      return '输入倍数 (如: 1.5)';
+      return $t('game.virtualBonusPool.enterMultiplier');
     case 'add':
-      return '输入增加的金额';
+      return $t('game.virtualBonusPool.enterAddAmount');
     case 'set':
-      return '输入新的固定金额';
+      return $t('game.virtualBonusPool.enterNewFixedAmount');
     default:
-      return '输入数值';
+      return $t('game.virtualBonusPool.enterValue');
   }
 };
 
 const getFieldLabel = (field: string) => {
   const labels: Record<string, string> = {
-    displayType: '展示形式',
-    numberStyle: '金额数字样式',
-    backgroundStyle: '背景风格',
-    decimalPlaces: '小数点位数',
-    status: '状态',
-    maxAmountAdjustment: '最大金额调整',
-    minAmountAdjustment: '最小金额调整',
-    remark: '备注',
+    displayType: $t('game.virtualBonusPool.displayType'),
+    numberStyle: $t('game.virtualBonusPool.numberStyle'),
+    backgroundStyle: $t('game.virtualBonusPool.backgroundStyle'),
+    decimalPlaces: $t('game.virtualBonusPool.decimalPlaces'),
+    status: $t('common.status'),
+    maxAmountAdjustment: $t('game.virtualBonusPool.maxAmountAdjust'),
+    minAmountAdjustment: $t('game.virtualBonusPool.minAmountAdjust'),
+    remark: $t('common.remark'),
   };
   return labels[field] || field;
 };
@@ -403,19 +405,19 @@ const getChangeDescription = (field: string, value: any) => {
       );
       return `→ ${bgOption?.label || value}`;
     case 'decimalPlaces':
-      return `→ ${value} 位`;
+      return `→ ${$t('game.virtualBonusPool.decimalPlacesUnit', [value])}`;
     case 'status':
-      return `→ ${value ? '启用' : '禁用'}`;
+      return `→ ${value ? $t('common.enabled') : $t('common.disabled')}`;
     case 'maxAmountAdjustment':
       const maxType = formData.maxAmountAdjustmentType;
       const maxValue = formData.maxAmountAdjustmentValue;
-      return `→ ${maxType === 'multiply' ? '乘以' : maxType === 'add' ? '增加' : '设为'} ${maxValue}`;
+      return `→ ${$t('game.virtualBonusPool.adjustOp' + (maxType === 'multiply' ? 'Multiply' : maxType === 'add' ? 'Add' : 'Set'))} ${maxValue}`;
     case 'minAmountAdjustment':
       const minType = formData.minAmountAdjustmentType;
       const minValue = formData.minAmountAdjustmentValue;
-      return `→ ${minType === 'multiply' ? '乘以' : minType === 'add' ? '增加' : '设为'} ${minValue}`;
+      return `→ ${$t('game.virtualBonusPool.adjustOp' + (minType === 'multiply' ? 'Multiply' : minType === 'add' ? 'Add' : 'Set'))} ${minValue}`;
     case 'remark':
-      return `→ ${value || '清空备注'}`;
+      return `→ ${value || $t('game.virtualBonusPool.clearRemark')}`;
     default:
       return `→ ${value}`;
   }
@@ -423,7 +425,7 @@ const getChangeDescription = (field: string, value: any) => {
 
 const handleSubmit = () => {
   if (!hasEnabledFields.value) {
-    message.warning('请至少选择一个要修改的字段');
+    message.warning($t('game.virtualBonusPool.selectAtLeastOneField'));
     return;
   }
 

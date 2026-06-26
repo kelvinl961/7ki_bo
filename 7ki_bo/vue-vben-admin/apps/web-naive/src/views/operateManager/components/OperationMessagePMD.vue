@@ -5,10 +5,10 @@
       <div class="flex flex-wrap items-end gap-4">
         <!-- 语言选择 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">语言</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('operations.messageSettings.language') }}</label>
           <n-select
             v-model:value="filters.language"
-            placeholder="选择语言"
+            :placeholder="$t('operations.messageSettings.selectLanguage')"
             clearable
             style="width: 120px"
             :options="languageOptions"
@@ -18,10 +18,10 @@
 
         <!-- 币种选择 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">币种</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('common.currency') }}</label>
           <n-select
             v-model:value="filters.currency"
-            placeholder="选择币种"
+            :placeholder="$t('operations.messageSettings.selectCurrency')"
             clearable
             style="width: 120px"
             :options="currencyOptions"
@@ -31,10 +31,10 @@
 
         <!-- 收件人类型 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">收件人类型</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('operations.messageSettings.receiverType') }}</label>
           <n-select
             v-model:value="filters.receiverType"
-            placeholder="选择收件人类型"
+            :placeholder="$t('operations.messageSettings.selectReceiverType')"
             clearable
             style="width: 140px"
             :options="receiverTypeOptions"
@@ -44,10 +44,10 @@
 
         <!-- 状态筛选 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">状态</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('common.status') }}</label>
           <n-select
             v-model:value="filters.status"
-            placeholder="选择状态"
+            :placeholder="$t('operations.messageSettings.selectStatus')"
             clearable
             style="width: 120px"
             :options="statusOptions"
@@ -57,10 +57,10 @@
 
         <!-- 展示状态 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">展示状态</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('operations.form.displayStatus') }}</label>
           <n-select
             v-model:value="filters.displayStatus"
-            placeholder="选择展示状态"
+            :placeholder="$t('operations.form.displayStatus')"
             clearable
             style="width: 140px"
             :options="displayStatusOptions"
@@ -70,10 +70,10 @@
 
         <!-- 关键词搜索 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">关键词</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('operations.messageSettings.keyword') }}</label>
           <n-input
             v-model:value="filters.keyword"
-            placeholder="输入内容或ID搜索"
+            :placeholder="$t('operations.messageSettings.contentSearch')"
             clearable
             style="width: 200px"
             @keyup.enter="handleFilter"
@@ -82,7 +82,7 @@
 
         <!-- 时间范围 -->
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium">时间范围</label>
+          <label class="mb-2 text-sm font-medium">{{ $t('operations.messageSettings.timeRange') }}</label>
           <n-date-picker
             v-model:value="filters.timeRange"
             type="daterange"
@@ -94,8 +94,8 @@
 
         <!-- 搜索按钮 -->
         <div class="flex gap-2">
-          <n-button type="primary" @click="handleFilter"> 搜索 </n-button>
-          <n-button @click="resetFilter"> 重置 </n-button>
+          <n-button type="primary" @click="handleFilter"> {{ $t('common.search') }} </n-button>
+          <n-button @click="resetFilter"> {{ $t('common.reset') }} </n-button>
         </div>
       </div>
     </n-card>
@@ -121,15 +121,13 @@
             <div class="flex items-center gap-4">
               <!-- 主要操作按钮 -->
               <div class="flex gap-2">
-                <n-button type="primary" @click="handleCreate">
-                  新增跑马灯
-                </n-button>
+                <n-button type="primary" @click="handleCreate">{{ $t('operations.messageSettings.addPmd') }}</n-button>
               </div>
 
               <!-- 选择信息 -->
               <div class="text-sm text-gray-600">
-                已选择 {{ selectedCount }} 条数据，共
-                {{ paginationReactive.total }} 条
+                {{ $t('operations.messageSettings.selectedData', [selectedCount, '']) }}
+                {{ $t('operations.domain.modal.recordsCount', [paginationReactive.total]) }}
               </div>
             </div>
 
@@ -140,8 +138,7 @@
                 type="warning"
                 size="small"
                 @click="handleBatchPause(selectedRows)"
-              >
-                批量暂停 ({{ selectedCount }})
+              >{{ $t('operations.messageSettings.batchPause') }} ({{ selectedCount }})
               </n-button>
               <n-button
                 v-if="selectedCount > 0"
@@ -149,12 +146,12 @@
                 size="small"
                 @click="handleBatchDelete(selectedRows)"
               >
-                批量删除 ({{ selectedCount }})
+                {{ $t('operations.messageSettings.batchDelete', [selectedCount]) }}
               </n-button>
 
               <!-- 选择控制 -->
-              <n-button size="small" @click="clearSelection">清空选择</n-button>
-              <n-button size="small" @click="selectAll">全选</n-button>
+              <n-button size="small" @click="clearSelection">{{ $t('operations.messageSettings.clearSelection') }}</n-button>
+              <n-button size="small" @click="selectAll">{{ $t('common.selectAll') }}</n-button>
             </div>
           </div>
         </n-card>
@@ -171,6 +168,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import {
   ref,
   reactive,
@@ -239,11 +238,11 @@ const notification = useNotification();
 
 // 选项配置
 const languageOptions = [
-  { label: '中文', value: 'zh-CN' },
-  { label: '英文', value: 'en-US' },
-  { label: '葡语', value: 'pt-BR' },
-  { label: '西班牙语', value: 'es-ES' },
-  { label: '日语', value: 'ja-JP' },
+  { label: $t('operations.messageSettings.option.langZh'), value: 'zh-CN' },
+  { label: $t('operations.messageSettings.option.langEn'), value: 'en-US' },
+  { label: $t('operations.messageSettings.option.langPt'), value: 'pt-BR' },
+  { label: $t('operations.messageSettings.option.langEs'), value: 'es-ES' },
+  { label: $t('operations.messageSettings.option.langJa'), value: 'ja-JP' },
 ];
 
 const currencyOptions = [
@@ -255,21 +254,21 @@ const currencyOptions = [
 ];
 
 const receiverTypeOptions = [
-  { label: '全部用户', value: 'all' },
-  { label: '会员层级', value: 'vip' },
-  { label: '新用户', value: 'new' },
-  { label: '活跃用户', value: 'active' },
+  { label: $t('operations.messageSettings.option.receiverAll'), value: 'all' },
+  { label: $t('operations.messageSettings.option.receiverVipLevel'), value: 'vip' },
+  { label: $t('operations.messageSettings.option.receiverNew'), value: 'new' },
+  { label: $t('operations.messageSettings.option.receiverActive'), value: 'active' },
 ];
 
 const statusOptions = [
-  { label: '已启用', value: 'enabled' },
-  { label: '已停用', value: 'disabled' },
+  { label: $t('operations.messageSettings.option.statusEnabled'), value: 'enabled' },
+  { label: $t('operations.messageSettings.option.statusDisabled'), value: 'disabled' },
 ];
 
 const displayStatusOptions = [
-  { label: '登录前', value: 'before_login' },
-  { label: '登录后', value: 'after_login' },
-  { label: '登录前后', value: 'both' },
+  { label: $t('operations.form.beforeLogin'), value: 'before_login' },
+  { label: $t('operations.form.afterLoginOnly'), value: 'after_login' },
+  { label: $t('operations.form.loginBoth'), value: 'both' },
 ];
 
 // Pagination (simplified for SmartDataGrid)
@@ -286,7 +285,7 @@ const columns: DataTableColumns<PMDMessage> = [
     width: 50,
   },
   {
-    title: '排序',
+    title: $t('operations.messageSettings.sort'),
     key: 'sortOrder',
     width: 80,
     sorter: true,
@@ -297,7 +296,7 @@ const columns: DataTableColumns<PMDMessage> = [
     width: 80,
   },
   {
-    title: '语言',
+    title: $t('operations.messageSettings.language'),
     key: 'language',
     width: 80,
     render: (row) => {
@@ -306,12 +305,12 @@ const columns: DataTableColumns<PMDMessage> = [
     },
   },
   {
-    title: '币种',
+    title: $t('common.currency'),
     key: 'currency',
     width: 80,
   },
   {
-    title: '收件人',
+    title: $t('operations.messageSettings.receiver'),
     key: 'receiverType',
     width: 100,
     render: (row) => {
@@ -322,7 +321,7 @@ const columns: DataTableColumns<PMDMessage> = [
     },
   },
   {
-    title: '展示状态',
+    title: $t('operations.form.displayStatus'),
     key: 'displayStatus',
     width: 100,
     render: (row) => {
@@ -333,25 +332,25 @@ const columns: DataTableColumns<PMDMessage> = [
     },
   },
   {
-    title: '开始时间',
+    title: $t('operations.messageSettings.startTime'),
     key: 'startTime',
     width: 160,
     render: (row) => formatDate(row.startTime),
   },
   {
-    title: '结束时间',
+    title: $t('operations.messageSettings.endTime'),
     key: 'endTime',
     width: 160,
     render: (row) => formatDate(row.endTime),
   },
   {
-    title: '停留时间(秒)',
+    title: $t('operations.form.displayDurationSec'),
     key: 'displayDuration',
     width: 120,
-    render: (row) => `${row.displayDuration || 0}秒`,
+    render: (row) => `${row.displayDuration || 0}${$t('operations.messageSettings.secondsUnit')}`,
   },
   {
-    title: '内容',
+    title: $t('operations.messageSettings.content'),
     key: 'content',
     width: 200,
     render: (row) => {
@@ -369,7 +368,7 @@ const columns: DataTableColumns<PMDMessage> = [
     },
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 100,
     render: (row) => {
@@ -381,7 +380,7 @@ const columns: DataTableColumns<PMDMessage> = [
     },
   },
   {
-    title: '后台备注',
+    title: $t('operations.messageSettings.backendRemark'),
     key: 'remark',
     width: 150,
     render: (row) => {
@@ -399,13 +398,13 @@ const columns: DataTableColumns<PMDMessage> = [
     },
   },
   {
-    title: '操作时间',
+    title: $t('common.operationTime'),
     key: 'updatedAt',
     width: 160,
     render: (row) => formatDate(row.updatedAt),
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 200,
     fixed: 'right',
@@ -423,7 +422,7 @@ const columns: DataTableColumns<PMDMessage> = [
                 ghost: true,
                 onClick: () => handleEdit(row),
               },
-              { default: () => '编辑' },
+              { default: () => $t('common.edit') },
             ),
             h(
               NButton,
@@ -433,7 +432,7 @@ const columns: DataTableColumns<PMDMessage> = [
                 ghost: true,
                 onClick: () => handleCopy(row),
               },
-              { default: () => '复制' },
+              { default: () => $t('common.copy') },
             ),
             h(
               NButton,
@@ -443,7 +442,7 @@ const columns: DataTableColumns<PMDMessage> = [
                 ghost: true,
                 onClick: () => handlePauseOrStart(row),
               },
-              { default: () => (row.status === 'enabled' ? '暂停' : '启动') },
+              { default: () => (row.status === 'enabled' ? $t('operations.messageSettings.stop') : $t('operations.messageSettings.start')) },
             ),
             h(
               NButton,
@@ -453,7 +452,7 @@ const columns: DataTableColumns<PMDMessage> = [
                 ghost: true,
                 onClick: () => handleDelete(row),
               },
-              { default: () => '删除' },
+              { default: () => $t('common.delete') },
             ),
           ],
         },
@@ -498,7 +497,7 @@ const loadData = async () => {
   } catch (error) {
     console.error('Error loading PMD data:', error);
     notification.error({
-      content: '加载数据失败',
+      content: $t('operations.messageSettings.loadFailed'),
       duration: 3000,
     });
     tableData.value = [];
@@ -545,7 +544,7 @@ const handleEdit = (row: PMDMessage) => {
 const handleCopy = (row: PMDMessage) => {
   const copyData = { ...row };
   delete copyData.id;
-  copyData.content = `${copyData.content} (复制)`;
+  copyData.content = `${copyData.content}${$t('operations.messageSettings.copySuffix')}`;
   editingItem.value = copyData;
   showModal.value = true;
 };
@@ -555,14 +554,14 @@ const handlePauseOrStart = async (row: PMDMessage) => {
     const willEnable = row.status !== 'enabled';
     await togglePMDStatus(row.id, willEnable);
     notification.success({
-      content: willEnable ? '启动成功' : '暂停成功',
+      content: willEnable ? $t('operations.messageSettings.startSuccess') : $t('operations.messageSettings.pauseSuccess'),
       duration: 3000,
     });
     loadData();
   } catch (error) {
     console.error('Error toggling PMD:', error);
     notification.error({
-      content: '操作失败',
+      content: $t('common.operationFailed'),
       duration: 3000,
     });
   }
@@ -573,14 +572,14 @@ const handleToggleStatus = async (row: PMDMessage) => {
     const newStatus = row.status === 'enabled' ? 'disabled' : 'enabled';
     await togglePMDStatus(row.id, newStatus === 'enabled');
     notification.success({
-      content: `${newStatus === 'enabled' ? '启用' : '停用'}成功`,
+      content: newStatus === 'enabled' ? $t('operations.messageSettings.toggleSuccess', [$t('common.enable')]) : $t('operations.messageSettings.toggleSuccess', [$t('common.disable')]),
       duration: 3000,
     });
     loadData();
   } catch (error) {
     console.error('Error toggling PMD status:', error);
     notification.error({
-      content: '状态更新失败',
+      content: $t('operations.messageSettings.statusUpdateFailed'),
       duration: 3000,
     });
   }
@@ -588,22 +587,22 @@ const handleToggleStatus = async (row: PMDMessage) => {
 
 const handleDelete = async (row: PMDMessage) => {
   dialog.warning({
-    title: '确认删除',
-    content: '确定要删除这条跑马灯通知吗？',
-    positiveText: '确定',
-    negativeText: '取消',
+    title: $t('operations.tracking.confirmDelete'),
+    content: $t('operations.messageSettings.confirmDeletePmd'),
+    positiveText: $t('common.confirm'),
+    negativeText: $t('common.cancel'),
     onPositiveClick: async () => {
       try {
         await deletePMD(row.id);
         notification.success({
-          content: '删除成功',
+          content: $t('common.deleteSuccess'),
           duration: 3000,
         });
         loadData();
       } catch (error) {
         console.error('Error deleting PMD:', error);
         notification.error({
-          content: '删除失败',
+          content: $t('operations.messageSettings.deleteFailed'),
           duration: 3000,
         });
       }
@@ -626,16 +625,16 @@ const handleBatchDelete = (selectedRows?: PMDMessage[]) => {
   }
 
   dialog.warning({
-    title: '确认批量删除',
-    content: `确定要删除选中的 ${pmdsToDelete.length} 条跑马灯通知吗？`,
-    positiveText: '确定',
-    negativeText: '取消',
+    title: $t('operations.messageSettings.confirmBatchDeleteTitle'),
+    content: $t('operations.messageSettings.confirmBatchDeletePmd', [pmdsToDelete.length]),
+    positiveText: $t('common.confirm'),
+    negativeText: $t('common.cancel'),
     onPositiveClick: async () => {
       try {
         const ids = pmdsToDelete.map((pmd) => Number(pmd.id));
         await batchDeletePMD({ ids });
         notification.success({
-          content: `成功删除 ${pmdsToDelete.length} 条跑马灯通知`,
+          content: $t('operations.messageSettings.batchDeletePmdSuccess', [pmdsToDelete.length]),
           duration: 3000,
         });
         selectedRowKeys.value = [];
@@ -643,7 +642,7 @@ const handleBatchDelete = (selectedRows?: PMDMessage[]) => {
       } catch (error) {
         console.error('Error batch deleting PMD:', error);
         notification.error({
-          content: '批量删除失败',
+          content: $t('operations.messageSettings.batchDeleteFailed'),
           duration: 3000,
         });
       }
@@ -662,17 +661,17 @@ const handleBatchPause = (selectedRows?: PMDMessage[]) => {
   }
 
   dialog.warning({
-    title: '确认批量暂停',
-    content: `确定要暂停选中的 ${pmdsToPause.length} 条跑马灯通知吗？`,
-    positiveText: '确定',
-    negativeText: '取消',
+    title: $t('operations.messageSettings.confirmBatchPauseTitle'),
+    content: $t('operations.messageSettings.confirmBatchPausePmd', [pmdsToPause.length]),
+    positiveText: $t('common.confirm'),
+    negativeText: $t('common.cancel'),
     onPositiveClick: async () => {
       try {
         const ids = pmdsToPause.map((pmd) => Number(pmd.id));
         // 批量暂停操作
         await Promise.all(ids.map((id) => togglePMDStatus(id, false)));
         notification.success({
-          content: `成功暂停 ${pmdsToPause.length} 条跑马灯通知`,
+          content: $t('operations.messageSettings.batchPausePmdSuccess', [pmdsToPause.length]),
           duration: 3000,
         });
         selectedRowKeys.value = [];
@@ -680,7 +679,7 @@ const handleBatchPause = (selectedRows?: PMDMessage[]) => {
       } catch (error) {
         console.error('Error batch pausing PMD:', error);
         notification.error({
-          content: '批量暂停失败',
+          content: $t('operations.messageSettings.batchPauseFailed'),
           duration: 3000,
         });
       }

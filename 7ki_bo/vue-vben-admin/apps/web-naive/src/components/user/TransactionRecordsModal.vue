@@ -3,11 +3,11 @@
     v-model:show="visible"
     preset="card"
     style="width: 90%; max-width: 1200px"
-    title="账变记录"
+    :title="$t('user.transactionRecords.title')"
   >
     <template #header>
       <div class="flex w-full items-center justify-between">
-        <h3 class="text-lg font-medium">账变记录</h3>
+        <h3 class="text-lg font-medium">{{ $t('user.transactionRecords.title') }}</h3>
         <n-button quaternary circle @click="visible = false">
           <template #icon>
             <n-icon>
@@ -18,7 +18,6 @@
       </div>
     </template>
 
-    <!-- 筛选器 -->
     <div class="mb-4">
       <n-card size="small">
         <n-form inline :show-label="false">
@@ -26,30 +25,23 @@
             <n-select
               v-model:value="filterType"
               style="width: 120px"
-              placeholder="交易类型"
+              :placeholder="$t('user.transactionRecords.transactionType')"
+              :options="transactionTypeOptions"
               @update:value="handleFilterChange"
-            >
-              <n-option value="all" label="全部" />
-              <n-option value="deposit" label="存款" />
-              <n-option value="withdrawal" label="提款" />
-              <n-option value="manual" label="手动" />
-              <n-option value="bet" label="投注" />
-              <n-option value="bonus" label="奖金" />
-            </n-select>
+            />
           </n-form-item>
           <n-form-item>
             <n-button type="primary" @click="handleRefresh">
               <template #icon>
                 <n-icon><RefreshOutline /></n-icon>
               </template>
-              刷新
+              {{ $t('common.refresh') }}
             </n-button>
           </n-form-item>
         </n-form>
       </n-card>
     </div>
 
-    <!-- 交易记录表格 -->
     <n-data-table
       :loading="loading"
       :columns="columns"
@@ -62,106 +54,103 @@
       @update:page-size="handlePageSizeChange"
     />
 
-    <!-- 交易详情模态框 -->
     <n-modal
       v-model:show="detailVisible"
       preset="card"
       style="width: 600px"
-      title="交易详情"
+      :title="$t('user.transactionRecords.transactionDetail')"
     >
       <div v-if="selectedRecord">
         <n-descriptions :column="2" label-placement="left" bordered>
-          <n-descriptions-item label="交易ID">
+          <n-descriptions-item :label="$t('user.transactionRecords.transactionId')">
             {{ selectedRecord.id }}
           </n-descriptions-item>
-          <n-descriptions-item label="交易类型">
+          <n-descriptions-item :label="$t('user.transactionRecords.transactionType')">
             <n-tag
               :type="getTransactionTypeColor(selectedRecord.transactionType)"
             >
               {{ formatTransactionType(selectedRecord) }}
             </n-tag>
           </n-descriptions-item>
-          <n-descriptions-item label="金额">
+          <n-descriptions-item :label="$t('common.amount')">
             <span :class="getAmountColor(selectedRecord.amount)">
               {{ formatCurrency(selectedRecord.amount) }}
             </span>
           </n-descriptions-item>
-          <n-descriptions-item label="状态">
+          <n-descriptions-item :label="$t('common.status')">
             <n-tag :type="formatTransactionStatus(selectedRecord.status).type">
               {{ formatTransactionStatus(selectedRecord.status).text }}
             </n-tag>
           </n-descriptions-item>
-          <n-descriptions-item label="交易前余额">
+          <n-descriptions-item :label="$t('user.transactionRecords.balanceBeforeTx')">
             {{ formatCurrency(selectedRecord.balanceBefore) }}
           </n-descriptions-item>
-          <n-descriptions-item label="交易后余额">
+          <n-descriptions-item :label="$t('user.transactionRecords.balanceAfterTx')">
             {{ formatCurrency(selectedRecord.balanceAfter) }}
           </n-descriptions-item>
-          <n-descriptions-item label="交易时间" :span="2">
+          <n-descriptions-item :label="$t('user.transactionRecords.transactionTime')" :span="2">
             {{ formatDateTime(selectedRecord.createdAt) }}
           </n-descriptions-item>
 
-          <!-- 存款特有字段 -->
           <template v-if="selectedRecord.transactionType === 'deposit'">
-            <n-descriptions-item v-if="selectedRecord.trxId" label="交易单号">
+            <n-descriptions-item v-if="selectedRecord.trxId" :label="$t('user.transactionRecords.trxId')">
               {{ selectedRecord.trxId }}
             </n-descriptions-item>
             <n-descriptions-item
               v-if="selectedRecord.paymentMethod"
-              label="支付方式"
+              :label="$t('user.transactionRecords.paymentMethod')"
             >
               {{ selectedRecord.paymentMethod }}
             </n-descriptions-item>
             <n-descriptions-item
               v-if="selectedRecord.paymentGateway"
-              label="支付通道"
+              :label="$t('user.transactionRecords.paymentGateway')"
             >
               {{ selectedRecord.paymentGateway }}
             </n-descriptions-item>
             <n-descriptions-item
               v-if="selectedRecord.bonusAmount"
-              label="奖金金额"
+              :label="$t('user.transactionRecords.bonusAmount')"
             >
               <span class="text-green-600">{{
                 formatCurrency(selectedRecord.bonusAmount)
               }}</span>
             </n-descriptions-item>
-            <n-descriptions-item v-if="selectedRecord.fees" label="手续费">
+            <n-descriptions-item v-if="selectedRecord.fees" :label="$t('user.transactionRecords.fees')">
               <span class="text-red-600">{{
                 formatCurrency(selectedRecord.fees)
               }}</span>
             </n-descriptions-item>
           </template>
 
-          <!-- 提款特有字段 -->
           <template v-if="selectedRecord.transactionType === 'withdrawal'">
             <n-descriptions-item
               v-if="selectedRecord.memberBank"
-              label="提款银行"
+              :label="$t('user.transactionRecords.withdrawBank')"
             >
               {{ selectedRecord.memberBank }}
             </n-descriptions-item>
             <n-descriptions-item
               v-if="selectedRecord.memberBankAccount"
-              label="银行账号"
+              :label="$t('user.transactionRecords.bankAccount')"
             >
               {{ selectedRecord.memberBankAccount }}
             </n-descriptions-item>
             <n-descriptions-item
               v-if="selectedRecord.accountHolderName"
-              label="开户名"
+              :label="$t('user.transactionRecords.accountHolder')"
             >
               {{ selectedRecord.accountHolderName }}
             </n-descriptions-item>
             <n-descriptions-item
               v-if="selectedRecord.approvedBy"
-              label="审批人"
+              :label="$t('user.transactionRecords.approvedBy')"
             >
               {{ selectedRecord.approvedBy }}
             </n-descriptions-item>
             <n-descriptions-item
               v-if="selectedRecord.rejectionReason"
-              label="拒绝原因"
+              :label="$t('user.transactionRecords.rejectionReason')"
               :span="2"
             >
               <span class="text-red-600">{{
@@ -170,27 +159,26 @@
             </n-descriptions-item>
           </template>
 
-          <!-- 手动交易特有字段 -->
           <template v-if="selectedRecord.transactionType === 'manual'">
             <n-descriptions-item
               v-if="selectedRecord.processedBy"
-              label="操作员"
+              :label="$t('user.transactionRecords.processedBy')"
             >
               {{ selectedRecord.processedBy }}
             </n-descriptions-item>
-            <n-descriptions-item v-if="selectedRecord.reason" label="操作原因">
+            <n-descriptions-item v-if="selectedRecord.reason" :label="$t('user.userDetail.reason')">
               {{ selectedRecord.reason }}
             </n-descriptions-item>
             <n-descriptions-item
               v-if="selectedRecord.frontendNotes"
-              label="前台备注"
+              :label="$t('user.userDetail.frontendNote')"
               :span="2"
             >
               {{ selectedRecord.frontendNotes }}
             </n-descriptions-item>
             <n-descriptions-item
               v-if="selectedRecord.backendNotes"
-              label="后台备注"
+              :label="$t('user.userDetail.backendNote')"
               :span="2"
             >
               {{ selectedRecord.backendNotes }}
@@ -199,7 +187,7 @@
 
           <n-descriptions-item
             v-if="selectedRecord.description"
-            label="描述"
+            :label="$t('common.description')"
             :span="2"
           >
             {{ selectedRecord.description }}
@@ -211,6 +199,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, computed, h } from 'vue';
 import type { DataTableColumns } from 'naive-ui';
 import {
@@ -247,7 +237,6 @@ interface Emits {
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
-// 响应式数据
 const visible = ref(false);
 const detailVisible = ref(false);
 const loading = ref(false);
@@ -255,23 +244,30 @@ const dataSource = ref<TransactionRecord[]>([]);
 const selectedRecord = ref<TransactionRecord | null>(null);
 const filterType = ref<string>('all');
 
-// 分页信息
 const pagination = ref({
   page: 1,
   pageSize: 20,
   itemCount: 0,
 });
 
-// 表格列配置
-const columns: DataTableColumns<TransactionRecord> = [
+const transactionTypeOptions = computed(() => [
+  { label: $t('common.all'), value: 'all' },
+  { label: $t('user.userDetail.deposit'), value: 'deposit' },
+  { label: $t('user.userDetail.withdrawal'), value: 'withdrawal' },
+  { label: $t('user.userDetail.manual'), value: 'manual' },
+  { label: $t('user.userDetail.bet'), value: 'bet' },
+  { label: $t('user.userDetail.bonus'), value: 'bonus' },
+]);
+
+const columns = computed<DataTableColumns<TransactionRecord>>(() => [
   {
-    title: '交易ID',
+    title: $t('user.transactionRecords.transactionId'),
     key: 'id',
     width: 120,
     ellipsis: { tooltip: true },
   },
   {
-    title: '类型',
+    title: $t('common.type'),
     key: 'transactionType',
     width: 100,
     render(row) {
@@ -286,7 +282,7 @@ const columns: DataTableColumns<TransactionRecord> = [
     },
   },
   {
-    title: '金额',
+    title: $t('common.amount'),
     key: 'amount',
     width: 120,
     render(row) {
@@ -300,7 +296,7 @@ const columns: DataTableColumns<TransactionRecord> = [
     },
   },
   {
-    title: '交易前余额',
+    title: $t('user.transactionRecords.balanceBeforeTx'),
     key: 'balanceBefore',
     width: 130,
     render(row) {
@@ -308,7 +304,7 @@ const columns: DataTableColumns<TransactionRecord> = [
     },
   },
   {
-    title: '交易后余额',
+    title: $t('user.transactionRecords.balanceAfterTx'),
     key: 'balanceAfter',
     width: 130,
     render(row) {
@@ -316,7 +312,7 @@ const columns: DataTableColumns<TransactionRecord> = [
     },
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 100,
     render(row) {
@@ -332,7 +328,7 @@ const columns: DataTableColumns<TransactionRecord> = [
     },
   },
   {
-    title: '时间',
+    title: $t('common.time'),
     key: 'createdAt',
     width: 160,
     render(row) {
@@ -340,13 +336,13 @@ const columns: DataTableColumns<TransactionRecord> = [
     },
   },
   {
-    title: '描述',
+    title: $t('common.description'),
     key: 'description',
     width: 200,
     ellipsis: { tooltip: true },
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     fixed: 'right',
     width: 80,
@@ -359,13 +355,12 @@ const columns: DataTableColumns<TransactionRecord> = [
           type: 'primary',
           onClick: () => handleViewDetail(row),
         },
-        { default: () => '详情' },
+        { default: () => $t('common.detail') },
       );
     },
   },
-];
+]);
 
-// 分页配置
 const paginationConfig = computed(() => ({
   page: pagination.value.page,
   pageSize: pagination.value.pageSize,
@@ -375,7 +370,6 @@ const paginationConfig = computed(() => ({
   showQuickJumper: true,
 }));
 
-// 获取交易记录
 const fetchTransactionHistory = async () => {
   if (!props.userId) return;
 
@@ -388,7 +382,6 @@ const fetchTransactionHistory = async () => {
     };
 
     const response = await getUserTransactionHistory(props.userId, params);
-    // Normalize numeric fields for table display
     const processed = (response.list || []).map((transaction) => ({
       ...transaction,
       amount: parseFloat(transaction.amount),
@@ -398,9 +391,9 @@ const fetchTransactionHistory = async () => {
     dataSource.value = processed;
     pagination.value.itemCount = response.pagination?.total || processed.length;
   } catch (error) {
-    console.error('获取交易记录失败:', error);
+    console.error('Failed to load transaction records:', error);
     notification.error({
-      content: '获取交易记录失败',
+      content: $t('user.transactionRecords.loadFailed'),
       duration: 3000,
     });
   } finally {
@@ -408,7 +401,6 @@ const fetchTransactionHistory = async () => {
   }
 };
 
-// 事件处理
 const handlePageChange = (page: number) => {
   pagination.value.page = page;
   fetchTransactionHistory();
@@ -434,7 +426,6 @@ const handleViewDetail = (record: TransactionRecord) => {
   detailVisible.value = true;
 };
 
-// 工具函数
 const formatCurrency = (amount: number): string => {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -469,7 +460,6 @@ const getAmountColor = (amount: number): string => {
   return amount >= 0 ? 'text-green-600' : 'text-red-600';
 };
 
-// 打开模态框
 const show = (userId: number) => {
   if (userId) {
     (props as any).userId = userId;
@@ -479,7 +469,6 @@ const show = (userId: number) => {
   }
 };
 
-// 关闭模态框
 const close = () => {
   visible.value = false;
   detailVisible.value = false;
@@ -488,12 +477,6 @@ const close = () => {
   emit('close');
 };
 
-// 监听模态框关闭
-const handleModalClose = () => {
-  close();
-};
-
-// 暴露方法
 defineExpose({
   show,
   close,

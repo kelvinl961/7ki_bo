@@ -2,7 +2,7 @@
   <n-modal
     v-model:show="modalShow"
     preset="card"
-    title="活动参与记录"
+    :title="$t('activity.recordModal.k6d3b')"
     style="width: 1000px; max-height: 90vh"
     :mask-closable="false"
   >
@@ -29,7 +29,7 @@
             </div>
           </div>
           <div class="text-right">
-            <p class="text-sm text-gray-600">总参与记录</p>
+            <p class="text-sm text-gray-600">{{ $t('activity.recordModal.k603b3') }}</p>
             <p class="text-2xl font-bold text-blue-600">
               {{ paginationConfig.itemCount }}
             </p>
@@ -46,19 +46,19 @@
           label-placement="left"
           label-width="auto"
         >
-          <n-form-item label="用户ID">
+          <n-form-item :label="$t('activity.recordModal.k7528')">
             <n-input
               v-model:value="filterForm.userId"
-              placeholder="请输入用户ID"
+              :placeholder="$t('activity.recordModal.k8bf7')"
               clearable
             />
           </n-form-item>
 
-          <n-form-item label="参与时间">
+          <n-form-item :label="$t('activity.recordModal.k53c2')">
             <n-date-picker
               v-model:value="filterForm.dateRange"
               type="daterange"
-              placeholder="选择时间范围"
+              :placeholder="$t('activity.recordModal.k9009')"
               clearable
             />
           </n-form-item>
@@ -68,15 +68,11 @@
               <n-button type="primary" @click="handleSearch">
                 <template #icon>
                   <n-icon :component="Search" />
-                </template>
-                搜索
-              </n-button>
+                </template>{{ $t('activity.rewardReport.k641c') }}</n-button>
               <n-button @click="handleReset">
                 <template #icon>
                   <n-icon :component="Refresh" />
-                </template>
-                重置
-              </n-button>
+                </template>{{ $t('activity.recordModal.k91cd') }}</n-button>
             </n-space>
           </n-form-item>
         </n-form>
@@ -102,22 +98,24 @@
     <template #footer>
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-4">
-          <n-statistic label="总参与人数" :value="paginationConfig.itemCount" />
+          <n-statistic :label="$t('activity.recordModal.k603b')" :value="paginationConfig.itemCount" />
           <n-statistic
-            label="总奖励金额"
+            :label="$t('activity.recordModal.k603b2')"
             :value="totalRewardAmount"
             :formatter="
               (value) => `${value} ${activityInfo?.currency || 'BRL'}`
             "
           />
         </div>
-        <n-button @click="handleClose">关闭</n-button>
+        <n-button @click="handleClose">{{ $t('activity.activityList.k5173') }}</n-button>
       </div>
     </template>
   </n-modal>
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, watch, onMounted, h } from 'vue';
 import type { DataTableColumns, FormInst } from 'naive-ui';
 import {
@@ -197,7 +195,7 @@ const paginationConfig = reactive({
   showSizePicker: true,
   pageSizes: [10, 20, 50, 100],
   showQuickJumper: true,
-  prefix: ({ itemCount }: { itemCount: number }) => `共 ${itemCount} 条`,
+  prefix: ({ itemCount }: { itemCount: number }) => $t('activity.totalRecords', [itemCount]),
 });
 
 // 计算总奖励金额
@@ -208,12 +206,12 @@ const totalRewardAmount = computed(() => {
 // 表格列配置
 const columns = computed<DataTableColumns<ActivityRecord>>(() => [
   {
-    title: '记录ID',
+    title: $t('activity.recordModal.k8bb0'),
     key: 'id',
     width: 80,
   },
   {
-    title: '用户信息',
+    title: $t('activity.recordModal.k75282'),
     key: 'userId',
     width: 150,
     render: (row) =>
@@ -226,7 +224,7 @@ const columns = computed<DataTableColumns<ActivityRecord>>(() => [
       ]),
   },
   {
-    title: '参与时间',
+    title: $t('activity.recordModal.k53c2'),
     key: 'participatedAt',
     width: 160,
     render: (row) =>
@@ -244,7 +242,7 @@ const columns = computed<DataTableColumns<ActivityRecord>>(() => [
       ]),
   },
   {
-    title: '奖励金额',
+    title: $t('activity.formModal.k5956'),
     key: 'amount',
     width: 120,
     render: (row) =>
@@ -258,14 +256,14 @@ const columns = computed<DataTableColumns<ActivityRecord>>(() => [
       ]),
   },
   {
-    title: '状态',
+    title: $t('activity.activityList.k72b6'),
     key: 'status',
     width: 100,
     render: (row) => {
       const statusConfig = {
-        COMPLETED: { type: 'success', text: '已完成' },
-        PENDING: { type: 'warning', text: '处理中' },
-        FAILED: { type: 'error', text: '失败' },
+        COMPLETED: { type: 'success', text: $t('activity.recordModal.k5df2') },
+        PENDING: { type: 'warning', text: $t('activity.recordModal.k5904') },
+        FAILED: { type: 'error', text: $t('activity.recordModal.k5931') },
       };
       const config = statusConfig[row.status as keyof typeof statusConfig] || {
         type: 'default',
@@ -279,7 +277,7 @@ const columns = computed<DataTableColumns<ActivityRecord>>(() => [
     },
   },
   {
-    title: '备注',
+    title: $t('activity.recordModal.k5907'),
     key: 'note',
     width: 200,
     ellipsis: {
@@ -319,7 +317,7 @@ const fetchActivityRecords = async () => {
     activityInfo.value = response.activity;
     paginationConfig.itemCount = response.pagination.total;
   } catch (error) {
-    message.error('获取活动记录失败');
+    message.error($t('activity.recordModal.k83b7'));
     console.error('Error fetching activity records:', error);
   } finally {
     loading.value = false;
@@ -376,10 +374,10 @@ const getStatusType = (status: string) => {
 
 const getStatusText = (status: string) => {
   const statusMap = {
-    DRAFT: '草稿',
-    ACTIVE: '进行中',
-    CLOSED: '已关闭',
-    ENDED: '已结束',
+    DRAFT: $t('activity.statuses.draft'),
+    ACTIVE: $t('activity.statuses.active'),
+    CLOSED: $t('activity.activityList.k5173'),
+    ENDED: $t('activity.detailModal.k5df2'),
   };
   return statusMap[status as keyof typeof statusMap] || status;
 };

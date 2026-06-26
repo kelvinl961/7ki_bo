@@ -9,8 +9,8 @@
     <!-- Page Header -->
     <div class="page-header">
       <n-breadcrumb>
-        <n-breadcrumb-item>财务管理</n-breadcrumb-item>
-        <n-breadcrumb-item>提现管理</n-breadcrumb-item>
+        <n-breadcrumb-item>{{ $t('finance.k2tg5p') }}</n-breadcrumb-item>
+        <n-breadcrumb-item>{{ $t('finance.kvqxwj') }}</n-breadcrumb-item>
       </n-breadcrumb>
     </div>
 
@@ -28,17 +28,17 @@
           >
             <!-- Filter fields remain the same -->
             <div class="filter-row">
-              <n-form-item label="订单号">
+              <n-form-item :label="$t('common.orderNo')">
                 <n-input
                   v-model:value="filters.orderId"
-                  placeholder="请输入订单号"
+                  :placeholder="$t('finance.pleaseEnterOrder')"
                   clearable
                 />
               </n-form-item>
-              <n-form-item label="会员账号">
+              <n-form-item :label="$t('common.memberAccount')">
                 <n-input
                   v-model:value="filters.memberAccount"
-                  placeholder="请输入会员账号"
+                  :placeholder="$t('finance.pleaseEnterMemberAccount')"
                   clearable
                 />
               </n-form-item>
@@ -49,25 +49,25 @@
           <!-- Action Buttons -->
           <div class="filter-actions">
             <div class="filter-buttons">
-              <n-button type="primary" @click="handleSearch">搜索</n-button>
+              <n-button type="primary" @click="handleSearch">{{ $t('common.search') }}</n-button>
               <n-dropdown :options="advancedSearchOptions" trigger="click">
-                <n-button>高级搜索</n-button>
+                <n-button>{{ $t('common.advancedSearch') }}</n-button>
               </n-dropdown>
-              <n-button @click="handleReset">重置</n-button>
+              <n-button @click="handleReset">{{ $t('common.reset') }}</n-button>
               <n-button type="primary" @click="handleCreateOrder"
-                >创建在线订单</n-button
+                >{{ $t('finance.createOnlineOrder') }}</n-button
               >
               <n-button type="warning" @click="handleCreateSupplementOrder"
-                >创建补单</n-button
+                >{{ $t('finance.createSupplementaryOrder') }}</n-button
               >
               <n-dropdown :options="exportOptions" trigger="click">
-                <n-button>导出数据</n-button>
+                <n-button>{{ $t('finance.k4s5pc') }}</n-button>
               </n-dropdown>
               <n-button @click="showColumnConfig = true">
                 <template #icon>
                   <n-icon><Settings /></n-icon>
                 </template>
-                列配置
+                {{ $t('finance.columnConfig') }}
               </n-button>
 
               <!-- 🚀 NEW: Replace old auto-refresh with SmartAutoRefresh component -->
@@ -106,10 +106,10 @@
         <!-- Totals Summary (existing implementation) -->
         <div class="totals-summary">
           <n-space size="large">
-            <n-statistic label="总订单数" :value="totals.totalOrders" />
-            <n-statistic label="总金额" :value="totals.totalAmount" />
-            <n-statistic label="成功订单" :value="totals.successOrders" />
-            <n-statistic label="成功金额" :value="totals.successAmount" />
+            <n-statistic :label="$t('finance.totalOrders')" :value="totals.totalOrders" />
+            <n-statistic :label="$t('finance.totalAmount')" :value="totals.totalAmount" />
+            <n-statistic :label="$t('finance.successOrder')" :value="totals.successOrders" />
+            <n-statistic :label="$t('finance.successAmount')" :value="totals.successAmount" />
           </n-space>
         </div>
       </n-card>
@@ -123,6 +123,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, onMounted, onUnmounted } from 'vue';
 import {
   NCard,
@@ -194,10 +196,10 @@ const totals = reactive({
 
 // Table columns (existing implementation)
 const columns = ref([
-  { key: 'orderId', title: '订单号', visible: true },
-  { key: 'memberAccount', title: '会员账号', visible: true },
-  { key: 'amount', title: '金额', visible: true },
-  { key: 'status', title: '状态', visible: true },
+  { key: 'orderId', title: $t('common.orderNo'), visible: true },
+  { key: 'memberAccount', title: $t('common.memberAccount'), visible: true },
+  { key: 'amount', title: $t('common.amount'), visible: true },
+  { key: 'status', title: $t('common.status'), visible: true },
   // ... other columns
 ]);
 
@@ -207,13 +209,13 @@ const visibleColumns = computed(() =>
 
 // Dropdown options (existing)
 const advancedSearchOptions = [
-  { label: '高级筛选', key: 'advanced' },
-  { label: '保存筛选', key: 'save' },
+  { label: $t('finance.text82'), key: 'advanced' },
+  { label: $t('finance.save'), key: 'save' },
 ];
 
 const exportOptions = [
-  { label: '导出Excel', key: 'excel' },
-  { label: '导出CSV', key: 'csv' },
+  { label: $t('finance.exportExcel'), key: 'excel' },
+  { label: $t('finance.exportCsv'), key: 'csv' },
 ];
 
 /**
@@ -252,7 +254,7 @@ const fetchData = async () => {
     }
   } catch (error) {
     console.error('Failed to fetch data:', error);
-    message.error('数据加载失败');
+    message.error($t('finance.dataLoadingFailed'));
   } finally {
     loading.value = false;
   }
@@ -332,9 +334,9 @@ let refreshTimer: NodeJS.Timeout | null = null;
 let countdownTimer: NodeJS.Timeout | null = null;
 
 const refreshIntervalOptions = [
-  { label: '15秒', value: 15 },
-  { label: '30秒', value: 30 },
-  { label: '60秒', value: 60 }
+  { label: $t('finance.15Seconds'), value: 15 },
+  { label: $t('finance.30Seconds'), value: 30 },
+  { label: $t('finance.60Seconds'), value: 60 }
 ];
 
 const startCountdown = () => {
@@ -363,10 +365,10 @@ const stopAllTimers = () => {
 const handleAutoRefreshToggle = (value: boolean) => {
   if (value) {
     startCountdown();
-    message.success(`已启用自动更新，每${refreshInterval.value}秒刷新一次`);
+    message.success($t('finance.autoRefreshEnabled', { seconds: refreshInterval.value }));
   } else {
     stopAllTimers();
-    message.success('已关闭自动更新');
+    message.success($t('finance.alreadyOffAuto'));
   }
 };
 
@@ -374,7 +376,7 @@ const handleRefreshIntervalChange = (newInterval: number) => {
   if (autoRefresh.value) {
     stopAllTimers();
     startCountdown();
-    message.success(`刷新间隔已更改为${newInterval}秒`);
+    message.success($t('finance.refreshIntervalChanged', { seconds: newInterval }));
   }
 };
 */

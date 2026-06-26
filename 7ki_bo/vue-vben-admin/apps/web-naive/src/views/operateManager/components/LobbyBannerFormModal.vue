@@ -2,14 +2,14 @@
   <n-modal
     v-model:show="modalShow"
     preset="dialog"
-    :title="isEditing ? '编辑Banner' : '新增Banner'"
+    :title="isEditing ? $t('operations.form.editBanner') : $t('operations.messageSettings.addBanner')"
     style="width: 900px"
     :mask-closable="false"
     @after-leave="handleModalClose"
   >
     <n-tabs v-model:value="activeTab" type="line" animated>
       <!-- 基本信息 -->
-      <n-tab-pane name="basic" tab="基本信息">
+      <n-tab-pane name="basic" :tab="$t('operations.form.tabBasic')">
         <n-form
           ref="basicFormRef"
           :model="formData"
@@ -18,55 +18,55 @@
           label-width="auto"
         >
           <div class="grid grid-cols-2 gap-4">
-            <n-form-item label="语言" path="language">
+            <n-form-item :label="$t('operations.messageSettings.language')" path="language">
               <n-select
                 v-model:value="formData.language"
-                placeholder="选择语言"
+                :placeholder="$t('operations.messageSettings.selectLanguage')"
                 :options="languageOptions"
               />
             </n-form-item>
 
-            <n-form-item label="币种" path="currency">
+            <n-form-item :label="$t('common.currency')" path="currency">
               <n-select
                 v-model:value="formData.currency"
-                placeholder="选择币种"
+                :placeholder="$t('operations.messageSettings.selectCurrency')"
                 :options="currencyOptions"
               />
             </n-form-item>
 
-            <n-form-item label="排序（可选）" path="sortOrder">
+            <n-form-item :label="$t('operations.form.sortOptional')" path="sortOrder">
               <n-input-number
                 v-model:value="formData.sortOrder"
-                placeholder="输入排序数值"
+                :placeholder="$t('operations.form.sortPlaceholder')"
                 :min="0"
                 :max="9999"
               />
             </n-form-item>
 
-            <n-form-item label="停留时间(秒)（可选）" path="displayDuration">
+            <n-form-item :label="$t('operations.form.staySecondsOptional')" path="displayDuration">
               <n-input-number
                 v-model:value="formData.displayDuration"
-                placeholder="输入停留时间"
+                :placeholder="$t('operations.form.displayDurationPlaceholder')"
                 :min="1"
                 :max="300"
               />
             </n-form-item>
           </div>
 
-          <n-form-item label="Banner名称" path="bannerName">
+          <n-form-item :label="$t('operations.messageSettings.bannerName')" path="bannerName">
             <n-input
               v-model:value="formData.bannerName"
-              placeholder="请输入Banner名称"
+              :placeholder="$t('operations.form.bannerNamePlaceholder')"
               clearable
             />
           </n-form-item>
 
-          <n-form-item label="Banner图片" path="bannerImageUrl">
+          <n-form-item :label="$t('operations.form.bannerImage')" path="bannerImageUrl">
             <MediaLibrarySelector
               v-model="formData.bannerImageUrl"
               category="banners"
               :accept-types="['image']"
-              placeholder="从媒体库选择或上传Banner图片"
+              :placeholder="$t('operations.form.bannerImagePlaceholder')"
               @file-selected="handleBannerImageSelected"
             />
 
@@ -75,7 +75,7 @@
               <div class="banner-preview">
                 <img
                   :src="getImageUrlByEnvironment(formData.bannerImageUrl)"
-                  alt="Banner预览"
+                  :alt="$t('operations.form.bannerPreview')"
                   class="banner-preview-image"
                 />
               </div>
@@ -85,7 +85,7 @@
       </n-tab-pane>
 
       <!-- 时间设置 -->
-      <n-tab-pane name="time" tab="时间设置">
+      <n-tab-pane name="time" :tab="$t('operations.form.tabTime')">
         <n-form
           ref="timeFormRef"
           :model="formData"
@@ -94,11 +94,11 @@
           label-width="auto"
         >
           <div class="grid grid-cols-2 gap-4">
-            <n-form-item label="开始时间" path="startTime">
+            <n-form-item :label="$t('operations.messageSettings.startTime')" path="startTime">
               <n-date-picker
                 v-model:value="formData.startTime"
                 type="datetime"
-                placeholder="选择开始时间"
+                :placeholder="$t('operations.messageSettings.startTime')"
                 style="width: 100%"
                 clearable
                 :value-format="'timestamp'"
@@ -112,11 +112,11 @@
               />
             </n-form-item>
 
-            <n-form-item label="结束时间（可选）" path="endTime">
+            <n-form-item :label="$t('operations.form.endTimeOptional')" path="endTime">
               <n-date-picker
                 v-model:value="formData.endTime"
                 type="datetime"
-                placeholder="选择结束时间"
+                :placeholder="$t('operations.messageSettings.endTime')"
                 style="width: 100%"
                 clearable
                 :value-format="'timestamp'"
@@ -133,31 +133,31 @@
 
           <!-- 时间预设选项 -->
           <div class="mb-4">
-            <label class="mb-2 block text-sm font-medium">快速设置</label>
+            <label class="mb-2 block text-sm font-medium">{{ $t('operations.form.quickSetup') }}</label>
             <n-space>
-              <n-button size="small" @click="setTimeRange(1)">1小时</n-button>
-              <n-button size="small" @click="setTimeRange(6)">6小时</n-button>
-              <n-button size="small" @click="setTimeRange(24)">1天</n-button>
-              <n-button size="small" @click="setTimeRange(168)">7天</n-button>
-              <n-button size="small" @click="setTimeRange(720)">30天</n-button>
+              <n-button size="small" @click="setTimeRange(1)">{{ $t('operations.form.hour1') }}</n-button>
+              <n-button size="small" @click="setTimeRange(6)">{{ $t('operations.form.hour6') }}</n-button>
+              <n-button size="small" @click="setTimeRange(24)">{{ $t('operations.form.day1') }}</n-button>
+              <n-button size="small" @click="setTimeRange(168)">{{ $t('operations.form.day7') }}</n-button>
+              <n-button size="small" @click="setTimeRange(720)">{{ $t('operations.form.day30') }}</n-button>
             </n-space>
           </div>
 
           <n-alert type="info" :show-icon="false">
             <template #header>
-              <span class="font-medium">时间说明</span>
+              <span class="font-medium">{{ $t('operations.form.timeHint') }}</span>
             </template>
             <div class="text-sm">
-              <p>• 开始时间：Banner开始显示的时间（必填）</p>
-              <p>• 结束时间：Banner停止显示的时间（可选）</p>
-              <p>• 如果不设置结束时间，将持续显示直到手动停止</p>
+              <p>• {{ $t('operations.form.bannerTimeStartHint') }}</p>
+              <p>• {{ $t('operations.form.bannerTimeEndHint') }}</p>
+              <p>• {{ $t('operations.form.bannerTimeNoEndHint') }}</p>
             </div>
           </n-alert>
         </n-form>
       </n-tab-pane>
 
       <!-- 跳转设置 -->
-      <n-tab-pane name="jump" tab="跳转设置">
+      <n-tab-pane name="jump" :tab="$t('operations.form.tabJump')">
         <n-form
           ref="jumpFormRef"
           :model="formData"
@@ -166,10 +166,10 @@
           label-width="auto"
         >
           <div class="grid grid-cols-2 gap-4">
-            <n-form-item label="跳转方式" path="jumpMode">
+            <n-form-item :label="$t('operations.messageSettings.jumpMode')" path="jumpMode">
               <n-select
                 v-model:value="formData.jumpMode"
-                placeholder="选择跳转方式"
+                :placeholder="$t('operations.messageSettings.selectJumpMode')"
                 :options="jumpModeOptions"
                 @update:value="handleJumpModeChange"
               />
@@ -178,12 +178,12 @@
             <!-- Dynamic activity dropdown when 活动 is selected -->
             <n-form-item
               v-if="formData.jumpMode === 'activity'"
-              label="选择活动"
+              :label="$t('operations.form.selectActivity')"
               path="selectedActivityId"
             >
               <n-select
                 v-model:value="formData.selectedActivityId"
-                placeholder="请选择活动"
+                :placeholder="$t('operations.form.selectActivity')"
                 :options="activityOptions"
                 :loading="loadingActivities"
                 @update:value="handleActivitySelection"
@@ -194,12 +194,12 @@
             <!-- Dynamic task dropdown when 任务 is selected -->
             <n-form-item
               v-if="formData.jumpMode === 'task'"
-              label="选择任务"
+              :label="$t('operations.form.selectTask')"
               path="selectedTaskId"
             >
               <n-select
                 v-model:value="formData.selectedTaskId"
-                placeholder="请选择任务"
+                :placeholder="$t('operations.form.selectTask')"
                 :options="taskOptions"
                 :loading="loadingTasks"
                 @update:value="handleTaskSelection"
@@ -210,12 +210,12 @@
             <!-- Dynamic game platform dropdown when 游戏 is selected -->
             <n-form-item
               v-if="formData.jumpMode === 'game'"
-              label="选择游戏平台"
+              :label="$t('operations.form.selectGamePlatform')"
               path="selectedGamePlatformId"
             >
               <n-select
                 v-model:value="formData.selectedGamePlatformId"
-                placeholder="请选择游戏平台"
+                :placeholder="$t('operations.form.selectGamePlatform')"
                 :options="gamePlatformOptions"
                 :loading="loadingGamePlatforms"
                 @update:value="handleGamePlatformSelection"
@@ -226,12 +226,12 @@
             <!-- Regular target URL for other jump modes - HIDDEN FOR NOW -->
             <!-- <n-form-item 
               v-if="formData.jumpMode !== 'none' && formData.jumpMode !== 'activity' && formData.jumpMode !== 'task' && formData.jumpMode !== 'game'" 
-              label="跳转目标" 
+              :label="$t('operations.messageSettings.jumpTarget')" 
               path="targetUrl"
             >
               <n-input
                 v-model:value="formData.targetUrl"
-                placeholder="请输入跳转目标URL或ID"
+                :placeholder="$t('operations.form.jumpTargetPlaceholder')"
                 clearable
               />
             </n-form-item> -->
@@ -239,21 +239,21 @@
 
           <n-alert type="info" :show-icon="false">
             <template #header>
-              <span class="font-medium">跳转说明</span>
+              <span class="font-medium">{{ $t('operations.form.jumpHint') }}</span>
             </template>
             <div class="text-sm">
-              <p>• 无跳转：点击Banner无任何响应</p>
-              <p>• 外链：跳转到外部网站，需要完整URL</p>
-              <p>• 内部页面：跳转到系统内部页面</p>
-              <p>• 游戏：跳转到指定游戏</p>
-              <p>• 活动页面：跳转到活动详情页</p>
+              <p>• {{ $t('operations.form.bannerJumpNoneHint') }}</p>
+              <p>• {{ $t('operations.form.bannerJumpExternalHint') }}</p>
+              <p>• {{ $t('operations.form.bannerJumpInternalHint') }}</p>
+              <p>• {{ $t('operations.form.jumpGameHint') }}</p>
+              <p>• {{ $t('operations.form.jumpActivityHint') }}</p>
             </div>
           </n-alert>
         </n-form>
       </n-tab-pane>
 
       <!-- 高级设置 -->
-      <n-tab-pane name="advanced" tab="高级设置">
+      <n-tab-pane name="advanced" :tab="$t('operations.form.tabAdvanced')">
         <n-form
           ref="advancedFormRef"
           :model="formData"
@@ -261,19 +261,19 @@
           label-placement="top"
           label-width="auto"
         >
-          <n-form-item label="状态">
+          <n-form-item :label="$t('common.status')">
             <n-select
               v-model:value="formData.status"
-              placeholder="选择状态"
+              :placeholder="$t('operations.messageSettings.selectStatus')"
               :options="statusOptions"
             />
           </n-form-item>
 
-          <n-form-item label="后台备注">
+          <n-form-item :label="$t('operations.messageSettings.backendRemark')">
             <n-input
               v-model:value="formData.remark"
               type="textarea"
-              placeholder="输入后台备注信息"
+              :placeholder="$t('operations.messageSettings.backendRemark')"
               :autosize="{ minRows: 2, maxRows: 4 }"
               maxlength="500"
               show-count
@@ -285,9 +285,9 @@
 
     <template #action>
       <n-space>
-        <n-button @click="handleCancel">取消</n-button>
+        <n-button @click="handleCancel">{{ $t('common.cancel') }}</n-button>
         <n-button type="primary" @click="handleSubmit" :loading="submitting">
-          {{ isEditing ? '更新' : '创建' }}
+          {{ isEditing ? $t('operations.form.update') : $t('operations.form.create') }}
         </n-button>
       </n-space>
     </template>
@@ -295,6 +295,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, onMounted, watch, h, nextTick } from 'vue';
 import type { FormInst, FormRules, UploadFileInfo } from 'naive-ui';
 import {
@@ -521,7 +523,7 @@ const loadActivities = async () => {
     }
   } catch (error) {
     console.error('❌ Failed to load activities:', error);
-    message.error('加载活动列表失败');
+    message.error($t('operations.form.loadActivitiesFailed'));
     activityOptions.value = [];
   } finally {
     loadingActivities.value = false;
@@ -546,7 +548,7 @@ const loadTasks = async () => {
     }
   } catch (error) {
     console.error('Failed to load tasks:', error);
-    message.error('加载任务列表失败');
+    message.error($t('operations.form.loadTasksFailed'));
   } finally {
     loadingTasks.value = false;
   }
@@ -564,14 +566,14 @@ const loadGamePlatforms = async () => {
     if (response.list && response.list.length > 0) {
       gamePlatformOptions.value = response.list.map(
         (platform: GamePlatformItem) => ({
-          label: `${platform.platformName} (${platform.subGameCount} 游戏)`,
+          label: `${platform.platformName} (${$t('operations.form.gameCount', [platform.subGameCount])})`,
           value: platform.id,
         }),
       );
     }
   } catch (error) {
     console.error('Failed to load game platforms:', error);
-    message.error('加载游戏平台列表失败');
+    message.error($t('operations.form.loadGamesFailed'));
   } finally {
     loadingGamePlatforms.value = false;
   }
@@ -624,11 +626,11 @@ const isEditing = computed(() => !!props.editingItem);
 
 // 选项配置
 const languageOptions: SelectOption[] = [
-  { label: '中文', value: 'zh-CN' },
-  { label: '英文', value: 'en' },
-  { label: '葡语', value: 'pt' },
-  { label: '西班牙语', value: 'es' },
-  { label: '日语', value: 'ja' },
+  { label: $t('operations.messageSettings.option.langZh'), value: 'zh-CN' },
+  { label: $t('operations.messageSettings.option.langEn'), value: 'en' },
+  { label: $t('operations.messageSettings.option.langPt'), value: 'pt' },
+  { label: $t('operations.messageSettings.option.langEs'), value: 'es' },
+  { label: $t('operations.messageSettings.option.langJa'), value: 'ja' },
 ];
 
 const currencyOptions: SelectOption[] = [
@@ -640,49 +642,49 @@ const currencyOptions: SelectOption[] = [
 ];
 
 const statusOptions: SelectOption[] = [
-  { label: '已发布', value: 'active' },
-  { label: '已下架', value: 'inactive' },
-  { label: '草稿', value: 'draft' },
+  { label: $t('operations.messageSettings.option.statusPublished'), value: 'active' },
+  { label: $t('operations.messageSettings.option.statusUnpublished'), value: 'inactive' },
+  { label: $t('operations.messageSettings.option.statusDraft'), value: 'draft' },
 ];
 
 const jumpModeOptions: SelectOption[] = [
-  { label: '无', value: 'none' },
-  { label: '外部链接', value: 'external_link' },
-  { label: '活动', value: 'activity' },
-  { label: '任务', value: 'task' },
-  { label: '充值', value: 'recharge' },
-  { label: '返水', value: 'rebate' },
-  { label: '代理', value: 'agent' },
+  { label: $t('operations.messageSettings.option.jumpNone'), value: 'none' },
+  { label: $t('operations.messageSettings.option.jumpExternal'), value: 'external_link' },
+  { label: $t('operations.messageSettings.option.jumpActivity'), value: 'activity' },
+  { label: $t('operations.messageSettings.option.jumpTask'), value: 'task' },
+  { label: $t('operations.layout.deposit'), value: 'recharge' },
+  { label: $t('operations.messageSettings.option.jumpRebate'), value: 'rebate' },
+  { label: $t('operations.layout.agent'), value: 'agent' },
   { label: 'VIP', value: 'vip' },
-  { label: '利息宝', value: 'interest_treasure' },
-  { label: '公积金', value: 'public_fund' },
-  { label: '游戏', value: 'game' },
-  { label: '盲盒抽奖', value: 'blind_box_lottery' },
-  { label: '俱乐部申请（合作联营）', value: 'club_application' },
+  { label: $t('operations.messageSettings.option.jumpInterest'), value: 'interest_treasure' },
+  { label: $t('operations.messageSettings.option.jumpPublicFund'), value: 'public_fund' },
+  { label: $t('operations.messageSettings.option.jumpGame'), value: 'game' },
+  { label: $t('operations.messageSettings.option.jumpBlindBox'), value: 'blind_box_lottery' },
+  { label: $t('operations.messageSettings.option.jumpClub'), value: 'club_application' },
 ];
 
 // 表单验证规则
 const basicRules: FormRules = {
   bannerName: [
-    { required: true, message: '请输入Banner名称', trigger: 'blur' },
+    { required: true, message: $t('common.pleaseEnterField', [$t('operations.messageSettings.bannerName')]), trigger: 'blur' },
     {
       min: 1,
       max: 100,
-      message: 'Banner名称长度在1到100个字符',
+      message: $t('operations.form.bannerNameLength'),
       trigger: 'blur',
     },
   ],
   bannerImageUrl: [
-    { required: true, message: '请上传Banner图片', trigger: 'blur' },
+    { required: true, message: $t('operations.form.uploadBannerRequired'), trigger: 'blur' },
   ],
-  language: [{ required: true, message: '请选择语言', trigger: 'change' }],
-  currency: [{ required: true, message: '请选择币种', trigger: 'change' }],
+  language: [{ required: true, message: $t('common.pleaseSelect') + ' ' + $t('operations.language'), trigger: 'change' }],
+  currency: [{ required: true, message: $t('common.pleaseSelect') + ' ' + $t('common.currency'), trigger: 'change' }],
   sortOrder: [
     {
       type: 'number',
       min: 0,
       max: 9999,
-      message: '排序数值在0到9999之间',
+      message: $t('operations.form.sortRange'),
       trigger: 'blur',
     },
   ],
@@ -691,7 +693,7 @@ const basicRules: FormRules = {
       type: 'number',
       min: 1,
       max: 300,
-      message: '停留时间在1到300秒之间',
+      message: $t('operations.form.stayDurationRange'),
       trigger: 'blur',
     },
   ],
@@ -701,17 +703,17 @@ const timeRules: FormRules = {
   startTime: [
     {
       required: true,
-      message: '请选择开始时间',
+      message: $t('common.pleaseSelect') + ' ' + $t('common.startTime'),
       trigger: 'change',
       validator: (rule, value) => {
         // Check for null, undefined, or empty string, but allow 0 as valid
         if (value === null || value === undefined || value === '') {
-          return new Error('请选择开始时间');
+          return new Error($t('common.pleaseSelect') + ' ' + $t('common.startTime'));
         }
 
         // Check if it's a valid number
         if (isNaN(value) || typeof value !== 'number') {
-          return new Error('请选择有效的开始时间');
+          return new Error($t('operations.form.validStartTime'));
         }
 
         // Check if it's a reasonable timestamp (within 1 year from now)
@@ -720,7 +722,7 @@ const timeRules: FormRules = {
         const oneYearAgo = now - 365 * 24 * 60 * 60 * 1000;
 
         if (value < oneYearAgo || value > oneYearFromNow) {
-          return new Error('开始时间应在合理范围内');
+          return new Error($t('operations.form.startInRange'));
         }
 
         return true;
@@ -730,7 +732,7 @@ const timeRules: FormRules = {
 };
 
 const jumpRules: FormRules = {
-  jumpMode: [{ required: true, message: '请选择跳转方式', trigger: 'change' }],
+  jumpMode: [{ required: true, message: $t('common.pleaseSelect') + ' ' + $t('operations.messageSettings.jumpMode'), trigger: 'change' }],
   targetUrl: [
     {
       validator: (rule, value) => {
@@ -739,7 +741,7 @@ const jumpRules: FormRules = {
           formData.value.jumpMode !== 'none' &&
           (!value || value.trim() === '')
         ) {
-          return new Error('请输入跳转目标');
+          return new Error($t('operations.form.enterJumpTarget'));
         }
         return true;
       },
@@ -749,7 +751,7 @@ const jumpRules: FormRules = {
 };
 
 const advancedRules: FormRules = {
-  status: [{ required: true, message: '请选择状态', trigger: 'change' }],
+  status: [{ required: true, message: $t('common.pleaseSelect') + ' ' + $t('common.status'), trigger: 'change' }],
 };
 
 // 方法
@@ -906,7 +908,7 @@ const validateAllForms = async (): Promise<boolean> => {
 const handleSubmit = async () => {
   const isValid = await validateAllForms();
   if (!isValid) {
-    message.error('请检查表单填写');
+    message.error($t('operations.form.checkForm'));
     return;
   }
 
@@ -993,23 +995,23 @@ const handleSubmit = async () => {
       const startDate = new Date(submitData.startTime);
       const endDate = new Date(submitData.endTime);
       if (startDate >= endDate) {
-        message.error('结束时间必须大于开始时间');
+        message.error($t('operations.form.endAfterStart'));
         return;
       }
     }
 
     if (isEditing.value && props.editingItem) {
       await updateBanner(props.editingItem.id, submitData);
-      message.success('Banner更新成功');
+      message.success($t('operations.messageSettings.bannerUpdateSuccess'));
     } else {
       await createBanner(submitData);
-      message.success('Banner创建成功');
+      message.success($t('operations.messageSettings.bannerCreateSuccess'));
     }
 
     emit('success');
   } catch (error) {
     console.error('Submit error:', error);
-    message.error(isEditing.value ? 'Banner更新失败' : 'Banner创建失败');
+    message.error(isEditing.value ? $t('operations.messageSettings.bannerUpdateFailed') : $t('operations.messageSettings.bannerCreateFailed'));
   } finally {
     submitting.value = false;
   }
@@ -1022,7 +1024,7 @@ const handleCancel = () => {
 // 处理媒体库图片选择
 const handleBannerImageSelected = (file: any) => {
   formData.value.bannerImageUrl = file.url || '';
-  message.success('Banner图片已选择');
+  message.success($t('operations.messageSettings.bannerImageSelected'));
 };
 
 // File upload handlers (保持兼容性)
@@ -1036,7 +1038,7 @@ const handleFileChange = (options: { fileList: UploadFileInfo[] }) => {
       reader.onload = (e) => {
         if (e.target?.result) {
           formData.value.bannerImageUrl = e.target.result as string;
-          message.success('图片已选择');
+          message.success($t('operations.messageSettings.imageSelected'));
         }
       };
       reader.readAsDataURL(file.file);
@@ -1048,7 +1050,7 @@ const removeImage = () => {
   formData.value.bannerImageUrl = '';
   formData.value.bannerImageId = undefined;
   fileList.value = [];
-  message.success('图片已删除');
+  message.success($t('operations.messageSettings.imageDeleted'));
 };
 
 const handleStartTimeChange = (value: number | null) => {

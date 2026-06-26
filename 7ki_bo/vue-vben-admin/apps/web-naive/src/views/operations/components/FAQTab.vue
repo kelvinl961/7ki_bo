@@ -7,7 +7,7 @@
           <n-select
             v-model:value="filters.language"
             :options="languageOptions"
-            placeholder="选择语言"
+            :placeholder="$t('operations.faq.selectLanguage')"
             style="width: 150px"
             clearable
             @update:value="loadFAQs"
@@ -16,7 +16,7 @@
           <n-select
             v-model:value="filters.faqType"
             :options="faqTypeOptions"
-            placeholder="选择类型"
+            :placeholder="$t('operations.faq.selectType')"
             style="width: 150px"
             clearable
             @update:value="loadFAQs"
@@ -25,7 +25,7 @@
           <n-select
             v-model:value="filters.status"
             :options="statusOptions"
-            placeholder="选择状态"
+            :placeholder="$t('operations.faq.selectStatus')"
             style="width: 150px"
             clearable
             @update:value="loadFAQs"
@@ -33,7 +33,7 @@
 
           <n-input
             v-model:value="filters.search"
-            placeholder="搜索问题或答案"
+            :placeholder="$t('operations.faq.searchPlaceholder')"
             style="width: 250px"
             clearable
             @update:value="loadFAQs"
@@ -44,14 +44,14 @@
           </n-input>
 
           <n-button type="primary" @click="openCategoryModal">
-            设置问题类别
+            {{ $t('operations.faq.setCategories') }}
           </n-button>
 
           <n-button type="primary" @click="showEditModal(null)">
             <template #icon>
               <span>+</span>
             </template>
-            新增问题
+            {{ $t('operations.faq.addQuestion') }}
           </n-button>
         </n-space>
       </n-card>
@@ -71,7 +71,7 @@
     <n-modal
       v-model:show="showModal"
       preset="card"
-      :title="editingId ? '编辑问题' : '新增问题'"
+      :title="editingId ? $t('operations.faq.editQuestion') : $t('operations.faq.addQuestion')"
       style="width: 800px"
       :mask-closable="false"
     >
@@ -81,54 +81,54 @@
         :rules="formRules"
         label-placement="top"
       >
-        <n-form-item label="问题类型" path="faqType">
+        <n-form-item :label="$t('operations.faq.questionType')" path="faqType">
           <n-select
             v-model:value="formData.faqType"
             :options="faqTypeOptions"
-            placeholder="选择问题类型"
+            :placeholder="$t('operations.faq.selectQuestionType')"
           />
         </n-form-item>
 
-        <n-form-item label="语言" path="language">
+        <n-form-item :label="$t('operations.language')" path="language">
           <n-select
             v-model:value="formData.language"
             :options="languageOptions"
-            placeholder="选择语言"
+            :placeholder="$t('operations.faq.selectLanguage')"
           />
         </n-form-item>
 
-        <n-form-item label="问题分类" path="categoryId">
+        <n-form-item :label="$t('operations.faq.questionCategory')" path="categoryId">
           <n-select
             v-model:value="formData.categoryId"
             :options="categoryOptions"
-            placeholder="选择问题分类"
+            :placeholder="$t('operations.faq.selectCategory')"
           />
         </n-form-item>
 
-        <n-form-item label="问题" path="question">
+        <n-form-item :label="$t('operations.faq.question')" path="question">
           <n-input
             v-model:value="formData.question"
-            placeholder="输入问题（最多100字）"
+            :placeholder="$t('operations.faq.questionPlaceholder')"
             maxlength="100"
             show-count
           />
         </n-form-item>
 
-        <n-form-item label="答案" path="answer">
+        <n-form-item :label="$t('operations.faq.answer')" path="answer">
           <n-input
             v-model:value="formData.answer"
             type="textarea"
-            placeholder="输入答案"
+            :placeholder="$t('operations.faq.answerPlaceholder')"
             :autosize="{ minRows: 4, maxRows: 8 }"
             maxlength="1000"
             show-count
           />
         </n-form-item>
 
-        <n-form-item label="视频（可选）">
+        <n-form-item :label="$t('operations.faq.videoOptional')">
           <n-input
             v-model:value="formData.videoUrl"
-            placeholder="输入视频链接或点击上传"
+            :placeholder="$t('operations.faq.videoPlaceholder')"
           />
           <n-upload
             class="mt-2"
@@ -137,15 +137,15 @@
             list-type="text"
             @before-upload="handleVideoUpload"
           >
-            <n-button>上传视频</n-button>
+            <n-button>{{ $t('operations.faq.uploadVideo') }}</n-button>
           </n-upload>
         </n-form-item>
 
-        <n-form-item label="排序">
+        <n-form-item :label="$t('operations.sort')">
           <n-input-number
             v-model:value="formData.displayOrder"
             :min="0"
-            placeholder="数字越小越靠前"
+            :placeholder="$t('operations.faq.sortPlaceholder')"
             style="width: 200px"
           />
         </n-form-item>
@@ -153,9 +153,9 @@
 
       <template #footer>
         <n-space justify="end">
-          <n-button @click="showModal = false">取消</n-button>
+          <n-button @click="showModal = false">{{ $t('common.cancel') }}</n-button>
           <n-button type="primary" @click="submitForm" :loading="saving">
-            确认
+            {{ $t('common.confirm') }}
           </n-button>
         </n-space>
       </template>
@@ -165,38 +165,38 @@
     <n-modal
       v-model:show="showCategoryModal"
       preset="card"
-      title="设置问题类别"
+      :title="$t('operations.faq.categoryModalTitle')"
       style="width: 800px"
     >
       <n-space vertical :size="16">
         <!-- Add/Edit Category Form -->
-        <n-card :title="editingCategoryId ? '编辑类别' : '新增类别'">
+        <n-card :title="editingCategoryId ? $t('operations.faq.editCategory') : $t('operations.faq.addCategory')">
           <n-form :model="categoryForm" label-placement="top">
-            <n-form-item label="语言">
+            <n-form-item :label="$t('operations.language')">
               <n-select
                 v-model:value="categoryForm.language"
                 :options="languageOptions"
-                placeholder="选择语言"
+                :placeholder="$t('operations.faq.selectLanguage')"
               />
             </n-form-item>
 
-            <n-form-item label="类别名称">
+            <n-form-item :label="$t('operations.faq.categoryName')">
               <n-input
                 v-model:value="categoryForm.categoryName"
-                placeholder="输入类别名称"
+                :placeholder="$t('operations.faq.categoryNamePlaceholder')"
               />
             </n-form-item>
 
-            <n-form-item label="图标">
+            <n-form-item :label="$t('operations.icon')">
               <MediaLibrarySelector
                 v-model="categoryForm.icon"
                 :accept-types="['image']"
                 category="customer-service/faq-categories"
-                placeholder="从媒体库选择或上传图标（建议500x500，≤500KB）"
+                :placeholder="$t('operations.faq.iconPlaceholder')"
               />
             </n-form-item>
 
-            <n-form-item label="排序">
+            <n-form-item :label="$t('operations.sort')">
               <n-input-number
                 v-model:value="categoryForm.displayOrder"
                 :min="0"
@@ -206,17 +206,17 @@
 
             <n-space justify="end">
               <n-button v-if="editingCategoryId" @click="cancelEditCategory">
-                取消编辑
+                {{ $t('operations.faq.cancelEdit') }}
               </n-button>
               <n-button type="primary" @click="submitCategory">
-                {{ editingCategoryId ? '更新类别' : '添加类别' }}
+                {{ editingCategoryId ? $t('operations.faq.updateCategory') : $t('operations.faq.addCategory') }}
               </n-button>
             </n-space>
           </n-form>
         </n-card>
 
         <!-- Category List -->
-        <n-card title="已有类别">
+        <n-card :title="$t('operations.faq.existingCategories')">
           <n-spin :show="loadingCategories">
             <n-data-table
               :columns="categoryColumns"
@@ -232,6 +232,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, computed, h, onMounted, reactive } from 'vue';
 import {
   NSpace,
@@ -338,38 +340,35 @@ const categoryForm = ref<FAQCategory>({
 });
 
 // Form validation rules
-const formRules = {
-  faqType: { required: true, message: '请选择问题类型' },
-  language: { required: true, message: '请选择语言' },
-  categoryId: { required: true, message: '请选择问题分类', type: 'number' },
-  question: { required: true, message: '请输入问题' },
-  answer: { required: true, message: '请输入答案' },
-};
+const formRules = computed(() => ({
+  faqType: { required: true, message: $t('operations.faq.rules.selectType') },
+  language: { required: true, message: $t('operations.faq.rules.selectLanguage') },
+  categoryId: { required: true, message: $t('operations.faq.rules.selectCategory'), type: 'number' },
+  question: { required: true, message: $t('operations.faq.rules.enterQuestion') },
+  answer: { required: true, message: $t('operations.faq.rules.enterAnswer') },
+}));
 
-// Language options
-const languageOptions = [
-  { label: '简体中文', value: 'zh-CN' },
-  { label: '繁体中文', value: 'zh-TW' },
-  { label: 'English', value: 'en' },
-  { label: 'Português', value: 'pt-BR' },
-];
+const languageOptions = computed(() => [
+  { label: $t('operations.faq.languages.zh-CN'), value: 'zh-CN' },
+  { label: $t('operations.faq.languages.zh-TW'), value: 'zh-TW' },
+  { label: $t('operations.faq.languages.en'), value: 'en' },
+  { label: $t('operations.faq.languages.pt-BR'), value: 'pt-BR' },
+]);
 
-// FAQ type options
-const faqTypeOptions = [
-  { label: '注册问题', value: 'REGISTRATION' },
-  { label: '充值问题', value: 'RECHARGE' },
-  { label: '提现问题', value: 'WITHDRAWAL' },
-  { label: '游戏问题', value: 'GAME' },
-  { label: '投注问题', value: 'BETTING' },
-  { label: '常见问题', value: 'COMMON' },
-  { label: '其他', value: 'OTHER' },
-];
+const faqTypeOptions = computed(() => [
+  { label: $t('operations.faq.types.REGISTRATION'), value: 'REGISTRATION' },
+  { label: $t('operations.faq.types.RECHARGE'), value: 'RECHARGE' },
+  { label: $t('operations.faq.types.WITHDRAWAL'), value: 'WITHDRAWAL' },
+  { label: $t('operations.faq.types.GAME'), value: 'GAME' },
+  { label: $t('operations.faq.types.BETTING'), value: 'BETTING' },
+  { label: $t('operations.faq.types.COMMON'), value: 'COMMON' },
+  { label: $t('operations.faq.types.OTHER'), value: 'OTHER' },
+]);
 
-// Status options
-const statusOptions = [
-  { label: '待发布', value: 'DRAFT' },
-  { label: '已发布', value: 'PUBLISHED' },
-];
+const statusOptions = computed(() => [
+  { label: $t('operations.draft'), value: 'DRAFT' },
+  { label: $t('operations.published'), value: 'PUBLISHED' },
+]);
 
 // Category options
 const categoryOptions = computed(() => {
@@ -382,7 +381,7 @@ const categoryOptions = computed(() => {
 // Table columns
 const columns = computed<DataTableColumns<FAQ>>(() => [
   {
-    title: '排序',
+    title: $t('operations.sort'),
     key: 'displayOrder',
     width: 80,
     render: (row) => {
@@ -398,45 +397,45 @@ const columns = computed<DataTableColumns<FAQ>>(() => [
     width: 80,
   },
   {
-    title: '类型',
+    title: $t('common.type'),
     key: 'faqType',
     width: 120,
     render: (row) => {
       const typeLabel =
-        faqTypeOptions.find((opt) => opt.value === row.faqType)?.label ||
+        faqTypeOptions.value.find((opt) => opt.value === row.faqType)?.label ||
         row.faqType;
       return h(NTag, { size: 'small' }, () => typeLabel);
     },
   },
   {
-    title: '语言',
+    title: $t('operations.language'),
     key: 'language',
     width: 100,
   },
   {
-    title: '问题',
+    title: $t('operations.faq.question'),
     key: 'question',
     ellipsis: { tooltip: true },
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 100,
     render: (row) => {
       return h(
         NTag,
         { type: row.status === 'PUBLISHED' ? 'success' : 'warning' },
-        () => (row.status === 'PUBLISHED' ? '已发布' : '待发布'),
+        () => (row.status === 'PUBLISHED' ? $t('operations.published') : $t('operations.draft')),
       );
     },
   },
   {
-    title: '操作人',
+    title: $t('common.operator'),
     key: 'createdBy',
     width: 120,
   },
   {
-    title: '操作时间',
+    title: $t('common.operationTime'),
     key: 'createdAt',
     width: 180,
     render: (row) => {
@@ -446,7 +445,7 @@ const columns = computed<DataTableColumns<FAQ>>(() => [
     },
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 250,
     fixed: 'right',
@@ -458,7 +457,7 @@ const columns = computed<DataTableColumns<FAQ>>(() => [
             size: 'small',
             onClick: () => showEditModal(row.id!),
           },
-          () => '修改',
+          () => $t('common.modify'),
         ),
         row.status === 'DRAFT'
           ? h(
@@ -468,7 +467,7 @@ const columns = computed<DataTableColumns<FAQ>>(() => [
                 type: 'success',
                 onClick: () => handlePublish(row.id!),
               },
-              () => '发布',
+              () => $t('operations.faq.publish'),
             )
           : h(
               NButton,
@@ -477,7 +476,7 @@ const columns = computed<DataTableColumns<FAQ>>(() => [
                 type: 'warning',
                 onClick: () => handleUnpublish(row.id!),
               },
-              () => '撤回',
+              () => $t('operations.faq.unpublish'),
             ),
         h(
           NPopconfirm,
@@ -486,8 +485,8 @@ const columns = computed<DataTableColumns<FAQ>>(() => [
           },
           {
             trigger: () =>
-              h(NButton, { size: 'small', type: 'error' }, () => '删除'),
-            default: () => '确定删除此FAQ吗？',
+              h(NButton, { size: 'small', type: 'error' }, () => $t('common.delete')),
+            default: () => $t('operations.faq.confirmDeleteFaq'),
           },
         ),
       ]);
@@ -498,12 +497,12 @@ const columns = computed<DataTableColumns<FAQ>>(() => [
 // Category table columns
 const categoryColumns = computed<DataTableColumns<FAQCategory>>(() => [
   {
-    title: '排序',
+    title: $t('operations.sort'),
     key: 'displayOrder',
     width: 80,
   },
   {
-    title: '图标',
+    title: $t('operations.icon'),
     key: 'icon',
     width: 100,
     render: (row) => {
@@ -523,16 +522,16 @@ const categoryColumns = computed<DataTableColumns<FAQCategory>>(() => [
     },
   },
   {
-    title: '语言',
+    title: $t('operations.language'),
     key: 'language',
     width: 100,
   },
   {
-    title: '类别名称',
+    title: $t('operations.faq.categoryName'),
     key: 'categoryName',
   },
   {
-    title: 'FAQ数量',
+    title: $t('operations.faq.faqCount'),
     key: '_count',
     width: 100,
     render: (row) => {
@@ -540,7 +539,7 @@ const categoryColumns = computed<DataTableColumns<FAQCategory>>(() => [
     },
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 150,
     render: (row) => {
@@ -551,7 +550,7 @@ const categoryColumns = computed<DataTableColumns<FAQCategory>>(() => [
             size: 'small',
             onClick: () => handleEditCategory(row),
           },
-          () => '修改',
+          () => $t('common.modify'),
         ),
         h(
           NPopconfirm,
@@ -560,8 +559,8 @@ const categoryColumns = computed<DataTableColumns<FAQCategory>>(() => [
           },
           {
             trigger: () =>
-              h(NButton, { size: 'small', type: 'error' }, () => '删除'),
-            default: () => '确定删除此类别吗？',
+              h(NButton, { size: 'small', type: 'error' }, () => $t('common.delete')),
+            default: () => $t('operations.faq.confirmDeleteCategory'),
           },
         ),
       ]);
@@ -578,7 +577,7 @@ const loadFAQs = async () => {
       faqList.value = response.data;
     }
   } catch (error: any) {
-    message.error(error.message || '加载FAQ列表失败');
+    message.error(error.message || $t('operations.faq.loadFailed'));
   } finally {
     loading.value = false;
   }
@@ -593,7 +592,7 @@ const loadCategories = async () => {
       categories.value = response.data;
     }
   } catch (error: any) {
-    message.error(error.message || '加载分类失败');
+    message.error(error.message || $t('operations.faq.loadCategoriesFailed'));
   } finally {
     loadingCategories.value = false;
   }
@@ -642,14 +641,14 @@ const submitForm = async () => {
     }
 
     if (response.success) {
-      message.success(editingId.value ? '更新成功' : '创建成功');
+      message.success(editingId.value ? $t('operations.faq.updateSuccess') : $t('operations.faq.createSuccess'));
       showModal.value = false;
       await loadFAQs();
     } else {
-      message.error(response.message || '操作失败');
+      message.error(response.message || $t('common.operationFailed'));
     }
   } catch (error: any) {
-    message.error(error.message || '操作失败');
+    message.error(error.message || $t('common.operationFailed'));
   } finally {
     saving.value = false;
   }
@@ -658,7 +657,7 @@ const submitForm = async () => {
 // Submit category
 const submitCategory = async () => {
   if (!categoryForm.value.categoryName) {
-    message.warning('请输入类别名称');
+    message.warning($t('operations.faq.enterCategoryName'));
     return;
   }
 
@@ -671,13 +670,13 @@ const submitCategory = async () => {
         categoryForm.value,
       );
       if (response.success) {
-        message.success('类别更新成功');
+        message.success($t('operations.faq.categoryUpdateSuccess'));
       }
     } else {
       // Create new category
       response = await createFAQCategory(categoryForm.value);
       if (response.success) {
-        message.success('类别添加成功');
+        message.success($t('operations.faq.categoryAddSuccess'));
       }
     }
 
@@ -692,10 +691,10 @@ const submitCategory = async () => {
       editingCategoryId.value = null;
       await loadCategories();
     } else {
-      message.error(response.message || '操作失败');
+      message.error(response.message || $t('common.operationFailed'));
     }
   } catch (error: any) {
-    message.error(error.message || '操作失败');
+    message.error(error.message || $t('common.operationFailed'));
   }
 };
 
@@ -745,13 +744,13 @@ const handleDelete = async (id: number) => {
   try {
     const response = await deleteFAQ(id);
     if (response.success) {
-      message.success('删除成功');
+      message.success($t('common.deleteSuccess'));
       await loadFAQs();
     } else {
-      message.error(response.message || '删除失败');
+      message.error(response.message || $t('common.operationFailed'));
     }
   } catch (error: any) {
-    message.error(error.message || '删除失败');
+    message.error(error.message || $t('common.operationFailed'));
   }
 };
 
@@ -760,13 +759,13 @@ const handleDeleteCategory = async (id: number) => {
   try {
     const response = await deleteFAQCategory(id);
     if (response.success) {
-      message.success('删除成功');
+      message.success($t('common.deleteSuccess'));
       await loadCategories();
     } else {
-      message.error(response.message || '删除失败');
+      message.error(response.message || $t('common.operationFailed'));
     }
   } catch (error: any) {
-    message.error(error.message || '删除失败');
+    message.error(error.message || $t('common.operationFailed'));
   }
 };
 
@@ -775,13 +774,13 @@ const handlePublish = async (id: number) => {
   try {
     const response = await publishFAQ(id);
     if (response.success) {
-      message.success('发布成功');
+      message.success($t('operations.faq.publishSuccess'));
       await loadFAQs();
     } else {
-      message.error(response.message || '发布失败');
+      message.error(response.message || $t('operations.faq.publishFailed'));
     }
   } catch (error: any) {
-    message.error(error.message || '发布失败');
+    message.error(error.message || $t('operations.faq.publishFailed'));
   }
 };
 
@@ -790,19 +789,19 @@ const handleUnpublish = async (id: number) => {
   try {
     const response = await unpublishFAQ(id);
     if (response.success) {
-      message.success('撤回成功');
+      message.success($t('operations.faq.unpublishSuccess'));
       await loadFAQs();
     } else {
-      message.error(response.message || '撤回失败');
+      message.error(response.message || $t('operations.faq.unpublishFailed'));
     }
   } catch (error: any) {
-    message.error(error.message || '撤回失败');
+    message.error(error.message || $t('operations.faq.unpublishFailed'));
   }
 };
 
 // Handle video upload
 const handleVideoUpload = (options: any) => {
-  message.info('视频上传功能待实现');
+  message.info($t('operations.faq.videoUploadPending'));
   return false;
 };
 

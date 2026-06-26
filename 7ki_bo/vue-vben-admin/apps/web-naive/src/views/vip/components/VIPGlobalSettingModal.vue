@@ -2,7 +2,7 @@
   <n-modal
     v-model:show="showModal"
     preset="dialog"
-    title="VIP公共设置"
+    :title="$t('vip.globalSettings')"
     :style="{ width: '1000px', maxHeight: '90vh' }"
     :closable="true"
     :mask-closable="false"
@@ -20,7 +20,7 @@
         >
           <!-- 奖励开关总控制 -->
           <div class="mb-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
-            <n-form-item label="发放开关" path="rewardEnabled">
+            <n-form-item :label="$t('vip.rewardDistributionSwitch')" path="rewardEnabled">
               <n-switch
                 v-model:value="formModel.rewardEnabled"
                 :checked-value="true"
@@ -29,8 +29,8 @@
               <n-text depth="3" class="ml-2">
                 {{
                   formModel.rewardEnabled
-                    ? '已启用VIP奖励发放'
-                    : '已关闭VIP奖励发放'
+                    ? $t('vip.rewardEnabled')
+                    : $t('vip.rewardDisabled')
                 }}
               </n-text>
             </n-form-item>
@@ -38,241 +38,297 @@
 
           <!-- 每日奖励设置 -->
           <div class="mb-6 rounded-lg border border-gray-200 p-4">
-            <h3 class="mb-4 text-lg font-medium text-gray-700">每日奖励设置</h3>
+            <h3 class="mb-4 text-lg font-medium text-gray-700">
+              {{ $t('vip.dailyRewardSettings') }}
+            </h3>
 
-            <n-form-item label="领取时间" path="dailySettings.claimTime">
+            <n-form-item :label="$t('vip.claimTime')" path="dailySettings.claimTime">
               <n-radio-group v-model:value="formModel.dailySettings.claimTime">
                 <n-space>
-                  <n-radio value="next-day" class="text-blue-600">次日</n-radio>
-                  <n-radio value="same-day" class="text-blue-600">当日</n-radio>
+                  <n-radio value="next-day" class="text-blue-600">{{
+                    $t('vip.nextDay')
+                  }}</n-radio>
+                  <n-radio value="same-day" class="text-blue-600">{{
+                    $t('vip.sameDay')
+                  }}</n-radio>
                 </n-space>
               </n-radio-group>
               <n-text
                 depth="3"
                 class="ml-4 cursor-pointer text-blue-500 hover:underline"
               >
-                (实时领取(需审核))
+                {{ $t('vip.realtimeClaimAudit') }}
               </n-text>
             </n-form-item>
 
-            <n-form-item label="领取方式" path="dailySettings.repeatableClaim">
+            <n-form-item
+              :label="$t('vip.claimMethod')"
+              path="dailySettings.repeatableClaim"
+            >
               <n-radio-group
                 v-model:value="formModel.dailySettings.repeatableClaim"
               >
                 <n-space vertical>
-                  <n-radio value="repeatable">可重复领取(含补领部分)</n-radio>
-                  <n-radio value="highest-only">只能领取最高一档</n-radio>
+                  <n-radio value="repeatable">{{
+                    $t('vip.repeatableClaim')
+                  }}</n-radio>
+                  <n-radio value="highest-only">{{
+                    $t('vip.highestOnlyClaim')
+                  }}</n-radio>
                 </n-space>
               </n-radio-group>
             </n-form-item>
 
             <n-form-item
-              label="*奖励领取延迟天数"
+              :label="$t('vip.rewardDelayDays')"
               path="dailySettings.delayDays"
             >
               <n-input-number
                 v-model:value="formModel.dailySettings.delayDays"
                 :min="0"
                 :max="30"
-                placeholder="请输入延迟天数"
+                :placeholder="$t('vip.enterDelayDays')"
                 style="width: 200px"
               />
-              <n-text depth="3" class="ml-2">天</n-text>
+              <n-text depth="3" class="ml-2">{{ $t('vip.days') }}</n-text>
             </n-form-item>
           </div>
 
           <!-- 每周奖励设置 -->
           <div class="mb-6 rounded-lg border border-gray-200 p-4">
-            <h3 class="mb-4 text-lg font-medium text-gray-700">每周奖励设置</h3>
+            <h3 class="mb-4 text-lg font-medium text-gray-700">
+              {{ $t('vip.weeklyRewardSettings') }}
+            </h3>
 
-            <n-form-item label="领取时间" path="weeklySettings.claimTime">
+            <n-form-item :label="$t('vip.claimTime')" path="weeklySettings.claimTime">
               <n-radio-group v-model:value="formModel.weeklySettings.claimTime">
                 <n-space>
-                  <n-radio value="next-day" class="text-blue-600">次日</n-radio>
-                  <n-radio value="same-day" class="text-blue-600">当日</n-radio>
+                  <n-radio value="next-day" class="text-blue-600">{{
+                    $t('vip.nextDay')
+                  }}</n-radio>
+                  <n-radio value="same-day" class="text-blue-600">{{
+                    $t('vip.sameDay')
+                  }}</n-radio>
                 </n-space>
               </n-radio-group>
               <n-text
                 depth="3"
                 class="ml-4 cursor-pointer text-blue-500 hover:underline"
               >
-                (实时领取(需审核))
+                {{ $t('vip.realtimeClaimAudit') }}
               </n-text>
             </n-form-item>
 
-            <n-form-item label="领取方式" path="weeklySettings.repeatableClaim">
+            <n-form-item
+              :label="$t('vip.claimMethod')"
+              path="weeklySettings.repeatableClaim"
+            >
               <n-radio-group
                 v-model:value="formModel.weeklySettings.repeatableClaim"
               >
                 <n-space vertical>
-                  <n-radio value="repeatable">可重复领取(含补领部分)</n-radio>
-                  <n-radio value="highest-only">只能领取最高一档</n-radio>
+                  <n-radio value="repeatable">{{
+                    $t('vip.repeatableClaim')
+                  }}</n-radio>
+                  <n-radio value="highest-only">{{
+                    $t('vip.highestOnlyClaim')
+                  }}</n-radio>
                 </n-space>
               </n-radio-group>
             </n-form-item>
 
             <n-form-item
-              label="*奖励领取延迟天数"
+              :label="$t('vip.rewardDelayDays')"
               path="weeklySettings.delayDays"
             >
               <n-input-number
                 v-model:value="formModel.weeklySettings.delayDays"
                 :min="0"
                 :max="30"
-                placeholder="请输入延迟天数"
+                :placeholder="$t('vip.enterDelayDays')"
                 style="width: 200px"
               />
-              <n-text depth="3" class="ml-2">天</n-text>
+              <n-text depth="3" class="ml-2">{{ $t('vip.days') }}</n-text>
             </n-form-item>
           </div>
 
           <!-- 每月奖励设置 -->
           <div class="mb-6 rounded-lg border border-gray-200 p-4">
-            <h3 class="mb-4 text-lg font-medium text-gray-700">每月奖励设置</h3>
+            <h3 class="mb-4 text-lg font-medium text-gray-700">
+              {{ $t('vip.monthlyRewardSettings') }}
+            </h3>
 
-            <n-form-item label="领取时间" path="monthlySettings.claimTime">
+            <n-form-item :label="$t('vip.claimTime')" path="monthlySettings.claimTime">
               <n-radio-group
                 v-model:value="formModel.monthlySettings.claimTime"
               >
                 <n-space>
-                  <n-radio value="next-day" class="text-blue-600">次日</n-radio>
-                  <n-radio value="same-day" class="text-blue-600">当日</n-radio>
+                  <n-radio value="next-day" class="text-blue-600">{{
+                    $t('vip.nextDay')
+                  }}</n-radio>
+                  <n-radio value="same-day" class="text-blue-600">{{
+                    $t('vip.sameDay')
+                  }}</n-radio>
                 </n-space>
               </n-radio-group>
               <n-text
                 depth="3"
                 class="ml-4 cursor-pointer text-blue-500 hover:underline"
               >
-                (实时领取(需审核))
+                {{ $t('vip.realtimeClaimAudit') }}
               </n-text>
             </n-form-item>
 
             <n-form-item
-              label="领取方式"
+              :label="$t('vip.claimMethod')"
               path="monthlySettings.repeatableClaim"
             >
               <n-radio-group
                 v-model:value="formModel.monthlySettings.repeatableClaim"
               >
                 <n-space vertical>
-                  <n-radio value="repeatable">可重复领取(含补领部分)</n-radio>
-                  <n-radio value="highest-only">只能领取最高一档</n-radio>
+                  <n-radio value="repeatable">{{
+                    $t('vip.repeatableClaim')
+                  }}</n-radio>
+                  <n-radio value="highest-only">{{
+                    $t('vip.highestOnlyClaim')
+                  }}</n-radio>
                 </n-space>
               </n-radio-group>
             </n-form-item>
 
             <n-form-item
-              label="*奖励领取延迟天数"
+              :label="$t('vip.rewardDelayDays')"
               path="monthlySettings.delayDays"
             >
               <n-input-number
                 v-model:value="formModel.monthlySettings.delayDays"
                 :min="0"
                 :max="30"
-                placeholder="请输入延迟天数"
+                :placeholder="$t('vip.enterDelayDays')"
                 style="width: 200px"
               />
-              <n-text depth="3" class="ml-2">天</n-text>
+              <n-text depth="3" class="ml-2">{{ $t('vip.days') }}</n-text>
             </n-form-item>
           </div>
 
           <!-- 生日金奖励设置 -->
           <div class="mb-6 rounded-lg border border-gray-200 p-4">
             <h3 class="mb-4 text-lg font-medium text-gray-700">
-              生日金奖励设置
+              {{ $t('vip.birthdayRewardSettings') }}
             </h3>
 
-            <n-form-item label="领取时间" path="birthdaySettings.claimTime">
+            <n-form-item :label="$t('vip.claimTime')" path="birthdaySettings.claimTime">
               <n-radio-group
                 v-model:value="formModel.birthdaySettings.claimTime"
               >
                 <n-space>
-                  <n-radio value="next-day" class="text-blue-600">次日</n-radio>
-                  <n-radio value="same-day" class="text-blue-600">当日</n-radio>
+                  <n-radio value="next-day" class="text-blue-600">{{
+                    $t('vip.nextDay')
+                  }}</n-radio>
+                  <n-radio value="same-day" class="text-blue-600">{{
+                    $t('vip.sameDay')
+                  }}</n-radio>
                 </n-space>
               </n-radio-group>
               <n-text
                 depth="3"
                 class="ml-4 cursor-pointer text-blue-500 hover:underline"
               >
-                (实时领取(需审核))
+                {{ $t('vip.realtimeClaimAudit') }}
               </n-text>
             </n-form-item>
 
             <n-form-item
-              label="领取方式"
+              :label="$t('vip.claimMethod')"
               path="birthdaySettings.repeatableClaim"
             >
               <n-radio-group
                 v-model:value="formModel.birthdaySettings.repeatableClaim"
               >
                 <n-space vertical>
-                  <n-radio value="repeatable">可重复领取(含补领部分)</n-radio>
-                  <n-radio value="highest-only">只能领取最高一档</n-radio>
+                  <n-radio value="repeatable">{{
+                    $t('vip.repeatableClaim')
+                  }}</n-radio>
+                  <n-radio value="highest-only">{{
+                    $t('vip.highestOnlyClaim')
+                  }}</n-radio>
                 </n-space>
               </n-radio-group>
             </n-form-item>
 
             <n-form-item
-              label="*奖励领取延迟天数"
+              :label="$t('vip.rewardDelayDays')"
               path="birthdaySettings.delayDays"
             >
               <n-input-number
                 v-model:value="formModel.birthdaySettings.delayDays"
                 :min="0"
                 :max="30"
-                placeholder="请输入延迟天数"
+                :placeholder="$t('vip.enterDelayDays')"
                 style="width: 200px"
               />
-              <n-text depth="3" class="ml-2">天</n-text>
+              <n-text depth="3" class="ml-2">{{ $t('vip.days') }}</n-text>
             </n-form-item>
           </div>
 
           <!-- 玩法奖励设定 -->
           <div class="mb-6 rounded-lg border border-gray-200 p-4">
-            <h3 class="mb-4 text-lg font-medium text-gray-700">玩法奖励设定</h3>
+            <h3 class="mb-4 text-lg font-medium text-gray-700">
+              {{ $t('vip.gameplayRewardSettings') }}
+            </h3>
 
-            <n-form-item label="派发方式" path="distributionMethod">
+            <n-form-item :label="$t('vip.distributionMethod')" path="distributionMethod">
               <n-radio-group v-model:value="formModel.distributionMethod">
                 <n-space vertical>
-                  <n-radio value="daily-birthday-common"
-                    >仅限每日/生日/公共设置</n-radio
-                  >
-                  <n-radio value="period-only">仅限周期奖励</n-radio>
+                  <n-radio value="daily-birthday-common">{{
+                    $t('vip.dailyBirthdayCommonOnly')
+                  }}</n-radio>
+                  <n-radio value="period-only">{{
+                    $t('vip.periodRewardOnly')
+                  }}</n-radio>
                 </n-space>
               </n-radio-group>
             </n-form-item>
 
             <n-form-item
-              label="晋级奖金"
+              :label="$t('vip.promotionBonus')"
               path="promotionBonusSettings.claimTime"
             >
               <n-radio-group
                 v-model:value="formModel.promotionBonusSettings.claimTime"
               >
                 <n-space>
-                  <n-radio value="next-day" class="text-blue-600">次日</n-radio>
-                  <n-radio value="same-day" class="text-blue-600">当日</n-radio>
+                  <n-radio value="next-day" class="text-blue-600">{{
+                    $t('vip.nextDay')
+                  }}</n-radio>
+                  <n-radio value="same-day" class="text-blue-600">{{
+                    $t('vip.sameDay')
+                  }}</n-radio>
                 </n-space>
               </n-radio-group>
               <n-text
                 depth="3"
                 class="ml-4 cursor-pointer text-blue-500 hover:underline"
               >
-                (实时领取(需审核))
+                {{ $t('vip.realtimeClaimAudit') }}
               </n-text>
             </n-form-item>
 
             <n-form-item
-              label="晋级奖金领取方式"
+              :label="$t('vip.promotionBonusClaimMethod')"
               path="promotionBonusSettings.repeatableClaim"
             >
               <n-radio-group
                 v-model:value="formModel.promotionBonusSettings.repeatableClaim"
               >
                 <n-space vertical>
-                  <n-radio value="repeatable">可重复领取(含补领部分)</n-radio>
-                  <n-radio value="highest-only">只能领取最高一档</n-radio>
+                  <n-radio value="repeatable">{{
+                    $t('vip.repeatableClaim')
+                  }}</n-radio>
+                  <n-radio value="highest-only">{{
+                    $t('vip.highestOnlyClaim')
+                  }}</n-radio>
                 </n-space>
               </n-radio-group>
             </n-form-item>
@@ -280,9 +336,14 @@
 
           <!-- 其他设置 -->
           <div class="mb-6 rounded-lg border border-gray-200 p-4">
-            <h3 class="mb-4 text-lg font-medium text-gray-700">其他设置</h3>
+            <h3 class="mb-4 text-lg font-medium text-gray-700">
+              {{ $t('vip.otherSettings') }}
+            </h3>
 
-            <n-form-item label="禁止参与等级(最多多选)" path="excludedLevels">
+            <n-form-item
+              :label="$t('vip.forbiddenLevels')"
+              path="excludedLevels"
+            >
               <n-checkbox-group v-model:value="formModel.excludedLevels">
                 <n-grid :cols="5" :x-gap="8" :y-gap="8">
                   <n-grid-item
@@ -297,30 +358,42 @@
               </n-checkbox-group>
             </n-form-item>
 
-            <n-form-item label="*结算倍率" path="settlementMultiplier">
+            <n-form-item
+              :label="$t('vip.settlementMultiplier')"
+              path="settlementMultiplier"
+            >
               <n-input-number
                 v-model:value="formModel.settlementMultiplier"
                 :min="0.01"
                 :max="100"
                 :precision="2"
-                placeholder="请输入结算倍率"
+                :placeholder="$t('vip.enterSettlementMultiplier')"
                 style="width: 200px"
               />
             </n-form-item>
 
-            <n-form-item label="奖金结算控制平台" path="platformControl">
+            <n-form-item
+              :label="$t('vip.bonusSettlementPlatform')"
+              path="platformControl"
+            >
               <n-radio-group v-model:value="formModel.platformControl">
                 <n-space vertical>
-                  <n-radio value="unlimited">不限制</n-radio>
-                  <n-radio value="selected-only">仅限勾选平台</n-radio>
-                  <n-radio value="exclude-selected">排除勾选平台</n-radio>
+                  <n-radio value="unlimited">{{
+                    $t('vip.noRestriction')
+                  }}</n-radio>
+                  <n-radio value="selected-only">{{
+                    $t('vip.selectedPlatformsOnly')
+                  }}</n-radio>
+                  <n-radio value="exclude-selected">{{
+                    $t('vip.excludeSelectedPlatforms')
+                  }}</n-radio>
                 </n-space>
               </n-radio-group>
             </n-form-item>
 
             <n-form-item
               v-if="formModel.platformControl !== 'unlimited'"
-              label="选择平台"
+              :label="$t('vip.selectPlatform')"
               path="selectedPlatforms"
             >
               <n-checkbox-group v-model:value="formModel.selectedPlatforms">
@@ -337,23 +410,25 @@
               </n-checkbox-group>
             </n-form-item>
 
-            <n-form-item label="规则说明" path="rulesType">
+            <n-form-item :label="$t('vip.rulesDescription')" path="rulesType">
               <n-radio-group v-model:value="formModel.rulesType">
                 <n-space>
-                  <n-radio value="custom">自定义</n-radio>
-                  <n-radio value="system">系统翻译</n-radio>
+                  <n-radio value="custom">{{ $t('common.custom') }}</n-radio>
+                  <n-radio value="system">{{
+                    $t('vip.systemTranslation')
+                  }}</n-radio>
                 </n-space>
               </n-radio-group>
             </n-form-item>
 
-            <n-form-item label="规则内容" path="rulesContent">
+            <n-form-item :label="$t('vip.rulesContent')" path="rulesContent">
               <n-input
                 v-model:value="formModel.rulesContent"
                 type="textarea"
                 :placeholder="
                   formModel.rulesType === 'system'
-                    ? '使用系统默认规则说明'
-                    : '请输入自定义规则内容'
+                    ? $t('vip.useDefaultRules')
+                    : $t('vip.enterCustomRules')
                 "
                 :disabled="formModel.rulesType === 'system'"
                 :autosize="{ minRows: 6, maxRows: 10 }"
@@ -364,30 +439,32 @@
 
           <!-- 展示设置 -->
           <div class="mb-6 rounded-lg border border-gray-200 p-4">
-            <h3 class="mb-4 text-lg font-medium text-gray-700">展示设置</h3>
+            <h3 class="mb-4 text-lg font-medium text-gray-700">
+              {{ $t('vip.displaySettings') }}
+            </h3>
 
-            <n-form-item label="VIP展示方式" path="displayMethod">
+            <n-form-item :label="$t('vip.vipDisplayMode')" path="displayMethod">
               <n-radio-group v-model:value="formModel.displayMethod">
                 <n-space>
-                  <n-radio value="list">列表展示</n-radio>
-                  <n-radio value="card">卡片展示</n-radio>
+                  <n-radio value="list">{{ $t('vip.listDisplay') }}</n-radio>
+                  <n-radio value="card">{{ $t('vip.cardDisplay') }}</n-radio>
                 </n-space>
               </n-radio-group>
             </n-form-item>
 
-            <n-form-item label="图标样式" path="iconStyle">
+            <n-form-item :label="$t('vip.iconStyle')" path="iconStyle">
               <n-radio-group v-model:value="formModel.iconStyle">
                 <n-space>
-                  <n-radio value="style1">样式1</n-radio>
-                  <n-radio value="style2">样式2</n-radio>
-                  <n-radio value="style3">样式3</n-radio>
-                  <n-radio value="style4">样式4</n-radio>
-                  <n-radio value="custom">自定义</n-radio>
+                  <n-radio value="style1">{{ $t('vip.style1') }}</n-radio>
+                  <n-radio value="style2">{{ $t('vip.style2') }}</n-radio>
+                  <n-radio value="style3">{{ $t('vip.style3') }}</n-radio>
+                  <n-radio value="style4">{{ $t('vip.style4') }}</n-radio>
+                  <n-radio value="custom">{{ $t('common.custom') }}</n-radio>
                 </n-space>
               </n-radio-group>
             </n-form-item>
 
-            <n-form-item label="徽章图" path="badgeVariant">
+            <n-form-item :label="$t('vip.badgeImage')" path="badgeVariant">
               <n-radio-group v-model:value="formModel.badgeVariant">
                 <n-grid :cols="4" :x-gap="16" :y-gap="16">
                   <n-grid-item
@@ -420,14 +497,14 @@
 
     <template #footer>
       <div class="flex justify-end gap-3">
-        <n-button @click="handleCancel" size="medium">取消</n-button>
+        <n-button @click="handleCancel" size="medium">{{ $t('common.cancel') }}</n-button>
         <n-button
           type="primary"
           @click="handleSubmit"
           :loading="submitting"
           size="medium"
         >
-          保存设置
+          {{ $t('vip.saveSettings') }}
         </n-button>
       </div>
     </template>
@@ -435,6 +512,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, watch, onMounted } from 'vue';
 import {
   NModal,
@@ -540,19 +619,19 @@ const formModel = reactive({
 });
 
 // 表单验证规则
-const formRules: FormRules = {
+const formRules = computed<FormRules>(() => ({
   'dailySettings.delayDays': [
     {
       required: true,
       type: 'number',
-      message: '请输入每日奖励延迟天数',
+      message: $t('vip.enterDailyDelayDays'),
       trigger: 'blur',
     },
     {
       type: 'number',
       min: 0,
       max: 30,
-      message: '延迟天数应在0-30天之间',
+      message: $t('vip.delayDaysRange'),
       trigger: 'blur',
     },
   ],
@@ -560,14 +639,14 @@ const formRules: FormRules = {
     {
       required: true,
       type: 'number',
-      message: '请输入每周奖励延迟天数',
+      message: $t('vip.enterWeeklyDelayDays'),
       trigger: 'blur',
     },
     {
       type: 'number',
       min: 0,
       max: 30,
-      message: '延迟天数应在0-30天之间',
+      message: $t('vip.delayDaysRange'),
       trigger: 'blur',
     },
   ],
@@ -575,14 +654,14 @@ const formRules: FormRules = {
     {
       required: true,
       type: 'number',
-      message: '请输入每月奖励延迟天数',
+      message: $t('vip.enterMonthlyDelayDays'),
       trigger: 'blur',
     },
     {
       type: 'number',
       min: 0,
       max: 30,
-      message: '延迟天数应在0-30天之间',
+      message: $t('vip.delayDaysRange'),
       trigger: 'blur',
     },
   ],
@@ -590,14 +669,14 @@ const formRules: FormRules = {
     {
       required: true,
       type: 'number',
-      message: '请输入生日奖励延迟天数',
+      message: $t('vip.enterBirthdayDelayDays'),
       trigger: 'blur',
     },
     {
       type: 'number',
       min: 0,
       max: 30,
-      message: '延迟天数应在0-30天之间',
+      message: $t('vip.delayDaysRange'),
       trigger: 'blur',
     },
   ],
@@ -605,25 +684,25 @@ const formRules: FormRules = {
     {
       required: true,
       type: 'number',
-      message: '请输入结算倍率',
+      message: $t('vip.enterSettlementMultiplierRequired'),
       trigger: 'blur',
     },
     {
       type: 'number',
       min: 0.01,
       max: 100,
-      message: '结算倍率应在0.01-100之间',
+      message: $t('vip.settlementMultiplierRange'),
       trigger: 'blur',
     },
   ],
   rulesContent: [
     {
-      validator: (rule, value) => {
+      validator: (_rule, value) => {
         if (
           formModel.rulesType === 'custom' &&
           (!value || value.trim() === '')
         ) {
-          return new Error('自定义规则内容不能为空');
+          return new Error($t('vip.customRulesRequired'));
         }
         return true;
       },
@@ -631,33 +710,39 @@ const formRules: FormRules = {
     },
   ],
   displayMethod: [
-    { required: true, message: '请选择VIP展示方式', trigger: 'change' },
+    {
+      required: true,
+      message: $t('vip.selectVipDisplayMode'),
+      trigger: 'change',
+    },
   ],
-  iconStyle: [{ required: true, message: '请选择图标样式', trigger: 'change' }],
+  iconStyle: [
+    { required: true, message: $t('vip.selectIconStyle'), trigger: 'change' },
+  ],
   badgeVariant: [
-    { required: true, message: '请选择徽章图', trigger: 'change' },
+    { required: true, message: $t('vip.selectBadgeImage'), trigger: 'change' },
   ],
-};
+}));
 
 // 选项配置
-const memberLevelOptions = [
-  { label: '默认等级', value: 'default' },
-  { label: '备用等级', value: 'backup' },
-  { label: '五元玩家', value: 'five-yuan' },
-  { label: '十元玩家', value: 'ten-yuan' },
-  { label: '三十元玩家', value: 'thirty-yuan' },
-  { label: '五十元玩家', value: 'fifty-yuan' },
-  { label: '一百元玩家', value: 'hundred-yuan' },
-  { label: '三百元玩家', value: 'three-hundred-yuan' },
-  { label: '五百元玩家', value: 'five-hundred-yuan' },
-  { label: '一千元玩家', value: 'thousand-yuan' },
-  { label: '三千元玩家', value: 'three-thousand-yuan' },
-  { label: '五千元玩家', value: 'five-thousand-yuan' },
-  { label: '一万元玩家', value: 'ten-thousand-yuan' },
-  { label: '三万元玩家', value: 'thirty-thousand-yuan' },
-  { label: '五万元玩家', value: 'fifty-thousand-yuan' },
-  { label: '测试专用等级', value: 'test-only' },
-];
+const memberLevelOptions = computed(() => [
+  { label: $t('vip.memberLevelDefault'), value: 'default' },
+  { label: $t('vip.memberLevelBackup'), value: 'backup' },
+  { label: $t('vip.memberLevel5'), value: 'five-yuan' },
+  { label: $t('vip.memberLevel10'), value: 'ten-yuan' },
+  { label: $t('vip.memberLevel30'), value: 'thirty-yuan' },
+  { label: $t('vip.memberLevel50'), value: 'fifty-yuan' },
+  { label: $t('vip.memberLevel100'), value: 'hundred-yuan' },
+  { label: $t('vip.memberLevel300'), value: 'three-hundred-yuan' },
+  { label: $t('vip.memberLevel500'), value: 'five-hundred-yuan' },
+  { label: $t('vip.memberLevel1000'), value: 'thousand-yuan' },
+  { label: $t('vip.memberLevel3000'), value: 'three-thousand-yuan' },
+  { label: $t('vip.memberLevel5000'), value: 'five-thousand-yuan' },
+  { label: $t('vip.memberLevel10000'), value: 'ten-thousand-yuan' },
+  { label: $t('vip.memberLevel30000'), value: 'thirty-thousand-yuan' },
+  { label: $t('vip.memberLevel50000'), value: 'fifty-thousand-yuan' },
+  { label: $t('vip.memberLevelTest'), value: 'test-only' },
+]);
 
 const platformOptions = [
   { label: 'Evolution Gaming', value: 'evolution' },
@@ -674,117 +759,92 @@ const platformOptions = [
   { label: 'Push Gaming', value: 'push' },
 ];
 
-const badgeVariantOptions = [
+const badgeVariantOptions = computed(() => [
   {
-    label: '红钻石',
+    label: $t('vip.badgeRedDiamond'),
     value: 'red-diamond',
     stars: '♦',
     colorClass: 'bg-gradient-to-br from-red-500 to-red-600',
   },
   {
-    label: '蓝宝石',
+    label: $t('vip.badgeBlueSapphire'),
     value: 'blue-sapphire',
     stars: '♦',
     colorClass: 'bg-gradient-to-br from-blue-500 to-blue-600',
   },
   {
-    label: '绿翡翠',
+    label: $t('vip.badgeGreenJade'),
     value: 'green-emerald',
     stars: '♦',
     colorClass: 'bg-gradient-to-br from-green-500 to-green-600',
   },
   {
-    label: '紫水晶',
+    label: $t('vip.badgePurpleAmethyst'),
     value: 'purple-amethyst',
     stars: '♦',
     colorClass: 'bg-gradient-to-br from-purple-500 to-purple-600',
   },
   {
-    label: '黄金徽章',
+    label: $t('vip.badgeGoldBadge'),
     value: 'gold-crown',
     stars: '♕',
     colorClass: 'bg-gradient-to-br from-yellow-400 to-yellow-500',
   },
   {
-    label: '银铂徽章',
+    label: $t('vip.badgeSilverPlatinum'),
     value: 'silver-crown',
     stars: '♔',
     colorClass: 'bg-gradient-to-br from-gray-400 to-gray-500',
   },
   {
-    label: '铜质徽章',
+    label: $t('vip.badgeBronze'),
     value: 'bronze-crown',
     stars: '♚',
     colorClass: 'bg-gradient-to-br from-orange-600 to-orange-700',
   },
   {
-    label: '钻石王冠',
+    label: $t('vip.badgeDiamondCrown'),
     value: 'diamond-crown',
     stars: '♛',
     colorClass: 'bg-gradient-to-br from-cyan-400 to-cyan-500',
   },
   {
-    label: '玫瑰金',
+    label: $t('vip.badgeRoseGold'),
     value: 'rose-gold',
     stars: '♕',
     colorClass: 'bg-gradient-to-br from-pink-400 to-pink-500',
   },
   {
-    label: '白金徽章',
+    label: $t('vip.badgePlatinum'),
     value: 'platinum',
     stars: '♔',
     colorClass: 'bg-gradient-to-br from-slate-300 to-slate-400',
   },
   {
-    label: '珊瑚粉',
+    label: $t('vip.badgeCoralPink'),
     value: 'coral-pink',
     stars: '♦',
     colorClass: 'bg-gradient-to-br from-coral-400 to-coral-500',
   },
   {
-    label: '翠绿宝石',
+    label: $t('vip.badgeEmerald'),
     value: 'jade-green',
     stars: '♛',
     colorClass: 'bg-gradient-to-br from-emerald-400 to-emerald-500',
   },
-];
+]);
 
-// 系统默认规则说明
-const systemRulesContent = `VIP奖励系统规则说明：
-
-1. 奖励发放规则
-   - 每日奖励：会员可在指定时间段内领取当日奖励，需完成当日有效投注要求
-   - 每周奖励：每周一自动发放上周奖励，基于上周投注活跃度计算
-   - 每月奖励：每月1日自动发放上月奖励，根据VIP等级和月度表现发放
-   - 生日奖励：会员生日当天可领取特殊奖励，每年限领一次
-
-2. 发放条件与限制
-   - 奖励金额根据VIP等级、投注活跃度和历史表现综合计算
-   - 单次奖励不得超过各类型设定的最高上限金额
-   - 会员须完成相应的有效投注要求才可提现奖励
-   - 不同终端设备可设置不同的奖励发放政策
-
-3. 晋级奖励说明
-   - 会员VIP等级提升时可获得相应晋级奖励
-   - 晋级奖励根据新等级标准发放，不可重复领取
-   - 晋级奖励需在规定时间内领取，逾期视为放弃
-
-4. 其他重要条款
-   - 奖励有效期为7个自然日，过期自动失效
-   - 平台保留对异常账户停止发放奖励的权利
-   - 如发现违规行为，平台有权收回已发放的奖励
-   - 如有争议，以系统记录和平台最终解释为准
-   - 本规则最终解释权归平台所有，如有变更恕不另行通知`;
+const systemRulesContent = computed(() => $t('vip.systemRulesContent'));
 
 // 监听规则类型变化，自动填充内容
 watch(
   () => formModel.rulesType,
   (newType) => {
     if (newType === 'system') {
-      formModel.rulesContent = systemRulesContent;
+      formModel.rulesContent = systemRulesContent.value;
     } else if (
       newType === 'custom' &&
-      formModel.rulesContent === systemRulesContent
+      formModel.rulesContent === systemRulesContent.value
     ) {
       formModel.rulesContent = '';
     }
@@ -852,7 +912,7 @@ const loadCurrentSettings = async () => {
       platformControl: settings.platformControl || 'unlimited',
       selectedPlatforms: settings.selectedPlatforms || [],
       rulesType: settings.rulesType || 'system',
-      rulesContent: settings.rulesContent || systemRulesContent,
+      rulesContent: settings.rulesContent || systemRulesContent.value,
 
       // 展示设置
       displayMethod: settings.displayMethod || 'list',
@@ -942,11 +1002,11 @@ const handleSubmit = async () => {
     };
 
     await updateVIPGlobalSettings(settingsData);
-    message.success('VIP公共设置保存成功');
+    message.success($t('vip.globalSettingsSaveSuccess'));
     emit('success');
     showModal.value = false;
   } catch (error) {
-    message.error('保存失败，请检查输入内容');
+    message.error($t('vip.globalSettingsSaveFailed'));
     console.error('保存VIP全局设置失败:', error);
   } finally {
     submitting.value = false;
@@ -965,7 +1025,7 @@ watch(
 
 // 初始化系统规则内容
 onMounted(() => {
-  formModel.rulesContent = systemRulesContent;
+  formModel.rulesContent = systemRulesContent.value;
 });
 </script>
 

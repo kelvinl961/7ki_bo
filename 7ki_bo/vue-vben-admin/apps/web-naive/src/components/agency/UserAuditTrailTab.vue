@@ -1,13 +1,12 @@
 <template>
   <div class="user-audit-trail-tab">
-    <!-- Filter Section -->
-    <n-card title="筛选条件" class="mb-4">
+    <n-card :title="$t('agency.auditTrail.filterConditions')" class="mb-4">
       <div class="flex flex-wrap items-end gap-4">
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium text-gray-700">操作类型</label>
+          <label class="mb-2 text-sm font-medium text-gray-700">{{ $t('agency.auditTrail.actionType') }}</label>
           <n-select
             v-model:value="actionTypeFilter"
-            placeholder="选择操作类型"
+            :placeholder="$t('agency.auditTrail.selectActionType')"
             clearable
             style="width: 140px"
             :options="actionTypeOptions"
@@ -15,10 +14,10 @@
           />
         </div>
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium text-gray-700">操作状态</label>
+          <label class="mb-2 text-sm font-medium text-gray-700">{{ $t('agency.auditTrail.actionStatus') }}</label>
           <n-select
             v-model:value="actionStatusFilter"
-            placeholder="选择状态"
+            :placeholder="$t('agency.auditTrail.selectStatus')"
             clearable
             style="width: 120px"
             :options="actionStatusOptions"
@@ -26,21 +25,21 @@
           />
         </div>
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium text-gray-700">开始日期</label>
+          <label class="mb-2 text-sm font-medium text-gray-700">{{ $t('agency.auditTrail.startDate') }}</label>
           <n-date-picker
             v-model:value="startDate"
             type="date"
-            placeholder="选择开始日期"
+            :placeholder="$t('agency.auditTrail.selectStartDate')"
             style="width: 150px"
             @update:value="loadAuditTrail"
           />
         </div>
         <div class="flex flex-col">
-          <label class="mb-2 text-sm font-medium text-gray-700">结束日期</label>
+          <label class="mb-2 text-sm font-medium text-gray-700">{{ $t('agency.auditTrail.endDate') }}</label>
           <n-date-picker
             v-model:value="endDate"
             type="date"
-            placeholder="选择结束日期"
+            :placeholder="$t('agency.auditTrail.selectEndDate')"
             style="width: 150px"
             @update:value="loadAuditTrail"
           />
@@ -50,26 +49,29 @@
           @click="loadAuditTrail"
           class="flex items-center gap-1"
         >
-          🔍 查询
+          🔍 {{ $t('common.query') }}
         </n-button>
         <n-button @click="handleResetFilter" class="flex items-center gap-1">
-          重置
+          {{ $t('common.reset') }}
         </n-button>
       </div>
     </n-card>
 
-    <!-- Audit Trail Table -->
     <n-card>
       <template #header>
         <div class="flex items-center justify-between">
-          <span class="text-lg font-medium">代理操作日志</span>
+          <span class="text-lg font-medium">{{
+            $t('agency.auditTrail.agentOperationLog')
+          }}</span>
           <div class="flex items-center gap-2 text-sm text-gray-500">
-            <span>共 {{ auditRecords.length || 0 }} 条记录</span>
+            <span>{{
+              $t('agency.auditTrail.recordCount', [auditRecords.length || 0])
+            }}</span>
             <n-button size="tiny" @click="loadAuditTrail" class="ml-2">
-              重新加载
+              {{ $t('agency.auditTrail.reload') }}
             </n-button>
             <n-button size="tiny" @click="handleExportData" class="ml-1">
-              导出数据
+              {{ $t('agency.auditTrail.exportData') }}
             </n-button>
           </div>
         </div>
@@ -85,24 +87,25 @@
       />
     </n-card>
 
-    <!-- Statistics Summary -->
-    <n-card title="操作统计" class="mt-4">
+    <n-card :title="$t('agency.auditTrail.operationStats')" class="mt-4">
       <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
         <div class="stat-card">
           <div class="stat-value">{{ totalActions }}</div>
-          <div class="stat-label">总操作数</div>
+          <div class="stat-label">{{ $t('agency.auditTrail.totalActions') }}</div>
         </div>
         <div class="stat-card">
           <div class="stat-value">{{ successfulActions }}</div>
-          <div class="stat-label">成功操作</div>
+          <div class="stat-label">
+            {{ $t('agency.auditTrail.successfulActions') }}
+          </div>
         </div>
         <div class="stat-card">
           <div class="stat-value">{{ failedActions }}</div>
-          <div class="stat-label">失败操作</div>
+          <div class="stat-label">{{ $t('agency.auditTrail.failedActions') }}</div>
         </div>
         <div class="stat-card">
           <div class="stat-value">{{ uniqueUsers }}</div>
-          <div class="stat-label">涉及用户数</div>
+          <div class="stat-label">{{ $t('agency.auditTrail.uniqueUsers') }}</div>
         </div>
       </div>
     </n-card>
@@ -110,6 +113,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, h, onMounted } from 'vue';
 import {
   NCard,
@@ -118,7 +123,6 @@ import {
   NDatePicker,
   NSelect,
   NTag,
-  NIcon,
   useMessage,
   type DataTableColumns,
 } from 'naive-ui';
@@ -136,25 +140,21 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const message = useMessage();
-
-// Reactive data
 const auditLoading = ref(false);
 const auditRecords = ref<AgentAuditRecord[]>([]);
-
-// Filters
 const actionTypeFilter = ref('');
 const actionStatusFilter = ref('');
 const startDate = ref<number | null>(null);
 const endDate = ref<number | null>(null);
 
-// Pagination
 const auditPagination = reactive({
   current: 1,
   pageSize: 10,
   total: 0,
   showSizePicker: true,
   pageSizes: [10, 20, 50],
-  prefix: (info: any) => `共 ${info.itemCount} 条`,
+  prefix: (info: { itemCount: number }) =>
+    $t('agency.auditTrail.recordCount', [info.itemCount]),
   onUpdatePage: (page: number) => {
     auditPagination.current = page;
     loadAuditTrail();
@@ -166,74 +166,75 @@ const auditPagination = reactive({
   },
 });
 
-// Options
-const actionTypeOptions = [
-  { label: '登录操作', value: 'login' },
-  { label: '资料修改', value: 'profile_update' },
-  { label: '状态变更', value: 'status_change' },
-  { label: '佣金操作', value: 'commission' },
-  { label: '系统操作', value: 'system' },
-  { label: '其他操作', value: 'other' },
-];
+const actionTypeOptions = computed(() => [
+  { label: $t('agency.auditTrail.login'), value: 'login' },
+  { label: $t('agency.auditTrail.profileUpdate'), value: 'profile_update' },
+  { label: $t('agency.auditTrail.statusChange'), value: 'status_change' },
+  { label: $t('agency.auditTrail.commissionAction'), value: 'commission' },
+  { label: $t('agency.auditTrail.systemAction'), value: 'system' },
+  { label: $t('agency.auditTrail.otherAction'), value: 'other' },
+]);
 
-const actionStatusOptions = [
-  { label: '成功', value: 'success' },
-  { label: '失败', value: 'failed' },
-  { label: '部分成功', value: 'partial' },
-  { label: '待处理', value: 'pending' },
-];
+const actionStatusOptions = computed(() => [
+  { label: $t('common.success'), value: 'success' },
+  { label: $t('common.failed'), value: 'failed' },
+  { label: $t('agency.auditTrail.partial'), value: 'partial' },
+  { label: $t('agency.auditTrail.pending'), value: 'pending' },
+]);
 
-// Computed
 const totalActions = computed(() => auditRecords.value.length);
-
 const successfulActions = computed(
-  () =>
-    auditRecords.value.filter((record) => record.status === 'success').length,
+  () => auditRecords.value.filter((record) => record.status === 'success').length,
 );
-
 const failedActions = computed(
-  () =>
-    auditRecords.value.filter((record) => record.status === 'failed').length,
+  () => auditRecords.value.filter((record) => record.status === 'failed').length,
 );
-
 const uniqueUsers = computed(() => {
   const users = new Set(auditRecords.value.map((record) => record.operator));
   return users.size;
 });
 
-// Table columns
-const auditColumns: DataTableColumns<AgentAuditRecord> = [
+const getActionTypeInfo = (actionType: string) => {
+  const map: Record<string, { label: string; type: string; icon: string }> = {
+    login: { label: $t('agency.auditTrail.login'), type: 'info', icon: '' },
+    profile_update: {
+      label: $t('agency.auditTrail.profileUpdate'),
+      type: 'warning',
+      icon: '',
+    },
+    status_change: {
+      label: $t('agency.auditTrail.statusChange'),
+      type: 'error',
+      icon: '',
+    },
+    commission: {
+      label: $t('agency.auditTrail.commissionAction'),
+      type: 'success',
+      icon: '',
+    },
+    system: { label: $t('agency.auditTrail.systemAction'), type: 'default', icon: '' },
+    other: { label: $t('agency.auditTrail.otherAction'), type: 'default', icon: '' },
+  };
+  return (
+    map[actionType] || { label: actionType, type: 'default', icon: '❓' }
+  );
+};
+
+const auditColumns = computed<DataTableColumns<AgentAuditRecord>>(() => [
   {
     title: 'ID',
     key: 'id',
     width: 80,
     align: 'center',
-    render: (row) => {
-      return h(
-        'span',
-        { class: 'text-xs text-gray-500 font-mono' },
-        `#${row.id}`,
-      );
-    },
+    render: (row) =>
+      h('span', { class: 'text-xs text-gray-500 font-mono' }, `#${row.id}`),
   },
   {
-    title: '操作类型',
+    title: $t('agency.auditTrail.actionType'),
     key: 'actionType',
     width: 120,
     render: (row) => {
-      const typeMap = {
-        login: { label: '登录操作', type: 'info', icon: '' },
-        profile_update: { label: '资料修改', type: 'warning', icon: '' },
-        status_change: { label: '状态变更', type: 'error', icon: '' },
-        commission: { label: '佣金操作', type: 'success', icon: '' },
-        system: { label: '系统操作', type: 'default', icon: '' },
-        other: { label: '其他操作', type: 'default', icon: '' },
-      };
-      const typeInfo = typeMap[row.actionType as keyof typeof typeMap] || {
-        label: row.actionType,
-        type: 'default',
-        icon: '❓',
-      };
+      const typeInfo = getActionTypeInfo(row.actionType);
       return h('div', { class: 'flex items-center gap-2' }, [
         h('span', { class: 'text-lg' }, typeInfo.icon),
         h(
@@ -245,29 +246,37 @@ const auditColumns: DataTableColumns<AgentAuditRecord> = [
     },
   },
   {
-    title: '操作名称',
+    title: $t('agency.auditTrail.actionName'),
     key: 'actionName',
     width: 120,
   },
   {
-    title: '描述',
+    title: $t('common.description'),
     key: 'description',
     width: 200,
     ellipsis: true,
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 100,
     align: 'center',
     render: (row) => {
-      const statusMap = {
-        success: { label: '成功', type: 'success', icon: '✅' },
-        failed: { label: '失败', type: 'error', icon: '❌' },
-        partial: { label: '部分成功', type: 'warning', icon: '⚠️' },
-        pending: { label: '待处理', type: 'info', icon: '⏳' },
+      const statusMap: Record<string, { label: string; type: string; icon: string }> = {
+        success: { label: $t('common.success'), type: 'success', icon: '✅' },
+        failed: { label: $t('common.failed'), type: 'error', icon: '❌' },
+        partial: {
+          label: $t('agency.auditTrail.partial'),
+          type: 'warning',
+          icon: '⚠️',
+        },
+        pending: {
+          label: $t('agency.auditTrail.pending'),
+          type: 'info',
+          icon: '⏳',
+        },
       };
-      const status = statusMap[row.status as keyof typeof statusMap] || {
+      const status = statusMap[row.status] || {
         label: row.status,
         type: 'default',
         icon: '❓',
@@ -283,50 +292,42 @@ const auditColumns: DataTableColumns<AgentAuditRecord> = [
     },
   },
   {
-    title: '操作员',
+    title: $t('common.operator'),
     key: 'operator',
     width: 120,
-    render: (row) => {
-      return h('div', { class: 'text-sm' }, [
+    render: (row) =>
+      h('div', { class: 'text-sm' }, [
         h('div', { class: 'font-medium' }, row.operator),
         h('div', { class: 'text-xs text-gray-500' }, row.operatorRole),
-      ]);
-    },
+      ]),
   },
   {
-    title: '目标用户',
+    title: $t('agency.auditTrail.targetUser'),
     key: 'targetUser',
     width: 120,
-    render: (row) => {
-      return row.targetUser
+    render: (row) =>
+      row.targetUser
         ? h('span', { class: 'text-sm' }, row.targetUser)
-        : h('span', { class: 'text-gray-400' }, '--');
-    },
+        : h('span', { class: 'text-gray-400' }, '--'),
   },
   {
-    title: 'IP地址',
+    title: $t('agency.loginDevices.ipAddress'),
     key: 'ipAddress',
     width: 120,
-    render: (row) => {
-      return h(
-        'span',
-        { class: 'text-xs font-mono text-gray-600' },
-        row.ipAddress,
-      );
-    },
+    render: (row) =>
+      h('span', { class: 'text-xs font-mono text-gray-600' }, row.ipAddress),
   },
   {
-    title: '操作时间',
+    title: $t('common.operationTime'),
     key: 'actionTime',
     width: 180,
-    render: (row) => {
-      return h('div', { class: 'text-sm' }, [
+    render: (row) =>
+      h('div', { class: 'text-sm' }, [
         h('div', { class: 'font-medium' }, formatDateTime(row.actionTime)),
-      ]);
-    },
+      ]),
   },
   {
-    title: '详情',
+    title: $t('common.detail'),
     key: 'details',
     width: 100,
     align: 'center',
@@ -339,48 +340,36 @@ const auditColumns: DataTableColumns<AgentAuditRecord> = [
           type: 'info',
           onClick: () => handleViewDetails(row),
         },
-        { default: () => '查看' },
+        { default: () => $t('agency.auditTrail.viewDetails') },
       );
     },
   },
-];
+]);
 
-// Methods
 const loadAuditTrail = async () => {
   if (!props.agentId) return;
 
   auditLoading.value = true;
   try {
-    const params: any = {
+    const params: Record<string, unknown> = {
       page: auditPagination.current,
       pageSize: auditPagination.pageSize,
     };
-
-    if (actionTypeFilter.value) {
-      params.actionType = actionTypeFilter.value;
-    }
-
-    if (actionStatusFilter.value) {
-      params.status = actionStatusFilter.value;
-    }
-
-    if (startDate.value) {
-      params.startDate = new Date(startDate.value).toISOString();
-    }
-
+    if (actionTypeFilter.value) params.actionType = actionTypeFilter.value;
+    if (actionStatusFilter.value) params.status = actionStatusFilter.value;
+    if (startDate.value) params.startDate = new Date(startDate.value).toISOString();
     if (endDate.value) {
       const end = new Date(endDate.value);
       end.setHours(23, 59, 59, 999);
       params.endDate = end.toISOString();
     }
-
     const response = await getAgentAuditTrailApi(props.agentId, params);
     auditRecords.value = response.list;
     auditPagination.total = response.pagination.total;
     auditPagination.current = 1;
   } catch (error) {
     console.error('Failed to load audit trail:', error);
-    message.error('加载审计日志失败');
+    message.error($t('agency.auditTrail.loadFailed'));
   } finally {
     auditLoading.value = false;
   }
@@ -396,25 +385,24 @@ const handleResetFilter = () => {
 };
 
 const handleExportData = () => {
-  message.info('导出数据功能开发中...');
+  message.info($t('agency.auditTrail.exportDeveloping'));
 };
 
 const handleViewDetails = (record: AgentAuditRecord) => {
   if (record.details) {
-    message.info(`查看详情: ${JSON.stringify(record.details, null, 2)}`);
+    message.info(
+      `${$t('agency.auditTrail.viewDetailsPrefix')}${JSON.stringify(record.details, null, 2)}`,
+    );
   } else {
-    message.info('暂无详细信息');
+    message.info($t('agency.auditTrail.noDetails'));
   }
 };
 
-const formatDateTime = (dateString: string) => {
-  return new Date(dateString).toLocaleString('zh-CN');
-};
+const formatDateTime = (dateString: string) =>
+  new Date(dateString).toLocaleString();
 
 onMounted(() => {
-  if (props.agentId) {
-    loadAuditTrail();
-  }
+  if (props.agentId) loadAuditTrail();
 });
 </script>
 

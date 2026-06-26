@@ -1,29 +1,32 @@
 <template>
-  <Page title="APP包管理" description="管理打包APP与原生马甲包">
+  <Page
+    :title="$t('operations.appPackage.title')"
+    :description="$t('operations.appPackage.description')"
+  >
     <n-space vertical :size="16">
       <n-tabs v-model:value="activeTab">
-        <n-tab-pane name="build" tab="打包APP" />
-        <n-tab-pane name="native" tab="原生马甲包" />
+        <n-tab-pane name="build" :tab="$t('operations.appPackage.tabBuild')" />
+        <n-tab-pane name="native" :tab="$t('operations.appPackage.tabNative')" />
       </n-tabs>
 
       <n-card v-if="activeTab === 'build'">
         <div class="build-header">
           <div class="build-header-left"></div>
           <n-space align="center">
-            <a class="guide-link" href="javascript:void(0)">操作教程</a>
-            <n-button @click="openPublicConfigModal">公共配置</n-button>
-            <n-button @click="openSigningModal">证书密钥</n-button>
-            <n-button type="primary" @click="openGenerateModal('ios')">生成iOS包</n-button>
-            <n-button type="primary" @click="openGenerateModal('android')">生成Android包</n-button>
+            <a class="guide-link" href="javascript:void(0)">{{ $t('operations.appPackage.guideLink') }}</a>
+            <n-button @click="openPublicConfigModal">{{ $t('operations.appPackage.publicConfig') }}</n-button>
+            <n-button @click="openSigningModal">{{ $t('operations.appPackage.signingKeys') }}</n-button>
+            <n-button type="primary" @click="openGenerateModal('ios')">{{ $t('operations.appPackage.generateIos') }}</n-button>
+            <n-button type="primary" @click="openGenerateModal('android')">{{ $t('operations.appPackage.generateAndroid') }}</n-button>
           </n-space>
         </div>
 
         <div class="build-switches">
           <n-space :size="24" align="center">
-            <span>极速安卓开关：{{ publicConfig.rapidAndroidEnabled ? '开' : '关' }}</span>
-            <span>原生安卓开关：{{ publicConfig.nativeAndroidEnabled ? '开' : '关' }}</span>
-            <span>极速iOS开关：{{ publicConfig.rapidIosEnabled ? '开' : '关' }}</span>
-            <span>原生iOS开关：{{ publicConfig.nativeIosEnabled ? '开' : '关' }}</span>
+            <span>{{ $t('operations.appPackage.rapidAndroidSwitch') }}：{{ publicConfig.rapidAndroidEnabled ? $t('operations.on') : $t('operations.off') }}</span>
+            <span>{{ $t('operations.appPackage.nativeAndroidSwitch') }}：{{ publicConfig.nativeAndroidEnabled ? $t('operations.on') : $t('operations.off') }}</span>
+            <span>{{ $t('operations.appPackage.rapidIosSwitch') }}：{{ publicConfig.rapidIosEnabled ? $t('operations.on') : $t('operations.off') }}</span>
+            <span>{{ $t('operations.appPackage.nativeIosSwitch') }}：{{ publicConfig.nativeIosEnabled ? $t('operations.on') : $t('operations.off') }}</span>
           </n-space>
         </div>
 
@@ -35,7 +38,7 @@
           :row-key="(row) => row.id"
         />
 
-        <div class="table-count">共 {{ buildPagination.total }} 条</div>
+        <div class="table-count">{{ $t('operations.totalCount', [buildPagination.total]) }}</div>
 
         <div class="mt-4 flex justify-end">
           <n-pagination
@@ -56,14 +59,14 @@
             <n-input
               v-model:value="nativeFilters.keyword"
               clearable
-              placeholder="搜索渠道ID/渠道名称/包名"
+              :placeholder="$t('operations.appPackage.searchPlaceholder')"
               style="width: 260px"
               @keyup.enter="loadNativePackages"
             />
             <n-select
               v-model:value="nativeFilters.packageType"
               clearable
-              placeholder="包类型"
+              :placeholder="$t('operations.packageType')"
               :options="packageTypeOptions"
               style="width: 120px"
               @update:value="loadNativePackages"
@@ -71,14 +74,14 @@
             <n-select
               v-model:value="nativeFilters.status"
               clearable
-              placeholder="状态"
+              :placeholder="$t('common.status')"
               :options="statusOptions"
               style="width: 140px"
               @update:value="loadNativePackages"
             />
-            <n-button @click="loadNativePackages">搜索</n-button>
+            <n-button @click="loadNativePackages">{{ $t('common.search') }}</n-button>
           </n-space>
-          <n-button type="primary" @click="openNativeModal">新增</n-button>
+          <n-button type="primary" @click="openNativeModal">{{ $t('common.create') }}</n-button>
         </n-space>
 
         <n-data-table
@@ -103,41 +106,41 @@
       </n-card>
     </n-space>
 
-    <n-modal v-model:show="publicConfigModalVisible" preset="card" title="公共配置" style="width: 620px">
+    <n-modal v-model:show="publicConfigModalVisible" preset="card" :title="$t('operations.appPackage.publicConfig')" style="width: 620px">
       <n-form label-placement="left" label-width="180">
         <n-grid :cols="2" :x-gap="16">
           <n-gi>
-            <n-form-item label="极速AndroidAPP">
+            <n-form-item :label="$t('operations.appPackage.rapidAndroidApp')">
               <n-switch v-model:value="publicConfigForm.rapidAndroidEnabled" />
             </n-form-item>
           </n-gi>
           <n-gi>
-            <n-form-item label="原生AndroidAPP">
+            <n-form-item :label="$t('operations.appPackage.nativeAndroidApp')">
               <n-switch v-model:value="publicConfigForm.nativeAndroidEnabled" />
             </n-form-item>
           </n-gi>
           <n-gi>
-            <n-form-item label="极速iOSAPP">
+            <n-form-item :label="$t('operations.appPackage.rapidIosApp')">
               <n-switch v-model:value="publicConfigForm.rapidIosEnabled" />
             </n-form-item>
           </n-gi>
           <n-gi>
-            <n-form-item label="原生iOSAPP">
+            <n-form-item :label="$t('operations.appPackage.nativeIosApp')">
               <n-switch v-model:value="publicConfigForm.nativeIosEnabled" />
             </n-form-item>
           </n-gi>
           <n-gi>
-            <n-form-item label="完整APP资源">
+            <n-form-item :label="$t('operations.appPackage.completeResource')">
               <n-switch v-model:value="publicConfigForm.completeResourceEnabled" />
             </n-form-item>
           </n-gi>
           <n-gi>
-            <n-form-item label="轻量资源APP">
+            <n-form-item :label="$t('operations.appPackage.liteResource')">
               <n-switch v-model:value="publicConfigForm.liteResourceEnabled" />
             </n-form-item>
           </n-gi>
           <n-gi :span="2">
-            <n-form-item label="备注说明">
+            <n-form-item :label="$t('operations.appPackage.note')">
               <n-input v-model:value="publicConfigForm.note" type="textarea" :autosize="{ minRows: 2, maxRows: 4 }" />
             </n-form-item>
           </n-gi>
@@ -145,40 +148,40 @@
       </n-form>
       <template #footer>
         <n-space justify="end">
-          <n-button @click="publicConfigModalVisible = false">取消</n-button>
-          <n-button type="primary" @click="savePublicConfig">确认</n-button>
+          <n-button @click="publicConfigModalVisible = false">{{ $t('common.cancel') }}</n-button>
+          <n-button type="primary" @click="savePublicConfig">{{ $t('common.confirm') }}</n-button>
         </n-space>
       </template>
     </n-modal>
 
-    <n-modal v-model:show="generateModalVisible" preset="card" :title="`生成${generateForm.systemType === 'ios' ? 'iOS' : 'Android'}包`" style="width: 560px">
+    <n-modal v-model:show="generateModalVisible" preset="card" :title="generateModalTitle" style="width: 560px">
       <n-form label-placement="left" label-width="160">
-        <n-form-item label="APP类型">
+        <n-form-item :label="$t('operations.appPackage.appType')">
           <n-checkbox-group v-model:value="generateForm.appTypes">
             <n-space>
               <n-checkbox value="pwa">PWA</n-checkbox>
-              <n-checkbox value="native">原生</n-checkbox>
-              <n-checkbox value="rapid">极速</n-checkbox>
-              <n-checkbox value="shortcut">桌面快捷方式</n-checkbox>
+              <n-checkbox value="native">{{ $t('operations.appPackage.appTypeNative') }}</n-checkbox>
+              <n-checkbox value="rapid">{{ $t('operations.appPackage.rapidApp') }}</n-checkbox>
+              <n-checkbox value="shortcut">{{ $t('operations.appPackage.appTypeShortcut') }}</n-checkbox>
             </n-space>
           </n-checkbox-group>
         </n-form-item>
-        <n-form-item label="强制重装低版本">
+        <n-form-item :label="$t('operations.appPackage.forceReinstall')">
           <n-input
             v-model:value="generateForm.forceReinstallBelowVersion"
-            placeholder="例如 1.0.52（低于该版本会提示重装）"
+            :placeholder="$t('operations.appPackage.forceReinstallPlaceholder')"
           />
         </n-form-item>
       </n-form>
       <template #footer>
         <n-space justify="end">
-          <n-button @click="generateModalVisible = false">取消</n-button>
-          <n-button type="primary" :loading="generateSubmitting" @click="submitGenerate">确认生成</n-button>
+          <n-button @click="generateModalVisible = false">{{ $t('common.cancel') }}</n-button>
+          <n-button type="primary" :loading="generateSubmitting" @click="submitGenerate">{{ $t('operations.appPackage.confirmGenerate') }}</n-button>
         </n-space>
       </template>
     </n-modal>
 
-    <n-modal v-model:show="signingModalVisible" preset="card" title="证书密钥" style="width: 620px">
+    <n-modal v-model:show="signingModalVisible" preset="card" :title="$t('operations.appPackage.signingKeys')" style="width: 620px">
       <n-form label-placement="left" label-width="180">
         <n-form-item label="Android Alias">
           <n-input v-model:value="signingForm.androidAlias" />
@@ -191,36 +194,36 @@
         </n-form-item>
       </n-form>
       <div class="tips">
-        <div>修改 Android 签名后，会影响谷歌快捷登录，仅需替换 Google 平台 SHA-1 证书指纹。</div>
-        <div>新签名仅对新打包生效，老包仍可继续使用。</div>
+        <div>{{ $t('operations.appPackage.signingTips1') }}</div>
+        <div>{{ $t('operations.appPackage.signingTips2') }}</div>
       </div>
       <template #footer>
         <n-space justify="end">
-          <n-button @click="signingModalVisible = false">取消</n-button>
-          <n-button type="primary" :loading="signingSubmitting" @click="saveSigningConfig">保存</n-button>
+          <n-button @click="signingModalVisible = false">{{ $t('common.cancel') }}</n-button>
+          <n-button type="primary" :loading="signingSubmitting" @click="saveSigningConfig">{{ $t('common.save') }}</n-button>
         </n-space>
       </template>
     </n-modal>
 
-    <n-modal v-model:show="fingerprintModalVisible" preset="dialog" title="证书指纹">
+    <n-modal v-model:show="fingerprintModalVisible" preset="dialog" :title="$t('operations.appPackage.fingerprintTitle')">
       <div class="fingerprint-text">{{ currentFingerprint || '-' }}</div>
     </n-modal>
 
-    <n-modal v-model:show="nativeModalVisible" preset="card" title="新增马甲包" style="width: 700px">
+    <n-modal v-model:show="nativeModalVisible" preset="card" :title="$t('operations.appPackage.addVestPackage')" style="width: 700px">
       <n-form label-placement="left" label-width="160">
         <n-grid :cols="2" :x-gap="16">
           <n-gi>
-            <n-form-item label="品牌">
+            <n-form-item :label="$t('operations.brand')">
               <n-select
                 v-model:value="nativeForm.brandSettingId"
                 clearable
                 :options="brandOptions"
-                placeholder="选择品牌"
+                :placeholder="$t('operations.appPackage.selectBrand')"
               />
             </n-form-item>
           </n-gi>
           <n-gi>
-            <n-form-item label="包类型">
+            <n-form-item :label="$t('operations.packageType')">
               <n-radio-group v-model:value="nativeForm.packageType">
                 <n-space>
                   <n-radio value="aab">aab</n-radio>
@@ -230,46 +233,46 @@
             </n-form-item>
           </n-gi>
           <n-gi>
-            <n-form-item label="渠道ID">
-              <n-input v-model:value="nativeForm.channelId" placeholder="请输入渠道ID" />
+            <n-form-item :label="$t('operations.channelId')">
+              <n-input v-model:value="nativeForm.channelId" :placeholder="$t('operations.appPackage.enterChannelId')" />
             </n-form-item>
           </n-gi>
           <n-gi>
-            <n-form-item label="渠道名称">
-              <n-input v-model:value="nativeForm.channelName" placeholder="请输入渠道名称" />
+            <n-form-item :label="$t('operations.channelName')">
+              <n-input v-model:value="nativeForm.channelName" :placeholder="$t('operations.appPackage.enterChannelName')" />
             </n-form-item>
           </n-gi>
           <n-gi>
-            <n-form-item label="APP名称">
-              <n-input v-model:value="nativeForm.appName" placeholder="例如 024APP2" />
+            <n-form-item :label="$t('operations.appName')">
+              <n-input v-model:value="nativeForm.appName" :placeholder="$t('operations.appPackage.appNamePlaceholder')" />
             </n-form-item>
           </n-gi>
           <n-gi>
-            <n-form-item label="包名">
+            <n-form-item :label="$t('operations.packageName')">
               <n-input v-model:value="nativeForm.packageName" placeholder="com.example.app" />
             </n-form-item>
           </n-gi>
           <n-gi>
-            <n-form-item label="版本号">
-              <n-input v-model:value="nativeForm.version" placeholder="例如 1.0.0" />
+            <n-form-item :label="$t('operations.version')">
+              <n-input v-model:value="nativeForm.version" :placeholder="$t('operations.appPackage.versionPlaceholder')" />
             </n-form-item>
           </n-gi>
           <n-gi>
-            <n-form-item label="应用地址">
-              <n-input v-model:value="nativeForm.applicationUrl" placeholder="下载地址" />
+            <n-form-item :label="$t('operations.applicationUrl')">
+              <n-input v-model:value="nativeForm.applicationUrl" :placeholder="$t('operations.appPackage.downloadUrlPlaceholder')" />
             </n-form-item>
           </n-gi>
           <n-gi :span="2">
             <n-form-item label="AppsFlyer Dev Key">
-              <n-input v-model:value="nativeForm.appsflyerDevKey" placeholder="请输入 AppsFlyer Dev Key" />
+              <n-input v-model:value="nativeForm.appsflyerDevKey" :placeholder="$t('operations.appPackage.appsflyerDevKeyPlaceholder')" />
             </n-form-item>
           </n-gi>
         </n-grid>
       </n-form>
       <template #footer>
         <n-space justify="end">
-          <n-button @click="nativeModalVisible = false">取消</n-button>
-          <n-button type="primary" :loading="nativeSubmitting" @click="submitNativePackage">确认</n-button>
+          <n-button @click="nativeModalVisible = false">{{ $t('common.cancel') }}</n-button>
+          <n-button type="primary" :loading="nativeSubmitting" @click="submitNativePackage">{{ $t('common.confirm') }}</n-button>
         </n-space>
       </template>
     </n-modal>
@@ -277,6 +280,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { computed, h, onMounted, reactive, ref } from 'vue';
 import type { DataTableColumns } from 'naive-ui';
 import {
@@ -326,19 +331,21 @@ import {
 const message = useMessage();
 const activeTab = ref<'build' | 'native'>('build');
 
-const statusOptions = [
-  { label: '打包中', value: 'packing' },
-  { label: '打包成功', value: 'success' },
-  { label: '打包失败', value: 'failed' },
-];
-const packageTypeOptions = [
+const statusOptions = computed(() => [
+  { label: $t('operations.appPackage.statusPacking'), value: 'packing' },
+  { label: $t('operations.appPackage.statusSuccess'), value: 'success' },
+  { label: $t('operations.appPackage.statusFailed'), value: 'failed' },
+]);
+const packageTypeOptions = computed(() => [
   { label: 'aab', value: 'aab' },
   { label: 'apk', value: 'apk' },
-];
-const systemTypeOptions = [
-  { label: 'Android', value: 'android' },
-  { label: 'iOS', value: 'ios' },
-];
+]);
+
+const generateModalTitle = computed(() =>
+  $t('operations.appPackage.generateTitle', [
+    generateForm.systemType === 'ios' ? 'iOS' : 'Android',
+  ]),
+);
 
 const publicConfig = reactive<AppPackagePublicConfig>({
   id: 0,
@@ -441,9 +448,9 @@ function statusTagType(status: BuildStatus) {
 }
 
 function statusLabel(status: BuildStatus) {
-  if (status === 'success') return '打包成功';
-  if (status === 'failed') return '打包失败';
-  return '打包中';
+  if (status === 'success') return $t('operations.appPackage.statusSuccess');
+  if (status === 'failed') return $t('operations.appPackage.statusFailed');
+  return $t('operations.appPackage.statusPacking');
 }
 
 function buildApplicationLines(row: AppBuildPackageItem) {
@@ -451,15 +458,15 @@ function buildApplicationLines(row: AppBuildPackageItem) {
   const suffix = row.systemType === 'android' ? '.apk' : '.ipa';
   const base = row.applicationUrl;
   return [
-    { canReplace: true, label: '极速APP', size: '6.01M', url: `${base}${suffix}` },
-    { canReplace: false, label: '原生APP(完整资源)', size: '85.45M', url: `${base}${suffix}` },
-    { canReplace: false, label: '原生APP(轻量资源)', size: '68.24M', url: `${base}${suffix}` },
+    { canReplace: true, label: $t('operations.appPackage.rapidApp'), size: '6.01M', url: `${base}${suffix}` },
+    { canReplace: false, label: $t('operations.appPackage.nativeAppFull'), size: '85.45M', url: `${base}${suffix}` },
+    { canReplace: false, label: $t('operations.appPackage.nativeAppLite'), size: '68.24M', url: `${base}${suffix}` },
   ];
 }
 
 const buildColumns = computed<DataTableColumns<AppBuildPackageItem>>(() => [
   {
-    title: '图标',
+    title: $t('operations.icon'),
     key: 'icon',
     width: 70,
     render: (row) =>
@@ -471,11 +478,11 @@ const buildColumns = computed<DataTableColumns<AppBuildPackageItem>>(() => [
         width: 36,
       }),
   },
-  { title: '系统', key: 'systemType', width: 90 },
-  { title: 'APP名称', key: 'appName', minWidth: 130 },
-  { title: 'APP包名', key: 'packageName', minWidth: 180 },
+  { title: $t('operations.system'), key: 'systemType', width: 90 },
+  { title: $t('operations.appName'), key: 'appName', minWidth: 130 },
+  { title: $t('operations.packageName'), key: 'packageName', minWidth: 180 },
   {
-    title: '应用地址',
+    title: $t('operations.applicationUrl'),
     key: 'applicationUrl',
     minWidth: 360,
     render: (row) => {
@@ -496,13 +503,13 @@ const buildColumns = computed<DataTableColumns<AppBuildPackageItem>>(() => [
             h(
               'a',
               { class: 'line-action', href: line.url, target: '_blank' },
-              '下载',
+              $t('common.download'),
             ),
             line.canReplace
               ? h(
                   'a',
                   { class: 'line-action', href: 'javascript:void(0)' },
-                  '替换',
+                  $t('operations.replace'),
                 )
               : null,
           ]),
@@ -510,30 +517,30 @@ const buildColumns = computed<DataTableColumns<AppBuildPackageItem>>(() => [
       );
     },
   },
-  { title: '版本号', key: 'version', width: 100 },
+  { title: $t('operations.version'), key: 'version', width: 100 },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 110,
     render: (row) => h(NTag, { type: statusTagType(row.status), size: 'small' }, () => statusLabel(row.status)),
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 90,
     render: () => '--',
   },
-  { title: '操作时间', key: 'operatedAt', width: 170 },
-  { title: '操作人', key: 'operator', width: 110 },
+  { title: $t('common.operationTime'), key: 'operatedAt', width: 170 },
+  { title: $t('common.operator'), key: 'operator', width: 110 },
 ]);
 
 const nativeColumns = computed<DataTableColumns<NativeVestPackageItem>>(() => [
-  { title: '渠道ID', key: 'channelId', width: 140 },
-  { title: '渠道名称', key: 'channelName', minWidth: 140 },
-  { title: '包类型', key: 'packageType', width: 90 },
-  { title: '包名', key: 'packageName', minWidth: 180 },
+  { title: $t('operations.channelId'), key: 'channelId', width: 140 },
+  { title: $t('operations.channelName'), key: 'channelName', minWidth: 140 },
+  { title: $t('operations.packageType'), key: 'packageType', width: 90 },
+  { title: $t('operations.packageName'), key: 'packageName', minWidth: 180 },
   {
-    title: '应用地址',
+    title: $t('operations.applicationUrl'),
     key: 'applicationUrl',
     minWidth: 220,
     render: (row) =>
@@ -541,21 +548,21 @@ const nativeColumns = computed<DataTableColumns<NativeVestPackageItem>>(() => [
         ? h(
             'a',
             { href: row.applicationUrl, target: '_blank', style: 'color:#1677ff;text-decoration:none;' },
-            '下载',
+            $t('common.download'),
           )
         : '-',
   },
-  { title: '版本号', key: 'version', width: 100 },
+  { title: $t('operations.version'), key: 'version', width: 100 },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'status',
     width: 110,
     render: (row) => h(NTag, { type: statusTagType(row.status), size: 'small' }, () => statusLabel(row.status)),
   },
-  { title: '操作人', key: 'operator', width: 120 },
-  { title: '操作时间', key: 'operatedAt', width: 170 },
+  { title: $t('common.operator'), key: 'operator', width: 120 },
+  { title: $t('common.operationTime'), key: 'operatedAt', width: 170 },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 150,
     render: (row) =>
@@ -566,11 +573,14 @@ const nativeColumns = computed<DataTableColumns<NativeVestPackageItem>>(() => [
             size: 'small',
             onClick: async () => {
               await updateNativeVestPackageStatusApi(row.id, row.status === 'success' ? 'failed' : 'success');
-              message.success('状态已更新');
+              message.success($t('operations.appPackage.statusUpdated'));
               loadNativePackages();
             },
           },
-          () => (row.status === 'success' ? '标记失败' : '标记成功'),
+          () =>
+            row.status === 'success'
+              ? $t('operations.appPackage.markFailed')
+              : $t('operations.appPackage.markSuccess'),
         ),
       ]),
   },
@@ -594,7 +604,7 @@ async function loadPublicConfig() {
 
 async function savePublicConfig() {
   await updateAppPackagePublicConfigApi(publicConfigForm);
-  message.success('公共配置已保存');
+  message.success($t('operations.appPackage.publicConfigSaved'));
   publicConfigModalVisible.value = false;
   await loadPublicConfig();
 }
@@ -626,7 +636,7 @@ function openGenerateModal(systemType: SystemType) {
 
 async function submitGenerate() {
   if (generateForm.appTypes.length === 0) {
-    message.warning('请至少选择一个APP类型');
+    message.warning($t('operations.appPackage.selectAppType'));
     return;
   }
   generateSubmitting.value = true;
@@ -636,7 +646,7 @@ async function submitGenerate() {
       appTypes: generateForm.appTypes,
       forceReinstallBelowVersion: generateForm.forceReinstallBelowVersion || null,
     });
-    message.success('打包任务已提交');
+    message.success($t('operations.appPackage.buildTaskSubmitted'));
     generateModalVisible.value = false;
     loadBuildPackages();
   } finally {
@@ -674,7 +684,7 @@ async function saveSigningConfig() {
       androidKeystorePassword: signingForm.androidKeystorePassword || null,
       androidKeyPassword: signingForm.androidKeyPassword || null,
     });
-    message.success(resp?.message || resp?.data?.message || '签名配置更新成功');
+    message.success(resp?.message || resp?.data?.message || $t('operations.appPackage.signingUpdated'));
     currentFingerprint.value =
       resp?.data?.certificateFingerprint || resp?.data?.data?.certificateFingerprint || '';
     fingerprintModalVisible.value = true;
@@ -723,7 +733,7 @@ function openNativeModal() {
 
 async function submitNativePackage() {
   if (!nativeForm.channelId || !nativeForm.channelName || !nativeForm.packageName || !nativeForm.version) {
-    message.warning('请填写渠道ID、渠道名称、包名和版本号');
+    message.warning($t('operations.appPackage.fillRequiredFields'));
     return;
   }
   nativeSubmitting.value = true;
@@ -739,7 +749,7 @@ async function submitNativePackage() {
       version: nativeForm.version.trim(),
       appsflyerDevKey: nativeForm.appsflyerDevKey.trim() || null,
     });
-    message.success('新增成功');
+    message.success($t('operations.appPackage.createSuccess'));
     nativeModalVisible.value = false;
     loadNativePackages();
   } finally {

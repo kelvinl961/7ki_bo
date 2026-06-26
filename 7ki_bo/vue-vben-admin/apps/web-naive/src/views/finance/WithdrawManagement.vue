@@ -2,11 +2,9 @@
   <div class="withdraw-management">
     <!-- Tab Navigation -->
     <n-tabs v-model:value="activeTab" type="line" class="mb-4">
-      <n-tab-pane name="risk-review" tab="风控审核">
+      <n-tab-pane name="risk-review" :tab="$t('finance.riskControlReview')">
         <template #tab>
-          <span class="flex items-center gap-2">
-            风控审核
-            <n-badge
+          <span class="flex items-center gap-2">{{ $t('finance.riskControlReview') }}<n-badge
               :value="riskReviewCount"
               :max="99"
               type="error"
@@ -17,11 +15,9 @@
         <RiskControlReview @refresh-tabs="handleRefreshTabs" />
       </n-tab-pane>
 
-      <n-tab-pane name="my-risk" tab="由我风控">
+      <n-tab-pane name="my-risk" :tab="$t('finance.riskControl')">
         <template #tab>
-          <span class="flex items-center gap-2">
-            由我风控
-            <n-badge
+          <span class="flex items-center gap-2">{{ $t('finance.riskControl') }}<n-badge
               :value="myRiskCount"
               :max="99"
               type="error"
@@ -35,11 +31,9 @@
         />
       </n-tab-pane>
 
-      <n-tab-pane name="finance-withdrawal" tab="财务出款">
+      <n-tab-pane name="finance-withdrawal" :tab="$t('finance.financePayout')">
         <template #tab>
-          <span class="flex items-center gap-2">
-            财务出款
-            <n-badge
+          <span class="flex items-center gap-2">{{ $t('finance.financePayout') }}<n-badge
               :value="financeCount"
               :max="99"
               type="error"
@@ -50,11 +44,9 @@
         <FinanceWithdrawal @refresh-tabs="handleRefreshTabs" />
       </n-tab-pane>
 
-      <n-tab-pane name="my-withdrawal" tab="由我出款">
+      <n-tab-pane name="my-withdrawal" :tab="$t('finance.payout')">
         <template #tab>
-          <span class="flex items-center gap-2">
-            由我出款
-            <n-badge
+          <span class="flex items-center gap-2">{{ $t('finance.payout') }}<n-badge
               :value="myWithdrawalCount"
               :max="99"
               type="error"
@@ -68,21 +60,19 @@
         />
       </n-tab-pane>
 
-      <n-tab-pane name="re-payment" tab="重新代付">
+      <n-tab-pane name="re-payment" :tab="$t('finance.rePayout')">
         <RePayment />
       </n-tab-pane>
 
-      <n-tab-pane name="auto-withdrawal" tab="免审出款">
+      <n-tab-pane name="auto-withdrawal" :tab="$t('finance.autoApprovedWithdrawal')">
         <template #tab>
-          <span class="flex items-center gap-2">
-            免审出款
-            <n-badge :value="autoApprovalCount" :max="99" type="success" />
+          <span class="flex items-center gap-2">{{ $t('finance.autoApprovedWithdrawal') }}<n-badge :value="autoApprovalCount" :max="99" type="success" />
           </span>
         </template>
         <AutoWithdrawal />
       </n-tab-pane>
 
-      <n-tab-pane name="all-withdrawals" tab="全部提现">
+      <n-tab-pane name="all-withdrawals" :tab="$t('finance.allWithdrawal')">
         <!-- Filter Section -->
         <n-card class="mb-4">
           <n-form
@@ -96,7 +86,7 @@
             <div
               class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
             >
-              <n-form-item label="日期范围" class="col-span-1 md:col-span-2">
+              <n-form-item :label="$t('finance.dateRange')" class="col-span-1 md:col-span-2">
                 <n-space vertical size="small" class="w-full">
                   <n-date-picker
                     v-model:value="filterForm.dateRange"
@@ -110,21 +100,21 @@
                 </n-space>
               </n-form-item>
 
-              <n-form-item label="提现状态">
+              <n-form-item :label="$t('finance.withdrawalStatus')">
                 <n-select
                   v-model:value="filterForm.status"
                   :options="statusOptions"
-                  placeholder="请选择状态"
+                  placeholder:placeholder="$t('finance.pleaseSelectStatus')"
                   clearable
                   class="w-full"
                 />
               </n-form-item>
 
-              <n-form-item label="提现方式">
+              <n-form-item :label="$t('finance.withdrawalMethod')">
                 <n-select
                   v-model:value="filterForm.withdrawMethod"
                   :options="withdrawMethodOptions"
-                  placeholder="请选择提现方式"
+                  placeholder:placeholder="$t('finance.pleaseSelectWithdrawalMethod')"
                   clearable
                   class="w-full"
                 />
@@ -135,41 +125,41 @@
             <div
               class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
             >
-              <n-form-item label="会员层级">
+              <n-form-item :label="$t('finance.memberTier')">
                 <n-select
                   v-model:value="filterForm.vipLevel"
                   :options="vipLevelOptions"
-                  placeholder="请选择会员等级"
+                  placeholder:placeholder="$t('finance.pleaseSelectMemberLevel')"
                   clearable
                   class="w-full"
                 />
               </n-form-item>
 
-              <n-form-item label="代理模式">
+              <n-form-item :label="$t('finance.text111')">
                 <n-select
                   v-model:value="filterForm.agentMode"
                   :options="agentModeOptions"
-                  placeholder="请选择代理模式"
+                  placeholder:placeholder="$t('finance.pleaseSelect1')"
                   clearable
                   class="w-full"
                 />
               </n-form-item>
 
-              <n-form-item label="三方代付">
+              <n-form-item :label="$t('finance.thirdPartyPayout')">
                 <n-select
                   v-model:value="filterForm.thirdPartyPayment"
                   :options="thirdPartyOptions"
-                  placeholder="请选择三方代付"
+                  placeholder:placeholder="$t('finance.pleaseSelectThirdPartyPayout')"
                   clearable
                   class="w-full"
                 />
               </n-form-item>
 
-              <n-form-item label="服务筛选">
+              <n-form-item :label="$t('finance.text112')">
                 <n-select
                   v-model:value="filterForm.serviceFilter"
                   :options="serviceFilterOptions"
-                  placeholder="请选择服务筛选"
+                  placeholder:placeholder="$t('finance.pleaseSelect2')"
                   clearable
                   class="w-full"
                 />
@@ -178,28 +168,28 @@
 
             <!-- Third row - Search and Actions -->
             <div class="flex flex-wrap items-end gap-4">
-              <n-form-item label="会员账号" class="min-w-[200px] flex-1">
+              <n-form-item :label="$t('finance.memberAccount2')" class="min-w-[200px] flex-1">
                 <n-input
                   v-model:value="searchInput"
-                  placeholder="会员账号或备注"
+                  placeholder:placeholder="$t('finance.memberAccountOrRemark')"
                   clearable
                   class="w-full"
                   @keyup.enter="handleSearch"
                 />
               </n-form-item>
-              <n-form-item label="会员ID" class="min-w-[160px]">
+              <n-form-item :label="$t('finance.memberId')" class="min-w-[160px]">
                 <n-input
                   v-model:value="userIdInput"
-                  placeholder="请输入会员ID"
+                  placeholder:placeholder="$t('finance.pleaseEnterMemberId')"
                   clearable
                   class="w-full"
                   @keyup.enter="handleSearch"
                 />
               </n-form-item>
-              <n-form-item label="订单号" class="min-w-[200px]">
+              <n-form-item :label="$t('finance.orderNo')" class="min-w-[200px]">
                 <n-input
                   v-model:value="orderIdInput"
-                  placeholder="请输入订单号"
+                  placeholder:placeholder="$t('finance.pleaseEnterOrder')"
                   clearable
                   class="w-full"
                   @keyup.enter="handleSearch"
@@ -208,9 +198,9 @@
 
               <n-form-item class="flex-shrink-0">
                 <n-space>
-                  <n-button type="primary" @click="handleSearch">搜索</n-button>
-                  <n-button @click="handleAdvancedSearch">高级搜索</n-button>
-                  <n-button @click="handleResetFilters">重置</n-button>
+                  <n-button type="primary" @click="handleSearch">{{ $t('common.search') }}</n-button>
+                  <n-button @click="handleAdvancedSearch">{{ $t('common.advancedSearch') }}</n-button>
+                  <n-button @click="handleResetFilters">{{ $t('common.reset') }}</n-button>
                 </n-space>
               </n-form-item>
             </div>
@@ -219,24 +209,20 @@
           <!-- Action Buttons -->
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <n-button type="primary" @click="handleCreateWithdrawal">
-                新建提现
-              </n-button>
+              <n-button type="primary" @click="handleCreateWithdrawal">{{ $t('finance.k1782445092045') }}</n-button>
               <n-button
                 type="primary"
                 :disabled="!checkedRowKeys.length"
                 @click="handleBatchOperation"
               >
-                批量操作 ({{ checkedRowKeys.length }})
+                {{ $t('finance.bulkOperationWithCount', { count: checkedRowKeys.length }) }}
               </n-button>
-              <n-button @click="handleExport">导出</n-button>
-              <n-button @click="fetchData">刷新</n-button>
+              <n-button @click="handleExport">{{ $t('common.export') }}</n-button>
+              <n-button @click="fetchData">{{ $t('common.refresh') }}</n-button>
               <n-button @click="showColumnConfig = true">
                 <template #icon>
                   <n-icon><Settings /></n-icon>
-                </template>
-                自定义列表
-              </n-button>
+                </template>{{ $t('finance.k1782445092046') }}</n-button>
               <!-- 🚀 NEW: SmartAutoRefresh Component -->
               <SmartAutoRefresh
                 v-model="autoRefreshEnabled"
@@ -249,7 +235,7 @@
 
             <!-- Summary -->
             <div class="flex items-center gap-4">
-              <n-text depth="3">总计: {{ summary.totalCount }} 条</n-text>
+              <n-text depth="3">{{ $t('finance.totalAmountLabel') }}: {{ summary.totalCount }}</n-text>
               <n-text depth="3">
                 总提现金额:
                 <strong class="text-red-600">{{
@@ -291,21 +277,15 @@
                     >
                       <template #icon>
                         <n-icon><ReloadOutline /></n-icon>
-                      </template>
-                      刷新
-                    </n-button>
+                      </template>{{ $t('common.refresh') }}</n-button>
                     <n-button type="success" @click="showCreateWithdrawalModal">
                       <template #icon>
                         <n-icon><AddOutline /></n-icon>
-                      </template>
-                      新建提现订单
-                    </n-button>
+                      </template>{{ $t('finance.withdrawalOrder') }}</n-button>
                     <n-button type="info" @click="handleExportAllWithdrawals">
                       <template #icon>
                         <n-icon><DownloadOutline /></n-icon>
-                      </template>
-                      导出数据
-                    </n-button>
+                      </template>{{ $t('finance.k4s5pc') }}</n-button>
                   </div>
 
                   <!-- 全选当前页 + 批量操作 dropdown (match screenshot) -->
@@ -313,9 +293,7 @@
                     :checked="isAllCurrentPageSelected"
                     :indeterminate="isCurrentPageIndeterminate"
                     @update:checked="toggleSelectAllCurrentPage"
-                  >
-                    全选当前页
-                  </n-checkbox>
+                  >{{ $t('finance.kq5y7t') }}</n-checkbox>
                   <n-dropdown
                     :options="batchOperationDropdownOptions"
                     :disabled="selectedCount === 0"
@@ -340,22 +318,22 @@
                     </n-button>
                   </n-dropdown>
                   <span class="text-sm text-gray-600"
-                    >已选择 {{ selectedCount }} 条数据</span
+                    >{{ $t('finance.selectedRecords', { count: selectedCount }) }}</span
                   >
                   <span class="text-sm text-gray-600"
-                    >共 {{ paginationReactive.total }} 条</span
+                    >{{ $t('finance.totalRecordsCompact', { count: paginationReactive.total }) }}</span
                   >
-                  <n-tag type="info" size="small">全部提现</n-tag>
+                  <n-tag type="info" size="small">{{ $t('finance.allWithdrawal') }}</n-tag>
                 </div>
 
                 <div class="flex items-center gap-4">
                   <!-- 选择控制 -->
                   <div class="flex gap-2">
                     <n-button size="small" @click="clearAllWithdrawalsSelection"
-                      >清空选择</n-button
+                      >{{ $t('finance.kxqos8') }}</n-button
                     >
                     <n-button size="small" @click="selectAllWithdrawals"
-                      >全选</n-button
+                      >{{ $t('common.selectAll') }}</n-button
                     >
                   </div>
                 </div>
@@ -365,15 +343,15 @@
         </SmartDataGrid>
       </n-tab-pane>
 
-      <n-tab-pane name="withdrawal-settings" tab="提现设置">
+      <n-tab-pane name="withdrawal-settings" :tab="$t('finance.withdrawalSettings')">
         <WithdrawalSettings />
       </n-tab-pane>
 
-      <n-tab-pane name="third-party-payment" tab="三方代付">
+      <n-tab-pane name="third-party-payment" :tab="$t('finance.thirdPartyPayout')">
         <ThirdPartyPayment />
       </n-tab-pane>
 
-      <n-tab-pane name="payment-statistics" tab="代付统计">
+      <n-tab-pane name="payment-statistics" :tab="$t('finance.paymentStatistics')">
         <PaymentStatistics />
       </n-tab-pane>
     </n-tabs>
@@ -393,7 +371,7 @@
             <h3 class="mb-2 text-lg font-medium text-gray-800">
               步骤 1: 搜索会员
             </h3>
-            <p class="mb-4 text-sm text-gray-600">请输入会员账号进行搜索</p>
+            <p class="mb-4 text-sm text-gray-600">{{ $t('finance.k5wygq') }}</p>
           </div>
           <div class="mb-4 flex gap-2">
             <n-select
@@ -404,7 +382,7 @@
             />
             <n-input
               v-model:value="memberSearchQuery"
-              placeholder="例如: shayu888"
+              placeholder:placeholder="$t('finance.sHAYU888')"
               :disabled="isEditing"
               style="flex: 1"
               maxlength="16"
@@ -437,13 +415,13 @@
             <div class="mb-2 flex items-center justify-between">
               <div class="flex items-center gap-4">
                 <span class="text-sm text-gray-600"
-                  >会员ID: <strong>{{ selectedMember.value }}</strong></span
+                  >{{ $t('finance.memberId') }}: <strong>{{ selectedMember.value }}</strong></span
                 >
                 <span class="text-sm text-gray-600"
-                  >会员账号: <strong>{{ selectedMember.account }}</strong></span
+                  >{{ $t('common.memberAccount') }}: <strong>{{ selectedMember.account }}</strong></span
                 >
                 <span class="text-sm text-gray-600"
-                  >币种:
+                  >{{ $t('common.currency') }}:
                   <strong>{{ selectedMember.currency || 'BRL' }}</strong></span
                 >
               </div>
@@ -452,12 +430,10 @@
                 size="small"
                 @click="handleMemberClear"
                 type="tertiary"
-              >
-                重新选择
-              </n-button>
+              >{{ $t('finance.k1782445092049') }}</n-button>
             </div>
             <div class="flex items-center justify-between">
-              <span class="text-gray-600">账户余额:</span>
+              <span class="text-gray-600">{{ $t('finance.accountBalance') }}:</span>
               <div class="flex items-center gap-2">
                 <span class="text-xl font-medium text-green-600">{{
                   formatBalance(selectedMember.balance)
@@ -476,7 +452,7 @@
             <h3 class="mb-2 text-lg font-medium text-gray-800">
               步骤 2: 填写提现信息
             </h3>
-            <p class="text-sm text-gray-600">请填写提现相关信息</p>
+            <p class="text-sm text-gray-600">{{ $t('finance.k6mwob') }}</p>
           </div>
           <n-form
             ref="withdrawalFormRef"
@@ -485,36 +461,36 @@
           >
             <!-- Withdrawal Method -->
             <div class="form-row mb-4">
-              <label class="form-label required">提现方式</label>
+              <label class="form-label required">{{ $t('finance.withdrawalMethod') }}</label>
               <n-select
                 v-model:value="withdrawalForm.withdrawMethod"
                 :options="withdrawMethodOptions"
-                placeholder="请选择提现方式"
+                placeholder:placeholder="$t('finance.pleaseSelectWithdrawalMethod')"
                 style="width: 100%"
               />
             </div>
 
             <!-- Withdrawal Account -->
             <div class="form-row mb-4">
-              <label class="form-label required">提现账号</label>
+              <label class="form-label required">{{ $t('finance.kkxo0e') }}</label>
               <n-select
                 v-model:value="withdrawalForm.withdrawAccount"
                 :options="withdrawAccountOptions"
-                placeholder="请选择提现账号"
+                placeholder:placeholder="$t('finance.pleaseSelectWithdrawalAccount')"
                 style="width: 100%"
               />
             </div>
 
             <!-- Withdrawal Amount -->
             <div class="form-row mb-4">
-              <label class="form-label required">提现金额</label>
+              <label class="form-label required">{{ $t('finance.withdrawalAmount') }}</label>
               <n-input-group>
                 <n-input-group-label style="background: #f5f5f5"
                   >R$</n-input-group-label
                 >
                 <n-input-number
                   v-model:value="withdrawalForm.amount"
-                  placeholder="请输入要提现金额"
+                  placeholder:placeholder="$t('finance.pleaseEnterWithdrawalAmount1')"
                   :min="0"
                   :precision="2"
                   style="flex: 1"
@@ -525,11 +501,11 @@
 
             <!-- Frontend Notes -->
             <div class="form-row mb-4">
-              <label class="form-label">前台备注</label>
+              <label class="form-label">{{ $t('finance.frontendRemark') }}</label>
               <n-input
                 v-model:value="withdrawalForm.frontendNote"
                 type="textarea"
-                placeholder="请输入显示在客户端的备注"
+                placeholder:placeholder="$t('finance.pleaseEnterRemark2')"
                 :autosize="{ minRows: 2, maxRows: 4 }"
                 maxlength="1000"
                 show-count
@@ -538,11 +514,11 @@
 
             <!-- Backend Notes -->
             <div class="form-row mb-4">
-              <label class="form-label">后台备注</label>
+              <label class="form-label">{{ $t('finance.backendRemark') }}</label>
               <n-input
                 v-model:value="withdrawalForm.backendNote"
                 type="textarea"
-                placeholder="请输入显示在管理后台的备注"
+                placeholder:placeholder="$t('finance.pleaseEnterManagementBackendRemark')"
                 :autosize="{ minRows: 2, maxRows: 4 }"
                 maxlength="1000"
                 show-count
@@ -551,11 +527,11 @@
 
             <!-- Verification Password -->
             <div class="form-row mb-6">
-              <label class="form-label required">验证密码</label>
+              <label class="form-label required">{{ $t('finance.text78') }}</label>
               <n-input
                 v-model:value="withdrawalForm.verificationPassword"
                 type="password"
-                placeholder="请输入您的登录密码"
+                placeholder:placeholder="$t('finance.pleaseEnterLogin')"
                 show-password-on="click"
               />
             </div>
@@ -563,17 +539,13 @@
 
           <!-- Action Buttons -->
           <div class="action-buttons mt-6 flex justify-center gap-4">
-            <n-button @click="handleCancelWithdrawal" style="width: 100px">
-              取消
-            </n-button>
+            <n-button @click="handleCancelWithdrawal" style="width: 100px">{{ $t('common.cancel') }}</n-button>
             <n-button
               type="primary"
               @click="handleSubmitWithdrawal"
               :loading="modalLoading"
               style="width: 100px"
-            >
-              确认
-            </n-button>
+            >{{ $t('common.confirm') }}</n-button>
           </div>
         </div>
 
@@ -582,9 +554,7 @@
           v-if="!selectedMember"
           class="action-buttons mt-6 flex justify-center"
         >
-          <n-button @click="handleCancelWithdrawal" style="width: 100px">
-            取消
-          </n-button>
+          <n-button @click="handleCancelWithdrawal" style="width: 100px">{{ $t('common.cancel') }}</n-button>
         </div>
       </div>
     </n-modal>
@@ -593,25 +563,25 @@
     <n-modal
       v-model:show="showNoteModal"
       preset="dialog"
-      title="编辑备注"
-      positive-text="保存"
-      negative-text="取消"
+      :title="$t('finance.editRemark')"
+      positive-text:positive-text="$t('common.save')"
+      negative-text:negative-text="$t('common.cancel')"
       @positive-click="handleSaveNote"
       @negative-click="showNoteModal = false"
     >
       <n-form ref="noteFormRef" :model="noteForm" :rules="noteRules">
-        <n-form-item label="备注类型" path="type">
+        <n-form-item :label="$t('finance.remark')" path="type">
           <n-select
             v-model:value="noteForm.type"
             :options="noteTypeOptions"
-            placeholder="请选择备注类型"
+            placeholder:placeholder="$t('finance.pleaseSelectRemark')"
           />
         </n-form-item>
-        <n-form-item label="备注内容" path="content">
+        <n-form-item :label="$t('finance.remark1')" path="content">
           <n-input
             v-model:value="noteForm.content"
             type="textarea"
-            placeholder="请输入备注内容"
+            placeholder:placeholder="$t('finance.pleaseEnterRemark1')"
             :autosize="{ minRows: 3 }"
           />
         </n-form-item>
@@ -622,36 +592,36 @@
     <n-modal
       v-model:show="showBatchModal"
       preset="dialog"
-      title="批量操作"
-      positive-text="确认"
-      negative-text="取消"
+      :title="$t('finance.bulkActions')"
+      positive-text:positive-text="$t('common.confirm')"
+      negative-text:negative-text="$t('common.cancel')"
       @positive-click="handleConfirmBatch"
       @negative-click="showBatchModal = false"
     >
       <n-form ref="batchFormRef" :model="batchForm" :rules="batchRules">
-        <n-form-item label="操作类型" path="action">
+        <n-form-item :label="$t('finance.actions')" path="action">
           <n-select
             v-model:value="batchForm.action"
             :options="batchActionOptions"
-            placeholder="请选择操作类型"
+            placeholder:placeholder="$t('finance.pleaseSelectActions')"
           />
         </n-form-item>
         <n-form-item
           v-if="batchForm.action === 'update-status'"
-          label="新状态"
+          :label="$t('finance.status')"
           path="status"
         >
           <n-select
             v-model:value="batchForm.status"
             :options="statusOptions.filter((opt) => opt.value !== '')"
-            placeholder="请选择新状态"
+            placeholder:placeholder="$t('finance.pleaseSelectStatus1')"
           />
         </n-form-item>
-        <n-form-item label="操作说明" path="reason">
+        <n-form-item :label="$t('finance.operationNote')" path="reason">
           <n-input
             v-model:value="batchForm.reason"
             type="textarea"
-            placeholder="请输入操作说明"
+            placeholder:placeholder="$t('finance.pleaseEnterOperationNote')"
             :autosize="{ minRows: 3 }"
           />
         </n-form-item>
@@ -662,15 +632,15 @@
     <n-modal
       v-model:show="batchReasonModal.show"
       preset="dialog"
-      title="操作说明"
-      positive-text="确认"
-      negative-text="取消"
+      :title="$t('finance.operationNote')"
+      positive-text:positive-text="$t('common.confirm')"
+      negative-text:negative-text="$t('common.cancel')"
       @positive-click="submitBatchReasonModal"
     >
       <n-input
         v-model:value="batchReasonModal.reason"
         type="textarea"
-        placeholder="请输入操作说明（必填）"
+        placeholder:placeholder="$t('finance.pleaseEnterOperationNoteRequired')"
         :autosize="{ minRows: 3 }"
       />
     </n-modal>
@@ -700,34 +670,34 @@
         >
           <div class="grid grid-cols-3 gap-4 text-sm">
             <div>
-              <span class="text-gray-600">订单号：</span>
+              <span class="text-gray-600">{{ $t('finance.k1782445092052') }}</span>
               <span>{{ batchForceRejectModal.data.orderId }}</span>
             </div>
             <div>
-              <span class="text-gray-600">会员ID：</span>
+              <span class="text-gray-600">{{ $t('finance.memberId') }}：</span>
               <span class="text-blue-600">{{ batchForceRejectModal.data.memberId }}</span>
             </div>
             <div>
-              <span class="text-gray-600">会员账号：</span>
+              <span class="text-gray-600">{{ $t('finance.k1782445092053') }}</span>
               <span>{{ batchForceRejectModal.data.accountName }}</span>
             </div>
             <div>
-              <span class="text-gray-600">会员层级：</span>
+              <span class="text-gray-600">{{ $t('finance.k17824450920531') }}</span>
               <span>{{ batchForceRejectModal.data.memberTag || '-' }}</span>
             </div>
             <div>
-              <span class="text-gray-600">提现金额：</span>
+              <span class="text-gray-600">{{ $t('finance.k1782445092054') }}</span>
               <span class="font-semibold text-green-600"
                 >{{ batchForceRejectModal.data.withdrawAmount }} {{ batchForceRejectModal.data.currency }}</span
               >
             </div>
             <div>
-              <span class="text-gray-600">手续费：</span>
+              <span class="text-gray-600">{{ $t('finance.k17824450920541') }}</span>
               <span>{{ batchForceRejectModal.data.fee ?? 0 }} {{ batchForceRejectModal.data.currency }}</span>
             </div>
           </div>
           <div class="mt-3 text-sm">
-            <span class="text-gray-600">实际到账：</span>
+            <span class="text-gray-600">{{ $t('finance.k1782445092055') }}</span>
             <span class="font-semibold"
               >{{ batchForceRejectModal.data.estimatedReceived ?? batchForceRejectModal.data.withdrawAmount }} {{ batchForceRejectModal.data.currency }}</span
             >
@@ -735,11 +705,11 @@
         </div>
         <div class="mb-6">
           <div class="mb-3 flex items-center gap-4">
-            <span class="text-sm font-medium">是否风控处理</span>
+            <span class="text-sm font-medium">{{ $t('finance.kzl2xl') }}</span>
             <n-radio-group v-model:value="batchForceRejectModal.windControlProcess">
-              <n-radio value="no">不处理</n-radio>
-              <n-radio value="add_audit">增加稽核任务</n-radio>
-              <n-radio value="deduct_balance">扣除余额</n-radio>
+              <n-radio value="no">{{ $t('finance.kb43kc') }}</n-radio>
+              <n-radio value="add_audit">{{ $t('finance.krsg39') }}</n-radio>
+              <n-radio value="deduct_balance">{{ $t('finance.k8ozj7') }}</n-radio>
             </n-radio-group>
           </div>
           <div
@@ -747,7 +717,7 @@
             class="mb-4"
           >
             <div class="mb-2 flex items-center gap-2">
-              <span class="text-sm font-medium">增加稽核任务</span>
+              <span class="text-sm font-medium">{{ $t('finance.krsg39') }}</span>
               <n-input-number
                 v-model:value="batchForceRejectModal.auditMultiplier"
                 :min="1"
@@ -755,7 +725,7 @@
                 :step="1"
                 class="w-24"
               />
-              <span class="text-sm">倍</span>
+              <span class="text-sm">{{ $t('finance.kblhtu') }}</span>
             </div>
             <div class="mb-3 text-sm text-gray-600">
               即需要再打码 {{ batchForceRejectModal.auditMultiplier * 30.0 }} 才能再次提现
@@ -763,7 +733,7 @@
           </div>
         </div>
         <div class="mb-6">
-          <div class="mb-3 text-sm font-medium">指定稽核平台</div>
+          <div class="mb-3 text-sm font-medium">{{ $t('finance.kusymy') }}</div>
           <div class="platform-grid max-h-80 overflow-y-auto rounded-lg border bg-gray-50 p-4">
             <div class="grid grid-cols-2 gap-3">
               <div
@@ -775,7 +745,7 @@
                   <span class="text-2xl">🎮</span>
                 </div>
                 <div class="flex-1">
-                  <div class="font-medium text-gray-900">全部平台</div>
+                  <div class="font-medium text-gray-900">{{ $t('finance.k7b4zs') }}</div>
                   <div class="text-sm text-gray-500">ALL • {{ batchForceRejectPlatforms.length }} 个平台</div>
                 </div>
                 <n-checkbox
@@ -806,17 +776,15 @@
               </div>
             </div>
           </div>
-          <div class="mt-3 rounded bg-yellow-50 p-3 text-sm text-gray-600">
-            提示：若此处勾选指定稽核但游戏管理选择稽核排除，则仍会被排除，即冲突时以游戏管理为准
-          </div>
+          <div class="mt-3 rounded bg-yellow-50 p-3 text-sm text-gray-600">{{ $t('finance.k1782445092059') }}</div>
         </div>
         <div class="mb-6 grid grid-cols-2 gap-6">
           <div>
-            <label class="mb-2 block text-sm font-medium">拒绝前台原因</label>
+            <label class="mb-2 block text-sm font-medium">{{ $t('finance.kmsitn') }}</label>
             <n-input
               v-model:value="batchForceRejectModal.frontendReason"
               type="textarea"
-              placeholder="请输入拒绝前台原因"
+              placeholder:placeholder="$t('finance.pleaseEnterFrontend')"
               :rows="4"
               :maxlength="1000"
             />
@@ -825,11 +793,11 @@
             </div>
           </div>
           <div>
-            <label class="mb-2 block text-sm font-medium">拒绝后台原因</label>
+            <label class="mb-2 block text-sm font-medium">{{ $t('finance.kutwb8') }}</label>
             <n-input
               v-model:value="batchForceRejectModal.backendReason"
               type="textarea"
-              placeholder="请输入拒绝后台原因"
+              placeholder:placeholder="$t('finance.pleaseEnterBackend')"
               :rows="4"
               :maxlength="1000"
             />
@@ -839,14 +807,12 @@
           </div>
         </div>
         <div class="flex justify-end gap-3">
-          <n-button @click="batchForceRejectModal.show = false">取消</n-button>
+          <n-button @click="batchForceRejectModal.show = false">{{ $t('common.cancel') }}</n-button>
           <n-button
             type="primary"
             :loading="batchForceRejectModal.loading"
             @click="submitBatchForceReject"
-          >
-            确认
-          </n-button>
+          >{{ $t('common.confirm') }}</n-button>
         </div>
       </div>
     </n-modal>
@@ -855,16 +821,16 @@
     <n-modal
       v-model:show="showDetailModal"
       preset="card"
-      title="提现详情"
+      :title="$t('finance.withdrawalDetails')"
       size="large"
       :style="{ width: '80%', maxWidth: '1200px' }"
     >
       <div v-if="detailModalData" class="space-y-6">
         <!-- Member Personal Information -->
-        <n-card title="会员个人信息" :bordered="false" class="shadow-sm">
+        <n-card :title="$t('finance.memberInfo1')" :bordered="false" class="shadow-sm">
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div class="info-item">
-              <span class="info-label">订单号</span>
+              <span class="info-label">{{ $t('finance.orderNo') }}</span>
               <div class="info-value-with-copy">
                 <span class="info-value">{{ detailModalData.orderId }}</span>
                 <n-button
@@ -879,7 +845,7 @@
               </div>
             </div>
             <div class="info-item">
-              <span class="info-label">会员账号</span>
+              <span class="info-label">{{ $t('finance.memberAccount2') }}</span>
               <div class="info-value-with-copy">
                 <span class="info-value">{{
                   detailModalData.accountName
@@ -898,21 +864,21 @@
               </div>
             </div>
             <div class="info-item">
-              <span class="info-label">会员ID</span>
+              <span class="info-label">{{ $t('finance.memberId') }}</span>
               <span class="info-value">{{ detailModalData.memberId }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">会员币种</span>
+              <span class="info-label">{{ $t('finance.memberCurrency') }}</span>
               <span class="info-value">{{ detailModalData.currency }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">会员层级</span>
+              <span class="info-label">{{ $t('finance.memberTier') }}</span>
               <span class="info-value">{{
                 detailModalData.memberTierName || '默认层级'
               }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">VIP等级</span>
+              <span class="info-label">{{ $t('finance.vIPLevel') }}</span>
               <span class="info-value">
                 <n-tag type="info" size="small">{{
                   detailModalData.vipLevel || 'VIP0'
@@ -920,7 +886,7 @@
               </span>
             </div>
             <div class="info-item">
-              <span class="info-label">三方商户订单号</span>
+              <span class="info-label">{{ $t('finance.k8e1y5') }}</span>
               <span class="info-value font-mono text-xs">{{
                 detailModalData.thirdPartyOrderNo || '-'
               }}</span>
@@ -929,16 +895,16 @@
         </n-card>
 
         <!-- Withdrawal Account Information -->
-        <n-card title="提现账户信息" :bordered="false" class="shadow-sm">
+        <n-card :title="$t('finance.withdrawalAccountInfo')" :bordered="false" class="shadow-sm">
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div class="info-item">
-              <span class="info-label">提现方式</span>
+              <span class="info-label">{{ $t('finance.withdrawalMethod') }}</span>
               <span class="info-value">{{
                 detailModalData.withdrawChannelInfo?.type || 'PIX'
               }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">真实姓名</span>
+              <span class="info-label">{{ $t('finance.text69') }}</span>
               <div class="info-value-with-copy">
                 <span class="info-value">{{
                   detailModalData.withdrawChannelInfo?.name || '-'
@@ -960,7 +926,7 @@
               </div>
             </div>
             <div class="info-item">
-              <span class="info-label">账号/地址</span>
+              <span class="info-label">{{ $t('finance.accountUrl') }}</span>
               <div class="info-value-with-copy">
                 <span class="info-value">{{
                   detailModalData.withdrawChannelInfo?.account || '-'
@@ -982,7 +948,7 @@
               </div>
             </div>
             <div class="info-item">
-              <span class="info-label">类型</span>
+              <span class="info-label">{{ $t('finance.type') }}</span>
               <span class="info-value">{{
                 detailModalData.withdrawChannelInfo?.cpf ? 'CPF' : 'CPF'
               }}</span>
@@ -1013,10 +979,10 @@
         </n-card>
 
         <!-- Withdrawal Amount Information -->
-        <n-card title="提现金额信息" :bordered="false" class="shadow-sm">
+        <n-card :title="$t('finance.withdrawalAmountInfo')" :bordered="false" class="shadow-sm">
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div class="info-item">
-              <span class="info-label">提现金额</span>
+              <span class="info-label">{{ $t('finance.withdrawalAmount') }}</span>
               <div class="info-value-with-copy">
                 <span class="info-value font-semibold text-red-600">{{
                   formatCurrency(
@@ -1043,7 +1009,7 @@
               </div>
             </div>
             <div class="info-item">
-              <span class="info-label">手续费</span>
+              <span class="info-label">{{ $t('finance.fee') }}</span>
               <div class="info-value-with-copy">
                 <span class="info-value">{{
                   formatCurrency(detailModalData.fee || 0)
@@ -1062,7 +1028,7 @@
               </div>
             </div>
             <div class="info-item">
-              <span class="info-label">预计到账</span>
+              <span class="info-label">{{ $t('finance.estimatedReceived') }}</span>
               <div class="info-value-with-copy">
                 <span class="info-value font-semibold text-green-600">{{
                   formatCurrency(
@@ -1092,7 +1058,7 @@
               </div>
             </div>
             <div class="info-item">
-              <span class="info-label">实际到账</span>
+              <span class="info-label">{{ $t('finance.actualReceived') }}</span>
               <div class="info-value-with-copy">
                 <span class="info-value">{{
                   formatCurrency(detailModalData.estimatedReceived || 0)
@@ -1117,16 +1083,16 @@
         </n-card>
 
         <!-- Other Information -->
-        <n-card title="其他信息" :bordered="false" class="shadow-sm">
+        <n-card :title="$t('finance.info')" :bordered="false" class="shadow-sm">
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div class="info-item">
-              <span class="info-label">操作人</span>
+              <span class="info-label">{{ $t('finance.operator') }}</span>
               <span class="info-value">{{
                 detailModalData.reviewer || '-'
               }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">操作时间</span>
+              <span class="info-label">{{ $t('finance.actionsTime') }}</span>
               <span class="info-value">{{
                 formatDateTime(
                   detailModalData.updatedAt || detailModalData.createdAt,
@@ -1134,7 +1100,7 @@
               }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">申请时间</span>
+              <span class="info-label">{{ $t('finance.applicationTime') }}</span>
               <span class="info-value">{{
                 formatDateTime(
                   detailModalData.appliedAt || detailModalData.createdAt,
@@ -1142,7 +1108,7 @@
               }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">充 / 提次数</span>
+              <span class="info-label">{{ $t('finance.kds6q2') }}</span>
               <span class="info-value"
                 >充{{
                   detailModalData.rechargeWithdrawCount?.rechargeCount || 0
@@ -1152,7 +1118,7 @@
               >
             </div>
             <div class="info-item col-span-2">
-              <span class="info-label">累计充 / 提差额</span>
+              <span class="info-label">{{ $t('finance.kji4l7') }}</span>
               <span
                 class="info-value"
                 :class="
@@ -1172,7 +1138,7 @@
               </span>
             </div>
             <div class="info-item">
-              <span class="info-label">重复IP人数</span>
+              <span class="info-label">{{ $t('finance.duplicateIpCount') }}</span>
               <span class="info-value text-orange-600"
                 >{{
                   detailModalData.rechargeWithdrawCount?.duplicateIP || 0
@@ -1183,16 +1149,16 @@
         </n-card>
 
         <!-- Three-party Payment -->
-        <n-card title="三方代付" :bordered="false" class="shadow-sm">
+        <n-card :title="$t('finance.thirdPartyPayout')" :bordered="false" class="shadow-sm">
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div class="info-item">
-              <span class="info-label">三方代付</span>
+              <span class="info-label">{{ $t('finance.thirdPartyPayout') }}</span>
               <span class="info-value">{{
                 detailModalData.paymentGateway || 'Pay4z'
               }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">代付次数</span>
+              <span class="info-label">{{ $t('finance.ksi6x5') }}</span>
               <span class="info-value">{{
                 detailModalData.withdrawCount || 1
               }}</span>
@@ -1213,13 +1179,13 @@
       v-model:show="showColumnConfig"
       preset="card"
       style="width: 600px"
-      title="自定义列"
+      :title="$t('finance.text80')"
     >
       <n-card>
         <template #header>
           <div class="flex items-center justify-between">
-            <span>拖拽重新排序，勾选控制显示</span>
-            <n-button text @click="resetColumnConfig">重置</n-button>
+            <span>{{ $t('finance.knyc2n') }}</span>
+            <n-button text @click="resetColumnConfig">{{ $t('common.reset') }}</n-button>
           </div>
         </template>
 
@@ -1238,7 +1204,7 @@
             </div>
             <div class="flex items-center gap-2">
               <span v-if="col.required" class="text-xs text-gray-400"
-                >必需</span
+                >{{ $t('finance.kyvp37') }}</span
               >
             </div>
           </div>
@@ -1246,10 +1212,10 @@
 
         <template #footer>
           <div class="flex justify-between">
-            <n-button @click="resetColumnConfig">重置</n-button>
+            <n-button @click="resetColumnConfig">{{ $t('common.reset') }}</n-button>
             <div class="flex gap-2">
-              <n-button @click="showColumnConfig = false">取消</n-button>
-              <n-button type="primary" @click="saveColumnConfig">保存</n-button>
+              <n-button @click="showColumnConfig = false">{{ $t('common.cancel') }}</n-button>
+              <n-button type="primary" @click="saveColumnConfig">{{ $t('common.save') }}</n-button>
             </div>
           </div>
         </template>
@@ -1265,6 +1231,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import {
   ref,
   computed,
@@ -1617,34 +1585,34 @@ const autoRefreshEnabled = ref(false);
 
 // Column configuration
 const columnConfigList = ref([
-  { key: 'orderId', title: '订单号', visible: true, required: true },
+  { key: 'orderId', title: $t('finance.orderNo'), visible: true, required: true },
   {
     key: 'memberId',
-    title: '会员ID / 会员账号 (VIP / 层级)',
+    title: $t('finance.memberIdMemberAccountVIPTier'),
     visible: true,
     required: false,
   },
   {
     key: 'firstDepositStatus',
-    title: '首充状态',
+    title: $t('finance.firstDepositStatus'),
     visible: true,
     required: false,
   },
-  { key: 'memberInfo', title: '会员信息', visible: true, required: false },
-  { key: 'memberName', title: '会员姓名', visible: false, required: false },
-  { key: 'appliedAt', title: '申请时间', visible: true, required: false },
-  { key: 'withdrawAmount', title: '提现金额', visible: true, required: false },
+  { key: 'memberInfo', title: $t('finance.memberInfo'), visible: true, required: false },
+  { key: 'memberName', title: $t('finance.member1'), visible: false, required: false },
+  { key: 'appliedAt', title: $t('finance.applicationTime'), visible: true, required: false },
+  { key: 'withdrawAmount', title: $t('finance.withdrawalAmount'), visible: true, required: false },
   {
     key: 'estimatedAmount',
-    title: '预计到账金额',
+    title: $t('finance.estimatedReceivedAmount'),
     visible: true,
     required: false,
   },
-  { key: 'counts', title: '充/提次数', visible: true, required: false },
-  { key: 'withdrawChannel', title: '提现方式', visible: true, required: false },
-  { key: 'actions', title: '操作', visible: true, required: true },
-  { key: 'status', title: '订单状态', visible: true, required: false },
-  { key: 'notes', title: '备注', visible: false, required: false },
+  { key: 'counts', title: $t('finance.count2'), visible: true, required: false },
+  { key: 'withdrawChannel', title: $t('finance.withdrawalMethod'), visible: true, required: false },
+  { key: 'actions', title: $t('common.actions'), visible: true, required: true },
+  { key: 'status', title: $t('finance.orderStatus'), visible: true, required: false },
+  { key: 'notes', title: $t('common.remark'), visible: false, required: false },
 ]);
 
 // Summary
@@ -1695,42 +1663,42 @@ const dateShortcuts = {
 };
 
 const thirdPartyOptions = [
-  { label: '全部', value: '' },
+  { label: $t('finance.all1'), value: '' },
   { label: 'PIX', value: 'pix' },
-  { label: '银行转账', value: 'bank' },
-  { label: '数字钱包', value: 'wallet' },
+  { label: $t('finance.bankTransfer'), value: 'bank' },
+  { label: $t('finance.digitalWallet'), value: 'wallet' },
 ];
 
 const statusOptions = [
-  { label: '全部', value: '' },
-  { label: '未锁定', value: 'unlocked' },
-  { label: '待出款', value: 'pending' },
-  { label: '已出款', value: 'completed' },
-  { label: '已拒绝', value: 'rejected' },
-  { label: '已取消', value: 'cancelled' },
+  { label: $t('finance.all1'), value: '' },
+  { label: $t('finance.unlocked'), value: 'unlocked' },
+  { label: $t('finance.pendingPayout'), value: 'pending' },
+  { label: $t('finance.paidOut'), value: 'completed' },
+  { label: $t('finance.rejected'), value: 'rejected' },
+  { label: $t('finance.cancelled'), value: 'cancelled' },
 ];
 
 const withdrawMethodOptions = [
-  { label: '全部', value: '' },
+  { label: $t('finance.all1'), value: '' },
   { label: 'PIX', value: 'pix' },
-  { label: '银行转账', value: 'bank' },
-  { label: '数字钱包', value: 'wallet' },
+  { label: $t('finance.bankTransfer'), value: 'bank' },
+  { label: $t('finance.digitalWallet'), value: 'wallet' },
 ];
 
 const withdrawAccountOptions = [
-  { label: '请选择提现账号', value: '' },
-  { label: '主账户', value: 'main_account' },
-  { label: '备用账户', value: 'backup_account' },
+  { label: $t('finance.pleaseSelectWithdrawalAccount'), value: '' },
+  { label: $t('finance.account'), value: 'main_account' },
+  { label: $t('finance.account1'), value: 'backup_account' },
 ];
 
 // VIP options - will be replaced with member tier options dynamically
 const vipLevelOptions = computed(() => {
   if (memberTierOptions.value.length > 0) {
-    return [{ label: '全部', value: '' }, ...memberTierOptions.value];
+    return [{ label: $t('finance.all1'), value: '' }, ...memberTierOptions.value];
   }
   // Fallback to default VIP options if tiers not loaded
   return [
-    { label: '全部', value: '' },
+    { label: $t('finance.all1'), value: '' },
     { label: 'VIP0', value: 'vip0' },
     { label: 'VIP1', value: 'vip1' },
     { label: 'VIP2', value: 'vip2' },
@@ -1741,74 +1709,74 @@ const vipLevelOptions = computed(() => {
 });
 
 const agentModeOptions = [
-  { label: '全部', value: '' },
-  { label: '推广模式', value: 'referral' },
-  { label: '手动分配', value: 'manual' },
+  { label: $t('finance.all1'), value: '' },
+  { label: $t('finance.text113'), value: 'referral' },
+  { label: $t('finance.text114'), value: 'manual' },
 ];
 
 const serviceFilterOptions = [
-  { label: '全部', value: '' },
-  { label: '正常服务', value: 'normal' },
-  { label: '风险控制', value: 'risk' },
-  { label: '客服处理', value: 'service' },
+  { label: $t('finance.all1'), value: '' },
+  { label: $t('finance.normal1'), value: 'normal' },
+  { label: $t('finance.riskControl1'), value: 'risk' },
+  { label: $t('finance.process1'), value: 'service' },
 ];
 
 const noteTypeOptions = [
-  { label: '后台备注', value: 'backend' },
-  { label: '前台备注', value: 'frontend' },
-  { label: '三方代付备注', value: 'agency' },
+  { label: $t('finance.backendRemark'), value: 'backend' },
+  { label: $t('finance.frontendRemark'), value: 'frontend' },
+  { label: $t('finance.thirdPartyPayoutRemark'), value: 'agency' },
 ];
 
 const batchActionOptions = [
-  { label: '批量锁定', value: 'lock' },
-  { label: '批量解锁', value: 'unlock' },
-  { label: '批量审核出款', value: 'approve' },
-  { label: '批量拒绝', value: 'reject' },
-  { label: '批量强制取消', value: 'cancel' },
-  { label: '批量更新状态', value: 'update-status' },
-  { label: '批量导出', value: 'export' },
+  { label: $t('finance.bulkLock'), value: 'lock' },
+  { label: $t('finance.bulkUnlock'), value: 'unlock' },
+  { label: $t('finance.bulkReviewPayout'), value: 'approve' },
+  { label: $t('finance.bulkReject'), value: 'reject' },
+  { label: $t('finance.bulkForceCancel'), value: 'cancel' },
+  { label: $t('finance.bulkStatus'), value: 'update-status' },
+  { label: $t('finance.bulkExport'), value: 'export' },
 ];
 
 // 批量操作下拉选项（与截图一致 11 项）
 const batchOperationDropdownOptions = [
-  { label: '批量锁定', key: 'batch-lock' },
-  { label: '批量解锁', key: 'batch-unlock' },
-  { label: '批量备注', key: 'batch-remark' },
-  { label: '批量强制取消', key: 'batch-force-cancel' },
-  { label: '批量强制拒绝', key: 'batch-force-reject' },
-  { label: '批量强制成功', key: 'batch-force-success' },
-  { label: '批量强制失败', key: 'batch-force-fail' },
-  { label: '批量刷新回调', key: 'batch-refresh-callback' },
-  { label: '批量审核出款', key: 'batch-approve' },
-  { label: '批量重新代付', key: 'batch-repay' },
-  { label: '批量已人工出款', key: 'batch-manual-withdrawal' },
+  { label: $t('finance.bulkLock'), key: 'batch-lock' },
+  { label: $t('finance.bulkUnlock'), key: 'batch-unlock' },
+  { label: $t('finance.bulkRemark'), key: 'batch-remark' },
+  { label: $t('finance.bulkForceCancel'), key: 'batch-force-cancel' },
+  { label: $t('finance.bulkForceReject'), key: 'batch-force-reject' },
+  { label: $t('finance.bulkForceSuccess1'), key: 'batch-force-success' },
+  { label: $t('finance.bulkForceFail'), key: 'batch-force-fail' },
+  { label: $t('finance.bulkRefreshCallback'), key: 'batch-refresh-callback' },
+  { label: $t('finance.bulkReviewPayout'), key: 'batch-approve' },
+  { label: $t('finance.bulkRePayout'), key: 'batch-repay' },
+  { label: $t('finance.bulkManualPayoutDone'), key: 'batch-manual-withdrawal' },
 ];
 
 // Validation rules
 const withdrawalRules: FormRules = {
   memberId: {
     required: true,
-    message: '请选择会员',
+    message: $t('finance.pleaseSelectMember'),
     trigger: ['blur', 'change'],
   },
   amount: {
     required: true,
     type: 'number',
-    message: '请输入提现金额',
+    message: $t('finance.pleaseEnterWithdrawalAmount'),
     trigger: ['blur', 'change'],
   },
-  withdrawMethod: { required: true, message: '请选择提现方式' },
-  paymentInfo: { required: true, message: '请输入收款信息' },
+  withdrawMethod: { required: true, message: $t('finance.pleaseSelectWithdrawalMethod') },
+  paymentInfo: { required: true, message: $t('finance.pleaseEnterReceivingInfo') },
 };
 
 const noteRules: FormRules = {
-  type: { required: true, message: '请选择备注类型' },
-  content: { required: true, message: '请输入备注内容' },
+  type: { required: true, message: $t('finance.pleaseSelectRemark') },
+  content: { required: true, message: $t('finance.pleaseEnterRemark1') },
 };
 
 const batchRules: FormRules = {
-  action: { required: true, message: '请选择操作类型' },
-  reason: { required: true, message: '请输入操作说明' },
+  action: { required: true, message: $t('finance.pleaseSelectActions') },
+  reason: { required: true, message: $t('finance.pleaseEnterOperationNote') },
 };
 
 // Table columns - matching exact user requirements
@@ -1820,7 +1788,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
   },
   // 1. 订单号
   {
-    title: '订单号',
+    title: $t('finance.orderNo'),
     key: 'orderId',
     width: 140,
     fixed: 'left',
@@ -1847,7 +1815,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
   },
   // 2. 会员ID / 会员账号 (VIP / 层级) — 上：ID+VIP，下：账号（电话）与层级
   {
-    title: '会员ID / 会员账号 (VIP / 层级)',
+    title: $t('finance.memberIdMemberAccountVIPTier'),
     key: 'memberId',
     width: 200,
     render: (row) =>
@@ -1897,7 +1865,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
   },
   // 3. 申请时间 (操作时间) (完成时长)
   {
-    title: '申请时间 (操作时间) (完成时长)',
+    title: $t('finance.applicationTimeActionsTimeCompletionDuration'),
     key: 'appliedAt',
     width: 180,
     render: (row) =>
@@ -1920,7 +1888,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
   },
   // 4. 会员币种 (比例)
   {
-    title: '会员币种 (比例)',
+    title: $t('finance.memberCurrencyRatio'),
     key: 'memberCurrency',
     width: 120,
     render: (row) =>
@@ -1935,7 +1903,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
   },
   // 5. 提现金额 (当前余额)
   {
-    title: '提现金额 (当前余额)',
+    title: $t('finance.withdrawalAmountBalance'),
     key: 'withdrawAmount',
     width: 140,
     render: (row) =>
@@ -1954,7 +1922,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
   },
   // 6. 预计到帐 (手续费) (实际到账)
   {
-    title: '预计到帐 (手续费) (实际到账)',
+    title: $t('finance.estimatedFeeActualReceived'),
     key: 'estimatedAmount',
     width: 160,
     render: (row) =>
@@ -1985,7 +1953,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
                 window.location.href = `/finance/wagering-audit?userId=${row.memberId}`;
               },
             },
-            { default: () => '稽核' },
+            { default: () => $t('finance.audit') },
           ),
           h(
             NButton,
@@ -1997,14 +1965,14 @@ const columns: DataTableColumns<WithdrawOrder> = [
                 window.location.href = `/game-management/bet-records?userId=${row.memberId}`;
               },
             },
-            { default: () => '投注' },
+            { default: () => $t('finance.wagering') },
           ),
         ]),
       ]),
   },
   // 7. 充 / 提次数 (累计充 / 提差额) (重复IP人数)
   {
-    title: '充 / 提次数 (累计充 / 提差额) (重复IP人数)',
+    title: $t('finance.countCumulativeIP'),
     key: 'counts',
     width: 180,
     render: (row) => {
@@ -2038,7 +2006,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
   },
   // 8. 收款方式 (收款人信息)
   {
-    title: '收款方式 (收款人信息)',
+    title: $t('finance.receivingMethodPayeeInfo'),
     key: 'paymentMethod',
     width: 320,
     render: (row) => {
@@ -2083,7 +2051,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
       const copyAll = () => {
         if (copyAllText) {
           navigator.clipboard.writeText(copyAllText);
-          message.success('已复制全部信息');
+          message.success($t('finance.alreadyAllInfo'));
         }
       };
 
@@ -2105,7 +2073,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
                 size: 'tiny',
                 onClick: copyAll,
               },
-              { default: () => '复制全部' },
+              { default: () => $t('finance.all') },
             ),
         ]),
         // Name
@@ -2189,7 +2157,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
   },
   // 9. 操作（位于订单状态 / 操作人之前）
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 120,
     render: (row) => {
@@ -2205,7 +2173,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
               type: 'info',
               onClick: () => handleEditNote(row),
             },
-            { default: () => '备注' },
+            { default: () => $t('common.remark') },
           ),
         );
       }
@@ -2215,7 +2183,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
   },
   // 10. 订单状态 (操作人)
   {
-    title: '订单状态 (操作人)',
+    title: $t('finance.orderStatusActions'),
     key: 'status',
     width: 140,
     render: (row) => {
@@ -2302,7 +2270,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
   },
   // 11. 前台备注
   {
-    title: '前台备注',
+    title: $t('finance.frontendRemark'),
     key: 'frontendNotes',
     width: 150,
     render: (row) => {
@@ -2316,7 +2284,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
   },
   // 12. 后台备注
   {
-    title: '后台备注',
+    title: $t('finance.backendRemark'),
     key: 'backendNotes',
     width: 200,
     render: (row) => {
@@ -2347,7 +2315,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
   },
   // 13. 三方备注
   {
-    title: '三方备注',
+    title: $t('finance.thirdPartyRemark'),
     key: 'thirdPartyNotes',
     width: 200,
     render: (row) => {
@@ -2377,7 +2345,7 @@ const columns: DataTableColumns<WithdrawOrder> = [
   },
   // 14. 三方代付 (代付次数)
   {
-    title: '三方代付 (代付次数)',
+    title: $t('finance.thirdPartyPayoutPayoutCount'),
     key: 'thirdPartyPayment',
     width: 160,
     render: (row) => {
@@ -2596,7 +2564,7 @@ async function submitBatchReasonModal() {
       actionKey,
     )
   ) {
-    message.warning('请输入操作说明');
+    message.warning($t('finance.pleaseEnterOperationNote'));
     return;
   }
   batchReasonModal.value.show = false;
@@ -2638,7 +2606,7 @@ async function runBatchAction(
         return row?.status === 'pending';
       });
       if (pendingOrderIds.length === 0) {
-        message.warning('所选记录中无待出款状态，仅处理待出款订单，已跳过');
+        message.warning($t('finance.recordsNoPendingPayoutStatusOnlyProcessPendingPayoutOrderAlreadySkipped'));
         return;
       }
       if (pendingOrderIds.length < orderIds.length) {
@@ -2742,9 +2710,9 @@ async function runBatchAction(
         message.error((res as any)?.message || '操作失败');
       }
     } else if (actionKey === 'batch-refresh-callback') {
-      message.info('批量刷新回调功能请在三方代付或重新代付中使用');
+      message.info($t('finance.bulkRefreshCallbackFeaturePleaseThirdPartyPayoutOrRePaying'));
     } else if (actionKey === 'batch-repay') {
-      message.info('请到「重新代付」页签进行批量重新代付');
+      message.info($t('finance.pleaseRePayoutBulkRePayout'));
     } else if (actionKey === 'batch-manual-withdrawal') {
       let ok = 0;
       for (const id of orderIds) {
@@ -2795,8 +2763,8 @@ function onBatchOperationSelect(key: string, selectedRows: WithdrawOrder[]) {
 
   if (orderIds.length === 0) {
     if (selectedRows.length > 0 && pendingOnly)
-      message.warning('所选记录中无待出款状态，仅处理待出款订单');
-    else message.warning('请先选择要操作的记录');
+      message.warning($t('finance.recordsNoPendingPayoutStatusOnlyProcessPendingPayoutOrder'));
+    else message.warning($t('finance.pleaseSelectActionsRecords'));
     return;
   }
   if (pendingOnly && rows.length < selectedRows.length) {
@@ -2816,7 +2784,7 @@ function onBatchOperationSelect(key: string, selectedRows: WithdrawOrder[]) {
 
 const handleExportAllWithdrawals = () => {
   // TODO: Implement export functionality
-  message.info('导出功能开发中');
+  message.info($t('finance.exportFeatureInDevelopment'));
 };
 
 // Rename fetchData to be more specific for All Withdrawals tab
@@ -2910,7 +2878,7 @@ const fetchData = async () => {
       console.log('⚠️ Direct array - no pagination');
     } else {
       console.error('❌ Unexpected response structure:', rawResponse);
-      message.error('数据格式错误');
+      message.error($t('finance.data'));
       return;
     }
 
@@ -2995,7 +2963,7 @@ const fetchData = async () => {
       console.log('🔍 Loading state:', loading.value);
     }, 100);
   } catch (error) {
-    message.error('获取数据失败');
+    message.error($t('finance.failedToFetchData'));
     console.error('Fetch data error:', error);
   } finally {
     loading.value = false;
@@ -3049,7 +3017,7 @@ const handleSaveWithdrawal = async () => {
     if (response.success) {
       // Show detailed success message with withdrawal info
       if (isEditing.value) {
-        message.success('提现订单更新成功');
+        message.success($t('finance.withdrawalOrderUpdateSuccessful'));
       } else {
         const orderInfo = response.data;
         message.success(
@@ -3130,7 +3098,7 @@ const handleToggleLock = async (row: WithdrawOrder) => {
       );
     }
   } catch (error) {
-    message.error('操作失败');
+    message.error($t('finance.actionsFailed1'));
     console.error('Toggle lock error:', error);
   }
 };
@@ -3142,7 +3110,7 @@ const handleSearch = () => {
 
 const handleAdvancedSearch = () => {
   // TODO: Implement advanced search modal
-  message.info('高级搜索功能开发中');
+  message.info($t('finance.advancedSearchFeatureInDevelopment'));
 };
 
 const handleResetFilters = () => {
@@ -3313,7 +3281,7 @@ const handleSaveNote = async () => {
         }
       }
 
-      message.success('备注保存成功');
+      message.success($t('finance.remarkSaveSuccess'));
       showNoteModal.value = false;
 
       // Force table to re-render by creating a new array reference
@@ -3340,7 +3308,7 @@ const handleSaveNote = async () => {
 
 const handleBatchOperation = () => {
   if (checkedRowKeys.value.length === 0) {
-    message.warning('请先选择要操作的记录');
+    message.warning($t('finance.pleaseSelectActionsRecords'));
     return;
   }
 
@@ -3365,13 +3333,13 @@ const handleConfirmBatch = async () => {
     });
 
     if (response.success) {
-      message.success('批量操作成功');
+      message.success($t('finance.bulkActionsSuccess'));
       showBatchModal.value = false;
       checkedRowKeys.value = [];
       fetchData();
     }
   } catch (error) {
-    message.error('批量操作失败');
+    message.error($t('finance.bulkActionsFailed'));
     console.error('Batch operation error:', error);
   }
 };
@@ -3410,10 +3378,10 @@ const handleExport = async () => {
       link.download = `withdrawal-records-${new Date().toISOString().split('T')[0]}.xlsx`;
       link.click();
       window.URL.revokeObjectURL(url);
-      message.success('导出成功');
+      message.success($t('finance.exportSuccessful'));
     }
   } catch (error) {
-    message.error('导出失败');
+    message.error($t('finance.exportFailed'));
     console.error('Export error:', error);
   }
 };
@@ -3543,7 +3511,7 @@ const handleMemberSearch = async (query: string) => {
     memberOptions.value = [];
     selectedMember.value = null;
     withdrawalForm.value.memberId = '';
-    message.error('搜索会员失败，请稍后重试');
+    message.error($t('finance.searchMemberFailedPleaseLaterRetry'));
   } finally {
     memberLoading.value = false;
   }
@@ -3971,7 +3939,7 @@ const showMemberDetail = (row: WithdrawOrder) => {
 // Copy to clipboard helper
 const copyToClipboard = (text: string, label: string = '内容') => {
   if (!text || text === '-') {
-    message.warning('无内容可复制');
+    message.warning($t('finance.no'));
     return;
   }
   navigator.clipboard
@@ -3980,7 +3948,7 @@ const copyToClipboard = (text: string, label: string = '内容') => {
       message.success(`已复制${label}`);
     })
     .catch(() => {
-      message.error('复制失败');
+      message.error($t('finance.failed2'));
     });
 };
 

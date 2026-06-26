@@ -34,7 +34,7 @@
             clearable
           />
         </n-form-item>
-        <n-form-item label="状态">
+        <n-form-item :label="$t('common.status')">
           <n-select
             v-model:value="filterForm.isActive"
             placeholder="请选择状态"
@@ -44,8 +44,8 @@
         </n-form-item>
         <n-form-item>
           <n-space>
-            <n-button type="primary" @click="fetchData">搜索</n-button>
-            <n-button @click="resetFilters">重置</n-button>
+            <n-button type="primary" @click="fetchData">{{ $t('common.search') }}</n-button>
+            <n-button @click="resetFilters">{{ $t('common.reset') }}</n-button>
           </n-space>
         </n-form-item>
       </n-form>
@@ -58,7 +58,7 @@
             @click="handleBatchDelete"
             >批量删除</n-button
           >
-          <n-button @click="fetchData">刷新</n-button>
+          <n-button @click="fetchData">{{ $t('common.refresh') }}</n-button>
         </div>
         <div class="flex items-center gap-2">
           <n-text depth="3">共 {{ paginationConfig.itemCount }} 条记录</n-text>
@@ -103,6 +103,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, computed, watch, onMounted, inject, h } from 'vue';
 import {
   useMessage,

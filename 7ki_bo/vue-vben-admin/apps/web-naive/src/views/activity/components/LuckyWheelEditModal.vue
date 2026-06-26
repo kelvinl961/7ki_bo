@@ -2,7 +2,7 @@
   <n-modal
     v-model:show="visible"
     preset="card"
-    :title="readOnly ? '详情' : '修改'"
+    :title="readOnly ? $t('activity.common.readOnlyDetail') : $t('activity.common.readOnlyModify')"
     class="lucky-wheel-edit-modal"
     :style="{ width: '920px', maxWidth: '98vw' }"
     :bordered="false"
@@ -20,27 +20,27 @@
           require-mark-placement="right-hanging"
           size="medium"
         >
-          <n-form-item label="币种">
+          <n-form-item :label="$t('activity.luckyWheel.k5e01')">
             <span class="lw-readonly-text">{{ form.currency || '—' }}</span>
           </n-form-item>
 
-          <n-form-item label="转盘类型">
+          <n-form-item :label="$t('activity.luckyWheelEdit.k8f6c')">
             <span class="lw-readonly-text">{{ wheelTypeText }}</span>
           </n-form-item>
 
-          <n-form-item label="转盘开关">
+          <n-form-item :label="$t('activity.luckyWheelEdit.k8f6c2')">
             <n-switch v-model:value="form.enabled" :disabled="readOnly" />
           </n-form-item>
 
-          <n-form-item label="转盘名称" required>
+          <n-form-item :label="$t('activity.luckyWheelEdit.k8f6c3')" required>
             <n-space vertical :size="10">
               <n-radio-group
                 v-model:value="form.nameMode"
                 :disabled="readOnly"
                 class="lw-radio-row"
               >
-                <n-radio value="system">系统自带</n-radio>
-                <n-radio value="custom">自定义</n-radio>
+                <n-radio value="system">{{ $t('activity.formModal.k7cfb') }}</n-radio>
+                <n-radio value="custom">{{ $t('activity.detailModal.k81ea') }}</n-radio>
               </n-radio-group>
               <n-input
                 v-model:value="form.name"
@@ -51,7 +51,7 @@
             </n-space>
           </n-form-item>
 
-          <n-form-item label="消耗幸运值" required>
+          <n-form-item :label="$t('activity.luckyWheelEdit.k6d88')" required>
             <n-space align="center" :size="8">
               <n-input-number
                 v-model:value="form.luckyValueCost"
@@ -61,11 +61,11 @@
                 :disabled="readOnly"
                 class="lw-input-compact"
               />
-              <span class="lw-hint">幸运值/次</span>
+              <span class="lw-hint">{{ $t('activity.luckyWheelEdit.k5e78k6b21') }}</span>
             </n-space>
           </n-form-item>
 
-          <n-form-item label="真实成本" required>
+          <n-form-item :label="$t('activity.luckyWheelEdit.k771f')" required>
             <n-space align="center" :size="8" wrap>
               <n-input-number
                 v-model:value="form.realCost"
@@ -75,19 +75,17 @@
                 :disabled="readOnly"
                 class="lw-input-compact"
               />
-              <span class="lw-hint">/次</span>
+              <span class="lw-hint">{{ $t('activity.common.perTime') }}</span>
               <n-button
                 v-if="!readOnly"
                 type="primary"
                 size="small"
                 @click="handleCalcRealCost"
-              >
-                计算真实成本
-              </n-button>
+              >{{ $t('activity.luckyWheelEdit.k8ba1') }}</n-button>
             </n-space>
           </n-form-item>
 
-          <n-form-item label="展示成本" required>
+          <n-form-item :label="$t('activity.luckyWheelEdit.k5c55')" required>
             <n-space align="center" :size="8" wrap>
               <n-input-number
                 v-model:value="form.displayCost"
@@ -97,19 +95,17 @@
                 :disabled="readOnly"
                 class="lw-input-compact"
               />
-              <span class="lw-hint">/次</span>
+              <span class="lw-hint">{{ $t('activity.common.perTime') }}</span>
               <n-button
                 v-if="!readOnly"
                 type="primary"
                 size="small"
                 @click="handleCalcDisplayCost"
-              >
-                计算展示成本
-              </n-button>
+              >{{ $t('activity.luckyWheelEdit.k8ba12') }}</n-button>
             </n-space>
           </n-form-item>
 
-          <n-form-item label="奖项数量" required>
+          <n-form-item :label="$t('activity.luckyWheelEdit.k5956')" required>
             <n-radio-group
               v-model:value="form.prizeCount"
               :disabled="readOnly"
@@ -126,28 +122,26 @@
             </n-radio-group>
           </n-form-item>
 
-          <n-form-item label="是否公开概率和成本" required>
+          <n-form-item :label="$t('activity.luckyWheelEdit.k662f')" required>
             <n-radio-group
               v-model:value="form.showProbabilityAndCost"
               :disabled="readOnly"
               class="lw-radio-row"
             >
-              <n-radio value="show">展示</n-radio>
-              <n-radio value="hide">不展示</n-radio>
+              <n-radio value="show">{{ $t('activity.formModal.k5c5511') }}</n-radio>
+              <n-radio value="hide">{{ $t('activity.formModal.k4e0d5') }}</n-radio>
             </n-radio-group>
           </n-form-item>
 
           <div class="lw-prize-section">
             <div class="lw-prize-section__toolbar">
-              <span class="lw-prize-section__title">奖项配置</span>
+              <span class="lw-prize-section__title">{{ $t('activity.luckyWheelEdit.k59562') }}</span>
               <n-button
                 v-if="!readOnly"
                 type="primary"
                 size="small"
                 @click="handleGenerateProbabilities"
-              >
-                生成中奖概率
-              </n-button>
+              >{{ $t('activity.luckyWheelEdit.k751f') }}</n-button>
             </div>
 
             <n-data-table
@@ -159,20 +153,18 @@
             />
 
             <div v-if="!readOnly" class="lw-prize-section__footer">
-              <n-button type="primary" size="small" @click="handleGenerateProbabilities">
-                生成中奖概率
-              </n-button>
+              <n-button type="primary" size="small" @click="handleGenerateProbabilities">{{ $t('activity.luckyWheelEdit.k751f') }}</n-button>
             </div>
           </div>
 
-          <n-form-item label="大奖公告" class="lw-mt">
+          <n-form-item :label="$t('activity.luckyWheelEdit.k5927')" class="lw-mt">
             <n-switch
               v-model:value="form.grandPrizeAnnouncement"
               :disabled="readOnly"
             />
           </n-form-item>
 
-          <n-form-item label="爆屏通知">
+          <n-form-item :label="$t('activity.luckyWheelEdit.k7206')">
             <n-switch
               v-model:value="form.screenBurstNotification"
               :disabled="readOnly"
@@ -184,21 +176,21 @@
 
     <template #footer>
       <div class="flex justify-end gap-3">
-        <n-button @click="visible = false">{{ readOnly ? '关闭' : '取消' }}</n-button>
+        <n-button @click="visible = false">{{ readOnly ? $t('activity.common.readOnlyClose') : $t('activity.common.readOnlyCancel') }}</n-button>
         <n-button
           v-if="!readOnly"
           type="primary"
           :loading="saving"
           @click="handleSave"
-        >
-          保存
-        </n-button>
+        >{{ $t('activity.luckyWheelEdit.k4fdd') }}</n-button>
       </div>
     </template>
   </n-modal>
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { computed, h, reactive, ref, watch } from 'vue';
 import {
   NModal,
@@ -250,10 +242,10 @@ const readOnly = computed(() => Boolean(props.readOnly));
 const prizeCountOptions = LUCKY_WHEEL_PRIZE_COUNT_OPTIONS;
 
 const prizeTypeOptions = [
-  { label: '固定奖金', value: 'fixed_bonus' },
-  { label: '实物', value: 'physical' },
-  { label: '幸运值', value: 'lucky_value' },
-  { label: '谢谢参与', value: 'none' },
+  { label: $t('activity.luckyWheelEdit.k56fa'), value: 'fixed_bonus' },
+  { label: $t('activity.luckyWheelEdit.k5b9e'), value: 'physical' },
+  { label: $t('activity.rewardReport.k5e782'), value: 'lucky_value' },
+  { label: $t('activity.luckyWheelEdit.k8c22'), value: 'none' },
 ];
 
 const form = reactive({
@@ -279,13 +271,13 @@ const wheelTypeText = computed(() =>
 
 const prizeColumns = computed<DataTableColumns<LuckyWheelPrizeItem>>(() => [
   {
-    title: '奖项',
+    title: $t('activity.luckyWheelEdit.k59563'),
     key: 'index',
     width: 56,
     render: (_, index) => index + 1,
   },
   {
-    title: '类型',
+    title: $t('activity.formModal.k7c7b'),
     key: 'prizeType',
     width: 120,
     render: (row) =>
@@ -301,7 +293,7 @@ const prizeColumns = computed<DataTableColumns<LuckyWheelPrizeItem>>(() => [
           }),
   },
   {
-    title: '奖励',
+    title: $t('activity.luckyWheelEdit.k59564'),
     key: 'reward',
     width: 110,
     render: (row) =>
@@ -319,7 +311,7 @@ const prizeColumns = computed<DataTableColumns<LuckyWheelPrizeItem>>(() => [
           }),
   },
   {
-    title: '真实中奖概率',
+    title: $t('activity.luckyWheelEdit.k771f2'),
     key: 'realProbability',
     width: 150,
     render: (row) =>
@@ -342,7 +334,7 @@ const prizeColumns = computed<DataTableColumns<LuckyWheelPrizeItem>>(() => [
           ]),
   },
   {
-    title: '展示中奖概率',
+    title: $t('activity.luckyWheelEdit.k5c552'),
     key: 'displayProbability',
     width: 150,
     render: (row) =>
@@ -365,7 +357,7 @@ const prizeColumns = computed<DataTableColumns<LuckyWheelPrizeItem>>(() => [
           ]),
   },
   {
-    title: '奖励图标',
+    title: $t('activity.luckyWheelEdit.k59565'),
     key: 'iconUrl',
     width: 100,
     render: (row) => {
@@ -441,16 +433,16 @@ function onPrizeCountChange(count: number) {
 
 function handleGenerateProbabilities() {
   if (!form.prizes.some((p) => p.reward != null && p.reward > 0)) {
-    message.warning('请先填写各奖项奖励金额');
+    message.warning($t('activity.luckyWheelEdit.k8bf7'));
     return;
   }
   form.prizes = generateWheelProbabilities(form.prizes);
-  message.success('已生成中奖概率');
+  message.success($t('activity.luckyWheelEdit.k5df2'));
 }
 
 function handleCalcRealCost() {
   if (!form.prizes.some((p) => p.realProbability != null)) {
-    message.warning('请先生成或填写真实中奖概率');
+    message.warning($t('activity.luckyWheelEdit.k8bf72'));
     return;
   }
   form.realCost = calcWheelRealCost(form.prizes);
@@ -458,7 +450,7 @@ function handleCalcRealCost() {
 
 function handleCalcDisplayCost() {
   if (!form.prizes.some((p) => p.displayProbability != null)) {
-    message.warning('请先生成或填写展示中奖概率');
+    message.warning($t('activity.luckyWheelEdit.k8bf73'));
     return;
   }
   form.displayCost = calcWheelDisplayCost(form.prizes);
@@ -497,11 +489,11 @@ watch(
 async function handleSave() {
   if (readOnly.value) return;
   if (form.nameMode === 'custom' && !form.name.trim()) {
-    message.warning('请输入自定义转盘名称');
+    message.warning($t('activity.luckyWheelEdit.k8bf74'));
     return;
   }
   if (!form.luckyValueCost || form.luckyValueCost < 1) {
-    message.warning('请填写消耗幸运值');
+    message.warning($t('activity.luckyWheelEdit.k8bf75'));
     return;
   }
   saving.value = true;
@@ -525,11 +517,11 @@ async function handleSave() {
       ...payload,
     };
     emit('saved', normalized);
-    message.success('保存成功');
+    message.success($t('activity.luckyWheelEdit.k4fdd2'));
     visible.value = false;
   } catch (e) {
     console.error(e);
-    message.error('保存失败');
+    message.error($t('activity.luckyWheelEdit.k4fdd3'));
   } finally {
     saving.value = false;
   }

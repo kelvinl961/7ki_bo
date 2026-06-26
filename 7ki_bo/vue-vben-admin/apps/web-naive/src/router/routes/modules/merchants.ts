@@ -6,7 +6,7 @@ const routes: RouteRecordRaw[] = [
       icon: 'ic:baseline-store',
       keepAlive: true,
       order: 360,
-      title: '商户管理',
+      title: 'page.menu.merchantManagement',
     },
     name: 'Merchants',
     path: '/merchants',
@@ -14,7 +14,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '商户列表',
+          title: 'page.menu.merchantList',
         },
         name: 'MerchantsList',
         path: '/merchants/index',

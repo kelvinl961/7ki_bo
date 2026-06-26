@@ -6,7 +6,7 @@ const routes: RouteRecordRaw[] = [
       icon: 'ic:outline-campaign',
       keepAlive: true,
       order: 400,
-      title: '优惠活动',
+      title: 'page.menu.promotionalActivities',
     },
     name: 'PreferentialActivities',
     path: '/preferentialActivitiesNew',
@@ -14,7 +14,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '活动中心',
+          title: 'page.menu.activityCenter',
         },
         name: 'ActivityCenter',
         path: '/preferentialActivitiesNew/activityCenter',
@@ -24,7 +24,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '任务中心',
+          title: 'page.menu.taskCenter',
         },
         name: 'TaskCenter',
         path: '/preferentialActivitiesNew/taskCenter',
@@ -34,7 +34,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '用户活动',
+          title: 'page.menu.userActivities',
         },
         name: 'UserActivityDashboard',
         path: '/preferentialActivitiesNew/user-activities',
@@ -44,7 +44,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '优惠明细',
+          title: 'page.menu.activityRewardReport',
         },
         name: 'ActivityRewardReport',
         path: '/preferentialActivitiesNew/activity-reward-report',
@@ -54,7 +54,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '公积金',
+          title: 'page.menu.providentFund',
         },
         name: 'ProvidentFund',
         path: '/preferentialActivitiesNew/provident-fund',
@@ -64,7 +64,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '幸运转盘',
+          title: 'page.menu.luckyWheel',
         },
         name: 'LuckyWheel',
         path: '/preferentialActivitiesNew/lucky-wheel',
@@ -74,7 +74,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           icon: 'ic:outline-emoji-events',
-          title: 'VIP奖励',
+          title: 'page.menu.vipReward',
         },
         name: 'VIPReward',
         path: '/preferentialActivitiesNew/vip-reward',
@@ -82,7 +82,7 @@ const routes: RouteRecordRaw[] = [
           {
             meta: {
               keepAlive: true,
-              title: 'VIP奖励设置',
+              title: 'page.menu.vipRewardSetting',
             },
             name: 'VIPRewardSetting',
             path: '/preferentialActivitiesNew/vip-reward/setting',
@@ -92,7 +92,7 @@ const routes: RouteRecordRaw[] = [
           {
             meta: {
               keepAlive: true,
-              title: 'VIP奖励设置总览',
+              title: 'page.menu.vipRewardOverview',
             },
             name: 'VIPRewardOverview',
             path: '/preferentialActivitiesNew/vip-reward/overview',

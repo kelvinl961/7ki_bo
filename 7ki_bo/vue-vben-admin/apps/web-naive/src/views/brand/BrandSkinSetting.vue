@@ -1,14 +1,14 @@
 <template>
-  <Page title="品牌皮肤设置" description="品牌皮肤、大厅背景与生效时间配置">
+  <Page :title="$t('brand.skinSettingTitle')" :description="$t('brand.skinSettingDesc')">
     <div class="mb-4">
       <n-breadcrumb>
-        <n-breadcrumb-item>品牌管理</n-breadcrumb-item>
-        <n-breadcrumb-item>品牌皮肤设置</n-breadcrumb-item>
+        <n-breadcrumb-item>{{ $t('brand.management') }}</n-breadcrumb-item>
+        <n-breadcrumb-item>{{ $t('brand.skinSettingBreadcrumb') }}</n-breadcrumb-item>
       </n-breadcrumb>
     </div>
 
     <div class="brand-skin-setting grid grid-cols-1 gap-6 lg:grid-cols-3">
-      <!-- 左侧：表单 -->
+      
       <div class="lg:col-span-1 space-y-6">
         <n-form
           ref="formRef"
@@ -17,23 +17,23 @@
           label-placement="top"
           require-mark-placement="right-hanging"
         >
-          <n-card title="基本信息" class="rounded-16px shadow-sm">
-            <n-form-item label="品牌ID" path="brandId" required>
-              <n-input v-model:value="formData.brandId" placeholder="品牌ID" clearable />
+          <n-card :title="$t('brand.skin.basicInfo')" class="rounded-16px shadow-sm">
+            <n-form-item :label="$t('brand.brandId')" path="brandId" required>
+              <n-input v-model:value="formData.brandId" :placeholder="$t('brand.brandId')" clearable />
             </n-form-item>
-            <n-form-item label="品牌编号" path="brandCode" required>
-              <n-input v-model:value="formData.brandCode" placeholder="品牌编号" clearable />
+            <n-form-item :label="$t('brand.skin.brandCode')" path="brandCode" required>
+              <n-input v-model:value="formData.brandCode" :placeholder="$t('brand.skin.brandCode')" clearable />
             </n-form-item>
-            <n-form-item label="品牌名称" path="brandName" required>
-              <n-input v-model:value="formData.brandName" placeholder="品牌名称" clearable />
+            <n-form-item :label="$t('brand.brandName')" path="brandName" required>
+              <n-input v-model:value="formData.brandName" :placeholder="$t('brand.brandName')" clearable />
             </n-form-item>
           </n-card>
 
-          <n-card title="皮肤颜色" class="rounded-16px shadow-sm">
-            <n-form-item label="选择皮肤预设" path="skinColorId">
+          <n-card :title="$t('brand.skin.skinColorSection')" class="rounded-16px shadow-sm">
+            <n-form-item :label="$t('brand.skin.selectSkinPreset')" path="skinColorId">
               <n-select
                 v-model:value="formData.skinColorId"
-                placeholder="选择皮肤颜色（可选，选择后自动填充下方色值）"
+                :placeholder="$t('brand.skin.selectSkinColorHint')"
                 :options="skinColorOptionsWithPreview"
                 clearable
                 style="width: 100%"
@@ -54,56 +54,56 @@
                 </template>
               </n-select>
             </n-form-item>
-            <n-form-item label="主色" path="primaryColor">
+            <n-form-item :label="$t('brand.skin.primaryColor')" path="primaryColor">
               <n-color-picker
                 v-model:value="formData.primaryColor"
                 :show-alpha="false"
                 style="width: 100%"
               />
             </n-form-item>
-            <n-form-item label="次色" path="secondaryColor">
+            <n-form-item :label="$t('brand.skin.secondaryColor')" path="secondaryColor">
               <n-color-picker
                 v-model:value="formData.secondaryColor"
                 :show-alpha="false"
                 style="width: 100%"
               />
             </n-form-item>
-            <n-form-item label="强调色" path="accentColor">
+            <n-form-item :label="$t('brand.skin.accentColor')" path="accentColor">
               <n-color-picker
                 v-model:value="formData.accentColor"
                 :show-alpha="false"
                 style="width: 100%"
               />
             </n-form-item>
-            <n-form-item label="第三色" path="tertiaryColor">
+            <n-form-item :label="$t('brand.skin.tertiaryColor')" path="tertiaryColor">
               <n-color-picker
                 v-model:value="formData.tertiaryColor"
                 :show-alpha="false"
                 style="width: 100%"
               />
             </n-form-item>
-            <n-form-item label="主文字色" path="textPrimaryColor">
+            <n-form-item :label="$t('brand.skin.textPrimaryColor')" path="textPrimaryColor">
               <n-color-picker
                 v-model:value="formData.textPrimaryColor"
                 :show-alpha="false"
                 style="width: 100%"
               />
             </n-form-item>
-            <n-form-item label="次文字色" path="textSecondaryColor">
+            <n-form-item :label="$t('brand.skin.textSecondaryColor')" path="textSecondaryColor">
               <n-color-picker
                 v-model:value="formData.textSecondaryColor"
                 :show-alpha="false"
                 style="width: 100%"
               />
             </n-form-item>
-            <n-form-item label="强调文字色" path="textAccentColor">
+            <n-form-item :label="$t('brand.skin.textAccentColor')" path="textAccentColor">
               <n-color-picker
                 v-model:value="formData.textAccentColor"
                 :show-alpha="false"
                 style="width: 100%"
               />
             </n-form-item>
-            <n-form-item label="按钮色" path="buttonColor">
+            <n-form-item :label="$t('brand.skin.buttonColor')" path="buttonColor">
               <n-color-picker
                 v-model:value="formData.buttonColor"
                 :show-alpha="false"
@@ -112,64 +112,64 @@
             </n-form-item>
           </n-card>
 
-          <n-card title="大厅背景" class="rounded-16px shadow-sm">
-          <n-form-item label="背景类型" path="lobbyBackgroundType">
+          <n-card :title="$t('brand.skin.lobbyBackgroundSection')" class="rounded-16px shadow-sm">
+          <n-form-item :label="$t('brand.skin.backgroundType')" path="lobbyBackgroundType">
             <n-radio-group
               v-model:value="formData.lobbyBackgroundType"
               class="flex flex-col gap-2"
             >
-              <n-radio value="system_default">系统默认</n-radio>
-              <n-radio value="system_config">系统配置（颜色）</n-radio>
-              <n-radio value="custom_image">自定义图片背景</n-radio>
+              <n-radio value="system_default">{{ $t('brand.skin.systemDefault') }}</n-radio>
+              <n-radio value="system_config">{{ $t('brand.skin.systemConfigColor') }}</n-radio>
+              <n-radio value="custom_image">{{ $t('brand.skin.customImageBg') }}</n-radio>
             </n-radio-group>
           </n-form-item>
-          <n-form-item label="背景颜色" path="lobbyBackgroundColor">
+          <n-form-item :label="$t('brand.skin.backgroundColor')" path="lobbyBackgroundColor">
             <n-color-picker
               v-model:value="formData.lobbyBackgroundColor"
               :show-alpha="false"
               style="width: 100%"
             />
             <template v-if="formData.lobbyBackgroundType !== 'system_config'">
-              <div class="mt-1 text-xs text-gray-400">选「系统配置」时生效</div>
+              <div class="mt-1 text-xs text-gray-400">{{ $t('brand.skin.systemConfigHint') }}</div>
             </template>
           </n-form-item>
-          <n-form-item label="背景图片" path="lobbyBackgroundImageUrl">
+          <n-form-item :label="$t('brand.skin.backgroundImage')" path="lobbyBackgroundImageUrl">
             <MediaLibrarySelector
               v-model="formData.lobbyBackgroundImageUrl"
               :accept-types="['image']"
-              placeholder="从媒体库选择或上传大厅背景图"
+              :placeholder="$t('brand.skin.lobbyBgPlaceholder')"
             />
             <template v-if="formData.lobbyBackgroundType !== 'custom_image'">
-              <div class="mt-1 text-xs text-gray-400">选「自定义图片背景」时生效</div>
+              <div class="mt-1 text-xs text-gray-400">{{ $t('brand.skin.customImageHint') }}</div>
             </template>
           </n-form-item>
           </n-card>
 
-          <n-card title="生效时间" class="rounded-16px shadow-sm">
-          <n-form-item label="开始时间" path="effectiveStartTime">
+          <n-card :title="$t('brand.skin.effectiveTime')" class="rounded-16px shadow-sm">
+          <n-form-item :label="$t('common.startTime')" path="effectiveStartTime">
             <n-date-picker
               v-model:value="formData.effectiveStartTime"
               type="datetime"
-              placeholder="选择开始时间"
+              :placeholder="$t('brand.skin.selectStartTime')"
               style="width: 100%"
               clearable
             />
           </n-form-item>
-          <n-form-item label="结束时间" path="effectiveEndTime">
+          <n-form-item :label="$t('common.endTime')" path="effectiveEndTime">
             <n-date-picker
               v-model:value="formData.effectiveEndTime"
               type="datetime"
-              placeholder="选择结束时间（可选）"
+              :placeholder="$t('brand.skin.selectEndTime')"
               style="width: 100%"
               clearable
             />
           </n-form-item>
           <n-alert type="info" :show-icon="true" class="mt-2">
-            不设置结束时间表示长期有效
+            {{ $t('brand.skin.noEndTimeHint') }}
           </n-alert>
           </n-card>
 
-          <n-card title="语言设置" class="rounded-16px shadow-sm">
+          <n-card :title="$t('brand.skin.languageSettings')" class="rounded-16px shadow-sm">
           <div
             v-for="clientType in clientTypes"
             :key="clientType.key"
@@ -191,25 +191,25 @@
           </div>
           </n-card>
 
-          <n-card title="其他设置" class="rounded-16px shadow-sm">
-            <n-form-item label="请求认证模式" path="authMode" required>
+          <n-card :title="$t('brand.skin.otherSettings')" class="rounded-16px shadow-sm">
+            <n-form-item :label="$t('brand.skin.authMode')" path="authMode" required>
               <n-select
                 v-model:value="formData.authMode"
                 :options="authModeOptions"
-                placeholder="选择认证模式"
+                :placeholder="$t('brand.skin.selectAuthMode')"
                 clearable
                 style="width: 100%"
               />
             </n-form-item>
-            <n-form-item label="APP配置" path="appSetting">
-              <n-input v-model:value="formData.appSetting" placeholder="输入APP配置" clearable />
+            <n-form-item :label="$t('brand.skin.appConfig')" path="appSetting">
+              <n-input v-model:value="formData.appSetting" :placeholder="$t('brand.skin.enterAppConfig')" clearable />
             </n-form-item>
-            <n-form-item label="备注信息" path="backendRemark">
+            <n-form-item :label="$t('brand.skin.remarkInfo')" path="backendRemark">
               <n-input
                 v-model:value="formData.backendRemark"
                 type="textarea"
                 :rows="3"
-                placeholder="输入备注信息"
+                :placeholder="$t('brand.skin.enterRemarkInfo')"
                 clearable
               />
             </n-form-item>
@@ -218,23 +218,21 @@
 
         <div class="flex flex-col gap-2">
           <div class="flex gap-2">
-            <n-button type="primary" :loading="saving || syncing" @click="handleSave">
-              保存并同步 API
-            </n-button>
-            <n-button @click="handleReset">重置</n-button>
+            <n-button type="primary" :loading="saving || syncing" @click="handleSave">{{ $t('brand.skin.saveAndSyncApi') }}</n-button>
+            <n-button @click="handleReset">{{ $t('common.reset') }}</n-button>
           </div>
           <p class="text-xs text-gray-500">
-            本地开发（代理至
+            {{ $t('brand.skin.devProxyHint') }}
             <a
               href="https://277br.pangu6688.com"
               target="_blank"
               rel="noopener noreferrer"
               class="text-primary"
-            >277br</a>）选择皮肤预设会自动
+            >277br</a>{{ $t('brand.skin.devProxyHint2') }}
             <code class="rounded bg-gray-100 px-1">PUT /brand-skin-lang/:id</code>；
-            用户端通过
+            {{ $t('brand.skin.devProxyHint3') }}
             <code class="rounded bg-gray-100 px-1">GET /layout-design/public/theme</code>
-            拉取主题。
+            {{ $t('brand.skin.devProxyHint4') }}
           </p>
           <n-alert
             v-if="!brandSkinLangRecord"
@@ -242,24 +240,24 @@
             :show-icon="true"
             class="mt-2"
           >
-            未加载到品牌皮肤语言配置，请先在「品牌Logo设置」创建一条记录后再同步颜色。
+            {{ $t('brand.skin.noSkinLangRecordHint') }}
           </n-alert>
         </div>
       </div>
 
-      <!-- 右侧：预览在上，详情在下 -->
+      
       <div class="lg:col-span-2 space-y-6">
-        <n-card title="模板与皮肤预览" class="rounded-16px shadow-sm">
+        <n-card :title="$t('brand.skin.templatePreview')" class="rounded-16px shadow-sm">
           <div class="preview-toolbar mb-2 flex items-center justify-between">
-            <span class="text-sm text-gray-600">预览</span>
-            <n-button size="small" type="primary">移动端预览（电话格式）</n-button>
+            <span class="text-sm text-gray-600">{{ $t('brand.skinLang.preview') }}</span>
+            <n-button size="small" type="primary">{{ $t('brand.skin.mobilePreviewPhone') }}</n-button>
           </div>
-          <!-- 电话格式：手机外框 + 圆角屏幕 -->
+          
           <div class="phone-format-wrapper flex justify-center p-4">
             <div class="phone-frame">
               <div class="phone-notch" />
               <div class="phone-screen mobile-preview-frame flex flex-col">
-            <!-- 顶栏：Logo、余额、充值 -->
+            
             <div
               class="preview-header flex shrink-0 items-center justify-between px-3 py-2"
               :style="{ backgroundColor: formData.secondaryColor, color: formData.textPrimaryColor }"
@@ -273,11 +271,9 @@
                 type="button"
                 class="rounded px-2 py-0.5 text-xs font-medium text-white"
                 :style="{ backgroundColor: formData.buttonColor }"
-              >
-                充值
-              </button>
+              >{{ $t('brand.skin.recharge') }}</button>
             </div>
-            <!-- 横幅区：使用真实大厅 Banner -->
+            
             <div class="banner-preview shrink-0 overflow-hidden rounded-b">
               <img
                 v-if="previewBannerUrl"
@@ -290,35 +286,35 @@
                 class="px-3 py-4 text-center text-xs text-white"
                 :style="{ backgroundColor: formData.secondaryColor }"
               >
-                全球首款 高清2K 让您享顶级至尊服务
+                {{ $t('brand.skin.bannerPlaceholder') }}
               </div>
             </div>
-            <!-- 公告条 -->
+            
             <div
               class="shrink-0 flex items-center gap-1 px-3 py-1.5 text-xs"
               :style="{ backgroundColor: formData.primaryColor, color: formData.textPrimaryColor }"
             >
               <span>🔔</span>
-              <span>恭喜玩家在<span :style="{ color: formData.textAccentColor }">龙虎斗</span>游戏中级场房间赢得<span :style="{ color: formData.textAccentColor }">18,888</span>奖后</span>
+              <span>{{ $t('brand.skin.announcementSample', ['18,888', $t('brand.skin.announcementGame')]) }}</span>
             </div>
-            <!-- 分类标签：选中用主文字色+强调文字色下划线，未选中用次文字色 -->
+            
             <div
               class="preview-tabs shrink-0 flex gap-2 border-b px-3 py-0.5 text-xs"
               :style="{ backgroundColor: formData.primaryColor, borderColor: formData.tertiaryColor }"
             >
-              <span class="font-medium" :style="{ color: formData.textPrimaryColor, borderBottom: `2px solid ${formData.textAccentColor}`, paddingBottom: '2px' }">热门</span>
-              <span :style="{ color: formData.textSecondaryColor }">棋牌</span>
-              <span :style="{ color: formData.textSecondaryColor }">捕鱼</span>
-              <span :style="{ color: formData.textSecondaryColor }">真人</span>
+              <span class="font-medium" :style="{ color: formData.textPrimaryColor, borderBottom: `2px solid ${formData.textAccentColor}`, paddingBottom: '2px' }">{{ $t('brand.skin.hot') }}</span>
+              <span :style="{ color: formData.textSecondaryColor }">{{ $t('brand.skin.chess') }}</span>
+              <span :style="{ color: formData.textSecondaryColor }">{{ $t('brand.skin.fishing') }}</span>
+              <span :style="{ color: formData.textSecondaryColor }">{{ $t('brand.skin.live') }}</span>
             </div>
-            <!-- 游戏区（大厅背景：颜色/图片/默认），可滚动确保全部显示 -->
+            
             <div
               class="lobby-preview flex-1 overflow-y-auto px-3 py-3 transition-colors duration-200"
               :style="lobbyPreviewStyle"
             >
               <div class="mb-2 flex items-center gap-1 text-xs" :style="{ color: formData.textPrimaryColor }">
                 <span>🔥</span>
-                <span>热门游戏</span>
+                <span>{{ $t('brand.skin.hotGames') }}</span>
               </div>
               <div class="grid grid-cols-3 gap-2">
                 <div
@@ -326,7 +322,7 @@
                   :key="game.id ?? idx"
                   class="text-center"
                 >
-                  <!-- 图片区域：宽度满格，照片带圆角 -->
+                  
                   <div
                     class="game-thumb mb-1 flex items-center justify-center overflow-hidden"
                     :style="{ backgroundColor: formData.primaryColor }"
@@ -339,51 +335,51 @@
                     />
                     <span v-else class="text-[10px] text-white/70">PG</span>
                   </div>
-                  <div class="text-[10px] truncate" :style="{ color: formData.textPrimaryColor }">{{ game.gameName || `游戏${idx + 1}` }}</div>
+                  <div class="text-[10px] truncate" :style="{ color: formData.textPrimaryColor }">{{ game.gameName || $t('brand.skin.gamePlaceholder', [idx + 1]) }}</div>
                 </div>
               </div>
             </div>
-            <!-- 底部导航 -->
+            
             <div
               class="preview-footer shrink-0 flex items-center justify-around py-2 text-xs"
               :style="{ backgroundColor: formData.secondaryColor, color: formData.textPrimaryColor }"
             >
-              <span class="font-medium">首页</span>
-              <span class="opacity-80">优惠</span>
-              <span class="opacity-80">充值</span>
-              <span class="opacity-80">提现</span>
-              <span class="opacity-80">我的</span>
+              <span class="font-medium">{{ $t('brand.skin.home') }}</span>
+              <span class="opacity-80">{{ $t('brand.skin.promotions') }}</span>
+              <span class="opacity-80">{{ $t('brand.skin.recharge') }}</span>
+              <span class="opacity-80">{{ $t('brand.skin.withdraw') }}</span>
+              <span class="opacity-80">{{ $t('brand.skin.profile') }}</span>
               </div>
             </div>
           </div>
           </div>
-          <!-- 当前皮肤标签 -->
+          
           <div class="mt-3 flex flex-wrap gap-2">
             <n-tag size="small" :bordered="false">rolex</n-tag>
-            <n-tag size="small" :bordered="false">有底色</n-tag>
+            <n-tag size="small" :bordered="false">{{ $t('brand.skin.withBackgroundTag') }}</n-tag>
             <n-tag
               size="small"
               :bordered="false"
               :color="{ color: formData.primaryColor, textColor: '#fff' }"
             >
-              {{ skinColorLabel || 'Bvlgari蓝黑' }}
+              {{ skinColorLabel || $t('brand.skin.customColor') }}
             </n-tag>
           </div>
           <p class="mt-2 text-xs text-gray-500">
-            移动端以电话格式展示，主色/次色/强调色与大厅背景会实时反映在顶栏、横幅、游戏区与底部导航。
+            {{ $t('brand.skin.previewHint') }}
           </p>
         </n-card>
 
-        <n-card title="详情（当前所有设置）" class="rounded-16px shadow-sm">
+        <n-card :title="$t('brand.skin.detailAllSettings')" class="rounded-16px shadow-sm">
           <div class="detail-grid grid grid-cols-2 gap-x-6 gap-y-4 text-sm">
             <div class="detail-item">
-              <span class="text-gray-500">皮肤预设</span>
+              <span class="text-gray-500">{{ $t('brand.skin.skinPreset') }}</span>
               <div class="mt-1 font-medium">
                 {{ skinColorLabel || '—' }}
               </div>
             </div>
             <div class="detail-item">
-              <span class="text-gray-500">主色</span>
+              <span class="text-gray-500">{{ $t('brand.skin.primaryColor') }}</span>
               <div class="mt-1 flex items-center gap-2">
                 <span
                   class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
@@ -393,7 +389,7 @@
               </div>
             </div>
             <div class="detail-item">
-              <span class="text-gray-500">次色</span>
+              <span class="text-gray-500">{{ $t('brand.skin.secondaryColor') }}</span>
               <div class="mt-1 flex items-center gap-2">
                 <span
                   class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
@@ -403,7 +399,7 @@
               </div>
             </div>
             <div class="detail-item">
-              <span class="text-gray-500">强调色</span>
+              <span class="text-gray-500">{{ $t('brand.skin.accentColor') }}</span>
               <div class="mt-1 flex items-center gap-2">
                 <span
                   class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
@@ -413,7 +409,7 @@
               </div>
             </div>
             <div class="detail-item">
-              <span class="text-gray-500">第三色</span>
+              <span class="text-gray-500">{{ $t('brand.skin.tertiaryColor') }}</span>
               <div class="mt-1 flex items-center gap-2">
                 <span
                   class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
@@ -423,7 +419,7 @@
               </div>
             </div>
             <div class="detail-item">
-              <span class="text-gray-500">主文字色</span>
+              <span class="text-gray-500">{{ $t('brand.skin.textPrimaryColor') }}</span>
               <div class="mt-1 flex items-center gap-2">
                 <span
                   class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
@@ -433,7 +429,7 @@
               </div>
             </div>
             <div class="detail-item">
-              <span class="text-gray-500">次文字色</span>
+              <span class="text-gray-500">{{ $t('brand.skin.textSecondaryColor') }}</span>
               <div class="mt-1 flex items-center gap-2">
                 <span
                   class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
@@ -443,7 +439,7 @@
               </div>
             </div>
             <div class="detail-item">
-              <span class="text-gray-500">强调文字色</span>
+              <span class="text-gray-500">{{ $t('brand.skin.textAccentColor') }}</span>
               <div class="mt-1 flex items-center gap-2">
                 <span
                   class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
@@ -453,7 +449,7 @@
               </div>
             </div>
             <div class="detail-item">
-              <span class="text-gray-500">按钮色</span>
+              <span class="text-gray-500">{{ $t('brand.skin.buttonColor') }}</span>
               <div class="mt-1 flex items-center gap-2">
                 <span
                   class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
@@ -463,13 +459,13 @@
               </div>
             </div>
             <div class="detail-item">
-              <span class="text-gray-500">大厅背景类型</span>
+              <span class="text-gray-500">{{ $t('brand.skin.lobbyBgType') }}</span>
               <div class="mt-1 font-medium">
                 {{ lobbyBackgroundTypeLabel }}
               </div>
             </div>
             <div class="detail-item">
-              <span class="text-gray-500">背景颜色</span>
+              <span class="text-gray-500">{{ $t('brand.skin.backgroundColor') }}</span>
               <div class="mt-1 flex items-center gap-2">
                 <span
                   class="inline-block h-4 w-4 shrink-0 rounded border border-gray-300"
@@ -479,63 +475,63 @@
               </div>
             </div>
             <div class="detail-item">
-              <span class="text-gray-500">背景图片</span>
+              <span class="text-gray-500">{{ $t('brand.skin.backgroundImage') }}</span>
               <div class="mt-1 font-medium truncate" :title="formData.lobbyBackgroundImageUrl || '—'">
-                {{ formData.lobbyBackgroundImageUrl ? '已设置' : '—' }}
+                {{ formData.lobbyBackgroundImageUrl ? $t('brand.skin.bgImageSet') : '—' }}
               </div>
             </div>
             <div class="detail-item">
-              <span class="text-gray-500">生效开始</span>
+              <span class="text-gray-500">{{ $t('brand.skin.effectiveStart') }}</span>
               <div class="mt-1 font-medium">
                 {{ formatTime(formData.effectiveStartTime) || '—' }}
               </div>
             </div>
             <div class="detail-item">
-              <span class="text-gray-500">生效结束</span>
+              <span class="text-gray-500">{{ $t('brand.skin.effectiveEnd') }}</span>
               <div class="mt-1 font-medium">
-                {{ formatTime(formData.effectiveEndTime) || '长期有效' }}
+                {{ formatTime(formData.effectiveEndTime) || $t('brand.skin.permanentlyEffective') }}
               </div>
             </div>
-            <!-- 基本信息 -->
+            
             <div class="detail-item col-span-2">
-              <span class="section-label text-base font-medium text-gray-700">基本信息</span>
+              <span class="section-label text-base font-medium text-gray-700">{{ $t('brand.skin.basicInfo') }}</span>
             </div>
             <div class="detail-item">
-              <span class="text-gray-500">品牌ID</span>
+              <span class="text-gray-500">{{ $t('brand.brandId') }}</span>
               <div class="mt-1 font-medium">{{ formData.brandId || '—' }}</div>
             </div>
             <div class="detail-item">
-              <span class="text-gray-500">品牌编号</span>
+              <span class="text-gray-500">{{ $t('brand.skin.brandCode') }}</span>
               <div class="mt-1 font-medium">{{ formData.brandCode || '—' }}</div>
             </div>
             <div class="detail-item">
-              <span class="text-gray-500">品牌名称</span>
+              <span class="text-gray-500">{{ $t('brand.brandName') }}</span>
               <div class="mt-1 font-medium">{{ formData.brandName || '—' }}</div>
             </div>
-            <!-- 语言设置 -->
+            
             <div class="detail-item col-span-2">
-              <span class="section-label text-base font-medium text-gray-700">语言设置</span>
+              <span class="section-label text-base font-medium text-gray-700">{{ $t('brand.skin.languageSettings') }}</span>
             </div>
             <div class="detail-item col-span-2">
-              <span class="text-gray-500">已选语言</span>
+              <span class="text-gray-500">{{ $t('brand.skin.selectedLanguages') }}</span>
               <div class="mt-1 font-medium">
                 {{ clientLanguagesDetailText || '—' }}
               </div>
             </div>
-            <!-- 其他设置 -->
+            
             <div class="detail-item col-span-2">
-              <span class="section-label text-base font-medium text-gray-700">其他设置</span>
+              <span class="section-label text-base font-medium text-gray-700">{{ $t('brand.skin.otherSettings') }}</span>
             </div>
             <div class="detail-item">
-              <span class="text-gray-500">请求认证模式</span>
+              <span class="text-gray-500">{{ $t('brand.skin.authMode') }}</span>
               <div class="mt-1 font-medium">{{ formData.authMode || '—' }}</div>
             </div>
             <div class="detail-item">
-              <span class="text-gray-500">APP配置</span>
+              <span class="text-gray-500">{{ $t('brand.skin.appConfig') }}</span>
               <div class="mt-1 font-medium">{{ formData.appSetting || '—' }}</div>
             </div>
             <div class="detail-item">
-              <span class="text-gray-500">备注信息</span>
+              <span class="text-gray-500">{{ $t('brand.skin.remarkInfo') }}</span>
               <div class="mt-1 font-medium break-words">{{ formData.backendRemark || '—' }}</div>
             </div>
           </div>
@@ -546,6 +542,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, computed, onMounted, defineAsyncComponent } from 'vue';
 import {
   NCard,
@@ -597,19 +595,19 @@ const message = useMessage();
 const formRef = ref<FormInst | null>(null);
 const saving = ref(false);
 const syncing = ref(false);
-/** 277br 上实际生效的品牌皮肤记录（brand-skin-lang） */
+
 const brandSkinLangRecord = ref<BrandSkinLangConfig | null>(null);
 
-/** 开发环境选择预设后自动 PUT（可在 .env 设 VITE_BRAND_SKIN_AUTO_SAVE=false 关闭） */
+
 const autoSaveOnTemplatePick =
   import.meta.env.DEV && import.meta.env.VITE_BRAND_SKIN_AUTO_SAVE !== 'false';
 
-/** 预览区展示的子游戏列表（来自子游戏管理接口，最多 6 个） */
+
 const previewGames = ref<GameItem[]>([]);
-/** 预览区使用的真实 Banner 图（来自大厅 Banner 接口，取第一条启用） */
+
 const previewBannerUrl = ref<string>('');
 
-/** 客户端语言按端拆分 */
+
 interface ClientLanguagesMap {
   desktop: string[];
   h5: string[];
@@ -641,7 +639,7 @@ interface FormModel {
   backendRemark: string;
 }
 
-/** 默认使用 Bvlgari蓝黑 '15' 色板（与 BRAND_COLOR_TEMPLATES 一致） */
+
 const defaultBvlgariPalette = getColorPaletteById('15');
 const defaultFormData: FormModel = {
   skinColorId: '15',
@@ -667,7 +665,7 @@ const defaultFormData: FormModel = {
     ios: ['zh-CN'],
     android: ['zh-CN'],
   },
-  authMode: '系统默认认证',
+  authMode: $t('brand.skinLang.authSystemDefault'),
   appSetting: '',
   backendRemark: '',
 };
@@ -689,30 +687,30 @@ const formRules: FormRules = {
   lobbyBackgroundImageUrl: [],
   effectiveStartTime: [],
   effectiveEndTime: [],
-  brandId: [{ required: true, message: '品牌ID不能为空', trigger: 'blur' }],
-  brandCode: [{ required: true, message: '品牌编号不能为空', trigger: 'blur' }],
-  brandName: [{ required: true, message: '品牌名称不能为空', trigger: 'blur' }],
-  authMode: [{ required: true, message: '请选择认证模式', trigger: ['blur', 'change'] }],
+  brandId: [{ required: true, message: $t('brand.skin.brandIdRequired'), trigger: 'blur' }],
+  brandCode: [{ required: true, message: $t('brand.skin.brandCodeRequired'), trigger: 'blur' }],
+  brandName: [{ required: true, message: $t('brand.skin.brandNameRequired'), trigger: 'blur' }],
+  authMode: [{ required: true, message: $t('brand.skin.selectAuthModeRequired'), trigger: ['blur', 'change'] }],
   appSetting: [],
   backendRemark: [],
 };
 
-const clientTypes = [{ key: 'desktop', label: '普通客户端' }];
+const clientTypes = [{ key: 'desktop', label: $t('brand.skinLang.desktopClient') }];
 const availableLanguages = [
-  { value: 'zh-CN', label: '简体中文' },
-  { value: 'pt-BR', label: '葡萄牙语' },
-  { value: 'en-US', label: '英文' },
-  { value: 'zh-TW', label: '繁体中文' },
-  { value: 'ko-KR', label: '韩语' },
-  { value: 'ja-JP', label: '日语' },
-  { value: 'th-TH', label: '泰语' },
-  { value: 'vi-VN', label: '越南语' },
+  { value: 'zh-CN', label: $t('brand.skinLang.langZhCN') },
+  { value: 'pt-BR', label: $t('brand.skinLang.langPtBR') },
+  { value: 'en-US', label: $t('brand.skinLang.langEnUS') },
+  { value: 'zh-TW', label: $t('brand.skinLang.langZhTW') },
+  { value: 'ko-KR', label: $t('brand.skinLang.langKoKR') },
+  { value: 'ja-JP', label: $t('brand.skinLang.langJaJP') },
+  { value: 'th-TH', label: $t('brand.skinLang.langThTH') },
+  { value: 'vi-VN', label: $t('brand.skinLang.langViVN') },
 ];
 const authModeOptions = [
-  { label: '系统默认认证', value: '系统默认认证' },
-  { label: '双重认证', value: '双重认证' },
-  { label: '生物识别认证', value: '生物识别认证' },
-  { label: '短信验证', value: '短信验证' },
+  { label: $t('brand.skinLang.authSystemDefault'), value: '系统默认认证' },
+  { label: $t('brand.skinLang.authTwoFactor'), value: '双重认证' },
+  { label: $t('brand.skinLang.authBiometric'), value: '生物识别认证' },
+  { label: $t('brand.skinLang.authSms'), value: '短信验证' },
 ];
 
 const { skinColorOptions, getSkinColorLabel } = useSkinColorOptions();
@@ -721,7 +719,7 @@ const skinColorOptionsWithPreview = computed(() =>
   skinColorOptions.map((opt) => ({ label: opt.label, value: opt.value })),
 );
 
-/** 当前用于预览的色板（来自表单颜色选择器） */
+
 const currentPalette = computed<ColorPalette | null>(() => {
   const d = formData.value;
   return {
@@ -738,22 +736,22 @@ const currentPalette = computed<ColorPalette | null>(() => {
 
 const skinColorLabel = computed(() => {
   const id = formData.value.skinColorId;
-  return id ? getSkinColorLabel(id) : '自定义颜色';
+  return id ? getSkinColorLabel(id) : $t('brand.skin.customColor');
 });
 
 const lobbyBackgroundTypeLabel = computed(() => {
   const t = formData.value.lobbyBackgroundType;
-  if (t === 'system_default') return '系统默认';
+  if (t === 'system_default') return $t('brand.skin.systemDefault');
   if (t === 'system_config')
-    return `系统配置（${formData.value.lobbyBackgroundColor}）`;
+    return `${$t('brand.skin.systemConfigColor').replace(/（颜色）|\(Color\)/, '')} (${formData.value.lobbyBackgroundColor})`;
   if (t === 'custom_image')
     return formData.value.lobbyBackgroundImageUrl
-      ? '自定义图片'
-      : '自定义图片（未设置）';
+      ? $t('brand.skin.customImage')
+      : $t('brand.skin.customImageNotSet');
   return '—';
 });
 
-/** 详情区展示：已选语言汇总文本 */
+
 const clientLanguagesDetailText = computed(() => {
   const map = formData.value.clientLanguages;
   if (!map) return '—';
@@ -836,11 +834,11 @@ function buildFormSnapshot(): BrandSkinFormColors {
 }
 
 async function syncColorsToBrandSkinLangApi(
-  successMessage = '颜色已同步至 API，刷新 277br 站点即可看到新主题',
+  successMessage = $t('brand.skin.colorsSynced'),
 ) {
   const record = brandSkinLangRecord.value;
   if (!record?.id) {
-    message.warning('未找到 brand-skin-lang 配置，无法同步到 277br');
+    message.warning($t('brand.skin.skinLangNotFound'));
     return false;
   }
   const skinColorId = formData.value.skinColorId || record.skinColor || '15';
@@ -856,7 +854,7 @@ async function syncColorsToBrandSkinLangApi(
     message.success(successMessage);
     return true;
   } catch {
-    message.error('同步失败，请确认已登录且代理指向 277br（VITE_DEV_API_PROXY_TARGET）');
+    message.error($t('brand.skin.syncFailed'));
     return false;
   } finally {
     syncing.value = false;
@@ -868,7 +866,7 @@ async function onSkinColorChange(skinColorId: string | null) {
   applyPaletteToForm(skinColorId);
   if (autoSaveOnTemplatePick) {
     await syncColorsToBrandSkinLangApi(
-      `已应用「${getSkinColorLabel(skinColorId)}」并同步至 277br API`,
+      $t('brand.skin.appliedAndSynced', [getSkinColorLabel(skinColorId)]),
     );
   }
 }
@@ -921,10 +919,10 @@ function handleSave() {
           appSetting: formData.value.appSetting || undefined,
           backendRemark: formData.value.backendRemark || undefined,
         });
-        message.success('配置已保存（/brand-skin-config）');
+        message.success($t('brand.skin.configSaved'));
       }
     } catch {
-      message.error('保存失败');
+      message.error($t('brand.skin.saveFailed'));
     } finally {
       saving.value = false;
     }
@@ -933,7 +931,7 @@ function handleSave() {
 
 function handleReset() {
   formData.value = { ...defaultFormData };
-  message.info('已重置为默认');
+  message.info($t('brand.skin.resetToDefault'));
 }
 
 function normalizeClientLanguages(
@@ -1001,7 +999,7 @@ onMounted(async () => {
       }
     }
   } catch {
-    // 未登录或接口失败时继续尝试 brand-skin-config
+    
   }
 
   try {
@@ -1030,7 +1028,7 @@ onMounted(async () => {
       if (saved.backendRemark != null) formData.value.backendRemark = saved.backendRemark;
     }
   } catch {
-    // 接口未实现或失败时使用默认
+    
   }
   try {
     const res = await getGameListApi({ pageSize: 6, isEnabled: true, sortBy: 'sortOrder', sortOrder: 'asc' });
@@ -1041,7 +1039,7 @@ onMounted(async () => {
         id: `preview-${i}`,
         platformId: null,
         gameId: '',
-        gameName: `游戏${previewGames.value.length + i + 1}`,
+        gameName: $t('brand.skin.gamePlaceholder', [previewGames.value.length + i + 1]),
         currency: '',
         isHot1: false,
         isHot2: false,
@@ -1063,7 +1061,7 @@ onMounted(async () => {
       id: `preview-${i}`,
       platformId: null,
       gameId: '',
-      gameName: `游戏${i + 1}`,
+      gameName: $t('brand.skin.gamePlaceholder', [i + 1]),
       currency: '',
       isHot1: false,
       isHot2: false,
@@ -1079,7 +1077,7 @@ onMounted(async () => {
       updatedAt: '',
     }));
   }
-  // 拉取真实大厅 Banner 用于预览
+  
   try {
     const bannerRes = await getBannerList({ pageSize: 1, status: 'active', sortBy: 'sortOrder', sortOrder: 'asc' });
     const banner = bannerRes?.data?.list?.[0];
@@ -1116,7 +1114,7 @@ onMounted(async () => {
   min-height: 0;
 }
 
-/* 移动端电话格式：手机外框 + 圆角屏幕 */
+
 .phone-format-wrapper {
   background: linear-gradient(145deg, #e8e8e8 0%, #c0c0c0 100%);
   border-radius: 2.5rem;
@@ -1171,7 +1169,7 @@ onMounted(async () => {
   object-fit: cover;
 }
 
-/* 游戏图：宽度直接满格，方形，照片带圆角 */
+
 .game-thumb {
   width: 100%;
   aspect-ratio: 1;

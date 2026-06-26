@@ -14,14 +14,27 @@
         </div>
       </div>
       <div class="file-info">
-        <p><strong>文件名:</strong> {{ file.filename }}</p>
-        <p><strong>大小:</strong> {{ formatFileSize(file.size) }}</p>
-        <p><strong>类型:</strong> {{ file.mimeType }}</p>
-        <p v-if="file.width && file.height">
-          <strong>尺寸:</strong> {{ file.width }} × {{ file.height }}px
+        <p>
+          <strong>{{ $t('media.filename') }}:</strong> {{ file.filename }}
         </p>
-        <p><strong>上传时间:</strong> {{ formatDate(file.createdAt) }}</p>
-        <p><strong>使用次数:</strong> {{ file.usageCount }}</p>
+        <p>
+          <strong>{{ $t('media.size') }}:</strong> {{ formatFileSize(file.size) }}
+        </p>
+        <p>
+          <strong>{{ $t('common.type') }}:</strong> {{ file.mimeType }}
+        </p>
+        <p v-if="file.width && file.height">
+          <strong>{{ $t('media.dimensions') }}:</strong>
+          {{ file.width }} × {{ file.height }}px
+        </p>
+        <p>
+          <strong>{{ $t('media.uploadTime') }}:</strong>
+          {{ formatDate(file.createdAt) }}
+        </p>
+        <p>
+          <strong>{{ $t('media.usageTimesLabel') }}:</strong>
+          {{ file.usageCount }}
+        </p>
       </div>
     </div>
 
@@ -32,40 +45,44 @@
       label-placement="top"
     >
       <!-- Filename -->
-      <n-form-item label="显示名称" path="filename">
+      <n-form-item :label="$t('media.displayName')" path="filename">
         <n-input
           v-model:value="formData.filename"
-          placeholder="输入显示名称"
+          :placeholder="$t('media.displayNamePlaceholder')"
           maxlength="100"
           show-count
         />
       </n-form-item>
 
       <!-- Category -->
-      <n-form-item label="分类" path="category">
+      <n-form-item :label="$t('media.category')" path="category">
         <n-select
           v-model:value="formData.category"
-          placeholder="选择文件分类"
+          :placeholder="$t('media.selectFileCategory')"
           :options="categoryOptions"
         />
       </n-form-item>
 
       <!-- Alt Text (for images) -->
-      <n-form-item v-if="file?.type === 'image'" label="替代文本" path="alt">
+      <n-form-item
+        v-if="file?.type === 'image'"
+        :label="$t('media.altText')"
+        path="alt"
+      >
         <n-input
           v-model:value="formData.alt"
-          placeholder="用于无障碍访问的替代文本"
+          :placeholder="$t('media.altTextPlaceholder')"
           maxlength="100"
           show-count
         />
       </n-form-item>
 
       <!-- Description -->
-      <n-form-item label="描述" path="description">
+      <n-form-item :label="$t('common.description')" path="description">
         <n-input
           v-model:value="formData.description"
           type="textarea"
-          placeholder="文件描述（可选）"
+          :placeholder="$t('media.descriptionOptional')"
           :autosize="{ minRows: 3, maxRows: 5 }"
           maxlength="200"
           show-count
@@ -73,26 +90,32 @@
       </n-form-item>
 
       <!-- Tags -->
-      <n-form-item label="标签" path="tags">
+      <n-form-item :label="$t('media.tags')" path="tags">
         <n-dynamic-tags v-model:value="formData.tags" />
       </n-form-item>
 
       <!-- Public -->
-      <n-form-item label="访问权限" path="isPublic">
+      <n-form-item :label="$t('media.accessPermission')" path="isPublic">
         <n-switch v-model:value="formData.isPublic">
-          <template #checked>公开</template>
-          <template #unchecked>私有</template>
+          <template #checked>{{ $t('media.public') }}</template>
+          <template #unchecked>{{ $t('media.private') }}</template>
         </n-switch>
         <div class="mt-1 text-xs text-gray-500">
-          公开文件可以被其他用户在选择器中看到
+          {{ $t('media.publicHint') }}
         </div>
       </n-form-item>
 
       <!-- File URL (read-only) -->
-      <n-form-item label="文件URL">
-        <n-input :value="file?.url" readonly placeholder="文件访问地址">
+      <n-form-item :label="$t('media.fileUrl')">
+        <n-input
+          :value="file?.url"
+          readonly
+          :placeholder="$t('media.fileUrlPlaceholder')"
+        >
           <template #suffix>
-            <n-button size="tiny" text @click="copyUrl">复制</n-button>
+            <n-button size="tiny" text @click="copyUrl">{{
+              $t('common.copy')
+            }}</n-button>
           </template>
         </n-input>
       </n-form-item>
@@ -100,16 +123,18 @@
 
     <!-- Actions -->
     <div class="mt-6 flex justify-end gap-3">
-      <n-button @click="handleCancel">取消</n-button>
+      <n-button @click="handleCancel">{{ $t('common.cancel') }}</n-button>
       <n-button type="primary" @click="handleSubmit" :loading="submitting">
-        保存
+        {{ $t('common.save') }}
       </n-button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch } from 'vue';
+import { $t } from '@vben/locales';
+
+import { ref, reactive, computed, watch } from 'vue';
 import {
   NForm,
   NFormItem,
@@ -161,17 +186,40 @@ const formData = reactive({
   isPublic: true,
 });
 
-// Validation rules
-const rules: FormRules = {
-  filename: [{ required: true, message: '请输入显示名称', trigger: 'blur' }],
-  category: [{ required: true, message: '请选择文件分类', trigger: 'change' }],
+const categoryMap = computed<Record<string, string>>(() => ({
+  backgrounds: $t('media.catBackgrounds'),
+  banners: $t('media.catBanners'),
+  icons: $t('media.catIcons'),
+  logos: $t('media.catLogos'),
+  templates: $t('media.catTemplates'),
+  avatars: $t('media.catAvatars'),
+  documents: $t('media.catDocuments'),
+  videos: $t('media.catVideos'),
+  audio: $t('media.catAudio'),
+  other: $t('media.catOther'),
+}));
+
+const getCategoryDisplayName = (category: string): string => {
+  return categoryMap.value[category] || category;
 };
 
-// Options
-const categoryOptions = MEDIA_CATEGORIES.map((cat) => ({
-  label: getCategoryDisplayName(cat),
-  value: cat,
+// Validation rules
+const rules = computed<FormRules>(() => ({
+  filename: [
+    { required: true, message: $t('media.displayNameRequired'), trigger: 'blur' },
+  ],
+  category: [
+    { required: true, message: $t('media.categoryRequired'), trigger: 'change' },
+  ],
 }));
+
+// Options
+const categoryOptions = computed(() =>
+  MEDIA_CATEGORIES.map((cat) => ({
+    label: getCategoryDisplayName(cat),
+    value: cat,
+  })),
+);
 
 // Methods
 const handleSubmit = async () => {
@@ -192,14 +240,14 @@ const handleSubmit = async () => {
     });
 
     if (response.success) {
-      message.success('文件信息更新成功');
+      message.success($t('media.updateSuccess'));
       emit('success');
     } else {
       throw new Error('Update failed');
     }
   } catch (error) {
     console.error('Update error:', error);
-    message.error('更新失败，请重试');
+    message.error($t('media.updateFailed'));
   } finally {
     submitting.value = false;
   }
@@ -216,31 +264,15 @@ const copyUrl = async () => {
     await navigator.clipboard.writeText(
       window.location.origin + props.file.url,
     );
-    message.success('URL已复制到剪贴板');
+    message.success($t('media.urlCopied'));
   } catch (error) {
     console.error('Copy URL error:', error);
-    message.error('复制失败');
+    message.error($t('media.copyFailed'));
   }
 };
 
-const getCategoryDisplayName = (category: string): string => {
-  const categoryMap: Record<string, string> = {
-    backgrounds: '背景图',
-    banners: '横幅',
-    icons: '图标',
-    logos: '标志',
-    templates: '模板',
-    avatars: '头像',
-    documents: '文档',
-    videos: '视频',
-    audio: '音频',
-    other: '其他',
-  };
-  return categoryMap[category] || category;
-};
-
 const formatDate = (dateString: string): string => {
-  return new Date(dateString).toLocaleString('zh-CN', {
+  return new Date(dateString).toLocaleString(undefined, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',

@@ -1,7 +1,7 @@
 <template>
   <div class="activity-reward-report">
     <Page>
-      <n-card title="筛选条件" class="mb-4">
+      <n-card :title="$t('activity.rewardReport.k7b5b')" class="mb-4">
         <!-- Filter -->
         <div class="filter-section">
           <n-form :label-width="100" label-placement="left">
@@ -15,10 +15,10 @@
                       size="small"
                       @update:value="onRewardDatePresetChange"
                     >
-                      <n-radio-button value="today">今日</n-radio-button>
-                      <n-radio-button value="yesterday">昨天</n-radio-button>
-                      <n-radio-button value="thisWeek">本周</n-radio-button>
-                      <n-radio-button value="lastWeek">上周</n-radio-button>
+                      <n-radio-button value="today">{{ $t('activity.rewardReport.k4eca') }}</n-radio-button>
+                      <n-radio-button value="yesterday">{{ $t('activity.rewardReport.k6628') }}</n-radio-button>
+                      <n-radio-button value="thisWeek">{{ $t('activity.labels.thisWeek') }}</n-radio-button>
+                      <n-radio-button value="lastWeek">{{ $t('activity.rewardReport.k4e0a') }}</n-radio-button>
                     </n-radio-group>
                     <n-date-picker
                       v-model:value="dateRange"
@@ -26,7 +26,7 @@
                       :timezone="REPORT_TIMEZONE"
                       clearable
                       :shortcuts="rewardDateShortcuts"
-                      placeholder="选择开始和结束日期"
+                      :placeholder="$t('activity.rewardReport.k9009')"
                       format="yyyy-MM-dd"
                       style="width: 320px"
                       @update:value="syncRewardDatePresetFromRange"
@@ -35,42 +35,42 @@
                 </n-form-item>
               </n-gi>
               <n-gi :span="6">
-                <n-form-item label="订单号">
+                <n-form-item :label="$t('activity.rewardReport.k8ba2')">
                   <n-input
                     v-model:value="filters.orderNo"
-                    placeholder="订单号"
+                    :placeholder="$t('activity.rewardReport.k8ba2')"
                     clearable
                     style="width: 100%"
                   />
                 </n-form-item>
               </n-gi>
               <n-gi :span="6">
-                <n-form-item label="用户ID/账号">
+                <n-form-item :label="$t('activity.rewardReport.k7528k8d26')">
                   <n-input
                     v-model:value="filters.userIdOrAccount"
-                    placeholder="用户ID 或 账号"
+                    :placeholder="$t('activity.rewardReport.k7528k6216k8d26')"
                     clearable
                     style="width: 100%"
                   />
                 </n-form-item>
               </n-gi>
               <n-gi :span="6">
-                <n-form-item label="优惠来源">
+                <n-form-item :label="$t('activity.rewardReport.k4f18')">
                   <n-select
                     v-model:value="filters.benefitSource"
                     :options="benefitSourceOptions"
-                    placeholder="请选择优惠来源"
+                    :placeholder="$t('activity.rewardReport.k8bf7')"
                     clearable
                     style="width: 100%"
                   />
                 </n-form-item>
               </n-gi>
               <n-gi v-if="filters.benefitSource === '活动'" :span="6">
-                <n-form-item label="活动名称">
+                <n-form-item :label="$t('activity.rewardReport.k6d3b')">
                   <n-select
                     v-model:value="filters.activityId"
                     :options="activitySelectOptions"
-                    placeholder="请选择或搜索活动"
+                    :placeholder="$t('activity.rewardReport.k8bf72')"
                     filterable
                     clearable
                     :loading="loadingActivitiesForFilter"
@@ -80,22 +80,22 @@
                 </n-form-item>
               </n-gi>
               <n-gi :span="6">
-                <n-form-item label="领取方式">
+                <n-form-item :label="$t('activity.rewardReport.k9886')">
                   <n-select
                     v-model:value="filters.collectionMethod"
                     :options="collectionMethodOptions"
-                    placeholder="全部领取方式"
+                    :placeholder="$t('activity.rewardReport.k5168')"
                     clearable
                     style="width: 100%"
                   />
                 </n-form-item>
               </n-gi>
               <n-gi :span="6">
-                <n-form-item label="奖励类型">
+                <n-form-item :label="$t('activity.rewardReport.k5956')">
                   <n-select
                     v-model:value="filters.rewardType"
                     :options="rewardTypeOptions"
-                    placeholder="请选择奖励类型"
+                    :placeholder="$t('activity.rewardReport.k8bf73')"
                     clearable
                     style="width: 100%"
                   />
@@ -104,13 +104,9 @@
               <n-gi :span="12">
                 <n-form-item :show-label="false">
                   <n-space>
-                    <n-button type="primary" :loading="loading" @click="runSearch">
-                      搜索
-                    </n-button>
-                    <n-button @click="resetFilters">重置</n-button>
-                    <n-button type="success" :loading="exporting" @click="handleExport">
-                      导出
-                    </n-button>
+                    <n-button type="primary" :loading="loading" @click="runSearch">{{ $t('activity.rewardReport.k641c') }}</n-button>
+                    <n-button @click="resetFilters">{{ $t('activity.recordModal.k91cd') }}</n-button>
+                    <n-button type="success" :loading="exporting" @click="handleExport">{{ $t('activity.rewardReport.k5bfc') }}</n-button>
                   </n-space>
                 </n-form-item>
               </n-gi>
@@ -122,9 +118,9 @@
         <n-card size="small">
           <template #header>
             <n-space justify="space-between">
-              <span>数据列表</span>
+              <span>{{ $t('activity.rewardReport.k6570') }}</span>
               <span style="font-size: 13px; color: #666">
-                共 {{ totalCount }} 条记录
+                {{ $t('activity.common.totalRecordsLabel', [totalCount]) }}
               </span>
             </n-space>
           </template>
@@ -149,7 +145,7 @@
             @refresh="fetchData"
           >
             <template #empty>
-              <n-empty description="暂无数据" style="padding: 40px 0" />
+              <n-empty :description="$t('activity.rewardReport.k6682')" style="padding: 40px 0" />
             </template>
           </SmartDataGrid>
 
@@ -158,15 +154,15 @@
             class="totals-summary"
           >
             <div class="total-item">
-              <span class="total-label">发放奖励合计:</span>
+              <span class="total-label">{{ $t('activity.rewardReport.k53d1') }}</span>
               <span class="total-value total-value--reward">{{ totalGrantedReward.toFixed(2) }}</span>
             </div>
           </div>
 
-          <n-empty v-else-if="!loading" description="暂无数据" style="padding: 40px 0" />
+          <n-empty v-else-if="!loading" :description="$t('activity.rewardReport.k6682')" style="padding: 40px 0" />
           <div v-else class="py-8 text-center">
             <n-spin size="large" />
-            <p class="mt-4">正在加载数据...</p>
+            <p class="mt-4">{{ $t('activity.rewardReport.k6b63') }}</p>
           </div>
         </n-card>
       </n-card>
@@ -182,7 +178,7 @@
       <n-modal
         v-model:show="showRewardDetailModal"
         preset="card"
-        title="详情"
+        :title="$t('activity.rewardReport.k8be6')"
         style="width: 560px; max-width: 90vw"
         :bordered="false"
         size="huge"
@@ -192,38 +188,38 @@
           <n-card size="small" :bordered="false" class="mb-0">
             <div class="detail-grid">
               <div class="detail-row">
-                <span class="detail-label">会员账号</span>
+                <span class="detail-label">{{ $t('activity.rewardReport.k4f1a3') }}</span>
                 <span class="detail-value">{{ rewardDetail.memberAccount ?? '-' }}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">活动名称</span>
+                <span class="detail-label">{{ $t('activity.rewardReport.k6d3b') }}</span>
                 <span class="detail-value">{{ rewardDetail.activityName ?? rewardDetail.benefitName ?? '-' }}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">活动ID</span>
+                <span class="detail-label">{{ $t('activity.rewardReport.k6d3b2') }}</span>
                 <span class="detail-value">{{ rewardDetail.activityId ?? '-' }}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">奖励类型</span>
+                <span class="detail-label">{{ $t('activity.rewardReport.k5956') }}</span>
                 <span class="detail-value">{{ rewardDetail.rewardType ?? '-' }}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">赠送奖励</span>
+                <span class="detail-label">{{ $t('activity.rewardReport.k8d60') }}</span>
                 <span class="detail-value detail-value--reward">{{ rewardDetail.grantedReward != null ? Number(rewardDetail.grantedReward).toFixed(2) : '-' }}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">领取时间</span>
+                <span class="detail-label">{{ $t('activity.rewardReport.k98862') }}</span>
                 <span class="detail-value">{{ formatDateTime(rewardDetail.acquisitionTime) }}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">领取方式</span>
+                <span class="detail-label">{{ $t('activity.rewardReport.k9886') }}</span>
                 <span class="detail-value">{{ rewardDetail.collectionMethod ?? '-' }}</span>
               </div>
             </div>
           </n-card>
         </div>
         <template #footer>
-          <n-button @click="showRewardDetailModal = false">关闭</n-button>
+          <n-button @click="showRewardDetailModal = false">{{ $t('activity.activityList.k5173') }}</n-button>
         </template>
       </n-modal>
     </Page>
@@ -231,6 +227,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, computed, watch, onMounted, defineAsyncComponent, h } from 'vue';
 import {
   NCard,
@@ -387,12 +385,12 @@ function getLastWeekRange(): [number, number] {
   return [start.getTime(), end.getTime()];
 }
 
-const rewardDateShortcuts: Record<string, () => [number, number]> = {
-  今日: () => getTodayRange(),
-  昨天: () => getYesterdayRange(),
-  本周: () => getWeekRange(),
-  上周: () => getLastWeekRange(),
-};
+const rewardDateShortcuts = computed(() => ({
+  [$t('activity.rewardReport.k4eca')]: () => getTodayRange(),
+  [$t('activity.rewardReport.k6628')]: () => getYesterdayRange(),
+  [$t('activity.labels.thisWeek')]: () => getWeekRange(),
+  [$t('activity.rewardReport.k4e0a')]: () => getLastWeekRange(),
+}));
 
 type RewardDatePreset = 'today' | 'yesterday' | 'thisWeek' | 'lastWeek';
 
@@ -489,7 +487,7 @@ async function loadActivitiesForRewardFilter() {
     const res = await getActivityList({ page: 1, pageSize: 500 });
     activityListForFilter.value = res.list ?? [];
   } catch {
-    message.error('加载活动列表失败');
+    message.error($t('activity.rewardReport.k52a0'));
     activityListForFilter.value = [];
   } finally {
     loadingActivitiesForFilter.value = false;
@@ -508,38 +506,38 @@ watch(
 );
 
 const benefitSourceOptions = [
-  { label: '活动', value: '活动' },
-  { label: '任务', value: '任务' },
-  { label: '新人福利', value: '新人福利' },
-  { label: '返水', value: '返水' },
-  { label: '返佣', value: '返佣' },
-  { label: 'VIP奖励', value: 'VIP奖励' },
-  { label: '利息宝', value: '利息宝' },
-  { label: '幸运转盘', value: '幸运转盘' },
-  { label: '公积金', value: '公积金' },
-  { label: '盲盒抽奖', value: '盲盒抽奖' },
-  { label: '充值优惠', value: '充值优惠' },
-  { label: '银商结算', value: '银商结算' },
-  { label: 'SVIP奖励', value: 'SVIP奖励' },
-  { label: '积分抽奖', value: '积分抽奖' },
-  { label: '折扣券', value: '折扣券' },
+  { label: $t('activity.rewardReport.k6d3b3'), value: '活动' },
+  { label: $t('activity.rewardReport.k4efb'), value: '任务' },
+  { label: $t('activity.rewardReport.k65b0'), value: '新人福利' },
+  { label: $t('activity.rewardReport.k8fd4'), value: '返水' },
+  { label: $t('activity.rewardReport.k8fd42'), value: '返佣' },
+  { label: $t('activity.rewardReport.vIP'), value: 'VIP奖励' },
+  { label: $t('activity.rewardReport.k5229'), value: '利息宝' },
+  { label: $t('activity.rewardReport.k5e78'), value: '幸运转盘' },
+  { label: $t('activity.rewardReport.k516c'), value: '公积金' },
+  { label: $t('activity.rewardReport.k76f2'), value: '盲盒抽奖' },
+  { label: $t('activity.rewardReport.k5145'), value: '充值优惠' },
+  { label: $t('activity.rewardReport.k94f6'), value: '银商结算' },
+  { label: $t('activity.rewardReport.sVIP'), value: 'SVIP奖励' },
+  { label: $t('activity.rewardReport.k79ef'), value: '积分抽奖' },
+  { label: $t('activity.rewardReport.k6298'), value: '折扣券' },
 ];
 
 const collectionMethodOptions = [
-  { label: '全部领取方式', value: '' },
-  { label: '手动领取', value: '手动领取' },
-  { label: '系统派发', value: '系统派发' },
-  { label: '后台手动派发', value: '后台手动派发' },
-  { label: '活动扣除', value: '活动扣除' },
+  { label: $t('activity.rewardReport.k5168'), value: '' },
+  { label: $t('activity.rewardReport.k624b'), value: '手动领取' },
+  { label: $t('activity.rewardReport.k7cfb'), value: '系统派发' },
+  { label: $t('activity.rewardReport.k540e'), value: '后台手动派发' },
+  { label: $t('activity.rewardReport.k6d3b4'), value: '活动扣除' },
 ];
 
 const rewardTypeOptions = [
-  { label: '奖金', value: '奖金' },
-  { label: '加倍奖金', value: '加倍奖金' },
-  { label: '活跃度', value: '活跃度' },
-  { label: '幸运值', value: '幸运值' },
-  { label: '积分', value: '积分' },
-  { label: '盲盒免费次数', value: '盲盒免费次数' },
+  { label: $t('activity.rewardReport.k59562'), value: '奖金' },
+  { label: $t('activity.rewardReport.k52a02'), value: '加倍奖金' },
+  { label: $t('activity.rewardReport.k6d3b5'), value: '活跃度' },
+  { label: $t('activity.rewardReport.k5e782'), value: '幸运值' },
+  { label: $t('activity.rewardReport.k79ef2'), value: '积分' },
+  { label: $t('activity.rewardReport.k76f22'), value: '盲盒免费次数' },
 ];
 
 const paginationPage = ref(1);
@@ -657,13 +655,13 @@ function formatDateTime(iso: string | undefined): string {
 }
 
 const columns: DataTableColumns<RewardHistoryItem> = [
-  { title: '订单号', key: 'orderNo', width: 140, ellipsis: { tooltip: true } },
-  { title: '优惠名称', key: 'benefitName', width: 160, ellipsis: { tooltip: true } },
-  { title: '会员币种', key: 'memberCurrency', width: 100, ellipsis: { tooltip: true } },
-  { title: '发放奖励', key: 'grantedReward', width: 100, render: (row) => row.grantedReward ?? '-' },
-  { title: '会员ID', key: 'memberId', width: 100, ellipsis: { tooltip: true } },
+  { title: $t('activity.rewardReport.k8ba2'), key: 'orderNo', width: 140, ellipsis: { tooltip: true } },
+  { title: $t('activity.rewardReport.k4f182'), key: 'benefitName', width: 160, ellipsis: { tooltip: true } },
+  { title: $t('activity.rewardReport.k4f1a'), key: 'memberCurrency', width: 100, ellipsis: { tooltip: true } },
+  { title: $t('activity.rewardReport.k53d12'), key: 'grantedReward', width: 100, render: (row) => row.grantedReward ?? '-' },
+  { title: $t('activity.rewardReport.k4f1a2'), key: 'memberId', width: 100, ellipsis: { tooltip: true } },
   {
-    title: '会员账号',
+    title: $t('activity.rewardReport.k4f1a3'),
     key: 'memberAccount',
     width: 140,
     ellipsis: { tooltip: true },
@@ -691,7 +689,7 @@ const columns: DataTableColumns<RewardHistoryItem> = [
     },
   },
   {
-    title: '上级代理',
+    title: $t('activity.rewardReport.k4e0a2'),
     key: 'upperAgent',
     width: 180,
     ellipsis: { tooltip: true },
@@ -708,7 +706,7 @@ const columns: DataTableColumns<RewardHistoryItem> = [
         if (canOpen) {
           openUpperAgentDetail(agentId);
         } else {
-          message.info('上级代理详情暂不可用（需后端返回 upper_agent_id）');
+          message.info($t('activity.rewardReport.k4e0ak9700UpperAgentId'));
         }
       };
       return h(
@@ -726,9 +724,9 @@ const columns: DataTableColumns<RewardHistoryItem> = [
       );
     },
   },
-  { title: '优惠来源', key: 'benefitSource', width: 100, ellipsis: { tooltip: true } },
+  { title: $t('activity.rewardReport.k4f18'), key: 'benefitSource', width: 100, ellipsis: { tooltip: true } },
   {
-    title: '来源类型',
+    title: $t('activity.rewardReport.k6765'),
     key: 'sourceType',
     width: 100,
     ellipsis: { tooltip: true },
@@ -741,11 +739,11 @@ const columns: DataTableColumns<RewardHistoryItem> = [
       return sourceTypeMap[row.sourceType ?? ''] ?? (row.sourceType ?? '-');
     },
   },
-  { title: '发放方式', key: 'collectionMethod', width: 110, ellipsis: { tooltip: true } },
-  { title: '奖励类型', key: 'rewardType', width: 100, ellipsis: { tooltip: true } },
-  { title: '获取时间', key: 'acquisitionTime', width: 165, ellipsis: { tooltip: true }, render: (row) => formatDateTime(row.acquisitionTime) },
+  { title: $t('activity.rewardReport.k53d13'), key: 'collectionMethod', width: 110, ellipsis: { tooltip: true } },
+  { title: $t('activity.rewardReport.k5956'), key: 'rewardType', width: 100, ellipsis: { tooltip: true } },
+  { title: $t('activity.rewardReport.k83b7'), key: 'acquisitionTime', width: 165, ellipsis: { tooltip: true }, render: (row) => formatDateTime(row.acquisitionTime) },
   {
-    title: '操作',
+    title: $t('activity.rewardReport.k64cd'),
     key: 'actions',
     width: 100,
     fixed: 'right',
@@ -763,7 +761,7 @@ const columns: DataTableColumns<RewardHistoryItem> = [
                 text: true,
                 onClick: () => handleViewDetail(row),
               },
-              { default: () => '详情' },
+              { default: () => $t('activity.rewardReport.k8be6') },
             ),
         },
       ),
@@ -967,7 +965,7 @@ async function handleExport() {
       rows = await fetchAllRewardHistoryRowsForExport();
     }
     if (!rows.length) {
-      message.warning('没有数据可导出');
+      message.warning($t('activity.rewardReport.k6ca1'));
       return;
     }
     await exportGridData(columns, rows, {

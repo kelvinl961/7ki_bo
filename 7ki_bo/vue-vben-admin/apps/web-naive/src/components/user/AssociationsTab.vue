@@ -10,11 +10,11 @@
       >
         <div class="filter-form-row">
           <!-- 操作时间类型选择 -->
-          <n-form-item label="操作时间">
+          <n-form-item :label="$t('common.operationTime')">
             <n-select
               v-model:value="filterForm.timeType"
               :options="timeTypeOptions"
-              placeholder="请选择时间类型"
+              :placeholder="$t('user.associations.selectTimeType')"
               style="width: 150px"
               clearable
             />
@@ -38,30 +38,30 @@
         </div>
 
         <div class="filter-form-row">
-          <n-form-item label="会员账号">
+          <n-form-item :label="$t('common.memberAccount')">
             <n-input
               v-model:value="filterForm.memberAccount"
-              placeholder="请输入会员账号"
+              :placeholder="$t('user.associations.enterMemberAccount')"
               style="width: 200px"
               clearable
             />
           </n-form-item>
 
-          <n-form-item label="关联类型">
+          <n-form-item :label="$t('user.associations.associationType')">
             <n-select
               v-model:value="filterForm.associationType"
               :options="typeOptions"
-              placeholder="请选择关联类型"
+              :placeholder="$t('user.associations.selectAssociationType')"
               style="width: 150px"
               clearable
             />
           </n-form-item>
 
-          <n-form-item label="全部处罚方式">
+          <n-form-item :label="$t('user.associations.allPunishmentMethods')">
             <n-select
               v-model:value="filterForm.punishmentMethod"
               :options="punishmentMethodOptions"
-              placeholder="请选择处罚方式"
+              :placeholder="$t('user.associations.selectPunishmentMethod')"
               style="width: 150px"
               clearable
             />
@@ -71,9 +71,9 @@
         <div class="filter-form-row">
           <n-form-item>
             <n-space>
-              <n-button type="primary" @click="handleSearch">搜索</n-button>
-              <n-button @click="handleReset">重置</n-button>
-              <n-button @click="handleExport">导出报表</n-button>
+              <n-button type="primary" @click="handleSearch">{{ $t('common.search') }}</n-button>
+              <n-button @click="handleReset">{{ $t('common.reset') }}</n-button>
+              <n-button @click="handleExport">{{ $t('common.exportReport') }}</n-button>
             </n-space>
           </n-form-item>
         </div>
@@ -114,6 +114,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, onMounted, watch, computed, h } from 'vue';
 import {
   NCard,
@@ -176,32 +178,32 @@ const pagination = ref({
 });
 
 // Options
-const timeTypeOptions = [
-  { label: '操作时间', value: 'operationTime' },
-  { label: '关联时间', value: 'associationTime' },
-];
+const timeTypeOptions = computed(() => [
+  { label: $t('common.operationTime'), value: 'operationTime' },
+  { label: $t('user.associations.associationTime'), value: 'associationTime' },
+]);
 
-const typeOptions = [
-  { label: '全部类型', value: 'all' },
-  { label: '同上级代理', value: 'same_superior_agent' },
-  { label: '同姓名', value: 'same_name' },
-  { label: '同IP', value: 'same_ip' },
-  { label: '同设备号', value: 'same_device' },
-  { label: '同登录密码', value: 'same_password' },
-  { label: '同提现密码', value: 'same_withdrawal_pin' },
-  { label: '同提现账号', value: 'same_withdrawal_account' },
-];
+const typeOptions = computed(() => [
+  { label: $t('user.associations.typeAll'), value: 'all' },
+  { label: $t('user.associations.typeSameSuperiorAgent'), value: 'same_superior_agent' },
+  { label: $t('user.associations.typeSameName'), value: 'same_name' },
+  { label: $t('user.associations.typeSameIp'), value: 'same_ip' },
+  { label: $t('user.associations.typeSameDevice'), value: 'same_device' },
+  { label: $t('user.associations.typeSamePassword'), value: 'same_password' },
+  { label: $t('user.associations.typeSameWithdrawalPin'), value: 'same_withdrawal_pin' },
+  { label: $t('user.associations.typeSameWithdrawalAccount'), value: 'same_withdrawal_account' },
+]);
 
-const punishmentMethodOptions = [
-  { label: '全部处罚方式', value: 'all' },
-  { label: '加入黑名单', value: 'blacklist' },
-  { label: '修改会员层级', value: 'change_member_tier' },
-  { label: '修改会员标签', value: 'change_member_tag' },
-  { label: '恢复正常', value: 'restore_normal' },
-  { label: '禁止领取优惠', value: 'ban_bonus' },
-  { label: '冻结', value: 'freeze' },
-  { label: '禁止进入游戏', value: 'ban_game' },
-];
+const punishmentMethodOptions = computed(() => [
+  { label: $t('user.associations.punishmentAll'), value: 'all' },
+  { label: $t('user.associations.punishmentBlacklist'), value: 'blacklist' },
+  { label: $t('user.associations.punishmentChangeTier'), value: 'change_member_tier' },
+  { label: $t('user.associations.punishmentChangeTag'), value: 'change_member_tag' },
+  { label: $t('user.associations.punishmentRestoreNormal'), value: 'restore_normal' },
+  { label: $t('user.associations.punishmentBanBonus'), value: 'ban_bonus' },
+  { label: $t('user.associations.punishmentFreeze'), value: 'freeze' },
+  { label: $t('user.associations.punishmentBanGame'), value: 'ban_game' },
+]);
 
 // Calculate minimum table width for horizontal scrolling
 const minTableWidth = computed(() => {
@@ -244,45 +246,45 @@ const columns = computed(() => [
     fixed: 'left' as const,
   },
   {
-    title: '关联时间',
+    title: $t('user.associations.associationTimeCol'),
     key: 'associationTime',
     width: 180,
     minWidth: 150,
     render: (row: any) => formatDateTime(row.associationTime),
   },
   {
-    title: '关联类型',
+    title: $t('user.associations.associationTypeCol'),
     key: 'associationType',
     width: 120,
     minWidth: 100,
   },
   {
-    title: '具体关联信息',
+    title: $t('user.associations.associationInfo'),
     key: 'associationInfo',
     width: 200,
     minWidth: 150,
     ellipsis: { tooltip: true },
   },
   {
-    title: '处罚方式',
+    title: $t('user.associations.punishmentMethod'),
     key: 'punishmentMethod',
     width: 100,
     minWidth: 80,
   },
   {
-    title: '币种',
+    title: $t('common.currency'),
     key: 'currency',
     width: 80,
     minWidth: 60,
   },
   {
-    title: '会员ID',
+    title: $t('user.associations.memberId'),
     key: 'userId',
     width: 120,
     minWidth: 100,
   },
   {
-    title: '会员账号',
+    title: $t('common.memberAccount'),
     key: 'account',
     width: 180,
     minWidth: 150,
@@ -290,118 +292,118 @@ const columns = computed(() => [
     render: (row: any) => `${row.account} (${row.memberLevel})`,
   },
   {
-    title: '真实姓名',
+    title: $t('user.associations.realName'),
     key: 'realName',
     width: 120,
     minWidth: 100,
     ellipsis: { tooltip: true },
   },
   {
-    title: '顶层代理',
+    title: $t('user.associations.topAgent'),
     key: 'topAgent',
     width: 120,
     minWidth: 100,
     ellipsis: { tooltip: true },
   },
   {
-    title: '上级代理',
+    title: $t('user.associations.superiorAgent'),
     key: 'superiorAgent',
     width: 120,
     minWidth: 100,
     ellipsis: { tooltip: true },
   },
   {
-    title: '账号状态',
+    title: $t('user.associations.accountStatus'),
     key: 'accountStatus',
     width: 100,
     minWidth: 80,
   },
   {
-    title: '注册时间',
+    title: $t('user.associations.registrationTime'),
     key: 'registrationTime',
     width: 180,
     minWidth: 150,
     render: (row: any) => formatDateTime(row.registrationTime),
   },
   {
-    title: '累计充值金额',
+    title: $t('user.associations.totalDepositAmount'),
     key: 'totalDeposit',
     width: 140,
     minWidth: 120,
     render: (row: any) => formatCurrency(row.totalDeposit),
   },
   {
-    title: '累计提现金额',
+    title: $t('user.associations.totalWithdrawAmount'),
     key: 'totalWithdraw',
     width: 140,
     minWidth: 120,
     render: (row: any) => formatCurrency(row.totalWithdraw),
   },
   {
-    title: '充提差额',
+    title: $t('user.associations.depositWithdrawDiff'),
     key: 'depositWithdrawDiff',
     width: 120,
     minWidth: 100,
     render: (row: any) => formatCurrency(row.depositWithdrawDiff),
   },
   {
-    title: '当前余额',
+    title: $t('user.associations.currentBalance'),
     key: 'currentBalance',
     width: 120,
     minWidth: 100,
     render: (row: any) => formatCurrency(row.currentBalance),
   },
   {
-    title: '利息宝',
+    title: $t('user.associations.interestTreasure'),
     key: 'savingsWallet',
     width: 100,
     minWidth: 80,
     render: (row: any) => formatCurrency(row.savingsWallet),
   },
   {
-    title: '优惠累计领取',
+    title: $t('user.associations.totalRewards'),
     key: 'totalRewards',
     width: 140,
     minWidth: 120,
     render: (row: any) => formatCurrency(row.totalRewards),
   },
   {
-    title: '累计投注',
+    title: $t('user.associations.totalBetting'),
     key: 'totalBetting',
     width: 120,
     minWidth: 100,
     render: (row: any) => formatCurrency(row.totalBetting),
   },
   {
-    title: '累计输赢',
+    title: $t('user.associations.totalWinLoss'),
     key: 'totalWinLoss',
     width: 120,
     minWidth: 100,
     render: (row: any) => formatCurrency(row.totalWinLoss),
   },
   {
-    title: '备注',
+    title: $t('common.remark'),
     key: 'notes',
     width: 150,
     minWidth: 120,
     ellipsis: { tooltip: true },
   },
   {
-    title: '操作时间',
+    title: $t('common.operationTime'),
     key: 'operationTime',
     width: 180,
     minWidth: 150,
     render: (row: any) => formatDateTime(row.operationTime),
   },
   {
-    title: '操作人',
+    title: $t('common.operator'),
     key: 'operator',
     width: 100,
     minWidth: 80,
     ellipsis: { tooltip: true },
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 100,
     minWidth: 80,
@@ -416,7 +418,7 @@ const columns = computed(() => [
             size: 'small',
             onClick: () => handleViewUser(row.id),
           },
-          { default: () => '查看' },
+          { default: () => $t('common.view') },
         ),
       ]);
     },
@@ -558,7 +560,7 @@ const loadTableData = async () => {
       }
       // Check if it's error format
       else if ('code' in response && (response as any).code !== 0) {
-        message.error((response as any).message || '加载关联账号失败');
+        message.error((response as any).message || $t('user.associations.loadFailed'));
         tableData.value = [];
         total.value = 0;
         (pagination.value as any).pageCount = 0;
@@ -577,7 +579,7 @@ const loadTableData = async () => {
   } catch (error: any) {
     console.error('Error loading associations:', error);
     // Only show error on actual network/exception errors
-    message.error('加载关联账号失败');
+    message.error($t('user.associations.loadFailed'));
     tableData.value = [];
     total.value = 0;
   } finally {
@@ -689,7 +691,7 @@ const handleReset = () => {
 };
 
 const handleExport = () => {
-  message.info('导出报表功能开发中...');
+  message.info($t('user.associations.exportDeveloping'));
 };
 
 const handlePageChange = (page: number) => {
@@ -706,7 +708,7 @@ const handlePageSizeChange = (pageSize: number) => {
 const handleViewUser = (userId: number) => {
   // Emit event to parent to open user detail modal
   // This will be handled by the parent component
-  message.info(`查看用户 ${userId}`);
+  message.info($t('user.associations.viewUser', [userId]));
 };
 
 onMounted(() => {

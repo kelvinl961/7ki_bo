@@ -1,7 +1,7 @@
 <template>
   <n-modal
     :show="visible"
-    :title="isEditing ? '修改热门游戏' : '添加热门游戏'"
+    :title="isEditing ? $t('game.hotGameExtra.editHotGame') : $t('game.hotGameExtra.addHotGame')"
     preset="dialog"
     style="width: 600px"
     @update:show="handleUpdateVisible"
@@ -15,68 +15,68 @@
       label-width="120"
       class="mt-4"
     >
-      <n-form-item label="平台名称" path="platformId">
+      <n-form-item :label="$t('game.subgame.platformName')" path="platformId">
         <n-select
           v-model:value="formData.platformId"
-          placeholder="选择平台"
+          :placeholder="$t('game.subgame.selectPlatform')"
           :options="platformOptions"
           :disabled="isEditing"
         />
       </n-form-item>
 
-      <n-form-item label="游戏ID" path="gameId">
+      <n-form-item :label="$t('game.subgame.gameId')" path="gameId">
         <n-input
           v-model:value="formData.gameId"
-          placeholder="请输入游戏ID"
+          :placeholder="$t('game.subgame.enterGameId')"
           :disabled="isEditing"
         />
       </n-form-item>
 
-      <n-form-item label="热门名称" path="gameName">
+      <n-form-item :label="$t('game.hotGameExtra.hotName', 'Hot Name')" path="gameName">
         <n-input
           v-model:value="formData.gameName"
-          placeholder="请输入热门名称"
+          :placeholder="$t('game.hotGameExtra.enterHotName', 'Enter hot name')"
         />
       </n-form-item>
 
-      <n-form-item label="游戏类型" path="gameCategory">
+      <n-form-item :label="$t('game.betRecords.gameType')" path="gameCategory">
         <n-select
           v-model:value="formData.gameCategory"
-          placeholder="选择游戏类型"
+          :placeholder="$t('game.subgame.selectGameType')"
           :options="gameCategoryOptions"
         />
       </n-form-item>
 
-      <n-form-item label="热门/回收" path="tagType">
+      <n-form-item :label="$t('game.hotGameExtra.tagType', 'Hot/Recycle')" path="tagType">
         <n-select
           v-model:value="formData.tagType"
-          placeholder="选择标签类型"
+          :placeholder="$t('game.hotGameExtra.selectTagType', 'Select tag type')"
           :options="tagTypeOptions"
         />
       </n-form-item>
 
-      <n-form-item label="币种" path="currency">
+      <n-form-item :label="$t('common.currency')" path="currency">
         <n-select
           v-model:value="formData.currency"
-          placeholder="选择币种"
+          :placeholder="$t('game.subgame.selectCurrency')"
           :options="currencyOptions"
         />
       </n-form-item>
 
-      <n-form-item label="排序" path="sortOrder">
+      <n-form-item :label="$t('game.subgame.sortOrder')" path="sortOrder">
         <n-input-number
           v-model:value="formData.sortOrder"
-          placeholder="请输入排序值"
+          :placeholder="$t('game.subgame.enterSortOrder')"
           :min="0"
           :max="9999"
           style="width: 100%"
         />
       </n-form-item>
 
-      <n-form-item label="备注" path="remark">
+      <n-form-item :label="$t('common.remark')" path="remark">
         <n-input
           v-model:value="formData.remark"
-          placeholder="请输入备注"
+          :placeholder="$t('common.pleaseEnter')"
           type="textarea"
           :rows="3"
           :maxlength="200"
@@ -84,16 +84,16 @@
         />
       </n-form-item>
 
-      <n-form-item label="是否启用" path="isEnabled">
+      <n-form-item :label="$t('common.enabled')" path="isEnabled">
         <n-switch v-model:value="formData.isEnabled" />
       </n-form-item>
     </n-form>
 
     <template #action>
       <div class="flex justify-end gap-2">
-        <n-button @click="handleCancel">取消</n-button>
+        <n-button @click="handleCancel">{{ $t('common.cancel') }}</n-button>
         <n-button type="primary" @click="handleSubmit" :loading="submitting">
-          {{ isEditing ? '更新' : '创建' }}
+          {{ isEditing ? $t('common.save') : $t('common.create') }}
         </n-button>
       </div>
     </template>
@@ -101,6 +101,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { computed, reactive, ref, watch } from 'vue';
 import type { FormInst, FormRules } from 'naive-ui';
 import {
@@ -162,51 +164,51 @@ const formData = reactive({
 });
 
 const tagTypeOptions = [
-  { label: '热门', value: 'hot' },
-  { label: '回收', value: 'recycled' },
+  { label: $t('game.hotGameExtra.tagHot'), value: 'hot' },
+  { label: $t('game.hotGameExtra.tagRecycled'), value: 'recycled' },
 ];
 
 const formRules: FormRules = {
   platformId: [
     {
       required: true,
-      message: '请选择平台',
+      message: $t('game.hotGameExtra.selectPlatformRequired'),
       trigger: 'change',
       type: 'number',
     },
   ],
   gameId: [
-    { required: true, message: '请输入游戏ID', trigger: 'blur' },
-    { min: 1, max: 50, message: '游戏ID长度为1-50个字符', trigger: 'blur' },
+    { required: true, message: $t('game.subgame.enterGameId'), trigger: 'blur' },
+    { min: 1, max: 50, message: $t('game.hotGameExtra.gameIdLength'), trigger: 'blur' },
   ],
   gameName: [
-    { required: true, message: '请输入热门名称', trigger: 'blur' },
-    { min: 1, max: 100, message: '热门名称长度为1-100个字符', trigger: 'blur' },
+    { required: true, message: $t('game.hotGameExtra.enterHotName'), trigger: 'blur' },
+    { min: 1, max: 100, message: $t('game.hotGameExtra.hotNameLength'), trigger: 'blur' },
   ],
   gameCategory: [
-    { required: true, message: '请选择游戏类型', trigger: 'change' },
+    { required: true, message: $t('game.hotGameExtra.selectGameTypeRequired'), trigger: 'change' },
   ],
-  tagType: [{ required: true, message: '请选择标签类型', trigger: 'change' }],
-  currency: [{ required: true, message: '请选择币种', trigger: 'change' }],
+  tagType: [{ required: true, message: $t('game.hotGameExtra.selectTagTypeRequired'), trigger: 'change' }],
+  currency: [{ required: true, message: $t('game.virtualBonusPool.selectCurrencyRequired'), trigger: 'change' }],
   sortOrder: [
     {
       required: true,
-      message: '请输入排序值',
+      message: $t('game.hotGameExtra.sortOrderRequired'),
       trigger: 'blur',
       type: 'number',
     },
     {
       min: 0,
       max: 9999,
-      message: '排序值范围为0-9999',
+      message: $t('game.hotGameExtra.sortOrderRange'),
       trigger: 'blur',
       type: 'number',
     },
   ],
-  remark: [{ max: 200, message: '备注长度不能超过200个字符', trigger: 'blur' }],
+  remark: [{ max: 200, message: $t('game.hotGameExtra.remarkMaxLength'), trigger: 'blur' }],
 };
 
-// 监听 visible 变化
+
 watch(
   () => props.visible,
   (newVal) => {
@@ -218,7 +220,7 @@ watch(
   { immediate: true },
 );
 
-// 监听 hotGameData 变化
+
 watch(
   () => props.hotGameData,
   (newVal) => {
@@ -231,7 +233,7 @@ watch(
 
 const loadFormData = () => {
   if (props.hotGameData) {
-    // 编辑模式
+    
     formData.platformId = props.hotGameData.platformId;
     formData.gameId = props.hotGameData.gameId;
     formData.gameName = props.hotGameData.gameName;
@@ -242,7 +244,7 @@ const loadFormData = () => {
     formData.remark = props.hotGameData.remark || '';
     formData.isEnabled = props.hotGameData.isEnabled;
   } else {
-    // 新增模式
+    
     resetForm();
   }
 };
@@ -261,7 +263,7 @@ const resetForm = () => {
 
 const loadOptions = async () => {
   try {
-    // 加载平台选项
+    
     const platformResponse = await getGamePlatformListApi({ pageSize: 1000 });
     platformOptions.value =
       platformResponse.list?.map((platform: GamePlatformItem) => ({
@@ -269,14 +271,14 @@ const loadOptions = async () => {
         value: platform.id,
       })) || [];
 
-    // 加载游戏类型选项
+    
     const categories = await getGameCategoriesApi();
     gameCategoryOptions.value = categories.map((category) => ({
       label: category,
       value: category,
     }));
 
-    // 加载币种选项
+    
     const currencies = await getCurrenciesApi();
     currencyOptions.value = currencies.map((currency) => ({
       label: currency,
@@ -285,7 +287,7 @@ const loadOptions = async () => {
   } catch (error) {
     console.error('加载选项失败:', error);
     notification.error({
-      content: '加载选项失败',
+      content: $t('game.loadFailed'),
       duration: 3000,
     });
   }
@@ -316,13 +318,13 @@ const handleSubmit = async () => {
         data as UpdateHotGameParams,
       );
       notification.success({
-        content: '更新成功',
+        content: $t('game.hotGameExtra.updateSuccess'),
         duration: 3000,
       });
     } else {
       await createHotGameApi(data as CreateHotGameParams);
       notification.success({
-        content: '创建成功',
+        content: $t('game.hotGameExtra.createSuccess'),
         duration: 3000,
       });
     }
@@ -332,7 +334,7 @@ const handleSubmit = async () => {
   } catch (error: any) {
     console.error('提交失败:', error);
     notification.error({
-      content: error?.message || '操作失败',
+      content: error?.message || $t('common.operationFailed'),
       duration: 3000,
     });
   } finally {

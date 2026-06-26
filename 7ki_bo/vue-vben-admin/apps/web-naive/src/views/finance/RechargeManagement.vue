@@ -2,27 +2,27 @@
   <div class="recharge-management">
     <!-- Main Navigation Tabs (simplified) -->
     <n-tabs v-model:value="activeTab" type="line" class="mb-4">
-      <n-tab-pane name="all-recharges" tab="全部充值">
+      <n-tab-pane name="all-recharges" :tab="$t('finance.allRecharges')">
         <!-- Enhanced Filter Section -->
         <n-card class="mb-4">
           <!-- Top Row - Primary Filters -->
           <div class="mb-4 flex flex-wrap items-center gap-4">
             <div class="flex items-center gap-2">
-              <span class="text-sm font-medium text-gray-600">创建时间</span>
+              <span class="text-sm font-medium text-gray-600">{{ $t('finance.createTime') }}</span>
               <n-radio-group
                 v-model:value="filterForm.timeRange"
                 size="small"
                 @update:value="handleTimeRangeChange"
               >
-                <n-radio value="today">今天</n-radio>
-                <n-radio value="week">本周</n-radio>
-                <n-radio value="month">本月</n-radio>
+                <n-radio value="today">{{ $t('common.today') }}</n-radio>
+                <n-radio value="week">{{ $t('finance.kex5pu') }}</n-radio>
+                <n-radio value="month">{{ $t('common.thisMonth') }}</n-radio>
               </n-radio-group>
               <n-date-picker
                 v-model:value="filterForm.dateRange"
                 type="datetimerange"
                 format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择自定义时间范围"
+                placeholder:placeholder="$t('finance.selectDateRange')"
                 style="width: 350px"
                 clearable
                 @update:value="handleDateRangeChange"
@@ -34,7 +34,7 @@
           <div class="mb-4 flex flex-wrap items-end gap-4">
             <n-select
               v-model:value="filterForm.status"
-              placeholder="订单状态"
+              placeholder:placeholder="$t('finance.orderStatus')"
               style="width: 120px"
               clearable
               :options="statusOptions"
@@ -42,7 +42,7 @@
             <div class="flex flex-col">
               <n-select
                 v-model:value="filterForm.searchCondition"
-                placeholder="请选择搜索条件"
+                placeholder:placeholder="$t('finance.pleaseSelectSearchConditions')"
                 clearable
                 style="width: 200px"
                 :options="searchConditionOptions"
@@ -79,31 +79,23 @@
               <n-button type="primary" @click="handleSearch">
                 <template #icon>
                   <n-icon :component="SearchOutline" />
-                </template>
-                搜索
-              </n-button>
-              <n-button @click="handleAdvancedSearch"> 高级搜索 </n-button>
-              <n-button @click="handleReset">重置</n-button>
+                </template>{{ $t('common.search') }}</n-button>
+              <n-button @click="handleAdvancedSearch">{{ $t('common.advancedSearch') }}</n-button>
+              <n-button @click="handleReset">{{ $t('common.reset') }}</n-button>
             </div>
             <div class="flex items-center gap-2">
               <n-button type="primary" @click="handleCreateSupplementaryOrder">
                 <template #icon>
                   <n-icon :component="AddOutline" />
-                </template>
-                创建补单
-              </n-button>
+                </template>{{ $t('finance.createSupplementaryOrder') }}</n-button>
               <n-button @click="handleExport">
                 <template #icon>
                   <n-icon :component="DownloadOutline" />
-                </template>
-                导出报表
-              </n-button>
+                </template>{{ $t('common.exportReport') }}</n-button>
               <n-button @click="fetchData">
                 <template #icon>
                   <n-icon :component="ReloadOutline" />
-                </template>
-                刷新
-              </n-button>
+                </template>{{ $t('common.refresh') }}</n-button>
             </div>
           </div>
         </n-card>
@@ -117,7 +109,7 @@
               <div class="text-lg font-bold text-blue-600">
                 {{ summary.totalCount }}
               </div>
-              <div class="mt-1 text-xs text-gray-600">全部充值</div>
+              <div class="mt-1 text-xs text-gray-600">{{ $t('finance.allRecharges') }}</div>
             </div>
             <div
               class="rounded-lg bg-gradient-to-r from-green-50 to-green-100 p-3 text-center"
@@ -125,7 +117,7 @@
               <div class="text-lg font-bold text-green-600">
                 {{ formatCurrency(summary.totalAmount) }}
               </div>
-              <div class="mt-1 text-xs text-gray-600">充值总计</div>
+              <div class="mt-1 text-xs text-gray-600">{{ $t('finance.kvmbt1') }}</div>
             </div>
             <div
               class="rounded-lg bg-gradient-to-r from-yellow-50 to-yellow-100 p-3 text-center"
@@ -133,7 +125,7 @@
               <div class="text-lg font-bold text-yellow-600">
                 {{ summary.pendingCount }}
               </div>
-              <div class="mt-1 text-xs text-gray-600">充值锁定</div>
+              <div class="mt-1 text-xs text-gray-600">{{ $t('finance.kx5rr1') }}</div>
             </div>
             <div
               class="rounded-lg bg-gradient-to-r from-purple-50 to-purple-100 p-3 text-center"
@@ -141,7 +133,7 @@
               <div class="text-lg font-bold text-purple-600">
                 {{ summary.confirmedCount }}
               </div>
-              <div class="mt-1 text-xs text-gray-600">充值确认</div>
+              <div class="mt-1 text-xs text-gray-600">{{ $t('finance.kpou7e') }}</div>
             </div>
             <div
               class="rounded-lg bg-gradient-to-r from-red-50 to-red-100 p-3 text-center"
@@ -149,13 +141,13 @@
               <div class="text-lg font-bold text-red-600">
                 {{ summary.rejectedCount }}
               </div>
-              <div class="mt-1 text-xs text-gray-600">充值失败</div>
+              <div class="mt-1 text-xs text-gray-600">{{ $t('finance.rechargeFailed') }}</div>
             </div>
             <div
               class="rounded-lg bg-gradient-to-r from-indigo-50 to-indigo-100 p-3 text-center"
             >
-              <div class="text-lg font-bold text-indigo-600">不自动刷新</div>
-              <div class="mt-1 text-xs text-gray-600">操作教程</div>
+              <div class="text-lg font-bold text-indigo-600">{{ $t('finance.kezim9') }}</div>
+              <div class="mt-1 text-xs text-gray-600">{{ $t('finance.k9szah') }}</div>
             </div>
           </div>
         </n-card>
@@ -164,12 +156,12 @@
         <n-card>
           <template #header>
             <div class="flex items-center justify-between">
-              <span class="font-medium">充值记录</span>
+              <span class="font-medium">{{ $t('finance.keh8ey') }}</span>
               <div class="flex items-center gap-2 text-sm text-gray-500">
-                <span>共 {{ summary.totalCount }} 条</span>
+                <span>{{ $t('finance.totalRecordsCompact', { count: summary.totalCount }) }}</span>
                 <n-divider vertical />
                 <n-button size="small" text @click="toggleTableDensity">
-                  {{ tableDense ? '宽松显示' : '紧凑显示' }}
+                  {{ tableDense ? $t('finance.comfortableView') : $t('finance.compactView') }}
                 </n-button>
               </div>
             </div>
@@ -193,28 +185,28 @@
         </n-card>
       </n-tab-pane>
 
-      <n-tab-pane name="recharge-statistics" tab="充值统计">
+      <n-tab-pane name="recharge-statistics" :tab="$t('finance.rechargeStatistics')">
         <!-- Statistics Filter Section -->
         <n-card class="mb-4">
           <div class="mb-4 flex flex-wrap items-center gap-4">
             <div class="flex items-center gap-2">
-              <span class="text-sm font-medium text-gray-600">统计时间</span>
+              <span class="text-sm font-medium text-gray-600">{{ $t('finance.statisticsTime') }}</span>
               <n-radio-group
                 v-model:value="statsForm.timeRange"
                 size="small"
                 @update:value="handleStatsTimeRangeChange"
               >
-                <n-radio value="today">今天</n-radio>
-                <n-radio value="week">本周</n-radio>
-                <n-radio value="month">本月</n-radio>
-                <n-radio value="custom">自定义</n-radio>
+                <n-radio value="today">{{ $t('common.today') }}</n-radio>
+                <n-radio value="week">{{ $t('finance.kex5pu') }}</n-radio>
+                <n-radio value="month">{{ $t('common.thisMonth') }}</n-radio>
+                <n-radio value="custom">{{ $t('finance.kv58uj') }}</n-radio>
               </n-radio-group>
               <n-date-picker
                 v-if="statsForm.timeRange === 'custom'"
                 v-model:value="statsForm.dateRange"
                 type="datetimerange"
                 format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择时间范围"
+                placeholder:placeholder="$t('finance.selectTimeRange')"
                 style="width: 350px"
                 clearable
                 @update:value="handleStatsDateRangeChange"
@@ -225,7 +217,7 @@
           <div class="mb-4 flex flex-wrap items-center gap-4">
             <n-select
               v-model:value="statsForm.paymentMethod"
-              placeholder="支付方式"
+              placeholder:placeholder="$t('finance.paymentMethod')"
               style="width: 140px"
               clearable
               :options="paymentMethodOptions"
@@ -233,7 +225,7 @@
             />
             <n-select
               v-model:value="statsForm.status"
-              placeholder="订单状态"
+              placeholder:placeholder="$t('finance.orderStatus')"
               style="width: 120px"
               clearable
               :options="statusOptions"
@@ -241,7 +233,7 @@
             />
             <n-select
               v-model:value="statsForm.groupBy"
-              placeholder="分组方式"
+              placeholder:placeholder="$t('finance.method')"
               style="width: 120px"
               :options="groupByOptions"
               @update:value="handleStatsFilterChange"
@@ -249,9 +241,7 @@
             <n-button type="primary" @click="fetchStatsData">
               <template #icon>
                 <n-icon :component="ReloadOutline" />
-              </template>
-              刷新数据
-            </n-button>
+              </template>{{ $t('finance.k6efv0') }}</n-button>
           </div>
         </n-card>
 
@@ -264,7 +254,7 @@
               <div class="text-lg font-bold text-blue-600">
                 {{ formatCurrency(statsData.summary?.totalSuccessAmount || 0) }}
               </div>
-              <div class="mt-1 text-xs text-gray-600">充值成功金额</div>
+              <div class="mt-1 text-xs text-gray-600">{{ $t('finance.rechargeSuccessAmount') }}</div>
             </div>
             <div
               class="rounded-lg bg-gradient-to-r from-green-50 to-green-100 p-3 text-center"
@@ -272,7 +262,7 @@
               <div class="text-lg font-bold text-green-600">
                 {{ statsData.summary?.totalSuccessCount || 0 }}
               </div>
-              <div class="mt-1 text-xs text-gray-600">充值人数</div>
+              <div class="mt-1 text-xs text-gray-600">{{ $t('finance.recharge8') }}</div>
             </div>
             <div
               class="rounded-lg bg-gradient-to-r from-purple-50 to-purple-100 p-3 text-center"
@@ -280,7 +270,7 @@
               <div class="text-lg font-bold text-purple-600">
                 {{ statsData.summary?.totalOrders || 0 }}
               </div>
-              <div class="mt-1 text-xs text-gray-600">成功充值人数</div>
+              <div class="mt-1 text-xs text-gray-600">{{ $t('finance.successRecharge') }}</div>
             </div>
             <div
               class="rounded-lg bg-gradient-to-r from-orange-50 to-orange-100 p-3 text-center"
@@ -288,7 +278,7 @@
               <div class="text-lg font-bold text-orange-600">
                 {{ statsData.summary?.totalSuccessCount || 0 }}
               </div>
-              <div class="mt-1 text-xs text-gray-600">充值总订单数</div>
+              <div class="mt-1 text-xs text-gray-600">{{ $t('finance.rechargeTotalOrders') }}</div>
             </div>
             <div
               class="rounded-lg bg-gradient-to-r from-red-50 to-red-100 p-3 text-center"
@@ -296,7 +286,7 @@
               <div class="text-lg font-bold text-red-600">
                 {{ statsData.summary?.totalSuccessCount || 0 }}
               </div>
-              <div class="mt-1 text-xs text-gray-600">成功充值订单数</div>
+              <div class="mt-1 text-xs text-gray-600">{{ $t('finance.successRechargeOrderCount') }}</div>
             </div>
             <div
               class="rounded-lg bg-gradient-to-r from-yellow-50 to-yellow-100 p-3 text-center"
@@ -304,7 +294,7 @@
               <div class="text-lg font-bold text-yellow-600">
                 {{ statsData.summary?.totalFailedCount || 0 }}
               </div>
-              <div class="mt-1 text-xs text-gray-600">失败充值订单数</div>
+              <div class="mt-1 text-xs text-gray-600">{{ $t('finance.failedRechargeOrderCount') }}</div>
             </div>
             <div
               class="rounded-lg bg-gradient-to-r from-indigo-50 to-indigo-100 p-3 text-center"
@@ -312,13 +302,13 @@
               <div class="text-lg font-bold text-indigo-600">
                 {{ (statsData.summary?.successRate || 0).toFixed(1) }}%
               </div>
-              <div class="mt-1 text-xs text-gray-600">充值成功率</div>
+              <div class="mt-1 text-xs text-gray-600">{{ $t('finance.rechargeSuccessRate') }}</div>
             </div>
             <div
               class="rounded-lg bg-gradient-to-r from-pink-50 to-pink-100 p-3 text-center"
             >
               <div class="text-lg font-bold text-pink-600">0%</div>
-              <div class="mt-1 text-xs text-gray-600">充值次数占比</div>
+              <div class="mt-1 text-xs text-gray-600">{{ $t('finance.kdiqtu') }}</div>
             </div>
           </div>
         </n-card>
@@ -328,7 +318,7 @@
           <!-- Time Series Chart -->
           <n-card>
             <template #header>
-              <span class="font-medium">充值趋势图</span>
+              <span class="font-medium">{{ $t('finance.ktvmq5') }}</span>
             </template>
             <EchartsUI ref="timeSeriesChartRef" style="height: 300px" />
           </n-card>
@@ -336,7 +326,7 @@
           <!-- Payment Method Distribution -->
           <n-card>
             <template #header>
-              <span class="font-medium">支付方式分布</span>
+              <span class="font-medium">{{ $t('finance.paymentMethod1') }}</span>
             </template>
             <EchartsUI ref="paymentMethodChartRef" style="height: 300px" />
           </n-card>
@@ -345,7 +335,7 @@
         <!-- Detailed Statistics Table -->
         <n-card>
           <template #header>
-            <span class="font-medium">支付方式详细统计</span>
+            <span class="font-medium">{{ $t('finance.kzfycy') }}</span>
           </template>
           <n-data-table
             :columns="statsColumns"
@@ -360,7 +350,7 @@
         <!-- Top Users Section -->
         <n-card class="mt-4">
           <template #header>
-            <span class="font-medium">充值排行榜</span>
+            <span class="font-medium">{{ $t('finance.k46b0q') }}</span>
           </template>
           <n-data-table
             :columns="topUsersColumns"
@@ -388,12 +378,12 @@
         label-placement="left"
         label-width="120px"
       >
-        <n-form-item label="会员ID" path="memberId">
+        <n-form-item :label="$t('finance.memberId')" path="memberId">
           <n-auto-complete
             v-model:value="rechargeForm.userId"
             :options="memberOptions"
             :loading="memberLoading"
-            placeholder="请输入会员ID/账号/姓名进行搜索"
+            placeholder:placeholder="$t('finance.pleaseEnterMemberIdAccountSearch')"
             :disabled="isEditing"
             @input="handleMemberInput"
             @select="handleMemberSelect"
@@ -404,10 +394,10 @@
 
         <!-- Member Info Display -->
         <div v-if="selectedMember" class="mb-4 rounded bg-gray-50 p-3">
-          <h4 class="mb-2 font-semibold">会员信息</h4>
+          <h4 class="mb-2 font-semibold">{{ $t('finance.memberInfo') }}</h4>
           <div class="grid grid-cols-2 gap-2 text-sm">
             <div>
-              <span class="font-medium">会员ID:</span>
+              <span class="font-medium">{{ $t('finance.memberId') }}:</span>
               {{ selectedMember.value }}
             </div>
             <div>
@@ -418,7 +408,7 @@
               <span class="font-medium">姓名:</span> {{ selectedMember.name }}
             </div>
             <div>
-              <span class="font-medium">VIP等级:</span>
+              <span class="font-medium">{{ $t('finance.vIPLevel') }}:</span>
               {{ selectedMember.vipLevel }}
             </div>
             <div>
@@ -426,41 +416,41 @@
               {{ formatCurrency(selectedMember.balance) }}
             </div>
             <div>
-              <span class="font-medium">邮箱:</span> {{ selectedMember.email }}
+              <span class="font-medium">{{ $t('common.email') }}:</span> {{ selectedMember.email }}
             </div>
           </div>
         </div>
 
-        <n-form-item label="充值金额" path="amount">
+        <n-form-item :label="$t('finance.rechargeAmount')" path="amount">
           <n-input-number
             v-model:value="rechargeForm.amount"
             :min="0"
             :precision="2"
-            placeholder="请输入充值金额"
+            placeholder:placeholder="$t('finance.pleaseEnterRechargeAmount')"
             style="width: 100%"
           />
         </n-form-item>
 
-        <n-form-item label="充值方式" path="rechargeMethod">
+        <n-form-item :label="$t('finance.rechargeMethod')" path="rechargeMethod">
           <n-select
             v-model:value="rechargeForm.rechargeMethod"
             :options="rechargeMethodOptions"
-            placeholder="请选择充值方式"
+            placeholder:placeholder="$t('finance.pleaseSelectRechargeMethod')"
           />
         </n-form-item>
 
-        <n-form-item label="支付渠道" path="channelInfo">
+        <n-form-item :label="$t('finance.payment')" path="channelInfo">
           <n-input
             v-model:value="rechargeForm.channelInfo"
-            placeholder="请输入支付渠道信息"
+            placeholder:placeholder="$t('finance.pleaseEnterPaymentInfo')"
           />
         </n-form-item>
 
-        <n-form-item label="备注" path="note">
+        <n-form-item :label="$t('common.remark')" path="note">
           <n-input
             v-model:value="rechargeForm.note"
             type="textarea"
-            placeholder="请输入备注信息"
+            placeholder:placeholder="$t('finance.pleaseEnterRemarkInfo')"
             :autosize="{ minRows: 2, maxRows: 4 }"
           />
         </n-form-item>
@@ -468,7 +458,7 @@
 
       <template #footer>
         <div class="flex justify-end gap-2">
-          <n-button @click="showRechargeModal = false">取消</n-button>
+          <n-button @click="showRechargeModal = false">{{ $t('common.cancel') }}</n-button>
           <n-button
             type="primary"
             @click="handleSaveRecharge"
@@ -490,7 +480,7 @@
     <n-modal
       v-model:show="showOrderDetailsModal"
       preset="card"
-      title="订单详情"
+      :title="$t('finance.orderDetails')"
       style="width: 900px; max-width: 90vw"
       :bordered="false"
       size="huge"
@@ -498,24 +488,24 @@
     >
       <div v-if="orderDetails" class="order-details">
         <!-- Order Information Section -->
-        <n-card title="订单信息" class="mb-4" size="small">
+        <n-card :title="$t('finance.orderInfo')" class="mb-4" size="small">
           <div class="grid grid-cols-2 gap-4">
             <div class="flex justify-between">
-              <span class="text-gray-600">订单号:</span>
+              <span class="text-gray-600">{{ $t('finance.orderNo') }}:</span>
               <span class="font-mono">{{ orderDetails.orderId }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600">订单状态:</span>
+              <span class="text-gray-600">{{ $t('common.orderStatus') }}:</span>
               <n-tag :type="getStatusColor(orderDetails.status)" size="small">
                 {{ getStatusText(orderDetails.status) }}
               </n-tag>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600">会员ID:</span>
+              <span class="text-gray-600">{{ $t('finance.memberId') }}:</span>
               <span>{{ orderDetails.memberId }}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-gray-600">会员账号:</span>
+              <span class="text-gray-600">{{ $t('common.memberAccount') }}:</span>
               <span>{{ orderDetails.accountName }}</span>
             </div>
             <div class="flex justify-between">
@@ -570,23 +560,23 @@
         </n-card>
 
         <!-- Amount and Time Information Section -->
-        <n-card title="金额和时间信息" size="small">
+        <n-card :title="$t('finance.amountAndTimeInfo')" size="small">
           <n-table :bordered="false" :single-line="false">
             <tbody>
               <tr>
-                <td class="text-gray-600" style="width: 150px">订单金额</td>
+                <td class="text-gray-600" style="width: 150px">{{ $t('finance.orderAmount') }}</td>
                 <td class="text-right">
                   {{ formatCurrency(orderDetails.rechargeAmount) }}
                 </td>
               </tr>
               <tr>
-                <td class="text-gray-600">赠送金额</td>
+                <td class="text-gray-600">{{ $t('finance.amount3') }}</td>
                 <td class="text-right">
                   {{ formatCurrency(orderDetails.bonusAmount || 0) }}
                 </td>
               </tr>
               <tr>
-                <td class="text-gray-600">总上分金额</td>
+                <td class="text-gray-600">{{ $t('finance.amount5') }}</td>
                 <td class="text-right">
                   {{
                     formatCurrency(
@@ -597,29 +587,29 @@
                 </td>
               </tr>
               <tr>
-                <td class="text-gray-600">会员币种</td>
+                <td class="text-gray-600">{{ $t('finance.memberCurrency') }}</td>
                 <td class="text-right">{{ orderDetails.currency || 'BRL' }}</td>
               </tr>
               <tr>
-                <td class="text-gray-600">收款账号/地址</td>
+                <td class="text-gray-600">{{ $t('finance.k4xkdu') }}</td>
                 <td class="text-right">
                   {{ orderDetails.receivingAccount || '-' }}
                 </td>
               </tr>
               <tr>
-                <td class="text-gray-600">是否首充</td>
+                <td class="text-gray-600">{{ $t('finance.k6akpt') }}</td>
                 <td class="text-right">
                   {{ orderDetails.isFirstDeposit ? '是' : '否' }}
                 </td>
               </tr>
               <tr>
-                <td class="text-gray-600">备注</td>
+                <td class="text-gray-600">{{ $t('common.remark') }}</td>
                 <td class="text-right">
                   {{ orderDetails.backendNote || '-' }}
                 </td>
               </tr>
               <tr>
-                <td class="text-gray-600">创建时间</td>
+                <td class="text-gray-600">{{ $t('finance.createTime') }}</td>
                 <td class="text-right">
                   {{
                     formatDateTime(
@@ -630,7 +620,7 @@
                 </td>
               </tr>
               <tr>
-                <td class="text-gray-600">成功时间</td>
+                <td class="text-gray-600">{{ $t('finance.successTime') }}</td>
                 <td class="text-right">
                   {{
                     orderDetails.confirmTime
@@ -643,7 +633,7 @@
                 </td>
               </tr>
               <tr>
-                <td class="text-gray-600">更新时间</td>
+                <td class="text-gray-600">{{ $t('finance.time') }}</td>
                 <td class="text-right">
                   {{
                     formatDateTime(
@@ -660,7 +650,7 @@
 
       <template #footer>
         <div class="flex justify-end">
-          <n-button @click="showOrderDetailsModal = false">关闭</n-button>
+          <n-button @click="showOrderDetailsModal = false">{{ $t('common.close') }}</n-button>
         </div>
       </template>
     </n-modal>
@@ -668,7 +658,7 @@
     <!-- Supplementary Order Modal -->
     <n-modal
       v-model:show="showSupplementaryOrderModal"
-      title="创建补单"
+      :title="$t('finance.createSupplementaryOrder')"
       preset="card"
       style="width: 500px"
       :mask-closable="false"
@@ -682,7 +672,7 @@
             </label>
             <n-input
               v-model:value="supplementaryOrderForm.orderNumber"
-              placeholder="请输入订单号"
+              placeholder:placeholder="$t('finance.pleaseEnterOrder')"
               :maxlength="30"
               show-count
               clearable
@@ -694,21 +684,19 @@
             @click="handleSearchOrder"
             :loading="searchingOrder"
             class="mt-6"
-          >
-            搜索
-          </n-button>
+          >{{ $t('common.search') }}</n-button>
         </div>
 
         <!-- Search Results Display -->
         <div v-if="searchedOrder" class="rounded-lg bg-gray-50 p-3">
-          <h4 class="mb-2 font-medium text-gray-900">订单信息</h4>
+          <h4 class="mb-2 font-medium text-gray-900">{{ $t('finance.orderInfo') }}</h4>
           <div class="grid grid-cols-2 gap-2 text-sm">
             <div>
               <span class="font-medium">订单号:</span>
               {{ searchedOrder.orderId }}
             </div>
             <div>
-              <span class="font-medium">会员账号:</span>
+              <span class="font-medium">{{ $t('common.memberAccount') }}:</span>
               {{ searchedOrder.accountName }}
             </div>
             <div>
@@ -716,7 +704,7 @@
               {{ formatCurrency(searchedOrder.rechargeAmount) }}
             </div>
             <div>
-              <span class="font-medium">状态:</span>
+              <span class="font-medium">{{ $t('common.status') }}:</span>
               <n-tag :type="getStatusColor(searchedOrder.status)" size="small">
                 {{ getStatusText(searchedOrder.status) }}
               </n-tag>
@@ -735,15 +723,13 @@
 
       <template #footer>
         <div class="flex justify-end gap-2">
-          <n-button @click="showSupplementaryOrderModal = false">取消</n-button>
+          <n-button @click="showSupplementaryOrderModal = false">{{ $t('common.cancel') }}</n-button>
           <n-button
             type="primary"
             @click="handleConfirmSupplementaryOrder"
             :disabled="!searchedOrder"
             :loading="creatingOrder"
-          >
-            确认
-          </n-button>
+          >{{ $t('common.confirm') }}</n-button>
         </div>
       </template>
     </n-modal>
@@ -751,6 +737,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, onMounted, h, watch, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import {
@@ -882,21 +870,21 @@ const filterForm = ref({
 
 /** 与 src/views/user-management/all-members 一致 */
 const searchConditionOptions = [
-  { label: '会员层级', value: 'memberLevel' },
-  { label: 'VIP等级', value: 'vipLevel' },
-  { label: '会员标签', value: 'memberTags' },
-  { label: '在线状态', value: 'onlineStatus' },
-  { label: '账号状态', value: 'accountStatus' },
-  { label: '登录记录', value: 'loginHistory' },
+  { label: $t('finance.memberTier'), value: 'memberLevel' },
+  { label: $t('finance.vIPLevel'), value: 'vipLevel' },
+  { label: $t('finance.memberTag'), value: 'memberTags' },
+  { label: $t('finance.onlineStatus'), value: 'onlineStatus' },
+  { label: $t('finance.accountStatus'), value: 'accountStatus' },
+  { label: $t('finance.loginRecords'), value: 'loginHistory' },
 ];
 
 const onlineStatusOptions = [
-  { label: '当前在线', value: 'currently_online' },
-  { label: '大厅会员', value: 'lobby_member' },
-  { label: '自营游戏会员', value: 'self_operated_member' },
-  { label: '三方游戏会员', value: 'third_party_member' },
-  { label: '疑似机器人', value: 'suspected_bot' },
-  { label: '今日在线', value: 'today_online' },
+  { label: $t('finance.online'), value: 'currently_online' },
+  { label: $t('finance.member'), value: 'lobby_member' },
+  { label: $t('finance.member2'), value: 'self_operated_member' },
+  { label: $t('finance.thirdPartyMember'), value: 'third_party_member' },
+  { label: $t('finance.text117'), value: 'suspected_bot' },
+  { label: $t('finance.todayOnline'), value: 'today_online' },
 ];
 
 const loadingConditionOptions = ref(false);
@@ -915,21 +903,21 @@ const handleSearchConditionChange = async (value: string | null) => {
     switch (value) {
       case 'accountStatus': {
         searchConditionValueOptions.value = [
-          { label: '正常', value: 'NORMAL' },
-          { label: '冻结', value: 'FROZEN' },
-          { label: '异常冻结', value: 'ABNORMAL_FREEZE' },
-          { label: '锁定', value: 'LOCKED' },
-          { label: '暂停', value: 'SUSPENDED' },
-          { label: '临时', value: 'TEMPORARY' },
+          { label: $t('finance.normal'), value: 'NORMAL' },
+          { label: $t('finance.frozen'), value: 'FROZEN' },
+          { label: $t('finance.exceptionFrozen'), value: 'ABNORMAL_FREEZE' },
+          { label: $t('finance.locked'), value: 'LOCKED' },
+          { label: $t('finance.suspended'), value: 'SUSPENDED' },
+          { label: $t('finance.temporary'), value: 'TEMPORARY' },
         ];
         break;
       }
       case 'loginHistory': {
         searchConditionValueOptions.value = [
-          { label: '今天登录', value: 'today' },
-          { label: '7天内登录', value: 'week' },
-          { label: '30天内登录', value: 'month' },
-          { label: '从未登录', value: 'never' },
+          { label: $t('finance.daysLogin'), value: 'today' },
+          { label: $t('finance.7DaysLogin'), value: 'week' },
+          { label: $t('finance.30DaysLogin'), value: 'month' },
+          { label: $t('finance.notLogin'), value: 'never' },
         ];
         break;
       }
@@ -946,9 +934,9 @@ const handleSearchConditionChange = async (value: string | null) => {
       }
       case 'memberTags': {
         searchConditionValueOptions.value = [
-          { label: '普通用户', value: 'normal' },
-          { label: 'VIP用户', value: 'vip' },
-          { label: '代理用户', value: 'agent' },
+          { label: $t('finance.user'), value: 'normal' },
+          { label: $t('finance.vIPUser'), value: 'vip' },
+          { label: $t('finance.user1'), value: 'agent' },
         ];
         break;
       }
@@ -972,7 +960,7 @@ const handleSearchConditionChange = async (value: string | null) => {
     }
   } catch (error) {
     console.error('Error loading search condition options:', error);
-    message.error('加载选项失败');
+    message.error($t('finance.loadingFailed'));
   } finally {
     loadingConditionOptions.value = false;
   }
@@ -986,13 +974,13 @@ const getSearchConditionLabel = () => {
 };
 
 const rechargeSearchFieldOptions: FieldSearchBarOption[] = [
-  { label: '精准会员账号', value: 'exact_account', mode: 'exact' },
-  { label: '模糊会员账号', value: 'fuzzy_account', mode: 'fuzzy' },
-  { label: '会员ID', value: 'userID', mode: 'exact' },
-  { label: '精准姓名', value: 'exact_name', mode: 'exact' },
-  { label: '模糊姓名', value: 'fuzzy_name', mode: 'fuzzy' },
-  { label: '订单号', value: 'order_id', mode: 'exact' },
-  { label: '三方订单号', value: 'third_party_order_no', mode: 'exact' },
+  { label: $t('finance.memberAccount'), value: 'exact_account', mode: 'exact' },
+  { label: $t('finance.memberAccount1'), value: 'fuzzy_account', mode: 'fuzzy' },
+  { label: $t('finance.memberId'), value: 'userID', mode: 'exact' },
+  { label: $t('finance.text70'), value: 'exact_name', mode: 'exact' },
+  { label: $t('finance.text71'), value: 'fuzzy_name', mode: 'fuzzy' },
+  { label: $t('finance.orderNo'), value: 'order_id', mode: 'exact' },
+  { label: $t('finance.thirdPartyOrder'), value: 'third_party_order_no', mode: 'exact' },
 ];
 
 function handleRechargeSearchFieldChange(field: string | null) {
@@ -1263,28 +1251,28 @@ const paginationConfig = ref({
 
 // Form validation rules with proper types
 const rechargeRules = {
-  memberId: [{ required: true, message: '请选择会员', trigger: 'blur' }],
+  memberId: [{ required: true, message: $t('finance.pleaseSelectMember'), trigger: 'blur' }],
   amount: [
-    { required: true, message: '请输入充值金额', trigger: 'blur' },
+    { required: true, message: $t('finance.pleaseEnterRechargeAmount'), trigger: 'blur' },
     {
       type: 'number' as const,
       min: 0.01,
-      message: '充值金额必须大于0',
+      message: $t('finance.rechargeAmountMust0'),
       trigger: 'blur',
     },
   ],
   rechargeMethod: [
-    { required: true, message: '请选择充值方式', trigger: 'change' },
+    { required: true, message: $t('finance.pleaseSelectRechargeMethod'), trigger: 'change' },
   ],
 };
 
 // Options
 const statusOptions = [
-  { label: '待处理', value: 'pending' },
-  { label: '已确认', value: 'confirmed' },
-  { label: '已拒绝', value: 'rejected' },
-  { label: '处理中', value: 'processing' },
-  { label: '已过期', value: 'expired' }, // ✅ Add expired status
+  { label: $t('finance.pending'), value: 'pending' },
+  { label: $t('finance.confirmed'), value: 'confirmed' },
+  { label: $t('finance.rejected'), value: 'rejected' },
+  { label: $t('finance.processing'), value: 'processing' },
+  { label: $t('finance.expired'), value: 'expired' }, // ✅ Add expired status
 ];
 
 const rechargeMethodOptions = [
@@ -1305,9 +1293,9 @@ const paymentMethodOptions = [
 ];
 
 const groupByOptions = [
-  { label: '按日', value: 'day' },
-  { label: '按周', value: 'week' },
-  { label: '按月', value: 'month' },
+  { label: $t('finance.day'), value: 'day' },
+  { label: $t('finance.week'), value: 'week' },
+  { label: $t('finance.month'), value: 'month' },
 ];
 
 const formatDateTime = (dateString: string, format?: string): string => {
@@ -1459,7 +1447,7 @@ const handleMemberSelect = (value: string) => {
 // Statistics table columns
 const statsColumns: DataTableColumns<any> = [
   {
-    title: '充值类型',
+    title: $t('finance.recharge5'),
     key: 'paymentMethod',
     width: 120,
     render: (row) =>
@@ -1470,13 +1458,13 @@ const statsColumns: DataTableColumns<any> = [
       ),
   },
   {
-    title: '充值大类',
+    title: $t('finance.recharge6'),
     key: 'paymentGateway',
     width: 120,
     render: (row) => h(NText, {}, { default: () => row.paymentGateway }),
   },
   {
-    title: '充值总额',
+    title: $t('finance.recharge7'),
     key: 'totalAmount',
     width: 140,
     render: (row) =>
@@ -1487,7 +1475,7 @@ const statsColumns: DataTableColumns<any> = [
       ),
   },
   {
-    title: '充值成功金额',
+    title: $t('finance.rechargeSuccessAmount'),
     key: 'successAmount',
     width: 140,
     render: (row) =>
@@ -1498,13 +1486,13 @@ const statsColumns: DataTableColumns<any> = [
       ),
   },
   {
-    title: '充值人数',
+    title: $t('finance.recharge8'),
     key: 'totalCount',
     width: 100,
     render: (row) => h(NText, {}, { default: () => row.totalCount }),
   },
   {
-    title: '成功充值人数',
+    title: $t('finance.successRecharge'),
     key: 'successCount',
     width: 140,
     render: (row) =>
@@ -1515,13 +1503,13 @@ const statsColumns: DataTableColumns<any> = [
       ),
   },
   {
-    title: '充值总订单数',
+    title: $t('finance.rechargeTotalOrders'),
     key: 'totalCount',
     width: 140,
     render: (row) => h(NText, {}, { default: () => row.totalCount }),
   },
   {
-    title: '成功充值订单数',
+    title: $t('finance.successRechargeOrderCount'),
     key: 'successCount',
     width: 160,
     render: (row) =>
@@ -1532,7 +1520,7 @@ const statsColumns: DataTableColumns<any> = [
       ),
   },
   {
-    title: '失败充值订单数',
+    title: $t('finance.failedRechargeOrderCount'),
     key: 'failedCount',
     width: 160,
     render: (row) =>
@@ -1543,7 +1531,7 @@ const statsColumns: DataTableColumns<any> = [
       ),
   },
   {
-    title: '充值成功率',
+    title: $t('finance.rechargeSuccessRate'),
     key: 'successRate',
     width: 120,
     render: (row) =>
@@ -1564,7 +1552,7 @@ const statsColumns: DataTableColumns<any> = [
       ),
   },
   {
-    title: '充值总次数占比',
+    title: $t('finance.rechargeCount'),
     key: 'percentage',
     width: 140,
     render: (row) => {
@@ -1582,7 +1570,7 @@ const statsColumns: DataTableColumns<any> = [
 // Top users table columns
 const topUsersColumns: DataTableColumns<any> = [
   {
-    title: '排名',
+    title: $t('finance.text17'),
     key: 'rank',
     width: 60,
     render: (_, index) =>
@@ -1607,7 +1595,7 @@ const topUsersColumns: DataTableColumns<any> = [
       ]),
   },
   {
-    title: '会员账号',
+    title: $t('finance.memberAccount2'),
     key: 'accountName',
     width: 140,
     render: (row) =>
@@ -1618,7 +1606,7 @@ const topUsersColumns: DataTableColumns<any> = [
       ),
   },
   {
-    title: 'VIP等级',
+    title: $t('finance.vIPLevel'),
     key: 'vipLevel',
     width: 100,
     render: (row) =>
@@ -1632,7 +1620,7 @@ const topUsersColumns: DataTableColumns<any> = [
       ),
   },
   {
-    title: '充值总金额',
+    title: $t('finance.totalRechargeAmount'),
     key: 'totalAmount',
     width: 140,
     render: (row) =>
@@ -1643,13 +1631,13 @@ const topUsersColumns: DataTableColumns<any> = [
       ),
   },
   {
-    title: '充值次数',
+    title: $t('finance.depositCount'),
     key: 'orderCount',
     width: 100,
     render: (row) => h(NText, {}, { default: () => row.orderCount }),
   },
   {
-    title: '平均充值金额',
+    title: $t('finance.averageRechargeAmount'),
     key: 'avgAmount',
     width: 140,
     render: (row) =>
@@ -1669,7 +1657,7 @@ const columns: DataTableColumns<RechargeOrder> = [
     width: 40,
   },
   {
-    title: '订单号',
+    title: $t('finance.orderNo'),
     key: 'orderId',
     width: 180,
     sorter: 'default',
@@ -1696,7 +1684,7 @@ const columns: DataTableColumns<RechargeOrder> = [
       ]),
   },
   {
-    title: '会员ID',
+    title: $t('finance.memberId'),
     key: 'memberId',
     width: 90,
     sorter: 'default',
@@ -1717,7 +1705,7 @@ const columns: DataTableColumns<RechargeOrder> = [
       ),
   },
   {
-    title: '会员账号',
+    title: $t('finance.memberAccount2'),
     key: 'accountName',
     width: 120,
     sorter: 'default',
@@ -1745,7 +1733,7 @@ const columns: DataTableColumns<RechargeOrder> = [
       ]),
   },
   {
-    title: '创建时间',
+    title: $t('finance.createTime'),
     key: 'appliedAt',
     width: 140,
     sorter: 'default',
@@ -1760,7 +1748,7 @@ const columns: DataTableColumns<RechargeOrder> = [
       ]),
   },
   {
-    title: '成功时间',
+    title: $t('finance.successTime'),
     key: 'confirmTime',
     width: 140,
     sorter: 'default',
@@ -1781,7 +1769,7 @@ const columns: DataTableColumns<RechargeOrder> = [
       ),
   },
   {
-    title: '更新时间',
+    title: $t('finance.time'),
     key: 'updatedAt',
     width: 140,
     sorter: 'default',
@@ -1796,7 +1784,7 @@ const columns: DataTableColumns<RechargeOrder> = [
       ]),
   },
   {
-    title: 'VIP等级',
+    title: $t('finance.vIPLevel'),
     key: 'vipLevel',
     width: 80,
     sorter: 'default',
@@ -1812,7 +1800,7 @@ const columns: DataTableColumns<RechargeOrder> = [
       ),
   },
   {
-    title: '会员层级',
+    title: $t('finance.memberTier'),
     key: 'memberTag',
     width: 90,
     sorter: 'default',
@@ -1828,7 +1816,7 @@ const columns: DataTableColumns<RechargeOrder> = [
       ),
   },
   {
-    title: '充值币种',
+    title: $t('finance.rechargeCurrency'),
     key: 'currency',
     width: 80,
     sorter: 'default',
@@ -1842,7 +1830,7 @@ const columns: DataTableColumns<RechargeOrder> = [
       ]),
   },
   {
-    title: '原始数量',
+    title: $t('finance.text72'),
     key: 'rechargeAmount',
     width: 120,
     sorter: 'default',
@@ -1865,7 +1853,7 @@ const columns: DataTableColumns<RechargeOrder> = [
       ]),
   },
   {
-    title: '实际到账',
+    title: $t('finance.actualReceived'),
     key: 'actualReceived',
     width: 90,
     sorter: 'default',
@@ -1881,7 +1869,7 @@ const columns: DataTableColumns<RechargeOrder> = [
       ]),
   },
   {
-    title: '订单状态',
+    title: $t('finance.orderStatus'),
     key: 'status',
     width: 100,
     sorter: 'default',
@@ -1901,7 +1889,7 @@ const columns: DataTableColumns<RechargeOrder> = [
       ]),
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 120,
     fixed: 'right',
@@ -1919,7 +1907,7 @@ const columns: DataTableColumns<RechargeOrder> = [
                 text: true,
                 onClick: () => handleViewDetails(row),
               },
-              { default: () => '详情' },
+              { default: () => $t('common.detail') },
             ),
             row.status === 'pending' &&
               h(
@@ -1930,7 +1918,7 @@ const columns: DataTableColumns<RechargeOrder> = [
                   text: true,
                   onClick: () => handleConfirmRecharge(row),
                 },
-                { default: () => '确认' },
+                { default: () => $t('common.confirm') },
               ),
             row.status === 'pending' &&
               h(
@@ -1941,7 +1929,7 @@ const columns: DataTableColumns<RechargeOrder> = [
                   text: true,
                   onClick: () => handleRejectRecharge(row),
                 },
-                { default: () => '拒绝' },
+                { default: () => $t('finance.text14') },
               ),
           ],
         },
@@ -2025,7 +2013,7 @@ const fetchData = async () => {
     // Handle response structure - the response interceptor returns the transformed data
     if (!response) {
       console.error('❌ No response received - response is null/undefined');
-      message.error('API响应为空');
+      message.error($t('finance.aPI'));
       return;
     }
 
@@ -2050,7 +2038,7 @@ const fetchData = async () => {
       };
     } else {
       console.error('❌ Unexpected response structure:', response);
-      message.error('API响应格式错误');
+      message.error($t('finance.aPI1'));
       return;
     }
 
@@ -2118,7 +2106,7 @@ const handleSaveRecharge = async () => {
       );
 
       if (response.success) {
-        message.success('更新成功');
+        message.success($t('finance.updateSuccessful'));
         showRechargeModal.value = false;
         fetchData();
       }
@@ -2134,7 +2122,7 @@ const handleSaveRecharge = async () => {
       const response = await rechargeApi.create(data);
 
       if (response.success) {
-        message.success('创建成功');
+        message.success($t('finance.createSuccess'));
         showRechargeModal.value = false;
         fetchData();
       }
@@ -2150,10 +2138,10 @@ const handleSaveRecharge = async () => {
 const handleConfirmRecharge = async (_order: RechargeOrder) => {
   try {
     // For now, just show success message since confirm API doesn't exist
-    message.success('充值确认成功');
+    message.success($t('finance.rechargeConfirmedSuccess'));
     fetchData();
   } catch (error) {
-    message.error('确认失败');
+    message.error($t('finance.confirmFailed'));
     console.error('Confirm recharge error:', error);
   }
 };
@@ -2241,7 +2229,7 @@ const handleTimeRangeChange = (value: string) => {
 
 const handleAdvancedSearch = () => {
   // TODO: Implement advanced search modal
-  message.info('高级搜索功能开发中...');
+  message.info($t('finance.advancedSearchFeatureInDevelopment1'));
 };
 
 const handleExport = async () => {
@@ -2271,7 +2259,7 @@ const handleExport = async () => {
     const response = await rechargeApi.getList(exportParams);
 
     if (!response || !response.records) {
-      message.error('导出数据失败');
+      message.error($t('finance.exportDataFailed'));
       return;
     }
 
@@ -2334,10 +2322,10 @@ const handleExport = async () => {
     link.click();
     document.body.removeChild(link);
 
-    message.success('导出成功');
+    message.success($t('finance.exportSuccessful'));
   } catch (error) {
     console.error('Export error:', error);
-    message.error('导出失败');
+    message.error($t('finance.exportFailed'));
   } finally {
     message.destroyAll();
   }
@@ -2418,11 +2406,11 @@ const handleViewUserDetail = async (row: RechargeOrder) => {
         showUserDetailModal.value = true;
       } else {
         console.error('❌ User data missing value field:', user);
-        message.warning('未找到用户信息: 用户数据格式错误');
+        message.warning($t('finance.notFoundUserInfoUserData'));
       }
     } else {
       console.error('❌ No users found in search response');
-      message.warning('未找到用户信息');
+      message.warning($t('finance.notFoundUserInfo'));
     }
   } catch (error: any) {
     console.error('❌ Error finding user:', error);
@@ -2454,7 +2442,7 @@ const fetchOrderDetails = async (orderId: string) => {
         message.error((response as any)?.error || '获取订单详情失败');
       }
     } else {
-      message.error('获取订单详情失败: 无响应数据');
+      message.error($t('finance.fetchOrderDetailsFailedNoData'));
     }
   } catch (error: any) {
     console.error('❌ Fetch order details error:', error);
@@ -2479,7 +2467,7 @@ const handleCreateSupplementaryOrder = () => {
 
 const handleSearchOrder = async () => {
   if (!supplementaryOrderForm.orderNumber.trim()) {
-    message.warning('请输入订单号');
+    message.warning($t('finance.pleaseEnterOrder'));
     return;
   }
 
@@ -2495,17 +2483,17 @@ const handleSearchOrder = async () => {
 
     if (foundOrder) {
       searchedOrder.value = foundOrder;
-      message.success('订单查找成功');
+      message.success($t('finance.orderSuccess'));
     } else {
       // If not found in current data, try to search via API
       // This would typically call a backend API to search for orders
-      message.warning('订单未找到，请检查订单号是否正确');
+      message.warning($t('finance.orderNotFoundPleaseCheckOrderYesNoCorrect'));
       searchError.value = '订单未找到，请检查订单号是否正确';
     }
   } catch (error) {
     console.error('搜索订单失败:', error);
     searchError.value = '搜索订单失败，请稍后重试';
-    message.error('搜索订单失败');
+    message.error($t('finance.searchOrderFailed'));
   } finally {
     searchingOrder.value = false;
   }
@@ -2513,7 +2501,7 @@ const handleSearchOrder = async () => {
 
 const handleConfirmSupplementaryOrder = async () => {
   if (!searchedOrder.value) {
-    message.warning('请先搜索并选择订单');
+    message.warning($t('finance.pleaseSearchSelectOrder'));
     return;
   }
 
@@ -2533,7 +2521,7 @@ const handleConfirmSupplementaryOrder = async () => {
     await fetchData();
   } catch (error) {
     console.error('创建补单失败:', error);
-    message.error('创建补单失败，请稍后重试');
+    message.error($t('finance.createSupplementaryOrderFailedPleaseLaterRetry'));
   } finally {
     creatingOrder.value = false;
   }

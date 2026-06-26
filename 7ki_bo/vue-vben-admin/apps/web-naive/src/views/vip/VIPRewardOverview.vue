@@ -1,15 +1,15 @@
 <template>
   <div class="vip-reward-overview">
     <Page
-      title="VIP奖励设置总览"
-      description="查看和管理所有VIP等级的奖励配置和统计信息"
+      :title="$t('vip.overviewTitle')"
+      :description="$t('vip.overviewDescription')"
     >
       <!-- 面包屑导航 -->
       <div class="mb-4">
         <n-breadcrumb>
-          <n-breadcrumb-item>优惠</n-breadcrumb-item>
-          <n-breadcrumb-item>VIP奖励</n-breadcrumb-item>
-          <n-breadcrumb-item>VIP奖励设置总览</n-breadcrumb-item>
+          <n-breadcrumb-item>{{ $t('vip.promotions') }}</n-breadcrumb-item>
+          <n-breadcrumb-item>{{ $t('vip.vipRewards') }}</n-breadcrumb-item>
+          <n-breadcrumb-item>{{ $t('vip.overviewBreadcrumb') }}</n-breadcrumb-item>
         </n-breadcrumb>
       </div>
 
@@ -18,31 +18,33 @@
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
             <div class="flex items-center gap-2">
-              <n-text>VIP开关:</n-text>
+              <n-text>{{ $t('vip.vipSwitchColon') }}</n-text>
               <n-switch
                 v-model:value="vipSystemEnabled"
                 @update:value="handleVIPToggle"
                 :loading="toggleLoading"
               />
               <n-text depth="3" class="text-sm">
-                {{ vipSystemEnabled ? '已启用' : '已关闭' }}
+                {{ vipSystemEnabled ? $t('vip.enabled') : $t('vip.closed') }}
               </n-text>
             </div>
           </div>
 
           <div class="flex items-center gap-2">
             <n-button @click="handleRewardImport" :loading="importLoading">
-              奖励导入
+              {{ $t('vip.rewardImport') }}
             </n-button>
 
-            <n-button @click="handleGlobalSettings"> VIP公共设置 </n-button>
+            <n-button @click="handleGlobalSettings">
+              {{ $t('vip.globalSettings') }}
+            </n-button>
 
             <n-button type="primary" @click="handleAddLevel">
-              新增等级
+              {{ $t('vip.addLevel') }}
             </n-button>
 
             <n-button @click="handleImportLevel" :loading="importLevelLoading">
-              导入等级
+              {{ $t('vip.importLevel') }}
             </n-button>
 
             <n-button
@@ -51,11 +53,11 @@
               :loading="batchSaveLoading"
               :disabled="!hasModifiedData"
             >
-              批量保存
+              {{ $t('vip.batchSave') }}
             </n-button>
 
             <n-button @click="handleRefresh" :loading="loading">
-              刷新
+              {{ $t('common.refresh') }}
             </n-button>
           </div>
         </div>
@@ -64,20 +66,26 @@
       <!-- 统计信息卡片 -->
       <n-card class="mb-4">
         <div class="grid grid-cols-5 gap-4">
-          <n-statistic label="总VIP等级" :value="summary.totalLevels" />
-          <n-statistic label="活跃VIP用户" :value="summary.activeUsers" />
           <n-statistic
-            label="本月奖励总额"
+            :label="$t('vip.totalVipLevels')"
+            :value="summary.totalLevels"
+          />
+          <n-statistic
+            :label="$t('vip.activeVipUsers')"
+            :value="summary.activeUsers"
+          />
+          <n-statistic
+            :label="$t('vip.monthlyRewardTotal')"
             :value="summary.monthlyRewards"
             suffix=" BRL"
           />
           <n-statistic
-            label="本周奖励总额"
+            :label="$t('vip.weeklyRewardTotal')"
             :value="summary.weeklyRewards"
             suffix=" BRL"
           />
           <n-statistic
-            label="今日奖励总额"
+            :label="$t('vip.dailyRewardTotal')"
             :value="summary.dailyRewards"
             suffix=" BRL"
           />
@@ -107,23 +115,23 @@
         <div class="mt-4 rounded bg-gray-50 p-4">
           <div class="grid grid-cols-4 gap-4 text-sm">
             <div>
-              <span class="font-medium">总用户数:</span>
+              <span class="font-medium">{{ $t('vip.totalUsers') }}</span>
               <span class="ml-2 text-blue-600">{{ summary.totalUsers }}</span>
             </div>
             <div>
-              <span class="font-medium">月奖励总计:</span>
+              <span class="font-medium">{{ $t('vip.monthlyRewardSum') }}</span>
               <span class="ml-2 text-green-600">{{
                 formatCurrency(summary.totalMonthlyRewards)
               }}</span>
             </div>
             <div>
-              <span class="font-medium">周奖励总计:</span>
+              <span class="font-medium">{{ $t('vip.weeklyRewardSum') }}</span>
               <span class="ml-2 text-orange-600">{{
                 formatCurrency(summary.totalWeeklyRewards)
               }}</span>
             </div>
             <div>
-              <span class="font-medium">日奖励总计:</span>
+              <span class="font-medium">{{ $t('vip.dailyRewardSum') }}</span>
               <span class="ml-2 text-purple-600">{{
                 formatCurrency(summary.totalDailyRewards)
               }}</span>
@@ -154,7 +162,7 @@
       <!-- 奖励导入弹窗 -->
       <n-modal
         v-model:show="showRewardImportModal"
-        title="奖励导入"
+        :title="$t('vip.rewardImport')"
         preset="dialog"
         style="width: 600px"
       >
@@ -171,29 +179,29 @@
                 <n-text style="font-size: 24px; font-weight: bold"> 📄 </n-text>
               </div>
               <n-text style="font-size: 16px">
-                点击或者拖拽文件到该区域来上传
+                {{ $t('vip.uploadClickOrDrag') }}
               </n-text>
               <n-p depth="3" style="margin: 8px 0 0 0">
-                请上传 Excel 或 CSV 格式的奖励配置文件
+                {{ $t('vip.uploadRewardConfigHint') }}
               </n-p>
             </n-upload-dragger>
           </n-upload>
 
           <n-text depth="3" class="text-sm">
-            支持格式: .xlsx, .xls, .csv | 最大文件大小: 10MB
+            {{ $t('vip.uploadFormatHint') }}
           </n-text>
         </div>
 
         <template #footer>
           <div class="flex justify-end gap-2">
-            <n-button @click="showRewardImportModal = false">取消</n-button>
+            <n-button @click="showRewardImportModal = false">{{ $t('common.cancel') }}</n-button>
             <n-button
               type="primary"
               @click="handleRewardImportConfirm"
               :loading="importLoading"
               :disabled="!fileList.length"
             >
-              导入
+              {{ $t('common.import') }}
             </n-button>
           </div>
         </template>
@@ -203,6 +211,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, onMounted, h } from 'vue';
 import { Page } from '@vben/common-ui';
 import {
@@ -309,7 +319,8 @@ const paginationConfig = reactive({
   showSizePicker: true,
   pageSizes: [10, 20, 50, 100],
   showQuickJumper: true,
-  prefix: ({ itemCount }: { itemCount: number }) => `共 ${itemCount} 条`,
+  prefix: ({ itemCount }: { itemCount: number }) =>
+    $t('vip.totalRecords', [itemCount]),
 });
 
 // 统计汇总数据
@@ -335,9 +346,9 @@ const formatCurrency = (amount: number): string => {
 };
 
 // 表格列配置 - 20列
-const columns: DataTableColumns<VIPRewardConfig> = [
+const columns = computed<DataTableColumns<VIPRewardConfig>>(() => [
   {
-    title: '序号',
+    title: $t('vip.serialNo'),
     key: 'index',
     width: 70,
     align: 'center',
@@ -345,7 +356,7 @@ const columns: DataTableColumns<VIPRewardConfig> = [
     render: (_, index) => index + 1,
   },
   {
-    title: 'VIP等级',
+    title: $t('vip.vipLevel'),
     key: 'vipLevel',
     width: 100,
     align: 'center',
@@ -354,7 +365,7 @@ const columns: DataTableColumns<VIPRewardConfig> = [
       h(NTag, { type: 'info', size: 'small' }, { default: () => row.vipLevel }),
   },
   {
-    title: '当前人数',
+    title: $t('vip.currentMemberCount'),
     key: 'userCount',
     width: 100,
     align: 'right',
@@ -362,7 +373,7 @@ const columns: DataTableColumns<VIPRewardConfig> = [
       h('span', { class: 'font-mono' }, row.userCount.toLocaleString()),
   },
   {
-    title: '币种',
+    title: $t('common.currency'),
     key: 'currency',
     width: 80,
     align: 'center',
@@ -374,7 +385,7 @@ const columns: DataTableColumns<VIPRewardConfig> = [
       ),
   },
   {
-    title: '预设图',
+    title: $t('vip.presetImage'),
     key: 'icon',
     width: 80,
     align: 'center',
@@ -388,7 +399,7 @@ const columns: DataTableColumns<VIPRewardConfig> = [
       }),
   },
   {
-    title: '晋级奖励金额',
+    title: $t('vip.upgradeRewardAmount'),
     key: 'upgradeAmount',
     width: 120,
     align: 'right',
@@ -400,7 +411,7 @@ const columns: DataTableColumns<VIPRewardConfig> = [
       ),
   },
   {
-    title: '晋级所需打码',
+    title: $t('vip.upgradeRequiredBet'),
     key: 'upgradeDMLimit',
     width: 120,
     align: 'right',
@@ -408,7 +419,7 @@ const columns: DataTableColumns<VIPRewardConfig> = [
       h('span', { class: 'font-mono' }, row.upgradeDMLimit.toLocaleString()),
   },
   {
-    title: '晋级彩金',
+    title: $t('vip.upgradeCash'),
     key: 'upgradeCash',
     width: 100,
     align: 'right',
@@ -420,7 +431,7 @@ const columns: DataTableColumns<VIPRewardConfig> = [
       ),
   },
   {
-    title: '月充值值',
+    title: $t('vip.monthlyRecharge'),
     key: 'monthlyRecharge',
     width: 100,
     align: 'right',
@@ -432,7 +443,7 @@ const columns: DataTableColumns<VIPRewardConfig> = [
       ),
   },
   {
-    title: '当月打码',
+    title: $t('vip.monthlyDm'),
     key: 'monthlyDM',
     width: 100,
     align: 'right',
@@ -440,7 +451,7 @@ const columns: DataTableColumns<VIPRewardConfig> = [
       h('span', { class: 'font-mono' }, row.monthlyDM.toLocaleString()),
   },
   {
-    title: '月返水',
+    title: $t('vip.previewColMonthlyRebate'),
     key: 'monthlyRebate',
     width: 100,
     align: 'right',
@@ -452,7 +463,7 @@ const columns: DataTableColumns<VIPRewardConfig> = [
       ),
   },
   {
-    title: '月返水打码',
+    title: $t('vip.monthlyDmRebate'),
     key: 'monthlyDMRebate',
     width: 120,
     align: 'right',
@@ -460,7 +471,7 @@ const columns: DataTableColumns<VIPRewardConfig> = [
       h('span', { class: 'font-mono' }, row.monthlyDMRebate.toLocaleString()),
   },
   {
-    title: '周充值值',
+    title: $t('vip.weeklyRecharge'),
     key: 'weeklyRecharge',
     width: 100,
     align: 'right',
@@ -472,7 +483,7 @@ const columns: DataTableColumns<VIPRewardConfig> = [
       ),
   },
   {
-    title: '周打码',
+    title: $t('vip.weeklyDm'),
     key: 'weeklyDM',
     width: 100,
     align: 'right',
@@ -480,7 +491,7 @@ const columns: DataTableColumns<VIPRewardConfig> = [
       h('span', { class: 'font-mono' }, row.weeklyDM.toLocaleString()),
   },
   {
-    title: '周返水',
+    title: $t('vip.weeklyRebateWater'),
     key: 'weeklyRebate',
     width: 100,
     align: 'right',
@@ -492,7 +503,7 @@ const columns: DataTableColumns<VIPRewardConfig> = [
       ),
   },
   {
-    title: '周返水打码',
+    title: $t('vip.weeklyDmRebate'),
     key: 'weeklyDMRebate',
     width: 120,
     align: 'right',
@@ -500,7 +511,7 @@ const columns: DataTableColumns<VIPRewardConfig> = [
       h('span', { class: 'font-mono' }, row.weeklyDMRebate.toLocaleString()),
   },
   {
-    title: '日返水',
+    title: $t('vip.dailyRebateWater'),
     key: 'dailyRebate',
     width: 100,
     align: 'right',
@@ -512,7 +523,7 @@ const columns: DataTableColumns<VIPRewardConfig> = [
       ),
   },
   {
-    title: '目标值',
+    title: $t('vip.targetValue'),
     key: 'dailyTarget',
     width: 100,
     align: 'right',
@@ -520,7 +531,7 @@ const columns: DataTableColumns<VIPRewardConfig> = [
       h('span', { class: 'font-mono' }, row.dailyTarget.toLocaleString()),
   },
   {
-    title: '日返水打码',
+    title: $t('vip.dailyDmRebate'),
     key: 'dailyDMRebate',
     width: 120,
     align: 'right',
@@ -528,7 +539,7 @@ const columns: DataTableColumns<VIPRewardConfig> = [
       h('span', { class: 'font-mono' }, row.dailyDMRebate.toLocaleString()),
   },
   {
-    title: '生日彩金',
+    title: $t('vip.birthdayCash'),
     key: 'birthdayCash',
     width: 100,
     align: 'right',
@@ -540,7 +551,7 @@ const columns: DataTableColumns<VIPRewardConfig> = [
       ),
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 120,
     align: 'center',
@@ -559,14 +570,14 @@ const columns: DataTableColumns<VIPRewardConfig> = [
                   type: 'primary',
                   onClick: () => handleEdit(row),
                 },
-                { default: () => '修改' },
+                { default: () => $t('common.modify') },
               ),
-            default: () => '编辑VIP等级配置',
+            default: () => $t('vip.editLevelConfig'),
           },
         ),
       ]),
   },
-];
+]);
 
 // 事件处理函数
 const handleVIPToggle = async (enabled: boolean) => {
@@ -577,9 +588,11 @@ const handleVIPToggle = async (enabled: boolean) => {
       ...settings,
       isEnabled: enabled,
     });
-    message.success(`VIP系统已${enabled ? '启用' : '关闭'}`);
+    message.success(
+      enabled ? $t('vip.systemEnabled') : $t('vip.systemDisabled'),
+    );
   } catch (error) {
-    message.error('VIP系统状态更新失败');
+    message.error($t('vip.systemStatusUpdateFailed'));
     vipSystemEnabled.value = !enabled; // 回滚状态
     console.error('Error toggling VIP system:', error);
   } finally {
@@ -609,11 +622,11 @@ const handleBatchSave = async () => {
   try {
     // 实现批量保存逻辑
     await bulkUpdateVIPLevels(tableData.value);
-    message.success('批量保存成功');
+    message.success($t('vip.batchSaveSuccess'));
     hasModifiedData.value = false;
     await fetchTableData();
   } catch (error) {
-    message.error('批量保存失败');
+    message.error($t('vip.batchSaveFailed'));
     console.error('Error batch saving:', error);
   } finally {
     batchSaveLoading.value = false;
@@ -671,7 +684,7 @@ const handleFileListChange = (files: UploadFileInfo[]) => {
 
 const handleRewardImportConfirm = async () => {
   if (!fileList.value.length) {
-    message.warning('请选择要导入的文件');
+    message.warning($t('vip.selectImportFile'));
     return;
   }
 
@@ -682,12 +695,12 @@ const handleRewardImportConfirm = async () => {
     formData.append('file', fileList.value[0].file!);
 
     // 调用导入API
-    message.success('奖励配置导入成功');
+    message.success($t('vip.rewardImportSuccess'));
     showRewardImportModal.value = false;
     fileList.value = [];
     await fetchTableData();
   } catch (error) {
-    message.error('导入失败，请检查文件格式');
+    message.error($t('vip.importFailedCheckFormat'));
     console.error('Error importing rewards:', error);
   } finally {
     importLoading.value = false;
@@ -749,7 +762,7 @@ const fetchTableData = async () => {
     // 更新统计数据
     updateSummary();
   } catch (error) {
-    message.error('获取VIP奖励配置失败');
+    message.error($t('vip.loadRewardConfigFailed'));
     console.error('Error fetching VIP reward data:', error);
   } finally {
     loading.value = false;

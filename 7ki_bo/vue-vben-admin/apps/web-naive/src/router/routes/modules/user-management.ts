@@ -9,7 +9,7 @@ const routes: RouteRecordRaw[] = [
       icon: 'ic:baseline-people',
       keepAlive: true,
       order: 200,
-      title: '用户管理',
+      title: 'page.menu.userManagement',
     },
     name: 'UserManagement',
     path: '/user-management',
@@ -17,7 +17,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '所有会员',
+          title: 'page.menu.allMembers',
         },
         name: 'AllMembers',
         path: '/user-management/all-members',
@@ -26,7 +26,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '会员层级管理',
+          title: 'page.menu.memberTierManagement',
         },
         name: 'MemberTierManagement',
         path: '/usermanagerNEW/memberTier',
@@ -36,7 +36,7 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
-          title: '注册和验证',
+          title: 'page.menu.registrationVerification',
         },
         name: 'RegistrationVerification',
         path: '/user-management/registration-verification',

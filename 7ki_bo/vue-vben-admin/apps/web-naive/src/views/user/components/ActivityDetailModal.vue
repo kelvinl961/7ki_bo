@@ -236,7 +236,7 @@
 
       <template #footer>
         <div class="flex justify-between">
-          <n-button @click="handleClose">关闭</n-button>
+          <n-button @click="handleClose">{{ $t('common.close') }}</n-button>
           <n-space>
             <n-button @click="$emit('refresh', activity?.id)">
               刷新状态
@@ -257,6 +257,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, computed } from 'vue';
 import {
   NModal,

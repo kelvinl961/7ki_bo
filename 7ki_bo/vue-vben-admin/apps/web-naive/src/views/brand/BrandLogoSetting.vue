@@ -1,31 +1,27 @@
 <template>
-  <Page title="品牌LOGO设置" description="品牌标识和图片资源管理">
-    <!-- 面包屑导航 -->
+  <Page :title="$t('brand.logoSettingTitle')" :description="$t('brand.logoSettingDesc')">
     <div class="mb-4">
       <n-breadcrumb>
-        <n-breadcrumb-item>品牌管理</n-breadcrumb-item>
-        <n-breadcrumb-item>品牌LOGO设置</n-breadcrumb-item>
+        <n-breadcrumb-item>{{ $t('brand.management') }}</n-breadcrumb-item>
+        <n-breadcrumb-item>{{ $t('brand.logoSettingBreadcrumb') }}</n-breadcrumb-item>
       </n-breadcrumb>
     </div>
 
-    <!-- 主要内容区域 -->
+    
     <n-tabs 
       v-model:value="activeTab" 
       type="line" 
       animated
       @update:value="handleTabChange"
     >
-      <!-- LOGO及图片设置 -->
-      <n-tab-pane name="logo-settings" tab="LOGO及图片设置">
-        <!-- 筛选器区域 -->
+      <n-tab-pane name="logo-settings" :tab="$t('brand.logoAndImageSetting')">
         <n-card class="mb-4">
           <div class="flex flex-wrap gap-4 items-end">
-            <!-- LOGO类型筛选 -->
             <div class="flex flex-col">
-              <label class="mb-2 text-sm font-medium">LOGO类型</label>
+              <label class="mb-2 text-sm font-medium">{{ $t('brand.logoType') }}</label>
               <n-select
                 v-model:value="filters.logoType"
-                placeholder="选择LOGO类型"
+                :placeholder="$t('brand.selectLogoType')"
                 clearable
                 style="width: 160px"
                 :options="logoTypeOptions"
@@ -33,12 +29,11 @@
               />
             </div>
 
-            <!-- 启用状态筛选 -->
             <div class="flex flex-col">
-              <label class="mb-2 text-sm font-medium">启用状态</label>
+              <label class="mb-2 text-sm font-medium">{{ $t('brand.enableStatus') }}</label>
               <n-select
                 v-model:value="filters.isEnabled"
-                placeholder="选择状态"
+                :placeholder="$t('brand.selectEnableStatus')"
                 clearable
                 style="width: 140px"
                 :options="statusOptions"
@@ -46,25 +41,25 @@
               />
             </div>
 
-            <!-- 操作人筛选 -->
+            
             <div class="flex flex-col">
-              <label class="mb-2 text-sm font-medium">操作人</label>
+              <label class="mb-2 text-sm font-medium">{{ $t('common.operator') }}</label>
               <n-input
                 v-model:value="filters.operator"
-                placeholder="输入操作人"
+                :placeholder="$t('brand.enterOperator')"
                 clearable
                 style="width: 140px"
                 @keyup.enter="handleFilter"
               />
             </div>
 
-            <!-- 搜索按钮 -->
+            
             <div class="flex gap-2">
               <n-button type="primary" @click="handleFilter">
-                搜索
+                {{ $t('common.search') }}
               </n-button>
               <n-button @click="resetFilter">
-                重置
+                {{ $t('common.reset') }}
               </n-button>
             </div>
           </div>
@@ -86,22 +81,21 @@
             <n-card :bordered="false" class="rounded-16px shadow-sm">
               <div class="flex justify-between items-center">
                 <div class="flex items-center gap-4">
-                  <!-- 主要操作按钮 -->
+                  
                   <div class="flex gap-2">
                     <n-button type="primary" @click="handleCreate">
-                      新增设置
+                      {{ $t('brand.addSetting') }}
                     </n-button>
                     <n-button @click="handleDownloadTemplate">
-                      下载模板
+                      {{ $t('brand.downloadTemplate') }}
                     </n-button>
                     <n-button @click="handleClearCache">
-                      清除缓存
+                      {{ $t('brand.clearCache') }}
                     </n-button>
                   </div>
                   
-                  <!-- 选择信息 -->
                   <div class="text-sm text-gray-600">
-                    共 {{ paginationReactive.total }} 条记录
+                    {{ $t('brand.totalRecords', [paginationReactive.total]) }}
                   </div>
                 </div>
               </div>
@@ -110,124 +104,112 @@
         </SmartDataGrid>
       </n-tab-pane>
 
-      <!-- 网页信息（含SEO） -->
-      <n-tab-pane name="website-info" tab="网页信息（含SEO）">
+      <n-tab-pane name="website-info" :tab="$t('brand.websiteInfoSeo')">
         <n-card>
-          <n-empty description="网页信息（含SEO）功能开发中..." size="large">
+          <n-empty :description="$t('brand.websiteInfoDeveloping')" size="large">
             <template #extra>
-              <n-button type="primary" @click="handleComingSoon('网页信息（含SEO）')">
-                敬请期待
+              <n-button type="primary" @click="handleComingSoon($t('brand.websiteInfoSeo'))">
+                {{ $t('game.comingSoon') }}
               </n-button>
             </template>
           </n-empty>
         </n-card>
       </n-tab-pane>
 
-      <!-- 关于我们 -->
-      <n-tab-pane name="about-us" tab="关于我们">
+      <n-tab-pane name="about-us" :tab="$t('brand.aboutUs')">
         <n-card>
-          <n-empty description="关于我们功能开发中..." size="large">
+          <n-empty :description="$t('brand.aboutUsDeveloping')" size="large">
             <template #extra>
-              <n-button type="primary" @click="handleComingSoon('关于我们')">
-                敬请期待
+              <n-button type="primary" @click="handleComingSoon($t('brand.aboutUs'))">
+                {{ $t('game.comingSoon') }}
               </n-button>
             </template>
           </n-empty>
         </n-card>
       </n-tab-pane>
 
-      <!-- 页脚配置 -->
-      <n-tab-pane name="footer-config" tab="页脚配置">
+      <n-tab-pane name="footer-config" :tab="$t('brand.footerConfig')">
         <n-card>
-          <n-empty description="页脚配置功能开发中..." size="large">
+          <n-empty :description="$t('brand.footerConfigDeveloping')" size="large">
             <template #extra>
-              <n-button type="primary" @click="handleComingSoon('页脚配置')">
-                敬请期待
+              <n-button type="primary" @click="handleComingSoon($t('brand.footerConfig'))">
+                {{ $t('game.comingSoon') }}
               </n-button>
             </template>
           </n-empty>
         </n-card>
       </n-tab-pane>
 
-      <!-- 官方频道或社区 -->
-      <n-tab-pane name="official-channels" tab="官方频道或社区">
+      <n-tab-pane name="official-channels" :tab="$t('brand.officialChannels')">
         <n-card>
-          <n-empty description="官方频道或社区功能开发中..." size="large">
+          <n-empty :description="$t('brand.officialChannelsDeveloping')" size="large">
             <template #extra>
-              <n-button type="primary" @click="handleComingSoon('官方频道或社区')">
-                敬请期待
+              <n-button type="primary" @click="handleComingSoon($t('brand.officialChannels'))">
+                {{ $t('game.comingSoon') }}
               </n-button>
             </template>
           </n-empty>
         </n-card>
       </n-tab-pane>
 
-      <!-- 设置找到我们 -->
-      <n-tab-pane name="find-us" tab="设置找到我们">
+      <n-tab-pane name="find-us" :tab="$t('brand.findUs')">
         <n-card>
-          <n-empty description="设置找到我们功能开发中..." size="large">
+          <n-empty :description="$t('brand.findUsDeveloping')" size="large">
             <template #extra>
-              <n-button type="primary" @click="handleComingSoon('设置找到我们')">
-                敬请期待
+              <n-button type="primary" @click="handleComingSoon($t('brand.findUs'))">
+                {{ $t('game.comingSoon') }}
               </n-button>
             </template>
           </n-empty>
         </n-card>
       </n-tab-pane>
 
-      <!-- APP配置 -->
-      <n-tab-pane name="app-config" tab="APP配置">
+      <n-tab-pane name="app-config" :tab="$t('brand.appConfig')">
         <n-card>
-          <n-empty description="APP配置功能开发中..." size="large">
+          <n-empty :description="$t('brand.appConfigDeveloping')" size="large">
             <template #extra>
-              <n-button type="primary" @click="handleComingSoon('APP配置')">
-                敬请期待
+              <n-button type="primary" @click="handleComingSoon($t('brand.appConfig'))">
+                {{ $t('game.comingSoon') }}
               </n-button>
             </template>
           </n-empty>
         </n-card>
       </n-tab-pane>
 
-      <!-- 颜色主题演示 -->
-      <n-tab-pane name="color-theme-demo" tab="颜色主题演示">
+      <n-tab-pane name="color-theme-demo" :tab="$t('brand.colorThemeDemo')">
         <ColorThemeDemo />
       </n-tab-pane>
 
-      <!-- 皮肤语言配置新 -->
-      <n-tab-pane name="skin-language" tab="皮肤语言配置新">
-        <!-- 筛选器区域 -->
+      <n-tab-pane name="skin-language" :tab="$t('brand.skinLanguageConfig')">
         <n-card class="mb-4">
           <div class="flex flex-wrap gap-4 items-end">
-            <!-- 品牌ID筛选 -->
             <div class="flex flex-col">
-              <label class="mb-2 text-sm font-medium">品牌ID</label>
+              <label class="mb-2 text-sm font-medium">{{ $t('brand.brandId') }}</label>
               <n-input
                 v-model:value="skinLangFilters.brandId"
-                placeholder="输入品牌ID"
+                :placeholder="$t('brand.enterBrandId')"
                 clearable
                 style="width: 140px"
                 @keyup.enter="handleSkinLangFilter"
               />
             </div>
 
-            <!-- 品牌名称筛选 -->
             <div class="flex flex-col">
-              <label class="mb-2 text-sm font-medium">品牌名称</label>
+              <label class="mb-2 text-sm font-medium">{{ $t('brand.brandName') }}</label>
               <n-input
                 v-model:value="skinLangFilters.brandName"
-                placeholder="输入品牌名称"
+                :placeholder="$t('brand.enterBrandName')"
                 clearable
                 style="width: 160px"
                 @keyup.enter="handleSkinLangFilter"
               />
             </div>
 
-            <!-- 品牌类型筛选 -->
             <div class="flex flex-col">
-              <label class="mb-2 text-sm font-medium">品牌类型</label>
+              <label class="mb-2 text-sm font-medium">{{ $t('brand.brandType') }}</label>
               <n-select
                 v-model:value="skinLangFilters.brandType"
-                placeholder="选择品牌类型"
+                :placeholder="$t('brand.selectBrandType')"
                 clearable
                 style="width: 140px"
                 :options="brandTypeOptions"
@@ -235,12 +217,11 @@
               />
             </div>
 
-            <!-- 渠道类型筛选 -->
             <div class="flex flex-col">
-              <label class="mb-2 text-sm font-medium">渠道类型</label>
+              <label class="mb-2 text-sm font-medium">{{ $t('brand.channelType') }}</label>
               <n-select
                 v-model:value="skinLangFilters.channelType"
-                placeholder="选择渠道类型"
+                :placeholder="$t('brand.selectChannelType')"
                 clearable
                 style="width: 140px"
                 :options="channelTypeOptions"
@@ -248,12 +229,11 @@
               />
             </div>
 
-            <!-- 版式风格筛选 -->
             <div class="flex flex-col">
-              <label class="mb-2 text-sm font-medium">版式风格</label>
+              <label class="mb-2 text-sm font-medium">{{ $t('brand.layoutStyle') }}</label>
               <n-select
                 v-model:value="skinLangFilters.skinStyle"
-                placeholder="选择版式风格"
+                :placeholder="$t('brand.selectLayoutStyle')"
                 clearable
                 filterable
                 style="width: 180px"
@@ -262,13 +242,12 @@
               />
             </div>
 
-            <!-- 搜索按钮 -->
             <div class="flex gap-2">
               <n-button type="primary" @click="handleSkinLangFilter">
-                搜索
+                {{ $t('common.search') }}
               </n-button>
               <n-button @click="resetSkinLangFilter">
-                重置
+                {{ $t('common.reset') }}
               </n-button>
             </div>
           </div>
@@ -290,16 +269,14 @@
             <n-card :bordered="false" class="rounded-16px shadow-sm">
               <div class="flex justify-between items-center">
                 <div class="flex items-center gap-4">
-                  <!-- 主要操作按钮 -->
+                  
                   <div class="flex gap-2">
                     <n-button type="primary" @click="handleSkinLangCreate">
-                      新增配置
+                      {{ $t('brand.addConfig') }}
                     </n-button>
                   </div>
-                  
-                  <!-- 选择信息 -->
                   <div class="text-sm text-gray-600">
-                    共 {{ skinLangPaginationReactive.total }} 条记录
+                    {{ $t('brand.totalRecords', [skinLangPaginationReactive.total]) }}
                   </div>
                 </div>
               </div>
@@ -308,7 +285,7 @@
         </SmartDataGrid>
 
         <n-alert type="info" class="mt-3">
-          在这里点击每行「修改」后，可直接在弹窗内修改主色、强调色、按钮色、主文字、次文字、点缀文字。
+          {{ $t('brand.skinLangEditHint') }}
         </n-alert>
       </n-tab-pane>
     </n-tabs>
@@ -321,10 +298,9 @@
       @submit="handleSkinLangSubmit"
     />
 
-    <!-- 创建/编辑对话框 -->
     <n-modal
       v-model:show="showModal"
-      :title="editingItem ? '编辑LOGO设置' : '新增LOGO设置'"
+      :title="editingItem ? $t('brand.editLogoSetting') : $t('brand.addLogoSetting')"
       preset="dialog"
       style="width: 800px"
       @after-leave="resetForm"
@@ -336,131 +312,94 @@
         label-placement="left"
         label-width="120"
       >
-            <n-form-item label="LOGO类型" path="logoType">
+            <n-form-item :label="$t('brand.logoType')" path="logoType">
               <n-select
                 v-model:value="formData.logoType"
-                placeholder="选择LOGO类型"
+                :placeholder="$t('brand.selectLogoType')"
                 :options="logoTypeOptions"
               />
             </n-form-item>
-            
-            <!-- 品牌名称（站点品牌） -->
-            <n-form-item label="品牌名称（站点品牌）" path="brandName">
-              <n-input v-model:value="formData.brandName" placeholder="输入品牌名称，最多30字" />
+
+            <n-form-item :label="$t('brand.brandNameSite')" path="brandName">
+              <n-input v-model:value="formData.brandName" :placeholder="$t('brand.enterBrandNameMax30')" />
             </n-form-item>
-            
-            <!-- 网页标题 -->
-            <n-form-item label="网页标题" path="webTitle">
-              <n-input v-model:value="formData.webTitle" placeholder="输入网页标题" />
+
+            <n-form-item :label="$t('brand.webTitle')" path="webTitle">
+              <n-input v-model:value="formData.webTitle" :placeholder="$t('brand.enterWebTitle')" />
             </n-form-item>
-            
-            <!-- 点击logo跳转 -->
-            <n-form-item label="点击logo跳转" path="logoClickType">
+
+            <n-form-item :label="$t('brand.logoClickRedirect')" path="logoClickType">
               <div class="flex items-center gap-2">
                 <n-select 
                   v-model:value="formData.logoClickType" 
-                  :options="[
-                    { label: '首页', value: 'homepage' },
-                    { label: '自定义', value: 'custom' }
-                  ]"
+                  :options="logoClickOptions"
                   style="width: 140px"
                 />
                 <n-input 
                   v-if="formData.logoClickType === 'custom'" 
                   v-model:value="formData.logoClickUrl" 
-                  placeholder="输入跳转链接，如 https://www.example.com" 
+                  :placeholder="$t('brand.enterRedirectUrl')" 
                   style="flex:1"
                 />
               </div>
             </n-form-item>
         
-        <n-form-item label="启用状态">
+        <n-form-item :label="$t('brand.enableStatus')">
           <n-switch v-model:value="formData.isEnabled" />
         </n-form-item>
 
-        <!-- 图片上传区域 -->
         <div class="image-upload-section">
-          <h4 class="mb-4 text-base font-medium">图片设置</h4>
+          <h4 class="mb-4 text-base font-medium">{{ $t('brand.imageSettings') }}</h4>
           
           <div class="grid grid-cols-2 gap-4">
-            <!-- 加载骨架屏（Loading Image） -->
-            <n-form-item label="加载骨架屏">
+            <n-form-item :label="$t('brand.loadingSkeleton')">
               <MediaLibrarySelector 
                 v-model="formData.skeletonImageFileUrl" 
                 :accept-types="['image']"
-                placeholder="从媒体库选择或上传骨架屏（建议1600x900，≤1MB）"
-              />
-            </n-form-item>
-            <!-- 登录页入口图 -->
-            <!--<n-form-item label="登录页入口图">
-              <MediaLibrarySelector 
-                v-model="formData.loginImageFileUrl" 
-                :accept-types="['image']"
-                placeholder="从媒体库选择或上传（建议1920x1080，≤3MB）"
-              />
-            </n-form-item>-->
-
-            <!-- APP商店图标 -->
-            <!--<n-form-item label="APP商店图标">
-              <MediaLibrarySelector 
-                v-model="formData.appStoreImageFileUrl" 
-                :accept-types="['image']"
-                placeholder="从媒体库选择或上传（建议1024x1024，≤1MB）"
+                :placeholder="$t('brand.skeletonPlaceholder')"
               />
             </n-form-item>
 
-            <!-- APP内部LOGO -->
-            <!--<n-form-item label="APP内部LOGO">
-              <MediaLibrarySelector 
-                v-model="formData.appInternalLogoFileUrl" 
-                :accept-types="['image']"
-                placeholder="从媒体库选择或上传（建议200x80，≤500KB）"
-              />
-            </n-form-item>-->
-
-            <!-- 大厅LOGO -->
-            <n-form-item label="大厅LOGO">
+            <n-form-item :label="$t('brand.lobbyLogo')">
               <MediaLibrarySelector 
                 v-model="formData.lobbyLogoFileUrl" 
                 :accept-types="['image']"
-                placeholder="从媒体库选择或上传（建议160x64，≤300KB）"
+                :placeholder="$t('brand.lobbyLogoPlaceholder')"
               />
             </n-form-item>
 
-            <!-- 网页端图标 -->
-            <n-form-item label="网页端图标">
+            <n-form-item :label="$t('brand.webFavicon')">
               <MediaLibrarySelector 
                 v-model="formData.webFaviconFileUrl" 
                 :accept-types="['image']"
-                placeholder="从媒体库选择或上传（建议32x32，≤100KB）"
+                :placeholder="$t('brand.webFaviconPlaceholder')"
               />
             </n-form-item>
 
-            <!-- 网页LOGO -->
-            <n-form-item label="网页LOGO">
+            <n-form-item :label="$t('brand.webLogo')">
               <MediaLibrarySelector 
                 v-model="formData.webLogoFileUrl" 
                 :accept-types="['image']"
-                placeholder="从媒体库选择或上传（建议160x48，≤200KB）"
+                :placeholder="$t('brand.webLogoPlaceholder')"
               />
             </n-form-item>
           </div>
         </div>
 
-        <n-form-item label="限制展示内容" path="restrictedContent">
+        <n-form-item :label="$t('brand.restrictedContent')" path="restrictedContent">
           <n-input
             v-model:value="formData.restrictedContent"
             type="textarea"
-            placeholder="请输入限制展示内容"
+            :placeholder="$t('brand.enterRestrictedContent')"
             :rows="3"
           />
         </n-form-item>
 
-        <n-form-item label="备注" path="remark">
+        <n-form-item :label="$t('common.remark')" path="remark">
           <n-input
             v-model:value="formData.remark"
             type="textarea"
-            placeholder="请输入备注信息"
+            :placeholder="$t('brand.enterRemarkInfo')"
             :rows="2"
           />
         </n-form-item>
@@ -468,58 +407,57 @@
       
       <template #action>
         <div class="flex gap-2 justify-end">
-          <n-button @click="showModal = false">取消</n-button>
+          <n-button @click="showModal = false">{{ $t('common.cancel') }}</n-button>
           <n-button type="primary" @click="handleSubmit" :loading="submitting">
-            {{ editingItem ? '更新' : '创建' }}
+            {{ editingItem ? $t('common.save') : $t('common.create') }}
           </n-button>
         </div>
       </template>
     </n-modal>
 
-    <!-- 详情对话框 -->
     <n-modal
       v-model:show="showDetailModal"
-      title="LOGO设置详情"
+      :title="$t('brand.logoSettingDetail')"
       preset="dialog"
       style="width: 900px"
     >
       <div v-if="detailData" class="detail-content">
         <div class="grid grid-cols-2 gap-4 mb-6">
           <div>
-            <label class="text-sm font-medium text-gray-600">LOGO类型</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('brand.logoType') }}</label>
             <div class="mt-1">
               <n-tag :type="detailData.logoType === '自定义图片' ? 'primary' : 'default'">
-                {{ detailData.logoType }}
+                {{ getLogoTypeLabel(detailData.logoType) }}
               </n-tag>
             </div>
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-600">启用状态</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('brand.enableStatus') }}</label>
             <div class="mt-1">
               <n-tag :type="detailData.isEnabled ? 'success' : 'error'">
-                {{ detailData.isEnabled ? '启用' : '禁用' }}
+                {{ detailData.isEnabled ? $t('common.enabled') : $t('common.disabled') }}
               </n-tag>
             </div>
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-600">操作人</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('common.operator') }}</label>
             <div class="mt-1">{{ detailData.operator }}</div>
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-600">操作时间</label>
+            <label class="text-sm font-medium text-gray-600">{{ $t('common.operationTime') }}</label>
             <div class="mt-1">{{ formatDate(detailData.updatedAt) }}</div>
           </div>
         </div>
 
         <div class="mb-6">
-          <h4 class="text-base font-medium mb-4">图片预览</h4>
+          <h4 class="text-base font-medium mb-4">{{ $t('brand.imagePreview') }}</h4>
           <div class="grid grid-cols-3 gap-4">
             <div v-if="detailData.loginImage" class="text-center">
-              <label class="text-sm font-medium text-gray-600">登录页入口图</label>
+              <label class="text-sm font-medium text-gray-600">{{ $t('brand.loginPageImage') }}</label>
               <div class="mt-2">
                 <n-image 
                   :src="getImageUrl(detailData.loginImage)" 
-                  alt="登录页入口图"
+                  :alt="$t('brand.loginPageImage')"
                   width="120"
                   height="80"
                   object-fit="cover"
@@ -528,11 +466,11 @@
               </div>
             </div>
             <div v-if="detailData.appStoreImage" class="text-center">
-              <label class="text-sm font-medium text-gray-600">APP商店图标</label>
+              <label class="text-sm font-medium text-gray-600">{{ $t('brand.appStoreIcon') }}</label>
               <div class="mt-2">
                 <n-image 
                   :src="getImageUrl(detailData.appStoreImage)" 
-                  alt="APP商店图标"
+                  :alt="$t('brand.appStoreIcon')"
                   width="60"
                   height="60"
                   object-fit="cover"
@@ -541,11 +479,11 @@
               </div>
             </div>
             <div v-if="detailData.appInternalLogo" class="text-center">
-              <label class="text-sm font-medium text-gray-600">APP内部LOGO</label>
+              <label class="text-sm font-medium text-gray-600">{{ $t('brand.appInternalLogo') }}</label>
               <div class="mt-2">
                 <n-image 
                   :src="getImageUrl(detailData.appInternalLogo)" 
-                  alt="APP内部LOGO"
+                  :alt="$t('brand.appInternalLogo')"
                   width="100"
                   height: 40
                   object-fit="cover"
@@ -554,11 +492,11 @@
               </div>
             </div>
             <div v-if="detailData.lobbyLogo" class="text-center">
-              <label class="text-sm font-medium text-gray-600">大厅LOGO</label>
+              <label class="text-sm font-medium text-gray-600">{{ $t('brand.lobbyLogo') }}</label>
               <div class="mt-2">
                 <n-image 
                   :src="getImageUrl(detailData.lobbyLogo)" 
-                  alt="大厅LOGO"
+                  :alt="$t('brand.lobbyLogo')"
                   width="80"
                   height="32"
                   object-fit="cover"
@@ -567,11 +505,11 @@
               </div>
             </div>
             <div v-if="detailData.webFavicon" class="text-center">
-              <label class="text-sm font-medium text-gray-600">网页端图标</label>
+              <label class="text-sm font-medium text-gray-600">{{ $t('brand.webFavicon') }}</label>
               <div class="mt-2">
                 <n-image 
                   :src="getImageUrl(detailData.webFavicon)" 
-                  alt="网页端图标"
+                  :alt="$t('brand.webFavicon')"
                   width="32"
                   height="32"
                   object-fit="cover"
@@ -580,11 +518,11 @@
               </div>
             </div>
             <div v-if="detailData.webLogo" class="text-center">
-              <label class="text-sm font-medium text-gray-600">网页LOGO</label>
+              <label class="text-sm font-medium text-gray-600">{{ $t('brand.webLogo') }}</label>
               <div class="mt-2">
                 <n-image 
                   :src="getImageUrl(detailData.webLogo)" 
-                  alt="网页LOGO"
+                  :alt="$t('brand.webLogo')"
                   width="80"
                   height="24"
                   object-fit="cover"
@@ -596,19 +534,19 @@
         </div>
 
         <div v-if="detailData.restrictedContent" class="mb-4">
-          <label class="text-sm font-medium text-gray-600">限制展示内容</label>
+          <label class="text-sm font-medium text-gray-600">{{ $t('brand.restrictedContent') }}</label>
           <div class="mt-1 p-3 bg-gray-50 rounded">{{ detailData.restrictedContent }}</div>
         </div>
 
         <div v-if="detailData.remark" class="mb-4">
-          <label class="text-sm font-medium text-gray-600">备注</label>
+          <label class="text-sm font-medium text-gray-600">{{ $t('common.remark') }}</label>
           <div class="mt-1 p-3 bg-gray-50 rounded">{{ detailData.remark }}</div>
         </div>
       </div>
       
       <template #action>
         <div class="flex gap-2 justify-end">
-          <n-button @click="showDetailModal = false">关闭</n-button>
+          <n-button @click="showDetailModal = false">{{ $t('common.close') }}</n-button>
         </div>
       </template>
     </n-modal>
@@ -616,6 +554,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, onMounted, h, watch, defineAsyncComponent } from 'vue';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 const SmartDataGrid = defineAsyncComponent(() => import('../../components/smart/SmartDataGrid/index.vue'));
@@ -712,7 +652,7 @@ const skinLangCurrentPage = ref(1);
 const skinLangCurrentPageSize = ref(10);
 const showSkinLangModal = ref(false);
 const editingSkinLangItem = ref<BrandSkinLangConfig | null>(null);
-/** 皮肤语言配置弹窗是否为详情模式（只读+预览，仅关闭按钮） */
+
 const skinLangDetailMode = ref(false);
 
 // Skin Language Filters
@@ -871,39 +811,45 @@ const clearWebLogo = () => {
 };
 
 // Options
-const logoTypeOptions = [
-  { label: '加载骨架屏', value: '加载骨架屏' },
-  { label: '图标', value: '图标' },
-  { label: '自定义文字', value: '自定义文字' },
-  { label: '自定义图片', value: '自定义图片' },
-];
+const logoTypeOptions = computed(() => [
+  { label: $t('brand.logoTypeSkeleton'), value: '加载骨架屏' },
+  { label: $t('brand.logoTypeIcon'), value: '图标' },
+  { label: $t('brand.logoTypeCustomText'), value: '自定义文字' },
+  { label: $t('brand.logoTypeCustomImage'), value: '自定义图片' },
+]);
 
-const statusOptions = [
-  { label: '启用', value: true },
-  { label: '禁用', value: false },
-];
+const statusOptions = computed(() => [
+  { label: $t('common.enabled'), value: true },
+  { label: $t('common.disabled'), value: false },
+]);
 
-// Skin Language Options
-const brandTypeOptions = [
-  { label: '主站点', value: '主站点' },
-  { label: '子站点', value: '子站点' },
-];
+const brandTypeOptions = computed(() => [
+  { label: $t('brand.brandTypeMainSite'), value: '主站点' },
+  { label: $t('brand.brandTypeSubSite'), value: '子站点' },
+]);
 
-const channelTypeOptions = [
-  { label: '通用', value: '通用' },
-  { label: '移动端', value: '移动端' },
-  { label: '桌面端', value: '桌面端' },
-];
+const channelTypeOptions = computed(() => [
+  { label: $t('brand.channelTypeGeneral'), value: '通用' },
+  { label: $t('brand.channelTypeMobile'), value: '移动端' },
+  { label: $t('brand.channelTypeDesktop'), value: '桌面端' },
+]);
 
-/** 皮肤语言 tab：版式风格筛选项（与编辑弹窗一致） */
-const layoutStyleFilterOptions = LAYOUT_STYLE_OPTIONS;
+const layoutStyleFilterOptions = computed(() => LAYOUT_STYLE_OPTIONS);
 
-// Form rules
-const formRules: FormRules = {
+const logoClickOptions = computed(() => [
+  { label: $t('brand.homepage'), value: 'homepage' },
+  { label: $t('common.custom'), value: 'custom' },
+]);
+
+function getLogoTypeLabel(type: string) {
+  return logoTypeOptions.value.find((o) => o.value === type)?.label ?? type;
+}
+
+const formRules = computed<FormRules>(() => ({
   logoType: [
-    { required: true, message: '请选择LOGO类型', trigger: 'change' }
+    { required: true, message: $t('brand.selectLogoTypeRequired'), trigger: 'change' }
   ],
-};
+}));
 
 const tableData = ref<BrandLogoSetting[]>([]);
 const totalCount = ref(0);
@@ -925,9 +871,9 @@ const skinLangPaginationReactive = reactive({
 });
 
 // Table columns
-const columns: DataTableColumns<BrandLogoSetting> = [
+const columns = computed<DataTableColumns<BrandLogoSetting>>(() => [
   {
-    title: 'LOGO类型',
+    title: $t('brand.logoType'),
     key: 'logoType',
     width: 120,
     render(row) {
@@ -938,7 +884,7 @@ const columns: DataTableColumns<BrandLogoSetting> = [
     },
   },
   {
-    title: '管理开关',
+    title: $t('brand.manageSwitch'),
     key: 'isEnabled',
     width: 100,
     render(row) {
@@ -949,7 +895,7 @@ const columns: DataTableColumns<BrandLogoSetting> = [
     },
   },
   {
-    title: '登录页面图片入口',
+    title: $t('brand.loginPageImageEntry'),
     key: 'loginImage',
     width: 140,
     render(row) {
@@ -957,7 +903,7 @@ const columns: DataTableColumns<BrandLogoSetting> = [
         return h('div', { class: 'image-container' }, [
           h(NImage, {
             src: getImageUrl(row.loginImage),
-            alt: '登录页入口图',
+            alt: $t('brand.loginPageImage'),
             width: 60,
             height: 40,
             objectFit: 'cover',
@@ -965,11 +911,11 @@ const columns: DataTableColumns<BrandLogoSetting> = [
           })
         ]);
       }
-      return h('span', { class: 'text-gray-400' }, '无图片');
+      return h('span', { class: 'text-gray-400' }, $t('brand.noImage'));
     },
   },
   {
-    title: 'APP商店图标',
+    title: $t('brand.appStoreIcon'),
     key: 'appStoreImage',
     width: 120,
     render(row) {
@@ -977,7 +923,7 @@ const columns: DataTableColumns<BrandLogoSetting> = [
         return h('div', { class: 'image-container' }, [
           h(NImage, {
             src: getImageUrl(row.appStoreImage),
-            alt: 'APP商店图标',
+            alt: $t('brand.appStoreIcon'),
             width: 35,
             height: 35,
             objectFit: 'cover',
@@ -985,11 +931,11 @@ const columns: DataTableColumns<BrandLogoSetting> = [
           })
         ]);
       }
-      return h('span', { class: 'text-gray-400' }, '无图片');
+      return h('span', { class: 'text-gray-400' }, $t('brand.noImage'));
     },
   },
   {
-    title: 'APP内部LOGO',
+    title: $t('brand.appInternalLogo'),
     key: 'appInternalLogo',
     width: 120,
     render(row) {
@@ -997,7 +943,7 @@ const columns: DataTableColumns<BrandLogoSetting> = [
         return h('div', { class: 'image-container' }, [
           h(NImage, {
             src: getImageUrl(row.appInternalLogo),
-            alt: 'APP内部LOGO',
+            alt: $t('brand.appInternalLogo'),
             width: 50,
             height: 20,
             objectFit: 'cover',
@@ -1005,11 +951,11 @@ const columns: DataTableColumns<BrandLogoSetting> = [
           })
         ]);
       }
-      return h('span', { class: 'text-gray-400' }, '无图片');
+      return h('span', { class: 'text-gray-400' }, $t('brand.noImage'));
     },
   },
   {
-    title: '大厅LOGO',
+    title: $t('brand.lobbyLogo'),
     key: 'lobbyLogo',
     width: 100,
     render(row) {
@@ -1017,7 +963,7 @@ const columns: DataTableColumns<BrandLogoSetting> = [
         return h('div', { class: 'image-container' }, [
           h(NImage, {
             src: getImageUrl(row.lobbyLogo),
-            alt: '大厅LOGO',
+            alt: $t('brand.lobbyLogo'),
             width: 40,
             height: 16,
             objectFit: 'cover',
@@ -1025,11 +971,11 @@ const columns: DataTableColumns<BrandLogoSetting> = [
           })
         ]);
       }
-      return h('span', { class: 'text-gray-400' }, '无图片');
+      return h('span', { class: 'text-gray-400' }, $t('brand.noImage'));
     },
   },
   {
-    title: '网页端图标',
+    title: $t('brand.webFavicon'),
     key: 'webFavicon',
     width: 100,
     render(row) {
@@ -1037,7 +983,7 @@ const columns: DataTableColumns<BrandLogoSetting> = [
         return h('div', { class: 'image-container' }, [
           h(NImage, {
             src: getImageUrl(row.webFavicon),
-            alt: '网页端图标',
+            alt: $t('brand.webFavicon'),
             width: 20,
             height: 20,
             objectFit: 'cover',
@@ -1045,11 +991,11 @@ const columns: DataTableColumns<BrandLogoSetting> = [
           })
         ]);
       }
-      return h('span', { class: 'text-gray-400' }, '无图片');
+      return h('span', { class: 'text-gray-400' }, $t('brand.noImage'));
     },
   },
   {
-    title: '网页LOGO',
+    title: $t('brand.webLogo'),
     key: 'webLogo',
     width: 100,
     render(row) {
@@ -1057,7 +1003,7 @@ const columns: DataTableColumns<BrandLogoSetting> = [
         return h('div', { class: 'image-container' }, [
           h(NImage, {
             src: getImageUrl(row.webLogo),
-            alt: '网页LOGO',
+            alt: $t('brand.webLogo'),
             width: 40,
             height: 12,
             objectFit: 'cover',
@@ -1065,11 +1011,11 @@ const columns: DataTableColumns<BrandLogoSetting> = [
           })
         ]);
       }
-      return h('span', { class: 'text-gray-400' }, '无图片');
+      return h('span', { class: 'text-gray-400' }, $t('brand.noImage'));
     },
   },
   {
-    title: '限制页面内容',
+    title: $t('brand.restrictedPageContent'),
     key: 'restrictedContent',
     width: 200,
     ellipsis: {
@@ -1077,7 +1023,7 @@ const columns: DataTableColumns<BrandLogoSetting> = [
     },
   },
   {
-    title: '后台备注',
+    title: $t('brand.backendRemark'),
     key: 'remark',
     width: 150,
     ellipsis: {
@@ -1085,12 +1031,12 @@ const columns: DataTableColumns<BrandLogoSetting> = [
     },
   },
   {
-    title: '操作人',
+    title: $t('common.operator'),
     key: 'operator',
     width: 100,
   },
   {
-    title: '操作时间',
+    title: $t('common.operationTime'),
     key: 'updatedAt',
     width: 160,
     render(row) {
@@ -1098,7 +1044,7 @@ const columns: DataTableColumns<BrandLogoSetting> = [
     },
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     fixed: 'right',
     width: 160,
@@ -1109,30 +1055,30 @@ const columns: DataTableColumns<BrandLogoSetting> = [
           quaternary: true,
           type: 'primary',
           onClick: () => handleEdit(row)
-        }, { default: () => '编辑' }),
+        }, { default: () => $t('common.edit') }),
         h(NButton, {
           size: 'small',
           quaternary: true,
           type: 'info',
           onClick: () => handleViewDetail(row)
-        }, { default: () => '详情' }),
+        }, { default: () => $t('common.detail') }),
         h(NPopconfirm, { onPositiveClick: () => handleDelete(row) }, {
           trigger: () => h(NButton, {
             size: 'small',
             quaternary: true,
             type: 'error'
-          }, { default: () => '删除' }),
-          default: () => '确定要删除这个设置吗？',
+          }, { default: () => $t('common.delete') }),
+          default: () => $t('brand.confirmDeleteSetting'),
         }),
       ]);
     },
   },
-];
+]);
 
 // Skin Language Table Columns
-const skinLangColumns: DataTableColumns<BrandSkinLangConfig> = [
+const skinLangColumns = computed<DataTableColumns<BrandSkinLangConfig>>(() => [
   {
-    title: '品牌ID',
+    title: $t('brand.brandId'),
     key: 'brandId',
     width: 100,
     sorter: true,
@@ -1141,7 +1087,7 @@ const skinLangColumns: DataTableColumns<BrandSkinLangConfig> = [
     },
   },
   {
-    title: '品牌名称',
+    title: $t('brand.brandName'),
     key: 'brandName',
     width: 140,
     render(row) {
@@ -1149,7 +1095,7 @@ const skinLangColumns: DataTableColumns<BrandSkinLangConfig> = [
     },
   },
   {
-    title: '品牌类型',
+    title: $t('brand.brandType'),
     key: 'brandType',
     width: 100,
     render(row) {
@@ -1160,7 +1106,7 @@ const skinLangColumns: DataTableColumns<BrandSkinLangConfig> = [
     },
   },
   {
-    title: '渠道类型',
+    title: $t('brand.channelType'),
     key: 'channelType',
     width: 100,
     render(row) {
@@ -1171,7 +1117,7 @@ const skinLangColumns: DataTableColumns<BrandSkinLangConfig> = [
     },
   },
   {
-    title: '版式风格',
+    title: $t('brand.layoutStyle'),
     key: 'skinStyle',
     width: 120,
     render(row) {
@@ -1182,7 +1128,7 @@ const skinLangColumns: DataTableColumns<BrandSkinLangConfig> = [
     },
   },
   {
-    title: '模板底色',
+    title: $t('brand.templateBaseColor'),
     key: 'gameColor',
     width: 100,
     render(row) {
@@ -1190,7 +1136,7 @@ const skinLangColumns: DataTableColumns<BrandSkinLangConfig> = [
     },
   },
   {
-    title: '皮肤颜色',
+    title: $t('brand.skinColor'),
     key: 'skinColor',
     width: 200,
     render(row) {
@@ -1210,17 +1156,17 @@ const skinLangColumns: DataTableColumns<BrandSkinLangConfig> = [
            h('div', { 
              class: 'color-swatch primary',
              style: { backgroundColor: colorInfo.palette.primary },
-             title: `主色: ${colorInfo.palette.primary} - 点击预览主题`
+             title: `${$t('brand.primaryColorLabel')}: ${colorInfo.palette.primary} - ${$t('brand.clickToPreview')}`
            }),
            h('div', { 
              class: 'color-swatch secondary',
              style: { backgroundColor: colorInfo.palette.secondary },
-             title: `次色: ${colorInfo.palette.secondary} - 点击预览主题`
+             title: `${$t('brand.secondaryColorLabel')}: ${colorInfo.palette.secondary} - ${$t('brand.clickToPreview')}`
            }),
            h('div', { 
              class: 'color-swatch accent',
              style: { backgroundColor: colorInfo.palette.accent },
-             title: `强调色: ${colorInfo.palette.accent} - 点击预览主题`
+             title: `${$t('brand.accentColorLabel')}: ${colorInfo.palette.accent} - ${$t('brand.clickToPreview')}`
            }),
          ]),
          // Color label
@@ -1234,7 +1180,7 @@ const skinLangColumns: DataTableColumns<BrandSkinLangConfig> = [
     },
   },
   {
-    title: '皮肤模版',
+    title: $t('brand.skinTemplate'),
     key: 'skinTemplate',
     width: 120,
     render(row) {
@@ -1246,7 +1192,7 @@ const skinLangColumns: DataTableColumns<BrandSkinLangConfig> = [
     },
   },
   {
-    title: '客户端语言',
+    title: $t('brand.clientLanguages'),
     key: 'clientLanguages',
     width: 200,
     render(row) {
@@ -1262,7 +1208,7 @@ const skinLangColumns: DataTableColumns<BrandSkinLangConfig> = [
     },
   },
   {
-    title: '创建时间',
+    title: $t('common.createTime'),
     key: 'createdAt',
     width: 160,
     sorter: true,
@@ -1271,7 +1217,7 @@ const skinLangColumns: DataTableColumns<BrandSkinLangConfig> = [
     },
   },
   {
-    title: '操作人',
+    title: $t('common.operator'),
     key: 'operator',
     width: 100,
     render(row) {
@@ -1279,7 +1225,7 @@ const skinLangColumns: DataTableColumns<BrandSkinLangConfig> = [
     },
   },
   {
-    title: '操作时间',
+    title: $t('common.operationTime'),
     key: 'updatedAt',
     width: 160,
     sorter: true,
@@ -1288,7 +1234,7 @@ const skinLangColumns: DataTableColumns<BrandSkinLangConfig> = [
     },
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     fixed: 'right',
     width: 120,
@@ -1299,19 +1245,19 @@ const skinLangColumns: DataTableColumns<BrandSkinLangConfig> = [
           quaternary: true,
           type: 'info',
           onClick: () => handleSkinLangViewDetail(row)
-        }, { default: () => '详情' }),
+        }, { default: () => $t('common.detail') }),
         h(NButton, {
           size: 'small',
           quaternary: true,
           type: 'primary',
           onClick: () => handleSkinLangEdit(row)
-        }, { default: () => '修改' }),
+        }, { default: () => $t('common.modify') }),
       ]);
     },
   },
-];
+]);
 
-// Methods：子 tab 切换只改本地状态，不调用路由，避免顶部多开「品牌LOGO设置」标签页
+
 const handleTabChange = (value: string) => {
   if (value === 'logo-settings') {
     loadData();
@@ -1322,7 +1268,7 @@ const handleTabChange = (value: string) => {
 
 const handleComingSoon = (featureName: string) => {
   notification.info({
-    content: `${featureName}功能正在积极开发中，敬请期待！`,
+    content: $t('brand.comingSoonMessage', [featureName]),
     duration: 3000
   });
 };
@@ -1355,10 +1301,10 @@ const loadData = async () => {
         tableData.value = response;
         totalCount.value = response.length;
       } else {
-        throw new Error('无效的响应格式：data 字段不是数组');
+        throw new Error($t('brand.invalidResponseDataNotArray'));
       }
             } else {
-          throw new Error('无效的响应格式');
+          throw new Error($t('brand.invalidResponseFormat'));
         }
         
         // Preload table images for faster display
@@ -1370,7 +1316,7 @@ const loadData = async () => {
       } catch (error) {
         console.error('Error loading brand logo settings:', error);
     notification.error({
-      content: error instanceof Error ? error.message : '获取数据失败',
+      content: error instanceof Error ? error.message : $t('brand.loadDataFailed'),
       duration: 3000
     });
   } finally {
@@ -1406,15 +1352,15 @@ const loadSkinLangData = async () => {
         skinLangTableData.value = response;
         skinLangTotalCount.value = response.length;
       } else {
-        throw new Error('无效的响应格式：data 字段不是数组');
+        throw new Error($t('brand.invalidResponseDataNotArray'));
       }
     } else {
-      throw new Error('无效的响应格式');
+      throw new Error($t('brand.invalidResponseFormat'));
     }
   } catch (error) {
     console.error('Error loading skin lang configs:', error);
     notification.error({
-      content: error instanceof Error ? error.message : '获取皮肤语言配置失败',
+      content: error instanceof Error ? error.message : $t('brand.loadSkinLangFailed'),
       duration: 3000
     });
   } finally {
@@ -1474,7 +1420,7 @@ const handleSkinLangEdit = (row: BrandSkinLangConfig) => {
   showSkinLangModal.value = true;
 };
 
-// 皮肤语言弹窗关闭时重置详情模式
+
 watch(showSkinLangModal, (visible) => {
   if (!visible) skinLangDetailMode.value = false;
 });
@@ -1484,11 +1430,10 @@ const handleSkinLangSubmit = async (data: BrandSkinLangCreateRequest) => {
     if (editingSkinLangItem.value?.id) {
       // Update existing skin lang config
       await updateBrandSkinLangConfig(editingSkinLangItem.value.id, data);
-      notification.success({ content: '皮肤语言配置更新成功' });
+      notification.success({ content: $t('brand.skinLangUpdateSuccess') });
     } else {
-      // Create new skin lang config
       await createBrandSkinLangConfig(data);
-      notification.success({ content: '皮肤语言配置创建成功' });
+      notification.success({ content: $t('brand.skinLangCreateSuccess') });
     }
     
     showSkinLangModal.value = false;
@@ -1498,7 +1443,7 @@ const handleSkinLangSubmit = async (data: BrandSkinLangCreateRequest) => {
   } catch (error) {
     console.error('Error submitting skin lang config:', error);
     notification.error({
-      content: error instanceof Error ? error.message : '操作失败，请重试'
+      content: error instanceof Error ? error.message : $t('brand.operationRetry')
     });
   }
 };
@@ -1512,13 +1457,13 @@ const handleClearCache = async () => {
   try {
     await clearCache();
     notification.success({
-      content: '图片缓存已清除',
+      content: $t('brand.imageCacheCleared'),
       duration: 3000
     });
   } catch (error) {
     console.error('Failed to clear cache:', error);
     notification.error({
-      content: '清除缓存失败',
+      content: $t('brand.clearCacheFailed'),
       duration: 3000
     });
   }
@@ -1548,14 +1493,14 @@ const handleDelete = async (row: BrandLogoSetting) => {
     // Handle the response from the interceptor
     // For successful operations, the interceptor handles the response extraction
     notification.success({
-      content: '删除成功',
+      content: $t('common.deleteSuccess'),
       duration: 3000
     });
     loadData(); // Reload data after deletion
   } catch (error) {
     console.error('Error deleting brand logo setting:', error);
     notification.error({
-      content: error instanceof Error ? error.message : '删除失败',
+      content: error instanceof Error ? error.message : $t('common.operationFailed'),
       duration: 3000
     });
   }
@@ -1572,13 +1517,13 @@ const handleToggle = async (row: BrandLogoSetting, value: boolean) => {
       row.updatedAt = response.updatedAt;
     }
     notification.success({
-      content: value ? '启用成功' : '禁用成功',
+      content: value ? $t('brand.enableSuccess') : $t('brand.disableSuccess'),
       duration: 3000
     });
   } catch (error) {
     console.error('Error toggling brand logo setting:', error);
     notification.error({
-      content: error instanceof Error ? error.message : '操作失败',
+      content: error instanceof Error ? error.message : $t('common.operationFailed'),
       duration: 3000
     });
   }
@@ -1627,7 +1572,7 @@ const handleSubmit = async () => {
     
     // Handle the response from the interceptor
     notification.success({
-      content: editingItem.value ? '更新成功' : '创建成功',
+      content: editingItem.value ? $t('common.saveSuccess') : $t('common.operationSuccess'),
       duration: 3000
     });
     showModal.value = false;
@@ -1635,7 +1580,7 @@ const handleSubmit = async () => {
   } catch (error) {
     console.error('Error submitting brand logo setting:', error);
     notification.error({
-      content: error instanceof Error ? error.message : '提交失败',
+      content: error instanceof Error ? error.message : $t('brand.submitFailed'),
       duration: 3000
     });
   } finally {
@@ -1645,11 +1590,11 @@ const handleSubmit = async () => {
 
 const handleDownloadTemplate = () => {
   const link = document.createElement('a');
-  link.href = 'data:text/plain;charset=utf-8,品牌LOGO设计模板文件';
+  link.href = `data:text/plain;charset=utf-8,${encodeURIComponent($t('brand.logoTemplateFile'))}`;
   link.download = 'brand-logo-template.psd';
   link.click();
   notification.success({
-    content: '设计模板下载中...',
+    content: $t('brand.templateDownloading'),
     duration: 3000
   });
 };
@@ -1736,8 +1681,8 @@ const previewColorTheme = (skinColorId: string) => {
   const colorInfo = getColorInfo(skinColorId);
   
   notification.info({
-    content: `预览 ${colorInfo.label} 主题色彩`,
-    meta: `主色: ${colorInfo.palette.primary} | 次色: ${colorInfo.palette.secondary} | 强调色: ${colorInfo.palette.accent}`,
+    content: $t('brand.previewTheme', [colorInfo.label]),
+    meta: `${$t('brand.primaryColorLabel')}: ${colorInfo.palette.primary} | ${$t('brand.secondaryColorLabel')}: ${colorInfo.palette.secondary} | ${$t('brand.accentColorLabel')}: ${colorInfo.palette.accent}`,
     duration: 5000
   });
 };

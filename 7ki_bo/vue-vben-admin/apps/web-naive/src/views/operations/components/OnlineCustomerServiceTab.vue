@@ -3,24 +3,23 @@
     <n-spin :show="loading">
       <n-space justify="end" class="mb-4">
         <n-button v-if="!isEditing" type="primary" @click="enableEdit">
-          修改
+          {{ $t('operations.customerService.edit') }}
         </n-button>
         <n-space v-else>
-          <n-button @click="cancelEdit"> 取消 </n-button>
+          <n-button @click="cancelEdit"> {{ $t('common.cancel') }} </n-button>
           <n-button type="primary" :loading="saving" @click="saveConfig">
-            保存
+            {{ $t('common.save') }}
           </n-button>
         </n-space>
       </n-space>
 
-      <n-card title="基础设置" class="mb-4">
+      <n-card :title="$t('operations.customerService.basicSettings')" class="mb-4">
         <n-space vertical :size="20">
-          <!-- Skip Message Center -->
           <n-space align="center" justify="space-between">
             <div>
-              <div class="font-semibold">跳过消息中心</div>
+              <div class="font-semibold">{{ $t('operations.customerService.skipMessageCenter') }}</div>
               <div class="text-sm text-gray-500">
-                开启后，用户的客服消息直接跳转至客服页面，不经过消息中心
+                {{ $t('operations.customerService.skipMessageCenterDesc') }}
               </div>
             </div>
             <n-switch
@@ -29,12 +28,11 @@
             />
           </n-space>
 
-          <!-- Online Service Toggle -->
           <n-space align="center" justify="space-between">
             <div>
-              <div class="font-semibold">在线客服开关</div>
+              <div class="font-semibold">{{ $t('operations.customerService.onlineServiceToggle') }}</div>
               <div class="text-sm text-gray-500">
-                控制在线客服功能的启用/关闭
+                {{ $t('operations.customerService.onlineServiceToggleDesc') }}
               </div>
             </div>
             <n-switch
@@ -45,25 +43,20 @@
         </n-space>
       </n-card>
 
-      <!-- Service Link Settings -->
-      <n-card title="客服链接设置" class="mb-4">
+      <n-card :title="$t('operations.customerService.serviceLinkSettings')" class="mb-4">
         <n-form :model="formData" label-placement="top">
-          <n-form-item label="品牌选择（支持多选）">
+          <n-form-item :label="$t('operations.customerService.brandSelect')">
             <n-input
               v-model:value="formData.brandId"
-              placeholder="输入品牌ID，例如：419|419"
+              :placeholder="$t('operations.customerService.brandIdPlaceholder')"
               :disabled="!isEditing"
             />
           </n-form-item>
 
-          <n-form-item label="客服链接设置（H5/APP生效）">
+          <n-form-item :label="$t('operations.customerService.serviceLinkH5App')">
             <n-space vertical class="w-full" :size="12">
-              <n-alert
-                type="info"
-                :show-icon="false"
-                style="margin-bottom: 8px"
-              >
-                注意：APP支持两种方式，H5仅支持外部浏览器打开
+              <n-alert type="info" :show-icon="false" style="margin-bottom: 8px">
+                {{ $t('operations.customerService.serviceLinkNote') }}
               </n-alert>
 
               <div
@@ -75,26 +68,26 @@
                   <n-select
                     v-model:value="link.language"
                     :options="languageOptions"
-                    placeholder="语言"
+                    :placeholder="$t('operations.language')"
                     style="width: 140px"
                     :disabled="!isEditing"
                   />
                   <n-input
                     v-model:value="link.serviceName"
-                    placeholder="客服名称"
+                    :placeholder="$t('operations.customerService.serviceName')"
                     :disabled="!isEditing"
                     style="width: 150px"
                   />
                   <n-select
                     v-model:value="link.openMethod"
                     :options="openMethodOptions"
-                    placeholder="打开方式"
+                    :placeholder="$t('operations.customerService.openMethod')"
                     style="width: 160px"
                     :disabled="!isEditing"
                   />
                   <n-input
                     v-model:value="link.url"
-                    placeholder="请输入线路地址"
+                    :placeholder="$t('operations.customerService.lineUrlPlaceholder')"
                     :disabled="!isEditing"
                     style="flex: 1; min-width: 250px"
                   />
@@ -125,18 +118,17 @@
                 v-if="serviceLinkList.length === 0 && !isEditing"
                 class="py-4 text-center text-sm text-gray-400"
               >
-                暂无客服链接
+                {{ $t('operations.customerService.noServiceLinks') }}
               </div>
             </n-space>
           </n-form-item>
         </n-form>
       </n-card>
 
-      <!-- H5 Floating Customer Service -->
-      <n-card title="H5悬浮客服设置" class="mb-4">
+      <n-card :title="$t('operations.customerService.h5FloatingSettings')" class="mb-4">
         <n-space vertical :size="16">
           <n-form :model="formData" label-placement="top">
-            <n-form-item label="H5悬浮客服">
+            <n-form-item :label="$t('operations.customerService.h5Floating')">
               <n-switch
                 v-model:value="formData.h5FloatingEnabled"
                 :disabled="!isEditing"
@@ -144,38 +136,41 @@
             </n-form-item>
 
             <template v-if="formData.h5FloatingEnabled">
-              <n-form-item label="客服系统">
+              <n-form-item :label="$t('operations.customerService.serviceSystem')">
                 <n-radio-group
                   v-model:value="formData.h5ServiceSystem"
                   :disabled="!isEditing"
                 >
                   <n-space>
                     <n-radio value="LIVECHAT">Livechat</n-radio>
-                    <n-radio value="OTHER_SYSTEM">其他系统</n-radio>
+                    <n-radio value="OTHER_SYSTEM">{{ $t('operations.customerService.otherSystem') }}</n-radio>
                   </n-space>
                 </n-radio-group>
               </n-form-item>
 
-              <n-form-item label="展示方式">
+              <n-form-item :label="$t('operations.customerService.displayMode')">
                 <n-radio-group
                   v-model:value="formData.h5DisplayLocation"
                   :disabled="!isEditing"
                 >
                   <n-space>
-                    <n-radio value="HOME_ONLY">首页</n-radio>
-                    <n-radio value="ALL_PAGES">全部页面</n-radio>
+                    <n-radio value="HOME_ONLY">{{ $t('operations.customerService.homeOnly') }}</n-radio>
+                    <n-radio value="ALL_PAGES">{{ $t('operations.customerService.allPages') }}</n-radio>
                   </n-space>
                 </n-radio-group>
               </n-form-item>
 
-              <n-form-item v-if="formData.h5ServiceSystem !== 'OTHER_SYSTEM'" label="内嵌代码">
+              <n-form-item
+                v-if="formData.h5ServiceSystem !== 'OTHER_SYSTEM'"
+                :label="$t('operations.customerService.embedCode')"
+              >
                 <n-space vertical class="w-full" :size="8">
                   <n-alert type="info" :show-icon="false">
-                    填写LiveChat的内嵌代码；如果代码无法显示图标，请联系技术客服。
+                    {{ $t('operations.customerService.embedCodeNote') }}
                   </n-alert>
                   <n-input
                     v-model:value="formData.h5EmbedCode"
-                    placeholder='在"内嵌代码"框中填写所需的H5悬浮客服代码'
+                    :placeholder="$t('operations.customerService.embedCodePlaceholder')"
                     type="textarea"
                     :autosize="{ minRows: 4, maxRows: 8 }"
                     :disabled="!isEditing"
@@ -184,36 +179,36 @@
               </n-form-item>
 
               <template v-else>
-                <n-form-item label="客服打开方式">
+                <n-form-item :label="$t('operations.customerService.serviceOpenMethod')">
                   <n-radio-group
                     v-model:value="formData.h5OpenMethod"
                     :disabled="!isEditing"
                   >
                     <n-space>
-                      <n-radio value="APP_INTERNAL">内嵌打开</n-radio>
-                      <n-radio value="EXTERNAL_BROWSER">外部浏览器</n-radio>
+                      <n-radio value="APP_INTERNAL">{{ $t('operations.customerService.appInternal') }}</n-radio>
+                      <n-radio value="EXTERNAL_BROWSER">{{ $t('operations.customerService.externalBrowser') }}</n-radio>
                     </n-space>
                   </n-radio-group>
                 </n-form-item>
 
-                <n-form-item label="客服图标">
+                <n-form-item :label="$t('operations.customerService.serviceIcon')">
                   <n-space vertical class="w-full" :size="8">
                     <n-alert type="info" :show-icon="false">
-                      请从媒体库选择或上传客服图标（建议 240px x 240px，png）
+                      {{ $t('operations.customerService.serviceIconNote') }}
                     </n-alert>
                     <MediaLibrarySelector
                       v-model="formData.h5IconUrl"
                       category="icons"
                       :accept-types="['image']"
-                      placeholder="选择客服图标"
+                      :placeholder="$t('operations.customerService.selectServiceIcon')"
                     />
                   </n-space>
                 </n-form-item>
 
-                <n-form-item label="客服链接">
+                <n-form-item :label="$t('operations.customerService.serviceLink')">
                   <n-input
                     v-model:value="formData.h5LinkUrl"
-                    placeholder="请输入客服链接"
+                    :placeholder="$t('operations.customerService.enterServiceLink')"
                     :disabled="!isEditing"
                   />
                 </n-form-item>
@@ -223,14 +218,13 @@
         </n-space>
       </n-card>
 
-      <!-- LiveChat App SDK Configuration -->
-      <n-card title="LiveChat App SDK 配置" class="mb-4">
+      <n-card :title="$t('operations.customerService.livechatSdkConfig')" class="mb-4">
         <n-alert type="info" class="mb-4">
-          重要提示：App端只支持 LiveChat 悬浮客服，其他客服系统不支持。
+          {{ $t('operations.customerService.livechatSdkNote') }}
         </n-alert>
 
         <n-form :model="formData" label-placement="top">
-          <n-form-item label="启用LiveChat SDK">
+          <n-form-item :label="$t('operations.customerService.enableLivechatSdk')">
             <n-switch
               v-model:value="formData.livechatEnabled"
               :disabled="!isEditing"
@@ -238,48 +232,48 @@
           </n-form-item>
 
           <template v-if="formData.livechatEnabled">
-            <n-form-item label="品牌ID（支持多选）">
+            <n-form-item :label="$t('operations.customerService.brandIds')">
               <n-input
                 v-model:value="brandIdsInput"
-                placeholder="输入品牌ID，多个ID用逗号分隔"
+                :placeholder="$t('operations.customerService.brandIdsPlaceholder')"
                 @blur="updateBrandIds"
                 :disabled="!isEditing"
               />
             </n-form-item>
 
-            <n-form-item label="展示位置">
+            <n-form-item :label="$t('operations.customerService.displayLocation')">
               <n-radio-group
                 v-model:value="formData.livechatDisplayLocation"
                 :disabled="!isEditing"
               >
                 <n-space>
-                  <n-radio value="HOME_ONLY">首页</n-radio>
-                  <n-radio value="ALL_PAGES">全部页面</n-radio>
+                  <n-radio value="HOME_ONLY">{{ $t('operations.customerService.homeOnly') }}</n-radio>
+                  <n-radio value="ALL_PAGES">{{ $t('operations.customerService.allPages') }}</n-radio>
                 </n-space>
               </n-radio-group>
             </n-form-item>
 
-            <n-form-item label="Group ID">
+            <n-form-item :label="$t('operations.customerService.groupId')">
               <n-space vertical class="w-full" :size="8">
                 <n-alert type="warning" :show-icon="false">
-                  没有填写，悬浮客服不启用
+                  {{ $t('operations.customerService.groupIdWarning') }}
                 </n-alert>
                 <n-input
                   v-model:value="formData.livechatGroupId"
-                  placeholder="填写LiveChat后台团队的Group ID"
+                  :placeholder="$t('operations.customerService.groupIdPlaceholder')"
                   :disabled="!isEditing"
                 />
               </n-space>
             </n-form-item>
 
-            <n-form-item label="License ID">
+            <n-form-item :label="$t('operations.customerService.licenseId')">
               <n-space vertical class="w-full" :size="8">
                 <n-alert type="info" :show-icon="false">
-                  只有填写了 Group ID 后，这个才是必填项
+                  {{ $t('operations.customerService.licenseIdNote') }}
                 </n-alert>
                 <n-input
                   v-model:value="formData.livechatLicenseId"
-                  placeholder="填写LiveChat提供的License ID"
+                  :placeholder="$t('operations.customerService.licenseIdPlaceholder')"
                   :disabled="!isEditing"
                 />
               </n-space>
@@ -288,45 +282,43 @@
         </n-form>
       </n-card>
 
-      <!-- Action Buttons (Hidden - moved to top) -->
       <div style="display: none">
         <n-space justify="end" class="mt-4">
-          <n-button @click="resetForm">重置</n-button>
+          <n-button @click="resetForm">{{ $t('common.reset') }}</n-button>
           <n-button type="primary" @click="saveConfig" :loading="saving">
-            保存
+            {{ $t('common.save') }}
           </n-button>
         </n-space>
       </div>
     </n-spin>
 
-    <!-- Language Configuration Modal -->
     <n-modal
       v-model:show="showLanguageModal"
       preset="card"
-      title="语言设置"
+      :title="$t('operations.customerService.languageSettings')"
       style="width: 600px"
     >
       <n-form :model="languageForm">
-        <n-form-item label="语言选择">
+        <n-form-item :label="$t('operations.language')">
           <n-select
             v-model:value="languageForm.language"
             :options="languageOptions"
-            placeholder="选择语言"
+            :placeholder="$t('operations.customerService.selectLanguage')"
           />
         </n-form-item>
 
-        <n-form-item label="客服名称">
+        <n-form-item :label="$t('operations.customerService.serviceName')">
           <n-input
             v-model:value="languageForm.serviceName"
-            placeholder="输入客服名称"
+            :placeholder="$t('operations.customerService.enterServiceName')"
           />
         </n-form-item>
       </n-form>
 
       <template #footer>
         <n-space justify="end">
-          <n-button @click="showLanguageModal = false">取消</n-button>
-          <n-button type="primary" @click="addLanguageConfig"> 确认 </n-button>
+          <n-button @click="showLanguageModal = false">{{ $t('common.cancel') }}</n-button>
+          <n-button type="primary" @click="addLanguageConfig"> {{ $t('common.confirm') }} </n-button>
         </n-space>
       </template>
     </n-modal>
@@ -334,6 +326,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, onMounted, computed, defineAsyncComponent } from 'vue';
 import {
   NCard,
@@ -406,10 +400,10 @@ const serviceLinkList = ref<
 >([]);
 
 // Open method options
-const openMethodOptions = [
-  { label: 'APP内部打开', value: 'APP_INTERNAL' },
-  { label: '外部浏览器打开', value: 'EXTERNAL_BROWSER' },
-];
+const openMethodOptions = computed(() => [
+  { label: $t('operations.customerService.openMethodAppInternal'), value: 'APP_INTERNAL' },
+  { label: $t('operations.customerService.openMethodExternal'), value: 'EXTERNAL_BROWSER' },
+]);
 
 // Brand IDs input (for easier management)
 const brandIdsInput = ref('');
@@ -421,15 +415,15 @@ const languageForm = ref<LanguageConfig>({
   serviceName: '',
 });
 
-const languageOptions = [
-  { label: '简体中文 (zh-CN)', value: 'zh-CN' },
-  { label: '繁体中文 (zh-TW)', value: 'zh-TW' },
-  { label: 'English (en)', value: 'en' },
-  { label: 'Português (pt-BR)', value: 'pt-BR' },
-  { label: 'Español (es)', value: 'es' },
-  { label: 'ไทย (th)', value: 'th' },
-  { label: 'Tiếng Việt (vi)', value: 'vi' },
-];
+const languageOptions = computed(() => [
+  { label: `${$t('operations.faq.languages.zh-CN')} (zh-CN)`, value: 'zh-CN' },
+  { label: `${$t('operations.faq.languages.zh-TW')} (zh-TW)`, value: 'zh-TW' },
+  { label: `${$t('operations.faq.languages.en')} (en)`, value: 'en' },
+  { label: `${$t('operations.faq.languages.pt-BR')} (pt-BR)`, value: 'pt-BR' },
+  { label: `${$t('operations.faq.languages.es')} (es)`, value: 'es' },
+  { label: `${$t('operations.faq.languages.th')} (th)`, value: 'th' },
+  { label: `${$t('operations.faq.languages.vi')} (vi)`, value: 'vi' },
+]);
 
 // Load configuration
 const loadConfig = async () => {
@@ -522,7 +516,7 @@ const loadConfig = async () => {
     }
   } catch (error: any) {
     console.error('Load config error:', error);
-    message.warning('暂无配置数据，可以创建新配置');
+    message.warning($t('operations.customerService.noConfigData'));
   } finally {
     loading.value = false;
   }
@@ -585,7 +579,7 @@ const saveConfig = async () => {
       formData.value.h5ServiceSystem === 'OTHER_SYSTEM' &&
       !formData.value.h5LinkUrl?.trim()
     ) {
-      message.warning('请选择其他系统时，客服链接不能为空');
+      message.warning($t('operations.customerService.serviceLinkRequired'));
       return;
     }
 
@@ -606,11 +600,11 @@ const saveConfig = async () => {
     formData.value.serviceLinkUrl = linksText;
 
     await updateOnlineCustomerServiceConfig(formData.value);
-    message.success('配置保存成功');
+    message.success($t('operations.customerService.configSaved'));
     isEditing.value = false;
     await loadConfig();
   } catch (error: any) {
-    message.error(error.message || '保存配置失败');
+    message.error(error.message || $t('operations.customerService.saveConfigFailed'));
   } finally {
     saving.value = false;
   }
@@ -639,7 +633,7 @@ const removeServiceLink = (index: number) => {
 // Add language configuration
 const addLanguageConfig = () => {
   if (!languageForm.value.language || !languageForm.value.serviceName) {
-    message.warning('请填写完整的语言配置');
+    message.warning($t('operations.customerService.fillLanguageConfig'));
     return;
   }
 
@@ -653,14 +647,14 @@ const addLanguageConfig = () => {
   );
 
   if (exists) {
-    message.warning('该语言已存在，请选择其他语言');
+    message.warning($t('operations.customerService.languageExists'));
     return;
   }
 
   formData.value.languageConfigs.push({ ...languageForm.value });
   languageForm.value = { language: '', serviceName: '' };
   showLanguageModal.value = false;
-  message.success('语言配置已添加');
+  message.success($t('operations.customerService.languageConfigAdded'));
 };
 
 // Remove language configuration

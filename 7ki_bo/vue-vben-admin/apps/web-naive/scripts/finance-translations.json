@@ -1,0 +1,4678 @@
+{
+  "金额": {
+    "en": "Amount",
+    "vi": "Số tiền"
+  },
+  "取消": {
+    "en": "Cancel",
+    "vi": "Hủy"
+  },
+  "自动": {
+    "en": "Auto",
+    "vi": "Tự động"
+  },
+  "系统": {
+    "en": "System",
+    "vi": "Hệ thống"
+  },
+  "操作": {
+    "en": "Actions",
+    "vi": "Thao tác"
+  },
+  "详情": {
+    "en": "Details",
+    "vi": "Chi tiết"
+  },
+  "失败": {
+    "en": "Failed",
+    "vi": "Thất bại"
+  },
+  "确认": {
+    "en": "Confirm",
+    "vi": "Xác nhận"
+  },
+  "保存": {
+    "en": "Save",
+    "vi": "Lưu"
+  },
+  "官网": {
+    "en": "Official Site",
+    "vi": "Trang chính thức"
+  },
+  "输赢": {
+    "en": "Win/Loss",
+    "vi": "Win/Loss"
+  },
+  "未知": {
+    "en": "Unknown",
+    "vi": "Không rõ"
+  },
+  "全部": {
+    "en": "All",
+    "vi": "Tất cả"
+  },
+  "投注": {
+    "en": "Wagering",
+    "vi": "Cược"
+  },
+  "电子": {
+    "en": "Slots",
+    "vi": "Slot"
+  },
+  "真人": {
+    "en": "Live Casino",
+    "vi": "Casino trực tiếp"
+  },
+  "体育": {
+    "en": "Sports",
+    "vi": "Thể thao"
+  },
+  "彩票": {
+    "en": "Lottery",
+    "vi": "Lottery"
+  },
+  "棋牌": {
+    "en": "Card Games",
+    "vi": "Bài"
+  },
+  "电竞": {
+    "en": "Esports",
+    "vi": "Esports"
+  },
+  "捕鱼": {
+    "en": "Fishing",
+    "vi": "Bắn cá"
+  },
+  "街机": {
+    "en": "Arcade",
+    "vi": "Arcade"
+  },
+  "模拟": {
+    "en": "simulated",
+    "vi": "mô phỏng"
+  },
+  "斗鸡": {
+    "en": "Cockfighting",
+    "vi": "Cockfight"
+  },
+  "稽核": {
+    "en": "Audit",
+    "vi": "Kiểm toán"
+  },
+  "类型": {
+    "en": "Type",
+    "vi": "Type"
+  },
+  "电话": {
+    "en": "Phone",
+    "vi": "Điện thoại"
+  },
+  "邮箱": {
+    "en": "Email",
+    "vi": "Email"
+  },
+  "解锁": {
+    "en": "Unlock",
+    "vi": "Unlock"
+  },
+  "锁定": {
+    "en": "Locked",
+    "vi": "Đã khóa"
+  },
+  "备注": {
+    "en": "Remark",
+    "vi": "Ghi chú"
+  },
+  "批准": {
+    "en": "Approve",
+    "vi": "Approve"
+  },
+  "拒绝": {
+    "en": "Reject",
+    "vi": "Từ chối"
+  },
+  "错误": {
+    "en": "Error",
+    "vi": "Error"
+  },
+  "币种": {
+    "en": "Currency",
+    "vi": "Loại tiền"
+  },
+  "日期": {
+    "en": "Date",
+    "vi": "Ngày"
+  },
+  "更新": {
+    "en": "Update",
+    "vi": "Cập nhật"
+  },
+  "创建": {
+    "en": "Create",
+    "vi": "Tạo"
+  },
+  "正常": {
+    "en": "Normal",
+    "vi": "Bình thường"
+  },
+  "冻结": {
+    "en": "Frozen",
+    "vi": "Frozen"
+  },
+  "暂停": {
+    "en": "Suspended",
+    "vi": "Suspended"
+  },
+  "临时": {
+    "en": "Temporary",
+    "vi": "Temporary"
+  },
+  "笔数": {
+    "en": "Count",
+    "vi": "Số lần"
+  },
+  "按日": {
+    "en": "By Day",
+    "vi": "By Day"
+  },
+  "按周": {
+    "en": "By Week",
+    "vi": "By Week"
+  },
+  "按月": {
+    "en": "By Month",
+    "vi": "By Month"
+  },
+  "排名": {
+    "en": "Ranking",
+    "vi": "Xếp hạng"
+  },
+  "普通": {
+    "en": "Regular",
+    "vi": "Bình thường"
+  },
+  "状态": {
+    "en": "Status",
+    "vi": "Trạng thái"
+  },
+  "停用": {
+    "en": "Disable",
+    "vi": "Tắt"
+  },
+  "启用": {
+    "en": "Enable",
+    "vi": "Bật"
+  },
+  "修改": {
+    "en": "Edit",
+    "vi": "Sửa"
+  },
+  "终端": {
+    "en": "Terminal",
+    "vi": "Terminal"
+  },
+  "数量": {
+    "en": "Quantity",
+    "vi": "Quantity"
+  },
+  "汇率": {
+    "en": "Exchange rate",
+    "vi": "Exchange rate"
+  },
+  "标记": {
+    "en": "Mark",
+    "vi": "Mark"
+  },
+  "编辑": {
+    "en": "Edit",
+    "vi": "Sửa"
+  },
+  "删除": {
+    "en": "Delete",
+    "vi": "Xóa"
+  },
+  "优先": {
+    "en": "Priority",
+    "vi": "Priority"
+  },
+  "特殊": {
+    "en": "Special",
+    "vi": "Special"
+  },
+  "昵称": {
+    "en": "Nickname",
+    "vi": "Tên hiển thị"
+  },
+  "确定": {
+    "en": "Confirm",
+    "vi": "Xác nhận"
+  },
+  "复制": {
+    "en": "Copy",
+    "vi": "Sao chép"
+  },
+  "网址": {
+    "en": "URL",
+    "vi": "URL"
+  },
+  "配置": {
+    "en": "Config",
+    "vi": "Config"
+  },
+  "测试": {
+    "en": "Test",
+    "vi": "Test"
+  },
+  "频繁": {
+    "en": "Frequent",
+    "vi": "Frequent"
+  },
+  "异常": {
+    "en": "Exception",
+    "vi": "Ngoại lệ"
+  },
+  "开启": {
+    "en": "On",
+    "vi": "On"
+  },
+  "剩余": {
+    "en": "Remaining",
+    "vi": "Còn lại"
+  },
+  "活动": {
+    "en": "Activity",
+    "vi": "Hoạt động"
+  },
+  "促销": {
+    "en": "Promotion",
+    "vi": "Promotion"
+  },
+  "奖励": {
+    "en": "Reward",
+    "vi": "Bonus"
+  },
+  "奖金": {
+    "en": "Bonus",
+    "vi": "Thưởng"
+  },
+  "充值": {
+    "en": "Recharge",
+    "vi": "Nạp tiền"
+  },
+  "救援": {
+    "en": "Rescue",
+    "vi": "Rescue"
+  },
+  "佣金": {
+    "en": "Commission",
+    "vi": "Commission"
+  },
+  "返水": {
+    "en": "Rebate",
+    "vi": "Rebate"
+  },
+  "退款": {
+    "en": "Refund",
+    "vi": "Refund"
+  },
+  "流水": {
+    "en": "Turnover",
+    "vi": "Turnover"
+  },
+  "新人": {
+    "en": "New User",
+    "vi": "New User"
+  },
+  "进度": {
+    "en": "Progress",
+    "vi": "Progress"
+  },
+  "清除": {
+    "en": "Clear",
+    "vi": "Clear"
+  },
+  "完成": {
+    "en": "Complete",
+    "vi": "Complete"
+  },
+  "提现": {
+    "en": "Withdrawal",
+    "vi": "Rút tiền"
+  },
+  "派彩": {
+    "en": "Payout",
+    "vi": "Payout"
+  },
+  "结算": {
+    "en": "Settlement",
+    "vi": "Settlement"
+  },
+  "人工": {
+    "en": "Manual",
+    "vi": "Thủ công"
+  },
+  "首充": {
+    "en": "First deposit",
+    "vi": "First deposit"
+  },
+  "密钥": {
+    "en": "Key",
+    "vi": "Key"
+  },
+  "全选": {
+    "en": "Select All",
+    "vi": "Chọn tất cả"
+  },
+  "允许": {
+    "en": "Allow",
+    "vi": "Allow"
+  },
+  "禁止": {
+    "en": "Forbid",
+    "vi": "Forbid"
+  },
+  "到账": {
+    "en": "Received",
+    "vi": "Received"
+  },
+  "即时": {
+    "en": "Instant",
+    "vi": "Instant"
+  },
+  "延迟": {
+    "en": "Delayed",
+    "vi": "Delayed"
+  },
+  "禁用": {
+    "en": "Disable",
+    "vi": "Tắt"
+  },
+  "关闭": {
+    "en": "Off",
+    "vi": "Off"
+  },
+  "由我": {
+    "en": "By Me",
+    "vi": "By Me"
+  },
+  "内容": {
+    "en": "Content",
+    "vi": "Nội dung"
+  },
+  "银行卡": {
+    "en": "Bank card",
+    "vi": "Ngân hàng card"
+  },
+  "订单号": {
+    "en": "Order No.",
+    "vi": "Mã đơn hàng"
+  },
+  "未锁定": {
+    "en": "Unlocked",
+    "vi": "Chưa khóa"
+  },
+  "待处理": {
+    "en": "Pending",
+    "vi": "Đang chờ"
+  },
+  "处理中": {
+    "en": "Processing",
+    "vi": "Processing"
+  },
+  "操作人": {
+    "en": "Operator",
+    "vi": "Operator"
+  },
+  "投注数": {
+    "en": "Bet Count",
+    "vi": "Bet Count"
+  },
+  "低风险": {
+    "en": "Low Risk",
+    "vi": "Low Risk"
+  },
+  "非活跃": {
+    "en": "Inactive",
+    "vi": "Inactive"
+  },
+  "待投注": {
+    "en": "Pending Wagering",
+    "vi": "Đang chờ Cược"
+  },
+  "投注中": {
+    "en": "Wagering",
+    "vi": "Wagering"
+  },
+  "待审核": {
+    "en": "Pending Review",
+    "vi": "Đang chờ Duyệt"
+  },
+  "已审核": {
+    "en": "Already Review",
+    "vi": "Already Duyệt"
+  },
+  "已完成": {
+    "en": "Already Complete",
+    "vi": "Already Complete"
+  },
+  "已拒绝": {
+    "en": "Rejected",
+    "vi": "Rejected"
+  },
+  "待确认": {
+    "en": "Pending Confirm",
+    "vi": "Đang chờ Xác nhận"
+  },
+  "区块链": {
+    "en": "Blockchain",
+    "vi": "Blockchain"
+  },
+  "类型：": {
+    "en": "Type：",
+    "vi": "Loại :"
+  },
+  "电话：": {
+    "en": "Phone：",
+    "vi": "Phone："
+  },
+  "邮箱：": {
+    "en": "Email：",
+    "vi": "Email："
+  },
+  "待出款": {
+    "en": "Pending payout",
+    "vi": "Đang chờ payout"
+  },
+  "审核中": {
+    "en": "Under review",
+    "vi": "Under review"
+  },
+  "已出款": {
+    "en": "Paid out",
+    "vi": "Paid out"
+  },
+  "已人工": {
+    "en": "Manual processed",
+    "vi": "Thủ công processed"
+  },
+  "已取消": {
+    "en": "Cancelled",
+    "vi": "Cancelled"
+  },
+  "成功率": {
+    "en": "Success rate",
+    "vi": "Thành công rate"
+  },
+  "总金额": {
+    "en": "Total amount",
+    "vi": "Tổng amount"
+  },
+  "搜索值": {
+    "en": "Search value",
+    "vi": "Giá trị tìm kiếm"
+  },
+  "已确认": {
+    "en": "Confirmed",
+    "vi": "Confirmed"
+  },
+  "已过期": {
+    "en": "Expired",
+    "vi": "Expired"
+  },
+  "手续费": {
+    "en": "Fee",
+    "vi": "Phí"
+  },
+  "已启用": {
+    "en": "Enabled",
+    "vi": "Enabled"
+  },
+  "已停用": {
+    "en": "Disabled",
+    "vi": "Disabled"
+  },
+  "请选择": {
+    "en": "Please select",
+    "vi": "Vui lòng select"
+  },
+  "将从 ": {
+    "en": "Will deduct from",
+    "vi": "Will deduct from"
+  },
+  "请输入": {
+    "en": "Please enter",
+    "vi": "Vui lòng enter"
+  },
+  "按比例": {
+    "en": "By Ratio",
+    "vi": "Theo tỷ lệ"
+  },
+  "未分类": {
+    "en": "Uncategorized",
+    "vi": "Uncategorized"
+  },
+  "商户号": {
+    "en": "Merchant ID",
+    "vi": "Merchant ID"
+  },
+  "信用卡": {
+    "en": "Credit Card",
+    "vi": "Credit Card"
+  },
+  "PC端": {
+    "en": "PC",
+    "vi": "PC"
+  },
+  "移动端": {
+    "en": "Mobile",
+    "vi": "Mobile"
+  },
+  "已首充": {
+    "en": "Already First deposit",
+    "vi": "Already First deposit"
+  },
+  "未充值": {
+    "en": "Not Recharge",
+    "vi": "Not Nạp tiền"
+  },
+  "待支付": {
+    "en": "Pending Payment",
+    "vi": "Đang chờ Thanh toán"
+  },
+  "未设置": {
+    "en": "Not Settings",
+    "vi": "Not Cài đặt"
+  },
+  " 吗？": {
+    "en": "? ？",
+    "vi": "? ？"
+  },
+  "通道 ": {
+    "en": "Channel",
+    "vi": "Kênh"
+  },
+  "15秒": {
+    "en": "15 seconds",
+    "vi": "15 seconds"
+  },
+  "30秒": {
+    "en": "30 seconds",
+    "vi": "30 seconds"
+  },
+  "60秒": {
+    "en": "60 seconds",
+    "vi": "60 seconds"
+  },
+  "停启用": {
+    "en": "Enable/Disable",
+    "vi": "Enable/Disable"
+  },
+  "利息宝": {
+    "en": "Interest Vault",
+    "vi": "Interest Treasure"
+  },
+  "保障金": {
+    "en": "Reserve Fund",
+    "vi": "Reserve Fund"
+  },
+  "保证金": {
+    "en": "Deposit Guarantee",
+    "vi": "Deposit Guarantee"
+  },
+  "公积金": {
+    "en": "Provident Fund",
+    "vi": "Quỹ tích lũy"
+  },
+  "源金额": {
+    "en": "Source Amount",
+    "vi": "Source Amount"
+  },
+  "优先级": {
+    "en": "Priority",
+    "vi": "Ưu tiên"
+  },
+  "进行中": {
+    "en": "In Progress",
+    "vi": "Đang diễn ra"
+  },
+  "已复制": {
+    "en": "Copied",
+    "vi": "Đã sao chép"
+  },
+  "已保存": {
+    "en": "Already Save",
+    "vi": "Already Lưu"
+  },
+  "应用到": {
+    "en": "Apply To",
+    "vi": "Apply To"
+  },
+  "仅通知": {
+    "en": "Notify Only",
+    "vi": "Notify Only"
+  },
+  "超3天": {
+    "en": "超 3 days",
+    "vi": "超 3 days"
+  },
+  "超7天": {
+    "en": "超 7 days",
+    "vi": "超 7 days"
+  },
+  "中风险": {
+    "en": "in Risk",
+    "vi": "in Risk"
+  },
+  "高风险": {
+    "en": "high Risk",
+    "vi": "high Risk"
+  },
+  "新状态": {
+    "en": "Newstatus",
+    "vi": "Newstatus"
+  },
+  "主账户": {
+    "en": "主 Account",
+    "vi": "主 Tài khoản"
+  },
+  "会员账号": {
+    "en": "Member Account",
+    "vi": "Tài khoản thành viên"
+  },
+  "三方代付": {
+    "en": "Third-party Payout",
+    "vi": "Chi hộ bên thứ ba"
+  },
+  "金额大小": {
+    "en": "Amount range",
+    "vi": "Số tiền range"
+  },
+  "提现方式": {
+    "en": "Withdrawal method",
+    "vi": "Rút tiền method"
+  },
+  "自动规则": {
+    "en": "Auto rule",
+    "vi": "Tự động rule"
+  },
+  "会员层级": {
+    "en": "Member tier",
+    "vi": "Thành viên tier"
+  },
+  "批量操作": {
+    "en": "Bulk Actions",
+    "vi": "Hàng loạt Thao tác"
+  },
+  "确认处理": {
+    "en": "Confirm process",
+    "vi": "Xác nhận process"
+  },
+  "处理备注": {
+    "en": "Process remark",
+    "vi": "Xử lý remark"
+  },
+  "订单信息": {
+    "en": "Order info",
+    "vi": "Đơn hàng info"
+  },
+  "提现信息": {
+    "en": "Withdrawal info",
+    "vi": "Rút tiền info"
+  },
+  "银行转账": {
+    "en": "Bank transfer",
+    "vi": "Ngân hàng transfer"
+  },
+  "数字钱包": {
+    "en": "Digital Wallet",
+    "vi": "Digital Wallet"
+  },
+  "小额免审": {
+    "en": "Small amount Auto-approved",
+    "vi": "Small amount Auto-approved"
+  },
+  "批量导出": {
+    "en": "Bulk export",
+    "vi": "Hàng loạt export"
+  },
+  "批量标记": {
+    "en": "Bulk mark",
+    "vi": "Hàng loạt mark"
+  },
+  "默认层级": {
+    "en": "Default tier",
+    "vi": "Default tier"
+  },
+  "完成时长": {
+    "en": "Completion duration",
+    "vi": "Completion duration"
+  },
+  "(汇率)": {
+    "en": "( Exchange rate )",
+    "vi": "( Exchange rate )"
+  },
+  "前台备注": {
+    "en": "Frontend remark",
+    "vi": "Frontend remark"
+  },
+  "免审订单": {
+    "en": "Auto-approved order",
+    "vi": "Auto-approved order"
+  },
+  "后台备注": {
+    "en": "Backend remark",
+    "vi": "Backend remark"
+  },
+  "人工出款": {
+    "en": "Manual payout",
+    "vi": "Thủ công payout"
+  },
+  "免审出款": {
+    "en": "Auto-approved Withdrawal",
+    "vi": "Rút tiền miễn duyệt"
+  },
+  "(0次)": {
+    "en": "(0times)",
+    "vi": "(0times)"
+  },
+  "免审规则": {
+    "en": "Auto-approval rule",
+    "vi": "Auto-approval rule"
+  },
+  "自动出款": {
+    "en": "Auto payout",
+    "vi": "Tự động payout"
+  },
+  "提现成功": {
+    "en": "Withdrawal successful",
+    "vi": "Rút tiền successful"
+  },
+  "自动失败": {
+    "en": "Auto-failed",
+    "vi": "Auto-failed"
+  },
+  "由我出款": {
+    "en": "By MePayout",
+    "vi": "By MePayout"
+  },
+  "财务出款": {
+    "en": "Finance payout",
+    "vi": "Tài chính payout"
+  },
+  "会员ID": {
+    "en": "Member ID",
+    "vi": "Thành viên ID"
+  },
+  "审核状态": {
+    "en": "Review Status",
+    "vi": "Duyệt Trạng thái"
+  },
+  "批量备注": {
+    "en": "Bulk Remark",
+    "vi": "Hàng loạt Ghi chú"
+  },
+  "批量解锁": {
+    "en": "Bulk unlock",
+    "vi": "Hàng loạt unlock"
+  },
+  "批量锁定": {
+    "en": "Bulk lock",
+    "vi": "Hàng loạt lock"
+  },
+  "操作类型": {
+    "en": "ActionsType",
+    "vi": "Operation Type"
+  },
+  "处理状态": {
+    "en": "Process Status",
+    "vi": "Xử lý Trạng thái"
+  },
+  "确认分配": {
+    "en": "Confirm 分 配",
+    "vi": "Xác nhận 分 配"
+  },
+  "编辑备注": {
+    "en": "Edit Remark",
+    "vi": "Sửa Ghi chú"
+  },
+  "备注类型": {
+    "en": "RemarkType",
+    "vi": "Ghi chú Loại"
+  },
+  "备注内容": {
+    "en": "remarkContent",
+    "vi": "Remark Content"
+  },
+  "出款详情": {
+    "en": "Payout Details",
+    "vi": "Chi hộ Chi tiết"
+  },
+  "基本信息": {
+    "en": "Basic info",
+    "vi": "Basic info"
+  },
+  "金额信息": {
+    "en": "Amount Info",
+    "vi": "Số tiền Thông tin"
+  },
+  "收款信息": {
+    "en": "Receiving Info",
+    "vi": "Receiving Thông tin"
+  },
+  "强制取消": {
+    "en": "强 制 Cancel",
+    "vi": "强 制 Hủy"
+  },
+  "强制拒绝": {
+    "en": "强 制 拒 绝",
+    "vi": "强 制 拒 绝"
+  },
+  "投注统计": {
+    "en": "Wagering Statistics",
+    "vi": "Cược Thống kê"
+  },
+  "统计周期": {
+    "en": "Statistics week 期",
+    "vi": "Thống kê week 期"
+  },
+  "充值金额": {
+    "en": "Recharge amount",
+    "vi": "Nạp tiền amount"
+  },
+  "提现金额": {
+    "en": "Withdrawal amount",
+    "vi": "Rút tiền amount"
+  },
+  "投注金额": {
+    "en": "Wagering Amount",
+    "vi": "Cược Số tiền"
+  },
+  "优惠金额": {
+    "en": "PromotionAmount",
+    "vi": "Số tiền khuyến mãi"
+  },
+  "首次提现": {
+    "en": "First withdrawal",
+    "vi": "First withdrawal"
+  },
+  "正常用户": {
+    "en": "Normal User",
+    "vi": "Bình thường User"
+  },
+  "近期活跃": {
+    "en": "近 期 活 跃",
+    "vi": "近 期 活 跃"
+  },
+  "充值上分": {
+    "en": "Recharge 上 分",
+    "vi": "Nạp tiền 上 分"
+  },
+  "注册账号": {
+    "en": "Registration Account",
+    "vi": "Registration Tài khoản"
+  },
+  "充值赠送": {
+    "en": "Recharge 赠 送",
+    "vi": "Nạp tiền 赠 送"
+  },
+  "领取奖励": {
+    "en": "领 取 奖 励",
+    "vi": "Nhận Thưởng"
+  },
+  "筛选来源": {
+    "en": "筛 选 来 源",
+    "vi": "筛 选 来 源"
+  },
+  "全部记录": {
+    "en": "All Records",
+    "vi": "Tất cả Bản ghi"
+  },
+  "处理成功": {
+    "en": "Process Success",
+    "vi": "Xử lý Thành công"
+  },
+  "处理失败": {
+    "en": "Process Failed",
+    "vi": "Xử lý Thất bại"
+  },
+  "批量处理": {
+    "en": "Bulk Process",
+    "vi": "Hàng loạt Xử lý"
+  },
+  "批量分配": {
+    "en": "Bulk 分 配",
+    "vi": "Hàng loạt 分 配"
+  },
+  "全部提现": {
+    "en": "All Withdrawal",
+    "vi": "Tất cả Rút tiền"
+  },
+  "复制全部": {
+    "en": "CopyAll",
+    "vi": "CopyAll"
+  },
+  "真实姓名": {
+    "en": "真 实 姓 名",
+    "vi": "Real Name"
+  },
+  "审核出款": {
+    "en": "Review Payout",
+    "vi": "Duyệt Chi hộ"
+  },
+  "风控审核": {
+    "en": "Risk control review",
+    "vi": "Risk control review"
+  },
+  "三方备注": {
+    "en": "Third-party Remark",
+    "vi": "Third-party Ghi chú"
+  },
+  "锁定失败": {
+    "en": "Locked Failed",
+    "vi": "Đã khóa Thất bại"
+  },
+  "解锁失败": {
+    "en": "Unlock Failed",
+    "vi": "Unlock Thất bại"
+  },
+  "刷新成功": {
+    "en": "Refresh Success",
+    "vi": "Làm mới Thành công"
+  },
+  "刷新失败": {
+    "en": "Refresh Failed",
+    "vi": "Làm mới Thất bại"
+  },
+  "未知结果": {
+    "en": "Not 知 结 果",
+    "vi": "Not 知 结 果"
+  },
+  "系统备注": {
+    "en": "System Remark",
+    "vi": "Hệ thống Ghi chú"
+  },
+  "暂无数据": {
+    "en": "No Data",
+    "vi": "No Dữ liệu"
+  },
+  "分配失败": {
+    "en": "分 配 Failed",
+    "vi": "分 配 Thất bại"
+  },
+  "统计时间": {
+    "en": "Statistics time",
+    "vi": "Thống kê time"
+  },
+  "选择币种": {
+    "en": "Select currency",
+    "vi": "Chọn currency"
+  },
+  "人工代付": {
+    "en": "Manual payout",
+    "vi": "Thủ công payout"
+  },
+  "未知渠道": {
+    "en": "Unknown channel",
+    "vi": "Unknown channel"
+  },
+  "全部会员": {
+    "en": "All members",
+    "vi": "Tất cả members"
+  },
+  "多次提现": {
+    "en": "Multiple withdrawals",
+    "vi": "Multiple withdrawals"
+  },
+  "总订单数": {
+    "en": "Total orders",
+    "vi": "Tổng orders"
+  },
+  "成功金额": {
+    "en": "Success amount",
+    "vi": "Thành công amount"
+  },
+  "导出成功": {
+    "en": "Export successful",
+    "vi": "Xuất successful"
+  },
+  "导出失败": {
+    "en": "Export failed",
+    "vi": "Xuất failed"
+  },
+  "全部充值": {
+    "en": "All Recharges",
+    "vi": "Tất cả nạp tiền"
+  },
+  "订单状态": {
+    "en": "Order Status",
+    "vi": "Đơn hàng Trạng thái"
+  },
+  "宽松显示": {
+    "en": "Comfortable view",
+    "vi": "Comfortable view"
+  },
+  "紧凑显示": {
+    "en": "Compact view",
+    "vi": "Compact view"
+  },
+  "充值统计": {
+    "en": "Recharge statistics",
+    "vi": "Nạp tiền statistics"
+  },
+  "支付方式": {
+    "en": "Payment Method",
+    "vi": "Thanh toán Phương thức"
+  },
+  "分组方式": {
+    "en": "分 组 Method",
+    "vi": "分 组 Phương thức"
+  },
+  "编辑充值": {
+    "en": "Edit Recharge",
+    "vi": "Sửa Nạp tiền"
+  },
+  "新建充值": {
+    "en": "新 建 Recharge",
+    "vi": "新 建 Nạp tiền"
+  },
+  "充值方式": {
+    "en": "Recharge Method",
+    "vi": "Nạp tiền Phương thức"
+  },
+  "支付渠道": {
+    "en": "Payment 渠 道",
+    "vi": "Thanh toán 渠 道"
+  },
+  "订单详情": {
+    "en": "Order Details",
+    "vi": "Đơn hàng Chi tiết"
+  },
+  "创建补单": {
+    "en": "Create supplementary order",
+    "vi": "Tạo supplementary order"
+  },
+  "会员标签": {
+    "en": "Member Tag",
+    "vi": "Thành viên Tag"
+  },
+  "在线状态": {
+    "en": "Online Status",
+    "vi": "Online Trạng thái"
+  },
+  "账号状态": {
+    "en": "Account Status",
+    "vi": "Tài khoản Trạng thái"
+  },
+  "登录记录": {
+    "en": "Login Records",
+    "vi": "Login Bản ghi"
+  },
+  "当前在线": {
+    "en": "当 前 Online",
+    "vi": "Đang online"
+  },
+  "大厅会员": {
+    "en": "大 厅 Member",
+    "vi": "Thành viên sảnh"
+  },
+  "今日在线": {
+    "en": "Today Online",
+    "vi": "Hôm nay Online"
+  },
+  "异常冻结": {
+    "en": "Exception Frozen",
+    "vi": "Ngoại lệ Frozen"
+  },
+  "今天登录": {
+    "en": "TodayLogin",
+    "vi": "Đăng nhập hôm nay"
+  },
+  "从未登录": {
+    "en": "from Not Login",
+    "vi": "Chưa từng đăng nhập"
+  },
+  "普通用户": {
+    "en": "普 通 User",
+    "vi": "Người dùng thường"
+  },
+  "代理用户": {
+    "en": "Agentuser",
+    "vi": "Người dùng đại lý"
+  },
+  "精准姓名": {
+    "en": "精 准 姓 名",
+    "vi": "Họ tên chính xác"
+  },
+  "模糊姓名": {
+    "en": "模 糊 姓 名",
+    "vi": "Họ tên mờ"
+  },
+  "充值趋势": {
+    "en": "Recharge 趋 势",
+    "vi": "Nạp tiền 趋 势"
+  },
+  "成功笔数": {
+    "en": "Success Count",
+    "vi": "Thành công Số lần"
+  },
+  "失败笔数": {
+    "en": "Failed Count",
+    "vi": "Thất bại Số lần"
+  },
+  "充值类型": {
+    "en": "Deposit Type",
+    "vi": "Nạp tiền Loại"
+  },
+  "充值大类": {
+    "en": "Deposit Category",
+    "vi": "Deposit Category"
+  },
+  "充值总额": {
+    "en": "Rechargetotalamount",
+    "vi": "Tổng nạp"
+  },
+  "充值人数": {
+    "en": "Deposit Users",
+    "vi": "Số người nạp"
+  },
+  "充值次数": {
+    "en": "Deposit count",
+    "vi": "Deposit count"
+  },
+  "创建时间": {
+    "en": "Create Time",
+    "vi": "Tạo Thời gian"
+  },
+  "成功时间": {
+    "en": "Success Time",
+    "vi": "Thành công Thời gian"
+  },
+  "更新时间": {
+    "en": "Update Time",
+    "vi": "Cập nhật lúc"
+  },
+  "充值币种": {
+    "en": "Recharge Currency",
+    "vi": "Nạp tiền Loại tiền"
+  },
+  "原始数量": {
+    "en": "原 始 数 量",
+    "vi": "原 始 数 量"
+  },
+  "实际到账": {
+    "en": "Actual received",
+    "vi": "Actual received"
+  },
+  "更新成功": {
+    "en": "Update successful",
+    "vi": "Update successful"
+  },
+  "创建成功": {
+    "en": "Create Success",
+    "vi": "Tạo Thành công"
+  },
+  "更新失败": {
+    "en": "UpdateFailed",
+    "vi": "Update failed"
+  },
+  "创建失败": {
+    "en": "Create Failed",
+    "vi": "Tạo Thất bại"
+  },
+  "确认失败": {
+    "en": "Confirm Failed",
+    "vi": "Xác nhận Thất bại"
+  },
+  "全部订单": {
+    "en": "All Orders",
+    "vi": "Tất cả đơn hàng"
+  },
+  "充值面额": {
+    "en": "Recharge denomination",
+    "vi": "Nạp tiền denomination"
+  },
+  "通道名称": {
+    "en": "channelname",
+    "vi": "channelname"
+  },
+  "充值状态": {
+    "en": "Recharge status",
+    "vi": "Nạp tiền status"
+  },
+  "大类配置": {
+    "en": "largetypeConfig",
+    "vi": "largetypeConfig"
+  },
+  "开启状态": {
+    "en": "On Status",
+    "vi": "On Trạng thái"
+  },
+  "全部状态": {
+    "en": "All Status",
+    "vi": "Tất cả Trạng thái"
+  },
+  "大类名称": {
+    "en": "largetypenametitle",
+    "vi": "largetypenametitle"
+  },
+  "大类图标": {
+    "en": "largetypeimagelabel",
+    "vi": "largetypeimagelabel"
+  },
+  "大类角标": {
+    "en": "大 类 角 标",
+    "vi": "大 类 角 标"
+  },
+  "支付平台": {
+    "en": "Payment Platform",
+    "vi": "Thanh toán Nền tảng"
+  },
+  "确认启用": {
+    "en": "Confirm Enable",
+    "vi": "Xác nhận Bật"
+  },
+  "确认删除": {
+    "en": "Confirm delete",
+    "vi": "Xác nhận delete"
+  },
+  "支付通道": {
+    "en": "Payment Channel",
+    "vi": "Thanh toán Kênh"
+  },
+  "通道币种": {
+    "en": "Channel Currency",
+    "vi": "Kênh Loại tiền"
+  },
+  "商户密钥": {
+    "en": "Merchant Key",
+    "vi": "Đại lý Key"
+  },
+  "成功标识": {
+    "en": "Success Flag",
+    "vi": "Thành công Flag"
+  },
+  "下单地址": {
+    "en": "Order URL",
+    "vi": "Đơn hàng URL"
+  },
+  "查询地址": {
+    "en": "Query URL",
+    "vi": "Truy vấn URL"
+  },
+  "通道编码": {
+    "en": "Channel 编 码",
+    "vi": "Kênh 编 码"
+  },
+  "通道类型": {
+    "en": "channeltype",
+    "vi": "channeltype"
+  },
+  "手续费率": {
+    "en": "Feerate",
+    "vi": "Feerate"
+  },
+  "通道费率": {
+    "en": "Channel 费 率",
+    "vi": "Kênh 费 率"
+  },
+  "赠送比例": {
+    "en": "giftRatio",
+    "vi": "giftRatio"
+  },
+  "温馨提示": {
+    "en": "温 馨 提 示",
+    "vi": "温 馨 提 示"
+  },
+  "赠送气泡": {
+    "en": "赠 送 气 泡",
+    "vi": "赠 送 气 泡"
+  },
+  "充值限制": {
+    "en": "Rechargelimitlimit",
+    "vi": "Rechargelimitlimit"
+  },
+  "固定金额": {
+    "en": "Fixedamount",
+    "vi": "Số tiền cố định"
+  },
+  "三方统计": {
+    "en": "Third-party Statistics",
+    "vi": "Third-party Thống kê"
+  },
+  "开始日期": {
+    "en": "Start date",
+    "vi": "Start date"
+  },
+  "结束日期": {
+    "en": "End date",
+    "vi": "End date"
+  },
+  "订单金额": {
+    "en": "Order Amount",
+    "vi": "Đơn hàng Số tiền"
+  },
+  "稽核倍数": {
+    "en": "Audit Multiplier",
+    "vi": "Audit Multiplier"
+  },
+  "订单备注": {
+    "en": "Order Remark",
+    "vi": "Đơn hàng Ghi chú"
+  },
+  "验证密码": {
+    "en": "验 证 密 码",
+    "vi": "验 证 密 码"
+  },
+  "充值成功": {
+    "en": "Recharge Success",
+    "vi": "Nạp tiền Thành công"
+  },
+  "会员币种": {
+    "en": "Member currency",
+    "vi": "Thành viên currency"
+  },
+  "赠送金额": {
+    "en": "giftamount",
+    "vi": "giftamount"
+  },
+  "时间信息": {
+    "en": "Time Info",
+    "vi": "Thời gian Thông tin"
+  },
+  "其他信息": {
+    "en": "其 他 Info",
+    "vi": "Thông tin khác"
+  },
+  "是否首存": {
+    "en": "Yes No 首 存",
+    "vi": "Yes No 首 存"
+  },
+  "错误信息": {
+    "en": "错 误 Info",
+    "vi": "Error Message"
+  },
+  "错误代码": {
+    "en": "错 误 代 码",
+    "vi": "错 误 代 码"
+  },
+  "错误详情": {
+    "en": "ErrorDetail",
+    "vi": "ErrorDetail"
+  },
+  "自定义列": {
+    "en": "自 定 义 列",
+    "vi": "Tùy chỉnh cột"
+  },
+  "三方支付": {
+    "en": "Third-party Payment",
+    "vi": "Third-party Thanh toán"
+  },
+  "合计笔数": {
+    "en": "TotalCount",
+    "vi": "TotalCount"
+  },
+  "通道大类": {
+    "en": "Channel large type",
+    "vi": "Channel large type"
+  },
+  "交易限额": {
+    "en": "Transaction Limit",
+    "vi": "Transaction Giới hạn"
+  },
+  "停用时间": {
+    "en": "Disable Time",
+    "vi": "Tắt Thời gian"
+  },
+  "停用原因": {
+    "en": "Disable 原 因",
+    "vi": "Tắt 原 因"
+  },
+  "暂无备注": {
+    "en": "No Remark",
+    "vi": "No Ghi chú"
+  },
+  "银行直连": {
+    "en": "Bank 直 连",
+    "vi": "Ngân hàng 直 连"
+  },
+  "即时支付": {
+    "en": "即 时 Payment",
+    "vi": "即 时 Thanh toán"
+  },
+  "默认级别": {
+    "en": "默 认 级 别",
+    "vi": "默 认 级 别"
+  },
+  "高级筛选": {
+    "en": "高 级 筛 选",
+    "vi": "高 级 筛 选"
+  },
+  "复制成功": {
+    "en": "Copied successfully",
+    "vi": "Sao chép thành công"
+  },
+  "复制失败": {
+    "en": "CopyFailed",
+    "vi": "Copy failed"
+  },
+  "订单ID": {
+    "en": "Order I D",
+    "vi": "Đơn hàng I D"
+  },
+  "会员姓名": {
+    "en": "memberName",
+    "vi": "memberName"
+  },
+  "商户ID": {
+    "en": "Merchant I D",
+    "vi": "Đại lý I D"
+  },
+  "订单类型": {
+    "en": "ordertype",
+    "vi": "Đơn hàng Loại"
+  },
+  "提交时间": {
+    "en": "SubmitTime",
+    "vi": "Thời gian gửi"
+  },
+  "支付时间": {
+    "en": "Payment Time",
+    "vi": "Thanh toán Thời gian"
+  },
+  "完成时间": {
+    "en": "Complete Time",
+    "vi": "Complete Thời gian"
+  },
+  "实际金额": {
+    "en": "Actual Amount",
+    "vi": "Actual Số tiền"
+  },
+  "首充状态": {
+    "en": "First deposit Status",
+    "vi": "First deposit Trạng thái"
+  },
+  "充值失败": {
+    "en": "Recharge failed",
+    "vi": "Nạp tiền failed"
+  },
+  "充值取消": {
+    "en": "Recharge Cancel",
+    "vi": "Nạp tiền Hủy"
+  },
+  "充值过期": {
+    "en": "Recharge 过 期",
+    "vi": "Nạp tiền Hết hạn"
+  },
+  "手动充值": {
+    "en": "手 动 Recharge",
+    "vi": "Nạp thủ công"
+  },
+  "强制入款": {
+    "en": "强 制 入 款",
+    "vi": "强 制 入 款"
+  },
+  "刷新状态": {
+    "en": "Refresh Status",
+    "vi": "Làm mới Trạng thái"
+  },
+  "通道编号": {
+    "en": "channelNumber",
+    "vi": "channelNumber"
+  },
+  "所属大类": {
+    "en": "所 属 大 类",
+    "vi": "所 属 大 类"
+  },
+  "单笔限额": {
+    "en": "Single Limit",
+    "vi": "Single Giới hạn"
+  },
+  "通道状态": {
+    "en": "Channel Status",
+    "vi": "Kênh Trạng thái"
+  },
+  "通道备注": {
+    "en": "Channel Remark",
+    "vi": "Kênh Ghi chú"
+  },
+  "显示排序": {
+    "en": "ShowSort",
+    "vi": "ShowSort"
+  },
+  "确认取消": {
+    "en": "Confirm Cancel",
+    "vi": "Xác nhận Hủy"
+  },
+  "添加备注": {
+    "en": "AddRemark",
+    "vi": "Add Remark"
+  },
+  "保存失败": {
+    "en": "Save failed",
+    "vi": "Lưu failed"
+  },
+  "配置成功": {
+    "en": "Config Success",
+    "vi": "Config Thành công"
+  },
+  "配置失败": {
+    "en": "Config Failed",
+    "vi": "Config Thất bại"
+  },
+  "删除成功": {
+    "en": "Delete successful",
+    "vi": "Xóa successful"
+  },
+  "删除失败": {
+    "en": "Delete Failed",
+    "vi": "Xóa Thất bại"
+  },
+  " 已启用": {
+    "en": "Enabled",
+    "vi": "Enabled"
+  },
+  " 已删除": {
+    "en": "Already Delete",
+    "vi": "Already Xóa"
+  },
+  "成功订单": {
+    "en": "Success Order",
+    "vi": "Thành công Đơn hàng"
+  },
+  "保存筛选": {
+    "en": "Save 筛 选",
+    "vi": "Lưu 筛 选"
+  },
+  "回调状态": {
+    "en": "Callback status",
+    "vi": "Gọi lại status"
+  },
+  "代付类型": {
+    "en": "Payout type",
+    "vi": "Chi hộ type"
+  },
+  "确认代付": {
+    "en": "Confirm Payout",
+    "vi": "Xác nhận Chi hộ"
+  },
+  "回调异常": {
+    "en": "Callback exception",
+    "vi": "Gọi lại exception"
+  },
+  "代付通道": {
+    "en": "Payout Channel",
+    "vi": "Chi hộ Kênh"
+  },
+  "备注说明": {
+    "en": "RemarkDescription",
+    "vi": "Ghi chú"
+  },
+  "异常信息": {
+    "en": "Exception Info",
+    "vi": "Ngoại lệ Thông tin"
+  },
+  "回调超时": {
+    "en": "Callback 超 时",
+    "vi": "Gọi lại 超 时"
+  },
+  "代付信息": {
+    "en": "Payout Info",
+    "vi": "Chi hộ Thông tin"
+  },
+  "回调日志": {
+    "en": "Callback day 志",
+    "vi": "Gọi lại day 志"
+  },
+  "回调失败": {
+    "en": "Callback Failed",
+    "vi": "Gọi lại Thất bại"
+  },
+  "重新代付": {
+    "en": "Re-payout",
+    "vi": "Chi hộ lại"
+  },
+  "手动处理": {
+    "en": "手 动 Process",
+    "vi": "手 动 Xử lý"
+  },
+  "系统重试": {
+    "en": "System retry",
+    "vi": "Hệ thống thử lại"
+  },
+  "预计金额": {
+    "en": "Estimated Amount",
+    "vi": "Estimated Số tiền"
+  },
+  "累计金额": {
+    "en": "Cumulative amount",
+    "vi": "Cumulative amount"
+  },
+  "确认拒绝": {
+    "en": "ConfirmReject",
+    "vi": "Confirm Reject"
+  },
+  "拒绝失败": {
+    "en": "RejectFailed",
+    "vi": "RejectFailed"
+  },
+  "代付成功": {
+    "en": "Payout Success",
+    "vi": "Chi hộ Thành công"
+  },
+  "代付失败": {
+    "en": "Payout Failed",
+    "vi": "Chi hộ Thất bại"
+  },
+  "由我风控": {
+    "en": "由 我 Risk control",
+    "vi": "Rủi ro do tôi phụ trách"
+  },
+  "申请时间": {
+    "en": "Application time",
+    "vi": "Đăng ký time"
+  },
+  "收款方式": {
+    "en": "Receiving method",
+    "vi": "Receiving method"
+  },
+  "审核通过": {
+    "en": "Review pass",
+    "vi": "Duyệt pass"
+  },
+  "确认通过": {
+    "en": "Confirm pass",
+    "vi": "Xác nhận pass"
+  },
+  "审核备注": {
+    "en": "Review remark",
+    "vi": "Duyệt remark"
+  },
+  "审核拒绝": {
+    "en": "Review 拒 绝",
+    "vi": "Duyệt 拒 绝"
+  },
+  "拒绝原因": {
+    "en": "拒 绝 原 因",
+    "vi": "Rejection Reason"
+  },
+  "操作说明": {
+    "en": "Operation note",
+    "vi": "Operation note"
+  },
+  "提现详情": {
+    "en": "Withdrawal Details",
+    "vi": "Rút tiền Chi tiết"
+  },
+  "风险评估": {
+    "en": "Risk 评 估",
+    "vi": "Risk 评 估"
+  },
+  "风险控制": {
+    "en": "Risk Control",
+    "vi": "Risk Control"
+  },
+  "信息不符": {
+    "en": "Info 不 符",
+    "vi": "Thông tin 不 符"
+  },
+  "可疑交易": {
+    "en": "可 疑 Transaction",
+    "vi": "可 疑 Transaction"
+  },
+  "频繁提现": {
+    "en": "FrequentWithdrawal",
+    "vi": "FrequentWithdrawal"
+  },
+  "其他原因": {
+    "en": "其 他 原 因",
+    "vi": "其 他 原 因"
+  },
+  "操作失败": {
+    "en": "Actions Failed",
+    "vi": "Thao tác Thất bại"
+  },
+  "审核失败": {
+    "en": "Review Failed",
+    "vi": "Duyệt Thất bại"
+  },
+  "大额提现": {
+    "en": "Large amount Withdrawal",
+    "vi": "Large amount Rút tiền"
+  },
+  "可疑模式": {
+    "en": "可 疑 模 式",
+    "vi": "可 疑 模 式"
+  },
+  "代付币种": {
+    "en": "Payout currency",
+    "vi": "Chi hộ currency"
+  },
+  "商户状态": {
+    "en": "Merchant Status",
+    "vi": "Đại lý Trạng thái"
+  },
+  "选择状态": {
+    "en": "Select status",
+    "vi": "Chọn status"
+  },
+  "限额设置": {
+    "en": "Limit settings",
+    "vi": "Giới hạn settings"
+  },
+  "代付限额": {
+    "en": "Payout limit",
+    "vi": "Chi hộ limit"
+  },
+  "查询失败": {
+    "en": "Query failed",
+    "vi": "Truy vấn failed"
+  },
+  "最小限额": {
+    "en": "Min limit",
+    "vi": "Tối thiểu limit"
+  },
+  "最大限额": {
+    "en": "Max limit",
+    "vi": "Tối đa limit"
+  },
+  "操作时间": {
+    "en": "Actions Time",
+    "vi": "Thao tác Thời gian"
+  },
+  "停/启用": {
+    "en": "stop/Enable",
+    "vi": "stop/Enable"
+  },
+  "删除确认": {
+    "en": "Delete confirmation",
+    "vi": "Xóa confirmation"
+  },
+  "新增成功": {
+    "en": "Create successful",
+    "vi": "Tạo successful"
+  },
+  "触发模式": {
+    "en": "Trigger Mode",
+    "vi": "Trigger Mode"
+  },
+  "稽核状态": {
+    "en": "Audit Status",
+    "vi": "Kiểm toán Trạng thái"
+  },
+  "总源金额": {
+    "en": "totalSource Amount",
+    "vi": "totalSource Amount"
+  },
+  "稽核统计": {
+    "en": "Audit Statistics",
+    "vi": "Kiểm toán Thống kê"
+  },
+  "提现模式": {
+    "en": "Withdrawal 模 式",
+    "vi": "Rút tiền 模 式"
+  },
+  "类型细项": {
+    "en": "类 型 细 项",
+    "vi": "类 型 细 项"
+  },
+  "优惠名称": {
+    "en": "PromotionName",
+    "vi": "Khuyến mãi Tên"
+  },
+  "要求倍数": {
+    "en": "要 求 倍 数",
+    "vi": "要 求 倍 数"
+  },
+  "任务状态": {
+    "en": "Task Status",
+    "vi": "Task Trạng thái"
+  },
+  "稽核ID": {
+    "en": "Audit I D",
+    "vi": "Kiểm toán I D"
+  },
+  "活动奖励": {
+    "en": "ActivityReward",
+    "vi": "Activity Reward"
+  },
+  "活动稽核": {
+    "en": "ActivityAudit",
+    "vi": "Hoạt động Kiểm toán"
+  },
+  "新人活动": {
+    "en": "New UserActivity",
+    "vi": "New UserActivity"
+  },
+  "促销奖励": {
+    "en": "PromotionReward",
+    "vi": "Promotion Reward"
+  },
+  "任务奖励": {
+    "en": "TaskReward",
+    "vi": "Task Reward"
+  },
+  "通用奖励": {
+    "en": "通 用 奖 励",
+    "vi": "通 用 奖 励"
+  },
+  "奖金发放": {
+    "en": "Bonusissue",
+    "vi": "Bonus Grant"
+  },
+  "会员充值": {
+    "en": "Member Recharge",
+    "vi": "Thành viên Nạp tiền"
+  },
+  "存款奖励": {
+    "en": "存 款 奖 励",
+    "vi": "存 款 奖 励"
+  },
+  "救援奖金": {
+    "en": "RescueBonus",
+    "vi": "RescueBonus"
+  },
+  "人工解除": {
+    "en": "Manual 解 除",
+    "vi": "Thủ công 解 除"
+  },
+  "人工加款": {
+    "en": "Manual 加 款",
+    "vi": "Cộng tiền thủ công"
+  },
+  "人工扣款": {
+    "en": "Manual 扣 款",
+    "vi": "Manual Debit"
+  },
+  "代理佣金": {
+    "en": "AgentCommission",
+    "vi": "Hoa hồng đại lý"
+  },
+  "推荐奖励": {
+    "en": "推 荐 奖 励",
+    "vi": "Referral Reward"
+  },
+  "资金修复": {
+    "en": "资 金 修 复",
+    "vi": "资 金 修 复"
+  },
+  "资金调整": {
+    "en": "资 金 调 整",
+    "vi": "资 金 调 整"
+  },
+  "代理转账": {
+    "en": "代 理 Transfer",
+    "vi": "代 理 Transfer"
+  },
+  "信用贷款": {
+    "en": "信 用 贷 款",
+    "vi": "信 用 贷 款"
+  },
+  "幸运转盘": {
+    "en": "Lucky Wheel",
+    "vi": "Vòng quay may mắn"
+  },
+  "神秘宝箱": {
+    "en": "神 秘 宝 箱",
+    "vi": "神 秘 宝 箱"
+  },
+  "小费奖励": {
+    "en": "小 费 奖 励",
+    "vi": "小 费 奖 励"
+  },
+  "来源描述": {
+    "en": "Source Description",
+    "vi": "Source Description"
+  },
+  "来源ID": {
+    "en": "sourceID",
+    "vi": "sourceID"
+  },
+  "稽核金额": {
+    "en": "Audit Amount",
+    "vi": "Kiểm toán Số tiền"
+  },
+  "激活时间": {
+    "en": "激 活 Time",
+    "vi": "激 活 Thời gian"
+  },
+  "过期时间": {
+    "en": "过 期 Time",
+    "vi": "Hết hạn Thời gian"
+  },
+  "清除稽核": {
+    "en": "ClearAudit",
+    "vi": "ClearAudit"
+  },
+  "清除失败": {
+    "en": "Clearfailed",
+    "vi": "Clearfailed"
+  },
+  "完成稽核": {
+    "en": "Complete Audit",
+    "vi": "Complete Kiểm toán"
+  },
+  "完成失败": {
+    "en": "Complete Failed",
+    "vi": "Complete Thất bại"
+  },
+  "签到奖励": {
+    "en": "Check-inReward",
+    "vi": "Check-inReward"
+  },
+  "奖金解锁": {
+    "en": "BonusUnlock",
+    "vi": "BonusUnlock"
+  },
+  "通道选择": {
+    "en": "Channel Select",
+    "vi": "Kênh Chọn"
+  },
+  "允许提现": {
+    "en": "AllowWithdrawal",
+    "vi": "AllowWithdrawal"
+  },
+  "监号数量": {
+    "en": "监 号 数 量",
+    "vi": "监 号 数 量"
+  },
+  "到账币种": {
+    "en": "Received Currency",
+    "vi": "Received Loại tiền"
+  },
+  "高级设置": {
+    "en": "highlevelsettings",
+    "vi": "Nâng cao"
+  },
+  "每日限额": {
+    "en": "Daily Limit",
+    "vi": "Daily Giới hạn"
+  },
+  "输入密钥": {
+    "en": "Enter Key",
+    "vi": "Nhập Key"
+  },
+  "回调地址": {
+    "en": "Callback URL",
+    "vi": "Gọi lại URL"
+  },
+  "应用设置": {
+    "en": "应 用 Settings",
+    "vi": "应 用 Cài đặt"
+  },
+  "工作时间": {
+    "en": "工 作 Time",
+    "vi": "工 作 Thời gian"
+  },
+  "所有通道": {
+    "en": "所 Has Channel",
+    "vi": "所 Has Kênh"
+  },
+  "暂停通道": {
+    "en": "Suspended Channel",
+    "vi": "Suspended Kênh"
+  },
+  "降低限额": {
+    "en": "降 低 Limit",
+    "vi": "降 低 Giới hạn"
+  },
+  "恢复条件": {
+    "en": "Restore Conditions",
+    "vi": "Restore Conditions"
+  },
+  "手动恢复": {
+    "en": "手 动 Restore",
+    "vi": "手 动 Restore"
+  },
+  "全部层级": {
+    "en": "All Tier",
+    "vi": "Tất cả Cấp"
+  },
+  "超30天": {
+    "en": "超 30 days",
+    "vi": "超 30 days"
+  },
+  "必审条件": {
+    "en": "必 审 Conditions",
+    "vi": "必 审 Conditions"
+  },
+  "免审条件": {
+    "en": "Auto-approved Conditions",
+    "vi": "Auto-approved Conditions"
+  },
+  "加密货币": {
+    "en": "加 密 货 币",
+    "vi": "加 密 货 币"
+  },
+  "默认标签": {
+    "en": "默 认 Tag",
+    "vi": "Nhãn mặc định"
+  },
+  "提现大类": {
+    "en": "Withdrawallargetype",
+    "vi": "Withdrawallargetype"
+  },
+  "日期范围": {
+    "en": "Date Range",
+    "vi": "Date Range"
+  },
+  "提现状态": {
+    "en": "Withdrawal status",
+    "vi": "Rút tiền status"
+  },
+  "代理模式": {
+    "en": "代 理 模 式",
+    "vi": "Chế độ đại lý"
+  },
+  "服务筛选": {
+    "en": "服 务 筛 选",
+    "vi": "服 务 筛 选"
+  },
+  "提现设置": {
+    "en": "Withdrawal settings",
+    "vi": "Rút tiền settings"
+  },
+  "代付统计": {
+    "en": "Payment Statistics",
+    "vi": "Thống kê chi hộ"
+  },
+  "预计到账": {
+    "en": "Estimated Received",
+    "vi": "Estimated Received"
+  },
+  "会员信息": {
+    "en": "Member info",
+    "vi": "Thành viên info"
+  },
+  "备用账户": {
+    "en": "备 用 Account",
+    "vi": "备 用 Tài khoản"
+  },
+  "推广模式": {
+    "en": "推 广 模 式",
+    "vi": "推 广 模 式"
+  },
+  "手动分配": {
+    "en": "手 动 分 配",
+    "vi": "手 动 分 配"
+  },
+  "正常服务": {
+    "en": "Normal 服 务",
+    "vi": "Bình thường 服 务"
+  },
+  "客服处理": {
+    "en": "客 服 Process",
+    "vi": "客 服 Xử lý"
+  },
+  "批量拒绝": {
+    "en": "Bulk reject",
+    "vi": "Hàng loạt reject"
+  },
+  "锁定成功": {
+    "en": "Lock successful",
+    "vi": "Lock successful"
+  },
+  "解锁成功": {
+    "en": "Unlock successful",
+    "vi": "Unlock successful"
+  },
+  "VIP免审": {
+    "en": "V I P Auto-approved",
+    "vi": "V I P Auto-approved"
+  },
+  "老用户免审": {
+    "en": "Veteran user Auto-approved",
+    "vi": "Veteran user Auto-approved"
+  },
+  "待自动审核": {
+    "en": "Pending auto-approval",
+    "vi": "Đang chờ auto-approval"
+  },
+  "自动处理中": {
+    "en": "Auto-processing",
+    "vi": "Auto-processing"
+  },
+  " 订单概览": {
+    "en": "Order Overview",
+    "vi": "Đơn hàng Tổng quan"
+  },
+  "充/提差额": {
+    "en": "充 / 提 差 额",
+    "vi": "充 / 提 差 额"
+  },
+  "非首次提现": {
+    "en": "Non- First withdrawal",
+    "vi": "Non- First withdrawal"
+  },
+  "无近期投注": {
+    "en": "No 近 期 Wagering",
+    "vi": "No 近 期 Cược"
+  },
+  "待财务处理": {
+    "en": "Pending Finance Process",
+    "vi": "Đang chờ Tài chính Xử lý"
+  },
+  "真实姓名：": {
+    "en": "真 实 姓 名 ：",
+    "vi": "真 实 姓 名 ："
+  },
+  "账号/地址": {
+    "en": "Account / URL",
+    "vi": "Tài khoản / URL"
+  },
+  "已人工出款": {
+    "en": "Manual payout done",
+    "vi": "Thủ công payout done"
+  },
+  "错误信息：": {
+    "en": "错 误 Info ：",
+    "vi": "错 误 Thông tin ："
+  },
+  "三方响应：": {
+    "en": "Third-party 响 应 ：",
+    "vi": "Third-party 响 应 ："
+  },
+  "选择代付商": {
+    "en": "Select payout provider",
+    "vi": "Chọn payout provider"
+  },
+  "PIX支付": {
+    "en": "PIX Payment",
+    "vi": "PIX Thanh toán"
+  },
+  "PIX自动": {
+    "en": "PIX Auto",
+    "vi": "PIX Tự động"
+  },
+  "第三方代付": {
+    "en": "Third-party payout",
+    "vi": "Third-party payout"
+  },
+  "成功订单数": {
+    "en": "Success orders",
+    "vi": "Thành công orders"
+  },
+  "失败订单数": {
+    "en": "Failed orders",
+    "vi": "Thất bại orders"
+  },
+  "VIP等级": {
+    "en": "V I P Level",
+    "vi": "V I P Cấp độ"
+  },
+  "疑似机器人": {
+    "en": "疑 似 机 器 人",
+    "vi": "Nghi bot"
+  },
+  "7天内登录": {
+    "en": "7 days within Login",
+    "vi": "Đăng nhập trong 7 ngày"
+  },
+  "VIP用户": {
+    "en": "V I P User",
+    "vi": "V I P User"
+  },
+  "三方订单号": {
+    "en": "Third-party Order no",
+    "vi": "Third-party Order no"
+  },
+  "请选择会员": {
+    "en": "Please select Member",
+    "vi": "Vui lòng select Thành viên"
+  },
+  "已放款成功": {
+    "en": "Already 放 款 Success",
+    "vi": "Already 放 款 Thành công"
+  },
+  "充值成功率": {
+    "en": "Recharge success rate",
+    "vi": "Nạp tiền success rate"
+  },
+  "充值总金额": {
+    "en": "Total recharge amount",
+    "vi": "Tổng recharge amount"
+  },
+  "第三方支付": {
+    "en": "No.Third-party Payment",
+    "vi": "No.Third-party Payment"
+  },
+  "黑名单状态": {
+    "en": "blacknameorderStatus",
+    "vi": "blacknameorderStatus"
+  },
+  "充值黑名单": {
+    "en": "Recharge blacklist",
+    "vi": "Nạp tiền blacklist"
+  },
+  "已停用通道": {
+    "en": "Disabled Channel",
+    "vi": "Disabled Kênh"
+  },
+  "三方商户号": {
+    "en": "Third-party merchant ID",
+    "vi": "Third-party merchant ID"
+  },
+  " 自动提取": {
+    "en": "Autosubmitcancel",
+    "vi": "Autosubmitcancel"
+  },
+  "减免百分比": {
+    "en": "减 免 百 分 比",
+    "vi": "减 免 百 分 比"
+  },
+  "总交易笔数": {
+    "en": "total Transaction Count",
+    "vi": "Total Transactions"
+  },
+  "总交易金额": {
+    "en": "total Transaction Amount",
+    "vi": "Total Transaction Amount"
+  },
+  "整体成功率": {
+    "en": "整 体 Success rate",
+    "vi": "整 体 Thành công rate"
+  },
+  "总上分金额": {
+    "en": "总 上 分 Amount",
+    "vi": "总 上 分 Số tiền"
+  },
+  "信用卡支付": {
+    "en": "信 用 卡 Payment",
+    "vi": "信 用 卡 Thanh toán"
+  },
+  "自定义查询": {
+    "en": "CustomSearch",
+    "vi": "CustomSearch"
+  },
+  "导出CSV": {
+    "en": "Export CSV",
+    "vi": "Xuất CSV"
+  },
+  "导出PDF": {
+    "en": "Export PDF",
+    "vi": "Xuất PDF"
+  },
+  "已首次充值": {
+    "en": "Already First time Recharge",
+    "vi": "Already First time Nạp tiền"
+  },
+  "未充值会员": {
+    "en": "Not Recharge Member",
+    "vi": "Not Nạp tiền Thành viên"
+  },
+  "无可用操作": {
+    "en": "No Available Actions",
+    "vi": "No Available Thao tác"
+  },
+  "通道已启用": {
+    "en": "Channel Enabled",
+    "vi": "Kênh Enabled"
+  },
+  "通道已停用": {
+    "en": "Channel Disabled",
+    "vi": "Kênh Disabled"
+  },
+  "充/提统计": {
+    "en": "充 / 提 Statistics",
+    "vi": "充 / 提 Thống kê"
+  },
+  "待重新代付": {
+    "en": "Pending re-payout",
+    "vi": "Đang chờ re-payout"
+  },
+  "订单已拒绝": {
+    "en": "Order Rejected",
+    "vi": "Đơn hàng Rejected"
+  },
+  "重新代付中": {
+    "en": "Re-paying",
+    "vi": "Re-paying"
+  },
+  "请输入金额": {
+    "en": "Please enter Amount",
+    "vi": "Vui lòng enter Số tiền"
+  },
+  "非标准支付": {
+    "en": "Non- 标 准 Payment",
+    "vi": "Non- 标 准 Thanh toán"
+  },
+  "请输入备注": {
+    "en": "Please enter Remark",
+    "vi": "Vui lòng enter Ghi chú"
+  },
+  "请选择状态": {
+    "en": "Please select Status",
+    "vi": "Vui lòng select Trạng thái"
+  },
+  "总稽核金额": {
+    "en": "totalAudit Amount",
+    "vi": "totalAudit Amount"
+  },
+  "需有效投注": {
+    "en": "需 Has 效 Wagering",
+    "vi": "需 Has 效 Cược"
+  },
+  "已完成投注": {
+    "en": "Already Complete Wagering",
+    "vi": "Already Complete Cược"
+  },
+  "未完成投注": {
+    "en": "Not Complete Wagering",
+    "vi": "Not Complete Cược"
+  },
+  "VIP奖励": {
+    "en": "VIPReward",
+    "vi": "Phần thưởng VIP"
+  },
+  "VIP奖金": {
+    "en": "VIPBonus",
+    "vi": "VIPBonus"
+  },
+  "俱乐部活动": {
+    "en": "俱 乐 部 活 动",
+    "vi": "俱 乐 部 活 动"
+  },
+  "稽核已清除": {
+    "en": "AuditalreadyClear",
+    "vi": "AuditalreadyClear"
+  },
+  "稽核已完成": {
+    "en": "Audit Already Complete",
+    "vi": "Kiểm toán Already Complete"
+  },
+  "提现手续费": {
+    "en": "Withdrawal fee",
+    "vi": "Rút tiền fee"
+  },
+  "API配置": {
+    "en": "A P I Config",
+    "vi": "A P I Config"
+  },
+  "API地址": {
+    "en": "A P I URL",
+    "vi": "A P I URL"
+  },
+  "输入商户号": {
+    "en": "enterMerchant ID",
+    "vi": "enterMerchant ID"
+  },
+  "仅启用通道": {
+    "en": "only Enable Channel",
+    "vi": "only Bật Kênh"
+  },
+  "失败率阈值": {
+    "en": "Failed 率 阈 值",
+    "vi": "Thất bại 率 阈 值"
+  },
+  "触发时动作": {
+    "en": "trigger 时 动 作",
+    "vi": "trigger 时 动 作"
+  },
+  "请选择银行": {
+    "en": "Please select Bank",
+    "vi": "Vui lòng select Ngân hàng"
+  },
+  "超24小时": {
+    "en": "超 24 hours",
+    "vi": "超 24 hours"
+  },
+  "充/提次数": {
+    "en": "充 / 提 Count",
+    "vi": "充 / 提 Số lần"
+  },
+  "选择时间范围": {
+    "en": "Select time range",
+    "vi": "Chọn time range"
+  },
+  "输入金额上限": {
+    "en": "enter nterAmountupperlimit",
+    "vi": "enter nterAmountupperlimit"
+  },
+  "账户安全规则": {
+    "en": "Account security rules",
+    "vi": "Tài khoản security rules"
+  },
+  "账户注册天数": {
+    "en": "Account registration days",
+    "vi": "Tài khoản registration days"
+  },
+  "最少注册天数": {
+    "en": "Minimum registration days",
+    "vi": "Minimum registration days"
+  },
+  "最近登录天数": {
+    "en": "Recent login days",
+    "vi": "Recent login days"
+  },
+  "交易历史规则": {
+    "en": "Transaction history rules",
+    "vi": "Transaction history rules"
+  },
+  "最少充值次数": {
+    "en": "Minimum deposit count",
+    "vi": "Minimum deposit count"
+  },
+  "充值提现比例": {
+    "en": "Deposit/withdrawal ratio",
+    "vi": "Deposit/withdrawal ratio"
+  },
+  "风险控制规则": {
+    "en": "Risk control rules",
+    "vi": "Risk control rules"
+  },
+  "单笔最大金额": {
+    "en": "Single Max Amount",
+    "vi": "Single Tối đa Số tiền"
+  },
+  "规则启用状态": {
+    "en": "Rule enable status",
+    "vi": "Rule enable status"
+  },
+  "启用小额免审": {
+    "en": "Enable small amount auto-approval",
+    "vi": "Bật small amount auto-approval"
+  },
+  "免审出款详情": {
+    "en": "Auto-approval payout details",
+    "vi": "Auto-approval payout details"
+  },
+  "免审规则匹配": {
+    "en": "Auto-rule match",
+    "vi": "Auto-rule match"
+  },
+  "高频用户免审": {
+    "en": "Frequent User Auto-approved",
+    "vi": "Frequent User Auto-approved"
+  },
+  "批量自动出款": {
+    "en": "Bulk auto payout",
+    "vi": "Hàng loạt auto payout"
+  },
+  "符合免审条件": {
+    "en": "Eligible for auto-approval",
+    "vi": "Eligible for auto-approval"
+  },
+  "获取数据失败": {
+    "en": "Failed to fetch data",
+    "vi": "Thất bại to fetch data"
+  },
+  "自动处理失败": {
+    "en": "Auto-process failed",
+    "vi": "Auto-process failed"
+  },
+  "规则保存失败": {
+    "en": "Failed to save rules",
+    "vi": "Thất bại to save rules"
+  },
+  "请输入订单号": {
+    "en": "Please enterOrder No.",
+    "vi": "Please enterOrder No."
+  },
+  "批量强制取消": {
+    "en": "Bulk force cancel",
+    "vi": "Hàng loạt force cancel"
+  },
+  "输入后点覆盖": {
+    "en": "Enter 后 点 覆 盖",
+    "vi": "Nhập 后 点 覆 盖"
+  },
+  "确认批量解锁": {
+    "en": "Confirm Bulk unlock",
+    "vi": "Xác nhận Hàng loạt unlock"
+  },
+  "确认批量锁定": {
+    "en": "Confirm Bulk lock",
+    "vi": "Xác nhận Hàng loạt lock"
+  },
+  "批量处理出款": {
+    "en": "Bulk process payout",
+    "vi": "Hàng loạt process payout"
+  },
+  "分配出款任务": {
+    "en": "Assign payout tasks",
+    "vi": "Assign payout tasks"
+  },
+  "批量强制拒绝": {
+    "en": "Bulk force reject",
+    "vi": "Hàng loạt force reject"
+  },
+  "此内容可作为": {
+    "en": "此 内 容 可 作 为",
+    "vi": "此 内 容 可 作 为"
+  },
+  "风险等级: ": {
+    "en": "Risk Level :",
+    "vi": "Risk Cấp độ :"
+  },
+  "需要额外关注": {
+    "en": "需 要 额 外 关 注",
+    "vi": "需 要 额 外 关 注"
+  },
+  "投注活跃用户": {
+    "en": "Wagering 活 跃 User",
+    "vi": "Cược 活 跃 User"
+  },
+  "投注任务提醒": {
+    "en": "Wagering Task 提 醒",
+    "vi": "Cược Task 提 醒"
+  },
+  "批量强制成功": {
+    "en": "Bulk force success",
+    "vi": "Hàng loạt force success"
+  },
+  "批量强制失败": {
+    "en": "Bulk force fail",
+    "vi": "Hàng loạt force fail"
+  },
+  "批量刷新回调": {
+    "en": "Bulk refresh callback",
+    "vi": "Hàng loạt refresh callback"
+  },
+  "批量审核出款": {
+    "en": "Bulk review payout",
+    "vi": "Hàng loạt review payout"
+  },
+  "批量重新代付": {
+    "en": "Bulk re-payout",
+    "vi": "Hàng loạt re-payout"
+  },
+  "暂无收款信息": {
+    "en": "No Receiving Info",
+    "vi": "No Receiving Thông tin"
+  },
+  "账号/地址：": {
+    "en": "Account / URL ：",
+    "vi": "Tài khoản / URL ："
+  },
+  "强制出款确认": {
+    "en": "强 制 Payout Confirm",
+    "vi": "强 制 Chi hộ Xác nhận"
+  },
+  "确认强制出款": {
+    "en": "Confirm 强 制 Payout",
+    "vi": "Xác nhận 强 制 Chi hộ"
+  },
+  "强制出款成功": {
+    "en": "强 制 Payout Success",
+    "vi": "强 制 Chi hộ Thành công"
+  },
+  "强制出款失败": {
+    "en": "强 制 Payout Failed",
+    "vi": "强 制 Chi hộ Thất bại"
+  },
+  "强制失败确认": {
+    "en": "强 制 Failed Confirm",
+    "vi": "强 制 Thất bại Xác nhận"
+  },
+  "确认强制失败": {
+    "en": "Confirm 强 制 Failed",
+    "vi": "Xác nhận 强 制 Thất bại"
+  },
+  "强制失败成功": {
+    "en": "强 制 Failed Success",
+    "vi": "强 制 Thất bại Thành công"
+  },
+  "重新出款确认": {
+    "en": "Re- Payout Confirm",
+    "vi": "Re- Chi hộ Xác nhận"
+  },
+  "确认重新出款": {
+    "en": "Confirm Re- Payout",
+    "vi": "Xác nhận Re- Chi hộ"
+  },
+  "人工出款确认": {
+    "en": "Manual payout Confirm",
+    "vi": "Thủ công payout Xác nhận"
+  },
+  "确认人工出款": {
+    "en": "Confirm Manual payout",
+    "vi": "Xác nhận Thủ công payout"
+  },
+  "人工出款失败": {
+    "en": "Manual payout Failed",
+    "vi": "Thủ công payout Thất bại"
+  },
+  "刷新状态失败": {
+    "en": "Refresh Status Failed",
+    "vi": "Làm mới Trạng thái Thất bại"
+  },
+  "备注更新成功": {
+    "en": "Remark Update successful",
+    "vi": "Ghi chú Update successful"
+  },
+  "备注更新失败": {
+    "en": "RemarkUpdateFailed",
+    "vi": "Cập nhật ghi chú thất bại"
+  },
+  "强制取消失败": {
+    "en": "强 制 Cancel Failed",
+    "vi": "强 制 Hủy Thất bại"
+  },
+  "强制拒绝成功": {
+    "en": "强 制 拒 绝 Success",
+    "vi": "强 制 拒 绝 Thành công"
+  },
+  "，已扣除余额": {
+    "en": "，alreadydeductBalance",
+    "vi": "，alreadydeductBalance"
+  },
+  "强制拒绝失败": {
+    "en": "强 制 拒 绝 Failed",
+    "vi": "强 制 拒 绝 Thất bại"
+  },
+  "审核出款失败": {
+    "en": "Review Payout Failed",
+    "vi": "Duyệt Chi hộ Thất bại"
+  },
+  "批量操作失败": {
+    "en": "Bulk Actions Failed",
+    "vi": "Hàng loạt Thao tác Thất bại"
+  },
+  "会员提现次数": {
+    "en": "Member withdrawal count",
+    "vi": "Thành viên withdrawal count"
+  },
+  "选择提现次数": {
+    "en": "Select withdrawal count",
+    "vi": "Chọn withdrawal count"
+  },
+  "平均处理时间": {
+    "en": "Average Processing time",
+    "vi": "Average Processing time"
+  },
+  "会员提现统计": {
+    "en": "Member withdrawal stats",
+    "vi": "Thành viên withdrawal stats"
+  },
+  "导出数据为空": {
+    "en": "Export data 为 空",
+    "vi": "Xuất data 为 空"
+  },
+  "自营游戏会员": {
+    "en": "自 营 游 戏 Member",
+    "vi": "Thành viên game tự vận hành"
+  },
+  "三方游戏会员": {
+    "en": "Third-party 游 戏 Member",
+    "vi": "Thành viên game bên thứ ba"
+  },
+  "30天内登录": {
+    "en": "30 days within Login",
+    "vi": "Đăng nhập trong 30 ngày"
+  },
+  "加载选项失败": {
+    "en": "Loading select item Failed",
+    "vi": "Không tải được tùy chọn"
+  },
+  "精准会员账号": {
+    "en": "Exact Member Account",
+    "vi": "Tài khoản thành viên chính xác"
+  },
+  "模糊会员账号": {
+    "en": "Fuzzy Member Account",
+    "vi": "Tài khoản thành viên mờ"
+  },
+  "支付方式分布": {
+    "en": "Payment Method Distribution",
+    "vi": "Payment Method Distribution"
+  },
+  "充值成功金额": {
+    "en": "Recharge Success amount",
+    "vi": "Nạp tiền Thành công amount"
+  },
+  "成功充值人数": {
+    "en": "SuccessRechargeuserscount",
+    "vi": "Thành công Nạp tiền Số người"
+  },
+  "充值总订单数": {
+    "en": "Recharge Total orders",
+    "vi": "Nạp tiền Tổng orders"
+  },
+  "平均充值金额": {
+    "en": "Average Recharge amount",
+    "vi": "Average Nạp tiền amount"
+  },
+  "充值确认成功": {
+    "en": "Recharge confirmed Success",
+    "vi": "Nạp tiền confirmed Thành công"
+  },
+  "导出数据失败": {
+    "en": "Export data Failed",
+    "vi": "Xuất data Thất bại"
+  },
+  "订单查找成功": {
+    "en": "Order 查 找 Success",
+    "vi": "Đơn hàng 查 找 Thành công"
+  },
+  "搜索订单失败": {
+    "en": "Search Order Failed",
+    "vi": "Tìm kiếm Đơn hàng Thất bại"
+  },
+  "编辑充值大类": {
+    "en": "Edit Rechargelargetype",
+    "vi": "Edit Rechargelargetype"
+  },
+  "新增充值大类": {
+    "en": "newaddRechargelargetype",
+    "vi": "newaddRechargelargetype"
+  },
+  "批量启用通道": {
+    "en": "Bulk Enable Channel",
+    "vi": "Hàng loạt Bật Kênh"
+  },
+  "批量删除通道": {
+    "en": "Bulk Delete Channel",
+    "vi": "Hàng loạt Xóa Kênh"
+  },
+  "三方支付通道": {
+    "en": "Third-party Payment Channel",
+    "vi": "Third-party Thanh toán Kênh"
+  },
+  "三方回调IP": {
+    "en": "Third-party callback IP",
+    "vi": "Third-party callback IP"
+  },
+  "通道所属大类": {
+    "en": "Channel 所 属 大 类",
+    "vi": "Kênh 所 属 大 类"
+  },
+  "通道单笔限额": {
+    "en": "Channel Single Limit",
+    "vi": "Kênh Single Giới hạn"
+  },
+  "是否输入姓名": {
+    "en": "yesnoenter nterName",
+    "vi": "yesnoenter nterName"
+  },
+  "通道停/启用": {
+    "en": "Channel stop / Enable",
+    "vi": "Channel stop / Enable"
+  },
+  "通道推荐金额": {
+    "en": "Channel 推 荐 Amount",
+    "vi": "Kênh 推 荐 Số tiền"
+  },
+  "配置推荐金额": {
+    "en": "Config 推 荐 Amount",
+    "vi": "Config 推 荐 Số tiền"
+  },
+  "配置充值赠送": {
+    "en": "Config Recharge 赠 送",
+    "vi": "Config Nạp tiền 赠 送"
+  },
+  "气泡背景颜色": {
+    "en": "气 泡 背 景 颜 色",
+    "vi": "气 泡 背 景 颜 色"
+  },
+  "赠送金额上限": {
+    "en": "Gift amountupperlimit",
+    "vi": "Gift amountupperlimit"
+  },
+  "赠送次数上限": {
+    "en": "赠 送 Count 上 限",
+    "vi": "赠 送 Số lần 上 限"
+  },
+  "仅限固定金额": {
+    "en": "onlylimitFixedamount",
+    "vi": "onlylimitFixedamount"
+  },
+  "输入加赠比例": {
+    "en": "Enter 加 赠 Ratio",
+    "vi": "Nhập 加 赠 Ratio"
+  },
+  "暂无统计数据": {
+    "en": "No Statistics Data",
+    "vi": "No Thống kê Dữ liệu"
+  },
+  "成功交易笔数": {
+    "en": "Success Transaction Count",
+    "vi": "Thành công Transaction Số lần"
+  },
+  "创建预设订单": {
+    "en": "Create 预 设 Order",
+    "vi": "Tạo 预 设 Đơn hàng"
+  },
+  "创建在线订单": {
+    "en": "Create online order",
+    "vi": "Tạo online order"
+  },
+  "充值通道币种": {
+    "en": "Recharge Channel Currency",
+    "vi": "Nạp tiền Kênh Loại tiền"
+  },
+  "PIX二维码": {
+    "en": "P I X 二 维 码",
+    "vi": "P I X 二 维 码"
+  },
+  "错误代码: ": {
+    "en": "错 误 代 码 :",
+    "vi": "错 误 代 码 :"
+  },
+  "错误信息: ": {
+    "en": "错 误 Info :",
+    "vi": "错 误 Thông tin :"
+  },
+  "会员查找成功": {
+    "en": "Member 查 找 Success",
+    "vi": "Thành viên 查 找 Thành công"
+  },
+  "订单创建成功": {
+    "en": "Order Create Success",
+    "vi": "Đơn hàng Tạo Thành công"
+  },
+  "补单创建成功": {
+    "en": "补 单 Create Success",
+    "vi": "补 单 Tạo Thành công"
+  },
+  "创建补单失败": {
+    "en": "Create supplementary order Failed",
+    "vi": "Tạo supplementary order Thất bại"
+  },
+  "确认强制入款": {
+    "en": "Confirm 强 制 入 款",
+    "vi": "Xác nhận 强 制 入 款"
+  },
+  "强制入款成功": {
+    "en": "强 制 入 款 Success",
+    "vi": "强 制 入 款 Thành công"
+  },
+  "强制入款失败": {
+    "en": "强 制 入 款 Failed",
+    "vi": "强 制 入 款 Thất bại"
+  },
+  "确认强制取消": {
+    "en": "Confirm 强 制 Cancel",
+    "vi": "Xác nhận 强 制 Hủy"
+  },
+  "强制取消成功": {
+    "en": "强 制 Cancel Success",
+    "vi": "强 制 Hủy Thành công"
+  },
+  "状态刷新失败": {
+    "en": "Status Refresh Failed",
+    "vi": "Trạng thái Làm mới Thất bại"
+  },
+  "状态更新失败": {
+    "en": "StatusUpdateFailed",
+    "vi": "Cập nhật trạng thái thất bại"
+  },
+  "连接测试成功": {
+    "en": "连 接 测 试 Success",
+    "vi": "连 接 测 试 Thành công"
+  },
+  "连接测试失败": {
+    "en": "连 接 测 试 Failed",
+    "vi": "连 接 测 试 Thất bại"
+  },
+  "启用通道失败": {
+    "en": "Enable Channel Failed",
+    "vi": "Bật Kênh Thất bại"
+  },
+  "删除通道失败": {
+    "en": "Delete Channel Failed",
+    "vi": "Xóa Kênh Thất bại"
+  },
+  "成功率(%)": {
+    "en": "Success rate ( % )",
+    "vi": "Thành công rate ( % )"
+  },
+  "列配置已保存": {
+    "en": "Column config Already Save",
+    "vi": "Column config Already Lưu"
+  },
+  "数据加载失败": {
+    "en": "Data Loading Failed",
+    "vi": "Dữ liệu Đang tải Thất bại"
+  },
+  "重新代付确认": {
+    "en": "Re-payout Confirm",
+    "vi": "Re-payout Xác nhận"
+  },
+  "异常订单详情": {
+    "en": "Exception orders Details",
+    "vi": "Ngoại lệ orders Chi tiết"
+  },
+  "PIX通道1": {
+    "en": "P I X Channel 1",
+    "vi": "P I X Kênh 1"
+  },
+  "PIX通道2": {
+    "en": "P I X Channel 2",
+    "vi": "P I X Kênh 2"
+  },
+  "银行代付通道": {
+    "en": "Bank Payout Channel",
+    "vi": "Ngân hàng Chi hộ Kênh"
+  },
+  "批量标记处理": {
+    "en": "Bulk mark Process",
+    "vi": "Hàng loạt mark Xử lý"
+  },
+  "回调异常类型": {
+    "en": "Callback exceptionType",
+    "vi": "Callback exceptionType"
+  },
+  "确认重新代付": {
+    "en": "Confirm Re-payout",
+    "vi": "Xác nhận Re-payout"
+  },
+  "重新代付失败": {
+    "en": "Re-payout Failed",
+    "vi": "Re-payout Thất bại"
+  },
+  "人工出款成功": {
+    "en": "Manual payout Success",
+    "vi": "Thủ công payout Thành công"
+  },
+  "拒绝订单确认": {
+    "en": "拒 绝 Order Confirm",
+    "vi": "拒 绝 Đơn hàng Xác nhận"
+  },
+  "暂无异常订单": {
+    "en": "No Exception orders",
+    "vi": "No Ngoại lệ orders"
+  },
+  "选择日期范围": {
+    "en": "select electDate Range",
+    "vi": "Select date range"
+  },
+  "选择收款方式": {
+    "en": "Select Receiving method",
+    "vi": "Chọn Receiving method"
+  },
+  "获取详情失败": {
+    "en": "Fetch Details Failed",
+    "vi": "Fetch Chi tiết Thất bại"
+  },
+  "审核通过成功": {
+    "en": "Review pass Success",
+    "vi": "Duyệt pass Thành công"
+  },
+  "批量审核失败": {
+    "en": "Bulk Review Failed",
+    "vi": "Hàng loạt Duyệt Thất bại"
+  },
+  "审核操作失败": {
+    "en": "Review Actions Failed",
+    "vi": "Duyệt Thao tác Thất bại"
+  },
+  "输入商户名称": {
+    "en": "Enter merchant name",
+    "vi": "Nhập merchant name"
+  },
+  "修改代付商户": {
+    "en": "Edit payout merchant",
+    "vi": "Sửa payout merchant"
+  },
+  "新增代付商户": {
+    "en": "Add payout merchant",
+    "vi": "Thêm payout merchant"
+  },
+  "选择代付币种": {
+    "en": "Select Payout currency",
+    "vi": "Chọn Chi hộ currency"
+  },
+  "三方商户密钥": {
+    "en": "Third-party merchant key",
+    "vi": "Third-party merchant key"
+  },
+  "回调成功标识": {
+    "en": "Callback success flag",
+    "vi": "Gọi lại success flag"
+  },
+  "三方下单地址": {
+    "en": "Third-party order URL",
+    "vi": "Third-party order URL"
+  },
+  "输入查询地址": {
+    "en": "Enter Query URL",
+    "vi": "Nhập Truy vấn URL"
+  },
+  "余额查询地址": {
+    "en": "Balance query URL",
+    "vi": "Balance query URL"
+  },
+  "三方商户余额": {
+    "en": "Merchant balance",
+    "vi": "Đại lý balance"
+  },
+  "加载中...": {
+    "en": "Loading...",
+    "vi": "Đang tải..."
+  },
+  "投注任务明细": {
+    "en": "WageringtaskDetails",
+    "vi": "WageringtaskDetails"
+  },
+  "最小稽核金额": {
+    "en": "Min Audit Amount",
+    "vi": "Tối thiểu Kiểm toán Số tiền"
+  },
+  "最大稽核金额": {
+    "en": "Max Audit Amount",
+    "vi": "Tối đa Kiểm toán Số tiền"
+  },
+  "自动解除设置": {
+    "en": "Auto Release Settings",
+    "vi": "Auto Release Settings"
+  },
+  "投注任务详情": {
+    "en": "Wagering Task Details",
+    "vi": "Cược Task Chi tiết"
+  },
+  "会员个人信息": {
+    "en": "Member items users Info",
+    "vi": "Member items users Info"
+  },
+  "任务创建时间": {
+    "en": "Task Create Time",
+    "vi": "Task Tạo Thời gian"
+  },
+  "自动解除额度": {
+    "en": "Auto 解 除 额 度",
+    "vi": "Tự động 解 除 额 度"
+  },
+  "新手福利任务": {
+    "en": "新 手 福 利 Task",
+    "vi": "新 手 福 利 Task"
+  },
+  "强制拒绝稽核": {
+    "en": "强 制 拒 绝 Audit",
+    "vi": "强 制 拒 绝 Kiểm toán"
+  },
+  "清除稽核失败": {
+    "en": "ClearAuditFailed",
+    "vi": "ClearAuditFailed"
+  },
+  "完成稽核失败": {
+    "en": "Complete Audit Failed",
+    "vi": "Complete Kiểm toán Thất bại"
+  },
+  "提现通道配置": {
+    "en": "Withdrawal Channel Config",
+    "vi": "Rút tiền Kênh Config"
+  },
+  "选择通道类型": {
+    "en": "selectchanneltype",
+    "vi": "selectchanneltype"
+  },
+  "输入通道名称": {
+    "en": "enterchannelname",
+    "vi": "enterchannelname"
+  },
+  "通道状态设置": {
+    "en": "Channel Status Settings",
+    "vi": "Kênh Trạng thái Cài đặt"
+  },
+  "工作时间设置": {
+    "en": "工 作 Time Settings",
+    "vi": "工 作 Thời gian Cài đặt"
+  },
+  "风险控制等级": {
+    "en": "Risk Control Level",
+    "vi": "Risk Control Cấp độ"
+  },
+  "选择风险等级": {
+    "en": "Select Risk Level",
+    "vi": "Chọn Risk Cấp độ"
+  },
+  "输入回调地址": {
+    "en": "Enter Callback URL",
+    "vi": "Nhập Gọi lại URL"
+  },
+  "选择应用范围": {
+    "en": "Select 应 用 范 围",
+    "vi": "Chọn 应 用 范 围"
+  },
+  "仅PIX通道": {
+    "en": "only P I X Channel",
+    "vi": "only P I X Kênh"
+  },
+  "风险检测规则": {
+    "en": "Risk 检 测 Rules",
+    "vi": "Risk 检 测 Quy tắc"
+  },
+  "异常金额阈值": {
+    "en": "Exception Amount 阈 值",
+    "vi": "Ngoại lệ Số tiền 阈 值"
+  },
+  "单笔异常金额": {
+    "en": "Single Exception Amount",
+    "vi": "Single Ngoại lệ Số tiền"
+  },
+  "失败率百分比": {
+    "en": "Failed 率 百 分 比",
+    "vi": "Thất bại 率 百 分 比"
+  },
+  "监控时间窗口": {
+    "en": "监 控 Time 窗 口",
+    "vi": "监 控 Thời gian 窗 口"
+  },
+  "自动处理动作": {
+    "en": "Auto Process 动 作",
+    "vi": "Tự động Xử lý 动 作"
+  },
+  "启用自动风控": {
+    "en": "Enable Auto Risk control",
+    "vi": "Bật Tự động Risk control"
+  },
+  "选择触发动作": {
+    "en": "Select trigger 动 作",
+    "vi": "Chọn trigger 动 作"
+  },
+  "选择恢复条件": {
+    "en": "Select Restore Conditions",
+    "vi": "Chọn Restore Conditions"
+  },
+  "1小时后自动": {
+    "en": "1hoursafterAuto",
+    "vi": "1hoursafterAuto"
+  },
+  "4小时后自动": {
+    "en": "4hoursafterAuto",
+    "vi": "4hoursafterAuto"
+  },
+  "关闭提现通道": {
+    "en": "Off Withdrawal Channel",
+    "vi": "Off Rút tiền Kênh"
+  },
+  "三方代付设置": {
+    "en": "Third-party payout Settings",
+    "vi": "Third-party payout Cài đặt"
+  },
+  "其他必审条件": {
+    "en": "其 他 必 审 Conditions",
+    "vi": "其 他 必 审 Conditions"
+  },
+  "其他免审条件": {
+    "en": "OtherAuto-approved Conditions",
+    "vi": "OtherAuto-approved Conditions"
+  },
+  "是否允许提现": {
+    "en": "YesNoAllowWithdrawal",
+    "vi": "YesNoAllowWithdrawal"
+  },
+  "暂无通道数据": {
+    "en": "No Channel Data",
+    "vi": "No Kênh Dữ liệu"
+  },
+  "设置更新失败": {
+    "en": "settingsUpdatefailed",
+    "vi": "Cài đặt Cập nhật Thất bại"
+  },
+  "保存设置失败": {
+    "en": "Save Settings Failed",
+    "vi": "Lưu Cài đặt Thất bại"
+  },
+  "新通道已添加": {
+    "en": "新 Channel Already 添 加",
+    "vi": "新 Kênh Already 添 加"
+  },
+  "批量设置失败": {
+    "en": "Bulk Settings Failed",
+    "vi": "Hàng loạt Cài đặt Thất bại"
+  },
+  "设置保存失败": {
+    "en": "Settings Save failed",
+    "vi": "Cài đặt Lưu failed"
+  },
+  "编辑提现订单": {
+    "en": "Edit Withdrawal Order",
+    "vi": "Sửa Rút tiền Đơn hàng"
+  },
+  "新建提现订单": {
+    "en": "新 建 Withdrawal Order",
+    "vi": "新 建 Rút tiền Đơn hàng"
+  },
+  "请选择新状态": {
+    "en": "PleaseselectNewstatus",
+    "vi": "PleaseselectNewstatus"
+  },
+  "提现账户信息": {
+    "en": "Withdrawal Account Info",
+    "vi": "Rút tiền Tài khoản Thông tin"
+  },
+  "提现金额信息": {
+    "en": "Withdrawal amount Info",
+    "vi": "Rút tiền amount Thông tin"
+  },
+  "预计到账金额": {
+    "en": "Estimated Received Amount",
+    "vi": "Estimated Received Số tiền"
+  },
+  "三方代付备注": {
+    "en": "Third-party payout Remark",
+    "vi": "Third-party payout Ghi chú"
+  },
+  "批量更新状态": {
+    "en": "BatchUpdatestatus",
+    "vi": "BatchUpdatestatus"
+  },
+  "批量锁定失败": {
+    "en": "Bulk lock Failed",
+    "vi": "Hàng loạt lock Thất bại"
+  },
+  "批量解锁失败": {
+    "en": "Bulk unlock Failed",
+    "vi": "Hàng loạt unlock Thất bại"
+  },
+  "数据格式错误": {
+    "en": "Data 格 式 错 误",
+    "vi": "Dữ liệu 格 式 错 误"
+  },
+  "备注保存成功": {
+    "en": "Remark Save Success",
+    "vi": "Ghi chú Lưu Thành công"
+  },
+  "批量操作成功": {
+    "en": "Bulk Actions Success",
+    "vi": "Hàng loạt Thao tác Thành công"
+  },
+  "无内容可复制": {
+    "en": "No 内 容 可 复 制",
+    "vi": "No 内 容 可 复 制"
+  },
+  "VIP等级规则": {
+    "en": "VIP level rules",
+    "vi": "VIP level rules"
+  },
+  "最低VIP等级": {
+    "en": "Minimum VIP level",
+    "vi": "Minimum VIP level"
+  },
+  "最近登录天数内": {
+    "en": "Recent login dayswithin",
+    "vi": "Recent login dayswithin"
+  },
+  "日累计免审金额": {
+    "en": "Daily auto-approval limit",
+    "vi": "Daily auto-approval limit"
+  },
+  "启用VIP免审": {
+    "en": "Enable VIP auto-approval",
+    "vi": "Bật VIP auto-approval"
+  },
+  "启用老用户免审": {
+    "en": "Enable veteran user auto-approval",
+    "vi": "Bật veteran user auto-approval"
+  },
+  "PIX自动代付": {
+    "en": "PIX Auto Payout",
+    "vi": "PIX Tự động Chi hộ"
+  },
+  "请输入会员ID": {
+    "en": "Please enter Member ID",
+    "vi": "Vui lòng enter Thành viên ID"
+  },
+  "批量已人工出款": {
+    "en": "Bulk Manual payout done",
+    "vi": "Hàng loạt Thủ công payout done"
+  },
+  "请输入前台备注": {
+    "en": "Please enter Frontend remark",
+    "vi": "Vui lòng enter Frontend remark"
+  },
+  "请输入后台备注": {
+    "en": "Please enter Backend remark",
+    "vi": "Vui lòng enter Backend remark"
+  },
+  "请选择操作类型": {
+    "en": "Please selectActionsType",
+    "vi": "Chọn loại thao tác"
+  },
+  "请输入操作说明": {
+    "en": "Please enter Operation note",
+    "vi": "Vui lòng enter Operation note"
+  },
+  "请选择处理状态": {
+    "en": "Please select Process Status",
+    "vi": "Vui lòng select Xử lý Trạng thái"
+  },
+  "请选择备注类型": {
+    "en": "Please selectRemarkType",
+    "vi": "Vui lòng chọn Ghi chú Loại"
+  },
+  "请输入备注内容": {
+    "en": "PleaseenterremarkContent",
+    "vi": "PleaseenterremarkContent"
+  },
+  "👤 会员信息": {
+    "en": "\ud83d \udc64 Member info",
+    "vi": "\ud83d \udc64 Thành viên info"
+  },
+  "⚠️ 风控评估": {
+    "en": "⚠ ️ Risk control 评 估",
+    "vi": "⚠ ️ Risk control 评 估"
+  },
+  "无效的会员ID": {
+    "en": "No 效 Member ID",
+    "vi": "No 效 Thành viên ID"
+  },
+  "已复制全部信息": {
+    "en": "Already 复 制 All Info",
+    "vi": "Already 复 制 Tất cả Thông tin"
+  },
+  "，请谨慎操作！": {
+    "en": "， Please 谨 慎 Actions ！",
+    "vi": "， Vui lòng 谨 慎 Thao tác ！"
+  },
+  "请输入会员账号": {
+    "en": "Please enter Member Account",
+    "vi": "Vui lòng enter Thành viên Tài khoản"
+  },
+  "请选择搜索条件": {
+    "en": "Please select Search Conditions",
+    "vi": "Vui lòng select Tìm kiếm Conditions"
+  },
+  "请选择搜索字段": {
+    "en": "Please selectSearch field",
+    "vi": "Please selectSearch field"
+  },
+  "请输入充值金额": {
+    "en": "Please enter Recharge amount",
+    "vi": "Vui lòng enter Nạp tiền amount"
+  },
+  "请选择充值方式": {
+    "en": "Please select Recharge Method",
+    "vi": "Vui lòng select Nạp tiền Phương thức"
+  },
+  "请输入备注信息": {
+    "en": "Please enter Remark Info",
+    "vi": "Vui lòng enter Ghi chú Thông tin"
+  },
+  "金额和时间信息": {
+    "en": "Amount and Time Info",
+    "vi": "Số tiền and Thời gian Thông tin"
+  },
+  "成功充值订单数": {
+    "en": "Success Recharge Order count",
+    "vi": "Thành công Nạp tiền Đơn hàng count"
+  },
+  "失败充值订单数": {
+    "en": "Failed Recharge Order count",
+    "vi": "Thất bại Nạp tiền Đơn hàng count"
+  },
+  "充值总次数占比": {
+    "en": "Recharge 总 Count 占 比",
+    "vi": "Nạp tiền 总 Số lần 占 比"
+  },
+  "API响应为空": {
+    "en": "A P I 响 应 为 空",
+    "vi": "A P I 响 应 为 空"
+  },
+  "未找到用户信息": {
+    "en": "Not found User Info",
+    "vi": "Not found User Thông tin"
+  },
+  "搜索订单失败:": {
+    "en": "Search Order Failed :",
+    "vi": "Tìm kiếm Đơn hàng Thất bại :"
+  },
+  "创建补单失败:": {
+    "en": "Create supplementary order Failed :",
+    "vi": "Tạo supplementary order Thất bại :"
+  },
+  "大类名称或角标": {
+    "en": "大 类 名 称 or 角 标",
+    "vi": "大 类 名 称 or 角 标"
+  },
+  "请输入大类名称": {
+    "en": "Please enter argetypenametitle",
+    "vi": "Please enter argetypenametitle"
+  },
+  "请输入大类角标": {
+    "en": "Please enter 大 类 角 标",
+    "vi": "Vui lòng enter 大 类 角 标"
+  },
+  "第三方支付平台": {
+    "en": "No. Third-party Payment Platform",
+    "vi": "No. Third-party Payment Platform"
+  },
+  "请选择大类配置": {
+    "en": "Please select argetypeConfig",
+    "vi": "Please select argetypeConfig"
+  },
+  "请选择会员层级": {
+    "en": "Please select Member tier",
+    "vi": "Vui lòng select Thành viên tier"
+  },
+  "自定义通道角标": {
+    "en": "自 定 义 Channel 角 标",
+    "vi": "自 定 义 Kênh 角 标"
+  },
+  "配置手续费减免": {
+    "en": "Config Fee 减 免",
+    "vi": "Config Phí 减 免"
+  },
+  "限前多少次充值": {
+    "en": "limitbeforemorelesstimesRecharge",
+    "vi": "limitbeforemorelesstimesRecharge"
+  },
+  "可输入任意金额": {
+    "en": "可 Enter any Amount",
+    "vi": "可 Nhập any Số tiền"
+  },
+  "请选择三方支付": {
+    "en": "Please select Third-party Payment",
+    "vi": "Vui lòng select Third-party Thanh toán"
+  },
+  "会员账号/ID": {
+    "en": "Member Account / I D",
+    "vi": "Thành viên Tài khoản / I D"
+  },
+  "请选择充值大类": {
+    "en": "Please selectRechargelargetype",
+    "vi": "Please selectRechargelargetype"
+  },
+  "请选择支付通道": {
+    "en": "Please select Payment Channel",
+    "vi": "Vui lòng select Thanh toán Kênh"
+  },
+  "请输入订单金额": {
+    "en": "Please enter Order Amount",
+    "vi": "Vui lòng enter Đơn hàng Số tiền"
+  },
+  "请输入赠送比例": {
+    "en": "PleaseentergiftRatio",
+    "vi": "PleaseentergiftRatio"
+  },
+  "请输入订单备注": {
+    "en": "Please enter Order Remark",
+    "vi": "Vui lòng enter Đơn hàng Ghi chú"
+  },
+  "请输入下单地址": {
+    "en": "Please enter Order URL",
+    "vi": "Vui lòng enter Đơn hàng URL"
+  },
+  "请输入查询地址": {
+    "en": "Please enter Query URL",
+    "vi": "Vui lòng enter Truy vấn URL"
+  },
+  "请输入通道编码": {
+    "en": "Please enter Channel 编 码",
+    "vi": "Vui lòng enter Kênh 编 码"
+  },
+  "请输入通道名称": {
+    "en": "Pleaseenterchannelname",
+    "vi": "Pleaseenterchannelname"
+  },
+  "请选择通道类型": {
+    "en": "Pleaseselectchanneltype",
+    "vi": "Pleaseselectchanneltype"
+  },
+  "请选择通道币种": {
+    "en": "Please select Channel Currency",
+    "vi": "Vui lòng select Kênh Loại tiền"
+  },
+  "请输入最小金额": {
+    "en": "Please enter Min Amount",
+    "vi": "Vui lòng enter Tối thiểu Số tiền"
+  },
+  "请输入最大金额": {
+    "en": "Please enter Max Amount",
+    "vi": "Vui lòng enter Tối đa Số tiền"
+  },
+  "请选择开启状态": {
+    "en": "Please select On Status",
+    "vi": "Vui lòng select On Trạng thái"
+  },
+  "PIX即时支付": {
+    "en": "P I X 即 时 Payment",
+    "vi": "P I X 即 时 Thanh toán"
+  },
+  "导出Excel": {
+    "en": "Export Excel",
+    "vi": "Xuất Excel"
+  },
+  "赠送比例(%)": {
+    "en": "giftRatio(%)",
+    "vi": "giftRatio(%)"
+  },
+  "处理时间(s)": {
+    "en": "Processing time ( s )",
+    "vi": "Processing time ( s )"
+  },
+  "搜索会员失败:": {
+    "en": "Search Member Failed :",
+    "vi": "Tìm kiếm Thành viên Thất bại :"
+  },
+  "请输入验证密码": {
+    "en": "Please enter 验 证 密 码",
+    "vi": "Vui lòng enter 验 证 密 码"
+  },
+  "创建订单失败:": {
+    "en": "Create Order Failed :",
+    "vi": "Tạo Đơn hàng Thất bại :"
+  },
+  "会员数据不完整": {
+    "en": "Member Data 不 完 整",
+    "vi": "Thành viên Dữ liệu 不 完 整"
+  },
+  "管理员强制入款": {
+    "en": "Management 员 强 制 入 款",
+    "vi": "Quản lý 员 强 制 入 款"
+  },
+  "请输入取消原因": {
+    "en": "Please enter Cancel 原 因",
+    "vi": "Vui lòng enter Hủy 原 因"
+  },
+  "请选择日期范围": {
+    "en": "Please selectDate Range",
+    "vi": "Vui lòng chọn khoảng ngày"
+  },
+  "暂无数据可导出": {
+    "en": "No Data 可 Export",
+    "vi": "No Dữ liệu 可 Xuất"
+  },
+  "统计报表已导出": {
+    "en": "Statistics 报 表 Already Export",
+    "vi": "Thống kê 报 表 Already Xuất"
+  },
+  "保存列配置失败": {
+    "en": "Save Column config Failed",
+    "vi": "Lưu Column config Thất bại"
+  },
+  "已关闭自动更新": {
+    "en": "alreadyOffAutoUpdate",
+    "vi": "alreadyOffAutoUpdate"
+  },
+  "请选择代付通道": {
+    "en": "Please select Payout Channel",
+    "vi": "Vui lòng select Chi hộ Kênh"
+  },
+  "重新代付处理中": {
+    "en": "Re-payout Processing",
+    "vi": "Re-payout Processing"
+  },
+  "备注功能开发中": {
+    "en": "Remark feature in development",
+    "vi": "Ghi chú tính năng in đang phát triển"
+  },
+  "请选择拒绝原因": {
+    "en": "Please select 拒 绝 原 因",
+    "vi": "Vui lòng select 拒 绝 原 因"
+  },
+  "请选择三方代付": {
+    "en": "Please select Third-party payout",
+    "vi": "Vui lòng select Third-party payout"
+  },
+  "三方代付平台名": {
+    "en": "Third-party platform name",
+    "vi": "Third-party platform name"
+  },
+  "输入三方商户号": {
+    "en": "Enter Third-party merchant ID",
+    "vi": "Nhập Third-party merchant ID"
+  },
+  "请选择代付币种": {
+    "en": "Please select Payout currency",
+    "vi": "Vui lòng select Chi hộ currency"
+  },
+  "请选择触发模式": {
+    "en": "Please select trigger 模 式",
+    "vi": "Vui lòng select trigger 模 式"
+  },
+  "BRL会员额度": {
+    "en": "B R L Member amount degree",
+    "vi": "B R L Member amount degree"
+  },
+  "第1天签到奖励": {
+    "en": "No.1daysCheck-inReward",
+    "vi": "No.1daysCheck-inReward"
+  },
+  "第2天签到奖励": {
+    "en": "No.2daysCheck-inReward",
+    "vi": "No.2daysCheck-inReward"
+  },
+  "第3天签到奖励": {
+    "en": "No.3daysCheck-inReward",
+    "vi": "No.3daysCheck-inReward"
+  },
+  "第4天签到奖励": {
+    "en": "No.4daysCheck-inReward",
+    "vi": "No.4daysCheck-inReward"
+  },
+  "第5天签到奖励": {
+    "en": "No.5daysCheck-inReward",
+    "vi": "No.5daysCheck-inReward"
+  },
+  "第6天签到奖励": {
+    "en": "No.6daysCheck-inReward",
+    "vi": "No.6daysCheck-inReward"
+  },
+  "第7天签到奖励": {
+    "en": "No.7daysCheck-inReward",
+    "vi": "No.7daysCheck-inReward"
+  },
+  "请输入有效额度": {
+    "en": "Please enter Has 效 额 度",
+    "vi": "Vui lòng enter Has 效 额 度"
+  },
+  "是否允许会员用": {
+    "en": "Yes No 允 许 Member 用",
+    "vi": "Yes No 允 许 Thành viên 用"
+  },
+  "是否支持转账现": {
+    "en": "Yes No 支 持 Transfer 现",
+    "vi": "Yes No 支 持 Transfer 现"
+  },
+  "输入API地址": {
+    "en": "Enter A P I URL",
+    "vi": "Nhập A P I URL"
+  },
+  "请输入领取金额": {
+    "en": "Pleaseenterclaimamount",
+    "vi": "Vui lòng nhập Nhận Số tiền"
+  },
+  "通道设置已更新": {
+    "en": "Channel Settings Already 更 新",
+    "vi": "Kênh Cài đặt Already 更 新"
+  },
+  "请选择工作时间": {
+    "en": "Please select 工 作 Time",
+    "vi": "Vui lòng select 工 作 Thời gian"
+  },
+  "请选择提现方式": {
+    "en": "Please select Withdrawal method",
+    "vi": "Vui lòng select Rút tiền method"
+  },
+  "请选择会员等级": {
+    "en": "Please select Member Level",
+    "vi": "Vui lòng select Thành viên Cấp độ"
+  },
+  "请选择代理模式": {
+    "en": "Please select 代 理 模 式",
+    "vi": "Vui lòng select 代 理 模 式"
+  },
+  "请选择服务筛选": {
+    "en": "Please select 服 务 筛 选",
+    "vi": "Vui lòng select 服 务 筛 选"
+  },
+  "会员账号或备注": {
+    "en": "Member Account or Remark",
+    "vi": "Thành viên Tài khoản or Ghi chú"
+  },
+  "请选择提现账号": {
+    "en": "Please select Withdrawal Account",
+    "vi": "Vui lòng select Rút tiền Tài khoản"
+  },
+  "请输入提现金额": {
+    "en": "Please enter Withdrawal amount",
+    "vi": "Vui lòng enter Rút tiền amount"
+  },
+  "请输入收款信息": {
+    "en": "Please enter Receiving Info",
+    "vi": "Vui lòng enter Receiving Thông tin"
+  },
+  "导出功能开发中": {
+    "en": "Export feature in development",
+    "vi": "Xuất tính năng in đang phát triển"
+  },
+  "批量自动出款确认": {
+    "en": "Bulk auto payout Confirm",
+    "vi": "Hàng loạt auto payout Xác nhận"
+  },
+  "自动审核规则设置": {
+    "en": "Auto-approval rule settings",
+    "vi": "Auto-approval rule settings"
+  },
+  "最低充值提现比例": {
+    "en": "最 低 Deposit/withdrawal ratio",
+    "vi": "最 低 Deposit/withdrawal ratio"
+  },
+  "单笔免审金额上限": {
+    "en": "Single auto-approval limit",
+    "vi": "Single auto-approval limit"
+  },
+  "每日累计最大金额": {
+    "en": "Daily Cumulative Max Amount",
+    "vi": "Daily Cumulative Tối đa Số tiền"
+  },
+  "启用高频用户免审": {
+    "en": "Enable frequent user auto-approval",
+    "vi": "Bật frequent user auto-approval"
+  },
+  "批量自动处理失败": {
+    "en": "Bulk auto-process failed",
+    "vi": "Hàng loạt auto-process failed"
+  },
+  "输入前台取消原因": {
+    "en": "Enter Frontend Cancel 原 因",
+    "vi": "Nhập Frontend Hủy 原 因"
+  },
+  "输入后台取消原因": {
+    "en": "Enter Backend Cancel 原 因",
+    "vi": "Nhập Backend Hủy 原 因"
+  },
+  "操作说明（选填）": {
+    "en": "Operation note（select ill）",
+    "vi": "Operation note（select ill）"
+  },
+  "输入拒绝前台原因": {
+    "en": "Enter 拒 绝 Frontend 原 因",
+    "vi": "Nhập 拒 绝 Frontend 原 因"
+  },
+  "输入拒绝后台原因": {
+    "en": "Enter 拒 绝 Backend 原 因",
+    "vi": "Nhập 拒 绝 Backend 原 因"
+  },
+  "强制失败操作失败": {
+    "en": "强 制 Failed Actions Failed",
+    "vi": "强 制 Thất bại Thao tác Thất bại"
+  },
+  "重新出款设置成功": {
+    "en": "Re- Payout settings Success",
+    "vi": "Re- Chi hộ settings Thành công"
+  },
+  "重新出款设置失败": {
+    "en": "Re- Payout settings Failed",
+    "vi": "Re- Chi hộ settings Thất bại"
+  },
+  "人工出款标记成功": {
+    "en": "Manual payoutMarkSuccess",
+    "vi": "Manual payoutMarkSuccess"
+  },
+  "，已添加稽核任务": {
+    "en": "，alreadyAddAudittask",
+    "vi": "，alreadyAddAudittask"
+  },
+  "获取订单详情失败": {
+    "en": "Fetch Order Details Failed",
+    "vi": "Fetch Đơn hàng Chi tiết Thất bại"
+  },
+  "暂无已停用的通道": {
+    "en": "No Disabled Channel",
+    "vi": "No Disabled Kênh"
+  },
+  "第三方支付平台名": {
+    "en": "No. Third-party Payment Platform name",
+    "vi": "No. Third-party Payment Platform name"
+  },
+  "单笔充值金额限定": {
+    "en": "Single Recharge amount 限 定",
+    "vi": "Single Nạp tiền amount 限 定"
+  },
+  "请输入减免百分比": {
+    "en": "Please enter 减 免 百 分 比",
+    "vi": "Vui lòng enter 减 免 百 分 比"
+  },
+  "请选择第三方支付": {
+    "en": "Please selectNo.Third-party Payment",
+    "vi": "Please selectNo.Third-party Payment"
+  },
+  "请输入三方商户号": {
+    "en": "Please enter Third-party merchant ID",
+    "vi": "Vui lòng enter Third-party merchant ID"
+  },
+  "请选择黑名单状态": {
+    "en": "Please select lacknameorderStatus",
+    "vi": "Please select lacknameorderStatus"
+  },
+  "点击查看订单详情": {
+    "en": "点 击 查 看 Order Details",
+    "vi": "点 击 查 看 Đơn hàng Chi tiết"
+  },
+  "点击查看会员详情": {
+    "en": "点 击 查 看 Member Details",
+    "vi": "点 击 查 看 Thành viên Chi tiết"
+  },
+  "加载充值大类失败": {
+    "en": "Loading Recharge large type Failed",
+    "vi": "Loading Recharge large type Failed"
+  },
+  "加载会员层级失败": {
+    "en": "Loading Member tier Failed",
+    "vi": "Đang tải Thành viên tier Thất bại"
+  },
+  "加载支付通道失败": {
+    "en": "Loading Payment Channel Failed",
+    "vi": "Đang tải Thanh toán Kênh Thất bại"
+  },
+  "预设订单创建成功": {
+    "en": "预 设 Order Create Success",
+    "vi": "预 设 Đơn hàng Tạo Thành công"
+  },
+  "创建预设订单失败": {
+    "en": "Create 预 设 Order Failed",
+    "vi": "Tạo 预 设 Đơn hàng Thất bại"
+  },
+  "强制入款操作失败": {
+    "en": "强 制 入 款 Actions Failed",
+    "vi": "强 制 入 款 Thao tác Thất bại"
+  },
+  "请输入取消原因：": {
+    "en": "Please enter Cancel 原 因 ：",
+    "vi": "Vui lòng enter Hủy 原 因 ："
+  },
+  "强制取消操作失败": {
+    "en": "强 制 Cancel Actions Failed",
+    "vi": "强 制 Hủy Thao tác Thất bại"
+  },
+  "状态刷新操作失败": {
+    "en": "Status Refresh Actions Failed",
+    "vi": "Trạng thái Làm mới Thao tác Thất bại"
+  },
+  "获取通道数据失败": {
+    "en": "Fetch Channel Data Failed",
+    "vi": "Fetch Kênh Dữ liệu Thất bại"
+  },
+  "测试连接中...": {
+    "en": "测 试 连 接 中 ...",
+    "vi": "测 试 连 接 中 ..."
+  },
+  "确定要删除通道 ": {
+    "en": "确 定 要 Delete Channel",
+    "vi": "确 定 要 Xóa Kênh"
+  },
+  "确定要删除大类 ": {
+    "en": "确 定 要 Delete 大 类",
+    "vi": "确 定 要 Xóa 大 类"
+  },
+  "获取统计数据失败": {
+    "en": "Fetch Statistics Data Failed",
+    "vi": "Fetch Thống kê Dữ liệu Thất bại"
+  },
+  "请先选择日期范围": {
+    "en": "Please 先 Select Date 范 围",
+    "vi": "Vui lòng chọn khoảng ngày trước"
+  },
+  "成功发起重新代付": {
+    "en": "Success 发 起 Re-payout",
+    "vi": "Thành công 发 起 Re-payout"
+  },
+  "批量重新代付失败": {
+    "en": "Bulk re-payout Failed",
+    "vi": "Hàng loạt re-payout Thất bại"
+  },
+  "批量审核通过成功": {
+    "en": "Bulk Review pass Success",
+    "vi": "Hàng loạt Duyệt pass Thành công"
+  },
+  "输入三方商户密钥": {
+    "en": "Enter Third-party merchant key",
+    "vi": "Nhập Third-party merchant key"
+  },
+  "输入回调成功标识": {
+    "en": "Enter Callback success flag",
+    "vi": "Nhập Gọi lại success flag"
+  },
+  "输入三方下单地址": {
+    "en": "Enter Third-party order URL",
+    "vi": "Nhập Third-party order URL"
+  },
+  "输入余额查询地址": {
+    "en": "Enter Balance query URL",
+    "vi": "Nhập Balance query URL"
+  },
+  "输入三方回调IP": {
+    "en": "Enter Third-party callback IP",
+    "vi": "Nhập Third-party callback IP"
+  },
+  "输入最小代付限额": {
+    "en": "Enter Min Payout limit",
+    "vi": "Nhập Tối thiểu Chi hộ limit"
+  },
+  "输入最大代付限额": {
+    "en": "Enter Max Payout limit",
+    "vi": "Nhập Tối đa Chi hộ limit"
+  },
+  "请检查表单必填项": {
+    "en": "Please check required fields",
+    "vi": "Vui lòng check required fields"
+  },
+  "投注任务(稽核)": {
+    "en": "Wagering Task ( Audit )",
+    "vi": "Cược Task ( Kiểm toán )"
+  },
+  "品牌名称(ID)": {
+    "en": "品 牌 名 称 ( I D )",
+    "vi": "Tên thương hiệu (ID)"
+  },
+  "仅限以下指定游戏": {
+    "en": "only 限 以 下 指 定 游 戏",
+    "vi": "only 限 以 下 指 定 游 戏"
+  },
+  "请输入子游戏名称": {
+    "en": "Please enter 子 游 戏 名 称",
+    "vi": "Vui lòng enter 子 游 戏 名 称"
+  },
+  "加载稽核记录失败": {
+    "en": "Loading Audit Records Failed",
+    "vi": "Đang tải Kiểm toán Bản ghi Thất bại"
+  },
+  "选择工作时间范围": {
+    "en": "Select 工 作 Time 范 围",
+    "vi": "Chọn 工 作 Thời gian 范 围"
+  },
+  "每日最大提现限额": {
+    "en": "Daily Max Withdrawal Limit",
+    "vi": "Daily Tối đa Rút tiền Giới hạn"
+  },
+  "批量工作时间设置": {
+    "en": "Bulk 工 作 Time Settings",
+    "vi": "Hàng loạt 工 作 Thời gian Cài đặt"
+  },
+  "风险自动减控设置": {
+    "en": "Risk Auto 减 控 Settings",
+    "vi": "Risk Tự động 减 控 Cài đặt"
+  },
+  "异常提现频率阈值": {
+    "en": "Exception Withdrawal 频 率 阈 值",
+    "vi": "Ngoại lệ Rút tiền 频 率 阈 值"
+  },
+  "风控自动审核设置": {
+    "en": "Risk control Auto Review Settings",
+    "vi": "Risk control Tự động Duyệt Cài đặt"
+  },
+  "请输入免审核金额": {
+    "en": "Please enter Auto-approved 核 Amount",
+    "vi": "Vui lòng enter Auto-approved 核 Số tiền"
+  },
+  "已应用到全部层级": {
+    "en": "alreadyApply ToAll Tier",
+    "vi": "alreadyApply ToAll Tier"
+  },
+  "操作失败，请重试": {
+    "en": "Actions Failed ， Please retry",
+    "vi": "Thao tác Thất bại ， Vui lòng thử lại"
+  },
+  "请输入要提现金额": {
+    "en": "Please enter 要 Withdrawal amount",
+    "vi": "Vui lòng enter 要 Rút tiền amount"
+  },
+  "批量强制拒绝失败": {
+    "en": "Bulk force reject Failed",
+    "vi": "Hàng loạt force reject Thất bại"
+  },
+  "批量审核出款失败": {
+    "en": "Bulk review payout Failed",
+    "vi": "Hàng loạt review payout Thất bại"
+  },
+  "提现订单更新成功": {
+    "en": "Withdrawal Order Update successful",
+    "vi": "Rút tiền Đơn hàng Update successful"
+  },
+  "选择最低VIP等级": {
+    "en": "Select Minimum VIP level",
+    "vi": "Chọn Minimum VIP level"
+  },
+  "会员币种 (比例)": {
+    "en": "Member currency ( Ratio )",
+    "vi": "Thành viên currency ( Ratio )"
+  },
+  "导出搜索功能开发中": {
+    "en": "Export search feature in development",
+    "vi": "Xuất search tính năng in đang phát triển"
+  },
+  "请输入取消前台原因": {
+    "en": "Please enter Cancel Frontend 原 因",
+    "vi": "Vui lòng enter Hủy Frontend 原 因"
+  },
+  "请输入取消后台原因": {
+    "en": "Please enter Cancel Backend 原 因",
+    "vi": "Vui lòng enter Hủy Backend 原 因"
+  },
+  "请输入拒绝前台原因": {
+    "en": "Please enter 拒 绝 Frontend 原 因",
+    "vi": "Vui lòng enter 拒 绝 Frontend 原 因"
+  },
+  "请输入拒绝后台原因": {
+    "en": "Please enter 拒 绝 Backend 原 因",
+    "vi": "Vui lòng enter 拒 绝 Backend 原 因"
+  },
+  "审核出款功能开发中": {
+    "en": "Review payout feature in development",
+    "vi": "Duyệt payout tính năng in đang phát triển"
+  },
+  "选择自定义时间范围": {
+    "en": "Select date range",
+    "vi": "Chọn khoảng thời gian tùy chỉnh"
+  },
+  "请输入支付渠道信息": {
+    "en": "Please enter Payment 渠 道 Info",
+    "vi": "Vui lòng enter Thanh toán 渠 道 Thông tin"
+  },
+  "充值金额必须大于0": {
+    "en": "Recharge amount must 大 于 0",
+    "vi": "Nạp tiền amount must 大 于 0"
+  },
+  "API响应格式错误": {
+    "en": "A P I 响 应 格 式 错 误",
+    "vi": "A P I 响 应 格 式 错 误"
+  },
+  "正在导出数据...": {
+    "en": "正 在 Export data ...",
+    "vi": "Đang xuất dữ liệu..."
+  },
+  "请先搜索并选择订单": {
+    "en": "Please 先 Search 并 Select Order",
+    "vi": "Vui lòng 先 Tìm kiếm 并 Chọn Đơn hàng"
+  },
+  "选择或上传大类图标": {
+    "en": "selectselectorUploadlargetypeimagelabel",
+    "vi": "selectselectorUploadlargetypeimagelabel"
+  },
+  "请输入赠送金额上限": {
+    "en": "Please ntergiftamountupperlimit",
+    "vi": "Please ntergiftamountupperlimit"
+  },
+  "请输入前多少次充值": {
+    "en": "Please enter eforemorelesstimesRecharge",
+    "vi": "Please enter eforemorelesstimesRecharge"
+  },
+  "请输入您的登录密码": {
+    "en": "Please enter 您 Login 密 码",
+    "vi": "Vui lòng enter 您 Login 密 码"
+  },
+  "三方通道名称/编码": {
+    "en": "Third-party Channel 名 称 / 编 码",
+    "vi": "Third-party Kênh 名 称 / 编 码"
+  },
+  "请选择通道所属大类": {
+    "en": "Please select Channel 所 属 大 类",
+    "vi": "Vui lòng select Kênh 所 属 大 类"
+  },
+  "请选择气泡背景颜色": {
+    "en": "Please select 气 泡 背 景 颜 色",
+    "vi": "Vui lòng select 气 泡 背 景 颜 色"
+  },
+  "请选择会员层级策略": {
+    "en": "Please select Member tier 策 略",
+    "vi": "Vui lòng select Thành viên tier 策 略"
+  },
+  "获取已停用通道失败": {
+    "en": "Fetch Disabled Channel Failed",
+    "vi": "Fetch Disabled Kênh Thất bại"
+  },
+  "请选择要启用的通道": {
+    "en": "Please select 要 Enable Channel",
+    "vi": "Vui lòng select 要 Bật Kênh"
+  },
+  "请选择要删除的通道": {
+    "en": "Please select 要 Delete Channel",
+    "vi": "Vui lòng select 要 Xóa Kênh"
+  },
+  "近30分钟成功笔数": {
+    "en": "Recent30minutesSuccessCount",
+    "vi": "Recent30minutesSuccessCount"
+  },
+  "近30分钟成功金额": {
+    "en": "Recent 30 minutes Success amount",
+    "vi": "Recent 30 minutes Success amount"
+  },
+  "近30分钟金额上升": {
+    "en": "近 30 minutes Amount 上 升",
+    "vi": "近 30 minutes Số tiền 上 升"
+  },
+  "近30分钟金额下降": {
+    "en": "近 30 minutes Amount 下 降",
+    "vi": "近 30 minutes Số tiền 下 降"
+  },
+  "提现金额 到账币种": {
+    "en": "Withdrawal amount Received Currency",
+    "vi": "Rút tiền amount Received Loại tiền"
+  },
+  "批量锁定功能开发中": {
+    "en": "Bulk lock feature in development",
+    "vi": "Hàng loạt lock tính năng in đang phát triển"
+  },
+  "批量解锁功能开发中": {
+    "en": "Bulk unlock feature in development",
+    "vi": "Hàng loạt unlock tính năng in đang phát triển"
+  },
+  "输入三方代付平台名": {
+    "en": "Enter Third-party platform name",
+    "vi": "Nhập Third-party platform name"
+  },
+  "请输入回调成功标识": {
+    "en": "Please enter Callback success flag",
+    "vi": "Vui lòng enter Gọi lại success flag"
+  },
+  "请输入三方下单地址": {
+    "en": "Please enter Third-party order URL",
+    "vi": "Vui lòng enter Third-party order URL"
+  },
+  "？删除后无法恢复。": {
+    "en": "? Cannot be recovered after deletion.",
+    "vi": "? Không thể khôi phục sau khi xóa."
+  },
+  "每分钟最大提现次数": {
+    "en": "Each minutes Max Withdrawal Count",
+    "vi": "Each minutes Max Withdrawal Count"
+  },
+  "免人工审核自动出款": {
+    "en": "免 Manual Review Auto payout",
+    "vi": "免 Thủ công Duyệt Tự động payout"
+  },
+  "请输入单笔提现金额": {
+    "en": "Please enter Single Withdrawal amount",
+    "vi": "Vui lòng enter Single Rút tiền amount"
+  },
+  "高级搜索功能开发中": {
+    "en": "Advanced search feature in development",
+    "vi": "Advanced search tính năng in đang phát triển"
+  },
+  "订单状态 (操作人)": {
+    "en": "Order Status (Operator)",
+    "vi": "Order Status (Operator)"
+  },
+  "成功自动处理提现申请": {
+    "en": "Withdrawal auto-processed successfully",
+    "vi": "Rút tiền auto-processed successfully"
+  },
+  "自动审核规则保存成功": {
+    "en": "Auto-approval rules saved",
+    "vi": "Auto-approval rules saved"
+  },
+  "我负责处理的提现出款": {
+    "en": "我 负 责 Process Withdrawal Payout",
+    "vi": "我 负 责 Xử lý Rút tiền Chi hộ"
+  },
+  "待财务处理的提现出款": {
+    "en": "Pending Finance Process Withdrawal Payout",
+    "vi": "Đang chờ Tài chính Xử lý Rút tiền Chi hộ"
+  },
+  "请先选择要操作的记录": {
+    "en": "Please 先 Select 要 Actions Records",
+    "vi": "Vui lòng 先 Chọn 要 Thao tác Bản ghi"
+  },
+  "该三方代付不支持刷新": {
+    "en": "该 Third-party payout 不 支 持 Refresh",
+    "vi": "该 Third-party payout 不 支 持 Làm mới"
+  },
+  "每3分钟才能刷新一次": {
+    "en": "每 3 minutes 才 能 Refresh 一 次",
+    "vi": "每 3 minutes 才 能 Làm mới 一 次"
+  },
+  "请输入自定义通道角标": {
+    "en": "Please enter 自 定 义 Channel 角 标",
+    "vi": "Vui lòng enter 自 定 义 Kênh 角 标"
+  },
+  "近30分钟成功IT率": {
+    "en": "Recent30minutesSuccessITrate",
+    "vi": "Recent30minutesSuccessITrate"
+  },
+  "UnivePay支付": {
+    "en": "U n i v e P a y Payment",
+    "vi": "U n i v e P a y Thanh toán"
+  },
+  "获取充值订单数据失败": {
+    "en": "Fetch Recharge Order count 据 Failed",
+    "vi": "Fetch Nạp tiền Đơn hàng count 据 Thất bại"
+  },
+  "🔗 支付通道选择:": {
+    "en": "\ud83d \udd17 Payment Channel Select :",
+    "vi": "\ud83d \udd17 Thanh toán Kênh Chọn :"
+  },
+  "请选择有效的充值大类": {
+    "en": "Please select Has 效 Recharge 大 类",
+    "vi": "Vui lòng select Has 效 Nạp tiền 大 类"
+  },
+  "🚀 创建订单数据:": {
+    "en": "🚀 Createorderdata:",
+    "vi": "🚀 Createorderdata:"
+  },
+  "📡 创建订单响应:": {
+    "en": "\ud83d \udce1 Create Order 响 应 :",
+    "vi": "\ud83d \udce1 Tạo Đơn hàng 响 应 :"
+  },
+  "请输入备注信息...": {
+    "en": "Please enter Remark Info ...",
+    "vi": "Vui lòng enter Ghi chú Thông tin ..."
+  },
+  "手续费减免配置已保存": {
+    "en": "Fee 减 免 Config Already Save",
+    "vi": "Phí 减 免 Config Already Lưu"
+  },
+  "获取大类配置数据失败": {
+    "en": "Fetch large type Config Data Failed",
+    "vi": "Fetch large type Config Data Failed"
+  },
+  "请选择开始和结束日期": {
+    "en": "PleaseSelect start and end dates",
+    "vi": "PleaseSelect start and end dates"
+  },
+  "提现申请风险控制审核": {
+    "en": "Withdrawal application Risk Control Review",
+    "vi": "Rút tiền application Risk Control Duyệt"
+  },
+  "请输入三方代付平台名": {
+    "en": "Please enter Third-party platform name",
+    "vi": "Vui lòng enter Third-party platform name"
+  },
+  "投注任务(稽核)信息": {
+    "en": "Wagering Task ( Audit ) Info",
+    "vi": "Cược Task ( Kiểm toán ) Thông tin"
+  },
+  "导出功能开发中...": {
+    "en": "Export feature in development ...",
+    "vi": "Xuất tính năng in đang phát triển ..."
+  },
+  "已关闭 (0.00)": {
+    "en": "Already Off (0.00)",
+    "vi": "Already Off (0.00)"
+  },
+  "是否支持数字货币提现": {
+    "en": "Yes No 支 持 Digital 货 币 Withdrawal",
+    "vi": "Yes No 支 持 Digital 货 币 Rút tiền"
+  },
+  "监控时间窗口（分钟）": {
+    "en": "监 控 Time 窗 口 （ minutes ）",
+    "vi": "监 控 Thời gian 窗 口 （ minutes ）"
+  },
+  "VIP用户免审金额上限": {
+    "en": "VIP auto-approval amount limit",
+    "vi": "VIP auto-approval amount limit"
+  },
+  "申请时间 (操作时间)": {
+    "en": "Application time ( Actions Time )",
+    "vi": "Đăng ký time ( Thao tác Thời gian )"
+  },
+  "三方代付 (代付次数)": {
+    "en": "Third-party payout ( Payout count )",
+    "vi": "Third-party payout ( Chi hộ count )"
+  },
+  "暂无符合免审条件的订单": {
+    "en": "No orders eligible for auto-approval",
+    "vi": "No orders eligible for auto-approval"
+  },
+  "请输入处理备注（可选）": {
+    "en": "Please enter Process remark （ optional ）",
+    "vi": "Vui lòng enter Xử lý remark （ optional ）"
+  },
+  "提现金额 (当前余额)": {
+    "en": "Withdrawal amount ( 当 前 Balance )",
+    "vi": "Rút tiền amount ( 当 前 Balance )"
+  },
+  "请输入单笔充值金额限定": {
+    "en": "Please enter Single Recharge amount 限 定",
+    "vi": "Vui lòng enter Single Nạp tiền amount 限 定"
+  },
+  "近30分钟成功IT笔数": {
+    "en": "Recent30minutesSuccessITCount",
+    "vi": "Recent30minutesSuccessITCount"
+  },
+  "近30分钟成功IT金额": {
+    "en": "Recent 30 minutes Success I T Amount",
+    "vi": "Recent 30 minutes Success I T Amount"
+  },
+  "近30分钟成功金额上升": {
+    "en": "近 30 minutes Success amount 上 升",
+    "vi": "近 30 minutes Thành công amount 上 升"
+  },
+  "近30分钟成功金额下降": {
+    "en": "近 30 minutes Success amount 下 降",
+    "vi": "近 30 minutes Thành công amount 下 降"
+  },
+  "请输入第三方支付平台名": {
+    "en": "Please enter No. Third-party Payment Platform name",
+    "vi": "Please enter No. Third-party Payment Platform name"
+  },
+  "请选择是否展示赠送气泡": {
+    "en": "Please select Yes No 展 示 赠 送 气 泡",
+    "vi": "Vui lòng select Yes No 展 示 赠 送 气 泡"
+  },
+  "❌ 加载充值大类失败:": {
+    "en": "❌ Loading Recharge large type Failed :",
+    "vi": "❌ Loading Recharge large type Failed :"
+  },
+  "❌ 加载会员层级失败:": {
+    "en": "❌ Loading Member tier Failed :",
+    "vi": "❌ Đang tải Thành viên tier Thất bại :"
+  },
+  "🏷️ 充值大类选择:": {
+    "en": "🏷️ Rechargelargetypeselect elect:",
+    "vi": "🏷️ Rechargelargetypeselect elect:"
+  },
+  "请先搜索并确认会员信息": {
+    "en": "Please 先 Search 并 Confirm Member info",
+    "vi": "Vui lòng 先 Tìm kiếm 并 Xác nhận Thành viên info"
+  },
+  "请至少配置一个金额区间": {
+    "en": "Please at least Config one Amount 区 间",
+    "vi": "Vui lòng at least Config one Số tiền 区 间"
+  },
+  "近30分钟成功率(%)": {
+    "en": "Recent 30 minutes Success rate ( % )",
+    "vi": "Recent 30 minutes Success rate ( % )"
+  },
+  "列配置已重置为默认显示": {
+    "en": "Column config Already Reset 为 默 认 显 示",
+    "vi": "Column config Already Đặt lại 为 默 认 显 示"
+  },
+  "会员账号 (会员层级)": {
+    "en": "Member Account ( Member tier )",
+    "vi": "Thành viên Tài khoản ( Thành viên tier )"
+  },
+  "请输入审核备注（可选）": {
+    "en": "Please enter Review remark （ optional ）",
+    "vi": "Vui lòng enter Duyệt remark （ optional ）"
+  },
+  "请输入操作说明（必填）": {
+    "en": "Please enter Operation note （ required ）",
+    "vi": "Vui lòng enter Operation note （ required ）"
+  },
+  "批量强制取消功能开发中": {
+    "en": "Bulk force cancel feature in development",
+    "vi": "Hàng loạt force cancel tính năng in đang phát triển"
+  },
+  "确认删除三方代付商户 ": {
+    "en": "Confirm delete Third-party payout Merchant",
+    "vi": "Xác nhận delete Third-party payout Đại lý"
+  },
+  "请先配置当前层级的条件": {
+    "en": "Please 先 Config 当 前 Tier Conditions",
+    "vi": "Vui lòng 先 Config 当 前 Cấp Conditions"
+  },
+  "新通道已添加 (本地)": {
+    "en": "新 Channel Already 添 加 ( 本 地 )",
+    "vi": "新 Kênh Already 添 加 ( 本 地 )"
+  },
+  "风险自动减控设置已保存": {
+    "en": "Risk Auto 减 控 Settings Already Save",
+    "vi": "Risk Tự động 减 控 Cài đặt Already Lưu"
+  },
+  "自动审核处理备注（可选）": {
+    "en": "Auto-approval remark （ optional ）",
+    "vi": "Auto-approval remark （ optional ）"
+  },
+  "收款方式 (收款人信息)": {
+    "en": "Receiving method ( Payee Info )",
+    "vi": "Receiving method ( Payee Thông tin )"
+  },
+  "获取数据失败，请稍后重试": {
+    "en": "Failed to fetch data ， Please later retry",
+    "vi": "Thất bại to fetch data ， Vui lòng sau thử lại"
+  },
+  "高级搜索功能开发中...": {
+    "en": "Advanced search feature in development ...",
+    "vi": "Advanced search tính năng in đang phát triển ..."
+  },
+  "搜索订单失败，请稍后重试": {
+    "en": "Search Order Failed ， Please later retry",
+    "vi": "Tìm kiếm Đơn hàng Thất bại ， Vui lòng sau thử lại"
+  },
+  "创建补单失败，请稍后重试": {
+    "en": "Create supplementary order Failed ， Please later retry",
+    "vi": "Tạo supplementary order Thất bại ， Vui lòng sau thử lại"
+  },
+  "确定要永久删除此通道吗？": {
+    "en": "确 定 要 permanently Delete 此 Channel ? ？",
+    "vi": "确 定 要 permanently Xóa 此 Kênh ? ？"
+  },
+  "至少需要配置一个金额区间": {
+    "en": "at least 需 要 Config one Amount 区 间",
+    "vi": "at least 需 要 Config one Số tiền 区 间"
+  },
+  "请输入会员账号或会员ID": {
+    "en": "Please enter Member Account or Member ID",
+    "vi": "Vui lòng enter Thành viên Tài khoản or Thành viên ID"
+  },
+  "搜索会员失败，请稍后重试": {
+    "en": "Search Member Failed ， Please later retry",
+    "vi": "Tìm kiếm Thành viên Thất bại ， Vui lòng sau thử lại"
+  },
+  "创建订单失败，请稍后重试": {
+    "en": "Create Order Failed ， Please later retry",
+    "vi": "Tạo Đơn hàng Thất bại ， Vui lòng sau thử lại"
+  },
+  "刷新过于频繁，请稍后再试": {
+    "en": "Refresh 过 于 频 繁 ， Please later 再 试",
+    "vi": "Làm mới 过 于 频 繁 ， Vui lòng sau 再 试"
+  },
+  "最小金额必须小于最大金额": {
+    "en": "Min Amount must 小 于 Max Amount",
+    "vi": "Tối thiểu Số tiền must 小 于 Tối đa Số tiền"
+  },
+  "会员ID (VIP等级)": {
+    "en": "Member ID ( V I P Level )",
+    "vi": "Thành viên ID ( V I P Cấp độ )"
+  },
+  "我负责的提现申请风险控制": {
+    "en": "我 负 责 Withdrawal application Risk Control",
+    "vi": "Rủi ro rút tiền do tôi phụ trách"
+  },
+  "稽核统计功能开发中...": {
+    "en": "Audit statistics feature in development ...",
+    "vi": "Kiểm toán statistics tính năng in đang phát triển ..."
+  },
+  "通道设置已更新 (本地)": {
+    "en": "Channel Settings Already 更 新 ( 本 地 )",
+    "vi": "Kênh Cài đặt Already 更 新 ( 本 地 )"
+  },
+  "例如: shayu888": {
+    "en": "例 如 : s h a y u 888",
+    "vi": "例 如 : s h a y u 888"
+  },
+  "请输入显示在客户端的备注": {
+    "en": "Please enterShowinClientRemark",
+    "vi": "Ghi chú hiển thị cho client"
+  },
+  "会员账号、订单号、会员ID": {
+    "en": "Member account, order no., member ID",
+    "vi": "Tài khoản thành viên, mã đơn, ID thành viên"
+  },
+  "大类名称不能超过50个字符": {
+    "en": "Category name cannot exceed 50 characters",
+    "vi": "Category name cannot exceed 50 characters"
+  },
+  "大类角标不能超过12个字符": {
+    "en": "Category badge cannot exceed 12 characters",
+    "vi": "Category badge cannot exceed 12 characters"
+  },
+  "请输入重新代付备注（可选）": {
+    "en": "Please enter Re-payout Remark （ optional ）",
+    "vi": "Vui lòng enter Re-payout Ghi chú （ optional ）"
+  },
+  "稽核投注任务记录查询与管理": {
+    "en": "Audit Wagering Task Records Query and Management",
+    "vi": "Audit Wagering Task Records Query and Management"
+  },
+  "通道优先级 (1-100)": {
+    "en": "Channel 优 先 级 (1-100)",
+    "vi": "Kênh 优 先 级 (1-100)"
+  },
+  "请输入显示在管理后台的备注": {
+    "en": "Please enter 显 示 在 Management Backend Remark",
+    "vi": "Vui lòng enter 显 示 在 Quản lý Backend Ghi chú"
+  },
+  "创建失败 - 响应格式不正确": {
+    "en": "Create Failed - 响 应 格 式 不 correct",
+    "vi": "Tạo Thất bại - 响 应 格 式 不 correct"
+  },
+  "会员账号或备注，最多200个": {
+    "en": "Member Account or Remark ， 最 多 200 个",
+    "vi": "Thành viên Tài khoản or Ghi chú ， 最 多 200 个"
+  },
+  "审核拒绝成功，已退回用户余额": {
+    "en": "Review 拒 绝 Success ， Already return User Balance",
+    "vi": "Duyệt 拒 绝 Thành công ， Already return User Balance"
+  },
+  "自动审核规则保存成功 (模拟)": {
+    "en": "Auto-approval rules saved ( simulated )",
+    "vi": "Auto-approval rules saved ( mô phỏng )"
+  },
+  "获取订单详情失败: 无响应数据": {
+    "en": "Fetch Order Details Failed : No 响 应 Data",
+    "vi": "Fetch Đơn hàng Chi tiết Thất bại : No 响 应 Dữ liệu"
+  },
+  "搜索支付平台、商户号、通道名称": {
+    "en": "SearchPayment Platform、Merchant ID、channelname",
+    "vi": "SearchPayment Platform、Merchant ID、channelname"
+  },
+  "输入三方商户号、域名、通道备注": {
+    "en": "Enter Third-party merchant ID 、 域 名 、 Channel Remark",
+    "vi": "Nhập Third-party merchant ID 、 域 名 、 Kênh Ghi chú"
+  },
+  "预计到账 (手续费) 实际到账": {
+    "en": "Estimated Received ( Fee ) Actual received",
+    "vi": "Estimated Received ( Phí ) Actual received"
+  },
+  "提现金额 当前金额 (实际金额)": {
+    "en": "Withdrawal amount 当 前 Amount ( Actual Amount )",
+    "vi": "Rút tiền amount 当 前 Số tiền ( Actual Số tiền )"
+  },
+  "订单未找到，请检查订单号是否正确": {
+    "en": "Order Not found ， Please check Order no Yes No correct",
+    "vi": "Order Not found ， Please check Order no Yes No correct"
+  },
+  "请输入会员账号或会员ID进行搜索": {
+    "en": "Please enter Member Account or Member ID 进 行 Search",
+    "vi": "Vui lòng enter Thành viên Tài khoản or Thành viên ID 进 行 Tìm kiếm"
+  },
+  "批量审核拒绝成功，已退回用户余额": {
+    "en": "Bulk Review 拒 绝 Success ， Already return User Balance",
+    "vi": "Hàng loạt Duyệt 拒 绝 Thành công ， Already return User Balance"
+  },
+  "所选记录中没有符合该操作条件的订单": {
+    "en": "所 选 Records 中 没 Has Eligible 该 Actions Conditions Order",
+    "vi": "所 选 Bản ghi 中 没 Has Eligible 该 Thao tác Conditions Đơn hàng"
+  },
+  "预计到帐 (手续费) (实际到账)": {
+    "en": "Est. Arrival (Fee) (Actual Received)",
+    "vi": "Est. Arrival (Fee) (Actual Received)"
+  },
+  "请确保已通过其他方式完成实际转账！": {
+    "en": "Please 确 保 Already pass 其 他 Method Complete Actual Transfer ！",
+    "vi": "Vui lòng 确 保 Already pass 其 他 Phương thức Complete Actual Transfer ！"
+  },
+  "强制取消成功，提现金额已返还给会员": {
+    "en": "强 制 Cancel Success ， Withdrawal amount Already refund 给 Member",
+    "vi": "强 制 Hủy Thành công ， Rút tiền amount Already refund 给 Thành viên"
+  },
+  "请输入会员ID/账号/姓名进行搜索": {
+    "en": "Please enter Member ID / Account / 姓 名 进 行 Search",
+    "vi": "Vui lòng enter Thành viên ID / Tài khoản / 姓 名 进 行 Tìm kiếm"
+  },
+  "未找到用户信息: 用户数据格式错误": {
+    "en": "Not found User Info : User Data 格 式 错 误",
+    "vi": "Not found User Thông tin : User Dữ liệu 格 式 错 误"
+  },
+  "状态刷新请求已提交，请稍后查看结果": {
+    "en": "Status Refresh Please 求 Already 提 交 ， Please later 查 看 结 果",
+    "vi": "Trạng thái Làm mới Vui lòng 求 Already 提 交 ， Vui lòng sau 查 看 结 果"
+  },
+  "成功重新代付 1 个订单 (模拟)": {
+    "en": "Success Re-payout 1 items Order ( simulated )",
+    "vi": "Success Re-payout 1 items Order ( simulated )"
+  },
+  "会员账号或备注内容搜索，最多200个": {
+    "en": "Search member account or remark, up to 200",
+    "vi": "Tìm tài khoản hoặc ghi chú, tối đa 200"
+  },
+  "申请时间 (操作时间) (完成时长)": {
+    "en": "Application time ( Actions Time ) ( Completion duration )",
+    "vi": "Đăng ký time ( Thao tác Thời gian ) ( Completion duration )"
+  },
+  "请到「重新代付」页签进行批量重新代付": {
+    "en": "Please 到 「 Re-payout 」 页 签 进 行 Bulk re-payout",
+    "vi": "Vui lòng 到 「 Re-payout 」 页 签 进 行 Hàng loạt re-payout"
+  },
+  "请输入赠送上限次数，不填表示不限次数": {
+    "en": "Please enter 赠 送 上 限 Count ， 不 填 表 示 不 限 Count",
+    "vi": "Vui lòng enter 赠 送 上 限 Số lần ， 不 填 表 示 不 限 Số lần"
+  },
+  "成功自动处理 1 个提现申请 (模拟)": {
+    "en": "Success Auto Process 1 items Withdrawal application ( simulated )",
+    "vi": "Success Auto Process 1 items Withdrawal application ( simulated )"
+  },
+  "强制取消 button clicked": {
+    "en": "强 制 Cancel b u t t o n c l i c k e d",
+    "vi": "强 制 Hủy b u t t o n c l i c k e d"
+  },
+  "未找到该会员，请检查账号或ID是否正确": {
+    "en": "Not found 该 Member ， Please check Account or I D Yes No correct",
+    "vi": "Not found 该 Thành viên ， Vui lòng check Tài khoản or I D Yes No correct"
+  },
+  "推荐金额配置已保存，包含金额和加赠比例": {
+    "en": "推 荐 Amount Config Already Save ， including Amount and 加 赠 Ratio",
+    "vi": "推 荐 Số tiền Config Already Lưu ， including Số tiền and 加 赠 Ratio"
+  },
+  "批量刷新回调请在三方代付或重新代付中使用": {
+    "en": "Bulk refresh callback Please 在 Third-party payout or Re-paying 使 用",
+    "vi": "Hàng loạt refresh callback Vui lòng 在 Third-party payout or Re-paying 使 用"
+  },
+  "风控页批量备注请使用单条备注或全部提现页": {
+    "en": "Risk control 页 Bulk Remark Please 使 用 单 records Remark or All Withdrawal 页",
+    "vi": "Risk control 页 Hàng loạt Ghi chú Vui lòng 使 用 单 records Ghi chú or Tất cả Rút tiền 页"
+  },
+  "所选记录中无待出款状态，仅处理待出款订单": {
+    "en": "所 选 Records 中 No Pending payout Status ， only Process Pending payout Order",
+    "vi": "所 选 Bản ghi 中 No Đang chờ payout Trạng thái ， only Xử lý Đang chờ payout Đơn hàng"
+  },
+  "充值赠送配置已保存，将在保存通道时一起提交": {
+    "en": "Recharge 赠 送 Config Already Save ， 将 在 Save Channel 时 一 起 提 交",
+    "vi": "Nạp tiền 赠 送 Config Already Lưu ， 将 在 Lưu Kênh 时 一 起 提 交"
+  },
+  "会员ID / 会员账号 (VIP / 层级)": {
+    "en": "Member ID / Member Account ( V I P / Tier )",
+    "vi": "Thành viên ID / Thành viên Tài khoản ( V I P / Cấp )"
+  },
+  "该操作请在「财务出款」或「全部提现」页签使用": {
+    "en": "该 Actions Please 在 「 Finance payout 」 or 「 All Withdrawal 」 页 签 使 用",
+    "vi": "该 Thao tác Vui lòng 在 「 Tài chính payout 」 or 「 Tất cả Rút tiền 」 页 签 使 用"
+  },
+  "批量刷新回调功能请在三方代付或重新代付中使用": {
+    "en": "Bulk refresh callback feature Please 在 Third-party payout or Re-paying 使 用",
+    "vi": "Hàng loạt refresh callback tính năng Vui lòng 在 Third-party payout or Re-paying 使 用"
+  },
+  "充/提次数 (累计充/提金额) (重复IP人数)": {
+    "en": "充 / 提 Count ( Cumulative 充 / 提 Amount ) ( 重 复 I P 人 数 )",
+    "vi": "充 / 提 Số lần ( Cumulative 充 / 提 Số tiền ) ( 重 复 I P 人 数 )"
+  },
+  "审核出款成功，订单已进入处理流程，等待第三方处理": {
+    "en": "Review Payout Success ， Order Already 进 入 Process 流 程 ， 等 Pending 第 Third-party Process",
+    "vi": "Duyệt Chi hộ Thành công ， Đơn hàng Already 进 入 Xử lý 流 程 ， 等 Đang chờ 第 Third-party Xử lý"
+  },
+  "输入的文字显示在代理通道选择区，最多1000个字": {
+    "en": "Enter 文 字 显 示 在 代 理 Channel Select 区 ， 最 多 1000 个 字",
+    "vi": "Nhập 文 字 显 示 在 代 理 Kênh Chọn 区 ， 最 多 1000 个 字"
+  },
+  "所选记录中无待出款状态，仅处理待出款订单，已跳过": {
+    "en": "所 选 Records 中 No Pending payout Status ， only Process Pending payout Order ， Already skipped",
+    "vi": "所 选 Bản ghi 中 No Đang chờ payout Trạng thái ， only Xử lý Đang chờ payout Đơn hàng ， Already skipped"
+  },
+  "所选记录中无待处理状态，仅处理待出款/风控审核订单": {
+    "en": "所 选 Records 中 No Pending Status ， only Process Pending payout / Risk control review Order",
+    "vi": "所 选 Bản ghi 中 No Đang chờ Trạng thái ， only Xử lý Đang chờ payout / Risk control review Đơn hàng"
+  },
+  "⚠️ 此操作将直接标记为已完成，不调用第三方支付接口": {
+    "en": "⚠ ️ 此 Actions 将 直 接 标 记 为 Already Complete ， 不 调 用 第 Third-party Payment 接 口",
+    "vi": "⚠ ️ 此 Thao tác 将 直 接 标 记 为 Already Complete ， 不 调 用 第 Third-party Thanh toán 接 口"
+  },
+  "没有符合锁定条件的订单（仅待出款且未锁定的订单可锁定）": {
+    "en": "没 Has Eligible Locked Conditions Order （ only Pending payout 且 Unlocked Order 可 Locked ）",
+    "vi": "没 Has Eligible Đã khóa Conditions Đơn hàng （ only Đang chờ payout 且 Chưa khóa Đơn hàng 可 Đã khóa ）"
+  },
+  "充 / 提次数 (累计充 / 提差额) (重复IP人数)": {
+    "en": "Dep/Wd Count (Cumulative Diff) (Duplicate IP Users)",
+    "vi": "Dep/Wd Count (Cumulative Diff) (Duplicate IP Users)"
+  },
+  "强制拒绝 button clicked (Finance)": {
+    "en": "强 制 拒 绝 b u t t o n c l i c k e d ( F i n a n c e )",
+    "vi": "强 制 拒 绝 b u t t o n c l i c k e d ( F i n a n c e )"
+  },
+  "所选记录中无待处理状态，仅处理待出款/风控审核订单，已跳过": {
+    "en": "所 选 Records 中 No Pending Status ， only Process Pending payout / Risk control review Order ， Already skipped",
+    "vi": "所 选 Bản ghi 中 No Đang chờ Trạng thái ， only Xử lý Đang chờ payout / Risk control review Đơn hàng ， Already skipped"
+  },
+  "必须审核的情形（必审的级别高于免审，只要触发必审则必须通过）": {
+    "en": "must Review 情 形 （ 必 审 级 别 higher than Auto-approved ， 只 要 trigger 必 审 则 must pass ）",
+    "vi": "must Duyệt 情 形 （ 必 审 级 别 higher than Auto-approved ， 只 要 trigger 必 审 则 must pass ）"
+  },
+  "免审规则配置功能开发中 - 会员层级、标签、注册时长、金额条件等": {
+    "en": "Auto-rule config feature in development - Member tier 、 Tag 、 Registration 时 长 、 Amount Conditions 等",
+    "vi": "Auto-rule config tính năng in đang phát triển - Thành viên tier 、 Tag 、 Registration 时 长 、 Số tiền Conditions 等"
+  },
+  "强制取消 button clicked (Risk Control)": {
+    "en": "强 制 Cancel b u t t o n c l i c k e d ( R i s k C o n t r o l )",
+    "vi": "强 制 Hủy b u t t o n c l i c k e d ( R i s k C o n t r o l )"
+  },
+  "强制拒绝 button clicked (Risk Control)": {
+    "en": "强 制 拒 绝 b u t t o n c l i c k e d ( R i s k C o n t r o l )",
+    "vi": "强 制 拒 绝 b u t t o n c l i c k e d ( R i s k C o n t r o l )"
+  },
+  "免审核的情形(满足以下任意一个条件的会员都自动免审核，不填或填0表示不限制)": {
+    "en": "Auto-approved 核 情 形 ( meet 以 下 any one Conditions Member 都 Auto Auto-approved 核 ， 不 填 or 填 0 表 示 不 限 制 )",
+    "vi": "Auto-approved 核 情 形 ( meet 以 下 any one Conditions Thành viên 都 Tự động Auto-approved 核 ， 不 填 or 填 0 表 示 不 限 制 )"
+  }
+}

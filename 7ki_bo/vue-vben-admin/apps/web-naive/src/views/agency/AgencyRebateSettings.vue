@@ -2,7 +2,7 @@
   <Page>
     <n-card>
       <n-tabs v-model:value="activeTab" type="line" animated>
-        <n-tab-pane name="validBet" tab="有效投注返水设置">
+        <n-tab-pane name="validBet" :tab="$t('agency.rebateSettings.validBetTab')">
           <div class="rebate-settings-container">
             <!-- 搜索区 -->
             <div class="mb-4">
@@ -11,7 +11,7 @@
                   <n-form-item>
                     <n-input
                       v-model:value="searchForm.gameCategory"
-                      placeholder="搜索游戏分类"
+                      :placeholder="$t('agency.rebateSettings.searchGameCategory')"
                       clearable
                       style="width: 200px"
                     />
@@ -19,7 +19,7 @@
                   <n-form-item>
                     <n-select
                       v-model:value="searchForm.isActive"
-                      placeholder="状态"
+                      :placeholder="$t('common.status')"
                       clearable
                       style="width: 120px"
                       :options="statusOptions"
@@ -30,13 +30,13 @@
                       <template #icon>
                         <n-icon><SearchOutline /></n-icon>
                       </template>
-                      搜索
+                      {{ $t('common.search') }}
                     </n-button>
                     <n-button
                       @click="handleResetSearch"
                       style="margin-left: 8px"
                     >
-                      重置
+                      {{ $t('common.reset') }}
                     </n-button>
                   </n-form-item>
                 </n-form>
@@ -48,19 +48,19 @@
               <n-card size="small">
                 <div class="grid grid-cols-4 gap-4">
                   <n-statistic
-                    label="总配置数"
+                    :label="$t('agency.rebateSettings.totalConfigs')"
                     :value="statistics.totalConfigs"
                   />
                   <n-statistic
-                    label="游戏分类"
+                    :label="$t('agency.rebateSettings.gameCategories')"
                     :value="statistics.totalGameCategories"
                   />
                   <n-statistic
-                    label="平均返水率"
+                    :label="$t('agency.rebateSettings.avgRebateRate')"
                     :value="`${statistics.averageRebateRate}%`"
                   />
                   <n-statistic
-                    label="最后更新"
+                    :label="$t('agency.rebateSettings.lastUpdated')"
                     :value="formatDate(statistics.lastUpdated)"
                   />
                 </div>
@@ -92,23 +92,22 @@
                       <!-- 主要操作按钮 -->
                       <div class="flex gap-2">
                         <n-button type="primary" @click="handleCreate">
-                          新增返水规则
+                          {{ $t('agency.rebateSettings.addRule') }}
                         </n-button>
                         <n-button
                           type="success"
                           @click="handleDownloadTemplate"
                         >
-                          下载模板
+                          {{ $t('agency.rebateSettings.downloadTemplate') }}
                         </n-button>
                         <n-button type="info" @click="handleImportExcel">
-                          Excel导入
+                          {{ $t('agency.rebateSettings.excelImport') }}
                         </n-button>
                       </div>
 
                       <!-- 选择信息 -->
                       <div class="text-sm text-gray-600">
-                        已选择 {{ selectedCount }} 条数据，共
-                        {{ paginationReactive.total }} 条
+                        {{ $t('agency.rebateSettings.selectedCount', [String(selectedCount), String(paginationReactive.total)]) }}
                       </div>
                     </div>
 
@@ -120,14 +119,14 @@
                         size="small"
                         @click="handleBatchModify(selectedRows)"
                       >
-                        批量修改 ({{ selectedCount }})
+                        {{ $t('agency.rebateSettings.batchModify') }} ({{ selectedCount }})
                       </n-button>
 
                       <!-- 选择控制 -->
                       <n-button size="small" @click="clearSelection"
-                        >清空选择</n-button
+                        >{{ $t('agency.rebateSettings.clearSelection') }}</n-button
                       >
-                      <n-button size="small" @click="selectAll">全选</n-button>
+                      <n-button size="small" @click="selectAll">{{ $t('common.selectAll') }}</n-button>
                     </div>
                   </div>
                 </n-card>
@@ -136,7 +135,7 @@
           </div>
         </n-tab-pane>
 
-        <n-tab-pane name="netProfit" tab="净盈利返水设置">
+        <n-tab-pane name="netProfit" :tab="$t('agency.rebateSettings.netProfitTab')">
           <div class="rebate-settings-container">
             <!-- 搜索区 -->
             <div class="mb-4">
@@ -145,7 +144,7 @@
                   <n-form-item>
                     <n-input
                       v-model:value="searchForm.gameCategory"
-                      placeholder="搜索游戏分类"
+                      :placeholder="$t('agency.rebateSettings.searchGameCategory')"
                       clearable
                       style="width: 200px"
                     />
@@ -153,7 +152,7 @@
                   <n-form-item>
                     <n-select
                       v-model:value="searchForm.isActive"
-                      placeholder="状态"
+                      :placeholder="$t('common.status')"
                       clearable
                       style="width: 120px"
                       :options="statusOptions"
@@ -164,13 +163,13 @@
                       <template #icon>
                         <n-icon><SearchOutline /></n-icon>
                       </template>
-                      搜索
+                      {{ $t('common.search') }}
                     </n-button>
                     <n-button
                       @click="handleResetSearch"
                       style="margin-left: 8px"
                     >
-                      重置
+                      {{ $t('common.reset') }}
                     </n-button>
                   </n-form-item>
                 </n-form>
@@ -182,19 +181,19 @@
               <n-card size="small">
                 <div class="grid grid-cols-4 gap-4">
                   <n-statistic
-                    label="总配置数"
+                    :label="$t('agency.rebateSettings.totalConfigs')"
                     :value="statistics.totalConfigs"
                   />
                   <n-statistic
-                    label="游戏分类"
+                    :label="$t('agency.rebateSettings.gameCategories')"
                     :value="statistics.totalGameCategories"
                   />
                   <n-statistic
-                    label="平均返水率"
+                    :label="$t('agency.rebateSettings.avgRebateRate')"
                     :value="`${statistics.averageRebateRate}%`"
                   />
                   <n-statistic
-                    label="最后更新"
+                    :label="$t('agency.rebateSettings.lastUpdated')"
                     :value="formatDate(statistics.lastUpdated)"
                   />
                 </div>
@@ -226,23 +225,22 @@
                       <!-- 主要操作按钮 -->
                       <div class="flex gap-2">
                         <n-button type="primary" @click="handleCreate">
-                          新增返水规则
+                          {{ $t('agency.rebateSettings.addRule') }}
                         </n-button>
                         <n-button
                           type="success"
                           @click="handleDownloadTemplate"
                         >
-                          下载模板
+                          {{ $t('agency.rebateSettings.downloadTemplate') }}
                         </n-button>
                         <n-button type="info" @click="handleImportExcel">
-                          Excel导入
+                          {{ $t('agency.rebateSettings.excelImport') }}
                         </n-button>
                       </div>
 
                       <!-- 选择信息 -->
                       <div class="text-sm text-gray-600">
-                        已选择 {{ selectedCount }} 条数据，共
-                        {{ paginationReactive.total }} 条
+                        {{ $t('agency.rebateSettings.selectedCount', [String(selectedCount), String(paginationReactive.total)]) }}
                       </div>
                     </div>
 
@@ -254,14 +252,14 @@
                         size="small"
                         @click="handleBatchModify(selectedRows)"
                       >
-                        批量修改 ({{ selectedCount }})
+                        {{ $t('agency.rebateSettings.batchModify') }} ({{ selectedCount }})
                       </n-button>
 
                       <!-- 选择控制 -->
                       <n-button size="small" @click="clearSelection"
-                        >清空选择</n-button
+                        >{{ $t('agency.rebateSettings.clearSelection') }}</n-button
                       >
-                      <n-button size="small" @click="selectAll">全选</n-button>
+                      <n-button size="small" @click="selectAll">{{ $t('common.selectAll') }}</n-button>
                     </div>
                   </div>
                 </n-card>
@@ -276,7 +274,7 @@
     <n-modal
       v-model:show="showEditModal"
       preset="dialog"
-      :title="editMode === 'create' ? '新增返水规则' : '编辑返水规则'"
+      :title="editMode === 'create' ? $t('agency.rebateSettings.createRule') : $t('agency.rebateSettings.editRule')"
       style="width: 600px"
       :mask-closable="false"
       @after-leave="handleEditModalClose"
@@ -289,78 +287,78 @@
         label-width="130px"
         class="mt-4"
       >
-        <n-form-item label="游戏分类" path="gameCategory">
+        <n-form-item :label="$t('agency.rebateSettings.gameCategories')" path="gameCategory">
           <n-select
             v-model:value="formData.gameCategory"
-            placeholder="请选择游戏分类"
+            :placeholder="$t('agency.rebateSettings.selectGameCategory')"
             :options="gameCategoryOptions"
             filterable
             tag
           />
         </n-form-item>
-        <n-form-item label="序号" path="sortOrder">
+        <n-form-item :label="$t('agency.rebateSettings.sortOrder')" path="sortOrder">
           <n-input
             :value="formData.sortOrder"
             readonly
-            placeholder="自动生成"
+            :placeholder="$t('agency.rebateSettings.autoGenerated')"
             style="width: 100%"
           />
         </n-form-item>
-        <n-form-item label="有效人数门槛" path="validUserThreshold">
+        <n-form-item :label="$t('agency.rebateSettings.validUserThreshold')" path="validUserThreshold">
           <n-input-number
             v-model:value="formData.validUserThreshold"
-            placeholder="请输入有效人数门槛（0表示不限制）"
+            :placeholder="$t('agency.rebateSettings.validUserThresholdHint')"
             :min="0"
             style="width: 100%"
           />
         </n-form-item>
-        <n-form-item label="有效投注门槛(万)" path="validBetThreshold">
+        <n-form-item :label="$t('agency.rebateSettings.validBetThreshold')" path="validBetThreshold">
           <n-input-number
             v-model:value="formData.validBetThreshold"
-            placeholder="请输入有效投注门槛（单位：万）"
+            :placeholder="$t('agency.rebateSettings.validBetThresholdHint')"
             :min="0"
             :precision="2"
             style="width: 100%"
           />
         </n-form-item>
-        <n-form-item label="每万投注返金额" path="rebateAmountPer10k">
+        <n-form-item :label="$t('agency.rebateSettings.rebatePer10k')" path="rebateAmountPer10k">
           <n-input-number
             v-model:value="formData.rebateAmountPer10k"
-            placeholder="请输入每万投注返金额"
+            :placeholder="$t('agency.rebateSettings.rebatePer10kHint')"
             :min="0"
             :precision="2"
             style="width: 100%"
           />
         </n-form-item>
-        <n-form-item label="返佣比例" path="rebatePercentage">
+        <n-form-item :label="$t('agency.rebateSettings.rebatePercentage')" path="rebatePercentage">
           <n-input
             :value="rebatePercentage"
             readonly
-            placeholder="自动计算"
+            :placeholder="$t('agency.rebateSettings.autoCalculated')"
             style="width: 100%"
           />
         </n-form-item>
-        <n-form-item label="状态" path="isActive">
+        <n-form-item :label="$t('common.status')" path="isActive">
           <n-switch
             v-model:value="formData.isActive"
             :checked-value="true"
             :unchecked-value="false"
           />
         </n-form-item>
-        <n-form-item label="备注" path="remarks">
+        <n-form-item :label="$t('common.remark')" path="remarks">
           <n-input
             v-model:value="formData.remarks"
             type="textarea"
-            placeholder="请输入备注"
+            :placeholder="$t('common.pleaseEnter') + $t('common.remark')"
             :rows="3"
           />
         </n-form-item>
       </n-form>
       <template #action>
         <n-space>
-          <n-button @click="showEditModal = false">取消</n-button>
+          <n-button @click="showEditModal = false">{{ $t('common.cancel') }}</n-button>
           <n-button type="primary" @click="handleSave" :loading="saving">
-            {{ editMode === 'create' ? '创建' : '更新' }}
+            {{ editMode === 'create' ? $t('common.create') : $t('agency.shared.update') }}
           </n-button>
         </n-space>
       </template>
@@ -370,7 +368,7 @@
     <n-modal
       v-model:show="showBatchModal"
       preset="dialog"
-      title="批量修改返水规则"
+      :title="$t('agency.rebateSettings.batchModifyTitle')"
       style="width: 500px"
       :mask-closable="false"
     >
@@ -382,36 +380,36 @@
         label-width="130px"
         class="mt-4"
       >
-        <n-form-item label="有效人数门槛" path="validUserThreshold">
+        <n-form-item :label="$t('agency.rebateSettings.validUserThreshold')" path="validUserThreshold">
           <n-input-number
             v-model:value="batchFormData.validUserThreshold"
-            placeholder="请输入有效人数门槛（留空表示不修改）"
+            :placeholder="$t('agency.rebateSettings.validUserThresholdOptional')"
             :min="0"
             style="width: 100%"
           />
         </n-form-item>
-        <n-form-item label="有效投注门槛(万)" path="validBetThreshold">
+        <n-form-item :label="$t('agency.rebateSettings.validBetThreshold')" path="validBetThreshold">
           <n-input-number
             v-model:value="batchFormData.validBetThreshold"
-            placeholder="请输入有效投注门槛（留空表示不修改）"
+            :placeholder="$t('agency.rebateSettings.validBetThresholdOptional')"
             :min="0"
             :precision="2"
             style="width: 100%"
           />
         </n-form-item>
-        <n-form-item label="每万投注返金额" path="rebateAmountPer10k">
+        <n-form-item :label="$t('agency.rebateSettings.rebatePer10k')" path="rebateAmountPer10k">
           <n-input-number
             v-model:value="batchFormData.rebateAmountPer10k"
-            placeholder="请输入每万投注返金额（留空表示不修改）"
+            :placeholder="$t('agency.rebateSettings.rebatePer10kOptional')"
             :min="0"
             :precision="2"
             style="width: 100%"
           />
         </n-form-item>
-        <n-form-item label="状态" path="isActive">
+        <n-form-item :label="$t('common.status')" path="isActive">
           <n-select
             v-model:value="batchFormData.isActive"
-            placeholder="请选择状态（留空表示不修改）"
+            :placeholder="$t('agency.rebateSettings.selectStatusOptional')"
             clearable
             :options="statusOptions"
           />
@@ -419,9 +417,9 @@
       </n-form>
       <template #action>
         <n-space>
-          <n-button @click="showBatchModal = false">取消</n-button>
+          <n-button @click="showBatchModal = false">{{ $t('common.cancel') }}</n-button>
           <n-button type="primary" @click="handleBatchSave" :loading="saving">
-            批量更新
+            {{ $t('agency.rebateSettings.batchUpdate') }}
           </n-button>
         </n-space>
       </template>
@@ -431,14 +429,14 @@
     <n-modal
       v-model:show="showImportModal"
       preset="dialog"
-      title="Excel导入返水规则"
+      :title="$t('agency.rebateSettings.importTitle')"
       style="width: 600px"
       :mask-closable="false"
     >
       <div class="import-content">
         <n-alert type="info" class="mb-4">
-          <p>请先下载模板文件，按照模板格式填写数据后再上传。</p>
-          <p>支持的文件格式：.xlsx, .xls</p>
+          <p>{{ $t('agency.rebateSettings.importHint1') }}</p>
+          <p>{{ $t('agency.rebateSettings.importHint2') }}</p>
         </n-alert>
 
         <n-upload
@@ -457,23 +455,23 @@
               </n-icon>
             </div>
             <n-text style="font-size: 16px"
-              >点击或者拖动文件到该区域来上传</n-text
+              >{{ $t('agency.rebateSettings.uploadDrag') }}</n-text
             >
             <n-p depth="3" style="margin: 8px 0 0 0">
-              请选择Excel文件进行批量导入
+              {{ $t('agency.rebateSettings.uploadHint') }}
             </n-p>
           </n-upload-dragger>
         </n-upload>
       </div>
       <template #action>
         <n-space>
-          <n-button @click="showImportModal = false">取消</n-button>
+          <n-button @click="showImportModal = false">{{ $t('common.cancel') }}</n-button>
           <n-button
             type="primary"
             @click="handleImportSave"
             :loading="importing"
           >
-            开始导入
+            {{ $t('agency.rebateSettings.startImport') }}
           </n-button>
         </n-space>
       </template>
@@ -482,6 +480,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import {
   ref,
   reactive,
@@ -641,22 +641,22 @@ const paginationReactive = reactive({
 });
 
 // 选项配置
-const statusOptions = [
-  { label: '启用', value: true },
-  { label: '禁用', value: false },
-] as const;
+const statusOptions = computed(() => [
+  { label: $t('common.enable'), value: true },
+  { label: $t('common.disable'), value: false },
+]);
 
 // 表单验证规则
-const formRules: FormRules = {
+const formRules = computed<FormRules>(() => ({
   gameCategory: [
-    { required: true, message: '请选择游戏分类', trigger: 'change' },
+    { required: true, message: $t('agency.rebateSettings.selectGameCategoryRequired'), trigger: 'change' },
   ],
   // sortOrder is auto-generated, no validation needed
   validUserThreshold: [
     {
       type: 'number',
       min: 0,
-      message: '有效人数门槛不能小于0',
+      message: $t('agency.rebateSettings.validUserMinZero'),
       trigger: 'blur',
     },
   ],
@@ -664,7 +664,7 @@ const formRules: FormRules = {
     {
       type: 'number',
       min: 0,
-      message: '有效投注门槛不能小于0',
+      message: $t('agency.rebateSettings.validBetMinZero'),
       trigger: 'blur',
     },
   ],
@@ -672,18 +672,18 @@ const formRules: FormRules = {
     {
       type: 'number',
       min: 0,
-      message: '每万投注返金额不能小于0',
+      message: $t('agency.rebateSettings.rebateMinZero'),
       trigger: 'blur',
     },
   ],
-};
+}));
 
-const batchFormRules: FormRules = {
+const batchFormRules = computed<FormRules>(() => ({
   validUserThreshold: [
     {
       type: 'number',
       min: 0,
-      message: '有效人数门槛不能小于0',
+      message: $t('agency.rebateSettings.validUserMinZero'),
       trigger: 'blur',
     },
   ],
@@ -691,7 +691,7 @@ const batchFormRules: FormRules = {
     {
       type: 'number',
       min: 0,
-      message: '有效投注门槛不能小于0',
+      message: $t('agency.rebateSettings.validBetMinZero'),
       trigger: 'blur',
     },
   ],
@@ -699,11 +699,11 @@ const batchFormRules: FormRules = {
     {
       type: 'number',
       min: 0,
-      message: '每万投注返金额不能小于0',
+      message: $t('agency.rebateSettings.rebateMinZero'),
       trigger: 'blur',
     },
   ],
-};
+}));
 
 // 计算返佣比例
 const rebatePercentage = computed(() => {
@@ -718,19 +718,19 @@ const rebatePercentage = computed(() => {
 const currentRecord = ref<RebateConfig | null>(null);
 
 // 表格列配置
-const columns: DataTableColumns<RebateConfig> = [
+const columns = computed<DataTableColumns<RebateConfig>>(() => [
   {
     type: 'selection',
     width: 50,
   },
   {
-    title: '序号',
+    title: $t('agency.rebateSettings.sortOrder'),
     key: 'sortOrder',
     width: 80,
     sorter: true,
   },
   {
-    title: '游戏分类',
+    title: $t('agency.rebateSettings.gameCategory'),
     key: 'gameCategory',
     width: 120,
     ellipsis: {
@@ -738,25 +738,25 @@ const columns: DataTableColumns<RebateConfig> = [
     },
   },
   {
-    title: '有效人数门槛',
+    title: $t('agency.rebateSettings.validUserThreshold'),
     key: 'validUserThreshold',
     width: 120,
     render: (row) => {
       return row.validUserThreshold === 0
-        ? '不限制'
-        : `${row.validUserThreshold}人`;
+        ? $t('agency.rebateSettings.unlimited')
+        : `${row.validUserThreshold}${$t('agency.rebateSettings.peopleSuffix')}`;
     },
   },
   {
-    title: '有效投注门槛',
+    title: $t('agency.rebateSettings.validBetThreshold'),
     key: 'validBetThreshold',
     width: 120,
     render: (row) => {
-      return `${row.validBetThreshold}万`;
+      return `${row.validBetThreshold}${$t('agency.rebateSettings.tenThousandSuffix')}`;
     },
   },
   {
-    title: '每万投注返金额',
+    title: $t('agency.rebateSettings.rebatePer10k'),
     key: 'rebateAmountPer10k',
     width: 150,
     render: (row) => {
@@ -765,19 +765,19 @@ const columns: DataTableColumns<RebateConfig> = [
     },
   },
   {
-    title: '状态',
+    title: $t('common.status'),
     key: 'isActive',
     width: 80,
     render: (row) => {
       return h(
         NTag,
         { type: row.isActive ? 'success' : 'error' },
-        { default: () => (row.isActive ? '启用' : '禁用') },
+        { default: () => (row.isActive ? $t('common.enable') : $t('common.disable')) },
       );
     },
   },
   {
-    title: '备注',
+    title: $t('common.remark'),
     key: 'remarks',
     width: 150,
     ellipsis: {
@@ -785,7 +785,7 @@ const columns: DataTableColumns<RebateConfig> = [
     },
   },
   {
-    title: '更新时间',
+    title: $t('agency.rebateSettings.lastUpdated'),
     key: 'updatedAt',
     width: 180,
     render: (row) => {
@@ -793,7 +793,7 @@ const columns: DataTableColumns<RebateConfig> = [
     },
   },
   {
-    title: '操作',
+    title: $t('common.actions'),
     key: 'actions',
     width: 120,
     fixed: 'right',
@@ -816,9 +816,9 @@ const columns: DataTableColumns<RebateConfig> = [
                       quaternary: true,
                       onClick: () => handleEdit(row),
                     },
-                    { default: () => '编辑' },
+                    { default: () => $t('common.edit') },
                   ),
-                default: () => '编辑',
+                default: () => $t('common.edit'),
               },
             ),
             h(
@@ -840,12 +840,12 @@ const columns: DataTableColumns<RebateConfig> = [
                             type: 'error',
                             quaternary: true,
                           },
-                          { default: () => '删除' },
+                          { default: () => $t('common.delete') },
                         ),
-                      default: () => '删除',
+                      default: () => $t('agency.rebateSettings.confirmDeleteRule'),
                     },
                   ),
-                default: () => '确认删除此返水规则吗？',
+                default: () => $t('agency.rebateSettings.confirmDeleteRule'),
               },
             ),
           ],
@@ -853,7 +853,7 @@ const columns: DataTableColumns<RebateConfig> = [
       );
     },
   },
-];
+]);
 
 // 格式化日期
 const formatDate = (date: string | undefined) => {
@@ -893,7 +893,7 @@ const loadData = async () => {
           validUserThreshold: 10,
           validBetThreshold: 100,
           rebateAmountPer10k: 50,
-          remarks: '示例配置',
+          remarks: $t('agency.rebateSettings.exampleConfig'),
           type: activeTab.value,
           isActive: true,
           createdAt: new Date().toISOString(),
@@ -904,7 +904,7 @@ const loadData = async () => {
     }
   } catch (error) {
     console.error('加载数据失败:', error);
-    message.error('加载数据失败');
+    message.error($t('agency.rebateSettings.loadFailed'));
     // 提供示例数据作为后备
     tableData.value = [
       {
@@ -914,7 +914,7 @@ const loadData = async () => {
         validUserThreshold: 10,
         validBetThreshold: 100,
         rebateAmountPer10k: 50,
-        remarks: '示例配置',
+        remarks: $t('agency.rebateSettings.exampleConfig'),
         type: activeTab.value,
         isActive: true,
         createdAt: new Date().toISOString(),
@@ -952,13 +952,13 @@ const loadStatistics = async () => {
 const loadGameCategories = async () => {
   // 先设置默认的游戏分类选项
   const defaultCategories = [
-    { value: 'slot', label: '电子游戏', description: 'Electronic slot games' },
-    { value: 'live', label: '真人娱乐', description: 'Live dealer games' },
-    { value: 'card', label: '棋牌游戏', description: 'Card and board games' },
-    { value: 'lottery', label: '彩票游戏', description: 'Lottery games' },
-    { value: 'sports', label: '体育投注', description: 'Sports betting' },
-    { value: 'fishing', label: '捕鱼游戏', description: 'Fishing games' },
-    { value: 'esports', label: '电竞游戏', description: 'Esports betting' },
+    { value: 'slot', label: $t('agency.rebateSettings.slotGames'), description: 'Electronic slot games' },
+    { value: 'live', label: $t('agency.rebateSettings.liveGames'), description: 'Live dealer games' },
+    { value: 'card', label: $t('agency.rebateSettings.cardGames'), description: 'Card and board games' },
+    { value: 'lottery', label: $t('agency.rebateSettings.lotteryGames'), description: 'Lottery games' },
+    { value: 'sports', label: $t('agency.rebateSettings.sportsGames'), description: 'Sports betting' },
+    { value: 'fishing', label: $t('agency.rebateSettings.fishingGames'), description: 'Fishing games' },
+    { value: 'esports', label: $t('agency.rebateSettings.esportsGames'), description: 'Esports betting' },
   ];
 
   // 设置默认选项
@@ -1019,11 +1019,11 @@ const handleEdit = (record: RebateConfig) => {
 const handleDelete = async (id: string) => {
   try {
     await deleteRebateSetting(id);
-    message.success('删除成功');
+    message.success($t('common.deleteSuccess'));
     loadData();
   } catch (error) {
     console.error('删除失败:', error);
-    message.error('删除失败');
+    message.error($t('common.operationFailed'));
   }
 };
 
@@ -1033,7 +1033,7 @@ const handleBatchModify = (selectedRows?: RebateConfig[]) => {
     tableData.value.filter((item) => selectedRowKeys.value.includes(item.id!));
 
   if (rowsToModify.length === 0) {
-    message.warning('请先选择要修改的记录');
+    message.warning($t('agency.rebateSettings.selectRecordsFirst'));
     return;
   }
 
@@ -1053,12 +1053,12 @@ const handleDownloadTemplate = async () => {
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `返水规则模板_${activeTab.value === 'validBet' ? '有效投注' : '净盈利'}.xlsx`;
+    link.download = $t('agency.rebateSettings.templateFilename', [activeTab.value === 'validBet' ? $t('agency.rebateSettings.validBetLabel') : $t('agency.rebateSettings.netProfitLabel')]);
     link.click();
     window.URL.revokeObjectURL(url);
   } catch (error) {
     console.error('下载模板失败:', error);
-    message.error('下载模板失败');
+    message.error($t('agency.rebateSettings.downloadTemplateFailed'));
   }
 };
 
@@ -1103,12 +1103,12 @@ const handleRowClick = (rebate: RebateConfig) => {
 
 const clearSelection = () => {
   selectedRowKeys.value = [];
-  message.success('已清空选择');
+  message.success($t('agency.rebateSettings.selectionCleared'));
 };
 
 const selectAll = () => {
   selectedRowKeys.value = tableData.value.map((rebate) => rebate.id!);
-  message.success('已全选');
+  message.success($t('agency.rebateSettings.allSelected'));
 };
 
 const handleSave = async () => {
@@ -1137,7 +1137,7 @@ const handleSave = async () => {
 
     if (editMode.value === 'create') {
       await createRebateSetting(data);
-      message.success('创建成功');
+      message.success($t('common.operationSuccess'));
     } else {
       // Include sortOrder for updates
       const updateData = {
@@ -1145,7 +1145,7 @@ const handleSave = async () => {
         sortOrder: formData.sortOrder,
       };
       await updateRebateSetting(currentRecord.value!.id!, updateData);
-      message.success('更新成功');
+      message.success($t('common.saveSuccess'));
     }
 
     showEditModal.value = false;
@@ -1154,7 +1154,7 @@ const handleSave = async () => {
   } catch (error) {
     console.error('保存失败:', error);
     console.error('Error details:', error);
-    message.error('保存失败');
+    message.error($t('agency.rebateSettings.loadFailed'));
   } finally {
     saving.value = false;
   }
@@ -1176,7 +1176,7 @@ const handleBatchSave = async () => {
       }, {} as any);
 
     if (Object.keys(updates).length === 0) {
-      message.warning('请至少选择一个要修改的字段');
+      message.warning($t('agency.rebateSettings.selectFieldToModify'));
       return;
     }
 
@@ -1185,14 +1185,14 @@ const handleBatchSave = async () => {
       updates,
     });
 
-    message.success('批量更新成功');
+    message.success($t('common.saveSuccess'));
     showBatchModal.value = false;
     selectedRowKeys.value = [];
     loadData();
     loadStatistics();
   } catch (error) {
     console.error('批量更新失败:', error);
-    message.error('批量更新失败');
+    message.error($t('common.operationFailed'));
   } finally {
     saving.value = false;
   }
@@ -1202,7 +1202,7 @@ const handleBeforeUpload = (options: { file: UploadFileInfo }) => {
   const { file } = options;
 
   if (!file.file) {
-    message.error('无效的文件');
+    message.error($t('agency.rebateSettings.invalidFile'));
     return false;
   }
 
@@ -1212,13 +1212,13 @@ const handleBeforeUpload = (options: { file: UploadFileInfo }) => {
     file.file.type === 'application/vnd.ms-excel';
 
   if (!isExcel) {
-    message.error('只支持Excel文件格式');
+    message.error($t('agency.rebateSettings.excelOnly'));
     return false;
   }
 
   const isLt10M = file.file.size / 1024 / 1024 < 10;
   if (!isLt10M) {
-    message.error('文件大小不能超过10MB');
+    message.error($t('agency.rebateSettings.fileTooLarge'));
     return false;
   }
 
@@ -1231,13 +1231,13 @@ const handleRemoveFile = () => {
 
 const handleImportSave = async () => {
   if (importFileList.value.length === 0) {
-    message.warning('请先选择要导入的文件');
+    message.warning($t('agency.rebateSettings.selectImportFile'));
     return;
   }
 
   const file = importFileList.value[0];
   if (!file.file) {
-    message.error('无效的文件');
+    message.error($t('agency.rebateSettings.invalidFile'));
     return;
   }
 
@@ -1250,19 +1250,19 @@ const handleImportSave = async () => {
     });
 
     if (result.success > 0) {
-      message.success(`导入成功: ${result.success}条记录`);
+      message.success($t('agency.rebateSettings.importSuccess', [String(result.success)]));
       if (result.failed > 0) {
-        message.warning(`导入失败: ${result.failed}条记录`);
+        message.warning($t('agency.rebateSettings.importPartialFail', [String(result.failed)]));
       }
       showImportModal.value = false;
       loadData();
       loadStatistics();
     } else {
-      message.error('导入失败');
+      message.error($t('agency.rebateSettings.importFailed'));
     }
   } catch (error) {
     console.error('导入失败:', error);
-    message.error('导入失败');
+    message.error($t('agency.rebateSettings.importFailed'));
   } finally {
     importing.value = false;
   }

@@ -1,30 +1,29 @@
 <template>
   <div class="contact-tab">
-    <n-card title="联系方式信息" class="mb-4">
+    <n-card :title="$t('agency.contact.title')" class="mb-4">
       <div class="py-8 text-center text-gray-500">
         <n-icon size="48" class="mb-4">
           <LockClosedOutline />
         </n-icon>
-        <div class="mb-2 text-lg font-medium">需要安全码解密</div>
-        <div class="text-sm">
-          请联系管理员获取安全码以查看完整的联系方式信息
+        <div class="mb-2 text-lg font-medium">
+          {{ $t('agency.contact.securityRequired') }}
         </div>
+        <div class="text-sm">{{ $t('agency.contact.contactAdmin') }}</div>
       </div>
     </n-card>
 
-    <!-- Placeholder for decrypted contact info -->
-    <n-card title="基本信息" class="mb-4">
+    <n-card :title="$t('agency.contact.basicInfo')" class="mb-4">
       <n-descriptions bordered :column="2" size="small">
-        <n-descriptions-item label="代理账号">
+        <n-descriptions-item :label="$t('agency.profile.agentAccount')">
           {{ agentDetail?.username || '--' }}
         </n-descriptions-item>
-        <n-descriptions-item label="代理ID">
+        <n-descriptions-item :label="$t('agency.profile.agentId')">
           {{ agentDetail?.id || '--' }}
         </n-descriptions-item>
-        <n-descriptions-item label="推荐码">
+        <n-descriptions-item :label="$t('agency.profile.referralCode')">
           {{ agentDetail?.referralCode || '--' }}
         </n-descriptions-item>
-        <n-descriptions-item label="币种">
+        <n-descriptions-item :label="$t('common.currency')">
           <n-tag type="info" size="small">{{
             agentDetail?.currency || '--'
           }}</n-tag>
@@ -32,56 +31,60 @@
       </n-descriptions>
     </n-card>
 
-    <!-- Security Code Input -->
-    <n-card title="安全码验证" class="mb-4">
+    <n-card :title="$t('agency.contact.securityVerification')" class="mb-4">
       <n-form
         :model="securityForm"
         :rules="securityRules"
         ref="securityFormRef"
       >
-        <n-form-item label="安全码" path="securityCode">
+        <n-form-item :label="$t('agency.contact.securityCode')" path="securityCode">
           <n-input
             v-model:value="securityForm.securityCode"
             type="password"
-            placeholder="请输入安全码"
+            :placeholder="$t('agency.contact.enterSecurityCode')"
             show-password-on="click"
             style="width: 300px"
           />
         </n-form-item>
         <n-form-item>
           <n-button type="primary" @click="handleDecrypt" :loading="decrypting">
-            解密查看
+            {{ $t('agency.contact.decryptView') }}
           </n-button>
-          <n-button @click="handleReset" class="ml-2"> 重置 </n-button>
+          <n-button @click="handleReset" class="ml-2">
+            {{ $t('common.reset') }}
+          </n-button>
         </n-form-item>
       </n-form>
     </n-card>
 
-    <!-- Decrypted Contact Info (Hidden by default) -->
-    <n-card v-if="isDecrypted" title="解密后的联系方式" class="mb-4">
+    <n-card
+      v-if="isDecrypted"
+      :title="$t('agency.contact.decryptedContact')"
+      class="mb-4"
+    >
       <n-descriptions bordered :column="2" size="small">
-        <n-descriptions-item label="真实姓名">
+        <n-descriptions-item :label="$t('agency.contact.realName')">
           {{ decryptedInfo.realName || '--' }}
         </n-descriptions-item>
-        <n-descriptions-item label="身份证号">
+        <n-descriptions-item :label="$t('agency.contact.idNumber')">
           {{ decryptedInfo.idCard || '--' }}
         </n-descriptions-item>
-        <n-descriptions-item label="手机号码">
+        <n-descriptions-item :label="$t('agency.contact.phone')">
           {{ decryptedInfo.phone || '--' }}
         </n-descriptions-item>
-        <n-descriptions-item label="邮箱地址">
+        <n-descriptions-item :label="$t('agency.contact.email')">
           {{ decryptedInfo.email || '--' }}
         </n-descriptions-item>
-        <n-descriptions-item label="居住地址">
+        <n-descriptions-item :label="$t('agency.contact.address')">
           {{ decryptedInfo.address || '--' }}
         </n-descriptions-item>
-        <n-descriptions-item label="紧急联系人">
+        <n-descriptions-item :label="$t('agency.contact.emergencyContact')">
           {{ decryptedInfo.emergencyContact || '--' }}
         </n-descriptions-item>
-        <n-descriptions-item label="紧急联系人电话">
+        <n-descriptions-item :label="$t('agency.contact.emergencyPhone')">
           {{ decryptedInfo.emergencyPhone || '--' }}
         </n-descriptions-item>
-        <n-descriptions-item label="备注">
+        <n-descriptions-item :label="$t('common.remark')">
           {{ decryptedInfo.notes || '--' }}
         </n-descriptions-item>
       </n-descriptions>
@@ -90,6 +93,8 @@
 </template>
 
 <script setup lang="ts">
+import { $t } from '@vben/locales';
+
 import { ref, reactive, computed, onMounted } from 'vue';
 import {
   NCard,
@@ -134,7 +139,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 const message = useMessage();
 
-// Reactive data
 const loading = ref(false);
 const agentDetail = ref<AgentContactInfo | null>(null);
 const securityFormRef = ref();
@@ -145,7 +149,6 @@ const securityForm = reactive<SecurityForm>({
 const decrypting = ref(false);
 const isDecrypted = ref(false);
 
-// Decrypted info from API
 const decryptedInfo = ref<DecryptedInfo>({
   realName: '',
   idCard: '',
@@ -157,16 +160,14 @@ const decryptedInfo = ref<DecryptedInfo>({
   notes: '',
 });
 
-// Validation rules
-const securityRules = {
+const securityRules = computed(() => ({
   securityCode: {
     required: true,
-    message: '请输入安全码',
+    message: $t('agency.contact.enterCodeRequired'),
     trigger: 'blur',
   },
-};
+}));
 
-// Methods
 const loadAgentContactInfo = async () => {
   if (!props.agentId) return;
 
@@ -174,8 +175,6 @@ const loadAgentContactInfo = async () => {
   try {
     const data = await getAgentContactInfoApi(props.agentId);
     agentDetail.value = data;
-
-    // Map API data to decrypted info
     decryptedInfo.value = {
       realName: data.realName || '',
       idCard: data.idCard || '',
@@ -188,7 +187,7 @@ const loadAgentContactInfo = async () => {
     };
   } catch (error) {
     console.error('Failed to load agent contact info:', error);
-    message.error('加载代理联系信息失败');
+    message.error($t('agency.contact.loadFailed'));
   } finally {
     loading.value = false;
   }
@@ -198,15 +197,13 @@ const handleDecrypt = async () => {
   try {
     await securityFormRef.value?.validate();
     decrypting.value = true;
-
-    // Simulate API call for security verification
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     if (securityForm.securityCode === 'admin123') {
       isDecrypted.value = true;
-      message.success('解密成功，联系方式信息已显示');
+      message.success($t('agency.contact.decryptSuccess'));
     } else {
-      message.error('安全码错误，请重试');
+      message.error($t('agency.contact.wrongCode'));
     }
   } catch (error) {
     console.error('Decryption error:', error);
@@ -218,16 +215,7 @@ const handleDecrypt = async () => {
 const handleReset = () => {
   securityForm.securityCode = '';
   isDecrypted.value = false;
-  message.info('已重置');
-};
-
-const copyToClipboard = async (text: string) => {
-  try {
-    await navigator.clipboard.writeText(text);
-    message.success('已复制到剪贴板');
-  } catch (error) {
-    message.error('复制失败');
-  }
+  message.info($t('agency.contact.resetDone'));
 };
 
 onMounted(() => {

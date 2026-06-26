@@ -93,8 +93,8 @@ function loadLocalesMapFromDir(
  * Set i18n language
  * @param locale
  */
-function setI18nLanguage(locale: Locale) {
-  i18n.global.locale.value = locale;
+function setI18nLanguage(locale: SupportedLanguagesType) {
+  i18n.global.locale.value = locale as Locale;
 
   document?.querySelector('html')?.setAttribute('lang', locale);
 }

@@ -6,6 +6,7 @@ import { useAccessStore, useUserStore } from '@vben/stores';
 import { startProgress, stopProgress } from '@vben/utils';
 
 import { accessRoutes, coreRouteNames } from '#/router/routes';
+import { loadRemainingAppLocales } from '#/locales';
 import { useAuthStore } from '#/store';
 
 import { generateAccess } from './access';
@@ -18,7 +19,12 @@ function setupCommonGuard(router: Router) {
   // 记录已经加载的页面
   const loadedPaths = new Set<string>();
 
-  router.beforeEach((to) => {
+  router.beforeEach(async (to) => {
+    // Ensure module locales (finance, activity, …) are merged before app pages render.
+    if (!coreRouteNames.includes(to.name as string)) {
+      await loadRemainingAppLocales(preferences.app.locale);
+    }
+
     to.meta.loaded = loadedPaths.has(to.path);
 
     // 页面加载进度条

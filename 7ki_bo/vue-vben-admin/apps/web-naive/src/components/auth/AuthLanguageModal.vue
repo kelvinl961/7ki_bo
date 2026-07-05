@@ -5,9 +5,11 @@ import { computed, ref, watch } from 'vue';
 
 import { SUPPORT_LANGUAGES } from '@vben/constants';
 import { Languages } from '@vben/icons';
-import { $t, loadLocaleMessages } from '@vben/locales';
-import { preferences, updatePreferences } from '@vben/preferences';
+import { $t } from '@vben/locales';
+import { preferences } from '@vben/preferences';
 import { NButton, NModal, NRadio, NRadioGroup } from 'naive-ui';
+
+import { switchAppLocale } from '#/locales';
 
 defineOptions({ name: 'AuthLanguageModal' });
 
@@ -23,6 +25,7 @@ withDefaults(
 
 const show = ref(false);
 const selected = ref<SupportedLanguagesType>(preferences.app.locale);
+const switching = ref(false);
 
 const currentLabel = computed(
   () =>
@@ -36,10 +39,16 @@ function open() {
 }
 
 async function handleConfirm() {
+  if (switching.value) return;
+
   const locale = selected.value;
-  updatePreferences({ app: { locale } });
-  await loadLocaleMessages(locale);
-  show.value = false;
+  switching.value = true;
+  try {
+    await switchAppLocale(locale);
+    show.value = false;
+  } finally {
+    switching.value = false;
+  }
 }
 
 watch(
@@ -91,7 +100,7 @@ watch(
     <template #footer>
       <div class="flex justify-end gap-2">
         <NButton @click="show = false">{{ $t('common.cancel') }}</NButton>
-        <NButton type="primary" @click="handleConfirm">
+        <NButton type="primary" :loading="switching" @click="handleConfirm">
           {{ $t('common.confirm') }}
         </NButton>
       </div>

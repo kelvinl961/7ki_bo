@@ -53,16 +53,8 @@ async function bootstrap(namespace: string) {
   // 安装权限指令
   registerAccessDirective(app);
 
-  // 初始化 tippy
-  const { initTippy } = await import('@vben/common-ui/es/tippy');
-  initTippy(app);
-
   // 配置路由及路由守卫
   app.use(router);
-
-  // 配置Motion插件
-  const { MotionPlugin } = await import('@vben/plugins/motion');
-  app.use(MotionPlugin);
 
   // 动态更新标题
   watchEffect(() => {
@@ -75,6 +67,10 @@ async function bootstrap(namespace: string) {
   });
 
   app.mount('#app');
+
+  // Non-critical plugins — defer so login page paints sooner
+  void import('@vben/common-ui/es/tippy').then(({ initTippy }) => initTippy(app));
+  void import('@vben/plugins/motion').then(({ MotionPlugin }) => app.use(MotionPlugin));
 }
 
 export { bootstrap };

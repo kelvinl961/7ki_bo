@@ -152,6 +152,16 @@ export function resolveMemberTierIdsFromConfig(
 
   const memberScope = String(config.memberScope ?? '').trim();
   if (memberScope && memberScope !== 'all') {
+    const scopeTags = splitCommaList(memberScope);
+    if (scopeTags.length > 1) {
+      const resolved = scopeTags
+        .map((tag) => resolveTagToTierId(tag, tierById, tierByKey))
+        .filter((id): id is string => Boolean(id));
+      if (resolved.length > 0) {
+        return [...new Set(resolved)];
+      }
+    }
+
     const resolved = resolveTagToTierId(memberScope, tierById, tierByKey);
     return resolved ? [resolved] : [];
   }
@@ -159,10 +169,93 @@ export function resolveMemberTierIdsFromConfig(
   return [];
 }
 
+/** True when every active tier is included in the selection. */
+export function isAllMemberTiersSelected(
+  selectedIds: string[],
+  tierOptions: MemberTierOption[],
+): boolean {
+  if (tierOptions.length === 0 || selectedIds.length === 0) return false;
+  const selectedSet = new Set(selectedIds);
+  return tierOptions.every((tier) => selectedSet.has(tier.id));
+}
+
 export function buildMemberTierLabelMap(
   tierOptions: MemberTierOption[],
 ): Map<string, string> {
   return new Map(tierOptions.map((t) => [t.id, t.label]));
+}
+
+function splitCommaList(raw: unknown): string[] {
+  const text = String(raw ?? '').trim();
+  if (!text) return [];
+  return text
+    .split(/[,，]/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+function countConfiguredMemberSelections(
+  config:
+    | {
+        memberTags?: unknown;
+        memberGroups?: unknown;
+        memberScope?: unknown;
+      }
+    | null
+    | undefined,
+): number {
+  if (!config) return 0;
+  const groupCount = parseNumericIdArray(config.memberGroups).length;
+  if (groupCount > 0) return groupCount;
+  const tagCount = parseStringArray(config.memberTags).length;
+  if (tagCount > 0) return tagCount;
+  return splitCommaList(config.memberScope).filter((part) => part !== 'all').length;
+}
+
+function shouldShowAllMemberTiersLabel(
+  config:
+    | {
+        memberTags?: unknown;
+        memberGroups?: unknown;
+        memberScope?: unknown;
+      }
+    | null
+    | undefined,
+  tierOptions: MemberTierOption[],
+  selectedIds: string[],
+): boolean {
+  const memberScope = String(config?.memberScope ?? '').trim();
+  const configuredCount = countConfiguredMemberSelections(config);
+  const scopeParts = splitCommaList(memberScope).filter((part) => part !== 'all');
+
+  // No explicit tier filter → all members.
+  if (configuredCount === 0 && scopeParts.length === 0) {
+    return !memberScope || memberScope === 'all';
+  }
+
+  if (tierOptions.length > 0 && selectedIds.length > 0) {
+    if (isAllMemberTiersSelected(selectedIds, tierOptions)) return true;
+    if (selectedIds.length >= tierOptions.length) return true;
+    if (
+      selectedIds.length >= Math.max(5, tierOptions.length - 1) &&
+      selectedIds.length / tierOptions.length >= 0.85
+    ) {
+      return true;
+    }
+  }
+
+  if (configuredCount > 0 && tierOptions.length > 0) {
+    return (
+      configuredCount >= tierOptions.length ||
+      (configuredCount >= Math.max(5, tierOptions.length - 1) &&
+        configuredCount / tierOptions.length >= 0.85)
+    );
+  }
+
+  if (scopeParts.length >= 8) return true;
+
+  // Tier metadata not loaded yet — many selections still means "select all".
+  return configuredCount >= 8;
 }
 
 export function formatActivityMemberParticipation(
@@ -179,6 +272,10 @@ export function formatActivityMemberParticipation(
   const labelById = buildMemberTierLabelMap(tierOptions);
   const selectedIds = resolveMemberTierIdsFromConfig(config, tierOptions);
 
+  if (shouldShowAllMemberTiersLabel(config, tierOptions, selectedIds)) {
+    return '全部层级';
+  }
+
   if (selectedIds.length > 0) {
     return selectedIds
       .map((id) => labelById.get(id) || id)
@@ -187,7 +284,12 @@ export function formatActivityMemberParticipation(
 
   const memberScope = String(config?.memberScope ?? '').trim();
   if (!memberScope || memberScope === 'all') {
-    return '全部会员';
+    return '全部层级';
+  }
+
+  const scopeParts = splitCommaList(memberScope);
+  if (scopeParts.length >= 8) {
+    return '全部层级';
   }
 
   if (labelById.has(memberScope)) {

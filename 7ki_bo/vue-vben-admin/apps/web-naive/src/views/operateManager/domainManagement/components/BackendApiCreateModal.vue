@@ -155,9 +155,9 @@
       <n-form-item :label="$t('operations.domain.createSubdomain.configAdvice')">
         <div style="width: 100%">
           <div style="margin-bottom: 8px">
-            <a href="#" style="color: #2080f0; text-decoration: none"
-              >{{ $t('operations.domain.createSubdomain.seeTutorial') }}/a
-            >
+            <a href="#" style="color: #2080f0; text-decoration: none">
+              {{ $t('operations.domain.createSubdomain.seeTutorial') }}
+            </a>
           </div>
 
           <n-card size="small" style="background: #fafafa">

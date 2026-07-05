@@ -859,6 +859,38 @@ const columns = computed<DataTableColumns>(() => {
             renderNumericCell(row, 'withdrawalCount', false, true), // isCount
         },
         {
+          title: c('unfundedWithdrawUserCount'),
+          key: 'unfundedWithdrawUserCount',
+          width: 120,
+          sorter: true,
+          render: (row: any) =>
+            renderNumericCell(row, 'unfundedWithdrawUserCount', true, true), // isCount
+        },
+        {
+          title: c('fundedWithdrawUserCount'),
+          key: 'fundedWithdrawUserCount',
+          width: 120,
+          sorter: true,
+          render: (row: any) =>
+            renderNumericCell(row, 'fundedWithdrawUserCount', true, true), // isCount
+        },
+        {
+          title: c('unfundedWithdrawAmount'),
+          key: 'unfundedWithdrawAmount',
+          width: 120,
+          sorter: true,
+          render: (row: any) =>
+            renderNumericCell(row, 'unfundedWithdrawAmount', true),
+        },
+        {
+          title: c('fundedWithdrawAmount'),
+          key: 'fundedWithdrawAmount',
+          width: 120,
+          sorter: true,
+          render: (row: any) =>
+            renderNumericCell(row, 'fundedWithdrawAmount', true),
+        },
+        {
           title: c('depositWithdrawalDiff'),
           key: 'depositWithdrawalDiff',
           width: 120,

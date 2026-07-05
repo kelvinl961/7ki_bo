@@ -44,7 +44,7 @@
         </n-form-item>
 
         <n-form-item
-          v-if="formData.ruleType !== 'ACTIVITY_CLAIM_ONLY' && formData.depositCondition === 'GTE_AMOUNT'"
+          v-if="formData.ruleType === 'DEPOSIT_ONLY' && formData.depositCondition === 'GTE_AMOUNT'"
           :label="$t('demo.conditionalRtp.depositMinAmount')"
           path="depositMinAmount"
         >
@@ -84,6 +84,24 @@
           </n-space>
           <template #feedback>
             {{ $t('demo.conditionalRtp.activityRewardFeedback') }}
+          </template>
+        </n-form-item>
+
+        <n-form-item
+          v-if="formData.ruleType === 'LOSS_ONLY'"
+          :label="$t('demo.conditionalRtp.lossMinAmount')"
+          path="lossMinAmount"
+        >
+          <n-input-number
+            v-model:value="formData.lossMinAmount"
+            :min="0"
+            :max="100000000"
+            :precision="2"
+            :placeholder="$t('demo.conditionalRtp.lossMinAmountPlaceholder')"
+            class="w-full max-w-md"
+          />
+          <template #feedback>
+            {{ $t('demo.conditionalRtp.lossMinAmountFeedback') }}
           </template>
         </n-form-item>
 
@@ -248,6 +266,14 @@
         </n-button>
         <n-button
           size="small"
+          type="warning"
+          @click="handleTemplateC"
+          :disabled="submitting"
+        >
+          {{ $t('demo.conditionalRtp.templateLossThreshold') }}
+        </n-button>
+        <n-button
+          size="small"
           type="error"
           @click="handleClearRules"
           :disabled="submitting"
@@ -318,7 +344,7 @@ import { getMerchantRtpVendorsApi } from '#/api/core/merchant-rtp';
 import { getActivityList, type Activity } from '#/api/activity';
 
 type DepositConditionType = 'NO_DEPOSIT' | 'GTE_AMOUNT';
-type RuleType = 'DEPOSIT_ONLY' | 'ACTIVITY_CLAIM_ONLY';
+type RuleType = 'DEPOSIT_ONLY' | 'ACTIVITY_CLAIM_ONLY' | 'LOSS_ONLY';
 
 type RtpVendorId = 'AG' | 'HG';
 type HgPlayerAction = 'setRtp' | 'cancelRtp';
@@ -332,6 +358,7 @@ type Rule = {
   /** Optional: claimed activity reward sum for these activities must be > threshold */
   activityIds?: string[];
   activityRewardAmountGt?: number;
+  lossMinAmount?: number;
   /** 1–2 vendors applied in order when auto-eval runs */
   applyVendors: RtpVendorId[];
   /** HG only; AG 规则忽略 */
@@ -405,6 +432,7 @@ const depositConditionOptions = [
 const ruleTypeOptions = [
   { label: '仅入金条件', value: 'DEPOSIT_ONLY' },
   { label: '仅活动领奖条件', value: 'ACTIVITY_CLAIM_ONLY' },
+  { label: '仅入金本金亏损', value: 'LOSS_ONLY' },
 ];
 
 const gamesLoading = ref(false);
@@ -482,6 +510,7 @@ const formData = reactive({
   depositMinAmount: 500,
   activityIds: [] as string[],
   activityRewardAmountGt: null as number | null,
+  lossMinAmount: 500,
   rtp: 94,
   games: [...defaultGames] as string[],
 });
@@ -534,9 +563,16 @@ watch(
     if (t === 'DEPOSIT_ONLY') {
       formData.activityIds = [];
       formData.activityRewardAmountGt = null;
+      formData.lossMinAmount = 500;
     } else if (t === 'ACTIVITY_CLAIM_ONLY') {
       formData.depositCondition = 'GTE_AMOUNT';
       formData.depositMinAmount = 0;
+      formData.lossMinAmount = 500;
+    } else if (t === 'LOSS_ONLY') {
+      formData.depositCondition = 'GTE_AMOUNT';
+      formData.depositMinAmount = 0;
+      formData.activityIds = [];
+      formData.activityRewardAmountGt = null;
     }
     formRef.value?.restoreValidation();
   },
@@ -618,11 +654,35 @@ const rules: any = {
     required: true,
     message: '请选择入金条件',
     trigger: 'change',
+    validator: () => {
+      if (formData.ruleType !== 'DEPOSIT_ONLY') return true;
+      return formData.depositCondition ? true : new Error('请选择入金条件');
+    },
   },
   depositMinAmount: {
     type: 'number',
     message: '请输入入金阈值',
     trigger: 'change',
+    validator: (_rule: unknown, value: number) => {
+      if (formData.ruleType !== 'DEPOSIT_ONLY' || formData.depositCondition !== 'GTE_AMOUNT') {
+        return true;
+      }
+      if (value == null || !Number.isFinite(Number(value)) || Number(value) < 0) {
+        return new Error('请输入入金阈值');
+      }
+      return true;
+    },
+  },
+  lossMinAmount: {
+    type: 'number',
+    trigger: 'change',
+    validator: (_rule: unknown, value: number) => {
+      if (formData.ruleType !== 'LOSS_ONLY') return true;
+      if (value == null || !Number.isFinite(Number(value)) || Number(value) < 0) {
+        return new Error('请输入亏损阈值（>= 0）');
+      }
+      return true;
+    },
   },
   activityRewardRule: {
     trigger: ['change', 'blur'],
@@ -633,6 +693,9 @@ const rules: any = {
       const hasGt = gt != null && Number.isFinite(Number(gt));
       if (formData.ruleType === 'DEPOSIT_ONLY') {
         return !hasActs && !hasGt ? true : new Error('仅入金条件时，请清空活动领奖条件');
+      }
+      if (formData.ruleType === 'LOSS_ONLY') {
+        return !hasActs && !hasGt ? true : new Error('仅亏损条件时，请清空活动领奖条件');
       }
       if (formData.ruleType === 'ACTIVITY_CLAIM_ONLY' && !hasActs && !hasGt) {
         return new Error('请选择活动并设置领奖累计阈值');
@@ -732,9 +795,17 @@ const buildPayload = (): ConditionalPlayerRtpConfigPayload => {
         conditions: {
           ruleType: r.ruleType,
           registrationDaysMax: 0,
-          depositCondition: r.depositCondition,
+          depositCondition: r.ruleType === 'LOSS_ONLY' ? 'GTE_AMOUNT' : r.depositCondition,
           depositMinAmount:
-            r.depositCondition === 'GTE_AMOUNT' ? r.depositMinAmount : undefined,
+            r.ruleType === 'DEPOSIT_ONLY' && r.depositCondition === 'GTE_AMOUNT'
+              ? r.depositMinAmount
+              : undefined,
+          ...(r.ruleType === 'LOSS_ONLY' && r.lossMinAmount != null
+            ? {
+                lossCondition: 'GTE_AMOUNT' as const,
+                lossMinAmount: r.lossMinAmount,
+              }
+            : {}),
           ...(r.activityIds?.length && r.activityRewardAmountGt != null
             ? {
                 activityIds: [...r.activityIds],
@@ -816,13 +887,15 @@ const handleLoadFromBackend = async () => {
         rule?.conditions?.activityRewardAmountGt != null;
       const ruleTypeRaw = String(rule?.conditions?.ruleType ?? '').toUpperCase();
       const ruleType: RuleType =
-        ruleTypeRaw === 'ACTIVITY_CLAIM_ONLY'
-          ? 'ACTIVITY_CLAIM_ONLY'
-          : ruleTypeRaw === 'DEPOSIT_ONLY'
-            ? 'DEPOSIT_ONLY'
-            : hasActivityRuleBits
-              ? 'ACTIVITY_CLAIM_ONLY'
-              : 'DEPOSIT_ONLY';
+        ruleTypeRaw === 'LOSS_ONLY'
+          ? 'LOSS_ONLY'
+          : ruleTypeRaw === 'ACTIVITY_CLAIM_ONLY'
+            ? 'ACTIVITY_CLAIM_ONLY'
+            : ruleTypeRaw === 'DEPOSIT_ONLY'
+              ? 'DEPOSIT_ONLY'
+              : hasActivityRuleBits
+                ? 'ACTIVITY_CLAIM_ONLY'
+                : 'DEPOSIT_ONLY';
       const applyVendors = normalizeApplyVendorsFromBackendResult(rule?.result);
       const hasHg = applyVendors.includes('HG');
       const hgPlayerAction: HgPlayerAction =
@@ -841,6 +914,10 @@ const handleLoadFromBackend = async () => {
           rule?.conditions?.activityRewardAmountGt != null &&
           rule?.conditions?.activityRewardAmountGt !== ''
             ? Number(rule.conditions.activityRewardAmountGt)
+            : undefined,
+        lossMinAmount:
+          ruleType === 'LOSS_ONLY' && rule?.conditions?.lossMinAmount != null
+            ? Number(rule.conditions.lossMinAmount)
             : undefined,
         applyVendors,
         hgPlayerAction: hasHg ? hgPlayerAction : undefined,
@@ -913,7 +990,11 @@ const signatureKey = (rule: Rule) => {
     rule.activityIds?.length && rule.activityRewardAmountGt != null
       ? `act:${[...rule.activityIds].sort().join(',')}|>${rule.activityRewardAmountGt}`
       : '';
-  return `${vendorKey}|${typeKey}|${rule.depositCondition}|${depKey}|${gamesKey}|${hgKey}|${actKey}`;
+  const lossKey =
+    rule.ruleType === 'LOSS_ONLY' && rule.lossMinAmount != null
+      ? `loss>=${rule.lossMinAmount}`
+      : '';
+  return `${vendorKey}|${typeKey}|${rule.depositCondition}|${depKey}|${gamesKey}|${hgKey}|${actKey}|${lossKey}`;
 };
 
 const conflictRuleIds = computed<Set<string>>(() => {
@@ -960,6 +1041,8 @@ const handleAddRule = async () => {
         formData.activityIds?.length && formData.activityRewardAmountGt != null
           ? Number(formData.activityRewardAmountGt)
           : undefined,
+      lossMinAmount:
+        formData.ruleType === 'LOSS_ONLY' ? Number(formData.lossMinAmount) : undefined,
       applyVendors: [...formData.applyVendors],
       hgPlayerAction: hasHg ? formData.hgPlayerAction : undefined,
       gamePattern:
@@ -998,6 +1081,7 @@ const handleResetForm = () => {
   formData.depositMinAmount = 500;
   formData.activityIds = [];
   formData.activityRewardAmountGt = null;
+  formData.lossMinAmount = 500;
   formData.rtp = 94;
   formData.games = [...defaultGames];
   message.info('已重置表单');
@@ -1025,6 +1109,14 @@ const handleTemplateB = () => {
   handleAddRule();
 };
 
+const handleTemplateC = () => {
+  formData.ruleType = 'LOSS_ONLY';
+  formData.lossMinAmount = 500;
+  formData.games = [...defaultGames];
+  formData.rtp = 20;
+  handleAddRule();
+};
+
 // developer mode removed
 
 const ruleColumns: DataTableColumns<Rule> = [
@@ -1039,16 +1131,20 @@ const ruleColumns: DataTableColumns<Rule> = [
     title: '规则类型',
     key: 'ruleType',
     width: 104,
-    render: (row) =>
-      row.ruleType === 'DEPOSIT_ONLY'
-        ? '仅入金'
-        : '仅活动领奖',
+    render: (row) => {
+      if (row.ruleType === 'LOSS_ONLY') return $t('demo.conditionalRtp.ruleTypeLossOnly');
+      if (row.ruleType === 'DEPOSIT_ONLY') return $t('demo.conditionalRtp.ruleTypeDepositOnly');
+      return $t('demo.conditionalRtp.ruleTypeActivityOnly');
+    },
   },
   {
-    title: '入金 / 活动领奖',
+    title: '入金 / 活动领奖 / 亏损',
     key: 'depositCondition',
-    width: 240,
+    width: 260,
     render: (row) => {
+      if (row.ruleType === 'LOSS_ONLY') {
+        return `入金本金亏损>=${row.lossMinAmount ?? 0}`;
+      }
       const dep = row.ruleType === 'ACTIVITY_CLAIM_ONLY'
         ? '—'
         : row.depositCondition === 'NO_DEPOSIT'

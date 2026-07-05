@@ -9,7 +9,7 @@
         <n-tag type="success">{{ data?.currency || '-' }}</n-tag>
       </n-descriptions-item>
 
-      <:label="$t('game.virtualBonusPool.displayForm')">
+      <n-descriptions-item :label="$t('game.virtualBonusPool.displayForm')">
         <n-tag type="warning">{{
           getDisplayTypeLabel(data?.displayType)
         }}</n-tag>
@@ -31,13 +31,13 @@
         </n-ellipsis>
       </n-descriptions-item>
 
-      <:label="$t('game.virtualBonusPool.maxDisplayAmount')">
+      <n-descriptions-item :label="$t('game.virtualBonusPool.maxDisplayAmount')">
         <span class="amount-text">
           {{ formatAmount(data?.maxAmount) }}
         </span>
       </n-descriptions-item>
 
-      <:label="$t('game.virtualBonusPool.minDisplayAmount')">
+      <n-descriptions-item :label="$t('game.virtualBonusPool.minDisplayAmount')">
         <span class="amount-text">
           {{ formatAmount(data?.minAmount) }}
         </span>
@@ -67,7 +67,7 @@
 
       <n-descriptions-item :label="$t('common.remark')" :span="2">
         <div class="remark-content">
-          {{ data?.remark || '{{ $t('game.virtualBonusPool.noRemark') }}' }}
+          {{ data?.remark || $t('game.virtualBonusPool.noRemark') }}
         </div>
       </n-descriptions-item>
 
@@ -82,7 +82,7 @@
 
     
     <div class="preview-section mt-6">
-      <:title="$t('game.virtualBonusPool.stylePreview')" size="small">
+      <n-card :title="$t('game.virtualBonusPool.stylePreview')" size="small">
         <div class="preview-container">
           <div
             class="bonus-pool-preview"

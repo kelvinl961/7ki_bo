@@ -17,6 +17,127 @@
             label-placement="top"
             :disabled="detailMode"
           >
+            <!-- Basic Info -->
+            <div class="form-section">
+              <h4 class="section-title">{{ $t('brand.skinLang.basicInfo') }}</h4>
+
+              <n-form-item :label="$t('brand.brandId')" path="brandId">
+                <n-input v-model:value="formModel.brandId" readonly />
+              </n-form-item>
+
+              <n-form-item :label="$t('brand.skinLang.brandCode')" path="brandCode">
+                <n-input v-model:value="formModel.brandCode" readonly />
+              </n-form-item>
+
+              <n-form-item :label="$t('brand.brandName')" path="brandName">
+                <n-text>{{ formModel.brandName }}</n-text>
+              </n-form-item>
+            </div>
+
+            <!-- Template Configuration -->
+            <div class="form-section">
+              <h4 class="section-title">{{ $t('brand.skinLang.templateConfig') }}</h4>
+
+              <n-form-item :label="$t('brand.skinLang.templateType')" path="templateType">
+                <n-radio-group
+                  v-model:value="formModel.templateType"
+                  :disabled="detailMode"
+                >
+                  <n-radio value="main-site">{{ $t('brand.skinLang.mainSite') }}</n-radio>
+                  <n-radio value="skin-template">{{ $t('brand.skinLang.skinTemplate') }}</n-radio>
+                </n-radio-group>
+              </n-form-item>
+
+              <n-form-item :label="$t('brand.skinLang.brandSkin')" path="skinStyle">
+                <n-select
+                  v-model:value="formModel.skinStyle"
+                  :options="skinStyleOptions"
+                  :placeholder="$t('brand.skinLang.selectBrandSkin')"
+                  filterable
+                  :disabled="detailMode"
+                />
+              </n-form-item>
+            </div>
+
+            <!-- Brand Icons / Skin Colors -->
+            <div class="form-section">
+              <h4 class="section-title">{{ $t('brand.skinLang.brandIcons') }}</h4>
+
+              <n-form-item :label="$t('brand.skinLang.gameColor')" path="gameColor">
+                <n-radio-group v-model:value="formModel.gameColor" :disabled="detailMode">
+                  <n-radio value="有底色">{{ $t('brand.skinLang.withBackground') }}</n-radio>
+                  <n-radio value="无底色">{{ $t('brand.skinLang.withoutBackground') }}</n-radio>
+                </n-radio-group>
+              </n-form-item>
+
+              <n-form-item :label="$t('brand.skinColor')" path="skinColor">
+                <n-radio-group
+                  v-model:value="formModel.skinColor"
+                  class="skin-color-group"
+                  :disabled="detailMode"
+                >
+                  <div class="skin-color-grid">
+                    <n-radio
+                      v-for="color in skinColorOptions"
+                      :key="color.value"
+                      :value="color.value"
+                      :label="color.label"
+                      class="skin-color-radio"
+                    />
+                  </div>
+                </n-radio-group>
+              </n-form-item>
+
+              <div class="quick-color-block">
+                <div class="quick-color-title">{{ $t('brand.skinLang.quickColorChange') }}</div>
+                <div class="quick-color-grid">
+                  <n-form-item :label="$t('brand.skinLang.primaryColor')" path="primaryColor">
+                    <n-color-picker
+                      v-model:value="formModel.primaryColor"
+                      :show-alpha="false"
+                      :disabled="detailMode"
+                    />
+                  </n-form-item>
+                  <n-form-item :label="$t('brand.skinLang.accentColor')" path="accentColor">
+                    <n-color-picker
+                      v-model:value="formModel.accentColor"
+                      :show-alpha="false"
+                      :disabled="detailMode"
+                    />
+                  </n-form-item>
+                  <n-form-item :label="$t('brand.skinLang.buttonColor')" path="buttonColor">
+                    <n-color-picker
+                      v-model:value="formModel.buttonColor"
+                      :show-alpha="false"
+                      :disabled="detailMode"
+                    />
+                  </n-form-item>
+                  <n-form-item :label="$t('brand.skinLang.primaryText')" path="textPrimary">
+                    <n-color-picker
+                      v-model:value="formModel.textPrimary"
+                      :show-alpha="false"
+                      :disabled="detailMode"
+                    />
+                  </n-form-item>
+                  <n-form-item :label="$t('brand.skinLang.secondaryText')" path="textSecondary">
+                    <n-color-picker
+                      v-model:value="formModel.textSecondary"
+                      :show-alpha="false"
+                      :disabled="detailMode"
+                    />
+                  </n-form-item>
+                  <n-form-item :label="$t('brand.skinLang.accentText')" path="textAccent">
+                    <n-color-picker
+                      v-model:value="formModel.textAccent"
+                      :show-alpha="false"
+                      :disabled="detailMode"
+                    />
+                  </n-form-item>
+                </div>
+              </div>
+            </div>
+
+            <!-- Lobby Background -->
             <div class="form-section">
               <h4 class="section-title">{{ $t('brand.skinLang.lobbyBackground') }}</h4>
 

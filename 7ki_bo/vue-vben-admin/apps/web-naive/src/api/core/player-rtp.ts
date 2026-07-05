@@ -170,19 +170,31 @@ export async function searchGamesWithPagination(
 // Conditional RTP config (demo)
 // =============================
 export type ConditionalPlayerDepositConditionType = 'NO_DEPOSIT' | 'GTE_AMOUNT';
-export type ConditionalPlayerRuleType = 'DEPOSIT_ONLY' | 'ACTIVITY_CLAIM_ONLY' | 'COMBINED';
+export type ConditionalPlayerLossConditionType = 'GTE_AMOUNT';
+export type ConditionalPlayerRuleType =
+  | 'DEPOSIT_ONLY'
+  | 'ACTIVITY_CLAIM_ONLY'
+  | 'COMBINED'
+  | 'LOSS_ONLY';
 
 export interface ConditionalPlayerRtpRuleConditions {
   /**
    * Rule matching strategy:
    * - DEPOSIT_ONLY: only evaluate deposit condition
    * - ACTIVITY_CLAIM_ONLY: only evaluate activity claim amount condition
+   * - LOSS_ONLY: deposit-principal loss >= lossMinAmount (excludes reward-funded losses)
    * - COMBINED: legacy mode (kept for backward compatibility; new UI no longer offers it)
    */
   ruleType?: ConditionalPlayerRuleType;
   registrationDaysMax?: number;
   depositCondition: ConditionalPlayerDepositConditionType;
   depositMinAmount?: number;
+  /**
+   * LOSS_ONLY: deposit-principal loss = max(0, deposits - withdrawals - balance)
+   * must be >= this threshold.
+   */
+  lossCondition?: ConditionalPlayerLossConditionType;
+  lossMinAmount?: number;
   /**
    * Optional (仅活动领奖规则): **lifetime accumulated** sum of `rewardAmount` in promotion
    * `activity_rewards` for this user across the listed `activityIds` (per-activity SUM, then summed

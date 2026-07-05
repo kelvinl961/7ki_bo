@@ -139,7 +139,7 @@
       </n-form-item>
 
       <!-- Domain Settings -->
-      <n-divider style="margin: 24px 0">{{ $t('operations.domain.createSubdomain.domainSettings') }}/n-divider>
+      <n-divider style="margin: 24px 0">{{ $t('operations.domain.createSubdomain.domainSettings') }}</n-divider>
 
       <!-- Is Promotion Domain -->
       <n-form-item :label="$t('operations.domain.createSubdomain.asPromotion')">
@@ -222,9 +222,9 @@
       <n-form-item :label="$t('operations.domain.createSubdomain.configAdvice')">
         <div style="width: 100%">
           <div style="margin-bottom: 8px">
-            <a href="#" style="color: #2080f0; text-decoration: none"
-              >{{ $t('operations.domain.createSubdomain.seeTutorial') }}/a
-            >
+            <a href="#" style="color: #2080f0; text-decoration: none">
+              {{ $t('operations.domain.createSubdomain.seeTutorial') }}
+            </a>
           </div>
 
           <n-card size="small" style="background: #fafafa">

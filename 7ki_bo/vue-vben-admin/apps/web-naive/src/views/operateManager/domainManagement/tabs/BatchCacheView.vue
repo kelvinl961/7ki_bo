@@ -9,9 +9,7 @@
             <n-alert type="warning" style="margin-bottom: 16px" size="small">
               <div style="display: flex; align-items: center; gap: 8px">
                 <span style="font-size: 24px">⚠</span>
-                <span
-                  >{{ $t('operations.domain.batchCacheExt.urlLimitWarning') }}/span
-                >
+                <span>{{ $t('operations.domain.batchCacheExt.urlLimitWarning') }}</span>
               </div>
             </n-alert>
 
@@ -78,9 +76,7 @@
             <n-alert type="warning" style="margin-bottom: 16px" size="small">
               <div style="display: flex; align-items: center; gap: 8px">
                 <span style="font-size: 24px">⚠</span>
-                <span
-                  >{{ $t('operations.domain.batchCacheExt.directoryLimitWarning') }}/span
-                >
+                <span>{{ $t('operations.domain.batchCacheExt.directoryLimitWarning') }}</span>
               </div>
             </n-alert>
 

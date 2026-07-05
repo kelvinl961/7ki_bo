@@ -373,10 +373,16 @@ const columns = computed<DataTableColumns<Activity>>(() => [
     key: 'memberScope',
     width: 120,
     render: (row) => {
-      const config = (row as any).config || {
-        memberScope: row.memberScope,
-      };
-      return formatActivityMemberParticipation(config, memberTierOptions.value);
+      const rowConfig = (row as any).config || {};
+      return formatActivityMemberParticipation(
+        {
+          ...rowConfig,
+          memberScope: rowConfig.memberScope ?? row.memberScope,
+          memberTags: rowConfig.memberTags,
+          memberGroups: rowConfig.memberGroups,
+        },
+        memberTierOptions.value,
+      );
     },
   },
 

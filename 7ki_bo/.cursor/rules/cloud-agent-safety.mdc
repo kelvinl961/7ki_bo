@@ -1,0 +1,16 @@
+---
+description: Isolation and merge rules for Cursor Cloud / Slack agents on 7ki BO
+alwaysApply: true
+---
+
+# Cloud / Slack agent safety (7ki BO)
+
+Cloud Agents run in isolated VMs. They never write to the operator laptop.
+
+- Repo: `kelvinl961/7ki_bo`. Slack channel `#7ki-bo`. Keyword `bo`.
+- Feature branch + PR. Humans merge. Auto-merge off. Never `worker=my-devbox`.
+- Do not approve PRs that change production payment or wallet admin without a human.
+- Playwright `--isolated` against **staging** BO only.
+- Context7 for Vue/Vben docs. Skip Supabase MCP.
+- Strix: owned staging only, never unattended Slack automations, never exploit PoCs.
+- Secrets: staging/dev Runtime Secrets only. Never commit `server3.pem` or production tokens.

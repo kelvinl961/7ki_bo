@@ -1,0 +1,9 @@
+{
+  "$schema": "https://www.cursor.com/schemas/environment.schema.json",
+  "name": "7ki-bo",
+  "install": "cd vue-vben-admin && (pnpm install --frozen-lockfile || npm ci)",
+  "repositoryDependencies": [
+    "github.com/kelvinl961/7ki_api",
+    "github.com/kelvinl961/7ki"
+  ]
+}

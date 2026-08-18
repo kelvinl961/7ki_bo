@@ -1,0 +1,22 @@
+{
+  "name": "7ki PR review (no merge)",
+  "description": "On pull request opened or pushed, review the diff, comment findings, and never merge or approve money-path changes.",
+  "cursorAutomation": true,
+  "trigger": {
+    "type": "git",
+    "events": ["pull_request_opened", "pull_request_pushed"],
+    "repos": [
+      "kelvinl961/7ki_api",
+      "kelvinl961/7ki",
+      "kelvinl961/7ki_bo"
+    ]
+  },
+  "tools": {
+    "prComment": true,
+    "slack": true,
+    "approvePullRequest": false,
+    "createPullRequest": false
+  },
+  "slackChannel": "#7ki-agents",
+  "instructions": "Review the PR. Comment bugs, security issues, and missing tests. If the diff touches wallet, withdrawal, unified reward claim, cashController, or prisma/wallet.prisma, state that a human must review and merge — do not approve. Never merge, never push to main/master/v2, never use production secrets. Summarize in Slack #7ki-agents. Do not run Strix. Do not enable auto-merge."
+}

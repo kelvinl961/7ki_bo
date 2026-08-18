@@ -1,0 +1,17 @@
+{
+  "name": "7ki Slack triage",
+  "description": "When a #7ki-agents message starts with fix: or review:, start a cloud agent and open a draft PR. Humans approve.",
+  "cursorAutomation": true,
+  "trigger": {
+    "type": "slack",
+    "channel": "#7ki-agents",
+    "messageFilter": "^(fix:|review:)"
+  },
+  "tools": {
+    "createPullRequest": true,
+    "slack": true,
+    "approvePullRequest": false
+  },
+  "environment": "7ki-platform",
+  "instructions": "Read the Slack message. Route api/client/bo keywords to the matching repo. Implement on a feature branch and open a DRAFT pull request. Never merge. Never approve. Never use production DATABASE_URL or wallet keys. Do not run Strix. Reply in the thread with the PR link."
+}

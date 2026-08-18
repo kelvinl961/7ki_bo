@@ -1,0 +1,21 @@
+{
+  "name": "7ki daily PR digest",
+  "description": "Weekday 09:00 Asia/Shanghai summary of open PRs and failing checks. No code changes.",
+  "cursorAutomation": true,
+  "trigger": {
+    "type": "cron",
+    "cron": "0 1 * * 1-5",
+    "note": "01:00 UTC = 09:00 Asia/Shanghai"
+  },
+  "tools": {
+    "slack": true,
+    "createPullRequest": false,
+    "approvePullRequest": false
+  },
+  "gitConfig": {
+    "repo": "kelvinl961/7ki_api",
+    "branch": "v2"
+  },
+  "slackChannel": "#7ki-agents",
+  "instructions": "List open PRs across kelvinl961/7ki_api, kelvinl961/7ki, and kelvinl961/7ki_bo. Include failing CI and PRs waiting on review. Flag any money-path files. Post the digest to Slack #7ki-agents. Do not edit code, do not open PRs, do not merge."
+}

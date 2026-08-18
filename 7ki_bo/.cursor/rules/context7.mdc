@@ -1,0 +1,8 @@
+---
+description: Fetch current library docs via Context7 instead of guessing APIs
+alwaysApply: true
+---
+
+# Context7
+
+When the task involves library APIs or framework setup, use Context7 MCP. Do not guess version-specific APIs.

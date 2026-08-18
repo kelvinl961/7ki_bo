@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "environmentName": "7ki-platform",
+  "repos": {
+    "api": "kelvinl961/7ki_api",
+    "client": "kelvinl961/7ki",
+    "bo": "kelvinl961/7ki_bo"
+  },
+  "channels": {
+    "7ki-api": "kelvinl961/7ki_api",
+    "7ki-client": "kelvinl961/7ki",
+    "7ki-bo": "kelvinl961/7ki_bo",
+    "7ki-agents": "7ki-platform"
+  },
+  "keywords": {
+    "api": "kelvinl961/7ki_api",
+    "client": "kelvinl961/7ki",
+    "bo": "kelvinl961/7ki_bo"
+  },
+  "settings": {
+    "autopr": true,
+    "autoMerge": false,
+    "worker": null,
+    "approveLowRiskPrs": false
+  }
+}

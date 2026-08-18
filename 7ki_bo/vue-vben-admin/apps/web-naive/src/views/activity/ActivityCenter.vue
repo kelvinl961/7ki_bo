@@ -32,8 +32,8 @@
           <ActivityStatistics />
         </n-tab-pane>
 
-        <!-- 分享管理 -->
-        <n-tab-pane name="share" :tab="$t('activity.center.k5206')">
+        <!-- 分类管理 -->
+        <n-tab-pane name="share" :tab="'分类管理'">
           <ShareManagement />
         </n-tab-pane>
       </n-tabs>

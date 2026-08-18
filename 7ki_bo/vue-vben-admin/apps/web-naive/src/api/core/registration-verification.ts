@@ -120,7 +120,16 @@ export interface RegistrationVerificationConfigPayload {
   pageStyle: {
     displayMode: string;
     displayStyle: string;
+    /** @deprecated Prefer sloganPrefix + sloganHighlight. */
     slogan: string;
+    /** Red left part of login/register header promo. */
+    sloganPrefix: string;
+    /** Color of sloganPrefix text (CSS hex color). */
+    sloganPrefixColor: string;
+    /** Green/highlight right part (e.g. reward amount text). */
+    sloganHighlight: string;
+    /** Color of sloganHighlight text (CSS hex color). */
+    sloganHighlightColor: string;
   };
 }
 

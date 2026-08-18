@@ -253,9 +253,8 @@
             <n-button size="small" type="primary">{{ $t('brand.skin.mobilePreviewPhone') }}</n-button>
           </div>
           
-          <div class="phone-format-wrapper flex justify-center p-4">
-            <div class="phone-frame">
-              <div class="phone-notch" />
+          <div class="preview-container flex justify-center p-2">
+            <div class="phone-bezel">
               <div class="phone-screen mobile-preview-frame flex flex-col">
             
             <div
@@ -1114,46 +1113,29 @@ onMounted(async () => {
   min-height: 0;
 }
 
-
-.phone-format-wrapper {
-  background: linear-gradient(145deg, #e8e8e8 0%, #c0c0c0 100%);
-  border-radius: 2.5rem;
-  padding: 12px;
-}
-
-.phone-frame {
+.preview-container {
   width: 100%;
-  max-width: 320px;
-  margin: 0 auto;
-  background: #1a1a1a;
-  border-radius: 2.25rem;
-  padding: 10px;
-  box-shadow:
-    0 0 0 2px #333,
-    0 20px 40px rgba(0, 0, 0, 0.3),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
-  position: relative;
 }
 
-.phone-notch {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100px;
-  height: 22px;
-  background: #1a1a1a;
-  border-radius: 0 0 14px 14px;
-  z-index: 10;
+.phone-bezel {
+  display: inline-block;
+  padding: 10px;
+  border-radius: 28px;
+  background: linear-gradient(160deg, #3a3a3a 0%, #1a1a1a 45%, #0d0d0d 100%);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 18px 40px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 .phone-screen.mobile-preview-frame {
-  border-radius: 1.5rem;
+  width: 300px;
+  aspect-ratio: 390 / 844;
+  max-height: 640px;
+  border-radius: 18px;
   overflow: hidden;
-  min-height: 620px;
-  height: 620px;
   position: relative;
-  background: #0a0a0a;
+  background: #0e131b;
 }
 
 .banner-preview {

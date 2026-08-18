@@ -314,6 +314,10 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
           if (typeof config?.url === 'string' && config.url.includes('conditional-rtp-config')) {
             return data;
           }
+          // AG/HG vendor templates: UI checks `res.code === 0` and `res.data.templates`.
+          if (typeof config?.url === 'string' && config.url.includes('rtp-vendor-templates')) {
+            return data;
+          }
           return data.data;
         }
 

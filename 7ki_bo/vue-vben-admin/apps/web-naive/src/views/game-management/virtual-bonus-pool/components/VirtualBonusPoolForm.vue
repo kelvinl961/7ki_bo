@@ -312,6 +312,7 @@ const MediaLibrarySelector = defineAsyncComponent(
 );
 import { getMediaFiles, type MediaFile } from '#/api/mediaLibrary';
 import { getImageUrlByEnvironment } from '../../../../utils/imageUtils';
+import { getDisplayPositionOptions } from '#/utils/gameTypeI18n';
 
 // Props
 interface Props {
@@ -366,13 +367,7 @@ const currencyOptions = [
   { label: $t('game.virtualBonusPool.currencyJpy'), value: 'JPY' },
 ];
 
-const displayPositionOptions = [
-  { label: $t('game.virtualBonusPool.posHotAbove'), value: '热门上方' },
-  { label: $t('game.virtualBonusPool.posHotBelow'), value: '热门下方' },
-  { label: $t('game.virtualBonusPool.posHomeTop'), value: '首页顶部' },
-  { label: $t('game.virtualBonusPool.posGameLobby'), value: '游戏大厅' },
-  { label: $t('game.virtualBonusPool.posProfile'), value: '个人中心' },
-];
+const displayPositionOptions = getDisplayPositionOptions();
 
 const clickTargetOptions = [
   { label: $t('game.virtualBonusPool.posGameLobby'), value: '/games' },

@@ -1,8 +1,10 @@
 import {
+  changeAppLocale,
   i18n,
   loadLocaleMessages,
   loadLocalesMap,
   loadLocalesMapFromDir,
+  registerAppLocaleSwitcher,
   setupI18n,
 } from './i18n';
 
@@ -12,10 +14,12 @@ const $te = i18n.global.te;
 export {
   $t,
   $te,
+  changeAppLocale,
   i18n,
   loadLocaleMessages,
   loadLocalesMap,
   loadLocalesMapFromDir,
+  registerAppLocaleSwitcher,
   setupI18n,
 };
 export {

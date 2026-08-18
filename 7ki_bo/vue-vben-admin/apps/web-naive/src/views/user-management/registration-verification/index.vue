@@ -236,6 +236,90 @@
             </div>
           </div>
         </section>
+
+        <section class="setting-card mt-4">
+          <div class="setting-card-header">
+            <div>
+              <div class="setting-card-title">
+                {{ $t('user.registrationVerification.authHeaderPromo') }}
+              </div>
+              <p class="setting-card-hint">
+                {{ $t('user.registrationVerification.authHeaderPromoHint') }}
+              </p>
+            </div>
+            <button
+              class="action-btn"
+              :disabled="savingPageStyle"
+              @click="onSavePageStyle"
+            >
+              {{
+                savingPageStyle
+                  ? $t('user.registrationVerification.saving')
+                  : $t('common.modify')
+              }}
+            </button>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label">
+              {{ $t('user.registrationVerification.sloganPrefix') }}
+            </div>
+            <div class="setting-content">
+              <div class="text-color-row">
+                <input
+                  v-model="pageStyle.sloganPrefix"
+                  type="text"
+                  class="text-input"
+                  maxlength="120"
+                  :placeholder="
+                    $t('user.registrationVerification.sloganPrefixPlaceholder')
+                  "
+                />
+                <label class="color-picker-label" :title="$t('user.registrationVerification.textColor')">
+                  <span class="color-swatch" :style="{ background: pageStyle.sloganPrefixColor }" />
+                  <input
+                    v-model="pageStyle.sloganPrefixColor"
+                    type="color"
+                    class="color-input-native"
+                  />
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="setting-row no-border">
+            <div class="setting-label">
+              {{ $t('user.registrationVerification.sloganHighlight') }}
+            </div>
+            <div class="setting-content">
+              <div class="text-color-row">
+                <input
+                  v-model="pageStyle.sloganHighlight"
+                  type="text"
+                  class="text-input"
+                  maxlength="60"
+                  :placeholder="
+                    $t('user.registrationVerification.sloganHighlightPlaceholder')
+                  "
+                />
+                <label class="color-picker-label" :title="$t('user.registrationVerification.textColor')">
+                  <span class="color-swatch" :style="{ background: pageStyle.sloganHighlightColor }" />
+                  <input
+                    v-model="pageStyle.sloganHighlightColor"
+                    type="color"
+                    class="color-input-native"
+                  />
+                </label>
+              </div>
+              <p v-if="pageStylePreview" class="slogan-preview">
+                <span class="slogan-preview-prefix" :style="{ color: pageStyle.sloganPrefixColor }">{{ pageStyle.sloganPrefix }}</span>
+                <span class="slogan-preview-highlight" :style="{ color: pageStyle.sloganHighlightColor }">{{
+                  pageStyle.sloganHighlight
+                }}</span>
+              </p>
+            </div>
+          </div>
+        </section>
       </n-spin>
     </div>
   </Page>
@@ -270,6 +354,7 @@ const loading = ref(false);
 const savingRegister = ref(false);
 const savingLogin = ref(false);
 const savingPlatform = ref(false);
+const savingPageStyle = ref(false);
 
 const meta = ref({
   scope: 'global',
@@ -295,6 +380,21 @@ const loginSupport = ref<
 });
 const defaultLoginMethod = ref<'phone' | 'email' | 'member_account'>(
   'member_account',
+);
+
+const pageStyle = ref({
+  sloganPrefix: '',
+  sloganPrefixColor: '#ff1900',
+  sloganHighlight: '',
+  sloganHighlightColor: '#24ee89',
+});
+
+const pageStylePreview = computed(
+  () =>
+    Boolean(
+      pageStyle.value.sloganPrefix.trim() ||
+        pageStyle.value.sloganHighlight.trim(),
+    ),
 );
 
 const defaultPlatformRestrictions = (): RegistrationPlatformRestrictions => ({
@@ -485,6 +585,12 @@ function applyFromConfig(data: RegistrationVerificationConfigPayload) {
   defaultLoginMethod.value = resolveLoginDefault(
     data.publicPage.loginSupport.defaultLoginMethod,
   );
+  pageStyle.value = {
+    sloganPrefix: data.pageStyle?.sloganPrefix ?? '',
+    sloganPrefixColor: data.pageStyle?.sloganPrefixColor || '#ff1900',
+    sloganHighlight: data.pageStyle?.sloganHighlight ?? '',
+    sloganHighlightColor: data.pageStyle?.sloganHighlightColor || '#24ee89',
+  };
   ensureSelectValueValid();
 }
 
@@ -612,6 +718,39 @@ async function onSaveLogin() {
   }
 }
 
+async function onSavePageStyle() {
+  if (!config.value) return;
+  savingPageStyle.value = true;
+  try {
+    const nextConfig = JSON.parse(
+      JSON.stringify(config.value),
+    ) as RegistrationVerificationConfigPayload;
+    const sloganPrefix = pageStyle.value.sloganPrefix.trim();
+    const sloganHighlight = pageStyle.value.sloganHighlight.trim();
+    nextConfig.pageStyle = {
+      displayMode: nextConfig.pageStyle?.displayMode || 'modal',
+      displayStyle: nextConfig.pageStyle?.displayStyle || 'default',
+      slogan: [sloganPrefix, sloganHighlight].filter(Boolean).join(' '),
+      sloganPrefix,
+      sloganPrefixColor: pageStyle.value.sloganPrefixColor,
+      sloganHighlight,
+      sloganHighlightColor: pageStyle.value.sloganHighlightColor,
+    };
+    const d = await saveRegistrationVerificationConfigApi({
+      scope: meta.value.scope,
+      scopeValue: meta.value.scopeValue,
+      config: nextConfig as unknown as Record<string, unknown>,
+    });
+    meta.value.version = d.version;
+    applyFromConfig(d.config);
+    message.success($t('user.registrationVerification.authHeaderPromoSaved'));
+  } catch (e) {
+    message.error((e as Error).message);
+  } finally {
+    savingPageStyle.value = false;
+  }
+}
+
 onMounted(() => {
   load();
 });
@@ -637,6 +776,14 @@ onMounted(() => {
   font-size: 18px;
   font-weight: 600;
   color: #111827;
+}
+
+.setting-card-hint {
+  margin: 4px 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #6b7280;
+  font-weight: 400;
 }
 
 .action-btn {
@@ -809,5 +956,72 @@ onMounted(() => {
   border: 1px solid #d9d9d9;
   border-radius: 4px;
   background: #fff;
+}
+
+.text-input {
+  width: 100%;
+  max-width: 480px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 14px;
+  color: #111827;
+}
+
+.text-input::placeholder {
+  color: #bfbfbf;
+}
+
+.slogan-preview {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.slogan-preview-prefix {
+  margin-right: 6px;
+}
+
+.slogan-preview-highlight {
+  /* color set via inline style */
+}
+
+.text-color-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.text-color-row .text-input {
+  flex: 1;
+}
+
+.color-picker-label {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.color-swatch {
+  display: block;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  border: 1px solid #d9d9d9;
+}
+
+.color-input-native {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  border: none;
+  padding: 0;
 }
 </style>

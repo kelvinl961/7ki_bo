@@ -505,6 +505,13 @@
       :user="props.user"
       @success="handleTransactionSuccess"
     />
+
+    <ManualPullbackModal
+      ref="manualPullbackModalRef"
+      :user-id="props.user?.id"
+      :account="props.user?.account"
+      @success="handleTransactionSuccess"
+    />
   </n-modal>
 </template>
 
@@ -554,6 +561,7 @@ import {
 } from '#/api/core/transaction';
 import ManualCreditModal from './ManualCreditModal.vue';
 import ManualDebitModal from './ManualDebitModal.vue';
+import ManualPullbackModal from './ManualPullbackModal.vue';
 import { notification } from '#/adapter/naive';
 
 // Define interfaces
@@ -634,6 +642,7 @@ const visible = ref(false);
 const activeTab = ref('overview');
 const manualCreditModalRef = ref();
 const manualDebitModalRef = ref();
+const manualPullbackModalRef = ref();
 const currentUserData = ref<any>(null);
 const accessStore = useAccessStore();
 
@@ -1297,8 +1306,7 @@ const handleRefreshBalance = async () => {
 };
 
 const handleManualPullback = () => {
-  console.log('人工拉回');
-  // TODO: Implement manual pullback logic
+  manualPullbackModalRef.value?.open();
 };
 
 const handleAccountRecords = () => {

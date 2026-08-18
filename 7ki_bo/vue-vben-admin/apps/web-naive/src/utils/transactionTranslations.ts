@@ -5,12 +5,16 @@
  * using the centralized mappings from transactionMappings.ts
  */
 
+import { $t, $te } from '@vben/locales';
+
 import { getActivityById } from '#/api/activity';
 
 import {
   TRANSACTION_PATTERN_HANDLERS,
   TRANSACTION_SUBCATEGORY_MAPPINGS,
   TRANSACTION_TYPE_MAPPINGS,
+  txSubLabel,
+  txTypeLabel,
 } from './transactionMappings';
 
 // Cache for activity names to avoid repeated API calls
@@ -112,14 +116,10 @@ export async function preloadActivityNames(transactions: any[]): Promise<void> {
 }
 
 /**
- * Translate transaction type to Chinese (账变大类)
- *
- * @param type - Transaction type (e.g., 'deposit', 'withdrawal', 'penalty_deduction')
- * @returns Chinese translation or original value if not found
+ * Translate transaction type using i18n (finance.txTypes.*).
  *
  * @example
- * translateTransactionType('deposit') // Returns '充值'
- * translateTransactionType('penalty_deduction') // Returns '拒绝扣款'
+ * translateTransactionType('deposit') // 'Deposit' / '充值' / …
  */
 export function translateTransactionType(
   type: null | string | undefined,
@@ -127,7 +127,13 @@ export function translateTransactionType(
   if (!type) return '-';
 
   const normalizedType = type.toLowerCase().trim();
-  return TRANSACTION_TYPE_MAPPINGS[normalizedType] || type;
+  const mapped = TRANSACTION_TYPE_MAPPINGS[normalizedType];
+  if (mapped) return txTypeLabel(mapped);
+
+  const directKey = `finance.txTypes.${normalizedType}`;
+  if ($te(directKey)) return $t(directKey);
+
+  return type;
 }
 
 /**
@@ -167,13 +173,16 @@ export function translateSubcategory(
 
   // Try direct mapping (case-insensitive)
   const normalized = trimmed.toLowerCase();
-  const directMatch =
+  const mappedKey =
     TRANSACTION_SUBCATEGORY_MAPPINGS[normalized] ||
     TRANSACTION_SUBCATEGORY_MAPPINGS[trimmed];
 
-  if (directMatch) {
-    return directMatch;
+  if (mappedKey) {
+    return txSubLabel(mappedKey);
   }
+
+  const directKey = `finance.txSubs.${normalized}`;
+  if ($te(directKey)) return $t(directKey);
 
   // Special handling for "recharge" activity rewards - show activity name from metadata
   // When subcategoryDetails is "recharge" and it's an activity reward, use activity title from metadata

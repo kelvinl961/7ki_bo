@@ -17,7 +17,7 @@ import type { SegmentedItem } from '@vben-core/shadcn-ui';
 import { computed, ref } from 'vue';
 
 import { Copy, RotateCw } from '@vben/icons';
-import { $t, loadLocaleMessages } from '@vben/locales';
+import { $t, changeAppLocale } from '@vben/locales';
 import {
   clearPreferencesCache,
   preferences,
@@ -231,7 +231,7 @@ async function handleReset() {
     return;
   }
   resetPreferences();
-  await loadLocaleMessages(preferences.app.locale);
+  await changeAppLocale(preferences.app.locale);
 }
 </script>
 

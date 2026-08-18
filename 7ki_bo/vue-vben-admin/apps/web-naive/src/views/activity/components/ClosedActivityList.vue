@@ -130,12 +130,14 @@ import {
   NTooltip,
   NStatistic,
   NProgress,
+  NPopconfirm,
   useMessage,
 } from 'naive-ui';
 
 import {
   getActivityList,
   cloneActivity,
+  deleteActivity,
   type Activity,
   type ActivityListParams,
   ACTIVITY_CATEGORIES,
@@ -416,6 +418,24 @@ const columns = computed<DataTableColumns<Activity>>(() => [
                 default: () => $t('activity.activityList.k590d2'),
               },
             ),
+            h(
+              NPopconfirm,
+              {
+                onPositiveClick: () => handleDelete(row),
+              },
+              {
+                trigger: () =>
+                  h(
+                    NButton,
+                    {
+                      size: 'small',
+                      type: 'error',
+                    },
+                    { default: () => $t('activity.activityList.k52202') },
+                  ),
+                default: () => $t('activity.activityList.k786e'),
+              },
+            ),
           ],
         },
       ),
@@ -491,6 +511,17 @@ const handleClone = async (item: Activity) => {
   } catch (error) {
     message.error($t('activity.activityList.k6d3b5'));
     console.error('Error cloning activity:', error);
+  }
+};
+
+const handleDelete = async (item: Activity) => {
+  try {
+    await deleteActivity(item.id);
+    tableData.value = tableData.value.filter((row) => row.id !== item.id);
+    message.success($t('activity.activityList.k6d3b'));
+  } catch (error) {
+    message.error($t('activity.activityList.k5220'));
+    console.error('Error deleting closed activity:', error);
   }
 };
 

@@ -57,6 +57,25 @@
                   :disabled="detailMode"
                 />
               </n-form-item>
+
+              <n-form-item
+                :label="$t('brand.skinLang.hotGamesHomeCount')"
+                path="hotGamesHomeCount"
+              >
+                <div class="hot-games-count-row">
+                  <n-input-number
+                    v-model:value="formModel.hotGamesHomeCount"
+                    :min="0"
+                    :max="150"
+                    :disabled="detailMode"
+                    :placeholder="$t('brand.skinLang.hotGamesHomeCountPlaceholder')"
+                    style="width: 160px"
+                  />
+                  <n-text depth="3" class="hot-games-count-hint">
+                    {{ $t('brand.skinLang.hotGamesHomeCountHint') }}
+                  </n-text>
+                </div>
+              </n-form-item>
             </div>
 
             <!-- Brand Icons / Skin Colors -->
@@ -338,6 +357,9 @@
               <n-text v-if="useLiveClientPreview" depth="3" class="preview-host-hint">
                 {{ $t('brand.skinLang.template') }}:{{ previewTemplateId }}
               </n-text>
+              <n-text v-if="previewResolutionLabel" depth="3" class="preview-host-hint">
+                {{ previewResolutionLabel }}
+              </n-text>
               <div
                 v-if="isDev && useLiveClientPreview"
                 class="preview-origin-switch"
@@ -369,75 +391,104 @@
             </div>
           </div>
 
-          <div class="preview-container">
-            <div class="device-frame-scaler" :style="livePreviewScalerStyle">
-            <div class="device-frame" :style="deviceFrameStyle">
-              <template v-if="useLiveClientPreview">
-                <div v-if="iframePreviewLoading" class="preview-loading">
-                  <n-spin />
-                  <div>{{ $t('brand.skinLang.loadingLivePreview') }}</div>
-                </div>
+          <div ref="previewContainerRef" class="preview-container">
+            <div class="phone-bezel">
+              <div class="device-frame-scaler" :style="previewScalerStyle">
+                <div class="device-frame" :style="deviceFrameStyle">
+                  <template v-if="useLiveClientPreview">
+                    <div v-if="iframePreviewLoading" class="preview-loading">
+                      <n-spin />
+                      <div>
+                        {{
+                          iframePreviewSwitchingTemplate
+                            ? $t('brand.skinLang.switchingTemplate')
+                            : $t('brand.skinLang.loadingLivePreview')
+                        }}
+                      </div>
+                    </div>
 
-                <div v-else-if="iframePreviewBlocked" class="preview-error preview-error--iframe">
-                  <div class="preview-error-title">{{ $t('brand.skinLang.iframePreviewBlocked') }}</div>
-                  <div class="preview-error-body">
-                    {{ iframePreviewBlockedHint }}
-                  </div>
-                  <n-button
-                    size="small"
-                    type="primary"
-                    tag="a"
-                    :href="livePreviewUrl"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {{ $t('brand.skinLang.openPreviewNewWindow') }} {{ previewHostShort }}
-                  </n-button>
-                </div>
+                    <div
+                      v-else-if="iframePreviewBlocked"
+                      class="preview-error preview-error--iframe"
+                    >
+                      <div class="preview-error-title">
+                        {{ $t('brand.skinLang.iframePreviewBlocked') }}
+                      </div>
+                      <div class="preview-error-body">
+                        {{ iframePreviewBlockedHint }}
+                      </div>
+                      <div class="template-preview template-preview--fallback">
+                        <img
+                          :src="blockedPreviewThumbnail"
+                          :alt="
+                            getLayoutStyleLabel(
+                              formModel.skinStyle,
+                              formModel.skinTemplate,
+                            )
+                          "
+                          @error="handleBlockedPreviewThumbError"
+                        />
+                        <div class="template-preview-fallback-label">
+                          {{ $t('brand.skinLang.staticPreviewFallback') }}
+                        </div>
+                      </div>
+                      <n-button
+                        size="small"
+                        type="primary"
+                        tag="a"
+                        :href="livePreviewUrl"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {{ $t('brand.skinLang.openPreviewNewWindow') }}
+                        {{ previewHostShort }}
+                      </n-button>
+                    </div>
 
-                <iframe
-                  v-show="!iframePreviewBlocked"
-                  ref="livePreviewIframeRef"
-                  :key="livePreviewIframeKey"
-                  :src="livePreviewUrl"
-                  class="preview-iframe"
-                  :title="$t('brand.skinLang.skinLivePreview')"
-                  @load="handleLivePreviewLoad"
-                />
-              </template>
+                    <iframe
+                      v-show="!iframePreviewBlocked"
+                      ref="livePreviewIframeRef"
+                      :key="livePreviewIframeKey"
+                      :src="livePreviewUrl"
+                      class="preview-iframe"
+                      :title="$t('brand.skinLang.skinLivePreview')"
+                      @load="handleLivePreviewLoad"
+                    />
+                  </template>
 
-              <template v-else>
-                <div v-if="isLoading" class="preview-loading">
-                  <n-spin />
-                  <div>{{ $t('brand.skinLang.generatingPreview') }}</div>
-                </div>
+                  <template v-else>
+                    <div v-if="isLoading" class="preview-loading">
+                      <n-spin />
+                      <div>{{ $t('brand.skinLang.generatingPreview') }}</div>
+                    </div>
 
-                <div v-else-if="previewError" class="preview-error">
-                  <n-icon size="24" color="#f56565">
-                    <svg viewBox="0 0 24 24">
-                      <path
-                        d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+                    <div v-else-if="previewError" class="preview-error">
+                      <n-icon size="24" color="#f56565">
+                        <svg viewBox="0 0 24 24">
+                          <path
+                            d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+                          />
+                        </svg>
+                      </n-icon>
+                      <div>{{ previewError }}</div>
+                    </div>
+
+                    <div
+                      v-else
+                      class="image-container"
+                      :style="previewImageContainerStyle"
+                    >
+                      <img
+                        :src="previewImageUrl"
+                        :alt="$t('brand.skinLang.skinLivePreview')"
+                        class="image-preview"
+                        @load="handleImageLoad"
+                        @error="handleImageError"
                       />
-                    </svg>
-                  </n-icon>
-                  <div>{{ previewError }}</div>
+                    </div>
+                  </template>
                 </div>
-
-                <div
-                  v-else
-                  class="image-container"
-                  :style="previewImageContainerStyle"
-                >
-                  <img
-                    :src="previewImageUrl"
-                    :alt="$t('brand.skinLang.skinLivePreview')"
-                    class="image-preview"
-                    @load="handleImageLoad"
-                    @error="handleImageError"
-                  />
-                </div>
-              </template>
-            </div>
+              </div>
             </div>
 
             <div class="preview-info">
@@ -496,6 +547,7 @@ import {
   NTabPane,
   NSpin,
   NIcon,
+  NInputNumber,
   type FormInst,
   type FormRules,
 } from 'naive-ui';
@@ -531,12 +583,19 @@ import {
   buildClientPreviewUrl,
   CLIENT_PREVIEW_COLORS_MESSAGE,
   CLIENT_PREVIEW_READY_MESSAGE,
+  CLIENT_PREVIEW_SKIN_EXTRAS_MESSAGE,
+  CLIENT_PREVIEW_TEMPLATE_MESSAGE,
   getClientPreviewBaseUrl,
   getClientPreviewHostLabel,
   getDevClientPreviewOriginOptions,
   isClientLivePreviewEnabled,
+  resolveClientPreview,
   setDevClientPreviewOriginOverride,
 } from '#/utils/clientPreviewUrl';
+import {
+  getComprehensiveTemplatePreviewThumbnail,
+  getComprehensiveTemplatePreviewThumbnailFallback,
+} from '#/constants/comprehensiveTemplatePreviewThumbnails';
 import { LIVE_PREVIEW_DEVICE } from '#/constants/livePreviewDevice';
 
 interface Props {
@@ -592,6 +651,7 @@ const formModel = reactive<
   skinColorRgb: 'rgb(5, 65, 70)',
   skinColorHex: '#054146', // Default hex
   skinTemplate: 'comprehensive_v1',
+  hotGamesHomeCount: 0,
   clientLanguages: {
     desktop: ['zh-CN'],
     h5: ['zh-CN'],
@@ -639,7 +699,6 @@ const {
   previewError,
   previewImageUrl,
   currentDevice,
-  previewContainerStyle,
   setPreviewDevice,
   handleImageError,
   handleImageLoad,
@@ -665,8 +724,34 @@ function switchDevPreviewOrigin(url: string) {
 
 const LIVE_PREVIEW_DEVICE_WIDTH = LIVE_PREVIEW_DEVICE.width;
 const LIVE_PREVIEW_DEVICE_HEIGHT = LIVE_PREVIEW_DEVICE.height;
+const STATIC_PREVIEW_WIDTH = 310;
+const STATIC_PREVIEW_HEIGHT = 550;
 
 const livePreviewDeviceLabel = `${LIVE_PREVIEW_DEVICE.label} (${LIVE_PREVIEW_DEVICE_WIDTH}×${LIVE_PREVIEW_DEVICE_HEIGHT})`;
+
+const previewContainerRef = ref<HTMLElement | null>(null);
+const previewContainerSize = ref({ width: 360, height: 420 });
+let previewResizeObserver: ResizeObserver | undefined;
+
+function updatePreviewContainerSize() {
+  const el = previewContainerRef.value;
+  if (!el) return;
+  const { clientWidth, clientHeight } = el;
+  if (clientWidth > 0 && clientHeight > 0) {
+    previewContainerSize.value = { width: clientWidth, height: clientHeight };
+    bumpLivePreviewViewport();
+  }
+}
+
+function bindPreviewContainerObserver() {
+  if (typeof ResizeObserver === 'undefined') return;
+  previewResizeObserver?.disconnect();
+  previewResizeObserver = new ResizeObserver(() => updatePreviewContainerSize());
+  if (previewContainerRef.value) {
+    previewResizeObserver.observe(previewContainerRef.value);
+    updatePreviewContainerSize();
+  }
+}
 
 const livePreviewViewportTick = ref(0);
 
@@ -677,53 +762,85 @@ function bumpLivePreviewViewport() {
 onMounted(() => {
   window.addEventListener('message', handlePreviewReadyMessage);
   window.addEventListener('resize', bumpLivePreviewViewport);
+  nextTick(() => bindPreviewContainerObserver());
 });
 
 onUnmounted(() => {
   window.removeEventListener('message', handlePreviewReadyMessage);
   window.removeEventListener('resize', bumpLivePreviewViewport);
+  previewResizeObserver?.disconnect();
+  previewResizeObserver = undefined;
   clearIframePreviewTimeout();
+  clearPreviewRefreshDebounce();
+  clearHotTemplateFallbackTimeout();
   if (colorPreviewDebounceId !== undefined) {
     clearTimeout(colorPreviewDebounceId);
     colorPreviewDebounceId = undefined;
   }
 });
 
-const livePreviewScale = computed(() => {
+const previewFrameSize = computed(() =>
+  useLiveClientPreview.value
+    ? { width: LIVE_PREVIEW_DEVICE_WIDTH, height: LIVE_PREVIEW_DEVICE_HEIGHT }
+    : { width: STATIC_PREVIEW_WIDTH, height: STATIC_PREVIEW_HEIGHT },
+);
+
+/** Phone bezel padding (10px × 2) reserved when fitting into the panel. */
+const PHONE_BEZEL_PAD = 20;
+
+const previewLayout = computed(() => {
   livePreviewViewportTick.value;
-  if (typeof window === 'undefined') return 1;
-  // Fit iPhone 13 Pro frame inside preview panel; prefer 1:1 when space allows
-  const maxW = Math.min(LIVE_PREVIEW_DEVICE_WIDTH, window.innerWidth * 0.42);
-  const maxH = Math.min(LIVE_PREVIEW_DEVICE_HEIGHT, window.innerHeight * 0.85);
-  return Math.min(
-    maxW / LIVE_PREVIEW_DEVICE_WIDTH,
-    maxH / LIVE_PREVIEW_DEVICE_HEIGHT,
-    1,
-  );
+  previewContainerSize.value;
+  const { width: availW, height: availH } = previewContainerSize.value;
+  const { width: frameW, height: frameH } = previewFrameSize.value;
+  if (availW <= 0 || availH <= 0 || frameW <= 0 || frameH <= 0) {
+    const scale = 0.48;
+    const scaledW = Math.round(frameW * scale);
+    const scaledH = Math.round(frameH * scale);
+    return { scale: scaledW / frameW, scaledW, scaledH };
+  }
+  const fitW = Math.max(availW - PHONE_BEZEL_PAD, 1);
+  const fitH = Math.max(availH - PHONE_BEZEL_PAD, 1);
+  const scaleW = fitW / frameW;
+  const scaleH = fitH / frameH;
+  const rawScale = Math.min(scaleW, scaleH, 1);
+  const scaledW = Math.floor(frameW * rawScale);
+  const scaledH = Math.floor(frameH * rawScale);
+  // Recalculate scale from floored width so visual size exactly fills scaler (no right gap)
+  const scale = scaledW / frameW;
+  return { scale, scaledW, scaledH };
 });
 
-const livePreviewScalerStyle = computed(() => {
-  const scale = livePreviewScale.value;
+const previewScalerStyle = computed(() => {
+  const { scaledW, scaledH } = previewLayout.value;
   return {
-    width: `${LIVE_PREVIEW_DEVICE_WIDTH * scale}px`,
-    height: `${LIVE_PREVIEW_DEVICE_HEIGHT * scale}px`,
+    width: `${scaledW}px`,
+    height: `${scaledH}px`,
     flexShrink: 0,
   };
 });
 
-const livePreviewFrameStyle = computed(() => ({
-  width: `${LIVE_PREVIEW_DEVICE_WIDTH}px`,
-  height: `${LIVE_PREVIEW_DEVICE_HEIGHT}px`,
-  transform: `scale(${livePreviewScale.value})`,
-  transformOrigin: 'top left',
-  border: '1px solid #e0e0e0',
-  borderRadius: '12px',
-  overflow: 'hidden',
-  backgroundColor: '#f5f5f5',
-}));
+const livePreviewFrameStyle = computed(() => {
+  const { scale } = previewLayout.value;
+  const { width, height } = previewFrameSize.value;
+  return {
+    width: `${width}px`,
+    height: `${height}px`,
+    transform: `scale(${scale})`,
+    transformOrigin: 'top left',
+    overflow: 'hidden',
+    backgroundColor: '#0e131b',
+  };
+});
 
 const deviceFrameStyle = computed(() =>
-  useLiveClientPreview.value ? livePreviewFrameStyle.value : previewContainerStyle.value,
+  useLiveClientPreview.value
+    ? livePreviewFrameStyle.value
+    : {
+        ...livePreviewFrameStyle.value,
+        width: `${STATIC_PREVIEW_WIDTH}px`,
+        height: `${STATIC_PREVIEW_HEIGHT}px`,
+      },
 );
 
 const previewHostLabel = computed(() => {
@@ -734,10 +851,144 @@ const previewHostLabel = computed(() => {
 const livePreviewIframeKey = ref(0);
 const livePreviewIframeRef = ref<HTMLIFrameElement | null>(null);
 const iframePreviewLoading = ref(false);
+const iframePreviewSwitchingTemplate = ref(false);
 const iframePreviewReady = ref(false);
 const iframePreviewBlocked = ref(false);
+const iframeSupportsHotTemplate = ref(false);
 const livePreviewUrl = ref('');
 let iframePreviewTimeoutId: ReturnType<typeof setTimeout> | undefined;
+let previewRefreshDebounceId: ReturnType<typeof setTimeout> | undefined;
+let hotTemplateFallbackTimeoutId: ReturnType<typeof setTimeout> | undefined;
+
+const previewResolutionLabel = computed(() => {
+  previewOriginTick.value;
+  const resolved = resolveClientPreview();
+  if (!resolved.url) return '';
+  const host = getClientPreviewHostLabel();
+  if (isDev) {
+    return `Preview: ${resolved.url} (${resolved.source})`;
+  }
+  return host
+    ? $t('brand.skinLang.previewResolved', [host, resolved.source])
+    : '';
+});
+
+const blockedPreviewThumbnail = computed(() =>
+  getComprehensiveTemplatePreviewThumbnail(previewTemplateId.value),
+);
+
+function handleBlockedPreviewThumbError(event: Event) {
+  const img = event.target as HTMLImageElement;
+  const fallback = getComprehensiveTemplatePreviewThumbnailFallback();
+  if (img && img.src !== fallback) {
+    img.src = fallback;
+  }
+}
+
+function buildPreviewParams() {
+  return {
+    skinTemplate: previewTemplateId.value,
+    brandCode: formModel.brandCode,
+    skinColor: formModel.skinColor,
+    gameColor: formModel.gameColor,
+    lobbyBackgroundSource: formModel.lobbyBackgroundSource,
+    lobbyPatternUrl: formModel.lobbyPatternUrl || undefined,
+    primaryColor: formModel.primaryColor,
+    accentColor: formModel.accentColor,
+    buttonColor: formModel.buttonColor,
+    textPrimary: formModel.textPrimary,
+    textSecondary: formModel.textSecondary,
+    textAccent: formModel.textAccent,
+  };
+}
+
+function postPreviewSkinExtrasToIframe() {
+  if (!useLiveClientPreview.value || iframePreviewBlocked.value) return;
+  const win = livePreviewIframeRef.value?.contentWindow;
+  if (!win) return;
+  win.postMessage(
+    {
+      type: CLIENT_PREVIEW_SKIN_EXTRAS_MESSAGE,
+      extras: {
+        skinColor: formModel.skinColor,
+        gameColor: formModel.gameColor,
+        lobbyBackgroundSource: formModel.lobbyBackgroundSource,
+        lobbyPatternUrl: formModel.lobbyPatternUrl || '',
+      },
+    },
+    '*',
+  );
+}
+
+function postPreviewTemplateToIframe(templateId: string) {
+  if (!useLiveClientPreview.value || iframePreviewBlocked.value) return;
+  const win = livePreviewIframeRef.value?.contentWindow;
+  if (!win) return;
+  win.postMessage(
+    {
+      type: CLIENT_PREVIEW_TEMPLATE_MESSAGE,
+      template: templateId,
+    },
+    '*',
+  );
+}
+
+function clearPreviewRefreshDebounce() {
+  if (previewRefreshDebounceId !== undefined) {
+    clearTimeout(previewRefreshDebounceId);
+    previewRefreshDebounceId = undefined;
+  }
+}
+
+function clearHotTemplateFallbackTimeout() {
+  if (hotTemplateFallbackTimeoutId !== undefined) {
+    clearTimeout(hotTemplateFallbackTimeoutId);
+    hotTemplateFallbackTimeoutId = undefined;
+  }
+}
+
+function tryHotTemplatePreviewSwitch(templateId: string): boolean {
+  if (
+    !iframeSupportsHotTemplate.value ||
+    !iframePreviewReady.value ||
+    iframePreviewBlocked.value
+  ) {
+    return false;
+  }
+
+  iframePreviewSwitchingTemplate.value = true;
+  iframePreviewLoading.value = true;
+  postPreviewTemplateToIframe(templateId);
+  postPreviewSkinExtrasToIframe();
+  postPreviewColorsToIframe();
+
+  clearHotTemplateFallbackTimeout();
+  hotTemplateFallbackTimeoutId = setTimeout(() => {
+    hotTemplateFallbackTimeoutId = undefined;
+    if (iframePreviewSwitchingTemplate.value) {
+      iframePreviewSwitchingTemplate.value = false;
+      refreshLivePreview();
+    }
+  }, 3500);
+
+  return true;
+}
+
+function scheduleFullLivePreviewRefresh() {
+  if (!useLiveClientPreview.value) return;
+  clearPreviewRefreshDebounce();
+  previewRefreshDebounceId = setTimeout(() => {
+    previewRefreshDebounceId = undefined;
+    refreshLivePreview();
+  }, 300);
+}
+
+function scheduleTemplatePreviewUpdate() {
+  if (!useLiveClientPreview.value) return;
+  const templateId = previewTemplateId.value;
+  if (tryHotTemplatePreviewSwitch(templateId)) return;
+  scheduleFullLivePreviewRefresh();
+}
 
 const previewTemplateId = computed(() =>
   resolveSkinTemplateForForm(formModel.skinStyle, formModel.skinTemplate),
@@ -792,19 +1043,7 @@ function syncLivePreviewUrl() {
     livePreviewUrl.value = '';
     return;
   }
-  livePreviewUrl.value = buildClientPreviewUrl(
-    {
-      skinTemplate: previewTemplateId.value,
-      brandCode: formModel.brandCode,
-      primaryColor: formModel.primaryColor,
-      accentColor: formModel.accentColor,
-      buttonColor: formModel.buttonColor,
-      textPrimary: formModel.textPrimary,
-      textSecondary: formModel.textSecondary,
-      textAccent: formModel.textAccent,
-    },
-    Date.now(),
-  );
+  livePreviewUrl.value = buildClientPreviewUrl(buildPreviewParams(), Date.now());
 }
 
 function clearIframePreviewTimeout() {
@@ -819,8 +1058,14 @@ function handlePreviewReadyMessage(event: MessageEvent) {
   iframePreviewReady.value = true;
   iframePreviewBlocked.value = false;
   iframePreviewLoading.value = false;
+  iframePreviewSwitchingTemplate.value = false;
   clearIframePreviewTimeout();
+  clearHotTemplateFallbackTimeout();
+  if (event.data?.supportsHotTemplate === true) {
+    iframeSupportsHotTemplate.value = true;
+  }
   postPreviewColorsToIframe();
+  postPreviewSkinExtrasToIframe();
 
   const reportedTemplate = event.data?.template;
   if (
@@ -850,16 +1095,19 @@ function handleLivePreviewLoad() {
     if (!iframePreviewReady.value) {
       iframePreviewBlocked.value = true;
       iframePreviewLoading.value = false;
+      iframePreviewSwitchingTemplate.value = false;
     }
-  }, 10000);
+  }, 8000);
 }
 
 function refreshLivePreview() {
   if (!useLiveClientPreview.value) return;
   iframePreviewLoading.value = true;
+  iframePreviewSwitchingTemplate.value = false;
   iframePreviewReady.value = false;
   iframePreviewBlocked.value = false;
   clearIframePreviewTimeout();
+  clearHotTemplateFallbackTimeout();
   syncLivePreviewUrl();
   livePreviewIframeKey.value += 1;
 }
@@ -1127,6 +1375,17 @@ watch(
         },
         brandIcon: resolveBrandIconForPreview(newItem.skinTemplate),
         skinColor: newItem.skinColor || '15',
+        hotGamesHomeCount: (() => {
+          const fromTop =
+            typeof newItem.hotGamesHomeCount === 'number'
+              ? newItem.hotGamesHomeCount
+              : null;
+          const fromPalette =
+            typeof newItem.colorPalette?.hotGamesHomeCount === 'number'
+              ? newItem.colorPalette.hotGamesHomeCount
+              : null;
+          return fromTop ?? fromPalette ?? 0;
+        })(),
         skinColorRgb:
           newItem.skinColorRgb ||
           getSkinColorValues(newItem.skinColor || '15').rgb,
@@ -1174,6 +1433,7 @@ watch(
         skinColorRgb: 'rgb(5, 65, 70)',
         skinColorHex: '#054146', // Default hex
         skinTemplate: 'comprehensive_v1',
+        hotGamesHomeCount: 0,
         clientLanguages: {
           desktop: ['zh-CN'],
           h5: ['zh-CN'],
@@ -1213,25 +1473,44 @@ watch(
     if (isLayoutStyleValue(style)) {
       formModel.skinTemplate = style;
     }
-    refreshLivePreview();
   },
 );
 
-// Reload iframe when layout / brand identity changes
+watch(previewTemplateId, () => {
+  scheduleTemplatePreviewUpdate();
+});
+
 watch(
   () => [
-    formModel.skinTemplate,
-    formModel.skinStyle,
     formModel.brandCode,
     formModel.brandIcon,
-    formModel.gameColor,
-    formModel.skinColor,
     formModel.clientLanguages.desktop,
   ],
   () => {
-    refreshLivePreview();
+    scheduleFullLivePreviewRefresh();
   },
   { deep: true },
+);
+
+watch(
+  () => [
+    formModel.gameColor,
+    formModel.skinColor,
+    formModel.lobbyBackgroundSource,
+    formModel.lobbyPatternUrl,
+  ],
+  () => {
+    if (
+      iframePreviewReady.value &&
+      !iframePreviewBlocked.value &&
+      iframeSupportsHotTemplate.value
+    ) {
+      postPreviewSkinExtrasToIframe();
+      schedulePreviewColorSync();
+      return;
+    }
+    scheduleFullLivePreviewRefresh();
+  },
 );
 
 // Live color sync via postMessage (no iframe reload)
@@ -1252,8 +1531,14 @@ watch(
 watch(
   () => visible.value,
   (open) => {
-    if (open && useLiveClientPreview.value) {
-      refreshLivePreview();
+    if (open) {
+      nextTick(() => {
+        bindPreviewContainerObserver();
+        updatePreviewContainerSize();
+      });
+      if (useLiveClientPreview.value) {
+        refreshLivePreview();
+      }
     }
   },
 );
@@ -1332,7 +1617,15 @@ const handleSubmit = async () => {
         borderColor: formModel.borderColor || palette.borderColor,
         generated: true,
         generatedAt,
+        hotGamesHomeCount:
+          typeof formModel.hotGamesHomeCount === 'number'
+            ? formModel.hotGamesHomeCount
+            : 0,
       },
+      hotGamesHomeCount:
+        typeof formModel.hotGamesHomeCount === 'number'
+          ? formModel.hotGamesHomeCount
+          : 0,
       textPrimary: formModel.textPrimary || palette.textPrimary,
       textSecondary: formModel.textSecondary || palette.textSecondary,
       textAccent: formModel.textAccent || palette.textAccent,
@@ -1394,12 +1687,12 @@ const handleClose = () => {
 }
 
 .preview-panel {
-  width: min(440px, 44vw);
+  width: min(430px, 42vw);
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   min-height: 0;
-  overflow-y: auto;
+  overflow: hidden;
   border-left: 1px solid #e0e0e0;
   padding-left: 24px;
 }
@@ -1463,6 +1756,31 @@ const handleClose = () => {
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+
+.template-preview--fallback {
+  width: min(100%, 220px);
+  height: auto;
+  margin: 12px auto 0;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.template-preview--fallback img {
+  width: 100%;
+  height: auto;
+  max-height: 360px;
+  object-fit: cover;
+  object-position: top;
+}
+
+.template-preview-fallback-label {
+  padding: 6px 8px;
+  font-size: 11px;
+  color: #666;
+  text-align: center;
+  background: #fafafa;
 }
 
 .template-label {
@@ -1561,21 +1879,23 @@ const handleClose = () => {
 }
 
 .preview-header {
-  margin-bottom: 16px;
+  flex-shrink: 0;
+  margin-bottom: 8px;
 }
 
 .preview-header h4 {
-  margin: 0 0 12px 0;
-  font-size: 16px;
+  margin: 0 0 6px 0;
+  font-size: 15px;
   font-weight: 600;
 }
 
 .preview-device-info {
-  margin-top: 8px;
+  margin-top: 4px;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
 }
 
 .preview-host-hint {
@@ -1599,25 +1919,44 @@ const handleClose = () => {
 
 .preview-container {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  gap: 8px;
+}
+
+.phone-bezel {
+  display: inline-block;
+  padding: 10px;
+  border-radius: 28px;
+  background: linear-gradient(160deg, #3a3a3a 0%, #1a1a1a 45%, #0d0d0d 100%);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 18px 40px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
 }
 
 .device-frame-scaler {
   position: relative;
   overflow: hidden;
-  margin-bottom: 16px;
+  flex-shrink: 0;
+  line-height: 0;
+  border-radius: 18px;
+  background: #0e131b;
 }
 
 .device-frame {
   position: absolute;
   top: 0;
   left: 0;
-  background: #fff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
   overflow: hidden;
+  background: #0e131b;
+  border-radius: 18px;
+  will-change: transform;
 }
 
 .preview-error {
@@ -1660,10 +1999,10 @@ const handleClose = () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  background: rgba(255, 255, 255, 0.9);
-  font-size: 14px;
-  color: #666;
+  gap: 10px;
+  background: rgba(14, 19, 27, 0.92);
+  font-size: 12px;
+  color: #e2e8f0;
 }
 
 .preview-image {
@@ -1671,21 +2010,47 @@ const handleClose = () => {
   height: 100%;
   object-fit: contain;
   display: block;
-  border-radius: 8px;
 }
 
 .preview-iframe {
   width: 100%;
   height: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
   border: 0;
   display: block;
-  background: #fff;
+  background: #0e131b;
+  vertical-align: top;
+}
+
+.preview-info {
+  flex-shrink: 0;
+  width: 100%;
+  padding-top: 0;
+}
+
+.preview-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
 }
 
 .image-container {
-  padding: 8px;
-  border-radius: 8px;
-  background-color: #f5f5f5;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border-radius: 18px;
+  background-color: #0e131b;
+  overflow: hidden;
+}
+
+.image-container .image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
 }
 
 .skin-lang-editor-modal.n-dialog {
@@ -1847,5 +2212,18 @@ const handleClose = () => {
   text-align: center;
   color: #555;
   padding: 2px;
+}
+
+.hot-games-count-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.hot-games-count-hint {
+  font-size: 12px;
+  line-height: 1.4;
+  max-width: 420px;
 }
 </style>

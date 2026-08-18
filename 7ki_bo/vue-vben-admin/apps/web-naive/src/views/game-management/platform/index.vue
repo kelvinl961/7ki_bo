@@ -1,12 +1,7 @@
 <template>
   <Page description="" title="">
-    
-    
-
-    
     <n-card class="mb-4">
       <div class="flex flex-wrap items-end gap-4">
-        
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium">{{ $t('game.subgame.gameType') }}</label>
           <n-select
@@ -19,7 +14,6 @@
           />
         </div>
 
-        
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium">{{ $t('common.currency') }}</label>
           <n-select
@@ -32,7 +26,6 @@
           />
         </div>
 
-        
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium">{{ $t('game.platform.platformStatus') }}</label>
           <n-select
@@ -45,7 +38,6 @@
           />
         </div>
 
-        
         <div class="flex flex-col">
           <label class="mb-2 text-sm font-medium">{{ $t('common.search') }}</label>
           <div class="flex gap-2">
@@ -56,14 +48,185 @@
               clearable
               @keyup.enter="handleFilter"
             />
-            <n-button type="primary" @click="handleFilter"> {{ $t('common.search') }} </n-button>
-            <n-button @click="resetFilter"> {{ $t('common.reset') }} </n-button>
+            <n-button type="primary" @click="handleFilter">{{ $t('common.search') }}</n-button>
+            <n-button @click="resetFilter">{{ $t('common.reset') }}</n-button>
           </div>
         </div>
       </div>
     </n-card>
 
-    
+    <SmartDataGrid
+      :data="tableData"
+      :columns="columns"
+      :loading="loading"
+      :pagination="paginationReactive"
+      selectable
+      :selected-keys="checkedRowKeys"
+      :row-key="(row: GamePlatformItem) => Number(row.id)"
+      @update:selected-keys="checkedRowKeys = $event"
+      @update:page="handlePageChange"
+      @update:page-size="handlePageSizeChange"
+      @refresh="handleRefresh"
+      @row-click="handleRowClick"
+    >
+      <template #actionBar="{ selectedCount }">
+        <n-card :bordered="false" class="rounded-16px shadow-sm">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="flex gap-2">
+                <n-button type="primary" @click="handleCreate">
+                  {{ $t('game.platform.addPlatform') }}
+                </n-button>
+                <n-button type="info" @click="handleOpenPublicConfig">
+                  {{ $t('game.platform.publicConfig') }}
+                </n-button>
+              </div>
+              <div class="text-sm text-gray-600">
+                {{ $t('game.selectedData', [selectedCount, paginationReactive.total]) }}
+              </div>
+            </div>
+
+            <div class="flex gap-2">
+              <n-button size="small" @click="clearSelection">{{ $t('game.clearSelection') }}</n-button>
+              <n-button size="small" @click="selectAll">{{ $t('common.selectAll') }}</n-button>
+            </div>
+          </div>
+        </n-card>
+      </template>
+    </SmartDataGrid>
+
+    <n-modal
+      v-model:show="showModal"
+      :title="editingPlatform ? $t('game.platform.editPlatform') : $t('game.platform.addPlatformTitle')"
+      preset="dialog"
+      style="width: 600px"
+      @after-leave="resetForm"
+    >
+      <n-form
+        ref="formRef"
+        :model="formData"
+        :rules="formRules"
+        label-placement="left"
+        label-width="100"
+      >
+        <n-form-item :label="$t('game.platform.platformId')" path="platformId">
+          <n-input
+            v-model:value="formData.platformId"
+            :placeholder="$t('game.platform.enterPlatformId')"
+            :disabled="!!editingPlatform"
+          />
+        </n-form-item>
+
+        <n-form-item :label="$t('game.platform.platformName')" path="platformName">
+          <n-input
+            v-model:value="formData.platformName"
+            :placeholder="$t('game.platform.enterPlatformName')"
+          />
+        </n-form-item>
+
+        <n-form-item :label="$t('game.subgame.gameType')" path="gameType">
+          <n-select
+            v-model:value="formData.gameType"
+            :placeholder="$t('game.subgame.selectGameType')"
+            :options="gameTypeOptions"
+          />
+        </n-form-item>
+
+        <n-form-item :label="$t('common.currency')" path="currency">
+          <n-select
+            v-model:value="formData.currency"
+            :placeholder="$t('game.subgame.selectCurrency')"
+            :options="currencyOptions"
+          />
+        </n-form-item>
+
+        <n-form-item :label="$t('game.platformExtra.minEntry')" path="minEntryAmount">
+          <n-input-number
+            v-model:value="formData.minEntryAmount"
+            :placeholder="$t('game.platformExtra.enterMinEntry')"
+            :min="0"
+            :precision="2"
+            style="width: 100%"
+          />
+        </n-form-item>
+
+        <n-form-item :label="$t('game.platform.sortOrder')" path="sortOrder">
+          <n-input-number
+            v-model:value="formData.sortOrder"
+            :placeholder="$t('game.platform.enterSortOrder')"
+            :min="0"
+            style="width: 100%"
+          />
+        </n-form-item>
+
+        <n-form-item :label="$t('game.platformExtra.logoImage')">
+          <MediaLibrarySelector
+            v-model="formData.logoUrl"
+            category="platforms"
+            :accept-types="['image']"
+            :placeholder="$t('game.platformExtra.logoPlaceholder')"
+            @file-selected="handleLogoSelected"
+          />
+        </n-form-item>
+
+        <n-form-item :label="$t('game.platformExtra2.platformImage')">
+          <MediaLibrarySelector
+            v-model="formData.imageUrl"
+            category="platforms"
+            :accept-types="['image']"
+            :placeholder="$t('game.platformExtra.logoPlaceholder')"
+            @file-selected="handleImageSelected"
+          />
+        </n-form-item>
+
+        <n-form-item :label="$t('game.platformExtra2.platformImage') + ' (H)'">
+          <MediaLibrarySelector
+            v-model="formData.imageHorizontalUrl"
+            category="platforms"
+            :accept-types="['image']"
+            :placeholder="$t('game.platformExtra.logoPlaceholder')"
+            @file-selected="handleHorizontalImageSelected"
+          />
+        </n-form-item>
+
+        <n-form-item :label="$t('common.remark')" path="remark">
+          <n-input
+            v-model:value="formData.remark"
+            :placeholder="$t('common.pleaseEnter')"
+            type="textarea"
+            :rows="3"
+          />
+        </n-form-item>
+
+        <div class="grid grid-cols-2 gap-4">
+          <n-form-item :label="$t('game.subgame.hot1')">
+            <n-switch v-model:value="formData.isHot" />
+          </n-form-item>
+
+          <n-form-item :label="$t('game.subgame.hot2')">
+            <n-switch v-model:value="formData.isFeatured" />
+          </n-form-item>
+
+          <n-form-item :label="$t('game.platformExtra2.platformSwitch')">
+            <n-switch v-model:value="formData.isEnabled" />
+          </n-form-item>
+
+          <n-form-item :label="$t('game.platform.showToStreamer')">
+            <n-switch v-model:value="formData.showToStreamer" />
+          </n-form-item>
+        </div>
+      </n-form>
+
+      <template #action>
+        <div class="flex justify-end gap-2">
+          <n-button @click="showModal = false">{{ $t('common.cancel') }}</n-button>
+          <n-button type="primary" :loading="submitting" @click="handleSubmit">
+            {{ editingPlatform ? $t('common.modify') : $t('common.create') }}
+          </n-button>
+        </div>
+      </template>
+    </n-modal>
+
     <GamePublicConfigModal v-model:show="showPublicConfigModal" />
   </Page>
 </template>
@@ -114,6 +277,10 @@ import {
   bulkDeleteGamePlatformsApi,
   type GamePlatformItem,
 } from '#/api/game/platform';
+import {
+  getGameTypeLabel,
+  normalizeGameTypeEnum,
+} from '#/utils/gameTypeI18n';
 const MediaLibrarySelector = defineAsyncComponent(
   () => import('#/components/MediaLibrarySelector.vue'),
 );
@@ -244,7 +411,7 @@ const columns: DataTableColumns<GamePlatformItem> = [
   { title: $t('game.platform.platformId'), key: 'platformId', width: 120 },
   { title: $t('game.subgame.platformName'), key: 'platformName', width: 180 },
   {
-    title: 'Logo',
+    title: $t('game.platformExtra2.logoColumn'),
     key: 'logoUrl',
     width: 80,
     render(row) {
@@ -269,28 +436,11 @@ const columns: DataTableColumns<GamePlatformItem> = [
     key: 'gameType',
     width: 100,
     render(row) {
-      // Convert English game type to Chinese for display
-      const getChineseGameType = (englishType: string) => {
-        const typeMap: Record<string, string> = {
-          LIVE: $t('game.statisticsExtra.typeLiveShort'),
-          SLOT: $t('game.statisticsExtra.typeSlotShort'),
-          SPORTS: $t('game.statisticsExtra.typeSportsShort'),
-          LOTTERY: $t('game.statisticsExtra.typeLotteryShort'),
-          CHESS_CARDS: $t('game.statisticsExtra.typeChessShort'),
-          ESPORTS: $t('game.platformExtra2.typeEsports'),
-          HUNTING: $t('game.statisticsExtra.typeHuntingShort'),
-          ARCADE: $t('game.statisticsExtra.typeArcadeShort'),
-          SIMULATION: $t('game.platformExtra2.typeSimulation'),
-          COCKFIGHT: $t('game.statisticsExtra.typeCockfightShort'),
-        };
-        return typeMap[englishType] || englishType;
-      };
-
       return h(
         NTag,
         { type: 'info', size: 'small' },
         {
-          default: () => getChineseGameType(row.gameType),
+          default: () => getGameTypeLabel(row.gameType),
         },
       );
     },
@@ -475,24 +625,7 @@ const handleEdit = (record: GamePlatformItem) => {
   editingPlatform.value = record;
   formData.platformId = record.platformId;
   formData.platformName = record.platformName;
-  // Convert Chinese game type back to English for form editing
-  const getEnglishGameType = (chineseType: string) => {
-    const typeMap: Record<string, string> = {
-      真人: 'LIVE',
-      电子: 'SLOT',
-      体育: 'SPORTS',
-      彩票: 'LOTTERY',
-      棋牌: 'CHESS_CARDS',
-      电竞: 'ESPORTS',
-      捕鱼: 'HUNTING',
-      街机: 'ARCADE',
-      模拟: 'SIMULATION',
-      斗鸡: 'COCKFIGHT',
-    };
-    return typeMap[chineseType] || chineseType;
-  };
-
-  formData.gameType = getEnglishGameType(record.gameType);
+  formData.gameType = normalizeGameTypeEnum(record.gameType) || record.gameType;
   formData.currency = record.currency;
   formData.isHot = record.isHot;
   formData.isFeatured = record.isFeatured;

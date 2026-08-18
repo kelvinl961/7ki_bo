@@ -20,7 +20,9 @@
     "build:analyze": "pnpm vite build --mode analyze",
     "dev": "pnpm vite --mode development",
     "preview": "vite preview",
-    "typecheck": "vue-tsc --noEmit --skipLibCheck"
+    "typecheck": "vue-tsc --noEmit --skipLibCheck",
+    "i18n:check": "node ./scripts/check-locale-parity.mjs",
+    "i18n:check:strict": "node ./scripts/check-locale-parity.mjs --strict"
   },
   "imports": {
     "#/*": "./src/*"

@@ -21,7 +21,7 @@
           >
             <n-tag type="info" size="small"> ID: {{ item.id }} </n-tag>
             <span class="item-currency">{{ item.currency }}</span>
-            <span class="item-position">{{ item.displayPosition }}</span>
+            <span class="item-position">{{ getDisplayPositionLabel(item.displayPosition) }}</span>
           </div>
         </div>
       </n-card>
@@ -250,6 +250,8 @@ import {
   useMessage,
   type FormInst,
 } from 'naive-ui';
+
+import { getDisplayPositionLabel } from '#/utils/gameTypeI18n';
 
 // Props
 interface Props {

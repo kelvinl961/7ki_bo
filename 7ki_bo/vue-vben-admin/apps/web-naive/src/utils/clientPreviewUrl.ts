@@ -1,18 +1,19 @@
 /**
  * Live 7ki client iframe preview (multi-tenant domain layout).
  *
- * Typical tenant layout (277br example):
- *   Client app  → https://277br.com
- *   Backoffice  → https://277br.118br.com
- *   API         → https://277br.pangu6688.com/api/
+ * Typical tenant layout (944br example):
+ *   Client app  → https://944br.com
+ *   Backoffice  → https://944br.118br.com
+ *   API         → https://944br.pangu6688.com/api/
  *
  * Preview base URL resolution (first match wins):
- * 1. `VITE_GLOB_CLIENT_PREVIEW_URL` — explicit override
- * 2. Tenant pattern from API or backoffice host:
- *    `277br.pangu6688.com` or `277br.118br.com` → `https://277br.com`
- *    (suffix configurable via `VITE_GLOB_CLIENT_PREVIEW_DOMAIN_SUFFIX`, default `.com`)
- * 3. API origin with `/api` stripped (same-host deployments only)
- * 4. `window.location.origin`
+ * 1. Dev localStorage override (DEV only)
+ * 2. Local BO (localhost) → client Vite (default :5173)
+ * 3. Tenant from browser host: `944br.118br.com` → `https://944br.com`
+ *    (suffix via `VITE_GLOB_CLIENT_PREVIEW_DOMAIN_SUFFIX`, default `.com`)
+ * 4. `VITE_GLOB_CLIENT_PREVIEW_URL` — fallback when not on a tenant BO host
+ * 5. Known shared API host map / API-origin heuristics
+ * 6. `window.location.origin`
  *
  * Client: `?preview=1&template=` overrides API skinTemplate (no build flag required).
  */
@@ -25,6 +26,15 @@ export const CLIENT_PREVIEW_READY_MESSAGE = '7ki-admin-preview-ready';
 
 /** Parent → iframe live color sync (no reload). */
 export const CLIENT_PREVIEW_COLORS_MESSAGE = '7ki-admin-preview-colors';
+
+/** Parent → iframe hot template switch (no full reload when client supports it). */
+export const CLIENT_PREVIEW_TEMPLATE_MESSAGE = '7ki-admin-preview-template';
+
+/** Parent → iframe lobby / skin extras sync without reload. */
+export const CLIENT_PREVIEW_SKIN_EXTRAS_MESSAGE = '7ki-admin-preview-skin-extras';
+
+/** Parent → iframe layout flags (ad / grandes / myPageStyle / page) without reload. */
+export const CLIENT_PREVIEW_LAYOUT_MESSAGE = '7ki-admin-preview-layout';
 
 /**
  * Shared / test API host → client lobby origin.
@@ -94,12 +104,41 @@ export function clearDevClientPreviewOriginOverride(): void {
 export type ClientPreviewParams = {
   skinTemplate: string;
   brandCode?: string;
+  skinColor?: string;
+  gameColor?: string;
+  lobbyBackgroundSource?: string;
+  lobbyPatternUrl?: string;
   primaryColor?: string;
   accentColor?: string;
   buttonColor?: string;
   textPrimary?: string;
   textSecondary?: string;
   textAccent?: string;
+  /** Lobby top ad / quick-nav strip */
+  topNavAdEnabled?: boolean;
+  /** Grandes prêmios / grand prize records */
+  grandesPremiosEnabled?: boolean;
+  /** Profile shell: profile_v1 | profile_v7 */
+  myPageStyle?: string;
+  /** Navigate iframe to home or profile */
+  previewPage?: 'home' | 'profile';
+};
+
+export type ClientPreviewResolutionSource =
+  | 'dev-override'
+  | 'local-dev'
+  | 'env-explicit'
+  | 'browser-tenant'
+  | 'known-api-host'
+  | 'tenant-pattern'
+  | 'api-origin'
+  | 'window-origin'
+  | 'none';
+
+export type ClientPreviewResolution = {
+  url: string;
+  source: ClientPreviewResolutionSource;
+  tenantSlug: string | null;
 };
 
 /** Resolve client origin from known API host map (test/staging). */
@@ -227,50 +266,96 @@ export function deriveClientPreviewOriginFromApiUrl(apiUrl: string): string {
 function deriveLocalDevClientPreviewOrigin(): string {
   if (!import.meta.env.DEV || typeof window === 'undefined') return '';
 
-  const explicit = (
-    import.meta.env.VITE_GLOB_CLIENT_PREVIEW_URL as string | undefined
-  )?.trim();
-  if (explicit) return explicit.replace(/\/+$/, '');
-
   const { hostname } = window.location;
   if (hostname !== 'localhost' && hostname !== '127.0.0.1') return '';
 
-  const clientPort = (
-    import.meta.env.VITE_GLOB_CLIENT_PREVIEW_DEV_PORT as string | undefined
-  )?.trim() || '5173';
+  const clientPort =
+    (import.meta.env.VITE_GLOB_CLIENT_PREVIEW_DEV_PORT as string | undefined)?.trim() ||
+    '5173';
 
   return `http://${hostname}:${clientPort}`;
 }
 
+function resolveBrowserTenantOrigin(): string {
+  if (typeof window === 'undefined') return '';
+  return deriveClientPreviewOriginFromTenantPattern(
+    undefined,
+    window.location.hostname,
+  );
+}
+
 /** Base URL of deployed 7ki client (no trailing slash). */
 export function getClientPreviewBaseUrl(): string {
+  return resolveClientPreview().url;
+}
+
+/**
+ * Resolve preview client origin with source metadata (ops / dev diagnostics).
+ * Tenant BO host (*.118br.com → *.com) wins over VITE_GLOB_CLIENT_PREVIEW_URL
+ * so multi-tenant previews stay correct when env points at a shared staging site.
+ */
+export function resolveClientPreview(): ClientPreviewResolution {
   if (import.meta.env.DEV) {
     const devOverride = getDevClientPreviewOriginOverride();
-    if (devOverride) return devOverride;
+    if (devOverride) {
+      return { url: devOverride, source: 'dev-override', tenantSlug: null };
+    }
   }
 
   const fromLocalDev = deriveLocalDevClientPreviewOrigin();
-  if (fromLocalDev) return fromLocalDev;
+  if (fromLocalDev) {
+    return { url: fromLocalDev, source: 'local-dev', tenantSlug: null };
+  }
+
+  // Prefer BO hostname mapping: 944br.118br.com → https://944br.com
+  const browserTenant = resolveBrowserTenantOrigin();
+  if (browserTenant) {
+    const slug =
+      typeof window !== 'undefined'
+        ? extractTenantSlugFromHost(window.location.hostname)
+        : null;
+    return { url: browserTenant, source: 'browser-tenant', tenantSlug: slug };
+  }
+
+  const fromTenant = deriveClientPreviewOriginFromTenantPattern();
+  if (fromTenant) {
+    const slug =
+      typeof window !== 'undefined'
+        ? extractTenantSlugFromHost(window.location.hostname)
+        : null;
+    return { url: fromTenant, source: 'tenant-pattern', tenantSlug: slug };
+  }
 
   const explicit = (
     import.meta.env.VITE_GLOB_CLIENT_PREVIEW_URL as string | undefined
   )?.trim();
-  if (explicit) return explicit.replace(/\/+$/, '');
-
-  const fromKnownApi = deriveClientPreviewFromKnownApiHost(readConfiguredApiUrl());
-  if (fromKnownApi) return fromKnownApi;
-
-  const fromTenant = deriveClientPreviewOriginFromTenantPattern();
-  if (fromTenant) return fromTenant;
-
-  const fromApi = deriveClientPreviewOriginFromApiUrl(readConfiguredApiUrl());
-  if (fromApi) return fromApi;
-
-  if (typeof window !== 'undefined') {
-    return window.location.origin.replace(/\/+$/, '');
+  if (explicit) {
+    return {
+      url: explicit.replace(/\/+$/, ''),
+      source: 'env-explicit',
+      tenantSlug: null,
+    };
   }
 
-  return '';
+  const fromKnownApi = deriveClientPreviewFromKnownApiHost(readConfiguredApiUrl());
+  if (fromKnownApi) {
+    return { url: fromKnownApi, source: 'known-api-host', tenantSlug: null };
+  }
+
+  const fromApi = deriveClientPreviewOriginFromApiUrl(readConfiguredApiUrl());
+  if (fromApi) {
+    return { url: fromApi, source: 'api-origin', tenantSlug: null };
+  }
+
+  if (typeof window !== 'undefined') {
+    return {
+      url: window.location.origin.replace(/\/+$/, ''),
+      source: 'window-origin',
+      tenantSlug: extractTenantSlugFromHost(window.location.hostname),
+    };
+  }
+
+  return { url: '', source: 'none', tenantSlug: null };
 }
 
 export function isClientLivePreviewEnabled(): boolean {
@@ -306,6 +391,20 @@ export function buildClientPreviewUrl(
   const brandCode = params.brandCode?.trim();
   if (brandCode) q.set('brandCode', brandCode);
 
+  const skinColor = params.skinColor?.trim();
+  if (skinColor) q.set('skinColor', skinColor);
+
+  const gameColor = params.gameColor?.trim();
+  if (gameColor) q.set('gameColor', gameColor);
+
+  const lobbyBackgroundSource = params.lobbyBackgroundSource?.trim();
+  if (lobbyBackgroundSource) {
+    q.set('lobbyBackgroundSource', lobbyBackgroundSource);
+  }
+
+  const lobbyPatternUrl = params.lobbyPatternUrl?.trim();
+  if (lobbyPatternUrl) q.set('lobbyPatternUrl', lobbyPatternUrl);
+
   const colorKeys: (keyof ClientPreviewParams)[] = [
     'primaryColor',
     'accentColor',
@@ -317,6 +416,18 @@ export function buildClientPreviewUrl(
   for (const key of colorKeys) {
     const value = params[key]?.trim();
     if (value) q.set(key, value);
+  }
+
+  if (typeof params.topNavAdEnabled === 'boolean') {
+    q.set('topNavAdEnabled', params.topNavAdEnabled ? '1' : '0');
+  }
+  if (typeof params.grandesPremiosEnabled === 'boolean') {
+    q.set('grandesPremiosEnabled', params.grandesPremiosEnabled ? '1' : '0');
+  }
+  const myPageStyle = params.myPageStyle?.trim();
+  if (myPageStyle) q.set('myPageStyle', myPageStyle);
+  if (params.previewPage === 'home' || params.previewPage === 'profile') {
+    q.set('previewPage', params.previewPage);
   }
 
   q.set('_t', String(cacheBust ?? Date.now()));

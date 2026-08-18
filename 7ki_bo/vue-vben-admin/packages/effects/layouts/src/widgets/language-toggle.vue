@@ -3,8 +3,8 @@ import type { SupportedLanguagesType } from '@vben/locales';
 
 import { SUPPORT_LANGUAGES } from '@vben/constants';
 import { Languages } from '@vben/icons';
-import { loadLocaleMessages } from '@vben/locales';
-import { preferences, updatePreferences } from '@vben/preferences';
+import { changeAppLocale } from '@vben/locales';
+import { preferences } from '@vben/preferences';
 
 import { VbenDropdownRadioMenu, VbenIconButton } from '@vben-core/shadcn-ui';
 
@@ -15,12 +15,8 @@ defineOptions({
 async function handleUpdate(value: string | undefined) {
   if (!value) return;
   const locale = value as SupportedLanguagesType;
-  updatePreferences({
-    app: {
-      locale,
-    },
-  });
-  await loadLocaleMessages(locale);
+  if (locale === preferences.app.locale) return;
+  await changeAppLocale(locale);
 }
 </script>
 

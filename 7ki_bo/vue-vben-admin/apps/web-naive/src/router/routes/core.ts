@@ -2,6 +2,7 @@ import type { RouteRecordRaw } from 'vue-router';
 
 import { LOGIN_PATH } from '@vben/constants';
 import { preferences } from '@vben/preferences';
+import { useAccessStore } from '@vben/stores';
 
 import { $t } from '#/locales';
 
@@ -26,6 +27,7 @@ const coreRoutes: RouteRecordRaw[] = [
    * 根路由
    * 使用基础布局，作为所有页面的父级容器，子级就不必配置BasicLayout。
    * 此路由必须存在，且不应修改
+   * Unauthenticated users go straight to login (avoids / → /home → /auth/login).
    */
   {
     component: BasicLayout,
@@ -35,7 +37,17 @@ const coreRoutes: RouteRecordRaw[] = [
     },
     name: 'Root',
     path: '/',
-    redirect: preferences.app.defaultHomePath,
+    redirect: () => {
+      try {
+        const accessStore = useAccessStore();
+        if (accessStore.accessToken) {
+          return preferences.app.defaultHomePath;
+        }
+      } catch {
+        // Pinia may not be ready during early route registration
+      }
+      return LOGIN_PATH;
+    },
     children: [],
   },
   {

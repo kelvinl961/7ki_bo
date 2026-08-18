@@ -9,6 +9,7 @@ import { preferences } from '@vben/preferences';
 import {
   darkTheme,
   dateEnUS,
+  dateViVN,
   dateZhCN,
   enUS,
   lightTheme,
@@ -16,6 +17,7 @@ import {
   NDialogProvider,
   NMessageProvider,
   NNotificationProvider,
+  viVN,
   zhCN,
 } from 'naive-ui';
 
@@ -25,10 +27,12 @@ const { commonTokens } = useNaiveDesignTokens();
 
 const tokenLocale = computed(() => {
   if (preferences.app.locale === 'zh-CN') return zhCN;
+  if (preferences.app.locale === 'vi-VN') return viVN;
   return enUS;
 });
 const tokenDateLocale = computed(() => {
   if (preferences.app.locale === 'zh-CN') return dateZhCN;
+  if (preferences.app.locale === 'vi-VN') return dateViVN;
   return dateEnUS;
 });
 const tokenTheme = computed(() =>

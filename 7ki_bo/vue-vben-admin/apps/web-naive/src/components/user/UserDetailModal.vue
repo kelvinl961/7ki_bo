@@ -317,7 +317,7 @@
                           class="cursor-pointer text-blue-600 hover:underline"
                           @click="handleViewWithdrawalAccounts"
                         >
-                          {{ userDetail.withdrawalAccountCount || 1 }}{{ $t('user.userDetail.units') }}
+                          {{ userDetail.withdrawalAccountCount ?? 0 }}{{ $t('user.userDetail.units') }}
                         </span>
                         <span class="text-gray-500"
                           >{{ $t('user.userDetail.sameWithdrawAccountCount') }}(
@@ -465,7 +465,11 @@
                           :loading="loading"
                           >{{ $t('common.refresh') }}</n-button
                         >
-                        <n-button text type="warning" size="tiny"
+                        <n-button
+                          text
+                          type="warning"
+                          size="tiny"
+                          @click="handleManualPullback"
                           >{{ $t('user.userDetail.manualRecall') }}</n-button
                         >
                         <n-button
@@ -1368,6 +1372,13 @@
       </template>
     </n-modal>
 
+    <ManualPullbackModal
+      ref="manualPullbackModalRef"
+      :user-id="props.userId"
+      :account="userDetail?.account"
+      @success="handlePullbackSuccess"
+    />
+
     <!-- Enhanced Manual Transaction Modal -->
     <n-modal
       v-model:show="showManualTransactionModal"
@@ -1757,6 +1768,7 @@ import UserAuditTrailTab from './UserAuditTrailTab.vue';
 import LoginDevicesTab from './LoginDevicesTab.vue';
 import RtpControlTab from './RtpControlTab.vue';
 import AssociationsTab from './AssociationsTab.vue';
+import ManualPullbackModal from './ManualPullbackModal.vue';
 import TimezoneDatePicker from '#/components/common/TimezoneDatePicker.vue';
 
 interface Props {
@@ -2777,6 +2789,16 @@ const handleRefreshBalance = async () => {
     console.error('Failed to refresh balance:', error);
     message.error($t('user.userDetail.balanceRefreshFailed'));
   }
+};
+
+const manualPullbackModalRef = ref<{ open: () => void } | null>(null);
+
+const handleManualPullback = () => {
+  manualPullbackModalRef.value?.open();
+};
+
+const handlePullbackSuccess = async () => {
+  await loadUserDetail(true);
 };
 
 const handleSubmitManualTransaction = async () => {

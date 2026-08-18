@@ -39,6 +39,10 @@ async function viteInjectAppLoadingPlugin(
     name: 'vite:inject-app-loading',
     transformIndexHtml: {
       handler(html) {
+        // Skip if the app already embedded a splash in index.html
+        if (html.includes('id="__app-loading__"')) {
+          return html;
+        }
         const re = /<body\s*>/;
         html = html.replace(re, `<body>${injectScript}${loadingHtml}`);
         return html;

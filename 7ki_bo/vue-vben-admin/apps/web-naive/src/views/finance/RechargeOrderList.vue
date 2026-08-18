@@ -2516,7 +2516,7 @@ import {
   getDisplayTimezone,
 } from '../../utils/timezoneUtils';
 // Import transaction mappings for remark translation
-import { TRANSACTION_SUBCATEGORY_MAPPINGS } from '../../utils/transactionMappings';
+import { translateSubcategory } from '../../utils/transactionTranslations';
 
 // Types
 interface TableTotals {
@@ -4095,10 +4095,8 @@ const columns: DataTableColumns<RechargeOrder> = [
         );
       }
 
-      // ✅ NEW: Translate remark key to Chinese (e.g., "manual_recharge" -> "手动充值")
-      // If the remark is a key in our mapping, translate it; otherwise use the raw value
-      const remarks =
-        TRANSACTION_SUBCATEGORY_MAPPINGS[remarksRaw] || remarksRaw;
+      // Translate remark key via i18n (e.g., "manual_recharge" -> localized label)
+      const remarks = translateSubcategory(remarksRaw);
 
       return h(
         NTooltip,

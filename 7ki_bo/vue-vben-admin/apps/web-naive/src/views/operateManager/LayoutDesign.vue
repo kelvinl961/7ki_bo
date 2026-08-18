@@ -86,9 +86,35 @@
                   {{ layoutConfig.topNavAdEnabled ? $t('operations.layout.opened') : $t('operations.layout.closed') }}
                 </div>
                 <div v-else class="flex items-center gap-3">
-                  <n-switch v-model:value="layoutConfig.topNavAdEnabled" />
+                  <n-switch
+                    :value="layoutConfig.topNavAdEnabled"
+                    @update:value="onTopNavAdToggle"
+                  />
                   <span class="text-sm text-gray-600">{{
                     layoutConfig.topNavAdEnabled ? $t('operations.layout.open') : $t('operations.layout.close')
+                  }}</span>
+                </div>
+              </div>
+
+              <!-- 大奖记录 / Grandes prêmios -->
+              <div class="rounded-lg border bg-gray-50 p-6">
+                <h4 class="text-md mb-3 font-medium text-gray-900">{{ $t('operations.layout.grandesPremios') }}</h4>
+                <p class="mb-4 text-sm text-gray-600">
+                  {{ $t('operations.layout.grandesPremiosDesc') }}
+                </p>
+                <div
+                  v-if="!isEditMode"
+                  class="text-sm font-medium text-gray-800"
+                >
+                  {{ layoutConfig.grandesPremiosEnabled ? $t('operations.layout.opened') : $t('operations.layout.closed') }}
+                </div>
+                <div v-else class="flex items-center gap-3">
+                  <n-switch
+                    :value="layoutConfig.grandesPremiosEnabled"
+                    @update:value="onGrandesPremiosToggle"
+                  />
+                  <span class="text-sm text-gray-600">{{
+                    layoutConfig.grandesPremiosEnabled ? $t('operations.layout.open') : $t('operations.layout.close')
                   }}</span>
                 </div>
               </div>
@@ -119,7 +145,10 @@
 
                 <!-- Edit Mode -->
                 <div v-if="isEditMode" class="space-y-4">
-                  <n-radio-group v-model:value="layoutConfig.myPageStyle">
+                  <n-radio-group
+                    :value="layoutConfig.myPageStyle"
+                    @update:value="onMyPageStyleChange"
+                  >
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                       <div
                         v-for="opt in MY_PAGE_STYLE_OPTIONS"
@@ -157,9 +186,6 @@
                 class="flex flex-wrap justify-center gap-3 border-t pt-6"
               >
                 <n-button size="large" @click="cancelEdit">{{ $t('common.cancel') }}</n-button>
-                <n-button size="large" type="warning" @click="generatePreview">
-                  {{ $t('operations.layout.generatePreview') }}
-                </n-button>
                 <n-button type="primary" size="large" @click="saveConfig">
                   {{ $t('common.save') }}
                 </n-button>
@@ -167,153 +193,269 @@
             </div>
       </div>
 
-      <!-- Right Panel - Mobile Preview -->
-      <div class="w-100 rounded-lg border bg-white p-4 shadow-sm">
-        <div class="mb-4 flex flex-col items-center gap-2">
-          <h3 class="text-center text-lg font-medium text-gray-900">{{ $t('operations.layout.preview') }}</h3>
-          <n-button type="warning" @click="generatePreview">{{ $t('operations.layout.generatePreview') }}</n-button>
+      <!-- Right Panel - Scaled iPhone preview (LIVE_PREVIEW_DEVICE) -->
+      <div class="w-[380px] shrink-0 rounded-lg border bg-white p-4 shadow-sm">
+        <div class="mb-3 flex flex-col items-center gap-2">
+          <h3 class="text-center text-lg font-medium text-gray-900">
+            {{ $t('operations.layout.preview') }}
+          </h3>
+          <div
+            v-if="clientLivePreviewAvailable"
+            class="flex items-center gap-2"
+          >
+            <n-switch
+              :value="useRealClientPreview"
+              @update:value="onRealClientPreviewToggle"
+            />
+            <span class="text-xs text-gray-600">{{
+              $t('operations.layout.realPreview')
+            }}</span>
+          </div>
+          <n-radio-group
+            v-model:value="previewTab"
+            size="small"
+            name="layout-preview-tab"
+            @update:value="onPreviewTabChange"
+          >
+            <n-radio-button value="lobby">
+              {{ $t('operations.layout.previewLobby') }}
+            </n-radio-button>
+            <n-radio-button value="profile">
+              {{ $t('operations.layout.previewProfile') }}
+            </n-radio-button>
+          </n-radio-group>
           <p class="text-center text-xs text-gray-500">
-            {{ $t('operations.layout.previewHint') }}
+            {{
+              useRealClientPreview && !iframePreviewBlocked
+                ? $t('operations.layout.realPreviewHint')
+                : $t('operations.layout.previewHint')
+            }}
+          </p>
+          <p
+            v-if="useRealClientPreview && previewHostLabel"
+            class="text-center text-[10px] text-gray-400"
+          >
+            {{ previewHostLabel }}
           </p>
         </div>
 
-        <!-- Mobile Frame -->
-        <div
-          class="w-200 mx-auto h-[600px] rounded-[2rem] bg-black p-3 shadow-2xl"
-        >
-          <div
-            class="relative h-full w-full overflow-hidden rounded-[1.5rem] bg-white"
-          >
-            <!-- Mobile Content Preview -->
-            <iframe
-              ref="previewIframe"
-              :src="previewUrl"
-              class="h-full w-full border-0"
-              @load="handleIframeLoad"
-            >
-            </iframe>
-
-            <!-- Fallback Preview Content (when iframe not available) -->
-            <div v-if="!previewUrl" class="h-full w-full overflow-y-auto">
-              <!-- Top Banner -->
-              <div
-                class="flex h-20 items-center justify-between bg-gradient-to-r from-blue-500 to-purple-600 px-4"
+        <div class="preview-container flex justify-center">
+          <div class="phone-bezel">
+            <div class="device-frame-scaler" :style="previewScalerStyle">
+              <!-- Real client iframe: transform on iframe itself; viewport stays 390×844 -->
+              <template
+                v-if="
+                  useRealClientPreview && livePreviewUrl && !iframePreviewBlocked
+                "
               >
-                <div class="text-lg font-bold text-white">JACKPOT</div>
-                <div class="flex gap-2">
-                  <button
-                    class="rounded bg-white bg-opacity-20 px-3 py-1 text-sm text-white"
-                  >
-                    {{ $t('operations.layout.login') }}
-                  </button>
-                  <button
-                    class="rounded bg-white px-3 py-1 text-sm text-blue-600"
-                  >
-                    {{ $t('operations.layout.register') }}
-                  </button>
-                </div>
-              </div>
-
-              <!-- Navigation Icons -->
-              <div class="grid grid-cols-4 gap-4 bg-gray-50 p-4">
-                <div class="text-center">
-                  <div
-                    class="mx-auto mb-1 flex h-12 w-12 items-center justify-center rounded-lg bg-red-500"
-                  >
-                    <span class="text-xs text-white">🎁</span>
-                  </div>
-                  <span class="text-xs text-gray-600">{{ $t('operations.layout.promotion') }}</span>
-                </div>
-                <div class="text-center">
-                  <div
-                    class="mx-auto mb-1 flex h-12 w-12 items-center justify-center rounded-lg bg-green-500"
-                  >
-                    <span class="text-xs text-white">💰</span>
-                  </div>
-                  <span class="text-xs text-gray-600">{{ $t('operations.layout.deposit') }}</span>
-                </div>
-                <div class="text-center">
-                  <div
-                    class="mx-auto mb-1 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-500"
-                  >
-                    <span class="text-xs text-white">👥</span>
-                  </div>
-                  <span class="text-xs text-gray-600">{{ $t('operations.layout.agent') }}</span>
-                </div>
-                <div class="text-center">
-                  <div
-                    class="mx-auto mb-1 flex h-12 w-12 items-center justify-center rounded-lg bg-purple-500"
-                  >
-                    <span class="text-xs text-white">👤</span>
-                  </div>
-                  <span class="text-xs text-gray-600">{{ $t('operations.layout.profile') }}</span>
-                </div>
-              </div>
-
-              <!-- Game Cards -->
-              <div class="space-y-3 p-4">
-                <h4 class="font-medium text-gray-800">{{ $t('operations.layout.hotGames') }}</h4>
-                <div class="grid grid-cols-3 gap-3">
-                  <div
-                    class="flex h-16 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-pink-500"
-                  >
-                    <span class="text-sm font-bold text-white">PG</span>
-                  </div>
-                  <div
-                    class="flex h-16 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500"
-                  >
-                    <span class="text-sm font-bold text-white">{{ $t('operations.layout.fishing') }}</span>
-                  </div>
-                  <div
-                    class="flex h-16 items-center justify-center rounded-lg bg-gradient-to-br from-green-500 to-emerald-500"
-                  >
-                    <span class="text-sm font-bold text-white">{{ $t('operations.layout.sports') }}</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Self-promotion Banner (conditional) -->
-              <div v-if="selfPromotionEnabled" class="mx-4 mb-4">
                 <div
-                  class="flex h-16 items-center justify-center rounded-lg bg-gradient-to-r from-green-400 to-blue-500"
+                  v-if="iframePreviewLoading"
+                  class="preview-loading"
                 >
-                  <span class="text-sm font-medium text-white"
-                    >{{ $t('operations.layout.selfPromoBanner') }}</span
-                  >
+                  <n-spin size="small" />
+                  <span>{{ $t('operations.layout.loadingRealPreview') }}</span>
                 </div>
-              </div>
+                <iframe
+                  ref="livePreviewIframeRef"
+                  :key="livePreviewIframeKey"
+                  :src="livePreviewUrl"
+                  class="preview-iframe"
+                  :width="previewLayout.frameW"
+                  :height="previewLayout.frameH"
+                  :style="liveIframeStyle"
+                  :title="$t('operations.layout.realPreview')"
+                  @load="handleLivePreviewLoad"
+                />
+              </template>
 
-              <!-- Bottom Navigation -->
+              <!-- Schematic fallback -->
               <div
-                class="absolute bottom-0 left-0 right-0 h-16 border-t bg-white"
+                v-else
+                class="device-frame"
+                :style="deviceFrameStyle"
               >
-                <div class="flex h-full items-center justify-around px-2">
                   <div
-                    v-for="(button, index) in getActiveButtons()"
-                    :key="index"
-                    class="flex flex-col items-center"
+                    v-if="useRealClientPreview && iframePreviewBlocked"
+                    class="schematic-blocked-banner"
                   >
-                    <img
-                      v-if="getIconImageUrl(button)"
-                      :src="getIconImageUrl(button)"
-                      :alt="button.label"
-                      class="mx-auto mb-1 h-4 w-4 object-contain"
-                    />
-                    <div v-else-if="button.icon" class="mb-1 text-xs">
-                      {{ getIconDisplay(button.icon) }}
-                    </div>
-                    <div v-else class="mb-1 h-6 w-6 rounded bg-gray-200"></div>
-                    <span class="text-xs text-gray-600">{{
-                      button.label || $t('operations.layout.button')
-                    }}</span>
+                    <span>{{ $t('operations.layout.iframeBlocked') }}</span>
+                    <a
+                      class="ml-1 underline"
+                      :href="livePreviewUrl"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      >{{ $t('operations.layout.openPreviewNewWindow') }}</a
+                    >
                   </div>
-                </div>
+                  <!-- Lobby schematic -->
+                  <div
+                    v-show="previewTab === 'lobby'"
+                    class="schematic-screen relative flex h-full min-h-0 flex-col bg-slate-900 text-white"
+                  >
+                    <div
+                      class="flex shrink-0 items-center justify-between bg-gradient-to-r from-indigo-600 to-violet-600 px-3 py-2"
+                    >
+                      <span class="text-sm font-bold">JACKPOT</span>
+                      <div class="flex gap-1">
+                        <span
+                          class="rounded bg-white/20 px-2 py-0.5 text-[10px]"
+                          >{{ $t('operations.layout.login') }}</span
+                        >
+                        <span
+                          class="rounded bg-white px-2 py-0.5 text-[10px] text-indigo-700"
+                          >{{ $t('operations.layout.register') }}</span
+                        >
+                      </div>
+                    </div>
+
+                    <div class="min-h-0 flex-1 overflow-y-auto pb-14">
+                      <Transition name="preview-fade">
+                        <div
+                          v-if="layoutConfig.topNavAdEnabled"
+                          class="border-b border-white/10 bg-slate-800/80 px-2 py-2"
+                        >
+                          <p class="mb-1.5 text-center text-[10px] text-slate-400">
+                            {{ $t('operations.layout.previewAdArea') }}
+                          </p>
+                          <div class="grid grid-cols-4 gap-1.5">
+                            <div
+                              v-for="item in previewQuickNavItems"
+                              :key="item.label"
+                              class="text-center"
+                            >
+                              <div
+                                class="mx-auto mb-0.5 flex h-9 w-9 items-center justify-center rounded-lg text-sm"
+                                :style="{ background: item.gradient }"
+                              >
+                                {{ item.icon }}
+                              </div>
+                              <span
+                                class="block truncate text-[9px] text-slate-300"
+                                >{{ item.label }}</span
+                              >
+                            </div>
+                          </div>
+                        </div>
+                      </Transition>
+
+                      <div
+                        class="mx-2 mt-2 h-20 overflow-hidden rounded-lg bg-gradient-to-br from-amber-500/80 to-rose-600/80"
+                      >
+                        <div
+                          class="flex h-full items-center justify-center text-xs font-medium text-white/90"
+                        >
+                          Banner
+                        </div>
+                      </div>
+
+                      <Transition name="preview-fade">
+                        <div
+                          v-if="layoutConfig.grandesPremiosEnabled"
+                          class="mx-2 mt-2 rounded-lg border border-amber-500/30 bg-slate-800/90 px-2 py-2"
+                        >
+                          <p
+                            class="mb-1.5 text-center text-[10px] font-medium text-amber-300"
+                          >
+                            ★ {{ $t('operations.layout.previewGrandesArea') }} ★
+                          </p>
+                          <div class="flex gap-1.5 overflow-hidden">
+                            <div
+                              v-for="n in 3"
+                              :key="n"
+                              class="flex min-w-[72px] flex-1 flex-col items-center rounded bg-slate-700/80 p-1.5"
+                            >
+                              <div
+                                class="mb-1 h-8 w-8 rounded bg-gradient-to-br from-yellow-400 to-orange-500"
+                              />
+                              <span class="text-[8px] text-slate-400"
+                                >1***{{ 100 + n }}</span
+                              >
+                              <span
+                                class="text-[9px] font-semibold text-amber-300"
+                                >R$ {{ (n * 120).toFixed(0) }}</span
+                              >
+                            </div>
+                          </div>
+                        </div>
+                      </Transition>
+
+                      <div class="space-y-2 p-2">
+                        <h4 class="text-[11px] font-medium text-slate-300">
+                          {{ $t('operations.layout.hotGames') }}
+                        </h4>
+                        <div class="grid grid-cols-3 gap-1.5">
+                          <div
+                            class="flex h-14 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 text-xs font-bold"
+                          >
+                            PG
+                          </div>
+                          <div
+                            class="flex h-14 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 text-[10px] font-bold"
+                          >
+                            {{ $t('operations.layout.fishing') }}
+                          </div>
+                          <div
+                            class="flex h-14 items-center justify-center rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 text-[10px] font-bold"
+                          >
+                            {{ $t('operations.layout.sports') }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      class="absolute bottom-0 left-0 right-0 flex h-12 items-center justify-around border-t border-white/10 bg-slate-950 px-1"
+                    >
+                      <div
+                        v-for="(button, index) in getActiveButtons()"
+                        :key="index"
+                        class="flex flex-col items-center"
+                      >
+                        <img
+                          v-if="getIconImageUrl(button)"
+                          :src="getIconImageUrl(button)"
+                          :alt="button.label"
+                          class="mb-0.5 h-3.5 w-3.5 object-contain"
+                        />
+                        <div v-else-if="button.icon" class="mb-0.5 text-[10px]">
+                          {{ getIconDisplay(button.icon) }}
+                        </div>
+                        <div
+                          v-else
+                          class="mb-0.5 h-3.5 w-3.5 rounded bg-slate-600"
+                        />
+                        <span
+                          class="max-w-[48px] truncate text-[8px] text-slate-400"
+                          >{{
+                            button.label || $t('operations.layout.button')
+                          }}</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Profile schematic -->
+                  <div
+                    v-show="previewTab === 'profile'"
+                    class="schematic-screen flex h-full min-h-0 flex-col bg-slate-100"
+                  >
+                    <div class="min-h-0 flex-1 overflow-y-auto">
+                      <img
+                        :src="currentMyPageTemplateUrl"
+                        :alt="$t('operations.layout.myPagePreview')"
+                        class="block w-full object-cover object-top"
+                      />
+                    </div>
+                    <p
+                      class="shrink-0 border-t bg-white py-1.5 text-center text-xs font-medium text-gray-700"
+                    >
+                      {{ myPageStyleDisplayName }}
+                    </p>
+                  </div>
               </div>
             </div>
           </div>
         </div>
-
-        <!-- Preview Info -->
       </div>
     </div>
 
@@ -448,7 +590,7 @@ import { $t } from '@vben/locales';
  * 阶段一：仅「我的页面样式」提供编辑 UI。
  * `layoutConfig` 与保存请求仍携带完整字段（默认值或接口回填），便于后端落库与后续开放更多项。
  */
-import { ref, reactive, computed, onMounted } from 'vue';
+import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import {
   NButton,
@@ -458,11 +600,13 @@ import {
   NInput,
   NSpace,
   NRadio,
+  NRadioButton,
   NRadioGroup,
   NUpload,
   NAlert,
   NSwitch,
   NSelect,
+  NSpin,
   useMessage,
 } from 'naive-ui';
 import {
@@ -478,6 +622,14 @@ import {
   normalizeSkinStyleForForm,
 } from '../../api/skinLang';
 import { useSkinColorOptions } from '../../composables/useColorTheme';
+import {
+  buildClientPreviewUrl,
+  CLIENT_PREVIEW_LAYOUT_MESSAGE,
+  CLIENT_PREVIEW_READY_MESSAGE,
+  getClientPreviewHostLabel,
+  isClientLivePreviewEnabled,
+} from '#/utils/clientPreviewUrl';
+import { LIVE_PREVIEW_DEVICE } from '#/constants/livePreviewDevice';
 
 const MY_PAGE_STYLE_OPTIONS: { value: MyPageStyleId; label: string }[] = [
   { value: 'profile_v1', label: 'profile_v1' },
@@ -502,8 +654,248 @@ const currentSkinName = ref('');
 const selfPromotionEnabled = ref(false);
 const showEditModal = ref(false);
 const editingSkinName = ref('');
-const previewIframe = ref<HTMLIFrameElement>();
 const isEditMode = ref(false);
+/** Live mock preview tab: lobby shows ad/grandes; profile shows myPageStyle template */
+const previewTab = ref<'lobby' | 'profile'>('lobby');
+
+/** Real client iframe preview (same protocol as brand skin) */
+const clientLivePreviewAvailable = computed(() => isClientLivePreviewEnabled());
+const useRealClientPreview = ref(false);
+const livePreviewIframeRef = ref<HTMLIFrameElement | null>(null);
+const livePreviewUrl = ref('');
+const livePreviewIframeKey = ref(0);
+const iframePreviewLoading = ref(false);
+const iframePreviewReady = ref(false);
+const iframePreviewBlocked = ref(false);
+/** Client reported supportsLayoutPreview in ready message */
+const iframeSupportsLayoutPreview = ref(false);
+let iframePreviewTimeoutId: ReturnType<typeof setTimeout> | undefined;
+let layoutPostDebounceId: ReturnType<typeof setTimeout> | undefined;
+
+const previewHostLabel = computed(() => getClientPreviewHostLabel());
+
+/** Fit iPhone 13 Pro (390×844) into the right panel without letterboxing. */
+const PREVIEW_AVAIL_W = 340;
+const PREVIEW_AVAIL_H = 640;
+
+const previewLayout = computed(() => {
+  const frameW = LIVE_PREVIEW_DEVICE.width;
+  const frameH = LIVE_PREVIEW_DEVICE.height;
+  const scaleW = PREVIEW_AVAIL_W / frameW;
+  const scaleH = PREVIEW_AVAIL_H / frameH;
+  const rawScale = Math.min(scaleW, scaleH, 1);
+  const scaledW = Math.floor(frameW * rawScale);
+  const scaledH = Math.floor(frameH * rawScale);
+  const scale = scaledW / frameW;
+  return { scale, scaledW, scaledH, frameW, frameH };
+});
+
+const previewScalerStyle = computed(() => {
+  const { scaledW, scaledH } = previewLayout.value;
+  return {
+    width: `${scaledW}px`,
+    height: `${scaledH}px`,
+    flexShrink: 0,
+  };
+});
+
+const deviceFrameStyle = computed(() => {
+  const { scale, frameW, frameH } = previewLayout.value;
+  return {
+    width: `${frameW}px`,
+    height: `${frameH}px`,
+    transform: `scale(${scale})`,
+    transformOrigin: 'top left',
+  };
+});
+
+/** Transform on the iframe so its layout viewport stays 390×844 (mobile). */
+const liveIframeStyle = computed(() => {
+  const { scale, frameW, frameH } = previewLayout.value;
+  return {
+    width: `${frameW}px`,
+    height: `${frameH}px`,
+    transform: `scale(${scale})`,
+    transformOrigin: 'top left',
+    border: '0',
+    display: 'block',
+    background: '#0e131b',
+  };
+});
+
+const previewQuickNavItems = computed(() => [
+  {
+    icon: '🎁',
+    label: $t('operations.layout.promotion'),
+    gradient: 'linear-gradient(145deg, #e879f9 0%, #a855f7 100%)',
+  },
+  {
+    icon: '💰',
+    label: $t('operations.layout.deposit'),
+    gradient: 'linear-gradient(145deg, #fb923c 0%, #fbbf24 100%)',
+  },
+  {
+    icon: '👥',
+    label: $t('operations.layout.agent'),
+    gradient: 'linear-gradient(145deg, #38bdf8 0%, #6366f1 100%)',
+  },
+  {
+    icon: '👤',
+    label: $t('operations.layout.profile'),
+    gradient: 'linear-gradient(145deg, #f472b6 0%, #a78bfa 100%)',
+  },
+]);
+
+function clearIframePreviewTimeout() {
+  if (iframePreviewTimeoutId !== undefined) {
+    clearTimeout(iframePreviewTimeoutId);
+    iframePreviewTimeoutId = undefined;
+  }
+}
+
+function buildLayoutPreviewParams() {
+  return {
+    skinTemplate: layoutSkinKey.value || 'comprehensive_v1',
+    brandCode: selectedBrandCode.value || undefined,
+    topNavAdEnabled: layoutConfig.topNavAdEnabled,
+    grandesPremiosEnabled: layoutConfig.grandesPremiosEnabled,
+    myPageStyle: layoutConfig.myPageStyle,
+    previewPage:
+      previewTab.value === 'profile'
+        ? ('profile' as const)
+        : ('home' as const),
+  };
+}
+
+function syncLivePreviewUrl() {
+  if (!useRealClientPreview.value) {
+    livePreviewUrl.value = '';
+    return;
+  }
+  livePreviewUrl.value = buildClientPreviewUrl(
+    buildLayoutPreviewParams(),
+    Date.now(),
+  );
+}
+
+function refreshLivePreview() {
+  if (!useRealClientPreview.value) return;
+  iframePreviewLoading.value = true;
+  iframePreviewReady.value = false;
+  iframePreviewBlocked.value = false;
+  clearIframePreviewTimeout();
+  syncLivePreviewUrl();
+  livePreviewIframeKey.value += 1;
+}
+
+function postLayoutToIframe() {
+  if (!useRealClientPreview.value || iframePreviewBlocked.value) return;
+  const win = livePreviewIframeRef.value?.contentWindow;
+  if (!win) return;
+  win.postMessage(
+    {
+      type: CLIENT_PREVIEW_LAYOUT_MESSAGE,
+      layout: {
+        topNavAdEnabled: layoutConfig.topNavAdEnabled,
+        grandesPremiosEnabled: layoutConfig.grandesPremiosEnabled,
+        myPageStyle: layoutConfig.myPageStyle,
+        previewPage: previewTab.value === 'profile' ? 'profile' : 'home',
+      },
+    },
+    '*',
+  );
+}
+
+/** Prefer live postMessage; reload iframe only when the client lacks the layout channel. */
+function scheduleLayoutPreviewSync() {
+  if (!useRealClientPreview.value) return;
+  if (layoutPostDebounceId !== undefined) clearTimeout(layoutPostDebounceId);
+  layoutPostDebounceId = setTimeout(() => {
+    layoutPostDebounceId = undefined;
+    // Solid path: postMessage only (no full lobby reload / init).
+    if (iframeSupportsLayoutPreview.value && iframePreviewReady.value) {
+      postLayoutToIframe();
+      return;
+    }
+    if (iframePreviewReady.value) {
+      postLayoutToIframe();
+    }
+    // Old / staging clients without supportsLayoutPreview: bake flags into URL.
+    refreshLivePreview();
+  }, 180);
+}
+
+function onRealClientPreviewToggle(value: boolean) {
+  useRealClientPreview.value = value;
+  if (value) {
+    iframeSupportsLayoutPreview.value = false;
+    refreshLivePreview();
+  } else {
+    clearIframePreviewTimeout();
+    iframePreviewLoading.value = false;
+    iframePreviewReady.value = false;
+    iframePreviewBlocked.value = false;
+    iframeSupportsLayoutPreview.value = false;
+    livePreviewUrl.value = '';
+  }
+}
+
+function handleLivePreviewReadyMessage(event: MessageEvent) {
+  if (event.data?.type !== CLIENT_PREVIEW_READY_MESSAGE) return;
+  iframePreviewReady.value = true;
+  iframePreviewBlocked.value = false;
+  iframePreviewLoading.value = false;
+  iframeSupportsLayoutPreview.value =
+    event.data?.supportsLayoutPreview === true;
+  clearIframePreviewTimeout();
+  postLayoutToIframe();
+}
+
+function handleLivePreviewLoad() {
+  iframePreviewLoading.value = false;
+  if (iframePreviewReady.value) {
+    iframePreviewBlocked.value = false;
+    postLayoutToIframe();
+    return;
+  }
+  clearIframePreviewTimeout();
+  iframePreviewTimeoutId = setTimeout(() => {
+    if (!iframePreviewReady.value) {
+      iframePreviewBlocked.value = true;
+      iframePreviewLoading.value = false;
+    }
+  }, 8000);
+}
+
+function focusLobbyPreview() {
+  previewTab.value = 'lobby';
+  scheduleLayoutPreviewSync();
+}
+
+function focusProfilePreview() {
+  previewTab.value = 'profile';
+  scheduleLayoutPreviewSync();
+}
+
+function onPreviewTabChange(value: string | number) {
+  previewTab.value = value === 'profile' ? 'profile' : 'lobby';
+  scheduleLayoutPreviewSync();
+}
+
+function onTopNavAdToggle(value: boolean) {
+  layoutConfig.topNavAdEnabled = value;
+  focusLobbyPreview();
+}
+
+function onGrandesPremiosToggle(value: boolean) {
+  layoutConfig.grandesPremiosEnabled = value;
+  focusLobbyPreview();
+}
+
+function onMyPageStyleChange(value: string | number | boolean | null) {
+  layoutConfig.myPageStyle = normalizeMyPageStyle(String(value ?? ''));
+  focusProfilePreview();
+}
 
 // Button configuration state
 const isButtonEditMode = ref(false);
@@ -552,6 +944,7 @@ const layoutConfig = reactive({
   sideMenuStyle: 'default',
   noWalletGuideEnabled: false,
   topNavAdEnabled: true,
+  grandesPremiosEnabled: true,
 });
 
 /** 切换品牌且无历史版式行时重置表单，避免沿用上一品牌的草稿 */
@@ -572,6 +965,7 @@ function resetLayoutDraftForNewBrand() {
     sideMenuStyle: 'default',
     noWalletGuideEnabled: false,
     topNavAdEnabled: true,
+    grandesPremiosEnabled: true,
   });
   currentSkinName.value = 'Rollex';
   selfPromotionEnabled.value = false;
@@ -626,9 +1020,6 @@ const availableIcons = ref<
 // Backup for cancel functionality
 const originalLayoutConfig = ref({});
 const originalButtonConfig = ref({});
-
-// Preview URL (can be set to actual preview endpoint when available)
-const previewUrl = ref('https://sevenki.118br.com/');
 
 // Brand skin information（含 skinTemplate 用于版式能力判断）
 const brandSkinInfo = ref<{
@@ -709,22 +1100,11 @@ const saveConfig = async () => {
   try {
     console.log('🔄 saveConfig called - starting save process...');
     await saveLayoutConfig();
-    updatePreview();
     console.log('✅ saveConfig completed successfully');
   } catch (error) {
     console.error('❌ Error saving config:', error);
     message.error($t('operations.layout.saveFailedRetry'));
   }
-};
-
-const handleIframeLoad = () => {
-  console.log('Preview iframe loaded');
-};
-
-const updatePreview = () => {
-  // This function would normally send updates to the preview iframe
-  // For now, it's just updating the reactive data that controls the fallback preview
-  console.log('Updating preview with current settings');
 };
 
 // Button configuration methods
@@ -797,9 +1177,6 @@ const confirmIconSelection = () => {
   }
   iconSelectorShow.value = false;
   showValidationError.value = false;
-
-  // Update preview in real-time
-  updatePreview();
 };
 
 const getIconDisplay = (iconKey: string) => {
@@ -834,16 +1211,6 @@ const validateButtonConfig = () => {
   return beforeLoginValid && afterLoginValid;
 };
 
-const generatePreview = () => {
-  updatePreview();
-  const base = previewUrl.value;
-  if (previewIframe.value && base) {
-    const sep = base.includes('?') ? '&' : '?';
-    previewIframe.value.src = `${base}${sep}_pv=${Date.now()}`;
-  }
-  message.success($t('operations.layout.previewRefreshed'));
-};
-
 const saveButtonConfig = async () => {
   if (!validateButtonConfig()) {
     showValidationError.value = true;
@@ -854,7 +1221,6 @@ const saveButtonConfig = async () => {
   try {
     await saveLayoutConfig();
     showValidationError.value = false;
-    updatePreview();
   } catch (error) {
     console.error('Error saving button config:', error);
     message.error($t('operations.layout.saveFailedRetry'));
@@ -1114,6 +1480,7 @@ const loadExistingConfig = async () => {
         sideMenuStyle: existingConfig.sideMenuStyle || 'default',
         noWalletGuideEnabled: existingConfig.noWalletGuideEnabled ?? false,
         topNavAdEnabled: existingConfig.topNavAdEnabled ?? true,
+        grandesPremiosEnabled: existingConfig.grandesPremiosEnabled ?? true,
       });
 
       // Update button configuration if available
@@ -1227,6 +1594,7 @@ const saveLayoutConfig = async () => {
         sideMenuStyle: layoutConfig.sideMenuStyle,
         noWalletGuideEnabled: layoutConfig.noWalletGuideEnabled,
         topNavAdEnabled: layoutConfig.topNavAdEnabled,
+        grandesPremiosEnabled: layoutConfig.grandesPremiosEnabled,
         selfPromotionEnabled: selfPromotionEnabled.value,
         ...(bc ? { brandCode: bc } : {}),
       },
@@ -1296,11 +1664,39 @@ const saveLayoutConfig = async () => {
 // Initialize data on component mount
 onMounted(async () => {
   console.log('🚀 LayoutDesign component mounted');
+  window.addEventListener('message', handleLivePreviewReadyMessage);
   await loadBrandSkinScope();
   await Promise.all([loadAvailableIcons(), loadExistingConfig()]);
   await loadBrandSkinConfig(selectedBrandCode.value ?? undefined);
   console.log(' All configuration data loaded, ready for user interaction');
 });
+
+onUnmounted(() => {
+  window.removeEventListener('message', handleLivePreviewReadyMessage);
+  clearIframePreviewTimeout();
+  if (layoutPostDebounceId !== undefined) clearTimeout(layoutPostDebounceId);
+});
+
+watch(
+  () => [
+    layoutConfig.topNavAdEnabled,
+    layoutConfig.grandesPremiosEnabled,
+    layoutConfig.myPageStyle,
+    previewTab.value,
+  ],
+  () => {
+    scheduleLayoutPreviewSync();
+  },
+);
+
+watch(
+  () => [selectedBrandCode.value, layoutSkinKey.value, useRealClientPreview.value],
+  () => {
+    if (useRealClientPreview.value) {
+      refreshLivePreview();
+    }
+  },
+);
 
 const currentMyPageTemplateUrl = computed(
   () => MY_PAGE_STYLE_TEMPLATE_IMAGE[layoutConfig.myPageStyle],
@@ -1331,12 +1727,108 @@ const myPageStyleDisplayName = computed(() => {
   color: #2563eb;
 }
 
-/* Mobile frame styling */
-.mobile-frame {
-  background: linear-gradient(145deg, #1f1f1f, #2c2c2c);
+.preview-container {
+  width: 100%;
+  min-height: 0;
+}
+
+.phone-bezel {
+  display: inline-block;
+  padding: 10px;
+  border-radius: 28px;
+  background: linear-gradient(160deg, #3a3a3a 0%, #1a1a1a 45%, #0d0d0d 100%);
   box-shadow:
-    0 20px 40px rgba(0, 0, 0, 0.3),
-    inset 0 2px 4px rgba(255, 255, 255, 0.1);
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 18px 40px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.device-frame-scaler {
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  line-height: 0;
+  border-radius: 18px;
+  background: #0e131b;
+}
+
+.device-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  background: #0e131b;
+  border-radius: 18px;
+  will-change: transform;
+}
+
+.preview-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: #0e131b;
+}
+
+.preview-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(14, 19, 27, 0.92);
+  font-size: 12px;
+  color: #e2e8f0;
+}
+
+.schematic-screen {
+  width: 100%;
+  height: 100%;
+}
+
+.schematic-blocked-banner {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 20;
+  border-bottom: 1px solid rgba(245, 158, 11, 0.4);
+  background: rgba(69, 26, 3, 0.95);
+  padding: 6px 8px;
+  text-align: center;
+  font-size: 10px;
+  color: #fef3c7;
+}
+
+.preview-fade-enter-active,
+.preview-fade-leave-active {
+  transition:
+    opacity 0.25s ease,
+    max-height 0.25s ease,
+    margin 0.25s ease,
+    padding 0.25s ease;
+  overflow: hidden;
+}
+
+.preview-fade-enter-from,
+.preview-fade-leave-to {
+  opacity: 0;
+  max-height: 0;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.preview-fade-enter-to,
+.preview-fade-leave-from {
+  opacity: 1;
+  max-height: 160px;
 }
 
 /* Scrollbar styling for preview content */
@@ -1351,10 +1843,5 @@ const myPageStyleDisplayName = computed(() => {
 .overflow-y-auto::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.2);
   border-radius: 1px;
-}
-
-/* Animation for toggle changes */
-.transition-all {
-  transition: all 0.3s ease;
 }
 </style>

@@ -21,24 +21,33 @@ export default defineConfig(async (config?: ConfigEnv) => {
         reportCompressedSize: false, 
         rollupOptions: {
           output: {
-            // ✅ 核心优化：解决文件碎片导致的 18s 排队问题
+            // Keep vendor chunks merged to avoid HTTP queueing; let Vite
+            // split views by dynamic import so login does not download all pages.
             manualChunks(id: string) {
               if (id.includes('node_modules')) {
-                // 将核心 UI 库合并，减少请求数
-                if (id.includes('ant-design-vue') || id.includes('@ant-design') || 
-                    id.includes('naive-ui') || id.includes('@vicons')) {
+                if (
+                  id.includes('ant-design-vue') ||
+                  id.includes('@ant-design') ||
+                  id.includes('naive-ui') ||
+                  id.includes('@vicons')
+                ) {
                   return 'vendor-ui';
                 }
-                // 将其他稳定的第三方库打包在一起
                 return 'vendor-libs';
               }
-              // ✅ 关键：将所有业务视图合并为一个大 Chunk
-              // 这样浏览器只需下载一个文件，而不是 50 个 1KB 的小文件，彻底解决 Queueing
-              if (id.includes('src/views/')) {
-                return 'pages-combined';
+              // Group view modules by top-level feature folder (smaller than
+              // one pages-combined blob, still fewer requests than per-file).
+              const viewsMatch = id.match(/[\\/]src[\\/]views[\\/]([^\\/]+)/);
+              if (viewsMatch?.[1]) {
+                const folder = viewsMatch[1];
+                if (folder === '_core') return 'pages-core';
+                return `pages-${folder}`;
               }
-              // 合并工具函数和核心逻辑
-              if (id.includes('src/api/') || id.includes('src/utils/') || id.includes('src/store/')) {
+              if (
+                id.includes('src/api/') ||
+                id.includes('src/utils/') ||
+                id.includes('src/store/')
+              ) {
                 return 'core-logic';
               }
             },

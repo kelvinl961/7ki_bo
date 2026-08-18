@@ -1185,3 +1185,71 @@ export async function getUserWalletTransactionsApi(
     cacheSource: response.cacheSource,
   };
 }
+
+/** Active game session + stuck balance preview for BO 人工拉回 */
+export interface GameWalletStatusData {
+  userId: number;
+  mainAvailableBalance: number;
+  totalSessionBalance: number;
+  stuckInGameBalance: number;
+  hasActiveSession: boolean;
+  canPullBack: boolean;
+  needsProviderRecall: boolean;
+  recommendedAction: 'pull_back' | 'provider_recall' | 'none';
+  activeSessions: Array<{
+    id: string;
+    gameProvider: string;
+    gameId: string | null;
+    status: string;
+    sessionBalance: number;
+    initialBalance: number;
+    totalBets: number;
+    totalWins: number;
+    sessionStart: string | Date | null;
+  }>;
+  vendorBalances: Array<{ vendor: string; balance: number }>;
+}
+
+export interface PullBackGameWalletResult {
+  userId: number;
+  adminId: number;
+  reason: string;
+  endedCount: number;
+  kicked: boolean;
+  needsProviderRecall: boolean;
+  walletBefore: { availableBalance: number; frozenBalance?: number };
+  walletAfter: { availableBalance: number; frozenBalance?: number };
+  sessions: Array<{
+    id: string;
+    gameProvider: string;
+    gameId: string | null;
+    status: string;
+    sessionBalance: number;
+  }>;
+}
+
+/**
+ * GET /api/admin/users/:userId/game-wallet-status
+ * Preview before 人工拉回 confirm.
+ */
+export async function getGameWalletStatusApi(userId: number) {
+  return requestClient.get<{
+    success: boolean;
+    data: GameWalletStatusData;
+  }>(`/admin/users/${userId}/game-wallet-status`);
+}
+
+/**
+ * POST /api/admin/users/:userId/pull-back-game-wallet
+ * Execute 人工拉回 after preview confirm.
+ */
+export async function pullBackGameWalletApi(
+  userId: number,
+  body: { reason: string; gameProvider?: string },
+) {
+  return requestClient.post<{
+    success: boolean;
+    data: PullBackGameWalletResult;
+    message?: string;
+  }>(`/admin/users/${userId}/pull-back-game-wallet`, body);
+}

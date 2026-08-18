@@ -227,7 +227,6 @@ const activityTypeOptions: SelectOption[] = [
   { label: $t('activity.detailModal.k7b7e'), value: 'checkin' },
   { label: $t('activity.rewardReport.k63a8'), value: 'promotion' },
   { label: $t('activity.detailModal.k5145'), value: 'recharge' },
-  { label: $t('activity.rewardReport.k5e78'), value: 'luckyspin' },
   { label: $t('activity.detailModal.k5e78'), value: 'luckywager' },
   { label: $t('activity.rewardReport.k7ea2'), value: 'redpacket' },
   { label: $t('activity.detailModal.k6295'), value: 'investment' },
@@ -235,6 +234,7 @@ const activityTypeOptions: SelectOption[] = [
   { label: $t('activity.detailModal.k96c6'), value: 'collect' },
   { label: $t('activity.detailModal.k7ade'), value: 'guessing' },
   { label: $t('activity.rewardReport.k65b02'), value: 'newbie' },
+  { label: $t('activity.detailModal.k81ea'), value: 'custom' },
 ];
 
 const statusOptions: SelectOption[] = [

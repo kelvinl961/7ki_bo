@@ -289,7 +289,7 @@
     "posHotBelow": "Below Hot",
     "posHomeTop": "Home Top",
     "posGameLobby": "Game Lobby",
-    "posProfile": "Profile",
+    "posProfile": "Profile Center",
     "targetGameLobby": "Game Lobby",
     "targetRecharge": "Recharge Page",
     "targetActivities": "Activities Page",
@@ -313,7 +313,6 @@
     "selectGamesToDelete": "Please select games to delete",
     "deletedGamesCount": "Successfully deleted {0} games",
     "statusUpdateSuccess": "Status updated successfully",
-    "statusUpdateFailed": "Status update failed",
     "invalidPlatform": "Invalid platform, please reselect",
     "clearedSelection": "Selection cleared",
     "selectedAll": "All selected",
@@ -383,8 +382,6 @@
     "prefixTotal": "Total {0}",
     "all": "All",
     "paginationTotal": "{0} records total",
-    "lastWeek": "Last Week",
-    "thisWeek": "This Week",
     "selectDateRange": "Please select date range",
     "loadSuccess": "Data loaded successfully",
     "fetchFailed": "Failed to fetch data",
@@ -588,7 +585,8 @@
     "selectPlatformsToDelete": "Please select platforms to delete",
     "deletedPlatformsCount": "Successfully deleted {0} platforms",
     "typeEsports": "Esports",
-    "typeSimulation": "Simulation"
+    "typeSimulation": "Simulation",
+    "logoColumn": "Logo"
   },
   "betRecordsExtra2": {
     "mergeDisplay": "Merge display:",
@@ -640,5 +638,35 @@
     "statsEmptyHint": "Tip: You must enter a member account or ID to query statistics",
     "memberCurrency": "Member Currency",
     "transactionCount": "Transaction Count"
+  },
+  "types": {
+    "VIDEO": "Video Games",
+    "LIVE": "Live Casino",
+    "SLOT": "Slots",
+    "LOTTERY": "Lottery",
+    "SPORTS": "Sports",
+    "ESPORTS": "Esports",
+    "HUNTING": "Fishing",
+    "FISHING": "Fishing",
+    "CHESS_CARDS": "Chess & Cards",
+    "CHESS": "Chess & Cards",
+    "ARCADE": "Arcade",
+    "COCKFIGHT": "Cockfight",
+    "BLOCKCHAIN": "Blockchain",
+    "SIMULATION": "Simulation",
+    "OTHER": "Other"
+  },
+  "categories": {
+    "arcade": "Arcade",
+    "slot": "Slots",
+    "fishing": "Fishing",
+    "sports": "Sports",
+    "live": "Live Casino",
+    "blockchain": "Blockchain",
+    "card": "Cards",
+    "lottery": "Lottery",
+    "SLOT": "Slots",
+    "LIVE": "Live Casino",
+    "BLOCKCHAIN": "Blockchain"
   }
 }

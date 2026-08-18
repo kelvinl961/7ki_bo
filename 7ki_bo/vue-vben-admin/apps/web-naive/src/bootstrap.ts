@@ -17,11 +17,8 @@ import App from './app.vue';
 import { router } from './router';
 
 async function bootstrap(namespace: string) {
-  // 初始化组件适配器
-  await initComponentAdapter();
-
-  // 初始化表单组件
-  await initSetupVbenForm();
+  // Parallelize independent adapters so first paint is not blocked sequentially
+  await Promise.all([initComponentAdapter(), initSetupVbenForm()]);
 
   // // 设置弹窗的默认配置
   // setDefaultModalProps({

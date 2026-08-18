@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 
 import { Settings } from '@vben/icons';
-import { $t, loadLocaleMessages } from '@vben/locales';
+import { $t, changeAppLocale } from '@vben/locales';
 import { preferences, updatePreferences } from '@vben/preferences';
 import { capitalizeFirstLetter } from '@vben/utils';
 
@@ -41,10 +41,12 @@ const listen = computed(() => {
         result[`update:${key}${capitalizeFirstLetter(subKey)}`] = (
           val: any,
         ) => {
-          updatePreferences({ [key]: { [subKey]: val } });
           if (key === 'app' && subKey === 'locale') {
-            loadLocaleMessages(val);
+            // Locale switcher persists preferences and reloads the app
+            void changeAppLocale(val);
+            return;
           }
+          updatePreferences({ [key]: { [subKey]: val } });
         };
       }
     } else {

@@ -363,6 +363,21 @@
             </n-timeline>
           </div>
         </n-tab-pane>
+        <n-tab-pane name="versions" tab="历史版本">
+          <div class="mb-2 text-xs text-gray-500">最近 30 次修改记录</div>
+          <n-spin :show="versionsLoading">
+            <n-empty v-if="!versionsLoading && versions.length === 0" description="暂无版本记录" />
+            <n-timeline v-else>
+              <n-timeline-item
+                v-for="v in versions"
+                :key="v.id"
+                type="info"
+                :title="`v${v.version}`"
+                :content="v.publishedAt ? formatDateTime(v.publishedAt) : `版本 ${v.version}`"
+              />
+            </n-timeline>
+          </n-spin>
+        </n-tab-pane>
       </n-tabs>
     </div>
 
@@ -381,12 +396,16 @@
 <script setup lang="ts">
 import { $t } from '@vben/locales';
 
-import { computed, watch } from 'vue';
+import { computed, watch, ref } from 'vue';
 import {
   NModal,
   NTabs,
   NTabPane,
   NDescriptions,
+  NSpin,
+  NTimeline,
+  NTimelineItem,
+  NEmpty,
   NDescriptionsItem,
   NTag,
   NProgress,
@@ -395,9 +414,6 @@ import {
   NImage,
   NCard,
   NStatistic,
-  NTimeline,
-  NTimelineItem,
-  NEmpty,
   NButton,
 } from 'naive-ui';
 import {
@@ -408,6 +424,7 @@ import {
   CheckmarkCircleOutline,
 } from '@vicons/ionicons5';
 import type { Activity } from '#/api/activity';
+import { getActivityVersions } from '#/api/activity';
 import { useActiveMemberTiers } from '#/composables/useActiveMemberTiers';
 import { formatActivityMemberParticipation } from '#/utils/activityMemberTier';
 

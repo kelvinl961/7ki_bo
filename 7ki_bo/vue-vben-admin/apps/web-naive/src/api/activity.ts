@@ -352,7 +352,7 @@ export async function getActivityStatistics(
  */
 export async function cloneActivity(
   id: number,
-  data: CloneActivityInput,
+  data: CloneActivityInput = {},
 ): Promise<Activity> {
   return requestClient.post(`/activities/${id}/clone`, data);
 }
@@ -364,6 +364,93 @@ export async function batchUpdateActivities(
   data: BatchUpdateActivityInput,
 ): Promise<{ message: string; updatedCount: number }> {
   return requestClient.post('/activities/batch-update', data);
+}
+
+export async function publishActivity(id: number): Promise<Activity> {
+  return requestClient.post(`/activities/${id}/publish`);
+}
+
+export async function closeActivityDisplay(id: number): Promise<Activity> {
+  return requestClient.post(`/activities/${id}/close-display`);
+}
+
+export async function closeActivity(id: number): Promise<Activity> {
+  return requestClient.post(`/activities/${id}/close`);
+}
+
+export async function pinActivity(id: number): Promise<Activity> {
+  return requestClient.post(`/activities/${id}/pin`);
+}
+
+export async function getActivityVersions(id: number): Promise<{
+  success: boolean;
+  data: Array<{
+    id: string;
+    version: number;
+    payload: unknown;
+    publishedAt: string | null;
+    publishedBy: string | null;
+  }>;
+}> {
+  return requestClient.get(`/activities/${id}/versions`);
+}
+
+export async function batchCopyActivities(data: {
+  ids: number[];
+  currency?: string;
+}): Promise<{
+  success: boolean;
+  data: { created: Activity[]; failed: Array<{ id: number; error: string }> };
+}> {
+  return requestClient.post('/activities/batch-copy', data);
+}
+
+export async function batchUpdateActivityStatus(data: {
+  ids: number[];
+  status: string;
+}): Promise<{ success: boolean; updatedCount: number }> {
+  return requestClient.post('/activities/batch-status', data);
+}
+
+export interface ActivityCategoryItem {
+  id: string;
+  name: string;
+  iconUrl?: string;
+  sortOrder: number;
+  enabled: boolean;
+  isSystem: boolean;
+}
+
+export async function getActivityCategories(): Promise<{
+  success: boolean;
+  data: ActivityCategoryItem[];
+}> {
+  return requestClient.get('/activity-categories');
+}
+
+export async function createActivityCategory(data: {
+  name: string;
+  iconUrl?: string;
+  sortOrder?: number;
+}): Promise<{ success: boolean; data: ActivityCategoryItem }> {
+  return requestClient.post('/activity-categories', data);
+}
+
+export async function updateActivityCategory(
+  id: string,
+  data: Partial<ActivityCategoryItem>,
+): Promise<{ success: boolean; data: ActivityCategoryItem }> {
+  return requestClient.put(`/activity-categories/${id}`, data);
+}
+
+export async function deleteActivityCategory(id: string): Promise<{ success: boolean }> {
+  return requestClient.delete(`/activity-categories/${id}`);
+}
+
+export async function reorderActivityCategories(
+  ids: string[],
+): Promise<{ success: boolean; data: ActivityCategoryItem[] }> {
+  return requestClient.post('/activity-categories/reorder', { ids });
 }
 
 /**

@@ -138,10 +138,35 @@ async function loadLocaleMessages(lang: SupportedLanguagesType) {
   return setI18nLanguage(lang);
 }
 
+type AppLocaleSwitcher = (locale: SupportedLanguagesType) => Promise<void>;
+
+let appLocaleSwitcher: AppLocaleSwitcher | undefined;
+
+/**
+ * App registers a full locale switcher (e.g. load all modules + reload).
+ * Package UI (header toggle, preferences) should call {@link changeAppLocale}.
+ */
+function registerAppLocaleSwitcher(fn: AppLocaleSwitcher) {
+  appLocaleSwitcher = fn;
+}
+
+/**
+ * Switch locale via the app handler when registered; otherwise load messages only.
+ */
+async function changeAppLocale(locale: SupportedLanguagesType) {
+  if (appLocaleSwitcher) {
+    await appLocaleSwitcher(locale);
+    return;
+  }
+  await loadLocaleMessages(locale);
+}
+
 export {
+  changeAppLocale,
   i18n,
   loadLocaleMessages,
   loadLocalesMap,
   loadLocalesMapFromDir,
+  registerAppLocaleSwitcher,
   setupI18n,
 };

@@ -253,25 +253,6 @@
         >
           {{ $t('demo.conditionalRtp.loadBackend') }}
         </n-button>
-        <n-button size="small" @click="handleTemplateA" :disabled="submitting">
-          {{ $t('demo.conditionalRtp.templateNoDeposit') }}
-        </n-button>
-        <n-button
-          size="small"
-          type="warning"
-          @click="handleTemplateB"
-          :disabled="submitting"
-        >
-          {{ $t('demo.conditionalRtp.templateDepositThreshold') }}
-        </n-button>
-        <n-button
-          size="small"
-          type="warning"
-          @click="handleTemplateC"
-          :disabled="submitting"
-        >
-          {{ $t('demo.conditionalRtp.templateLossThreshold') }}
-        </n-button>
         <n-button
           size="small"
           type="error"
@@ -423,7 +404,9 @@ const hgGameTypeOptions = [
   { label: '4 彩票游戏', value: 4 },
 ];
 
-const vendorOptions = ref<Array<{ label: string; value: RtpVendorId }>>([]);
+const vendorOptions = ref<
+  Array<{ label: string; value: RtpVendorId; disabled?: boolean }>
+>([]);
 
 const depositConditionOptions = [
   { label: '未入金（累计入金=0）', value: 'NO_DEPOSIT' },
@@ -527,10 +510,16 @@ const rtpOptionsEffective = computed(() => {
 });
 
 function onApplyVendorsChange(val: RtpVendorId[]) {
-  const allowed = new Set(vendorOptions.value.map((o) => o.value));
+  const allowed = new Set(
+    vendorOptions.value.filter((o) => !o.disabled).map((o) => o.value),
+  );
   let next = [...new Set(val.filter((v) => allowed.has(v)))].slice(0, 2);
   if (next.length === 0) {
-    next = [(vendorOptions.value[0]?.value ?? 'AG') as RtpVendorId];
+    const firstEnabled =
+      vendorOptions.value.find((o) => !o.disabled)?.value ??
+      vendorOptions.value[0]?.value ??
+      'AG';
+    next = [firstEnabled as RtpVendorId];
   }
   formData.applyVendors = next;
   if (!next.includes('HG')) formData.hgPlayerAction = 'setRtp';
@@ -1092,31 +1081,6 @@ const handleClearRules = () => {
   message.info('已清空全部规则');
 };
 
-const handleTemplateA = () => {
-  formData.ruleType = 'DEPOSIT_ONLY';
-  formData.depositCondition = 'NO_DEPOSIT';
-  formData.games = [...defaultGames];
-  formData.rtp = 94;
-  handleAddRule();
-};
-
-const handleTemplateB = () => {
-  formData.ruleType = 'DEPOSIT_ONLY';
-  formData.depositCondition = 'GTE_AMOUNT';
-  formData.depositMinAmount = 500;
-  formData.games = [...defaultGames];
-  formData.rtp = 20;
-  handleAddRule();
-};
-
-const handleTemplateC = () => {
-  formData.ruleType = 'LOSS_ONLY';
-  formData.lossMinAmount = 500;
-  formData.games = [...defaultGames];
-  formData.rtp = 20;
-  handleAddRule();
-};
-
 // developer mode removed
 
 const ruleColumns: DataTableColumns<Rule> = [
@@ -1263,21 +1227,35 @@ const ruleColumns: DataTableColumns<Rule> = [
 const loadRtpVendors = async () => {
   try {
     const { vendors } = await getMerchantRtpVendorsApi();
-    vendorOptions.value = vendors.map((v) => ({
-      label: v.label,
-      value: v.id as RtpVendorId,
-    }));
-    if (vendorOptions.value.length > 0) {
-      const allowed = new Set(vendorOptions.value.map((o) => o.value));
-      const next = formData.applyVendors.filter((v) => allowed.has(v));
-      formData.applyVendors =
-        next.length > 0 ? next : [vendorOptions.value[0]!.value];
+    const byId = new Map(
+      (vendors || []).map((v) => [String(v.id).toUpperCase(), v] as const),
+    );
+    const slots: RtpVendorId[] = ['AG', 'HG'];
+    vendorOptions.value = slots.map((id) => {
+      const row = byId.get(id);
+      const available = row?.available !== false;
+      return {
+        label: row?.label || id,
+        value: id,
+        disabled: !available,
+      };
+    });
+    const allowed = new Set(
+      vendorOptions.value.filter((o) => !o.disabled).map((o) => o.value),
+    );
+    const kept = formData.applyVendors.filter((v) => allowed.has(v));
+    if (kept.length > 0) {
+      formData.applyVendors = kept;
+    } else if (allowed.size > 0) {
+      formData.applyVendors = [...allowed].slice(0, 2) as RtpVendorId[];
+    } else {
+      formData.applyVendors = ['AG'];
     }
   } catch (e) {
     console.error('loadRtpVendors', e);
     vendorOptions.value = [
-      { label: 'AG', value: 'AG' },
-      { label: 'HG', value: 'HG' },
+      { label: 'AG 游戏平台', value: 'AG', disabled: false },
+      { label: 'HG 厂商', value: 'HG', disabled: false },
     ];
   }
 };

@@ -24,10 +24,36 @@
             v-model:value="formData.rtpVendor"
             :options="vendorOptions"
             :placeholder="$t('demo.merchantRtp.vendorPlaceholder')"
-            :disabled="vendorOptions.length === 0"
+            :disabled="vendorOptions.every((o) => o.disabled)"
             @update:value="onVendorChange"
           />
-          
+        </n-form-item>
+
+        <n-alert
+          v-if="vendorUnavailableReasons.length > 0"
+          type="warning"
+          class="mb-4"
+          :title="$t('demo.merchantRtp.vendorUnavailableTitle')"
+        >
+          <ul class="m-0 pl-4">
+            <li v-for="(r, i) in vendorUnavailableReasons" :key="i">{{ r }}</li>
+          </ul>
+        </n-alert>
+
+        <n-form-item
+          v-if="formData.rtpVendor === 'AG'"
+          :label="$t('demo.merchantRtp.subMerchantCode')"
+          path="subMerchantCode"
+        >
+          <n-input
+            v-model:value="formData.subMerchantCode"
+            clearable
+            :placeholder="$t('demo.merchantRtp.subMerchantCodePlaceholder')"
+            class="w-full max-w-md"
+          />
+          <template #feedback>
+            {{ $t('demo.merchantRtp.subMerchantCodeFeedback') }}
+          </template>
         </n-form-item>
 
         
@@ -128,14 +154,33 @@
           <n-space>
             <n-button
               type="primary"
-              :disabled="!formData.rtpVendor || vendorOptions.length === 0"
+              :disabled="!formData.rtpVendor || isCurrentVendorDisabled"
               @click="handleSubmit"
               :loading="submitting"
             >
               {{ $t('demo.merchantRtp.setRtp') }}
             </n-button>
+            <n-button
+              :disabled="!formData.rtpVendor || isCurrentVendorDisabled"
+              :loading="savingVendorTemplate"
+              @click="handleSaveMerchantTemplate"
+            >
+              {{ $t('demo.merchantRtp.saveVendorTemplate') }}
+            </n-button>
+            <n-button
+              :disabled="!formData.rtpVendor || !hasMerchantTemplate"
+              @click="handleApplyMerchantTemplate"
+            >
+              {{ $t('demo.merchantRtp.applyVendorTemplate') }}
+            </n-button>
             <n-button @click="handleReset"> {{ $t('common.reset') }} </n-button>
           </n-space>
+          <template #feedback>
+            <span v-if="merchantTemplateUpdatedAt">
+              {{ $t('demo.merchantRtp.vendorTemplateUpdatedAt', { time: merchantTemplateUpdatedAt }) }}
+            </span>
+            <span v-else>{{ $t('demo.merchantRtp.vendorTemplateEmpty') }}</span>
+          </template>
         </n-form-item>
       </n-form>
     </n-card>
@@ -168,13 +213,20 @@ import {
   NSpace,
   NDataTable,
   NButton,
+  NInput,
   NInputNumber,
   useMessage,
   type FormInst,
   type DataTableColumns,
 } from 'naive-ui';
 import { requestClient } from '#/api/request';
-import { searchGamesWithPagination } from '#/api/core/player-rtp';
+import {
+  searchGamesWithPagination,
+  getRtpVendorTemplatesApi,
+  putRtpVendorTemplatesApi,
+  type MerchantVendorTemplatePayload,
+  type RtpVendorTemplatesBlob,
+} from '#/api/core/player-rtp';
 import { getMerchantRtpVendorsApi } from '#/api/core/merchant-rtp';
 
 /** HG operator setRtp — UI capped at 97 (operator limit); must stay in sync with allowed submit values */
@@ -197,7 +249,7 @@ const currentPage = ref(1);
 const hasMoreGames = ref(true);
 const currentSearchQuery = ref('');
 
-const vendorOptions = ref<Array<{ label: string; value: string }>>([]);
+const vendorOptions = ref<Array<{ label: string; value: string; disabled?: boolean }>>([]);
 /** Enabled platforms from API (isEnabled=true), for reference */
 const enabledPlatforms = ref<
   Array<{
@@ -207,16 +259,51 @@ const enabledPlatforms = ref<
     apiConfigured: boolean;
   }>
 >([]);
+const vendorAvailability = ref<Record<string, { available: boolean; reason: string | null }>>({
+  AG: { available: true, reason: null },
+  HG: { available: true, reason: null },
+});
+const savedVendorTemplates = ref<RtpVendorTemplatesBlob>({
+  conditional: {},
+  merchant: {},
+});
+const savingVendorTemplate = ref(false);
 
 // Form data
 const formData = reactive({
   rtpVendor: null as string | null,
+  subMerchantCode: '' as string,
   gamePattern: 1 as number,
   gameType: 0 as number,
   maxMultiple: null as number | null,
   maxWinPoints: null as number | null,
   Rtp: null as number | null,
   GameId: ['ALL'] as string[],
+});
+
+const vendorUnavailableReasons = computed(() =>
+  ['AG', 'HG']
+    .filter((id) => vendorAvailability.value[id]?.available === false)
+    .map((id) => vendorAvailability.value[id]?.reason || `${id} unavailable`),
+);
+
+const isCurrentVendorDisabled = computed(() => {
+  const v = formData.rtpVendor;
+  if (!v) return true;
+  return vendorAvailability.value[v]?.available === false;
+});
+
+const hasMerchantTemplate = computed(() => {
+  const v = formData.rtpVendor as 'AG' | 'HG' | null;
+  return !!(v && savedVendorTemplates.value.merchant?.[v]);
+});
+
+const merchantTemplateUpdatedAt = computed(() => {
+  const v = formData.rtpVendor as 'AG' | 'HG' | null;
+  if (!v) return '';
+  return savedVendorTemplates.value.merchant?.[v]?.updatedAt
+    ? String(savedVendorTemplates.value.merchant[v]!.updatedAt)
+    : '';
 });
 
 // RTP options (Max 97 - Operator Permission Limit)
@@ -493,6 +580,10 @@ const handleSubmit = async () => {
         Rtp: formData.Rtp!,
         GameId: gameIds,
       };
+      const sub = formData.subMerchantCode?.trim();
+      if (sub) {
+        requestData.subMerchantCode = sub;
+      }
       response = await requestClient.post('/v1/operator/setRtp', requestData);
     }
 
@@ -524,6 +615,7 @@ const handleSubmit = async () => {
 
 const handleReset = () => {
   formData.rtpVendor = vendorOptions.value[0]?.value ?? null;
+  formData.subMerchantCode = '';
   formData.gamePattern = 1;
   formData.gameType = 0;
   formData.maxMultiple = null;
@@ -782,24 +874,121 @@ const loadRtpVendors = async () => {
       rtpIntegration: p.rtpIntegration,
       apiConfigured: p.apiConfigured,
     }));
-    vendorOptions.value = vendors.map((v) => ({ label: v.label, value: v.id }));
-    if (!formData.rtpVendor && vendorOptions.value.length > 0) {
-      formData.rtpVendor = vendorOptions.value[0]!.value;
+    const byId = new Map(
+      (vendors || []).map((v) => [String(v.id).toUpperCase(), v] as const),
+    );
+    vendorOptions.value = (['AG', 'HG'] as const).map((id) => {
+      const row = byId.get(id);
+      const available = row?.available !== false;
+      vendorAvailability.value[id] = {
+        available,
+        reason: row?.reason ?? (available ? null : `${id} unavailable`),
+      };
+      return {
+        label: row?.label || id,
+        value: id,
+        disabled: !available,
+      };
+    });
+    const firstEnabled = vendorOptions.value.find((v) => !v.disabled);
+    if (!formData.rtpVendor || vendorOptions.value.find((v) => v.value === formData.rtpVendor)?.disabled) {
+      formData.rtpVendor = firstEnabled?.value ?? null;
     }
-    if (vendorOptions.value.length === 0) {
-      message.warning(
-        '无可用商户 RTP 渠道：需存在 isEnabled=true 且 platformId 为 AG/AG_* 或 HG/HG_* 的平台，并已配置对应 API',
-      );
+    if (!firstEnabled) {
+      message.warning($t('demo.merchantRtp.noVendorsConfigured'));
     }
   } catch (e) {
     console.error('loadRtpVendors', e);
     message.error('加载厂商列表失败');
+    vendorOptions.value = [
+      { label: 'AG 游戏平台', value: 'AG', disabled: false },
+      { label: 'HG 厂商', value: 'HG', disabled: false },
+    ];
   }
+};
+
+const loadVendorTemplates = async () => {
+  try {
+    const res = await getRtpVendorTemplatesApi();
+    if (res?.code === 0 && res.data?.templates) {
+      savedVendorTemplates.value = {
+        conditional: res.data.templates.conditional ?? {},
+        merchant: res.data.templates.merchant ?? {},
+      };
+    }
+  } catch (e) {
+    console.error('loadVendorTemplates', e);
+  }
+};
+
+const handleSaveMerchantTemplate = async () => {
+  const vendor = formData.rtpVendor as 'AG' | 'HG' | null;
+  if (!vendor || isCurrentVendorDisabled.value) {
+    message.warning($t('demo.merchantRtp.vendorTemplateUnavailable'));
+    return;
+  }
+  if (formData.Rtp == null) {
+    message.warning($t('demo.merchantRtp.selectRtp'));
+    return;
+  }
+  const payload: MerchantVendorTemplatePayload = {
+    rtp: formData.Rtp,
+    GameId: [...formData.GameId],
+  };
+  if (vendor === 'AG') {
+    const sub = formData.subMerchantCode?.trim();
+    if (sub) payload.subMerchantCode = sub;
+  } else {
+    payload.gamePattern = formData.gamePattern;
+    payload.gameType = formData.gameType;
+    payload.maxMultiple = formData.maxMultiple;
+    payload.maxWinPoints = formData.maxWinPoints;
+  }
+  savingVendorTemplate.value = true;
+  try {
+    const res = await putRtpVendorTemplatesApi({
+      merchant: { [vendor]: payload },
+    });
+    if (res?.code !== 0) {
+      message.error(res?.error || $t('demo.merchantRtp.vendorTemplateSaveFailed'));
+      return;
+    }
+    savedVendorTemplates.value = res.data?.templates ?? savedVendorTemplates.value;
+    message.success($t('demo.merchantRtp.vendorTemplateSaved', { vendor }));
+  } catch (e: any) {
+    message.error(e?.message || $t('demo.merchantRtp.vendorTemplateSaveFailed'));
+  } finally {
+    savingVendorTemplate.value = false;
+  }
+};
+
+const handleApplyMerchantTemplate = () => {
+  const vendor = formData.rtpVendor as 'AG' | 'HG' | null;
+  if (!vendor) return;
+  const t = savedVendorTemplates.value.merchant?.[vendor];
+  if (!t) {
+    message.warning($t('demo.merchantRtp.vendorTemplateEmpty'));
+    return;
+  }
+  formData.Rtp = t.rtp;
+  formData.GameId =
+    Array.isArray(t.GameId) && t.GameId.length > 0 ? [...t.GameId] : ['ALL'];
+  if (vendor === 'AG') {
+    formData.subMerchantCode = t.subMerchantCode ?? '';
+  } else {
+    if (t.gamePattern != null) formData.gamePattern = Number(t.gamePattern);
+    if (t.gameType != null) formData.gameType = Number(t.gameType);
+    formData.maxMultiple = t.maxMultiple ?? null;
+    formData.maxWinPoints = t.maxWinPoints ?? null;
+  }
+  formRef.value?.restoreValidation();
+  message.success($t('demo.merchantRtp.vendorTemplateApplied', { vendor }));
 };
 
 // Initialize
 onMounted(async () => {
   await loadRtpVendors();
+  await loadVendorTemplates();
   loadInitialGames();
   await loadLastConfig();
   loadHistory();

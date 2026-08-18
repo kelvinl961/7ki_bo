@@ -167,7 +167,7 @@
     "k63a8": "Referral reward",
     "k8f6f": "软一刀",
     "k65b02": "new一刀",
-    "k76f8": "相Row榜",
+    "k76f8": "Leaderboard",
     "k672a4": "UnknownType",
     "android": "Android应用",
     "iOS": "iOS应用",
@@ -1381,7 +1381,7 @@
     "referral": "Referral reward",
     "soft": "软一刀",
     "new": "new一刀",
-    "ranking": "相Row榜",
+    "ranking": "Leaderboard",
     "custom": "Custom"
   },
   "statuses": {

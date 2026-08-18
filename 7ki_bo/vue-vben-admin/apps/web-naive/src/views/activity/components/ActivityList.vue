@@ -97,6 +97,30 @@
               <!-- 批量操作 -->
               <n-button
                 v-if="selectedCount > 0"
+                type="success"
+                size="small"
+                @click="handleBatchPublish(selectedRows)"
+              >
+                批量发布 ({{ selectedCount }})
+              </n-button>
+              <n-button
+                v-if="selectedCount > 0"
+                type="warning"
+                size="small"
+                @click="handleBatchClose(selectedRows)"
+              >
+                批量关闭 ({{ selectedCount }})
+              </n-button>
+              <n-button
+                v-if="selectedCount > 0"
+                type="info"
+                size="small"
+                @click="handleBatchCopy(selectedRows)"
+              >
+                批量复制 ({{ selectedCount }})
+              </n-button>
+              <n-button
+                v-if="selectedCount > 0"
                 type="error"
                 size="small"
                 @click="handleBatchDelete(selectedRows)"
@@ -181,6 +205,12 @@ import {
   bulkDeleteActivities,
   batchUpdateDisplayOrder,
   updateActivityStatus,
+  publishActivity,
+  closeActivityDisplay,
+  closeActivity,
+  pinActivity,
+  batchCopyActivities,
+  batchUpdateActivityStatus,
   type Activity,
   type ActivityListParams,
   ACTIVITY_STATUS_OPTIONS,
@@ -564,6 +594,75 @@ const columns = computed<DataTableColumns<Activity>>(() => [
               },
             ),
             h(
+              NTooltip,
+              {},
+              {
+                trigger: () =>
+                  h(
+                    NButton,
+                    {
+                      size: 'small',
+                      onClick: () => handlePin(row),
+                    },
+                    { default: () => '置顶' },
+                  ),
+                default: () => '置顶到第一位',
+              },
+            ),
+            h(
+              NTooltip,
+              {},
+              {
+                trigger: () =>
+                  h(
+                    NButton,
+                    {
+                      size: 'small',
+                      type: 'success',
+                      disabled: row.status === 'active',
+                      onClick: () => handlePublish(row),
+                    },
+                    { default: () => '发布' },
+                  ),
+                default: () => '发布活动',
+              },
+            ),
+            h(
+              NTooltip,
+              {},
+              {
+                trigger: () =>
+                  h(
+                    NButton,
+                    {
+                      size: 'small',
+                      type: 'warning',
+                      onClick: () => handleCloseDisplay(row),
+                    },
+                    { default: () => '关闭展示' },
+                  ),
+                default: () => '关闭客户端展示（活动可继续结算）',
+              },
+            ),
+            h(
+              NPopconfirm,
+              {
+                onPositiveClick: () => handleCloseActivity(row),
+              },
+              {
+                trigger: () =>
+                  h(
+                    NButton,
+                    {
+                      size: 'small',
+                      type: 'error',
+                    },
+                    { default: () => '关闭活动' },
+                  ),
+                default: () => '关闭后客户端不再展示且不可派发/领取奖励',
+              },
+            ),
+            h(
               NPopconfirm,
               {
                 onPositiveClick: () => handleStatusToggle(row),
@@ -748,6 +847,93 @@ const handleViewRecords = (item: Activity) => {
 const handleDistributeReward = (item: Activity) => {
   distributeActivity.value = item;
   showDistributeModal.value = true;
+};
+
+const handlePin = async (item: Activity) => {
+  try {
+    await pinActivity(item.id);
+    message.success('已置顶');
+    await fetchActivityList();
+  } catch (error) {
+    message.error(error instanceof Error ? error.message : '置顶失败');
+  }
+};
+
+const handlePublish = async (item: Activity) => {
+  try {
+    await publishActivity(item.id);
+    message.success('发布成功');
+    await fetchActivityList();
+  } catch (error) {
+    message.error(error instanceof Error ? error.message : '发布失败');
+  }
+};
+
+const handleCloseDisplay = async (item: Activity) => {
+  try {
+    await closeActivityDisplay(item.id);
+    message.success('已关闭展示');
+    await fetchActivityList();
+  } catch (error) {
+    message.error(error instanceof Error ? error.message : '关闭展示失败');
+  }
+};
+
+const handleCloseActivity = async (item: Activity) => {
+  try {
+    await closeActivity(item.id);
+    message.success('活动已关闭');
+    await fetchActivityList();
+  } catch (error) {
+    message.error(error instanceof Error ? error.message : '关闭活动失败');
+  }
+};
+
+const handleBatchPublish = async (selectedRows?: Activity[]) => {
+  const rows = selectedRows || [];
+  if (!rows.length) return;
+  try {
+    await batchUpdateActivityStatus({
+      ids: rows.map((r) => r.id),
+      status: 'active',
+    });
+    message.success('批量发布成功');
+    clearSelection();
+    await fetchActivityList();
+  } catch (error) {
+    message.error(error instanceof Error ? error.message : '批量发布失败');
+  }
+};
+
+const handleBatchClose = async (selectedRows?: Activity[]) => {
+  const rows = selectedRows || [];
+  if (!rows.length) return;
+  try {
+    await batchUpdateActivityStatus({
+      ids: rows.map((r) => r.id),
+      status: 'archived',
+    });
+    message.success('批量关闭成功');
+    clearSelection();
+    await fetchActivityList();
+  } catch (error) {
+    message.error(error instanceof Error ? error.message : '批量关闭失败');
+  }
+};
+
+const handleBatchCopy = async (selectedRows?: Activity[]) => {
+  const rows = selectedRows || [];
+  if (!rows.length) return;
+  try {
+    const res = await batchCopyActivities({ ids: rows.map((r) => r.id) });
+    const created = res.data?.created?.length ?? 0;
+    const failed = res.data?.failed?.length ?? 0;
+    message.success(`复制完成：成功 ${created}，失败 ${failed}`);
+    clearSelection();
+    await fetchActivityList();
+  } catch (error) {
+    message.error(error instanceof Error ? error.message : '批量复制失败');
+  }
 };
 
 const handleDelete = async (item: Activity) => {

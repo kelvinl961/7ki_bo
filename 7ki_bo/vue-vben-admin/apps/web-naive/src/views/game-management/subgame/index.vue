@@ -369,6 +369,7 @@
 
 <script lang="ts" setup>
 import { $t } from '@vben/locales';
+import { preferences } from '@vben/preferences';
 
 import {
   computed,
@@ -428,6 +429,13 @@ const ApiImportDialog = defineAsyncComponent(
   () => import('./ApiImportDialog.vue'),
 );
 import { getImageUrlByEnvironment } from '../../../utils/imageUtils';
+import {
+  getGameTypeFilterEnums,
+  getGameTypeLabel,
+  getGameTypeSelectOptions,
+  getLocalizedGameName,
+  normalizeGameTypeEnum,
+} from '#/utils/gameTypeI18n';
 
 
 const message = useMessage();
@@ -500,110 +508,10 @@ const currencyOptions = [
 ];
 
 
-const gameTypeMapping = {
-  
-  VIDEO: '电子游戏',
-  LIVE: '真人游戏',
-  SLOT: '电子游戏',
-  LOTTERY: '彩票游戏',
-  SPORTS: '体育游戏',
-  ESPORTS: '体育游戏',
-  HUNTING: '捕鱼游戏',
-  CHESS_CARDS: '棋牌游戏',
-  TABLE: '棋牌游戏',
-  ARCADE: '街机游戏',
-  SIMULATION: '电子游戏',
-  COCKFIGHT: '斗鸡游戏',
-  BLOCKCHAIN: '区块链游戏',
-  OTHER: '电子游戏',
-  
-  CHESS_CARD: '棋牌游戏', 
-  CHESS: '棋牌游戏',
-  CARDS: '棋牌游戏',
-} as const;
-
-
-const reverseGameTypeMapping = Object.entries(gameTypeMapping).reduce(
-  (acc, [enumValue, chinese]) => {
-    if (!acc[chinese]) {
-      acc[chinese] = [];
-    }
-    acc[chinese].push(enumValue);
-    return acc;
-  },
-  {} as Record<string, string[]>,
-);
-
-
-reverseGameTypeMapping['棋牌游戏'] = ['CHESS_CARDS', 'TABLE', 'CHESS_CARD'];
-reverseGameTypeMapping['棋牌'] = ['CHESS_CARDS', 'TABLE', 'CHESS_CARD'];
-
-
-console.log('Reverse Game Type Mapping:', reverseGameTypeMapping);
-
-
-const getEnglishGameTypesForFiltering = (chineseType: string) => {
-  const enumValues = reverseGameTypeMapping[chineseType];
-  if (enumValues && enumValues.length > 0) {
-    console.log(
-      `Game type conversion for filtering: ${chineseType} -> ${enumValues.join(', ')}`,
-    );
-    return enumValues;
-  }
-  
-  return [chineseType];
-};
-
-
-const getEnglishGameTypes = (chineseType: string) => {
-  const enumValues = reverseGameTypeMapping[chineseType];
-  if (enumValues && enumValues.length > 0) {
-    
-    const result = enumValues[0];
-    console.log(`Game type conversion for form: ${chineseType} -> ${result}`);
-    return result;
-  }
-  
-  return chineseType;
-};
-
-const gameTypeOptions = [
-  { label: $t('game.subgame.typeVideo'), value: '电子游戏' },
-  { label: $t('game.subgame.typeLive'), value: '真人游戏' },
-  { label: $t('game.subgame.typeSports'), value: '体育游戏' },
-  { label: $t('game.subgame.typeLottery'), value: '彩票游戏' },
-  { label: $t('game.subgame.typeHunting'), value: '捕鱼游戏' },
-  { label: $t('game.subgame.typeChess'), value: '棋牌游戏' },
-  { label: $t('game.subgame.typeChessShort'), value: '棋牌' },
-  { label: $t('game.subgame.typeArcade'), value: '街机游戏' },
-  { label: $t('game.subgame.typeCockfight'), value: '斗鸡游戏' },
-  { label: $t('game.subgame.typeBlockchain'), value: '区块链游戏' },
-];
-
-
-const gameTypeFilterOptions = [
-  { label: $t('game.subgame.typeVideo'), value: '电子游戏' },
-  { label: $t('game.subgame.typeLive'), value: '真人游戏' },
-  { label: $t('game.subgame.typeSports'), value: '体育游戏' },
-  { label: $t('game.subgame.typeLottery'), value: '彩票游戏' },
-  { label: $t('game.subgame.typeHunting'), value: '捕鱼游戏' },
-  { label: $t('game.subgame.typeChess'), value: '棋牌游戏' },
-  { label: $t('game.subgame.typeChessShort'), value: '棋牌' },
-  { label: $t('game.subgame.typeArcade'), value: '街机游戏' },
-  { label: $t('game.subgame.typeCockfight'), value: '斗鸡游戏' },
-  { label: $t('game.subgame.typeBlockchain'), value: '区块链游戏' },
-];
-
+const gameTypeOptions = getGameTypeSelectOptions();
+const gameTypeFilterOptions = getGameTypeSelectOptions();
 
 const vendorOptions = ref<Array<{ label: string; value: string }>>([]);
-
-
-const getChineseGameType = (englishType: string | null | undefined) => {
-  if (!englishType) return '-';
-  return (
-    gameTypeMapping[englishType as keyof typeof gameTypeMapping] || englishType
-  );
-};
 
 const statusOptions = [
   { label: $t('common.enabled'), value: 'true', type: 'option' },
@@ -694,13 +602,20 @@ const columns: DataTableColumns<GameItem> = [
     key: 'gameName',
     width: 180,
     render(row) {
+      const primary = getLocalizedGameName(row);
+      const secondary =
+        preferences.app.locale === 'zh-CN'
+          ? row.gameNameEn
+          : row.gameName && row.gameName !== primary
+            ? row.gameName
+            : '';
       return h('div', [
-        h('div', { style: 'font-weight: 500' }, row.gameName),
-        row.gameNameEn &&
+        h('div', { style: 'font-weight: 500' }, primary),
+        secondary &&
           h(
             'div',
             { style: 'font-size: 12px; color: #666; margin-top: 2px' },
-            row.gameNameEn,
+            secondary,
           ),
       ]);
     },
@@ -710,7 +625,7 @@ const columns: DataTableColumns<GameItem> = [
     key: 'gameType',
     width: 100,
     render(row) {
-      return getChineseGameType(row.gameType);
+      return getGameTypeLabel(row.gameType);
     },
   },
   {
@@ -914,7 +829,7 @@ const loadFilteredPlatforms = async () => {
 
     
     if (filterForm.gameType) {
-      const enumValues = getEnglishGameTypesForFiltering(filterForm.gameType);
+      const enumValues = getGameTypeFilterEnums(filterForm.gameType);
       if (enumValues && enumValues.length > 0) {
         params.gameType = enumValues.join(',');
       }
@@ -925,7 +840,7 @@ const loadFilteredPlatforms = async () => {
     console.log(
       'English enum values:',
       filterForm.gameType
-        ? getEnglishGameTypesForFiltering(filterForm.gameType)
+        ? getGameTypeFilterEnums(filterForm.gameType)
         : 'none',
     );
 
@@ -1258,7 +1173,7 @@ const handleEdit = (record: GameItem) => {
   formData.gameNameEn = record.gameNameEn || '';
   
   formData.gameType = record.gameType
-    ? getChineseGameType(record.gameType)
+    ? normalizeGameTypeEnum(record.gameType)
     : '';
   formData.vendor = record.thirdPartyData?.vendor || '';
   formData.currency = record.currency;
@@ -1383,7 +1298,7 @@ const handleSubmit = async () => {
       vendor: formData.vendor,
       gameNameEn: formData.gameNameEn || undefined,
       
-      gameType: getEnglishGameTypes(formData.gameType),
+      gameType: normalizeGameTypeEnum(formData.gameType) || formData.gameType,
       currency: formData.currency,
       isHot1: formData.isHot1,
       isHot2: formData.isHot2,
@@ -1643,7 +1558,7 @@ const buildGameListParams = (
     params.search = filterForm.search.trim();
   }
   if (filterForm.gameType) {
-    const enumValues = getEnglishGameTypesForFiltering(filterForm.gameType);
+    const enumValues = getGameTypeFilterEnums(filterForm.gameType);
     if (enumValues?.length) {
       params.gameType = enumValues.join(',');
     }
@@ -1725,7 +1640,7 @@ const handleExportCsv = async () => {
       g.gameDisplayId ?? '',
       g.gameName,
       g.gameNameEn ?? '',
-      getChineseGameType(g.gameType),
+      getGameTypeLabel(g.gameType),
       g.currency,
       g.isEnabled ? $t('common.yes') : $t('common.no'),
       g.isHot1 ? $t('common.yes') : $t('common.no'),

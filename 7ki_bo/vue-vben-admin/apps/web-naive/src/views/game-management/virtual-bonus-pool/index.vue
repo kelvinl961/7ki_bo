@@ -200,6 +200,7 @@ import {
   bulkUpdateVirtualBonusPools,
   type VirtualBonusPool,
 } from '#/api/virtualBonusPool';
+import { getDisplayPositionLabel } from '#/utils/gameTypeI18n';
 
 // Types (VirtualBonusPool is imported from API)
 
@@ -356,7 +357,9 @@ const columns: DataTableColumns<VirtualBonusPool> = [
         }
         return JSON.stringify(pos);
       }
-      return row.displayPosition || '-';
+      return getDisplayPositionLabel(
+        typeof row.displayPosition === 'string' ? row.displayPosition : '',
+      );
     },
   },
   {

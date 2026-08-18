@@ -466,26 +466,17 @@ import {
   type BetTransactionFilters,
 } from '#/api/game/betTransactions';
 import type { DataTableColumns } from 'naive-ui';
+import {
+  getGameCategoryLabel,
+  getLocalizedGameName,
+} from '#/utils/gameTypeI18n';
 
 const route = useRoute();
 const router = useRouter();
 const message = useMessage();
 
-// Game category translation map
-const gameCategoryLabels: Record<string, string> = {
-  arcade: $t('game.statisticsExtra.typeArcadeShort'),
-  SLOT: $t('game.statisticsExtra.typeSlotShort'),
-  fishing: $t('game.statisticsExtra.typeHuntingShort'),
-  sports: $t('game.statisticsExtra.typeSportsShort'),
-  LIVE: $t('game.statisticsExtra.typeLiveShort'),
-  BLOCKCHAIN: $t('game.statisticsExtra.typeBlockchainShort'),
-  card: $t('game.statisticsExtra.typeChessShort'),
-};
-
-// Helper function to translate game category
-const translateGameCategory = (category: string): string => {
-  return gameCategoryLabels[category] || category;
-};
+const translateGameCategory = (category: string): string =>
+  getGameCategoryLabel(category);
 
 // State
 const loading = ref(false);
@@ -680,6 +671,11 @@ const columns: DataTableColumns<BetTransactionItem> = [
     ellipsis: {
       tooltip: true,
     },
+    render: (row) =>
+      getLocalizedGameName({
+        gameName: row.gameName,
+        gameNameEn: (row as any).gameNameEn,
+      }),
   },
   {
     title: $t('game.subgame.gameId'),

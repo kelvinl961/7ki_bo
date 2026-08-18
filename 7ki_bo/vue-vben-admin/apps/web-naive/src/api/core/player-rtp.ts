@@ -263,3 +263,82 @@ export async function getConditionalPlayerRtpConfigApi(): Promise<ConditionalPla
 export async function clearConditionalPlayerRtpConfigApi(): Promise<ConditionalPlayerRtpConfigResponse> {
   return await requestClient.delete('/v1/player/conditional-rtp-config');
 }
+
+/** Saved AG/HG result templates (conditional + merchant sections). Does not call setRtp. */
+export interface ConditionalVendorTemplatePayload {
+  rtp: number;
+  games: string[];
+  hgPlayerAction?: 'setRtp' | 'cancelRtp';
+  gamePattern?: number;
+  gameType?: number;
+  maxMultiple?: number | null;
+  maxWinPoints?: number | null;
+  updatedAt?: string;
+}
+
+export interface MerchantVendorTemplatePayload {
+  rtp: number;
+  GameId?: string[];
+  subMerchantCode?: string;
+  gamePattern?: number;
+  gameType?: number;
+  maxMultiple?: number | null;
+  maxWinPoints?: number | null;
+  updatedAt?: string;
+}
+
+export interface RtpVendorTemplatesBlob {
+  conditional: Partial<Record<'AG' | 'HG', ConditionalVendorTemplatePayload>>;
+  merchant: Partial<Record<'AG' | 'HG', MerchantVendorTemplatePayload>>;
+}
+
+function emptyRtpVendorTemplates(): RtpVendorTemplatesBlob {
+  return { conditional: {}, merchant: {} };
+}
+
+/**
+ * request interceptor may return full `{ code, data }` or unwrapped `{ templates }`.
+ */
+function normalizeRtpVendorTemplatesResponse(res: unknown): {
+  code: number;
+  error: string;
+  data: { templates: RtpVendorTemplatesBlob; message?: string };
+} {
+  const r = (res ?? {}) as Record<string, unknown>;
+  const nested =
+    r.data && typeof r.data === 'object' ? (r.data as Record<string, unknown>) : undefined;
+  const templates = (nested?.templates ?? r.templates) as RtpVendorTemplatesBlob | undefined;
+  const code = typeof r.code === 'number' ? r.code : templates ? 0 : 1;
+  const error = typeof r.error === 'string' ? r.error : '';
+  const message =
+    (typeof nested?.message === 'string' && nested.message) ||
+    (typeof r.message === 'string' && r.message) ||
+    undefined;
+  return {
+    code,
+    error,
+    data: {
+      templates: templates ?? emptyRtpVendorTemplates(),
+      ...(message ? { message } : {}),
+    },
+  };
+}
+
+export async function getRtpVendorTemplatesApi(): Promise<{
+  code: number;
+  error: string;
+  data: { templates: RtpVendorTemplatesBlob };
+}> {
+  const res = await requestClient.get('/v1/player/rtp-vendor-templates');
+  return normalizeRtpVendorTemplatesResponse(res);
+}
+
+export async function putRtpVendorTemplatesApi(templates: Partial<RtpVendorTemplatesBlob>): Promise<{
+  code: number;
+  error: string;
+  data: { templates: RtpVendorTemplatesBlob; message?: string };
+}> {
+  const res = await requestClient.put('/v1/player/rtp-vendor-templates', { templates });
+  return normalizeRtpVendorTemplatesResponse(res);
+}
+

@@ -156,6 +156,8 @@ export interface BrandSkinLangConfig {
     borderColor?: string;
     generated: boolean;
     generatedAt: string;
+    /** Home Popular strip count for comprehensive v12/v13 (0 = all). */
+    hotGamesHomeCount?: number | null;
   };
   // New color fields from ColorPalette
   textPrimary?: string; // Dark text color for headings
@@ -165,6 +167,8 @@ export interface BrandSkinLangConfig {
   // Background image field
   backgroundImage?: string; // URL or path to background image
   skinTemplate: string;
+  /** Home Popular/hot games strip count (comprehensive v12/v13). 0 = show all. */
+  hotGamesHomeCount?: number | null;
   /** 主站 / 皮肤模板 */
   templateType?: string;
   /** 生效时间：custom = 自定义时间；immediate = 立即生效 */
@@ -232,6 +236,7 @@ export interface BrandSkinLangCreateRequest {
     borderColor?: string;
     generated: boolean;
     generatedAt: string;
+    hotGamesHomeCount?: number | null;
   };
   // New color fields from ColorPalette
   textPrimary?: string; // Dark text color for headings
@@ -241,6 +246,8 @@ export interface BrandSkinLangCreateRequest {
   // Background image field
   backgroundImage?: string; // URL or path to background image
   skinTemplate: string;
+  /** Home Popular strip count (v12/v13). 0 = show all. Persisted in colorPalette. */
+  hotGamesHomeCount?: number | null;
   templateType?: string;
   effectiveTimeMode?: 'custom' | 'immediate';
   effectiveTime?: string | null;

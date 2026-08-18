@@ -16,7 +16,7 @@
       </n-descriptions-item>
 
       <n-descriptions-item :label="$t('game.virtualBonusPool.displayPosition')">
-        {{ data?.displayPosition || '-' }}
+        {{ getDisplayPositionLabel(data?.displayPosition) }}
       </n-descriptions-item>
 
       <n-descriptions-item :label="$t('game.virtualBonusPool.clickTarget')" :span="2">
@@ -93,7 +93,7 @@
           >
             <div class="pool-header">
               <span class="pool-title">{{ $t('game.virtualBonusPool.poolTitle') }}</span>
-              <span class="pool-position">{{ data?.displayPosition }}</span>
+              <span class="pool-position">{{ getDisplayPositionLabel(data?.displayPosition) }}</span>
             </div>
             <div class="pool-amount">
               <span class="currency">{{
@@ -124,6 +124,8 @@ import {
   NEllipsis,
   NCard,
 } from 'naive-ui';
+
+import { getDisplayPositionLabel } from '#/utils/gameTypeI18n';
 
 // Props
 interface Props {
@@ -182,6 +184,12 @@ const formatDateTime = (dateTime?: string) => {
 
 const getCurrencySymbol = (currency?: string) => {
   const currencyMap: Record<string, string> = {
+    BRL: 'R$',
+    USD: '$',
+    EUR: '€',
+    CNY: '¥',
+    JPY: '¥',
+    VND: '₫',
     '巴西(BRL)': 'R$',
     '美元(USD)': '$',
     '欧元(EUR)': '€',

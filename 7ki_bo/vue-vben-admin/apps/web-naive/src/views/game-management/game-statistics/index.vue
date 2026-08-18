@@ -115,6 +115,7 @@ import {
 import { useMessage } from 'naive-ui';
 import { exportGridData } from '#/utils/exportUtils';
 import { getGameStatistics, getGameTypes } from '#/api/gameStatistics';
+import { getGameTypeLabel } from '#/utils/gameTypeI18n';
 
 const message = useMessage();
 
@@ -251,7 +252,7 @@ const columns = computed<DataTableColumns<any>>(() => [
       if (row.isTotal) {
         return h('strong', {}, $t('game.statisticsExtra.totalRow'));
       }
-      return row.gameType || '-';
+      return getGameTypeLabel(row.gameType);
     },
   },
   {
@@ -483,7 +484,7 @@ const exportToExcel = async () => {
     // Prepare data with formatted values
     const exportData = tableData.value.map((row) => ({
       [$t('common.currency')]: row.currency || '',
-      [$t('game.statistics.gameType')]: row.gameType || '',
+      [$t('game.statistics.gameType')]: getGameTypeLabel(row.gameType),
       [$t('game.statisticsExtra.avgDailyBettors')]: row.avgDailyBettors || 0,
       [$t('game.statisticsExtra.betCountCol')]: row.betCount || 0,
       [$t('game.betRecords.validBet')]: row.validBet ? Number(row.validBet).toFixed(2) : '0.00',

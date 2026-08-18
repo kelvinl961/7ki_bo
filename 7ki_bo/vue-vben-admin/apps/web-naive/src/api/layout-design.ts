@@ -169,6 +169,8 @@ export interface LayoutConfig {
   noWalletGuideEnabled?: boolean;
   /** 顶部导航广告图区域是否展示 */
   topNavAdEnabled: boolean;
+  /** 大厅大奖记录 / Grandes prêmios 是否展示 */
+  grandesPremiosEnabled: boolean;
   selfPromotionEnabled: boolean;
   brandCode?: string;
   isActive: boolean;
@@ -205,6 +207,7 @@ export interface LayoutConfigCreateRequest {
     sideMenuStyle?: string;
     noWalletGuideEnabled?: boolean;
     topNavAdEnabled: boolean;
+    grandesPremiosEnabled: boolean;
     selfPromotionEnabled: boolean;
     skinName: string;
   };
@@ -257,6 +260,8 @@ export interface LayoutTheme {
   badgeHotStyle?: string;
   /** 顶部导航广告图区域是否展示 */
   topNavAdEnabled?: boolean;
+  /** 大厅大奖记录 / Grandes prêmios 是否展示 */
+  grandesPremiosEnabled?: boolean;
   selfPromotionEnabled: boolean;
 }
 

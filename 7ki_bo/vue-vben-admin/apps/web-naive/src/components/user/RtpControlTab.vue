@@ -331,7 +331,7 @@ watch(
 
 const vendorSelectOptions = computed(() =>
   rtpVendors.value.map((v) => ({
-    label: $t('user.rtpControl.hgVendor'),
+    label: v.label || v.id,
     value: v.id,
   })),
 );
@@ -950,9 +950,9 @@ const loadLastConfig = async () => {
 const loadRtpVendors = async () => {
   try {
     const vendors = await getPlayerRtpVendorsApi();
-    rtpVendors.value = vendors.filter((v) => v.id?.toLowerCase() === 'hg');
+    rtpVendors.value = Array.isArray(vendors) ? vendors : [];
     if (rtpVendors.value.length === 0) {
-      message.warning($t('user.rtpControl.noHgChannel'));
+      message.warning($t('user.rtpControl.noRtpChannel'));
       formData.rtpVendor = null;
       return;
     }

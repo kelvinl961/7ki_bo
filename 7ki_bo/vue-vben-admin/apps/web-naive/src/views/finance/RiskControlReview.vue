@@ -39,7 +39,7 @@
                 v-model:value="filters.dateRange"
                 type="daterange"
                 format="yyyy-MM-dd"
-                placeholder:placeholder="$t('finance.selectDate')"
+                :placeholder="$t('finance.selectDate')"
                 clearable
                 size="small"
                 class="w-full"
@@ -51,7 +51,7 @@
             <n-form-item :label="$t('finance.memberAccount2')">
               <n-input
                 v-model:value="filters.memberAccount"
-                placeholder:placeholder="$t('finance.memberAccountOrRemark200')"
+                :placeholder="$t('finance.memberAccountOrRemark200')"
                 clearable
                 size="small"
               />
@@ -62,7 +62,7 @@
             <n-form-item :label="$t('finance.memberId')">
               <n-input
                 v-model:value="filters.userId"
-                placeholder:placeholder="$t('finance.pleaseEnterMemberId')"
+                :placeholder="$t('finance.pleaseEnterMemberId')"
                 clearable
                 size="small"
               />
@@ -73,7 +73,7 @@
             <n-form-item :label="$t('finance.orderNo')">
               <n-input
                 v-model:value="filters.orderId"
-                placeholder:placeholder="$t('finance.pleaseEnterOrder')"
+                :placeholder="$t('finance.pleaseEnterOrder')"
                 clearable
                 size="small"
               />
@@ -85,7 +85,7 @@
             <n-form-item :label="$t('finance.memberCurrency')">
               <n-select
                 v-model:value="filters.memberCurrency"
-                placeholder:placeholder="$t('finance.selectCurrency')"
+                :placeholder="$t('finance.selectCurrency')"
                 clearable
                 size="small"
                 :options="currencyOptions"
@@ -98,7 +98,7 @@
             <n-form-item :label="$t('finance.withdrawalAmount')">
               <n-input
                 v-model:value="filters.withdrawalAmount"
-                placeholder:placeholder="$t('finance.pleaseEnterAmount')"
+                :placeholder="$t('finance.pleaseEnterAmount')"
                 clearable
                 size="small"
               />
@@ -110,7 +110,7 @@
             <n-form-item :label="$t('finance.receivingMethod')">
               <n-select
                 v-model:value="filters.paymentMethod"
-                placeholder:placeholder="$t('finance.selectReceivingMethod')"
+                :placeholder="$t('finance.selectReceivingMethod')"
                 clearable
                 size="small"
                 :options="paymentMethodOptions"
@@ -246,8 +246,8 @@
       v-model:show="approvalModal.show"
       preset="dialog"
       :title="$t('finance.reviewPass')"
-      positive-text:positive-text="$t('finance.confirmPass')"
-      negative-text:negative-text="$t('common.cancel')"
+      :positive-text="$t('finance.confirmPass')"
+      :negative-text="$t('common.cancel')"
       @positive-click="handleApproval"
     >
       <div class="space-y-4">
@@ -275,7 +275,7 @@
             <n-input
               v-model:value="approvalModal.notes"
               type="textarea"
-              placeholder:placeholder="$t('finance.pleaseEnterReviewRemarkOptional')"
+              :placeholder="$t('finance.pleaseEnterReviewRemarkOptional')"
               :rows="3"
             />
           </n-form-item>
@@ -288,8 +288,8 @@
       v-model:show="rejectionModal.show"
       preset="dialog"
       :title="$t('finance.review')"
-      positive-text:positive-text="$t('finance.confirm1')"
-      negative-text:negative-text="$t('common.cancel')"
+      :positive-text="$t('finance.confirm1')"
+      :negative-text="$t('common.cancel')"
       @positive-click="handleRejection"
     >
       <div class="space-y-4">
@@ -316,7 +316,7 @@
           <n-form-item :label="$t('finance.text86')" required>
             <n-select
               v-model:value="rejectionModal.reason"
-              placeholder:placeholder="$t('finance.pleaseSelect')"
+              :placeholder="$t('finance.pleaseSelect')"
               :options="rejectionReasons"
             />
           </n-form-item>
@@ -326,7 +326,7 @@
             <n-input
               v-model:value="rejectionModal.notes"
               type="textarea"
-              placeholder:placeholder="$t('finance.pleaseEnterReviewRemarkOptional')"
+              :placeholder="$t('finance.pleaseEnterReviewRemarkOptional')"
               :rows="3"
             />
           </n-form-item>
@@ -339,14 +339,14 @@
       v-model:show="batchReasonModal.show"
       preset="dialog"
       :title="$t('finance.operationNote')"
-      positive-text:positive-text="$t('common.confirm')"
-      negative-text:negative-text="$t('common.cancel')"
+      :positive-text="$t('common.confirm')"
+      :negative-text="$t('common.cancel')"
       @positive-click="submitBatchReasonModal"
     >
       <n-input
         v-model:value="batchReasonModal.reason"
         type="textarea"
-        placeholder:placeholder="$t('finance.pleaseEnterOperationNoteRequired')"
+        :placeholder="$t('finance.pleaseEnterOperationNoteRequired')"
         :autosize="{ minRows: 3 }"
       />
     </n-modal>
@@ -356,8 +356,8 @@
       v-model:show="showFilterBatchModal"
       preset="dialog"
       :title="$t('finance.bulkActions')"
-      positive-text:positive-text="$t('common.confirm')"
-      negative-text:negative-text="$t('common.cancel')"
+      :positive-text="$t('common.confirm')"
+      :negative-text="$t('common.cancel')"
       @positive-click="submitFilterBatchModal"
     >
       <div class="space-y-4">
@@ -365,14 +365,14 @@
           <n-select
             v-model:value="filterBatchActionKey"
             :options="batchOperationDropdownOptionsSelect"
-            placeholder:placeholder="$t('finance.pleaseSelectActions')"
+            :placeholder="$t('finance.pleaseSelectActions')"
           />
         </n-form-item>
         <n-form-item :label="$t('finance.operationNote1')">
           <n-input
             v-model:value="filterBatchReason"
             type="textarea"
-            placeholder:placeholder="$t('finance.pleaseEnterOperationNote')"
+            :placeholder="$t('finance.pleaseEnterOperationNote')"
             :autosize="{ minRows: 2 }"
           />
         </n-form-item>
@@ -611,7 +611,7 @@
             <n-input
               v-model:value="forceCancelModal.frontendReason"
               type="textarea"
-              placeholder:placeholder="$t('finance.pleaseEnterCancelFrontend')"
+              :placeholder="$t('finance.pleaseEnterCancelFrontend')"
               :rows="4"
               :maxlength="1000"
             />
@@ -624,7 +624,7 @@
             <n-input
               v-model:value="forceCancelModal.backendReason"
               type="textarea"
-              placeholder:placeholder="$t('finance.pleaseEnterCancelBackend')"
+              :placeholder="$t('finance.pleaseEnterCancelBackend')"
               :rows="4"
               :maxlength="1000"
             />
@@ -855,7 +855,7 @@
             <n-input
               v-model:value="forceRejectModal.frontendReason"
               type="textarea"
-              placeholder:placeholder="$t('finance.pleaseEnterFrontend')"
+              :placeholder="$t('finance.pleaseEnterFrontend')"
               :rows="4"
               :maxlength="1000"
             />
@@ -868,7 +868,7 @@
             <n-input
               v-model:value="forceRejectModal.backendReason"
               type="textarea"
-              placeholder:placeholder="$t('finance.pleaseEnterBackend')"
+              :placeholder="$t('finance.pleaseEnterBackend')"
               :rows="4"
               :maxlength="1000"
             />

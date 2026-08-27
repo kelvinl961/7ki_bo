@@ -866,6 +866,9 @@
     "k662f": "Public odds and cost",
     "k5927": "Grand prize announcement",
     "k7206": "Full-screen notification",
+    "announceMin": "Show amount ≥",
+    "randomBonus": "Random cash",
+    "displayOnly": "Display only",
     "k5e78k6b21": "Lucky value per spin",
     "k8ba1": "Calculate actual cost",
     "k8ba12": "Calculate display cost",
@@ -888,7 +891,30 @@
     "k771f2": "Actual win probability",
     "k5c552": "Display win probability",
     "k59565": "Biểu tượng thưởng",
-    "k4fee": "Chỉnh sửa"
+    "k4fee": "Chỉnh sửa",
+    "k8d44": "Tài nguyên",
+    "assetGroupPage": "Trang",
+    "assetGroupWheel": "Vòng quay",
+    "assetGroupWin": "Trúng thưởng",
+    "k8d442": "Hình phân đoạn",
+    "k8d443": "Hình vòng quay khi đứng yên",
+    "frameAsset": "Hình vòng quay khi trúng thưởng",
+    "k8d444": "Kim chỉ trung tâm",
+    "modalTopAsset": "Hộp thoại trúng thưởng trên",
+    "modalBottomAsset": "Hộp thoại trúng thưởng dưới",
+    "k8d445": "Tài nguyên hộp thoại kết quả",
+    "k8d446": "Chọn hoặc tải ảnh lên từ thư viện media",
+    "spinAsset": "Hình vòng quay khi đang quay",
+    "winEffectAsset": "Hiệu ứng trúng thưởng (tiền bay)",
+    "k8d447": "Hình đứng yên / đang quay / trúng thưởng đổi theo trạng thái; hình phân đoạn nằm trong các ô; kim chỉ ở giữa vòng quay",
+    "k8d448": "Chưa bắt đầu",
+    "k8d449": "Đang diễn ra",
+    "k8d450": "Đã kết thúc",
+    "k8d451": "Luôn hiệu lực",
+    "k8d452": "Thời gian",
+    "k6dfb": "Thêm vòng quay",
+    "k8bf76": "Vui lòng chọn thời gian bắt đầu và kết thúc",
+    "k8bf77": "Thời gian kết thúc không được sớm hơn thời gian bắt đầu"
   },
   "luckyWheelPublicConfig": {
     "k8f6c": "Cấu hình chung vòng quay",
@@ -1577,6 +1603,7 @@
     "recipient": "Người nhận",
     "all": "All",
     "earn": "Nhận được",
+    "depositEarn": "Nạp tiền",
     "consume": "Đã tiêu",
     "expire": "Hết hạn",
     "deduct": "Khấu trừ",
@@ -1605,6 +1632,7 @@
     "luckyValueChange": "Thy đổi điểm my mắn",
     "wheelSilver": "Vòng bạc",
     "wheelGold": "Vòng vàng",
-    "wheelDiamond": "Vòng kim cương"
+    "wheelDiamond": "Vòng kim cương",
+    "wheelCustom": "Vòng tùy chỉnh"
   }
 }

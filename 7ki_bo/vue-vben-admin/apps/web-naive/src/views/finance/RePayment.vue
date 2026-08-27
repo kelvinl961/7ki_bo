@@ -34,7 +34,7 @@
                 v-model:value="filters.dateRange"
                 type="datetimerange"
                 format="yyyy-MM-dd HH:mm:ss"
-                placeholder:placeholder="$t('finance.selectTimeRange')"
+                :placeholder="$t('finance.selectTimeRange')"
                 clearable
                 size="small"
                 class="w-80"
@@ -51,7 +51,7 @@
               <n-form-item :label="$t('finance.memberAccount2')">
                 <n-input
                   v-model:value="filters.memberAccount"
-                  placeholder:placeholder="$t('finance.searchMemberAccountOrRemarkUpTo200')"
+                  :placeholder="$t('finance.searchMemberAccountOrRemarkUpTo200')"
                   clearable
                   size="small"
                 />
@@ -63,7 +63,7 @@
               <n-form-item :label="$t('finance.thirdPartyPayout')">
                 <n-select
                   v-model:value="filters.thirdPartyPayment"
-                  placeholder:placeholder="$t('finance.thirdPartyPayout')"
+                  :placeholder="$t('finance.thirdPartyPayout')"
                   clearable
                   size="small"
                   :options="thirdPartyOptions"
@@ -76,7 +76,7 @@
               <n-form-item :label="$t('finance.amountRange')">
                 <n-input
                   v-model:value="filters.amount"
-                  placeholder:placeholder="$t('common.amount')"
+                  :placeholder="$t('common.amount')"
                   clearable
                   size="small"
                 />
@@ -88,7 +88,7 @@
               <n-form-item :label="$t('finance.callbackStatus')">
                 <n-select
                   v-model:value="filters.callbackStatus"
-                  placeholder:placeholder="$t('finance.callbackStatus')"
+                  :placeholder="$t('finance.callbackStatus')"
                   clearable
                   size="small"
                   :options="callbackStatusOptions"
@@ -101,7 +101,7 @@
               <n-form-item :label="$t('finance.payoutType')">
                 <n-select
                   v-model:value="filters.rePaymentType"
-                  placeholder:placeholder="$t('finance.payoutType')"
+                  :placeholder="$t('finance.payoutType')"
                   clearable
                   size="small"
                   :options="rePaymentTypeOptions"
@@ -225,7 +225,7 @@
             <span class="text-sm text-gray-600">{{ $t('finance.kq5y7t') }}</span>
             <n-select
               v-model:value="batchOperation"
-              placeholder:placeholder="$t('finance.bulkActions')"
+              :placeholder="$t('finance.bulkActions')"
               size="small"
               class="w-40"
               :options="batchOperationOptions"
@@ -246,8 +246,8 @@
       v-model:show="rePaymentModal.show"
       preset="dialog"
       :title="$t('finance.rePayoutConfirm1')"
-      positive-text:positive-text="$t('finance.confirmPayout')"
-      negative-text:negative-text="$t('common.cancel')"
+      :positive-text="$t('finance.confirmPayout')"
+      :negative-text="$t('common.cancel')"
       @positive-click="handleRePayment"
     >
       <div class="space-y-4">
@@ -279,7 +279,7 @@
           <n-form-item :label="$t('finance.payoutChannel')" required>
             <n-select
               v-model:value="rePaymentModal.paymentChannel"
-              placeholder:placeholder="$t('finance.pleaseSelectPayoutChannel')"
+              :placeholder="$t('finance.pleaseSelectPayoutChannel')"
               :options="paymentChannelOptions"
             />
           </n-form-item>
@@ -289,7 +289,7 @@
             <n-input
               v-model:value="rePaymentModal.notes"
               type="textarea"
-              placeholder:placeholder="$t('finance.pleaseEnterRePayoutRemarkOptional')"
+              :placeholder="$t('finance.pleaseEnterRePayoutRemarkOptional')"
               :rows="3"
             />
           </n-form-item>
@@ -1094,7 +1094,7 @@ const fetchData = async () => {
         await rePaymentApi.getCallbackExceptionWithdrawals(params);
 
       if (response && response.success) {
-        tableData.value = response.data.withdrawals || [];
+        tableData.value = (response.data.withdrawals || []) as RePaymentRecord[];
         paginationReactive.total = response.data.pagination?.total || 0;
 
         // Update statistics

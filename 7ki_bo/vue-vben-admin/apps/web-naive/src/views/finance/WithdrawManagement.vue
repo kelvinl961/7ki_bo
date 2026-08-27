@@ -104,7 +104,7 @@
                 <n-select
                   v-model:value="filterForm.status"
                   :options="statusOptions"
-                  placeholder:placeholder="$t('finance.pleaseSelectStatus')"
+                  :placeholder="$t('finance.pleaseSelectStatus')"
                   clearable
                   class="w-full"
                 />
@@ -114,7 +114,7 @@
                 <n-select
                   v-model:value="filterForm.withdrawMethod"
                   :options="withdrawMethodOptions"
-                  placeholder:placeholder="$t('finance.pleaseSelectWithdrawalMethod')"
+                  :placeholder="$t('finance.pleaseSelectWithdrawalMethod')"
                   clearable
                   class="w-full"
                 />
@@ -129,7 +129,7 @@
                 <n-select
                   v-model:value="filterForm.vipLevel"
                   :options="vipLevelOptions"
-                  placeholder:placeholder="$t('finance.pleaseSelectMemberLevel')"
+                  :placeholder="$t('finance.pleaseSelectMemberLevel')"
                   clearable
                   class="w-full"
                 />
@@ -139,7 +139,7 @@
                 <n-select
                   v-model:value="filterForm.agentMode"
                   :options="agentModeOptions"
-                  placeholder:placeholder="$t('finance.pleaseSelect1')"
+                  :placeholder="$t('finance.pleaseSelect1')"
                   clearable
                   class="w-full"
                 />
@@ -149,7 +149,7 @@
                 <n-select
                   v-model:value="filterForm.thirdPartyPayment"
                   :options="thirdPartyOptions"
-                  placeholder:placeholder="$t('finance.pleaseSelectThirdPartyPayout')"
+                  :placeholder="$t('finance.pleaseSelectThirdPartyPayout')"
                   clearable
                   class="w-full"
                 />
@@ -159,7 +159,7 @@
                 <n-select
                   v-model:value="filterForm.serviceFilter"
                   :options="serviceFilterOptions"
-                  placeholder:placeholder="$t('finance.pleaseSelect2')"
+                  :placeholder="$t('finance.pleaseSelect2')"
                   clearable
                   class="w-full"
                 />
@@ -171,7 +171,7 @@
               <n-form-item :label="$t('finance.memberAccount2')" class="min-w-[200px] flex-1">
                 <n-input
                   v-model:value="searchInput"
-                  placeholder:placeholder="$t('finance.memberAccountOrRemark')"
+                  :placeholder="$t('finance.memberAccountOrRemark')"
                   clearable
                   class="w-full"
                   @keyup.enter="handleSearch"
@@ -180,7 +180,7 @@
               <n-form-item :label="$t('finance.memberId')" class="min-w-[160px]">
                 <n-input
                   v-model:value="userIdInput"
-                  placeholder:placeholder="$t('finance.pleaseEnterMemberId')"
+                  :placeholder="$t('finance.pleaseEnterMemberId')"
                   clearable
                   class="w-full"
                   @keyup.enter="handleSearch"
@@ -189,7 +189,7 @@
               <n-form-item :label="$t('finance.orderNo')" class="min-w-[200px]">
                 <n-input
                   v-model:value="orderIdInput"
-                  placeholder:placeholder="$t('finance.pleaseEnterOrder')"
+                  :placeholder="$t('finance.pleaseEnterOrder')"
                   clearable
                   class="w-full"
                   @keyup.enter="handleSearch"
@@ -382,7 +382,7 @@
             />
             <n-input
               v-model:value="memberSearchQuery"
-              placeholder:placeholder="$t('finance.sHAYU888')"
+              :placeholder="$t('finance.sHAYU888')"
               :disabled="isEditing"
               style="flex: 1"
               maxlength="16"
@@ -465,7 +465,7 @@
               <n-select
                 v-model:value="withdrawalForm.withdrawMethod"
                 :options="withdrawMethodOptions"
-                placeholder:placeholder="$t('finance.pleaseSelectWithdrawalMethod')"
+                :placeholder="$t('finance.pleaseSelectWithdrawalMethod')"
                 style="width: 100%"
               />
             </div>
@@ -476,7 +476,7 @@
               <n-select
                 v-model:value="withdrawalForm.withdrawAccount"
                 :options="withdrawAccountOptions"
-                placeholder:placeholder="$t('finance.pleaseSelectWithdrawalAccount')"
+                :placeholder="$t('finance.pleaseSelectWithdrawalAccount')"
                 style="width: 100%"
               />
             </div>
@@ -490,7 +490,7 @@
                 >
                 <n-input-number
                   v-model:value="withdrawalForm.amount"
-                  placeholder:placeholder="$t('finance.pleaseEnterWithdrawalAmount1')"
+                  :placeholder="$t('finance.pleaseEnterWithdrawalAmount1')"
                   :min="0"
                   :precision="2"
                   style="flex: 1"
@@ -505,7 +505,7 @@
               <n-input
                 v-model:value="withdrawalForm.frontendNote"
                 type="textarea"
-                placeholder:placeholder="$t('finance.pleaseEnterRemark2')"
+                :placeholder="$t('finance.pleaseEnterRemark2')"
                 :autosize="{ minRows: 2, maxRows: 4 }"
                 maxlength="1000"
                 show-count
@@ -518,7 +518,7 @@
               <n-input
                 v-model:value="withdrawalForm.backendNote"
                 type="textarea"
-                placeholder:placeholder="$t('finance.pleaseEnterManagementBackendRemark')"
+                :placeholder="$t('finance.pleaseEnterManagementBackendRemark')"
                 :autosize="{ minRows: 2, maxRows: 4 }"
                 maxlength="1000"
                 show-count
@@ -531,7 +531,7 @@
               <n-input
                 v-model:value="withdrawalForm.verificationPassword"
                 type="password"
-                placeholder:placeholder="$t('finance.pleaseEnterLogin')"
+                :placeholder="$t('finance.pleaseEnterLogin')"
                 show-password-on="click"
               />
             </div>
@@ -564,8 +564,8 @@
       v-model:show="showNoteModal"
       preset="dialog"
       :title="$t('finance.editRemark')"
-      positive-text:positive-text="$t('common.save')"
-      negative-text:negative-text="$t('common.cancel')"
+      :positive-text="$t('common.save')"
+      :negative-text="$t('common.cancel')"
       @positive-click="handleSaveNote"
       @negative-click="showNoteModal = false"
     >
@@ -574,14 +574,14 @@
           <n-select
             v-model:value="noteForm.type"
             :options="noteTypeOptions"
-            placeholder:placeholder="$t('finance.pleaseSelectRemark')"
+            :placeholder="$t('finance.pleaseSelectRemark')"
           />
         </n-form-item>
         <n-form-item :label="$t('finance.remark1')" path="content">
           <n-input
             v-model:value="noteForm.content"
             type="textarea"
-            placeholder:placeholder="$t('finance.pleaseEnterRemark1')"
+            :placeholder="$t('finance.pleaseEnterRemark1')"
             :autosize="{ minRows: 3 }"
           />
         </n-form-item>
@@ -593,8 +593,8 @@
       v-model:show="showBatchModal"
       preset="dialog"
       :title="$t('finance.bulkActions')"
-      positive-text:positive-text="$t('common.confirm')"
-      negative-text:negative-text="$t('common.cancel')"
+      :positive-text="$t('common.confirm')"
+      :negative-text="$t('common.cancel')"
       @positive-click="handleConfirmBatch"
       @negative-click="showBatchModal = false"
     >
@@ -603,7 +603,7 @@
           <n-select
             v-model:value="batchForm.action"
             :options="batchActionOptions"
-            placeholder:placeholder="$t('finance.pleaseSelectActions')"
+            :placeholder="$t('finance.pleaseSelectActions')"
           />
         </n-form-item>
         <n-form-item
@@ -614,18 +614,69 @@
           <n-select
             v-model:value="batchForm.status"
             :options="statusOptions.filter((opt) => opt.value !== '')"
-            placeholder:placeholder="$t('finance.pleaseSelectStatus1')"
+            :placeholder="$t('finance.pleaseSelectStatus1')"
           />
         </n-form-item>
         <n-form-item :label="$t('finance.operationNote')" path="reason">
           <n-input
             v-model:value="batchForm.reason"
             type="textarea"
-            placeholder:placeholder="$t('finance.pleaseEnterOperationNote')"
+            :placeholder="$t('finance.pleaseEnterOperationNote')"
             :autosize="{ minRows: 3 }"
           />
         </n-form-item>
       </n-form>
+    </n-modal>
+
+    <!-- 批量重新代付 -->
+    <n-modal
+      v-model:show="batchRePayModal.show"
+      preset="dialog"
+      :title="$t('finance.rePayoutConfirm1')"
+      :positive-text="$t('finance.confirmPayout')"
+      :negative-text="$t('common.cancel')"
+      :loading="batchRePayModal.loading"
+      @positive-click="submitBatchRePayModal"
+    >
+      <div class="space-y-4">
+        <n-alert type="warning" :show-icon="false">
+          确认重新代付以下{{ batchRePayModal.items.length }}个订单？
+        </n-alert>
+        <div class="max-h-60 overflow-y-auto">
+          <div
+            v-for="item in batchRePayModal.items"
+            :key="item.id || item.orderId"
+            class="mb-2 rounded border p-2"
+          >
+            <div class="text-sm">
+              <div><strong>{{ $t('finance.orderNo') }}:</strong> {{ item.orderId }}</div>
+              <div>
+                <strong>{{ $t('finance.member') }}:</strong>
+                {{ item.memberAccount || item.accountName }}
+              </div>
+              <div>
+                <strong>{{ $t('common.amount') }}:</strong>
+                {{ item.withdrawAmount }} {{ item.currency }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <n-form-item :label="$t('finance.payoutChannel')" required>
+          <n-select
+            v-model:value="batchRePayModal.paymentChannel"
+            :placeholder="$t('finance.pleaseSelectPayoutChannel')"
+            :options="paymentChannelOptions"
+          />
+        </n-form-item>
+        <n-form-item :label="$t('finance.remark3')">
+          <n-input
+            v-model:value="batchRePayModal.notes"
+            type="textarea"
+            :placeholder="$t('finance.pleaseEnterRePayoutRemarkOptional')"
+            :rows="3"
+          />
+        </n-form-item>
+      </div>
     </n-modal>
 
     <!-- 批量操作 - 填写原因（强制取消/强制拒绝/批量备注） -->
@@ -633,14 +684,14 @@
       v-model:show="batchReasonModal.show"
       preset="dialog"
       :title="$t('finance.operationNote')"
-      positive-text:positive-text="$t('common.confirm')"
-      negative-text:negative-text="$t('common.cancel')"
+      :positive-text="$t('common.confirm')"
+      :negative-text="$t('common.cancel')"
       @positive-click="submitBatchReasonModal"
     >
       <n-input
         v-model:value="batchReasonModal.reason"
         type="textarea"
-        placeholder:placeholder="$t('finance.pleaseEnterOperationNoteRequired')"
+        :placeholder="$t('finance.pleaseEnterOperationNoteRequired')"
         :autosize="{ minRows: 3 }"
       />
     </n-modal>
@@ -784,7 +835,7 @@
             <n-input
               v-model:value="batchForceRejectModal.frontendReason"
               type="textarea"
-              placeholder:placeholder="$t('finance.pleaseEnterFrontend')"
+              :placeholder="$t('finance.pleaseEnterFrontend')"
               :rows="4"
               :maxlength="1000"
             />
@@ -797,7 +848,7 @@
             <n-input
               v-model:value="batchForceRejectModal.backendReason"
               type="textarea"
-              placeholder:placeholder="$t('finance.pleaseEnterBackend')"
+              :placeholder="$t('finance.pleaseEnterBackend')"
               :rows="4"
               :maxlength="1000"
             />
@@ -1235,6 +1286,7 @@ import { $t } from '@vben/locales';
 
 import {
   ref,
+  reactive,
   computed,
   onMounted,
   onUnmounted,
@@ -1300,6 +1352,7 @@ import {
   NIcon,
   NCheckbox,
   NModal,
+  NAlert,
   NTabs,
   NTabPane,
   NBadge,
@@ -1328,6 +1381,7 @@ import { formatCurrency, formatDateTime } from '#/utils/format';
 
 // Interfaces
 interface WithdrawOrder {
+  id?: string;
   orderId: string;
   memberId: string;
   userID?: string; // 9-digit display ID (e.g., "154301535")
@@ -1359,6 +1413,8 @@ interface WithdrawOrder {
   isLocked?: boolean;
   lockedBy?: string;
   lockedAt?: string;
+  paymentGateway?: string;
+  memberAccount?: string;
 }
 
 interface FilterForm {
@@ -1459,6 +1515,13 @@ const checkedRowKeys = ref<string[]>([]);
 const showWithdrawalModal = ref(false);
 const showNoteModal = ref(false);
 const showBatchModal = ref(false);
+const batchRePayModal = reactive({
+  show: false,
+  loading: false,
+  items: [] as WithdrawOrder[],
+  paymentChannel: '',
+  notes: '',
+});
 const showColumnConfig = ref(false);
 const showWithdrawalSettings = ref(false);
 const showDetailModal = ref(false);
@@ -1750,6 +1813,12 @@ const batchOperationDropdownOptions = [
   { label: $t('finance.bulkReviewPayout'), key: 'batch-approve' },
   { label: $t('finance.bulkRePayout'), key: 'batch-repay' },
   { label: $t('finance.bulkManualPayoutDone'), key: 'batch-manual-withdrawal' },
+];
+
+const paymentChannelOptions = [
+  { label: $t('finance.pIXChannel1'), value: 'PIX_CHANNEL_1' },
+  { label: $t('finance.pIXChannel2'), value: 'PIX_CHANNEL_2' },
+  { label: $t('finance.bankPayoutChannel'), value: 'BANK_CHANNEL' },
 ];
 
 // Validation rules
@@ -2571,6 +2640,76 @@ async function submitBatchReasonModal() {
   await runBatchAction(actionKey, orderIds, reason.trim());
 }
 
+const REPAYABLE_STATUSES = new Set(['processing', 'failed']);
+
+function openBatchRePayModal(rows: WithdrawOrder[]) {
+  const eligible = rows.filter((r) =>
+    REPAYABLE_STATUSES.has(String(r.status || '')),
+  );
+  if (eligible.length === 0) {
+    message.warning($t('finance.recordsHasEligibleActionsConditionsOrder'));
+    return;
+  }
+  if (eligible.length < rows.length) {
+    message.info(
+      `已跳过 ${rows.length - eligible.length} 笔非处理中/失败订单，将重新代付 ${eligible.length} 笔`,
+    );
+  }
+  const knownChannels = new Set(paymentChannelOptions.map((o) => o.value));
+  const existingChannel = eligible
+    .map((r) => String(r.paymentGateway || '').trim())
+    .find((ch) => ch && knownChannels.has(ch));
+  batchRePayModal.items = eligible;
+  batchRePayModal.paymentChannel = existingChannel || '';
+  batchRePayModal.notes = '';
+  batchRePayModal.loading = false;
+  batchRePayModal.show = true;
+}
+
+async function submitBatchRePayModal(): Promise<boolean> {
+  if (!batchRePayModal.paymentChannel) {
+    message.warning($t('finance.pleaseSelectPayoutChannel'));
+    return false;
+  }
+  const withdrawalIds = batchRePayModal.items
+    .map((r) => String(r.id || ''))
+    .filter(Boolean);
+  if (withdrawalIds.length === 0) {
+    message.warning($t('finance.pleaseSelectActionsRecords'));
+    return false;
+  }
+  try {
+    batchRePayModal.loading = true;
+    const res = await rePaymentApi.bulkRePayment({
+      withdrawalIds,
+      paymentChannel: batchRePayModal.paymentChannel,
+      notes: batchRePayModal.notes || undefined,
+    });
+    const results = res?.data?.results ?? [];
+    const ok = results.filter((r) => r.success).length;
+    const len = withdrawalIds.length;
+    if (res?.success === false) {
+      message.error(res.message || '批量重新代付失败');
+      return false;
+    }
+    message[ok === len ? 'success' : 'warning'](
+      ok === len
+        ? `批量重新代付成功 (${len} 条)`
+        : `部分成功 ${ok}/${len} 条`,
+    );
+    batchRePayModal.show = false;
+    checkedRowKeys.value = [];
+    await fetchData();
+    return true;
+  } catch (e: unknown) {
+    const err = e as { message?: string };
+    message.error(err?.message || '批量重新代付失败');
+    return false;
+  } finally {
+    batchRePayModal.loading = false;
+  }
+}
+
 async function runBatchAction(
   actionKey: string,
   orderIds: string[],
@@ -2712,7 +2851,8 @@ async function runBatchAction(
     } else if (actionKey === 'batch-refresh-callback') {
       message.info($t('finance.bulkRefreshCallbackFeaturePleaseThirdPartyPayoutOrRePaying'));
     } else if (actionKey === 'batch-repay') {
-      message.info($t('finance.pleaseRePayoutBulkRePayout'));
+      const rows = tableData.value.filter((r) => orderIds.includes(r.orderId));
+      openBatchRePayModal(rows);
     } else if (actionKey === 'batch-manual-withdrawal') {
       let ok = 0;
       for (const id of orderIds) {

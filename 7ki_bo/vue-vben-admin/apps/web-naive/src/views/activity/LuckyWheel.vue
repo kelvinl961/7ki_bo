@@ -29,12 +29,17 @@
             <n-button
               v-if="activeTab === 'wheels'"
               type="primary"
+              @click="openCreate"
+            >{{ $t('activity.luckyWheelEdit.k6dfb') }}</n-button>
+            <n-button
+              v-if="activeTab === 'wheels'"
+              type="primary"
               @click="showPublicConfig = true"
             >{{ $t('activity.luckyWheel.k8f6c3') }}</n-button>
             <n-button
               v-if="showAddLuckyValueBtn"
               type="primary"
-              @click="showAddLuckyValue = true"
+              @click="openAddLuckyValue()"
             >{{ $t('activity.luckyWheelAddLuckyValue.k65b0') }}</n-button>
             <n-button
               v-if="showExportBtn"
@@ -289,11 +294,28 @@
         v-model:show="showEditModal"
         :wheel="editingWheel"
         :read-only="editReadOnly"
+        :create-mode="editCreateMode"
+        :default-currency="wheels[0]?.currency || 'BRL'"
         @saved="onWheelSaved"
       />
 
       <LuckyWheelAddLuckyValueModal
         v-model:show="showAddLuckyValue"
+        :initial-account="addLuckyValueAccount"
+        :initial-member-id="addLuckyValueMemberId"
+        @saved="reloadActive"
+      />
+
+      <LuckyWheelDeductLuckyValueModal
+        v-model:show="showDeductLuckyValue"
+        :user-ids="deductUserIds"
+        :remaining-by-user-id="deductRemainingByUserId"
+        @saved="reloadActive"
+      />
+
+      <LuckyWheelPhysicalOrderModal
+        v-model:show="showPhysicalOrderModal"
+        :order="editingPhysicalOrder"
         @saved="reloadActive"
       />
     </Page>
@@ -337,6 +359,8 @@ import {
 import LuckyWheelPublicConfigModal from './components/LuckyWheelPublicConfigModal.vue';
 import LuckyWheelEditModal from './components/LuckyWheelEditModal.vue';
 import LuckyWheelAddLuckyValueModal from './components/LuckyWheelAddLuckyValueModal.vue';
+import LuckyWheelDeductLuckyValueModal from './components/LuckyWheelDeductLuckyValueModal.vue';
+import LuckyWheelPhysicalOrderModal from './components/LuckyWheelPhysicalOrderModal.vue';
 import {
   BULK_ACTION_OPTION_KEYS,
   LUCKY_VALUE_CHANGE_TYPE_OPTION_KEYS,
@@ -353,6 +377,7 @@ import {
   type LuckyWheelPublicConfigSnapshot,
   normalizeLuckyWheelItem,
   normalizeLuckyWheelPublicConfig,
+  luckyWheelScheduleStatus,
   wheelTypeLabel,
 } from './components/luckyWheelTypes';
 import {
@@ -386,8 +411,16 @@ const exportLoading = ref(false);
 const showPublicConfig = ref(false);
 const showEditModal = ref(false);
 const showAddLuckyValue = ref(false);
+const showDeductLuckyValue = ref(false);
+const addLuckyValueAccount = ref('');
+const addLuckyValueMemberId = ref<number | string | null>(null);
+const deductUserIds = ref<number[]>([]);
+const deductRemainingByUserId = ref<Record<number, number>>({});
+const showPhysicalOrderModal = ref(false);
 const editReadOnly = ref(false);
+const editCreateMode = ref(false);
 const editingWheel = ref<LuckyWheelItem | null>(null);
+const editingPhysicalOrder = ref<Record<string, any> | null>(null);
 const publicConfigSnapshot = ref<LuckyWheelPublicConfigSnapshot | null>(null);
 const wheels = ref<LuckyWheelItem[]>([]);
 
@@ -637,9 +670,37 @@ function toggleSelectCurrentPage(checked: boolean) {
   }
 }
 
+function openAddLuckyValue(row?: Record<string, any>) {
+  addLuckyValueAccount.value = row?.account ? String(row.account) : '';
+  addLuckyValueMemberId.value = row?.memberId ?? null;
+  showAddLuckyValue.value = true;
+}
+
+function openDeductLuckyValue(rows: Array<Record<string, any>>) {
+  const remaining: Record<number, number> = {};
+  const ids: number[] = [];
+  for (const row of rows) {
+    const userId = Number(row.memberId);
+    if (!Number.isInteger(userId) || userId <= 0) continue;
+    ids.push(userId);
+    remaining[userId] = Number(row.remainingLuckyValue || 0);
+  }
+  deductUserIds.value = [...new Set(ids)];
+  deductRemainingByUserId.value = remaining;
+  if (deductUserIds.value.length === 0) {
+    message.warning($t('activity.luckyWheelAddLuckyValue.memberIds'));
+    return;
+  }
+  showDeductLuckyValue.value = true;
+}
+
 function handleBulkAction(action: string | null) {
   if (!action) return;
   if (action === 'export') handleExport();
+  if (action === 'deduct' && activeTab.value === 'remaining-lucky-value') {
+    const selected = tableRows.value.filter((row) => checkedRowKeys.value.includes(rowKey(row)));
+    openDeductLuckyValue(selected);
+  }
   bulkAction.value = null;
 }
 
@@ -703,10 +764,23 @@ async function onWheelSwitch(row: LuckyWheelItem, enabled: boolean) {
   }
 }
 
+function openCreate() {
+  editingWheel.value = null;
+  editReadOnly.value = false;
+  editCreateMode.value = true;
+  showEditModal.value = true;
+}
+
 function openEdit(row: LuckyWheelItem, readOnly = false) {
   editingWheel.value = row;
   editReadOnly.value = readOnly;
+  editCreateMode.value = false;
   showEditModal.value = true;
+}
+
+function openPhysicalOrder(row: Record<string, any>) {
+  editingPhysicalOrder.value = row;
+  showPhysicalOrderModal.value = true;
 }
 
 const wheelColumns = computed<DataTableColumns<LuckyWheelItem>>(() => [
@@ -717,6 +791,27 @@ const wheelColumns = computed<DataTableColumns<LuckyWheelItem>>(() => [
     key: 'wheelType',
     width: 120,
     render: (row) => wheelTypeLabel(row.wheelType),
+  },
+  {
+    title: $t('activity.luckyWheelEdit.k8d452'),
+    key: 'schedule',
+    width: 210,
+    render: (row) => {
+      const status = luckyWheelScheduleStatus(row.startsAt, row.endsAt);
+      const statusLabel =
+        status === 'always'
+          ? $t('activity.luckyWheelEdit.k8d451')
+          : status === 'upcoming'
+            ? $t('activity.luckyWheelEdit.k8d448')
+            : status === 'ended'
+              ? $t('activity.luckyWheelEdit.k8d450')
+              : $t('activity.luckyWheelEdit.k8d449');
+      const range =
+        row.startsAt || row.endsAt
+          ? `${formatTs(row.startsAt)} ~ ${formatTs(row.endsAt)}`
+          : statusLabel;
+      return `${statusLabel}${row.startsAt || row.endsAt ? ` · ${range}` : ''}`;
+    },
   },
   { title: $t('activity.luckyWheelEdit.k5956'), key: 'prizeCount', width: 90, render: (r) => displayValue(r.prizeCount) },
   {
@@ -799,8 +894,20 @@ const remainingColumns = computed<DataTableColumns<any>>(() => [
   {
     title: $t('activity.rewardReport.k64cd'),
     key: 'actions',
-    width: 80,
-    render: () => h(NButton, { text: true, type: 'primary', disabled: true }, { default: () => $t('activity.rewardReport.k8be6') }),
+    width: 180,
+    render: (row) =>
+      h(NSpace, { size: 8 }, () => [
+        h(
+          NButton,
+          { text: true, type: 'primary', onClick: () => openAddLuckyValue(row) },
+          { default: () => $t('activity.luckyWheelAddLuckyValue.k65b0') },
+        ),
+        h(
+          NButton,
+          { text: true, type: 'warning', onClick: () => openDeductLuckyValue([row]) },
+          { default: () => $t('activity.luckyWheelAddLuckyValue.deductAction') },
+        ),
+      ]),
   },
   { title: $t('activity.activityList.k64cd'), key: 'operator', width: 90, render: (r) => displayValue(r.operator) },
 ]);
@@ -1009,6 +1116,7 @@ function onWheelSaved(updated: LuckyWheelItem) {
   const normalized = normalizeLuckyWheelItem(updated) ?? updated;
   const idx = wheels.value.findIndex((w) => w.id === normalized.id);
   if (idx >= 0) wheels.value[idx] = normalized;
+  else wheels.value = [normalized, ...wheels.value];
   reloadActive();
 }
 

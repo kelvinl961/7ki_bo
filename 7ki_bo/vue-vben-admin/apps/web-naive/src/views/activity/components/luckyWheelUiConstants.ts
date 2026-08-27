@@ -10,11 +10,12 @@ export const OPERATOR_SEARCH_OPTION_KEYS = [
 
 export const LUCKY_VALUE_CHANGE_TYPE_OPTION_KEYS = [
   { labelKey: 'activity.luckyWheelUi.all', value: null },
-  { labelKey: 'activity.luckyWheelUi.earn', value: 'earn' },
-  { labelKey: 'activity.luckyWheelUi.consume', value: 'consume' },
-  { labelKey: 'activity.luckyWheelUi.expire', value: 'expire' },
-  { labelKey: 'activity.luckyWheelUi.deduct', value: 'deduct' },
-  { labelKey: 'activity.luckyWheelUi.manual', value: 'manual' },
+  { labelKey: 'activity.luckyWheelUi.earn', value: 'BET_EARN' },
+  { labelKey: 'activity.luckyWheelUi.depositEarn', value: 'DEPOSIT_EARN' },
+  { labelKey: 'activity.luckyWheelUi.manual', value: 'MANUAL_ADD' },
+  { labelKey: 'activity.luckyWheelUi.deduct', value: 'MANUAL_DEDUCT' },
+  { labelKey: 'activity.luckyWheelUi.consume', value: 'SPIN_CONSUME' },
+  { labelKey: 'activity.luckyWheelUi.expire', value: 'EXPIRE_VOID' },
 ];
 
 export const REMAINING_VALUE_METRIC_OPTION_KEYS = [
@@ -36,6 +37,7 @@ export const WHEEL_TYPE_FILTER_OPTION_KEYS = [
   { labelKey: 'activity.luckyWheelUi.wheelSilver', value: 'silver' },
   { labelKey: 'activity.luckyWheelUi.wheelGold', value: 'gold' },
   { labelKey: 'activity.luckyWheelUi.wheelDiamond', value: 'diamond' },
+  { labelKey: 'activity.luckyWheelUi.wheelCustom', value: 'custom' },
 ];
 
 export const PHYSICAL_ORDER_STATUS_OPTION_KEYS = [
@@ -53,4 +55,5 @@ export const PHYSICAL_ORDER_TIME_FIELD_OPTION_KEYS = [
 
 export const BULK_ACTION_OPTION_KEYS = [
   { labelKey: 'activity.luckyWheelUi.bulkExport', value: 'export' },
+  { labelKey: 'activity.luckyWheelAddLuckyValue.deductAction', value: 'deduct' },
 ];

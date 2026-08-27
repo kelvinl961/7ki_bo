@@ -121,7 +121,8 @@ export const rePaymentApi = {
       '/wallet/re-payment/callback-exceptions',
       { params: filters },
     );
-    return response.data;
+    // request interceptor already returns { success, data }
+    return response as GetCallbackExceptionsResponse;
   },
 
   /**
@@ -135,7 +136,7 @@ export const rePaymentApi = {
       `/wallet/re-payment/withdrawals/${withdrawalId}/repayment`,
       data,
     );
-    return response.data;
+    return response as OperationResponse;
   },
 
   /**
@@ -148,7 +149,7 @@ export const rePaymentApi = {
       '/wallet/re-payment/withdrawals/bulk-repayment',
       data,
     );
-    return response.data;
+    return response as BulkOperationResponse;
   },
 
   /**
@@ -162,7 +163,7 @@ export const rePaymentApi = {
       `/wallet/re-payment/withdrawals/${withdrawalId}/manual-process`,
       data,
     );
-    return response.data;
+    return response as OperationResponse;
   },
 
   /**
@@ -175,7 +176,7 @@ export const rePaymentApi = {
     const response = await requestClient.get('/wallet/re-payment/statistics', {
       params,
     });
-    return response.data;
+    return response as RePaymentStatistics;
   },
 
   /**

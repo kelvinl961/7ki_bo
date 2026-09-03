@@ -95,7 +95,7 @@
                   {{ game.platformName }}
                 </n-text>
                 <n-text depth="3" size="small">
-                  收藏时间: {{ formatDate(game.addedAt) }}
+                  收藏时间: <TzDateTime :value="game.addedAt" />
                 </n-text>
                 <n-tag
                   :type="game.isEnabled ? 'success' : 'error'"
@@ -132,6 +132,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useMessage, useDialog } from 'naive-ui';
 import { SearchOutline } from '@vicons/ionicons5';
 import { useFavoriteGames } from '#/composables/useFavoriteGames';
+import TzDateTime from '#/components/common/TzDateTime.vue';
 import type { FavoriteGame } from '#/api/favoriteGames';
 
 // Composables
@@ -222,16 +223,6 @@ const handleSelectionChange = (gameId: number, checked: boolean) => {
   } else {
     selectedGames.value = selectedGames.value.filter((id) => id !== gameId);
   }
-};
-
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('zh-CN', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
 };
 
 // Initialize

@@ -128,6 +128,7 @@
           <label class="mb-2 text-sm font-medium">{{ $t('operations.messageSettings.timeRange') }}</label>
           <n-date-picker
             v-model:value="timeRange"
+            :time-zone="timezone"
             type="datetimerange"
             :placeholder="$t('common.selectDateRange')"
             style="width: 300px"
@@ -284,13 +285,13 @@
           <div>
             <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.startTime') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
-              {{ formatDate(detailData.startTime) }}
+              <TzDateTime :value="detailData.startTime" />
             </div>
           </div>
           <div>
             <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.endTime') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
-              {{ formatDate(detailData.endTime) }}
+              <TzDateTime :value="detailData.endTime" />
             </div>
           </div>
         </div>
@@ -433,6 +434,11 @@ import {
   type SelectOption,
 } from 'naive-ui';
 import { notification } from '#/adapter/naive';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import TzDateTime from '#/components/common/TzDateTime.vue';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
+
+const { timezone } = useDisplayTimezone();
 const LobbyPopModalFormModal = defineAsyncComponent(
   () => import('./LobbyPopModalFormModal.vue'),
 );
@@ -670,7 +676,7 @@ const columns: DataTableColumns<LobbyPopModal> = [
     key: 'startTime',
     width: 160,
     render(row) {
-      return formatDate(row.startTime);
+      return renderTzDateTime(row.startTime);
     },
   },
   {
@@ -678,7 +684,7 @@ const columns: DataTableColumns<LobbyPopModal> = [
     key: 'endTime',
     width: 160,
     render(row) {
-      return formatDate(row.endTime);
+      return renderTzDateTime(row.endTime);
     },
   },
   {
@@ -1035,16 +1041,6 @@ const handleImageError = (event: Event) => {
     if (target.src !== placeholderImageUrl) {
       target.src = placeholderImageUrl;
     }
-  }
-};
-
-const formatDate = (date: string | Date | null) => {
-  if (!date) return '-';
-  try {
-    return new Date(date).toLocaleString('zh-CN');
-  } catch (error) {
-    console.error('Date formatting error:', error);
-    return '-';
   }
 };
 

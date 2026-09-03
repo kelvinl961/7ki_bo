@@ -133,6 +133,8 @@ import {
   useMessage,
   type DataTableColumns,
 } from 'naive-ui';
+import { formatDateTimeInTimezone } from '#/utils/timezoneUtils';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 
 interface Props {
   agentId?: number;
@@ -387,12 +389,14 @@ const columns = computed<DataTableColumns<Message>>(() => [
     width: 180,
     render: (row) => {
       return h('div', { class: 'text-sm' }, [
-        h('div', { class: 'font-medium' }, formatDateTime(row.sendTime)),
+        h('div', { class: 'font-medium' }, renderTzDateTime(row.sendTime)),
         row.readTime
           ? h(
               'div',
               { class: 'text-xs text-gray-500' },
-              $t('agency.messages.readAt', [formatDateTime(row.readTime)]),
+              $t('agency.messages.readAt', [
+                formatDateTimeInTimezone(row.readTime),
+              ]),
             )
           : null,
       ]);
@@ -562,10 +566,6 @@ const handleExportMessages = () => {
 const handleRefresh = () => {
   loadMessages();
   message.success($t('agency.messages.refreshed'));
-};
-
-const formatDateTime = (dateString: string) => {
-  return new Date(dateString).toLocaleString();
 };
 
 onMounted(() => {

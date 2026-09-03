@@ -24,6 +24,7 @@
                   <n-date-picker
                     v-model:value="dateRange"
                     type="datetimerange"
+                    :time-zone="timezone"
                     clearable
                     size="small"
                     :shortcuts="dateShortcuts"
@@ -281,6 +282,7 @@
                 <n-date-picker
                   v-model:value="statsDateRange"
                   type="datetimerange"
+                  :time-zone="timezone"
                   clearable
                   size="small"
                   :shortcuts="dateShortcuts"
@@ -466,6 +468,8 @@ import {
   type BetTransactionFilters,
 } from '#/api/game/betTransactions';
 import type { DataTableColumns } from 'naive-ui';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 import {
   getGameCategoryLabel,
   getLocalizedGameName,
@@ -474,6 +478,7 @@ import {
 const route = useRoute();
 const router = useRouter();
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 
 const translateGameCategory = (category: string): string =>
   getGameCategoryLabel(category);
@@ -833,7 +838,7 @@ const columns: DataTableColumns<BetTransactionItem> = [
     title: $t('game.betRecordsExtra2.betTime'),
     key: 'createdAt',
     width: 160,
-    render: (row) => formatDateTime(row.createdAt),
+    render: (row) => renderTzDateTime(row.createdAt),
   },
   {
     title: $t('game.betRecordsExtra2.description'),
@@ -1475,19 +1480,6 @@ const formatCurrency = (value: number | string | null): string => {
   if (value === null || value === undefined) return '0.00';
   const num = typeof value === 'string' ? parseFloat(value) : value;
   return num.toFixed(2);
-};
-
-const formatDateTime = (dateStr: string): string => {
-  const date = new Date(dateStr);
-  return date.toLocaleString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-  });
 };
 
 // Lifecycle

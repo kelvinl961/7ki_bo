@@ -381,6 +381,8 @@ import {
   watch,
   nextTick,
 } from 'vue';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import { formatDateTimeInTimezone } from '#/utils/timezoneUtils';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 import { defineAsyncComponent } from 'vue';
 const SmartDataGrid = defineAsyncComponent(
@@ -548,12 +550,6 @@ const formRules: FormRules = {
   currency: [
     { required: true, message: $t('game.virtualBonusPool.selectCurrencyRequired'), trigger: ['blur', 'change'] },
   ],
-};
-
-
-const formatDate = (date: string | Date | null) => {
-  if (!date) return '-';
-  return new Date(date).toLocaleString('zh-CN');
 };
 
 
@@ -729,7 +725,7 @@ const columns: DataTableColumns<GameItem> = [
     key: 'createdAt',
     width: 160,
     render(row) {
-      return formatDate(row.createdAt);
+      return renderTzDateTime(row.createdAt);
     },
   },
   {
@@ -1650,8 +1646,8 @@ const handleExportCsv = async () => {
       g.showToStreamer ? $t('common.yes') : $t('common.no'),
       g.sortOrder,
       g.remark ?? '',
-      formatDate(g.createdAt),
-      formatDate(g.updatedAt),
+      formatDateTimeInTimezone(g.createdAt),
+      formatDateTimeInTimezone(g.updatedAt),
     ]);
 
     const body = [

@@ -203,7 +203,7 @@
 <script setup lang="ts">
 import { $t } from '@vben/locales';
 
-import { ref, reactive, onMounted, computed, watch } from 'vue';
+import { ref, reactive, onMounted, computed, watch, defineAsyncComponent } from 'vue';
 import {
   NModal,
   NButton,
@@ -221,7 +221,10 @@ import {
   type MediaFile,
 } from '#/api/mediaLibrary';
 import { getImageUrlByEnvironment } from '../utils/imageUtils';
-import MediaUploadForm from '#/views/media-library/components/MediaUploadForm.vue';
+
+const MediaUploadForm = defineAsyncComponent(
+  () => import('#/views/media-library/components/MediaUploadForm.vue'),
+);
 
 // Props
 interface Props {

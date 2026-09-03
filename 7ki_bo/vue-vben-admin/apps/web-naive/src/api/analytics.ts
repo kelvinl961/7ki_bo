@@ -46,8 +46,7 @@ export interface AnalyticsParams {
  */
 export async function getTodayDashboardStats(): Promise<DashboardStats> {
   try {
-    // 🌍 Use UTC-3 timezone (America/Sao_Paulo) for date calculations
-    const todayStr = getTodayInTimezone('America/Sao_Paulo'); // YYYY-MM-DD format
+    const todayStr = getTodayInTimezone();
 
     // Get multiple statistics in parallel
     const [rechargeStats, withdrawalStats, memberStats, agentStats, vipStats] =
@@ -226,8 +225,7 @@ export async function getRankingData(
   limit = 10,
 ): Promise<RankingData[]> {
   try {
-    // 🌍 Use UTC-3 timezone (America/Sao_Paulo) for date calculations
-    const today = getTodayInTimezone('America/Sao_Paulo');
+    const today = getTodayInTimezone();
 
     const response = await requestClient.get<{
       data: Array<{
@@ -268,8 +266,7 @@ export async function getPromotionStats(): Promise<{
   totalBonus: number;
 }> {
   try {
-    // 🌍 Use UTC-3 timezone (America/Sao_Paulo) for date calculations
-    const today = getTodayInTimezone('America/Sao_Paulo');
+    const today = getTodayInTimezone();
 
     const response = await requestClient.get<{
       todayBonus: number;
@@ -350,8 +347,7 @@ export async function getDashboardAnalytics(): Promise<{
  * Get today vs yesterday stats to compute percentage changes
  */
 export async function getDashboardDiffApi() {
-  // 🌍 Use UTC-3 timezone (America/Sao_Paulo) for date calculations
-  const todayStr = getTodayInTimezone('America/Sao_Paulo');
+  const todayStr = getTodayInTimezone();
   return requestClient.get<{
     today: DashboardStats;
     yesterday: DashboardStats;

@@ -17,7 +17,7 @@
               @update:value="onSwitch"
             />
             <n-text v-if="pfEnabledAt" depth="3" class="text-xs">
-              {{ $t('activity.common.enabledAt') }}{{ formatTs(pfEnabledAt) }}
+              {{ $t('activity.common.enabledAt') }}<TzDateTime :value="pfEnabledAt" fallback="" />
             </n-text>
           </n-space>
           <n-space>
@@ -42,6 +42,7 @@
                 <n-date-picker
                   v-model:value="dateRange"
                   type="datetimerange"
+                  :time-zone="timezone"
                   clearable
                   style="width: 100%"
                 />
@@ -133,6 +134,9 @@ import {
   type DataTableColumns,
 } from 'naive-ui';
 import { Page } from '@vben/common-ui';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import TzDateTime from '#/components/common/TzDateTime.vue';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 import ProvidentFundSettingModal from './components/ProvidentFundSettingModal.vue';
 import {
   type ProvidentFundFormSnapshot,
@@ -150,6 +154,7 @@ import {
 } from '#/api/core/provident-fund-admin';
 
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 const activeTab = ref<'details' | 'wagering' | 'withdrawals'>('details');
 const pfEnabled = ref(false);
 const pfEnabledAt = ref<string | null>(null);
@@ -229,12 +234,6 @@ function applyServerPagination(meta: any, currentListLength: number) {
   if (pagination.page <= 1) {
     pagination.itemCount = currentListLength;
   }
-}
-
-function formatTs(iso: string | null) {
-  if (!iso) return '';
-  const d = new Date(iso);
-  return Number.isNaN(d.getTime()) ? iso : d.toLocaleString('zh-CN');
 }
 
 function rangeParams() {
@@ -411,7 +410,7 @@ const detailColumns: DataTableColumns<any> = [
     title: $t('activity.detailModal.k66f4'),
     key: 'createdAt',
     width: 170,
-    render: (r) => formatTs(r.createdAt),
+    render: (r) => renderTzDateTime(r.createdAt),
   },
 ];
 
@@ -473,7 +472,7 @@ const wageringColumns: DataTableColumns<any> = [
     title: $t('activity.providentFund.k521b'),
     key: 'firstOccurrenceAt',
     width: 170,
-    render: (r) => formatTs(r.firstOccurrenceAt),
+    render: (r) => renderTzDateTime(r.firstOccurrenceAt),
   },
 ];
 
@@ -482,7 +481,7 @@ const withdrawalColumns: DataTableColumns<any> = [
   { title: $t('activity.rewardReport.k4f1a3'), key: 'memberAccount', width: 140, ellipsis: { tooltip: true } },
   { title: $t('activity.luckyWheel.k5e01'), key: 'currency', width: 80 },
   { title: $t('activity.providentFund.k53d62'), key: 'amount', width: 110 },
-  { title: $t('activity.rewardReport.k98862'), key: 'claimedAt', width: 180, render: (r) => formatTs(r.claimedAt) },
+  { title: $t('activity.rewardReport.k98862'), key: 'claimedAt', width: 180, render: (r) => renderTzDateTime(r.claimedAt) },
 ];
 
 const activeColumns = computed(() => {

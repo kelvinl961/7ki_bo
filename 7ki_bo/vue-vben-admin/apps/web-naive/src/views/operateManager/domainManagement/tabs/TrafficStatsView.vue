@@ -73,6 +73,7 @@ import {
   useMessage,
   type DataTableColumn,
 } from 'naive-ui';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 
 const message = useMessage();
 
@@ -370,7 +371,7 @@ const domainDetailColumns: DataTableColumn<DomainDetail>[] = [
     key: 'createdAt',
     width: 180,
     render(row: DomainDetail) {
-      return new Date(row.createdAt).toLocaleString('zh-CN');
+      return renderTzDateTime(row.createdAt);
     },
   },
 ];

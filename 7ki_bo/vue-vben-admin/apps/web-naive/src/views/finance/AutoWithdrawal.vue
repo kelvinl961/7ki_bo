@@ -34,6 +34,7 @@
               <n-date-picker
                 v-model:value="filters.dateRange"
                 type="datetimerange"
+                :time-zone="timezone"
                 format="yyyy-MM-dd HH:mm:ss"
                 placeholder:placeholder="$t('finance.selectTimeRange')"
                 clearable
@@ -453,9 +454,7 @@
             </div>
             <div class="flex justify-between">
               <span class="text-gray-600">{{ $t('finance.applyTime') }}:</span>
-              <span>{{
-                formatDateTime(detailModal.data.applicationTime)
-              }}</span>
+              <span><TzDateTime :value="detailModal.data.applicationTime" /></span>
             </div>
             <div class="flex justify-between">
               <span class="text-gray-600">{{ $t('common.orderStatus') }}:</span>
@@ -539,6 +538,9 @@ import {
   nextTick,
   defineAsyncComponent,
 } from 'vue';
+import TzDateTime from '#/components/common/TzDateTime.vue';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 const SmartAutoRefresh = defineAsyncComponent(
   () => import('../../components/smart/SmartAutoRefresh/index.vue'),
@@ -599,6 +601,7 @@ interface AutoWithdrawalRecord {
 }
 
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 const dialog = useDialog();
 
 // Data and state
@@ -801,7 +804,7 @@ const columns: DataTableColumns<AutoWithdrawalRecord> = [
     width: 150,
     render: (row) =>
       h('div', { class: 'text-center' }, [
-        h('div', formatDateTime(row.createdAt || row.applicationTime)),
+        h('div', [renderTzDateTime(row.createdAt || row.applicationTime)]),
         h('div', { class: 'text-xs text-gray-500' }, '完成时长'),
       ]),
   },
@@ -1343,11 +1346,6 @@ const handleRefreshIntervalChange = (newInterval: number) => {
 };
 
 // Utility functions
-const formatDateTime = (dateTime: string) => {
-  if (!dateTime) return '-';
-  return new Date(dateTime).toLocaleString('zh-CN');
-};
-
 const getStatusType = (status: string) => {
   const statusMap: Record<string, string> = {
     pending_auto_approval: 'warning',

@@ -116,6 +116,7 @@ import {
   NPopconfirm,
   NText,
 } from 'naive-ui';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 import {
   TaskCategory,
   getTaskCenterList,
@@ -288,7 +289,7 @@ const columns = [
     title: '修改时间',
     key: 'updatedAt',
     width: 160,
-    render: (row: TaskCenterItem) => new Date(row.updatedAt).toLocaleString(),
+    render: (row: TaskCenterItem) => renderTzDateTime(row.updatedAt),
   },
   {
     title: '操作',

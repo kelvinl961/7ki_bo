@@ -81,6 +81,7 @@
           <div class="grid grid-cols-2 gap-4">
             <n-form-item :label="$t('operations.messageSettings.startTime')" path="startTime">
               <n-date-picker
+                :time-zone="timezone"
                 v-model:value="formData.startTime"
                 type="datetime"
                 :placeholder="$t('operations.messageSettings.startTime')"
@@ -91,6 +92,7 @@
 
             <n-form-item :label="$t('operations.messageSettings.endTime')" path="endTime">
               <n-date-picker
+                :time-zone="timezone"
                 v-model:value="formData.endTime"
                 type="datetime"
                 :placeholder="$t('operations.messageSettings.endTime')"
@@ -245,6 +247,7 @@ import {
   updateOperationMessage,
   type OperationMessageCreateRequest,
 } from '#/api/operationMessage';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking modal load
 import { defineAsyncComponent } from 'vue';
 const MediaLibrarySelector = defineAsyncComponent(
@@ -293,6 +296,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<Emits>();
+const { timezone } = useDisplayTimezone();
 
 // Form data
 const formRef = ref<FormInst>();

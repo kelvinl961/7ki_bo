@@ -27,6 +27,8 @@ import {
 } from 'naive-ui';
 import { SettingsOutline } from '@vicons/ionicons5';
 import { useUserStore } from '@vben/stores';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 import SiteBillDetailPanel from './SiteBillDetailPanel.vue';
 import {
   confirmSiteBillPaymentApi,
@@ -49,6 +51,7 @@ import {
 } from '#/api/game/gamePlatform';
 
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 const dialog = useDialog();
 const router = useRouter();
 const userStore = useUserStore();
@@ -728,7 +731,7 @@ const baseColumns = computed<DataTableColumns<SiteBillListItem>>(() => {
     });
   }
   if (v.operatedAt) {
-    cols.push({ title: $t('common.operationTime'), key: 'operatedAt', width: 160, render: (row) => row.operatedAt || '—' });
+    cols.push({ title: $t('common.operationTime'), key: 'operatedAt', width: 160, render: (row) => renderTzDateTime(row.operatedAt, 'datetime', '—') });
   }
   if (v.operatorName) {
     cols.push({ title: $t('common.operator'), key: 'operatorName', width: 100, render: (row) => row.operatorName || '—' });
@@ -831,6 +834,7 @@ onMounted(() => {
             <n-form-item :label="$t('system.siteBill.billMonth')" label-placement="left" :show-feedback="false">
               <n-date-picker
                 v-model:formatted-value="filterForm.billMonth"
+                :time-zone="timezone"
                 type="month"
                 clearable
                 value-format="yyyy-MM"
@@ -843,6 +847,7 @@ onMounted(() => {
             <n-form-item :label="$t('system.siteBill.sameBrandMonth')" label-placement="left" :show-feedback="false">
               <n-date-picker
                 v-model:formatted-value="filterForm.sameBrandMonth"
+                :time-zone="timezone"
                 type="month"
                 clearable
                 value-format="yyyy-MM"

@@ -132,6 +132,7 @@
 import { $t } from '@vben/locales';
 
 import { h, onMounted, reactive, ref, defineAsyncComponent } from 'vue';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 const SmartDataGrid = defineAsyncComponent(
   () => import('../../../components/smart/SmartDataGrid/index.vue'),
@@ -424,7 +425,7 @@ const columns: DataTableColumns<GameItem> = [
     key: 'createdAt',
     width: 180,
     render(row) {
-      return new Date(row.createdAt).toLocaleString('zh-CN');
+      return renderTzDateTime(row.createdAt);
     },
   },
   {
@@ -432,7 +433,7 @@ const columns: DataTableColumns<GameItem> = [
     key: 'updatedAt',
     width: 180,
     render(row) {
-      return new Date(row.updatedAt).toLocaleString('zh-CN');
+      return renderTzDateTime(row.updatedAt);
     },
   },
 ];

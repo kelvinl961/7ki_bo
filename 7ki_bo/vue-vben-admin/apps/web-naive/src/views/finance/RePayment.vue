@@ -33,6 +33,7 @@
               <n-date-picker
                 v-model:value="filters.dateRange"
                 type="datetimerange"
+                :time-zone="timezone"
                 format="yyyy-MM-dd HH:mm:ss"
                 :placeholder="$t('finance.selectTimeRange')"
                 clearable
@@ -320,9 +321,7 @@
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-600">{{ $t('finance.applyTime') }}:</span>
-                <span>{{
-                  formatDateTime(detailModal.data.applicationTime)
-                }}</span>
+                <span><TzDateTime :value="detailModal.data.applicationTime" /></span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-600">{{ $t('common.orderStatus') }}:</span>
@@ -355,9 +354,7 @@
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-600">{{ $t('finance.lastRetry') }}:</span>
-                <span>{{
-                  formatDateTime(detailModal.data.lastRetryTime) || '-'
-                }}</span>
+                <span><TzDateTime :value="detailModal.data.lastRetryTime" /></span>
               </div>
             </div>
           </n-card>
@@ -396,7 +393,7 @@
               class="mb-2 border-b pb-2 last:border-b-0"
             >
               <div class="text-xs text-gray-500">
-                {{ formatDateTime(log.timestamp) }}
+                <TzDateTime :value="log.timestamp" />
               </div>
               <div class="text-sm">{{ log.message }}</div>
             </div>
@@ -434,6 +431,9 @@ import {
   watch,
   defineAsyncComponent,
 } from 'vue';
+import TzDateTime from '#/components/common/TzDateTime.vue';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 const SmartAutoRefresh = defineAsyncComponent(
   () => import('../../components/smart/SmartAutoRefresh/index.vue'),
@@ -506,6 +506,7 @@ interface RePaymentRecord {
 }
 
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 const dialog = useDialog();
 
 // Data and state
@@ -667,7 +668,7 @@ const columns: DataTableColumns<RePaymentRecord> = [
     width: 150,
     render: (row) =>
       h('div', { class: 'text-center' }, [
-        h('div', formatDateTime(row.applicationTime)),
+        h('div', [renderTzDateTime(row.applicationTime)]),
         h('div', { class: 'text-xs text-gray-500' }, '完成时长'),
       ]),
   },
@@ -1257,11 +1258,6 @@ const handleRefreshIntervalChange = (newInterval: number) => {
 };
 
 // Utility functions
-const formatDateTime = (dateTime: string) => {
-  if (!dateTime) return '-';
-  return new Date(dateTime).toLocaleString('zh-CN');
-};
-
 const getStatusType = (status: string) => {
   const statusMap: Record<string, string> = {
     callback_failed: 'error',

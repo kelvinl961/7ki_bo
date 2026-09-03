@@ -18,6 +18,7 @@
             <n-date-picker
               v-model:value="dateRange"
               type="daterange"
+              :time-zone="timezone"
               :shortcuts="dateShortcuts as any"
               :placeholder="$t('game.statistics.selectDateRange')"
               format="yyyy-MM-dd"
@@ -116,8 +117,11 @@ import { useMessage } from 'naive-ui';
 import { exportGridData } from '#/utils/exportUtils';
 import { getGameStatistics, getGameTypes } from '#/api/gameStatistics';
 import { getGameTypeLabel } from '#/utils/gameTypeI18n';
+import { formatIsoDateInTimezone } from '#/utils/timezoneUtils';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 
 // Reactive data
 const loading = ref(false);
@@ -424,12 +428,8 @@ const fetchData = async () => {
   error.value = '';
 
   try {
-    const startDateStr = new Date(dateRange.value[0])
-      .toISOString()
-      .split('T')[0];
-    const endDate = new Date(dateRange.value[1]);
-    endDate.setHours(23, 59, 59, 999);
-    const endDateStr = endDate.toISOString().split('T')[0];
+    const startDateStr = formatIsoDateInTimezone(dateRange.value[0]);
+    const endDateStr = formatIsoDateInTimezone(dateRange.value[1]);
 
     const response = await getGameStatistics({
       startDate: startDateStr,
@@ -474,12 +474,8 @@ const exportToExcel = async () => {
     // Dynamically import xlsx
     const XLSX = await import('xlsx');
 
-    const startDateStr = new Date(dateRange.value[0])
-      .toISOString()
-      .split('T')[0];
-    const endDate = new Date(dateRange.value[1]);
-    endDate.setHours(23, 59, 59, 999);
-    const endDateStr = endDate.toISOString().split('T')[0];
+    const startDateStr = formatIsoDateInTimezone(dateRange.value[0]);
+    const endDateStr = formatIsoDateInTimezone(dateRange.value[1]);
 
     // Prepare data with formatted values
     const exportData = tableData.value.map((row) => ({

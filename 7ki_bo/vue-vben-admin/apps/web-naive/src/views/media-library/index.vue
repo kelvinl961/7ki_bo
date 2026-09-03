@@ -171,7 +171,7 @@
           </div>
           <div class="file-stats">
             <span>{{ $t('media.usageCount', [file.usageCount]) }}</span>
-            <span>{{ formatDate(file.createdAt) }}</span>
+            <span><TzDateTime :value="file.createdAt" /></span>
           </div>
         </div>
 
@@ -298,6 +298,7 @@ import {
   type MediaFile,
   type MediaCategory,
 } from '#/api/mediaLibrary';
+import TzDateTime from '#/components/common/TzDateTime.vue';
 import { getImageUrlByEnvironment } from '../../utils/imageUtils';
 // Lazy load child components to avoid blocking main component
 const MediaUploadForm = defineAsyncComponent(
@@ -578,14 +579,6 @@ const getCategoryDisplayName = (category: string): string => {
     other: $t('media.catOther'),
   };
   return categoryMap[category] || category;
-};
-
-const formatDate = (dateString: string): string => {
-  return new Date(dateString).toLocaleDateString('zh-CN', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
 };
 
 // Lifecycle

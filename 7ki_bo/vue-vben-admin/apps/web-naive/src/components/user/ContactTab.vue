@@ -169,6 +169,7 @@ import {
   type FormInst,
   type FormRules,
 } from 'naive-ui';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 import {
   getUserContactsApi,
   updateUserContactsApi,
@@ -294,7 +295,7 @@ const bindingColumns = computed<DataTableColumns<ThirdPartyBinding>>(() => [
     title: $t('user.contact.boundAt'),
     key: 'boundAt',
     width: 180,
-    render: (row) => new Date(row.boundAt).toLocaleString(),
+    render: (row) => renderTzDateTime(row.boundAt),
   },
   {
     title: $t('user.contact.thirdPartyPlatform'),

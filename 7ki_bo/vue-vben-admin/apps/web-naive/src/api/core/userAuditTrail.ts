@@ -1,4 +1,5 @@
 import { requestClient } from '#/api/request';
+import { formatDateTimeInTimezone } from '#/utils/timezoneUtils';
 
 // ===================================
 // INTERFACES
@@ -248,15 +249,7 @@ export function formatOperationTime(time: Date | string): string {
       return '无效日期';
     }
 
-    return date.toLocaleString('zh-CN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      timeZone: 'Asia/Shanghai',
-    });
+    return formatDateTimeInTimezone(date);
   } catch (error) {
     console.error('Error formatting date:', time, error);
     return '日期解析错误';

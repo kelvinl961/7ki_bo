@@ -43,6 +43,7 @@
           <n-form-item :label="$t('activity.luckyWheelEdit.k8d452')" required>
             <n-space :size="8" align="center">
               <n-date-picker
+                :time-zone="timezone"
                 v-model:value="form.startsAt"
                 type="datetime"
                 :disabled="readOnly"
@@ -52,6 +53,7 @@
               />
               <span class="lw-hint">-</span>
               <n-date-picker
+                :time-zone="timezone"
                 v-model:value="form.endsAt"
                 type="datetime"
                 :disabled="readOnly"
@@ -350,6 +352,7 @@ import {
   type DataTableColumns,
 } from 'naive-ui';
 import { createLuckyWheelItemApi, putLuckyWheelItemApi } from '#/api/core/lucky-wheel-admin';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 import MediaLibrarySelector from '#/components/MediaLibrarySelector.vue';
 import {
   LUCKY_WHEEL_PRIZE_COUNT_OPTIONS,
@@ -377,6 +380,7 @@ const emit = defineEmits<{
 
 const visible = defineModel<boolean>('show', { default: false });
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 const saving = ref(false);
 
 const readOnly = computed(() => Boolean(props.readOnly));

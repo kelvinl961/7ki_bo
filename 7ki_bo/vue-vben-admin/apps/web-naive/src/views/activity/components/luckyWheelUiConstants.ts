@@ -12,8 +12,11 @@ export const LUCKY_VALUE_CHANGE_TYPE_OPTION_KEYS = [
   { labelKey: 'activity.luckyWheelUi.all', value: null },
   { labelKey: 'activity.luckyWheelUi.earn', value: 'BET_EARN' },
   { labelKey: 'activity.luckyWheelUi.depositEarn', value: 'DEPOSIT_EARN' },
-  { labelKey: 'activity.luckyWheelUi.manual', value: 'MANUAL_ADD' },
+  { labelKey: 'activity.luckyWheelUi.manualAdd', value: 'MANUAL_ADD' },
   { labelKey: 'activity.luckyWheelUi.deduct', value: 'MANUAL_DEDUCT' },
+  { labelKey: 'activity.luckyWheelUi.consumeSilver', value: 'SPIN_CONSUME_SILVER' },
+  { labelKey: 'activity.luckyWheelUi.consumeGold', value: 'SPIN_CONSUME_GOLD' },
+  { labelKey: 'activity.luckyWheelUi.consumeDiamond', value: 'SPIN_CONSUME_DIAMOND' },
   { labelKey: 'activity.luckyWheelUi.consume', value: 'SPIN_CONSUME' },
   { labelKey: 'activity.luckyWheelUi.expire', value: 'EXPIRE_VOID' },
 ];
@@ -26,10 +29,11 @@ export const REMAINING_VALUE_METRIC_OPTION_KEYS = [
 ] as const;
 
 export const WINNING_REWARD_TYPE_OPTION_KEYS = [
-  { labelKey: 'activity.luckyWheelUi.fixedBonus', value: 'fixed_bonus' },
-  { labelKey: 'activity.luckyWheelUi.randomBonus', value: 'random_bonus' },
-  { labelKey: 'activity.luckyWheelUi.physical', value: 'physical' },
-  { labelKey: 'activity.luckyWheelUi.none', value: 'none' },
+  { labelKey: 'activity.luckyWheelUi.fixedBonus', value: 'FIXED_CASH' },
+  { labelKey: 'activity.luckyWheelUi.randomBonus', value: 'RANDOM_CASH' },
+  { labelKey: 'activity.luckyWheelUi.physical', value: 'PHYSICAL' },
+  { labelKey: 'activity.luckyWheelUi.none', value: 'THANK_YOU' },
+  { labelKey: 'activity.luckyWheelUi.displayOnly', value: 'DISPLAY_ONLY' },
 ];
 
 export const WHEEL_TYPE_FILTER_OPTION_KEYS = [

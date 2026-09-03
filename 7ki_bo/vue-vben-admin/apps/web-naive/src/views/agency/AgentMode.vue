@@ -900,6 +900,7 @@ const SmartDataGrid = defineAsyncComponent(
   () => import('../../components/smart/SmartDataGrid/index.vue'),
 );
 import { Page } from '@vben/common-ui';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 import {
   NCard,
   NForm,
@@ -1248,7 +1249,7 @@ const columns = computed<DataTableColumns<AgentModeRow>>(() => [
     key: 'operatedAt',
     width: 140,
     sorter: true,
-    render: (row) => row.operatedAt || '-',
+    render: (row) => renderTzDateTime(row.operatedAt),
   },
 ]);
 

@@ -1621,6 +1621,7 @@
                 <n-date-picker
                   v-model:value="statsFilters.startDate"
                   type="date"
+                  :time-zone="timezone"
                  :placeholder="$t('finance.startDate')"
                   style="width: 140px"
                 />
@@ -1628,6 +1629,7 @@
                 <n-date-picker
                   v-model:value="statsFilters.endDate"
                   type="date"
+                  :time-zone="timezone"
                  :placeholder="$t('finance.endDate')"
                   style="width: 140px"
                 />
@@ -2264,24 +2266,26 @@
 
           <!-- Time Info -->
           <n-descriptions bordered :column="2" :title="$t('finance.timeInfo')" class="mt-4">
-            <n-descriptions-item :label="$t('finance.createTime')">{{
-              formatDateTime(currentOrderDetail.createdAt)
-            }}</n-descriptions-item>
-            <n-descriptions-item :label="$t('finance.successTime')">
-              {{
-                currentOrderDetail.status === 'SUCCESS' ||
-                currentOrderDetail.status === 'success'
-                  ? formatDateTime(
-                      (currentOrderDetail as any).processingTime ||
-                        (currentOrderDetail as any).confirmTime ||
-                        (currentOrderDetail as any).completeTime,
-                    )
-                  : '-'
-              }}
+            <n-descriptions-item :label="$t('finance.createTime')">
+              <TzDateTime :value="currentOrderDetail.createdAt" />
             </n-descriptions-item>
-            <n-descriptions-item :label="$t('finance.time')">{{
-              formatDateTime(currentOrderDetail.updatedAt)
-            }}</n-descriptions-item>
+            <n-descriptions-item :label="$t('finance.successTime')">
+              <TzDateTime
+                v-if="
+                  currentOrderDetail.status === 'SUCCESS' ||
+                  currentOrderDetail.status === 'success'
+                "
+                :value="
+                  (currentOrderDetail as any).processingTime ||
+                  (currentOrderDetail as any).confirmTime ||
+                  (currentOrderDetail as any).completeTime
+                "
+              />
+              <template v-else>-</template>
+            </n-descriptions-item>
+            <n-descriptions-item :label="$t('finance.time')">
+              <TzDateTime :value="currentOrderDetail.updatedAt" />
+            </n-descriptions-item>
             <n-descriptions-item :label="$t('finance.operator')">{{
               (currentOrderDetail as any).操作人 || 'system'
             }}</n-descriptions-item>
@@ -2508,13 +2512,17 @@ import thirdPartyChannelApi from '../../api/finance/third-party-channels';
 import { getMemberTiersApi } from '../../api/core/memberTier';
 import { sortMemberTiersForDisplay } from '#/utils/memberTierSort';
 import { requestClient } from '../../api/request';
-// Import timezone utilities
 import {
+  displayCalendarRangeToPicker,
   formatDateTimeInTimezone,
-  getNowInTimezone,
-  convertTimezoneToUTC,
+  formatDateInTimezone,
   getDisplayTimezone,
+  getNowInTimezone,
+  pickerRangeToUtcIso,
 } from '../../utils/timezoneUtils';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import TzDateTime from '#/components/common/TzDateTime.vue';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 // Import transaction mappings for remark translation
 import { translateSubcategory } from '../../utils/transactionTranslations';
 
@@ -2588,6 +2596,7 @@ interface ThirdPartyChannel {
 
 // Reactive data
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 const dialog = useDialog();
 const accessStore = useAccessStore();
 const userStore = useUserStore();
@@ -3115,7 +3124,7 @@ const disabledChannelColumns: DataTableColumns<any> = [
       return h(
         'div',
         { class: 'text-xs text-gray-600' },
-        new Date(row.updatedAt).toLocaleString('zh-CN'),
+        { default: () => renderTzDateTime(row.updatedAt) },
       );
     },
   },
@@ -3533,14 +3542,6 @@ const formatCurrency = (amount: number): string => {
   }).format(amount);
 };
 
-// Import timezone utilities
-import {
-  formatDateTimeInTimezone,
-  getNowInTimezone,
-  convertTimezoneToUTC,
-  getDisplayTimezone,
-} from '../../utils/timezoneUtils';
-
 const formatDateTime = (dateString: string): string => {
   if (!dateString) return '-';
   const tz = getDisplayTimezone();
@@ -3771,7 +3772,7 @@ const columns: DataTableColumns<RechargeOrder> = [
       h(
         NText,
         { style: { fontSize: '12px' } },
-        { default: () => formatDateTime(row.createdAt) },
+        { default: () => renderTzDateTime(row.createdAt) },
       ),
   },
   {
@@ -3788,7 +3789,7 @@ const columns: DataTableColumns<RechargeOrder> = [
       return h(
         NText,
         { style: { fontSize: '12px' } },
-        { default: () => (successTime ? formatDateTime(successTime) : '-') },
+        { default: () => (successTime ? renderTzDateTime(successTime) : '-') },
       );
     },
   },
@@ -3800,7 +3801,7 @@ const columns: DataTableColumns<RechargeOrder> = [
       h(
         NText,
         { style: { fontSize: '12px' } },
-        { default: () => formatDateTime(row.updatedAt) },
+        { default: () => renderTzDateTime(row.updatedAt) },
       ),
   },
   {
@@ -4613,7 +4614,7 @@ const categoryColumns: DataTableColumns<any> = [
               typeof row.createdAt === 'object' &&
               row.createdAt.toISOString
             ) {
-              return new Date(row.createdAt).toLocaleDateString('zh-CN');
+              return formatDateInTimezone(row.createdAt);
             }
             return '-';
           },
@@ -4668,56 +4669,11 @@ const fetchData = async () => {
     let endDate: string | undefined;
 
     if (filters.dateRange) {
-      const [start, end] = filters.dateRange;
-      const tz = getDisplayTimezone();
-      const startDateObj = new Date(start);
-      const endDateObj = new Date(end);
-
-      // Get date components in display timezone
-      const startTz = new Intl.DateTimeFormat('en-US', {
-        timeZone: tz,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-      }).formatToParts(startDateObj);
-
-      const endTz = new Intl.DateTimeFormat('en-US', {
-        timeZone: tz,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-      }).formatToParts(endDateObj);
-
-      const startUTC = convertTimezoneToUTC(
-        parseInt(startTz.find((p) => p.type === 'year')!.value),
-        parseInt(startTz.find((p) => p.type === 'month')!.value),
-        parseInt(startTz.find((p) => p.type === 'day')!.value),
-        parseInt(startTz.find((p) => p.type === 'hour')!.value),
-        parseInt(startTz.find((p) => p.type === 'minute')!.value),
-        parseInt(startTz.find((p) => p.type === 'second')!.value),
-        tz,
+      const { startDate: startIso, endDate: endIso } = pickerRangeToUtcIso(
+        filters.dateRange,
       );
-
-      const endUTC = convertTimezoneToUTC(
-        parseInt(endTz.find((p) => p.type === 'year')!.value),
-        parseInt(endTz.find((p) => p.type === 'month')!.value),
-        parseInt(endTz.find((p) => p.type === 'day')!.value),
-        parseInt(endTz.find((p) => p.type === 'hour')!.value),
-        parseInt(endTz.find((p) => p.type === 'minute')!.value),
-        parseInt(endTz.find((p) => p.type === 'second')!.value),
-        tz,
-      );
-
-      startDate = startUTC.toISOString();
-      endDate = endUTC.toISOString();
+      startDate = startIso;
+      endDate = endIso;
     }
 
     const params: RechargeOrderListParams = {
@@ -4828,8 +4784,7 @@ const handleSearch = () => {
 const handleQuickDateSelect = (value: 'day' | 'week' | 'month' | null) => {
   if (!value) return;
 
-  const tz = getDisplayTimezone();
-  const tzNow = getNowInTimezone(tz);
+  const tzNow = getNowInTimezone();
 
   let startYear: number, startMonth: number, startDay: number;
   let endYear: number, endMonth: number, endDay: number;
@@ -4865,27 +4820,14 @@ const handleQuickDateSelect = (value: 'day' | 'week' | 'month' | null) => {
     endDay = tzNow.day;
   }
 
-  // Convert to UTC timestamps
-  const startDateUTC = convertTimezoneToUTC(
+  filters.dateRange = displayCalendarRangeToPicker(
     startYear,
     startMonth,
     startDay,
-    0,
-    0,
-    0,
-    tz,
-  );
-  const endDateUTC = convertTimezoneToUTC(
     endYear,
     endMonth,
     endDay,
-    23,
-    59,
-    59,
-    tz,
   );
-
-  filters.dateRange = [startDateUTC.getTime(), endDateUTC.getTime()];
 };
 
 const handleDateRangeChange = (value: [number, number] | null) => {
@@ -4907,6 +4849,12 @@ const handleReset = () => {
   handleQuickDateSelect('day'); // Apply default date range
   fetchData();
 };
+
+watch(timezone, () => {
+  if (filters.dateQuickSelect) {
+    handleQuickDateSelect(filters.dateQuickSelect);
+  }
+});
 
 // User search function
 // Removed handleUserSearch - not used
@@ -7298,8 +7246,8 @@ const formatStatsDateRange = () => {
   if (!statsFilters.startDate || !statsFilters.endDate) {
     return '请选择日期范围';
   }
-  const start = new Date(statsFilters.startDate).toLocaleDateString('zh-CN');
-  const end = new Date(statsFilters.endDate).toLocaleDateString('zh-CN');
+  const start = formatDateInTimezone(statsFilters.startDate);
+  const end = formatDateInTimezone(statsFilters.endDate);
   return `${start} - ${end}`;
 };
 

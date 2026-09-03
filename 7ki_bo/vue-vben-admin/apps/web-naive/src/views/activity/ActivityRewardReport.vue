@@ -23,7 +23,7 @@
                     <n-date-picker
                       v-model:value="dateRange"
                       type="daterange"
-                      :timezone="REPORT_TIMEZONE"
+                      :time-zone="timezone"
                       clearable
                       :shortcuts="rewardDateShortcuts"
                       :placeholder="$t('activity.rewardReport.k9009')"
@@ -209,7 +209,7 @@
               </div>
               <div class="detail-row">
                 <span class="detail-label">{{ $t('activity.rewardReport.k98862') }}</span>
-                <span class="detail-value">{{ formatDateTime(rewardDetail.acquisitionTime) }}</span>
+                <span class="detail-value"><TzDateTime :value="rewardDetail.acquisitionTime" /></span>
               </div>
               <div class="detail-row">
                 <span class="detail-label">{{ $t('activity.rewardReport.k9886') }}</span>
@@ -261,12 +261,14 @@ import { exportGridData } from '#/utils/exportUtils';
 import type { RewardHistoryItem } from '#/api/activityRewardReport';
 import {
   convertTimezoneToUTC,
-  formatDateTimeInTimezone,
+  displayCalendarRangeToPicker,
+  getDisplayTimezone,
   getNowInTimezone,
+  pickerTimestampToYmd,
 } from '#/utils/timezoneUtils';
-
-/** 本页筛选与接口日期均按巴西圣保罗日历日（与后端 ACTIVE_TIMEZONES 一致） */
-const REPORT_TIMEZONE = 'America/Sao_Paulo';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import TzDateTime from '#/components/common/TzDateTime.vue';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 
 const UserDetailModal = defineAsyncComponent(
   () => import('#/components/user/UserDetailModal.vue'),
@@ -276,6 +278,7 @@ const SmartDataGrid = defineAsyncComponent(
 );
 
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 const loading = ref(false);
 const exporting = ref(false);
 const error = ref('');
@@ -308,13 +311,17 @@ function addCalendarDaysInTz(
   return { year: y, month: m, day: d };
 }
 
-/** 圣保罗「今天」00:00:00 ~ 23:59:59 */
+/** Display-timezone calendar day 00:00:00 ~ 23:59:59 */
 function getTodayRange(): [number, number] {
-  const tz = REPORT_TIMEZONE;
-  const tzNow = getNowInTimezone(tz);
-  const start = convertTimezoneToUTC(tzNow.year, tzNow.month, tzNow.day, 0, 0, 0, tz);
-  const end = convertTimezoneToUTC(tzNow.year, tzNow.month, tzNow.day, 23, 59, 59, tz);
-  return [start.getTime(), end.getTime()];
+  const tzNow = getNowInTimezone();
+  return displayCalendarRangeToPicker(
+    tzNow.year,
+    tzNow.month,
+    tzNow.day,
+    tzNow.year,
+    tzNow.month,
+    tzNow.day,
+  );
 }
 
 /** 圣保罗日历：含该日的自然周之周一（周一至周日） */
@@ -323,7 +330,7 @@ function getMondayOfWeekContaining(
   month: number,
   day: number,
 ): { year: number; month: number; day: number } {
-  const tz = REPORT_TIMEZONE;
+  const tz = getDisplayTimezone();
   const noon = convertTimezoneToUTC(year, month, day, 12, 0, 0, tz);
   const weekdayShort = new Intl.DateTimeFormat('en-US', {
     timeZone: tz,
@@ -354,35 +361,43 @@ function getMondayOfWeekContaining(
 
 /** 圣保罗「昨天」00:00:00 ~ 23:59:59 */
 function getYesterdayRange(): [number, number] {
-  const tz = REPORT_TIMEZONE;
+  const tz = getDisplayTimezone();
   const { year, month, day } = getNowInTimezone(tz);
   const y = addCalendarDaysInTz(year, month, day, -1, tz);
-  const start = convertTimezoneToUTC(y.year, y.month, y.day, 0, 0, 0, tz);
-  const end = convertTimezoneToUTC(y.year, y.month, y.day, 23, 59, 59, tz);
-  return [start.getTime(), end.getTime()];
+  return displayCalendarRangeToPicker(y.year, y.month, y.day, y.year, y.month, y.day);
 }
 
 /** 圣保罗当周：周一 00:00:00 ~ 周日 23:59:59 */
 function getWeekRange(): [number, number] {
-  const tz = REPORT_TIMEZONE;
+  const tz = getDisplayTimezone();
   const { year, month, day } = getNowInTimezone(tz);
   const mon = getMondayOfWeekContaining(year, month, day);
   const sun = addCalendarDaysInTz(mon.year, mon.month, mon.day, 6, tz);
-  const start = convertTimezoneToUTC(mon.year, mon.month, mon.day, 0, 0, 0, tz);
-  const end = convertTimezoneToUTC(sun.year, sun.month, sun.day, 23, 59, 59, tz);
-  return [start.getTime(), end.getTime()];
+  return displayCalendarRangeToPicker(
+    mon.year,
+    mon.month,
+    mon.day,
+    sun.year,
+    sun.month,
+    sun.day,
+  );
 }
 
 /** 圣保罗上一自然周：上周一 00:00:00 ~ 上周日 23:59:59 */
 function getLastWeekRange(): [number, number] {
-  const tz = REPORT_TIMEZONE;
+  const tz = getDisplayTimezone();
   const { year, month, day } = getNowInTimezone(tz);
   const mon = getMondayOfWeekContaining(year, month, day);
   const prevMon = addCalendarDaysInTz(mon.year, mon.month, mon.day, -7, tz);
   const prevSun = addCalendarDaysInTz(prevMon.year, prevMon.month, prevMon.day, 6, tz);
-  const start = convertTimezoneToUTC(prevMon.year, prevMon.month, prevMon.day, 0, 0, 0, tz);
-  const end = convertTimezoneToUTC(prevSun.year, prevSun.month, prevSun.day, 23, 59, 59, tz);
-  return [start.getTime(), end.getTime()];
+  return displayCalendarRangeToPicker(
+    prevMon.year,
+    prevMon.month,
+    prevMon.day,
+    prevSun.year,
+    prevSun.month,
+    prevSun.day,
+  );
 }
 
 const rewardDateShortcuts = computed(() => ({
@@ -395,14 +410,8 @@ const rewardDateShortcuts = computed(() => ({
 type RewardDatePreset = 'today' | 'yesterday' | 'thisWeek' | 'lastWeek';
 
 function tsToYmdInReportTz(ts: number): string {
-  const d = new Date(ts);
-  if (Number.isNaN(d.getTime())) return '';
-  return new Intl.DateTimeFormat('en-CA', {
-    timeZone: REPORT_TIMEZONE,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(d);
+  if (Number.isNaN(ts)) return '';
+  return pickerTimestampToYmd(ts);
 }
 
 const dateRange = ref<[number, number] | null>(getTodayRange());
@@ -437,6 +446,12 @@ function onRewardDatePresetChange(v: RewardDatePreset | null) {
   else if (v === 'thisWeek') dateRange.value = getWeekRange();
   else if (v === 'lastWeek') dateRange.value = getLastWeekRange();
 }
+
+watch(timezone, () => {
+  if (dateQuickPreset.value) {
+    onRewardDatePresetChange(dateQuickPreset.value);
+  }
+});
 
 /** 筛选条件 */
 const filters = ref({
@@ -646,14 +661,6 @@ async function handleViewDetail(row: RewardHistoryItem) {
   }
 }
 
-function formatDateTime(iso: string | undefined): string {
-  if (!iso) return '-';
-  const d = new Date(iso);
-  return Number.isNaN(d.getTime())
-    ? iso
-    : formatDateTimeInTimezone(d, REPORT_TIMEZONE);
-}
-
 const columns: DataTableColumns<RewardHistoryItem> = [
   { title: $t('activity.rewardReport.k8ba2'), key: 'orderNo', width: 140, ellipsis: { tooltip: true } },
   { title: $t('activity.rewardReport.k4f182'), key: 'benefitName', width: 160, ellipsis: { tooltip: true } },
@@ -741,7 +748,7 @@ const columns: DataTableColumns<RewardHistoryItem> = [
   },
   { title: $t('activity.rewardReport.k53d13'), key: 'collectionMethod', width: 110, ellipsis: { tooltip: true } },
   { title: $t('activity.rewardReport.k5956'), key: 'rewardType', width: 100, ellipsis: { tooltip: true } },
-  { title: $t('activity.rewardReport.k83b7'), key: 'acquisitionTime', width: 165, ellipsis: { tooltip: true }, render: (row) => formatDateTime(row.acquisitionTime) },
+  { title: $t('activity.rewardReport.k83b7'), key: 'acquisitionTime', width: 165, ellipsis: { tooltip: true }, render: (row) => renderTzDateTime(row.acquisitionTime) },
   {
     title: $t('activity.rewardReport.k64cd'),
     key: 'actions',
@@ -840,14 +847,8 @@ function buildRewardHistoryBaseParams(): RewardHistoryParams {
   const range = dateRange.value?.length === 2 ? dateRange.value : getTodayRange();
   const today = getTodayRange();
   const toYmd = (ts: number) => {
-    const d = new Date(ts);
-    if (Number.isNaN(d.getTime())) return '';
-    return new Intl.DateTimeFormat('en-CA', {
-      timeZone: REPORT_TIMEZONE,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    }).format(d);
+    if (Number.isNaN(ts)) return '';
+    return pickerTimestampToYmd(ts);
   };
   const startDate = toYmd(range[0]) || toYmd(today[0]);
   const endDate = toYmd(range[1]) || toYmd(today[1]);

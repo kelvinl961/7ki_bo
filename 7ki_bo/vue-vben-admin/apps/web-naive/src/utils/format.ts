@@ -1,3 +1,5 @@
+import { getDisplayTimezone } from '#/utils/timezoneUtils';
+
 /**
  * Format currency value
  * @param value - The numeric value to format
@@ -61,7 +63,7 @@ export function formatDateTime(
   }
 
   const options: Intl.DateTimeFormatOptions = {
-    timeZone: 'America/Sao_Paulo',
+    timeZone: getDisplayTimezone(),
   };
 
   switch (format) {

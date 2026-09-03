@@ -172,6 +172,7 @@ import {
   useMessage,
   type DataTableColumn,
 } from 'naive-ui';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 import { domainApi } from '../api/domainApi';
 // ✅ PERFORMANCE FIX: Lazy load modal components - they only load when modals are opened
 import { defineAsyncComponent } from 'vue';
@@ -584,7 +585,7 @@ const columns: DataTableColumn<Domain>[] = [
     key: 'updatedAt',
     width: 160,
     render(row: Domain) {
-      return new Date(row.updatedAt).toLocaleString('zh-CN');
+      return renderTzDateTime(row.updatedAt);
     },
   },
 ];

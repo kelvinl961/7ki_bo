@@ -131,12 +131,14 @@ import {
 import { requestClient } from '#/api/request';
 import TimezoneDatePicker from '#/components/common/TimezoneDatePicker.vue';
 import QuickDateSelect from '#/components/common/QuickDateSelect.vue';
-import { formatCurrency, formatDateTime } from '#/utils/format';
+import { formatCurrency } from '#/utils/format';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 import {
-  convertTimezoneToUTC,
-  getDisplayTimezone,
+  displayCalendarRangeToPicker,
   getNowInTimezone,
+  pickerRangeToUtcIso,
 } from '#/utils/timezoneUtils';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 
 interface Props {
   userId: number;
@@ -148,6 +150,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 
 // Filter form
 const filterForm = ref({
@@ -250,7 +253,7 @@ const columns = computed(() => [
     key: 'associationTime',
     width: 180,
     minWidth: 150,
-    render: (row: any) => formatDateTime(row.associationTime),
+    render: (row: any) => renderTzDateTime(row.associationTime),
   },
   {
     title: $t('user.associations.associationTypeCol'),
@@ -323,7 +326,7 @@ const columns = computed(() => [
     key: 'registrationTime',
     width: 180,
     minWidth: 150,
-    render: (row: any) => formatDateTime(row.registrationTime),
+    render: (row: any) => renderTzDateTime(row.registrationTime),
   },
   {
     title: $t('user.associations.totalDepositAmount'),
@@ -393,7 +396,7 @@ const columns = computed(() => [
     key: 'operationTime',
     width: 180,
     minWidth: 150,
-    render: (row: any) => formatDateTime(row.operationTime),
+    render: (row: any) => renderTzDateTime(row.operationTime),
   },
   {
     title: $t('common.operator'),
@@ -450,57 +453,11 @@ const loadTableData = async () => {
     };
 
     if (filterForm.value.dateRange) {
-      const [start, end] = filterForm.value.dateRange;
-      // Convert from display timezone to UTC
-      const tz = getDisplayTimezone();
-      const startDate = new Date(start);
-      const endDate = new Date(end);
-
-      // Get date components in display timezone
-      const startTz = new Intl.DateTimeFormat('en-US', {
-        timeZone: tz,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-      }).formatToParts(startDate);
-
-      const endTz = new Intl.DateTimeFormat('en-US', {
-        timeZone: tz,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-      }).formatToParts(endDate);
-
-      const startUTC = convertTimezoneToUTC(
-        parseInt(startTz.find((p) => p.type === 'year')!.value),
-        parseInt(startTz.find((p) => p.type === 'month')!.value),
-        parseInt(startTz.find((p) => p.type === 'day')!.value),
-        parseInt(startTz.find((p) => p.type === 'hour')!.value),
-        parseInt(startTz.find((p) => p.type === 'minute')!.value),
-        parseInt(startTz.find((p) => p.type === 'second')!.value),
-        tz,
+      const { startDate, endDate } = pickerRangeToUtcIso(
+        filterForm.value.dateRange,
       );
-
-      const endUTC = convertTimezoneToUTC(
-        parseInt(endTz.find((p) => p.type === 'year')!.value),
-        parseInt(endTz.find((p) => p.type === 'month')!.value),
-        parseInt(endTz.find((p) => p.type === 'day')!.value),
-        parseInt(endTz.find((p) => p.type === 'hour')!.value),
-        parseInt(endTz.find((p) => p.type === 'minute')!.value),
-        parseInt(endTz.find((p) => p.type === 'second')!.value),
-        tz,
-      );
-
-      params.startDate = startUTC.toISOString();
-      params.endDate = endUTC.toISOString();
+      params.startDate = startDate;
+      params.endDate = endDate;
     }
 
     // Always include associationType if set
@@ -592,8 +549,7 @@ const handleQuickDateSelect = (value: 'day' | 'week' | 'month' | null) => {
   if (!value) return; // Handle null case
 
   // Use the exact same logic as user management page
-  const tz = getDisplayTimezone();
-  const tzNow = getNowInTimezone(tz);
+  const tzNow = getNowInTimezone();
 
   let startYear: number, startMonth: number, startDay: number;
   let endYear: number, endMonth: number, endDay: number;
@@ -631,40 +587,14 @@ const handleQuickDateSelect = (value: 'day' | 'week' | 'month' | null) => {
       return;
   }
 
-  // Convert to UTC timestamps using the same logic as user management
-  const startDateUTC = convertTimezoneToUTC(
+  filterForm.value.dateRange = displayCalendarRangeToPicker(
     startYear,
     startMonth,
     startDay,
-    0,
-    0,
-    0,
-    tz,
-  );
-  const endDateUTC = convertTimezoneToUTC(
     endYear,
     endMonth,
     endDay,
-    23,
-    59,
-    59,
-    tz,
   );
-
-  // Validate and store UTC timestamps directly
-  if (isNaN(startDateUTC.getTime()) || isNaN(endDateUTC.getTime())) {
-    console.error('❌ Failed to convert timezone dates to UTC');
-    // Fallback: approximate UTC (not ideal)
-    filterForm.value.dateRange = [
-      new Date(
-        Date.UTC(startYear, startMonth - 1, startDay, 3, 0, 0),
-      ).getTime(), // São Paulo is UTC-3
-      new Date(Date.UTC(endYear, endMonth - 1, endDay, 2, 59, 59)).getTime(),
-    ];
-  } else {
-    // Store UTC timestamps - these represent display timezone time
-    filterForm.value.dateRange = [startDateUTC.getTime(), endDateUTC.getTime()];
-  }
 };
 
 const handleDateRangeChange = (value: [number, number] | null) => {
@@ -715,7 +645,16 @@ onMounted(() => {
   if (props.initialAssociationType) {
     filterForm.value.associationType = props.initialAssociationType;
   }
+  if (filterForm.value.dateQuickSelect) {
+    handleQuickDateSelect(filterForm.value.dateQuickSelect);
+  }
   loadTableData();
+});
+
+watch(timezone, () => {
+  if (filterForm.value.dateQuickSelect) {
+    handleQuickDateSelect(filterForm.value.dateQuickSelect);
+  }
 });
 </script>
 

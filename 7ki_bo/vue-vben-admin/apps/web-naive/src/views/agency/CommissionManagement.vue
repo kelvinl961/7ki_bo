@@ -38,7 +38,7 @@
             <n-date-picker
               v-model:value="pendingTabDates.state.dateRange"
               type="daterange"
-              :timezone="COMMISSION_REPORT_TIMEZONE"
+              :time-zone="timezone"
               clearable
               :shortcuts="commissionDateShortcuts"
               :placeholder="$t('agency.commission.selectDateRange')"
@@ -136,7 +136,7 @@
             <n-date-picker
               v-model:value="readyTabDates.state.dateRange"
               type="daterange"
-              :timezone="COMMISSION_REPORT_TIMEZONE"
+              :time-zone="timezone"
               clearable
               :shortcuts="commissionDateShortcuts"
               :placeholder="$t('agency.commission.selectDateRange')"
@@ -211,7 +211,7 @@
             <n-date-picker
               v-model:value="withdrawnTabDates.state.dateRange"
               type="daterange"
-              :timezone="COMMISSION_REPORT_TIMEZONE"
+              :time-zone="timezone"
               clearable
               :shortcuts="commissionDateShortcuts"
               :placeholder="$t('agency.commission.selectDateRange')"
@@ -292,7 +292,7 @@
             <n-date-picker
               v-model:value="rejectedTabDates.state.dateRange"
               type="daterange"
-              :timezone="COMMISSION_REPORT_TIMEZONE"
+              :time-zone="timezone"
               clearable
               :shortcuts="commissionDateShortcuts"
               :placeholder="$t('agency.commission.selectDateRange')"
@@ -356,7 +356,7 @@
             <n-date-picker
               v-model:value="claimedTabDates.state.dateRange"
               type="daterange"
-              :timezone="COMMISSION_REPORT_TIMEZONE"
+              :time-zone="timezone"
               clearable
               :shortcuts="commissionDateShortcuts"
               :placeholder="$t('agency.commission.selectDateRange')"
@@ -420,7 +420,7 @@
             <n-date-picker
               v-model:value="allTabDates.state.dateRange"
               type="daterange"
-              :timezone="COMMISSION_REPORT_TIMEZONE"
+              :time-zone="timezone"
               clearable
               :shortcuts="commissionDateShortcuts"
               :placeholder="$t('agency.commission.selectDateRange')"
@@ -687,13 +687,20 @@ import {
   type DataTableColumns,
 } from 'naive-ui';
 import { requestClient } from '#/api/request';
-import { convertTimezoneToUTC, getNowInTimezone } from '#/utils/timezoneUtils';
-
-/** 与优惠明细等报表一致：按圣保罗日历日传参 */
-const COMMISSION_REPORT_TIMEZONE = 'America/Sao_Paulo';
+import {
+  convertTimezoneToUTC,
+  displayCalendarRangeToPicker,
+  getDisplayTimezone,
+  getNowInTimezone,
+  pickerDateRangeToUtcTimestamps,
+  pickerTimestampToYmd,
+} from '#/utils/timezoneUtils';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 
 const message = useMessage();
 const dialog = useDialog();
+const { timezone } = useDisplayTimezone();
 
 // Active tab
 const activeTab = ref('pending');
@@ -728,19 +735,6 @@ const commissionDateShortcuts = computed(() => ({
 const formatCurrency = (amount: number, currency: string = 'BRL') => {
   if (amount === null || amount === undefined) return '0.00';
   return `${amount.toFixed(2)} ${currency}`;
-};
-
-// Format date
-const formatDate = (date: string) => {
-  return new Date(date).toLocaleString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-  });
 };
 
 // ==================== 1. Commission Settings ====================
@@ -844,11 +838,15 @@ function addCalendarDaysInTz(
 }
 
 function getTodayRange(): [number, number] {
-  const tz = COMMISSION_REPORT_TIMEZONE;
-  const tzNow = getNowInTimezone(tz);
-  const start = convertTimezoneToUTC(tzNow.year, tzNow.month, tzNow.day, 0, 0, 0, tz);
-  const end = convertTimezoneToUTC(tzNow.year, tzNow.month, tzNow.day, 23, 59, 59, tz);
-  return [start.getTime(), end.getTime()];
+  const tzNow = getNowInTimezone();
+  return displayCalendarRangeToPicker(
+    tzNow.year,
+    tzNow.month,
+    tzNow.day,
+    tzNow.year,
+    tzNow.month,
+    tzNow.day,
+  );
 }
 
 function getMondayOfWeekContaining(
@@ -856,7 +854,7 @@ function getMondayOfWeekContaining(
   month: number,
   day: number,
 ): { year: number; month: number; day: number } {
-  const tz = COMMISSION_REPORT_TIMEZONE;
+  const tz = getDisplayTimezone();
   const noon = convertTimezoneToUTC(year, month, day, 12, 0, 0, tz);
   const weekdayShort = new Intl.DateTimeFormat('en-US', {
     timeZone: tz,
@@ -886,33 +884,41 @@ function getMondayOfWeekContaining(
 }
 
 function getYesterdayRange(): [number, number] {
-  const tz = COMMISSION_REPORT_TIMEZONE;
+  const tz = getDisplayTimezone();
   const { year, month, day } = getNowInTimezone(tz);
   const y = addCalendarDaysInTz(year, month, day, -1, tz);
-  const start = convertTimezoneToUTC(y.year, y.month, y.day, 0, 0, 0, tz);
-  const end = convertTimezoneToUTC(y.year, y.month, y.day, 23, 59, 59, tz);
-  return [start.getTime(), end.getTime()];
+  return displayCalendarRangeToPicker(y.year, y.month, y.day, y.year, y.month, y.day);
 }
 
 function getWeekRange(): [number, number] {
-  const tz = COMMISSION_REPORT_TIMEZONE;
+  const tz = getDisplayTimezone();
   const { year, month, day } = getNowInTimezone(tz);
   const mon = getMondayOfWeekContaining(year, month, day);
   const sun = addCalendarDaysInTz(mon.year, mon.month, mon.day, 6, tz);
-  const start = convertTimezoneToUTC(mon.year, mon.month, mon.day, 0, 0, 0, tz);
-  const end = convertTimezoneToUTC(sun.year, sun.month, sun.day, 23, 59, 59, tz);
-  return [start.getTime(), end.getTime()];
+  return displayCalendarRangeToPicker(
+    mon.year,
+    mon.month,
+    mon.day,
+    sun.year,
+    sun.month,
+    sun.day,
+  );
 }
 
 function getLastWeekRange(): [number, number] {
-  const tz = COMMISSION_REPORT_TIMEZONE;
+  const tz = getDisplayTimezone();
   const { year, month, day } = getNowInTimezone(tz);
   const mon = getMondayOfWeekContaining(year, month, day);
   const prevMon = addCalendarDaysInTz(mon.year, mon.month, mon.day, -7, tz);
   const prevSun = addCalendarDaysInTz(prevMon.year, prevMon.month, prevMon.day, 6, tz);
-  const start = convertTimezoneToUTC(prevMon.year, prevMon.month, prevMon.day, 0, 0, 0, tz);
-  const end = convertTimezoneToUTC(prevSun.year, prevSun.month, prevSun.day, 23, 59, 59, tz);
-  return [start.getTime(), end.getTime()];
+  return displayCalendarRangeToPicker(
+    prevMon.year,
+    prevMon.month,
+    prevMon.day,
+    prevSun.year,
+    prevSun.month,
+    prevSun.day,
+  );
 }
 
 
@@ -920,14 +926,8 @@ function getLastWeekRange(): [number, number] {
 type CommissionDatePreset = 'today' | 'yesterday' | 'thisWeek' | 'lastWeek';
 
 function tsToYmdInCommissionTz(ts: number): string {
-  const d = new Date(ts);
-  if (Number.isNaN(d.getTime())) return '';
-  return new Intl.DateTimeFormat('en-CA', {
-    timeZone: COMMISSION_REPORT_TIMEZONE,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(d);
+  if (Number.isNaN(ts)) return '';
+  return pickerTimestampToYmd(ts);
 }
 
 function bindCommissionTabDates(filters: {
@@ -1052,7 +1052,7 @@ const pendingColumns = computed<DataTableColumns<any>>(() => [
     title: $t('agency.commission.settlementDate'),
     key: 'settlementDate',
     width: 160,
-    render: (row) => formatDate(row.settlementDate),
+    render: (row) => renderTzDateTime(row.settlementDate),
   },
   {
     title: $t('agency.commission.agentId'),
@@ -1119,7 +1119,7 @@ const pendingColumns = computed<DataTableColumns<any>>(() => [
     title: $t('common.operationTime'),
     key: 'operatedAt',
     width: 160,
-    render: (row) => formatDate(row.operatedAt),
+    render: (row) => renderTzDateTime(row.operatedAt),
   },
   {
     title: $t('common.actions'),
@@ -1183,6 +1183,17 @@ function normalizeCommissionRecordsResponse(response: unknown): {
   };
 }
 
+function withUtcCommissionDates<
+  T extends { endDate: number | null; startDate: number | null },
+>(filters: T) {
+  const { startDate, endDate, ...rest } = filters;
+  if (startDate == null || endDate == null) {
+    return { ...rest };
+  }
+  const [s, e] = pickerDateRangeToUtcTimestamps([startDate, endDate]);
+  return { ...rest, startDate: s, endDate: e };
+}
+
 const fetchPendingData = async () => {
   pendingLoading.value = true;
   try {
@@ -1190,7 +1201,7 @@ const fetchPendingData = async () => {
       page: pendingPagination.page,
       pageSize: pendingPagination.pageSize,
       status: 'PENDING',
-      ...pendingFilters,
+      ...withUtcCommissionDates(pendingFilters),
     };
     const response = await requestClient.get('/commission-management/records', {
       params,
@@ -1432,7 +1443,7 @@ const readyColumns = computed<DataTableColumns<any>>(() => [
     title: $t('agency.commission.settlementDate'),
     key: 'settlementDate',
     width: 160,
-    render: (row) => formatDate(row.settlementDate),
+    render: (row) => renderTzDateTime(row.settlementDate),
   },
   {
     title: $t('agency.commission.agentAccount'),
@@ -1450,7 +1461,7 @@ const readyColumns = computed<DataTableColumns<any>>(() => [
     title: $t('common.operationTime'),
     key: 'operatedAt',
     width: 160,
-    render: (row) => formatDate(row.operatedAt),
+    render: (row) => renderTzDateTime(row.operatedAt),
   },
   {
     title: $t('common.actions'),
@@ -1487,7 +1498,7 @@ const fetchReadyData = async () => {
       page: readyPagination.page,
       pageSize: readyPagination.pageSize,
       status: 'READY',
-      ...readyFilters,
+      ...withUtcCommissionDates(readyFilters),
     };
     const response = await requestClient.get('/commission-management/records', {
       params,
@@ -1602,7 +1613,7 @@ const withdrawnColumns = computed<DataTableColumns<any>>(() => [
     title: $t('agency.commission.withdrawTime'),
     key: 'withdrawnAt',
     width: 160,
-    render: (row) => formatDate(row.withdrawnAt),
+    render: (row) => renderTzDateTime(row.withdrawnAt),
   },
   {
     title: $t('common.actions'),
@@ -1641,7 +1652,7 @@ const fetchWithdrawnData = async () => {
       page: withdrawnPagination.page,
       pageSize: withdrawnPagination.pageSize,
       status: 'WITHDRAWN',
-      ...withdrawnFilters,
+      ...withUtcCommissionDates(withdrawnFilters),
     };
     const response = await requestClient.get('/commission-management/records', {
       params,
@@ -1787,7 +1798,7 @@ const rejectedColumns = computed<DataTableColumns<any>>(() => [
     title: $t('agency.commission.rejectTime'),
     key: 'rejectedAt',
     width: 160,
-    render: (row) => formatDate(row.rejectedAt),
+    render: (row) => renderTzDateTime(row.rejectedAt),
   },
 ]);
 
@@ -1798,7 +1809,7 @@ const fetchRejectedData = async () => {
       page: rejectedPagination.page,
       pageSize: rejectedPagination.pageSize,
       status: 'REJECTED',
-      ...rejectedFilters,
+      ...withUtcCommissionDates(rejectedFilters),
     };
     const response = await requestClient.get('/commission-management/records', {
       params,
@@ -1873,7 +1884,7 @@ const claimedColumns = computed<DataTableColumns<any>>(() => [
     title: $t('agency.commission.claimTime'),
     key: 'claimedAt',
     width: 160,
-    render: (row) => formatDate(row.claimedAt),
+    render: (row) => renderTzDateTime(row.claimedAt),
   },
 ]);
 
@@ -1884,7 +1895,7 @@ const fetchClaimedData = async () => {
       page: claimedPagination.page,
       pageSize: claimedPagination.pageSize,
       status: 'CLAIMED',
-      ...claimedFilters,
+      ...withUtcCommissionDates(claimedFilters),
     };
     const response = await requestClient.get('/commission-management/records', {
       params,
@@ -1932,6 +1943,21 @@ const allFilters = reactive({
   status: null as string | null,
 });
 const allTabDates = bindCommissionTabDates(allFilters);
+
+watch(timezone, () => {
+  for (const tab of [
+    pendingTabDates,
+    readyTabDates,
+    withdrawnTabDates,
+    rejectedTabDates,
+    claimedTabDates,
+    allTabDates,
+  ]) {
+    if (tab.state.preset) {
+      tab.onPresetChange(tab.state.preset);
+    }
+  }
+});
 
 const allColumns = computed<DataTableColumns<any>>(() => [
   {
@@ -1984,7 +2010,7 @@ const allColumns = computed<DataTableColumns<any>>(() => [
     title: $t('common.operationTime'),
     key: 'operatedAt',
     width: 160,
-    render: (row) => formatDate(row.operatedAt),
+    render: (row) => renderTzDateTime(row.operatedAt),
   },
 ]);
 
@@ -1994,7 +2020,7 @@ const fetchAllData = async () => {
     const params = {
       page: allPagination.page,
       pageSize: allPagination.pageSize,
-      ...allFilters,
+      ...withUtcCommissionDates(allFilters),
     };
     const response = await requestClient.get('/commission-management/records', {
       params,

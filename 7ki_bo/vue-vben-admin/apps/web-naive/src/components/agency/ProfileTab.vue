@@ -39,13 +39,13 @@
           {{ agentDetail?.hierarchyLevel || '--' }}
         </n-descriptions-item>
         <n-descriptions-item :label="$t('common.createTime')">
-          {{ formatDateTime(agentDetail?.createdAt) || '--' }}
+          <TzDateTime :value="agentDetail?.createdAt" fallback="--" />
         </n-descriptions-item>
         <n-descriptions-item :label="$t('agency.profile.assignedAt')">
-          {{ formatDateTime(agentDetail?.assignedAt) || '--' }}
+          <TzDateTime :value="agentDetail?.assignedAt" fallback="--" />
         </n-descriptions-item>
         <n-descriptions-item :label="$t('agency.profile.lastUpdated')">
-          {{ formatDateTime(agentDetail?.updatedAt) || '--' }}
+          <TzDateTime :value="agentDetail?.updatedAt" fallback="--" />
         </n-descriptions-item>
       </n-descriptions>
     </n-card>
@@ -187,6 +187,7 @@ import {
   getAgentProfileInfoApi,
   type AgentProfileInfo,
 } from '#/api/agency/agent-details';
+import TzDateTime from '#/components/common/TzDateTime.vue';
 
 interface Props {
   agentId?: number;
@@ -213,11 +214,6 @@ const loadAgentProfile = async () => {
   } finally {
     loading.value = false;
   }
-};
-
-const formatDateTime = (dateString: string | undefined) => {
-  if (!dateString) return '--';
-  return new Date(dateString).toLocaleString();
 };
 
 const formatCurrency = (amount: number | undefined) => {

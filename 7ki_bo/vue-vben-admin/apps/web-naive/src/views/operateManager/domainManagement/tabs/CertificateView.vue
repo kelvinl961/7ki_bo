@@ -13,6 +13,7 @@
 
         <n-date-picker
           v-model:value="filters.expiryDate"
+          :time-zone="timezone"
           type="daterange"
           clearable
           style="width: 280px"
@@ -273,7 +274,7 @@
           {{ selectedCertificate.operator }}
         </n-descriptions-item>
         <n-descriptions-item :label="$t('common.operationTime')">
-          {{ new Date(selectedCertificate.updatedAt).toLocaleString('zh-CN') }}
+          <TzDateTime :value="selectedCertificate.updatedAt" />
         </n-descriptions-item>
       </n-descriptions>
 
@@ -315,7 +316,11 @@ import {
   type FormInst,
   type FormRules,
 } from 'naive-ui';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import TzDateTime from '#/components/common/TzDateTime.vue';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 
+const { timezone } = useDisplayTimezone();
 const message = useMessage();
 
 interface Certificate {
@@ -765,7 +770,7 @@ const columns: DataTableColumn<Certificate>[] = [
     key: 'updatedAt',
     width: 160,
     render(row: Certificate) {
-      return new Date(row.updatedAt).toLocaleString('zh-CN');
+      return renderTzDateTime(row.updatedAt);
     },
   },
 ];

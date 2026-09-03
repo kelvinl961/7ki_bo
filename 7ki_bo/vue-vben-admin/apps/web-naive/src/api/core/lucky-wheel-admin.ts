@@ -574,6 +574,8 @@ export async function listLuckyWheelLuckyValueRecordsApi(params: {
       promotionSource: item.sourceRefType ?? '—',
       promotionType: item.sourceRefId ?? '—',
       changeType: item.changeType,
+      metadata: item.metadata ?? null,
+      operator: item.operator ?? null,
       balanceBefore: item.balanceBefore,
       changeAmount: item.deltaValue,
       balanceAfter: item.balanceAfter,
@@ -690,12 +692,6 @@ export async function listLuckyWheelWinningRecordsApi(params: {
     account: item.account,
     wheelName: (item.wheel as { name?: string } | undefined)?.name || '—',
     wheelType: tierToWheelType(String(item.wheelTier || 'SILVER')),
-    wheelTypeLabel:
-      String(item.wheelTier || 'SILVER') === 'GOLD'
-        ? 'Gold Wheel'
-        : String(item.wheelTier || 'SILVER') === 'DIAMOND'
-          ? 'Diamond Wheel'
-          : 'Silver Wheel',
     luckyValueCost: item.luckyCost,
     rewardType: item.prizeType,
     prizeIcon: ((item.prize as { iconUrl?: string | null } | undefined)?.iconUrl) || null,

@@ -41,6 +41,7 @@
               <n-date-picker
                 v-model:value="filters.dateRange"
                 type="datetimerange"
+                :time-zone="timezone"
                 format="yyyy-MM-dd HH:mm:ss"
                 :placeholder="$t('finance.selectTimeRange')"
                 clearable
@@ -819,9 +820,7 @@
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-600">{{ $t('finance.applyTime') }}:</span>
-                <span>{{
-                  formatDateTime(detailModal.data.applicationTime)
-                }}</span>
+                <span><TzDateTime :value="detailModal.data.applicationTime" /></span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-600">{{ $t('common.status') }}:</span>
@@ -1930,7 +1929,7 @@
 
             <div class="mb-2 flex items-center gap-2 text-sm text-gray-600">
               <span>来源: {{ audit.source }}</span>
-              <span class="ml-auto">{{ formatDateTime(audit.createdAt) }}</span>
+              <span class="ml-auto"><TzDateTime :value="audit.createdAt" /></span>
             </div>
 
             <div class="text-sm text-gray-600">
@@ -2030,7 +2029,10 @@ import {
 import { rePaymentApi } from '#/api/finance/rePayment';
 import { useUserStore } from '@vben/stores';
 import { getGamePlatformListApi } from '#/api/game/platform';
-import { formatCurrency, formatDateTime } from '#/utils/format';
+import { formatCurrency } from '#/utils/format';
+import TzDateTime from '#/components/common/TzDateTime.vue';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 const UserDetailModal = defineAsyncComponent(
   () => import('#/components/user/UserDetailModal.vue'),
 );
@@ -2104,6 +2106,7 @@ interface WithdrawalRecord {
 }
 
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 const dialog = useDialog();
 const userStore = useUserStore();
 
@@ -2822,12 +2825,12 @@ const columns: DataTableColumns<WithdrawalRecord> = [
         h(
           'div',
           { class: 'text-xs' },
-          formatDateTime(row.appliedAt || row.applicationTime),
+          [renderTzDateTime(row.appliedAt || row.applicationTime)],
         ),
         h(
           'div',
           { class: 'text-xs text-gray-500' },
-          formatDateTime(row.updatedAt || row.completedTime),
+          [renderTzDateTime(row.updatedAt || row.completedTime)],
         ),
         h(
           'div',
@@ -5117,10 +5120,6 @@ const handleBatchAssign = async () => {
 };
 
 // Utility functions
-const formatDateTime = (dateTime: string) => {
-  return new Date(dateTime).toLocaleString('zh-CN');
-};
-
 const getStatusType = (
   status: string,
 ): 'success' | 'warning' | 'error' | 'default' | 'primary' | 'info' => {

@@ -6,6 +6,7 @@
           <n-form-item :label="$t('reports.startDate')">
             <n-date-picker
               v-model:value="startDate"
+              :time-zone="timezone"
               type="date"
               :placeholder="$t('reports.selectStartDate')"
               format="yyyy-MM-dd"
@@ -15,6 +16,7 @@
           <n-form-item :label="$t('reports.endDate')">
             <n-date-picker
               v-model:value="endDate"
+              :time-zone="timezone"
               type="date"
               :placeholder="$t('reports.selectEndDate')"
               format="yyyy-MM-dd"
@@ -69,7 +71,9 @@ import {
   NAlert,
 } from 'naive-ui';
 import { useMessage } from 'naive-ui';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 
+const { timezone } = useDisplayTimezone();
 const message = useMessage();
 
 const loading = ref(false);

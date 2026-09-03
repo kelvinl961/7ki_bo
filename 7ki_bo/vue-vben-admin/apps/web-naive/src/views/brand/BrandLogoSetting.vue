@@ -445,7 +445,7 @@
           </div>
           <div>
             <label class="text-sm font-medium text-gray-600">{{ $t('common.operationTime') }}</label>
-            <div class="mt-1">{{ formatDate(detailData.updatedAt) }}</div>
+            <div class="mt-1"><TzDateTime :value="detailData.updatedAt" /></div>
           </div>
         </div>
 
@@ -571,6 +571,8 @@ import {
   type BrandLogoSetting,
   type BrandLogoSettingCreateRequest
 } from '#/api/brandLogo';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import TzDateTime from '#/components/common/TzDateTime.vue';
 import {
   getBrandSkinLangConfigs,
   getBrandSkinLangConfigById,
@@ -1040,7 +1042,7 @@ const columns = computed<DataTableColumns<BrandLogoSetting>>(() => [
     key: 'updatedAt',
     width: 160,
     render(row) {
-      return formatDate(row.updatedAt);
+      return renderTzDateTime(row.updatedAt);
     },
   },
   {
@@ -1213,7 +1215,7 @@ const skinLangColumns = computed<DataTableColumns<BrandSkinLangConfig>>(() => [
     width: 160,
     sorter: true,
     render(row) {
-      return h('span', { class: 'text-sm' }, formatDate(row.createdAt));
+      return renderTzDateTime(row.createdAt);
     },
   },
   {
@@ -1230,7 +1232,7 @@ const skinLangColumns = computed<DataTableColumns<BrandSkinLangConfig>>(() => [
     width: 160,
     sorter: true,
     render(row) {
-      return h('span', { class: 'text-sm' }, formatDate(row.updatedAt));
+      return renderTzDateTime(row.updatedAt);
     },
   },
   {
@@ -1631,11 +1633,6 @@ const resetForm = () => {
   lobbyLogoPreview.value = '';
   webFaviconPreview.value = '';
   webLogoPreview.value = '';
-};
-
-const formatDate = (date: string | Date | null) => {
-  if (!date) return '-';
-  return new Date(date).toLocaleString('zh-CN');
 };
 
 const handlePageChange = (page: number) => {

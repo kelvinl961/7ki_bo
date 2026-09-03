@@ -38,6 +38,7 @@
               <n-date-picker
                 v-model:value="filters.dateRange"
                 type="daterange"
+                :time-zone="timezone"
                 format="yyyy-MM-dd"
                 :placeholder="$t('finance.selectDate')"
                 clearable
@@ -406,9 +407,7 @@
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-600">{{ $t('finance.applyTime') }}:</span>
-                <span>{{
-                  formatDateTime(detailModal.data.applicationTime)
-                }}</span>
+                <span><TzDateTime :value="detailModal.data.applicationTime" /></span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-600">{{ $t('common.status') }}:</span>
@@ -958,7 +957,11 @@ import {
 import { riskControlApi } from '#/api/finance/riskControl';
 import { useUserStore } from '@vben/stores';
 import { getGamePlatformListApi } from '#/api/game/platform';
-import { formatCurrency, formatDateTime } from '#/utils/format';
+import { formatCurrency } from '#/utils/format';
+import TzDateTime from '#/components/common/TzDateTime.vue';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
+import { formatIsoDateInTimezone } from '#/utils/timezoneUtils';
 const UserDetailModal = defineAsyncComponent(
   () => import('#/components/user/UserDetailModal.vue'),
 );
@@ -1031,6 +1034,7 @@ interface WithdrawalRecord {
 }
 
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 
 // Data and state
 const loading = ref(false);
@@ -1399,12 +1403,12 @@ const columns: DataTableColumns<WithdrawalRecord> = [
         h(
           'div',
           { class: 'text-xs' },
-          formatDateTime(row.appliedAt || row.applicationTime),
+          [renderTzDateTime(row.appliedAt || row.applicationTime)],
         ),
         h(
           'div',
           { class: 'text-xs text-gray-500' },
-          formatDateTime(row.updatedAt || row.completedTime),
+          [renderTzDateTime(row.updatedAt || row.completedTime)],
         ),
         h(
           'div',
@@ -2692,13 +2696,8 @@ const fetchData = async () => {
 
     // Add filters
     if (filters.dateRange) {
-      const startDate = new Date(filters.dateRange[0]);
-      startDate.setHours(0, 0, 0, 0);
-      params.startDate = startDate.toISOString().split('T')[0];
-
-      const endDate = new Date(filters.dateRange[1]);
-      endDate.setHours(23, 59, 59, 999);
-      params.endDate = endDate.toISOString().split('T')[0];
+      params.startDate = formatIsoDateInTimezone(filters.dateRange[0]);
+      params.endDate = formatIsoDateInTimezone(filters.dateRange[1]);
     }
 
     if (filters.memberId) params.memberId = filters.memberId;
@@ -3035,10 +3034,6 @@ const handleRejection = async () => {
 };
 
 // Utility functions
-const formatDateTime = (dateTime: string) => {
-  return new Date(dateTime).toLocaleString('zh-CN');
-};
-
 const getStatusType = (status: string) => {
   const statusMap: Record<string, string> = {
     pending: 'warning',

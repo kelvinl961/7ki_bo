@@ -96,6 +96,7 @@
           <div class="grid grid-cols-2 gap-4">
             <n-form-item :label="$t('operations.messageSettings.startTime')" path="startTime">
               <n-date-picker
+                :time-zone="timezone"
                 v-model:value="formData.startTime"
                 type="datetime"
                 :placeholder="$t('operations.messageSettings.startTime')"
@@ -114,6 +115,7 @@
 
             <n-form-item :label="$t('operations.form.endTimeOptional')" path="endTime">
               <n-date-picker
+                :time-zone="timezone"
                 v-model:value="formData.endTime"
                 type="datetime"
                 :placeholder="$t('operations.messageSettings.endTime')"
@@ -337,6 +339,9 @@ import {
   getGamePlatformListApi,
   type GamePlatformItem,
 } from '#/api/game/platform';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
+
+const { timezone } = useDisplayTimezone();
 
 // Props
 interface Props {

@@ -160,6 +160,7 @@ import {
   useMessage,
   type DataTableColumns,
 } from 'naive-ui';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 
 interface Props {
   agentId?: number;
@@ -391,7 +392,7 @@ const columns = computed<DataTableColumns<Association>>(() => [
     width: 180,
     render: (row) =>
       h('div', { class: 'text-sm' }, [
-        h('div', { class: 'font-medium' }, formatDateTime(row.createdAt)),
+        h('div', { class: 'font-medium' }, renderTzDateTime(row.createdAt)),
       ]),
   },
   {
@@ -574,10 +575,6 @@ const resetForm = () => {
     status: 'pending',
     remark: '',
   });
-};
-
-const formatDateTime = (dateString: string) => {
-  return new Date(dateString).toLocaleString();
 };
 
 onMounted(() => {

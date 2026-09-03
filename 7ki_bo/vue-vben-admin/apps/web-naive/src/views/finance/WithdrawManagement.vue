@@ -91,6 +91,7 @@
                   <n-date-picker
                     v-model:value="filterForm.dateRange"
                     type="datetimerange"
+                    :time-zone="timezone"
                     clearable
                     format="yyyy-MM-dd HH:mm:ss"
                     :shortcuts="dateShortcuts"
@@ -1144,19 +1145,23 @@
             </div>
             <div class="info-item">
               <span class="info-label">{{ $t('finance.actionsTime') }}</span>
-              <span class="info-value">{{
-                formatDateTime(
-                  detailModalData.updatedAt || detailModalData.createdAt,
-                )
-              }}</span>
+              <span class="info-value">
+                <TzDateTime
+                  :value="
+                    detailModalData.updatedAt || detailModalData.createdAt
+                  "
+                />
+              </span>
             </div>
             <div class="info-item">
               <span class="info-label">{{ $t('finance.applicationTime') }}</span>
-              <span class="info-value">{{
-                formatDateTime(
-                  detailModalData.appliedAt || detailModalData.createdAt,
-                )
-              }}</span>
+              <span class="info-value">
+                <TzDateTime
+                  :value="
+                    detailModalData.appliedAt || detailModalData.createdAt
+                  "
+                />
+              </span>
             </div>
             <div class="info-item">
               <span class="info-label">{{ $t('finance.kds6q2') }}</span>
@@ -1377,7 +1382,10 @@ import { searchUsersApi } from '#/api/core/user-management';
 import { getMemberTiersApi } from '#/api/core/memberTier';
 import { sortMemberTiersForDisplay } from '#/utils/memberTierSort';
 import { getGamePlatformListApi } from '#/api/game/platform';
-import { formatCurrency, formatDateTime } from '#/utils/format';
+import { formatCurrency } from '#/utils/format';
+import TzDateTime from '#/components/common/TzDateTime.vue';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 
 // Interfaces
 interface WithdrawOrder {
@@ -1457,6 +1465,7 @@ interface BatchForm {
 
 // Refs
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 const dialog = useDialog();
 const route = useRoute();
 const filterFormRef = ref<FormInst | null>(null);
@@ -1939,11 +1948,11 @@ const columns: DataTableColumns<WithdrawOrder> = [
     width: 180,
     render: (row) =>
       h('div', { class: 'text-center space-y-1' }, [
-        h('div', { class: 'text-xs' }, formatDateTime(row.appliedAt)),
+        h('div', { class: 'text-xs' }, [renderTzDateTime(row.appliedAt)]),
         h(
           'div',
           { class: 'text-xs text-gray-500' },
-          formatDateTime(row.updatedAt || row.completedTime),
+          [renderTzDateTime(row.updatedAt || row.completedTime)],
         ),
         h(
           'div',

@@ -89,7 +89,7 @@
             {{ formatCurrency(selectedRecord.balanceAfter) }}
           </n-descriptions-item>
           <n-descriptions-item :label="$t('user.transactionRecords.transactionTime')" :span="2">
-            {{ formatDateTime(selectedRecord.createdAt) }}
+            <TzDateTime :value="selectedRecord.createdAt" />
           </n-descriptions-item>
 
           <template v-if="selectedRecord.transactionType === 'deposit'">
@@ -216,6 +216,8 @@ import {
   NSelect,
   NTag,
 } from 'naive-ui';
+import TzDateTime from '#/components/common/TzDateTime.vue';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 import { CloseOutline, RefreshOutline } from '@vicons/ionicons5';
 import { notification } from '#/adapter/naive';
 import {
@@ -332,7 +334,7 @@ const columns = computed<DataTableColumns<TransactionRecord>>(() => [
     key: 'createdAt',
     width: 160,
     render(row) {
-      return formatDateTime(row.createdAt);
+      return renderTzDateTime(row.createdAt);
     },
   },
   {
@@ -431,10 +433,6 @@ const formatCurrency = (amount: number): string => {
     style: 'currency',
     currency: 'BRL',
   }).format(amount);
-};
-
-const formatDateTime = (dateString: string): string => {
-  return new Date(dateString).toLocaleString('pt-BR');
 };
 
 const getTransactionTypeColor = (

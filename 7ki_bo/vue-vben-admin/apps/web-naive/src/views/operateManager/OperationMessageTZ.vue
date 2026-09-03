@@ -256,13 +256,13 @@
                 <div>
                   <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.startTime') }}</label>
                   <div class="mt-1 rounded bg-gray-50 p-2">
-                    {{ formatDate(detailData.startTime) }}
+                    <TzDateTime :value="detailData.startTime" />
                   </div>
                 </div>
                 <div>
                   <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.endTime') }}</label>
                   <div class="mt-1 rounded bg-gray-50 p-2">
-                    {{ formatDate(detailData.endTime) }}
+                    <TzDateTime :value="detailData.endTime" />
                   </div>
                 </div>
               </div>
@@ -395,6 +395,8 @@ import {
 } from 'naive-ui';
 import { Page } from '@vben/common-ui';
 import { notification } from '#/adapter/naive';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import TzDateTime from '#/components/common/TzDateTime.vue';
 // ✅ PERFORMANCE FIX: Tab components are already wrapped in Suspense, but make them async for better code splitting
 const OperationMessageFormModal = defineAsyncComponent(
   () => import('./components/OperationMessageFormModal.vue'),
@@ -620,7 +622,7 @@ const columns: DataTableColumns<OperationMessage> = [
     key: 'startTime',
     width: 160,
     render(row) {
-      return formatDate(row.startTime);
+      return renderTzDateTime(row.startTime);
     },
   },
   {
@@ -628,7 +630,7 @@ const columns: DataTableColumns<OperationMessage> = [
     key: 'endTime',
     width: 160,
     render(row) {
-      return formatDate(row.endTime);
+      return renderTzDateTime(row.endTime);
     },
   },
   {
@@ -956,11 +958,6 @@ const clearSelection = () => {
 const selectAll = () => {
   selectedRowKeys.value = tableData.value.map((message) => message.id);
   console.log('All selected');
-};
-
-const formatDate = (date: string | Date | null) => {
-  if (!date) return '-';
-  return new Date(date).toLocaleString('zh-CN');
 };
 
 // Tab handling

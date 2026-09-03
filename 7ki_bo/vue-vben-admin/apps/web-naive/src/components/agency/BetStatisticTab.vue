@@ -95,6 +95,7 @@
           <n-date-picker
             v-model:value="startDate"
             type="date"
+            :time-zone="timezone"
             :placeholder="$t('agency.betStatistic.selectStartDate')"
             style="width: 150px"
             @update:value="loadBetStatistics"
@@ -105,6 +106,7 @@
           <n-date-picker
             v-model:value="endDate"
             type="date"
+            :time-zone="timezone"
             :placeholder="$t('agency.betStatistic.selectEndDate')"
             style="width: 150px"
             @update:value="loadBetStatistics"
@@ -183,6 +185,9 @@ import {
   type DataTableColumns,
 } from 'naive-ui';
 import { BarChartOutline } from '@vicons/ionicons5';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
+import { formatDateTimeInTimezone } from '#/utils/timezoneUtils';
 import {
   getAgentBetStatisticsApi,
   type AgentBetRecord,
@@ -197,7 +202,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const message = useMessage();
-const betLoading = ref(false);
+const { timezone } = useDisplayTimezone();
 const betRecords = ref<AgentBetRecord[]>([]);
 const gameTypeFilter = ref('');
 const betStatusFilter = ref('');
@@ -394,13 +399,13 @@ const betColumns = computed<DataTableColumns<AgentBetRecord>>(() => [
     width: 180,
     render: (row) =>
       h('div', { class: 'text-sm' }, [
-        h('div', { class: 'font-medium' }, formatDateTime(row.betTime)),
+        h('div', { class: 'font-medium' }, renderTzDateTime(row.betTime)),
         row.settlementTime
           ? h(
               'div',
               { class: 'text-xs text-gray-500' },
               $t('agency.betStatistic.settlement', [
-                formatDateTime(row.settlementTime),
+                formatDateTimeInTimezone(row.settlementTime),
               ]),
             )
           : null,
@@ -453,8 +458,6 @@ const handleExportData = () => {
 };
 
 const formatCurrency = (amount: number) => `R$ ${Number(amount).toFixed(2)}`;
-const formatDateTime = (dateString: string) =>
-  new Date(dateString).toLocaleString();
 
 onMounted(() => {
   if (props.agentId) loadBetStatistics();

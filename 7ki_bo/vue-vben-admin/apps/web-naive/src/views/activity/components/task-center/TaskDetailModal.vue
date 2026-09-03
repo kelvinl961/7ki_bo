@@ -102,12 +102,15 @@
           :label-style="{ fontWeight: '500' }"
         >
           <n-descriptions-item :label="$t('activity.formModal.k5f00')">
-            {{
-              taskData.startTime ? formatDateTime(taskData.startTime) : $t('activity.common.unlimited')
-            }}
+            <TzDateTime
+              v-if="taskData.startTime"
+              :value="taskData.startTime"
+            />
+            <span v-else>{{ $t('activity.common.unlimited') }}</span>
           </n-descriptions-item>
           <n-descriptions-item :label="$t('activity.formModal.k7ed3')">
-            {{ taskData.endTime ? formatDateTime(taskData.endTime) : $t('activity.common.unlimited') }}
+            <TzDateTime v-if="taskData.endTime" :value="taskData.endTime" />
+            <span v-else>{{ $t('activity.common.unlimited') }}</span>
           </n-descriptions-item>
         </n-descriptions>
       </n-card>
@@ -126,10 +129,10 @@
             {{ taskData.updatedBy || '--' }}
           </n-descriptions-item>
           <n-descriptions-item :label="$t('activity.providentFund.k521b')">
-            {{ formatDateTime(taskData.createdAt) }}
+            <TzDateTime :value="taskData.createdAt" />
           </n-descriptions-item>
           <n-descriptions-item :label="$t('activity.detailModal.k66f4')">
-            {{ taskData.updatedAt ? formatDateTime(taskData.updatedAt) : '--' }}
+            <TzDateTime :value="taskData.updatedAt" fallback="--" />
           </n-descriptions-item>
         </n-descriptions>
       </n-card>
@@ -158,6 +161,7 @@ import {
   NCode,
 } from 'naive-ui';
 import { EyeOutline } from '@vicons/ionicons5';
+import TzDateTime from '#/components/common/TzDateTime.vue';
 import type { TaskCenter } from '#/api/taskCenter';
 
 interface Props {
@@ -176,18 +180,6 @@ const showModal = computed({
   get: () => props.show,
   set: (value) => emit('update:show', value),
 });
-
-// 格式化日期时间
-const formatDateTime = (dateString: string) => {
-  return new Date(dateString).toLocaleString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  });
-};
 
 // 获取任务类型标签
 const getTaskTypeLabel = (taskType: string) => {

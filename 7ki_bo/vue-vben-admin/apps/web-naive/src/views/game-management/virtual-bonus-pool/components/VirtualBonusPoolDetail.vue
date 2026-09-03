@@ -76,7 +76,7 @@
       </n-descriptions-item>
 
       <n-descriptions-item :label="$t('common.operationTime')">
-        {{ formatDateTime(data?.operationTime) }}
+        <TzDateTime :value="data?.operationTime" />
       </n-descriptions-item>
     </n-descriptions>
 
@@ -117,6 +117,7 @@
 import { $t } from '@vben/locales';
 
 import { computed } from 'vue';
+import TzDateTime from '#/components/common/TzDateTime.vue';
 import {
   NDescriptions,
   NDescriptionsItem,
@@ -175,11 +176,6 @@ const getBackgroundStyleLabel = (value?: string) => {
 const formatAmount = (amount?: number) => {
   if (typeof amount !== 'number') return '-';
   return amount.toLocaleString();
-};
-
-const formatDateTime = (dateTime?: string) => {
-  if (!dateTime) return '-';
-  return new Date(dateTime).toLocaleString('zh-CN');
 };
 
 const getCurrencySymbol = (currency?: string) => {

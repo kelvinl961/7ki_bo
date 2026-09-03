@@ -30,6 +30,7 @@
               <n-date-picker
                 v-model:value="filters.dateRange"
                 type="daterange"
+                :time-zone="timezone"
                 format="yyyy-MM-dd"
                 placeholder:placeholder="$t('finance.selectTimeRange')"
                 clearable
@@ -233,6 +234,7 @@ import {
   getPaymentStatistics,
   exportPaymentStatistics,
 } from '#/api/finance/paymentStatistics';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 
 interface PaymentStatistic {
   id: string;
@@ -256,6 +258,7 @@ interface PaymentStatistic {
 }
 
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 
 // Data and state
 const loading = ref(false);

@@ -35,6 +35,7 @@
           <n-date-picker
             v-model:value="searchForm.startDate"
             type="datetime"
+            :time-zone="timezone"
             :placeholder="$t('agency.agentList.selectTime')"
             style="width: 200px"
           />
@@ -44,6 +45,7 @@
           <n-date-picker
             v-model:value="searchForm.endDate"
             type="datetime"
+            :time-zone="timezone"
             :placeholder="$t('agency.agentList.selectTime')"
             style="width: 200px"
           />
@@ -386,9 +388,11 @@ import { useRoute, useRouter } from 'vue-router';
 import { Page } from '@vben/common-ui';
 import {
   getNowInTimezone,
-  convertTimezoneToUTC,
-  getDisplayTimezone,
+  displayCalendarRangeToPicker,
+  pickerTimestampToUtc,
 } from '#/utils/timezoneUtils';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 import {
   NCard,
   NForm,
@@ -442,6 +446,7 @@ import { notification } from '#/adapter/naive';
 const message = useMessage();
 const router = useRouter();
 const route = useRoute();
+const { timezone } = useDisplayTimezone();
 
 // 表单引用
 const formRef = ref();
@@ -828,20 +833,7 @@ const columns = computed<DataTableColumns<AgentRecord>>(() => [
     title: $t('agency.agentList.agentSince'),
     key: 'createdAt',
     width: 160,
-    render: (row) => {
-      const date = new Date(row.createdAt);
-      return date
-        .toLocaleString('zh-CN', {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false,
-        })
-        .replace(/\//g, '-');
-    },
+    render: (row) => renderTzDateTime(row.createdAt),
   },
   {
     title: $t('agency.agentList.commissionMethod'),
@@ -1005,8 +997,8 @@ const fetchData = async () => {
     // Add date range if provided
     if (searchForm.startDate && searchForm.endDate) {
       params.dateRange = [
-        new Date(searchForm.startDate).toISOString(),
-        new Date(searchForm.endDate).toISOString(),
+        pickerTimestampToUtc(searchForm.startDate).toISOString(),
+        pickerTimestampToUtc(searchForm.endDate).toISOString(),
       ];
     }
 
@@ -1432,41 +1424,21 @@ onMounted(() => {
     }
   }
 
-  // 📅 Set default today date range in UTC-3 (America/Sao_Paulo) timezone
+  // Set default today date range in the selected display timezone
   // Only set if not already set (preserve user's selection)
   if (!searchForm.startDate && !searchForm.endDate) {
-    const tz = getDisplayTimezone(); // Defaults to 'America/Sao_Paulo' (UTC-3)
-    const now = getNowInTimezone(tz);
-
-    // Get today's start (00:00:00) and end (23:59:59) in UTC-3 timezone
-    const todayStartUTC = convertTimezoneToUTC(
+    const now = getNowInTimezone();
+    const [start, end] = displayCalendarRangeToPicker(
       now.year,
       now.month,
       now.day,
-      0,
-      0,
-      0,
-      tz,
-    );
-    const todayEndUTC = convertTimezoneToUTC(
       now.year,
       now.month,
       now.day,
-      23,
-      59,
-      59,
-      tz,
     );
 
-    searchForm.startDate = todayStartUTC.getTime();
-    searchForm.endDate = todayEndUTC.getTime();
-
-    console.log('📅 Set default date range (UTC-3):', {
-      timezone: tz,
-      today: `${now.year}-${now.month}-${now.day}`,
-      start: todayStartUTC.toISOString(),
-      end: todayEndUTC.toISOString(),
-    });
+    searchForm.startDate = start;
+    searchForm.endDate = end;
   }
 
   fetchData();

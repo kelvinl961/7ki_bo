@@ -183,6 +183,7 @@
         <n-form-item :label="$t('brand.expiryDate')" path="expiryDate">
           <n-date-picker
             v-model:value="formData.expiryDate"
+            :time-zone="timezone"
             type="date"
             :placeholder="$t('brand.selectExpiryDate')"
             style="width: 100%"
@@ -288,7 +289,9 @@ import {
   getDomainStatsApi,
   updateDomainApi,
 } from '#/api/domainManagement';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 
+const { timezone } = useDisplayTimezone();
 const message = useMessage();
 const formRef = ref<FormInst | null>(null);
 

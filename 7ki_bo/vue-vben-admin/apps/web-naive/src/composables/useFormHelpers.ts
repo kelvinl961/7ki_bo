@@ -7,6 +7,11 @@ import type { Ref } from 'vue';
 
 import { computed, ref, watch } from 'vue';
 
+import {
+  formatPickerWallClock,
+  pickerDateRangeToUtcTimestamps,
+} from '#/utils/timezoneUtils';
+
 /**
  * Auto-trim search input
  * Usage: const trimmedSearch = useAutoTrim(searchInput);
@@ -36,7 +41,7 @@ export function useTrimmedSearch(initialValue = '') {
 }
 
 /**
- * Format date range with time display
+ * Format date range with time display in the selected timezone
  * Shows: "2024-01-01 00:00:00 ~ 2024-01-31 23:59:59"
  */
 export function formatDateRangeWithTime(
@@ -45,26 +50,12 @@ export function formatDateRangeWithTime(
 ): string {
   if (!startDate || !endDate) return '';
 
-  const start = new Date(startDate);
-  const end = new Date(endDate);
-
-  const formatDateTime = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
-
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-  };
-
-  return `${formatDateTime(start)} ~ ${formatDateTime(end)}`;
+  return `${formatPickerWallClock(new Date(startDate).getTime())} ~ ${formatPickerWallClock(new Date(endDate).getTime())}`;
 }
 
 /**
- * Normalize date range for API calls
- * Sets startDate to 00:00:00 and endDate to 23:59:59
+ * Normalize a Naive picker range for API calls.
+ * Picker values are display-TZ wall clocks; convert those to UTC ISO.
  */
 export function normalizeDateRangeForAPI(dateRange: [number, number] | null): {
   endDate?: string;
@@ -74,19 +65,11 @@ export function normalizeDateRangeForAPI(dateRange: [number, number] | null): {
     return {};
   }
 
-  const [start, end] = dateRange;
-
-  // Start of day (00:00:00)
-  const startDate = new Date(start);
-  startDate.setHours(0, 0, 0, 0);
-
-  // End of day (23:59:59.999)
-  const endDate = new Date(end);
-  endDate.setHours(23, 59, 59, 999);
+  const [startMs, endMs] = pickerDateRangeToUtcTimestamps(dateRange);
 
   return {
-    startDate: startDate.toISOString(),
-    endDate: endDate.toISOString(),
+    startDate: new Date(startMs).toISOString(),
+    endDate: new Date(endMs).toISOString(),
   };
 }
 
@@ -97,21 +80,7 @@ export function normalizeDateRangeForAPI(dateRange: [number, number] | null): {
 export function getDateRangeLabel(dateRange: [number, number] | null): string {
   if (!dateRange) return '选择日期范围';
 
-  const start = new Date(dateRange[0]);
-  const end = new Date(dateRange[1]);
-
-  // Set to start/end of day for display
-  start.setHours(0, 0, 0, 0);
-  end.setHours(23, 59, 59, 999);
-
-  const formatDate = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-
-  return `${formatDate(start)} 00:00:00 ~ ${formatDate(end)} 23:59:59`;
+  return formatDateRangeWithTime(dateRange[0], dateRange[1]);
 }
 
 /**

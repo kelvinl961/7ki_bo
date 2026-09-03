@@ -90,6 +90,7 @@
           <label class="mb-2 text-sm font-medium">{{ $t('operations.messageSettings.timeRange') }}</label>
           <n-date-picker
             v-model:value="filters.timeRange"
+            :time-zone="timezone"
             type="daterange"
             clearable
             style="width: 240px"
@@ -210,6 +211,10 @@ import {
   type GGMessage,
   type GGListParams,
 } from '#/api/operationMessageGG';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
+
+const { timezone } = useDisplayTimezone();
 
 const OperationMessageGGFormModal = defineAsyncComponent(
   () => import('./OperationMessageGGFormModal.vue'),
@@ -353,13 +358,13 @@ const columns: DataTableColumns<GGMessage> = [
     title: $t('operations.messageSettings.startTime'),
     key: 'startTime',
     width: 160,
-    render: (row) => formatDate(row.startTime),
+    render: (row) => renderTzDateTime(row.startTime),
   },
   {
     title: $t('operations.messageSettings.endTime'),
     key: 'endTime',
     width: 160,
-    render: (row) => formatDate(row.endTime),
+    render: (row) => renderTzDateTime(row.endTime),
   },
   {
     title: $t('operations.messageSettings.videoPush'),
@@ -407,7 +412,7 @@ const columns: DataTableColumns<GGMessage> = [
     title: $t('common.operationTime'),
     key: 'updatedAt',
     width: 160,
-    render: (row) => formatDate(row.updatedAt),
+    render: (row) => renderTzDateTime(row.updatedAt),
   },
   {
     title: $t('common.actions'),
@@ -727,11 +732,6 @@ const clearSelection = () => {
 const selectAll = () => {
   selectedRowKeys.value = tableData.value.map((gg) => gg.id);
   console.log('All selected');
-};
-
-const formatDate = (date: string | Date | null) => {
-  if (!date) return '-';
-  return new Date(date).toLocaleString('zh-CN');
 };
 
 // 初始化

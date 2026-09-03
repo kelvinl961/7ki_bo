@@ -253,9 +253,7 @@
 
                   <div class="flex justify-between">
                     <span class="text-gray-600">{{ $t('user.userDetail.registerTime') }}:</span>
-                    <span>{{
-                      formatDateTime(userDetail.registrationTime)
-                    }}</span>
+                    <span><TzDateTime :value="userDetail.registrationTime" /></span>
                   </div>
 
                   <div class="flex justify-between">
@@ -305,7 +303,7 @@
 
                   <div class="flex justify-between">
                     <span class="text-gray-600">{{ $t('user.userDetail.lastLoginTime') }}:</span>
-                    <span>{{ formatDateTime(userDetail.lastLoginTime) }}</span>
+                    <span><TzDateTime :value="userDetail.lastLoginTime" /></span>
                   </div>
 
                   <div class="flex justify-between">
@@ -402,6 +400,7 @@
                   <n-date-picker
                     v-model:value="dateRange"
                     type="datetimerange"
+                    :time-zone="timezone"
                     :start-placeholder="$t('common.startTime')"
                     :end-placeholder="$t('common.endTime')"
                     style="width: 360px"
@@ -563,6 +562,9 @@ import ManualCreditModal from './ManualCreditModal.vue';
 import ManualDebitModal from './ManualDebitModal.vue';
 import ManualPullbackModal from './ManualPullbackModal.vue';
 import { notification } from '#/adapter/naive';
+import TzDateTime from '#/components/common/TzDateTime.vue';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 
 // Define interfaces
 interface PromotionStats {
@@ -639,12 +641,13 @@ const emit = defineEmits<{
 
 // State
 const visible = ref(false);
+const accessStore = useAccessStore();
+const { timezone } = useDisplayTimezone();
 const activeTab = ref('overview');
 const manualCreditModalRef = ref();
 const manualDebitModalRef = ref();
 const manualPullbackModalRef = ref();
 const currentUserData = ref<any>(null);
-const accessStore = useAccessStore();
 
 // Transaction-related state
 const recentTransactions = ref<TransactionRecord[]>([]);
@@ -730,7 +733,7 @@ const transactionPreviewColumns = computed(() => [
     key: 'createdAt',
     width: 140,
     render(row: TransactionRecord) {
-      return formatDateTime(row.createdAt);
+      return renderTzDateTime(row.createdAt);
     },
   },
   {
@@ -753,7 +756,7 @@ const transactionFullColumns = computed(() => [
     key: 'createdAt',
     width: 160,
     render(row: TransactionRecord) {
-      return row.createdAt ? formatDateTime(row.createdAt) : '-';
+      return row.createdAt ? renderTzDateTime(row.createdAt) : '-';
     },
   },
   {
@@ -1293,10 +1296,6 @@ const formatCurrency = (amount: number): string => {
     style: 'currency',
     currency: 'BRL',
   }).format(amount);
-};
-
-const formatDateTime = (dateString: string): string => {
-  return new Date(dateString).toLocaleString('pt-BR');
 };
 
 // Balance action handlers

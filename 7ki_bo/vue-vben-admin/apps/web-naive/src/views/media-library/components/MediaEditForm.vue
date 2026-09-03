@@ -29,7 +29,7 @@
         </p>
         <p>
           <strong>{{ $t('media.uploadTime') }}:</strong>
-          {{ formatDate(file.createdAt) }}
+          <TzDateTime :value="file.createdAt" />
         </p>
         <p>
           <strong>{{ $t('media.usageTimesLabel') }}:</strong>
@@ -154,6 +154,7 @@ import {
   MEDIA_CATEGORIES,
   type MediaFile,
 } from '#/api/mediaLibrary';
+import TzDateTime from '#/components/common/TzDateTime.vue';
 import { getImageUrlByEnvironment } from '../../../utils/imageUtils';
 
 // Props
@@ -269,16 +270,6 @@ const copyUrl = async () => {
     console.error('Copy URL error:', error);
     message.error($t('media.copyFailed'));
   }
-};
-
-const formatDate = (dateString: string): string => {
-  return new Date(dateString).toLocaleString(undefined, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
 };
 
 // Watch for props changes

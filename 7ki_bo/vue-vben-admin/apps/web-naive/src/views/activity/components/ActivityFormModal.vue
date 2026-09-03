@@ -2740,6 +2740,16 @@
                     </div>
                   </template>
 
+                  <!-- 新砍一刀 / soft gameplay fields -->
+                  <template
+                    v-if="
+                      formData.activityType === 'newblade' ||
+                      formData.activityType === 'soft'
+                    "
+                  >
+                    <NewbladeConfigFields :form-data="formData" />
+                  </template>
+
                   <!-- Guessing/Competition Specific Fields (only for 竞猜 type) -->
                   <template v-if="formData.activityType === 'guessing'">
                     <!-- Team/Match Configuration -->
@@ -4511,6 +4521,9 @@ import { defineAsyncComponent } from 'vue';
 const MediaLibrarySelector = defineAsyncComponent(
   () => import('#/components/MediaLibrarySelector.vue'),
 );
+const NewbladeConfigFields = defineAsyncComponent(
+  () => import('./NewbladeConfigFields.vue'),
+);
 const RichTextEditor = defineAsyncComponent(
   () => import('#/components/common/RichTextEditor.vue'),
 );
@@ -5022,6 +5035,52 @@ const formData = reactive({
   collectConditions: [
     { type: 'valid_bet', conditionValue: '', dailyCountLimit: '' },
   ] as { type: string; conditionValue: string; dailyCountLimit: string }[],
+
+  // 新砍一刀 / soft
+  newbladeResetMode: 'once' as 'once' | 'custom_days',
+  newbladeResetDays: 7,
+  newbladeAllowReenterAfterClaim: false,
+  newbladeDistributionMethod: 'player_claim_expires',
+  newbladeRewardExpirationDays: 1,
+  newbladeFinalRewardType: 'fixed' as 'fixed' | 'random',
+  newbladeFinalRewardFixed: 100,
+  newbladeFinalRewardMin: 100,
+  newbladeFinalRewardMax: 1000,
+  newbladeFinalRewardExpected: 300,
+  newbladeFirstSpinMin: 10,
+  newbladeFirstSpinMax: 90,
+  newbladeFirstSpinExpected: 50,
+  newbladeFirstSpinRequiresTask: false,
+  newbladeRequiredDrawsMin: 10,
+  newbladeRequiredDrawsMax: 20,
+  newbladeRequiredDrawsExpected: 10,
+  newbladeGiftDailyLogin: true,
+  newbladeGiftOnlineMinutes: 0,
+  newbladeHomeSpinReminder: false,
+  newbladeAccumulateTasks: true,
+  newbladeTasks: [{ id: 'invite_1', type: 'invite', value: 1, weight: 1 }] as {
+    id: string;
+    type: string;
+    value: number;
+    weight: number;
+  }[],
+  newbladeValidMemberMode: 'register_login' as 'register_login' | 'strict',
+  newbladeSameIpLimit: 0,
+  newbladeSameDeviceLimit: 0,
+  newbladeBeforeLoginPopup: 'none',
+  newbladeAfterLoginPopup: 'none',
+  newbladePopupStyle: 'lottery' as 'lottery' | 'promo_image',
+  newbladeDisplayOnAgentPage: false,
+  newbladeWheelSlotCount: 4,
+  newbladeDrawStyle: 'turntable_1',
+  newbladeBgColor: '#0d4f3c',
+  newbladeFirstDrawStyle: 'chest',
+  newbladeEnableWinningAnnouncement: false,
+  newbladeEnableBurstNotify: false,
+  newbladePromoShareImagesText: '',
+  newbladeShareShowActivityName: true,
+  newbladeShareShowInviteCode: true,
+  newbladeShareShowMemberAccount: false,
 
   // Guessing/Competition Specific Fields
   guessingTeams: [
@@ -5722,6 +5781,47 @@ const handleModalClose = () => {
     collectConditions: [
       { type: 'valid_bet', conditionValue: '', dailyCountLimit: '' },
     ],
+
+    // 新砍一刀 / soft
+    newbladeResetMode: 'once',
+    newbladeResetDays: 7,
+    newbladeAllowReenterAfterClaim: false,
+    newbladeDistributionMethod: 'player_claim_expires',
+    newbladeRewardExpirationDays: 1,
+    newbladeFinalRewardType: 'fixed',
+    newbladeFinalRewardFixed: 100,
+    newbladeFinalRewardMin: 100,
+    newbladeFinalRewardMax: 1000,
+    newbladeFinalRewardExpected: 300,
+    newbladeFirstSpinMin: 10,
+    newbladeFirstSpinMax: 90,
+    newbladeFirstSpinExpected: 50,
+    newbladeFirstSpinRequiresTask: false,
+    newbladeRequiredDrawsMin: 10,
+    newbladeRequiredDrawsMax: 20,
+    newbladeRequiredDrawsExpected: 10,
+    newbladeGiftDailyLogin: true,
+    newbladeGiftOnlineMinutes: 0,
+    newbladeHomeSpinReminder: false,
+    newbladeAccumulateTasks: true,
+    newbladeTasks: [{ id: 'invite_1', type: 'invite', value: 1, weight: 1 }],
+    newbladeValidMemberMode: 'register_login',
+    newbladeSameIpLimit: 0,
+    newbladeSameDeviceLimit: 0,
+    newbladeBeforeLoginPopup: 'none',
+    newbladeAfterLoginPopup: 'none',
+    newbladePopupStyle: 'lottery',
+    newbladeDisplayOnAgentPage: false,
+    newbladeWheelSlotCount: 4,
+    newbladeDrawStyle: 'turntable_1',
+    newbladeBgColor: '#0d4f3c',
+    newbladeFirstDrawStyle: 'chest',
+    newbladeEnableWinningAnnouncement: false,
+    newbladeEnableBurstNotify: false,
+    newbladePromoShareImagesText: '',
+    newbladeShareShowActivityName: true,
+    newbladeShareShowInviteCode: true,
+    newbladeShareShowMemberAccount: false,
 
     // Guessing/Competition Specific Fields
     guessingTeams: [
@@ -6504,6 +6604,69 @@ const handleSubmit = async () => {
         return !isNaN(val) && val > 0 ? val : undefined;
       })(),
     };
+
+    // 新砍一刀 / soft — only persist gameplay keys for these types
+    if (
+      formData.activityType === 'newblade' ||
+      formData.activityType === 'soft'
+    ) {
+      const promoImages = String(formData.newbladePromoShareImagesText || '')
+        .split(/[,\n]/)
+        .map((s: string) => s.trim())
+        .filter(Boolean);
+      Object.assign(configPayload, {
+        resetMode: formData.newbladeResetMode,
+        resetDays: formData.newbladeResetDays,
+        allowReenterAfterClaim: Boolean(formData.newbladeAllowReenterAfterClaim),
+        distributionMethod: formData.newbladeDistributionMethod,
+        rewardExpirationDays: formData.newbladeRewardExpirationDays,
+        finalRewardType: formData.newbladeFinalRewardType,
+        finalRewardFixed: formData.newbladeFinalRewardFixed,
+        finalRewardMin: formData.newbladeFinalRewardMin,
+        finalRewardMax: formData.newbladeFinalRewardMax,
+        finalRewardExpected: formData.newbladeFinalRewardExpected,
+        firstSpinMin: formData.newbladeFirstSpinMin,
+        firstSpinMax: formData.newbladeFirstSpinMax,
+        firstSpinExpected: formData.newbladeFirstSpinExpected,
+        firstSpinRequiresTask: Boolean(formData.newbladeFirstSpinRequiresTask),
+        requiredDrawsMin: formData.newbladeRequiredDrawsMin,
+        requiredDrawsMax: formData.newbladeRequiredDrawsMax,
+        requiredDrawsExpected: formData.newbladeRequiredDrawsExpected,
+        giftDailyLogin: Boolean(formData.newbladeGiftDailyLogin),
+        giftOnlineMinutes: formData.newbladeGiftOnlineMinutes || 0,
+        homeSpinReminder: Boolean(formData.newbladeHomeSpinReminder),
+        accumulateTasks: Boolean(formData.newbladeAccumulateTasks),
+        tasks: Array.isArray(formData.newbladeTasks)
+          ? formData.newbladeTasks.map((t: any, i: number) => ({
+              id: t.id || `task_${i}`,
+              type: t.type || 'invite',
+              value: Number(t.value) || 1,
+              weight: Number(t.weight) || 1,
+            }))
+          : [],
+        validMemberMode: formData.newbladeValidMemberMode,
+        sameIpLimit: formData.newbladeSameIpLimit || 0,
+        sameDeviceLimit: formData.newbladeSameDeviceLimit || 0,
+        beforeLoginPopup: formData.newbladeBeforeLoginPopup || 'none',
+        afterLoginPopup: formData.newbladeAfterLoginPopup || 'none',
+        popupStyle: formData.newbladePopupStyle || 'lottery',
+        displayOnAgentPage: Boolean(formData.newbladeDisplayOnAgentPage),
+        wheelSlotCount: formData.newbladeWheelSlotCount || 4,
+        drawStyle: formData.newbladeDrawStyle || 'turntable_1',
+        bgColor: formData.newbladeBgColor || '#0d4f3c',
+        firstDrawStyle: formData.newbladeFirstDrawStyle || 'chest',
+        enableWinningAnnouncement: Boolean(
+          formData.newbladeEnableWinningAnnouncement,
+        ),
+        enableBurstNotify: Boolean(formData.newbladeEnableBurstNotify),
+        promoShareImages: promoImages,
+        shareOverlayFlags: {
+          showActivityName: Boolean(formData.newbladeShareShowActivityName),
+          showInviteCode: Boolean(formData.newbladeShareShowInviteCode),
+          showMemberAccount: Boolean(formData.newbladeShareShowMemberAccount),
+        },
+      });
+    }
 
     console.log('🔍 Debug - ConfigPayload before submission:', configPayload);
 
@@ -7959,6 +8122,119 @@ watch(
           directPopupAfterRecharge: formData.directPopupAfterRecharge,
           rewardExpirationDays: formData.rewardExpirationDays,
         });
+      }
+
+      // 新砍一刀 / soft
+      if (
+        (newItem as any).type === 'newblade' ||
+        (newItem as any).type === 'soft'
+      ) {
+        const cfg = ((newItem as any).config || {}) as Record<string, any>;
+        formData.newbladeResetMode =
+          cfg.resetMode === 'custom_days' ||
+          cfg.resetMode === 'custom' ||
+          cfg.resetMode === 'days'
+            ? 'custom_days'
+            : 'once';
+        formData.newbladeResetDays = Number(cfg.resetDays ?? 7) || 7;
+        formData.newbladeAllowReenterAfterClaim = Boolean(
+          cfg.allowReenterAfterClaim ?? cfg.reenterAfterClaim ?? false,
+        );
+        formData.newbladeDistributionMethod =
+          cfg.distributionMethod || 'player_claim_expires';
+        formData.newbladeRewardExpirationDays = Number(
+          cfg.rewardExpirationDays ?? cfg.claimExpiryDays ?? 1,
+        );
+        formData.newbladeFinalRewardType =
+          cfg.finalRewardType === 'random' ? 'random' : 'fixed';
+        formData.newbladeFinalRewardFixed = Number(
+          cfg.finalRewardFixed ?? cfg.rewardAmount ?? 100,
+        );
+        formData.newbladeFinalRewardMin = Number(cfg.finalRewardMin ?? 100);
+        formData.newbladeFinalRewardMax = Number(cfg.finalRewardMax ?? 1000);
+        formData.newbladeFinalRewardExpected = Number(
+          cfg.finalRewardExpected ?? cfg.expectedBonus ?? 300,
+        );
+        formData.newbladeFirstSpinMin = Number(
+          cfg.firstSpinMin ?? cfg.firstWinMin ?? 10,
+        );
+        formData.newbladeFirstSpinMax = Number(
+          cfg.firstSpinMax ?? cfg.firstWinMax ?? 90,
+        );
+        formData.newbladeFirstSpinExpected = Number(
+          cfg.firstSpinExpected ?? cfg.firstWinExpected ?? 50,
+        );
+        formData.newbladeFirstSpinRequiresTask = Boolean(
+          cfg.firstSpinRequiresTask ?? false,
+        );
+        formData.newbladeRequiredDrawsMin = Number(
+          cfg.requiredDrawsMin ?? 10,
+        );
+        formData.newbladeRequiredDrawsMax = Number(
+          cfg.requiredDrawsMax ?? 20,
+        );
+        formData.newbladeRequiredDrawsExpected = Number(
+          cfg.requiredDrawsExpected ?? formData.newbladeRequiredDrawsMin,
+        );
+        formData.newbladeGiftDailyLogin =
+          cfg.giftDailyLogin !== undefined
+            ? Boolean(cfg.giftDailyLogin)
+            : true;
+        formData.newbladeGiftOnlineMinutes = Number(
+          cfg.giftOnlineMinutes ?? 0,
+        );
+        formData.newbladeHomeSpinReminder = Boolean(cfg.homeSpinReminder);
+        formData.newbladeAccumulateTasks = Boolean(
+          cfg.accumulateTasks ?? cfg.allowAccumulate ?? true,
+        );
+        formData.newbladeTasks = Array.isArray(cfg.tasks) && cfg.tasks.length
+          ? cfg.tasks.map((t: any, i: number) => ({
+              id: t.id || `task_${i}`,
+              type: t.type || 'invite',
+              value: Number(t.value ?? t.threshold ?? 1) || 1,
+              weight: Number(t.weight ?? 1) || 1,
+            }))
+          : [{ id: 'invite_1', type: 'invite', value: 1, weight: 1 }];
+        formData.newbladeValidMemberMode =
+          cfg.validMemberMode === 'strict' ? 'strict' : 'register_login';
+        formData.newbladeSameIpLimit = Number(
+          cfg.sameIpLimit ?? cfg.promotionSameIPLimit ?? 0,
+        );
+        formData.newbladeSameDeviceLimit = Number(
+          cfg.sameDeviceLimit ?? cfg.promotionSameDeviceLimit ?? 0,
+        );
+        formData.newbladeBeforeLoginPopup = cfg.beforeLoginPopup || 'none';
+        formData.newbladeAfterLoginPopup = cfg.afterLoginPopup || 'none';
+        formData.newbladePopupStyle =
+          cfg.popupStyle === 'promo_image' ? 'promo_image' : 'lottery';
+        formData.newbladeDisplayOnAgentPage = Boolean(
+          cfg.displayOnAgentPage ?? cfg.promotionDisplayOnAgentPage,
+        );
+        formData.newbladeWheelSlotCount = [4, 6, 8, 10, 12].includes(
+          Number(cfg.wheelSlotCount ?? cfg.turntableCount),
+        )
+          ? Number(cfg.wheelSlotCount ?? cfg.turntableCount)
+          : 4;
+        formData.newbladeDrawStyle = cfg.drawStyle || 'turntable_1';
+        formData.newbladeBgColor =
+          cfg.bgColor || cfg.backgroundColor || '#0d4f3c';
+        formData.newbladeFirstDrawStyle = cfg.firstDrawStyle || 'chest';
+        formData.newbladeEnableWinningAnnouncement = Boolean(
+          cfg.enableWinningAnnouncement,
+        );
+        formData.newbladeEnableBurstNotify = Boolean(cfg.enableBurstNotify);
+        const images = cfg.promoShareImages ?? cfg.shareImages ?? [];
+        formData.newbladePromoShareImagesText = Array.isArray(images)
+          ? images.join(', ')
+          : '';
+        const overlay = cfg.shareOverlayFlags || {};
+        formData.newbladeShareShowActivityName =
+          overlay.showActivityName !== false;
+        formData.newbladeShareShowInviteCode =
+          overlay.showInviteCode !== false;
+        formData.newbladeShareShowMemberAccount = Boolean(
+          overlay.showMemberAccount,
+        );
       }
 
       // Load wagering specific configuration

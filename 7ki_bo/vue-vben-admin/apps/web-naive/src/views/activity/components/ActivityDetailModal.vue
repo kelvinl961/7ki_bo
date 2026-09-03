@@ -675,6 +675,7 @@ const getTypeText = (type: string) => {
     newbie: $t('activity.types.newbie'),
     referral: $t('activity.types.referral'),
     soft: $t('activity.types.soft'),
+    newblade: $t('activity.types.newblade'),
     new: $t('activity.types.new'),
     ranking: $t('activity.types.ranking'),
     custom: $t('activity.types.custom'),

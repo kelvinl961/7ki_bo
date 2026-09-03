@@ -145,6 +145,7 @@ import {
   useMessage,
   type DataTableColumns,
 } from 'naive-ui';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 import { getAgentLoginDevicesApi } from '#/api/agency/agent-details';
 
 interface Props {
@@ -357,7 +358,7 @@ const columns = computed<DataTableColumns<LoginDevice>>(() => [
     width: 180,
     render: (row) =>
       h('div', { class: 'text-sm' }, [
-        h('div', { class: 'font-medium' }, formatDateTime(row.lastLoginTime)),
+        h('div', { class: 'font-medium' }, renderTzDateTime(row.lastLoginTime)),
         h(
           'div',
           { class: 'text-xs text-gray-500' },
@@ -549,10 +550,6 @@ const resetForm = () => {
     status: 'active',
     remark: '',
   });
-};
-
-const formatDateTime = (dateString: string) => {
-  return new Date(dateString).toLocaleString();
 };
 
 onMounted(() => {

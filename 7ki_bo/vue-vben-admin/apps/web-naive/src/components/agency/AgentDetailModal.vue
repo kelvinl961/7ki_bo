@@ -103,14 +103,13 @@
                     {{ agentDetail.topAgentCode || '--' }}
                   </n-descriptions-item>
                   <n-descriptions-item :label="$t('common.createTime')">
-                    {{ formatDateTime(agentDetail.createdAt) }}
+                    <TzDateTime :value="agentDetail.createdAt" />
                   </n-descriptions-item>
                   <n-descriptions-item :label="$t('agency.profile.assignedAt')">
-                    {{
-                      agentDetail.assignedAt
-                        ? formatDateTime(agentDetail.assignedAt)
-                        : '--'
-                    }}
+                    <TzDateTime
+                      :value="agentDetail.assignedAt"
+                      fallback="--"
+                    />
                   </n-descriptions-item>
                 </n-descriptions>
               </n-card>
@@ -144,10 +143,10 @@
                   <n-descriptions-item
                     :label="$t('agency.agentDetail.registrationTime')"
                   >
-                    {{ formatDateTime(agentDetail.createdAt) }}
+                    <TzDateTime :value="agentDetail.createdAt" />
                   </n-descriptions-item>
                   <n-descriptions-item :label="$t('agency.agentDetail.lastLogin')">
-                    {{ formatDateTime(agentDetail.updatedAt) }}
+                    <TzDateTime :value="agentDetail.updatedAt" />
                   </n-descriptions-item>
                   <n-descriptions-item :label="$t('agency.agentDetail.loginCount')">
                     {{ $t('agency.agentDetail.loginCountSuffix', [0]) }}
@@ -485,6 +484,7 @@ import BetStatisticTab from './BetStatisticTab.vue';
 import UserAuditTrailTab from './UserAuditTrailTab.vue';
 import LoginDevicesTab from './LoginDevicesTab.vue';
 import { updateAgentStatusApi } from '#/api/agency/agent';
+import TzDateTime from '#/components/common/TzDateTime.vue';
 
 interface Props {
   visible: boolean;
@@ -658,10 +658,6 @@ const handleUpdateTag = async () => {
     message.error($t('agency.agentDetail.tagUpdateFailed'));
     console.error('Error updating agent tag:', error);
   }
-};
-
-const formatDateTime = (dateString: string) => {
-  return new Date(dateString).toLocaleString();
 };
 
 const formatCurrency = (amount: number) => {

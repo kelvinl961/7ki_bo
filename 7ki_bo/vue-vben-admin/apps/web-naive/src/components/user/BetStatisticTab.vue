@@ -8,6 +8,7 @@
           <n-date-picker
             v-model:value="dateRange"
             type="daterange"
+            :time-zone="timezone"
             :placeholder="$t('user.betStatistic.selectDateRange')"
             style="width: 320px"
             :shortcuts="dateShortcuts"
@@ -352,6 +353,8 @@ import { $t } from '@vben/locales';
 
 import { ref, computed, onMounted, h } from 'vue';
 import { NCard, NButton, NDatePicker, NDataTable, NSpin, NTag } from 'naive-ui';
+import { formatDateTimeInTimezone } from '#/utils/timezoneUtils';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 import {
   getBetStatisticData,
   type BetStatisticSummary,
@@ -368,6 +371,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const { timezone } = useDisplayTimezone();
 
 // ===================================
 // REACTIVE DATA
@@ -670,7 +674,7 @@ const loadBetStatistics = async () => {
 
     // Update query info
     lastQueryInfo.value = {
-      timestamp: new Date().toLocaleString('zh-CN'),
+      timestamp: formatDateTimeInTimezone(new Date()),
       dateRange: dateRange.value
         ? `${dateRange.value[0]} ~ ${dateRange.value[1]}`
         : $t('user.betStatistic.last7Days'),

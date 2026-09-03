@@ -51,35 +51,32 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { NDropdown, NIcon } from 'naive-ui';
 import { $t } from '@vben/locales';
 
-interface TimezoneOption {
-  labelKey: string;
-  key: string;
-  timezone: string;
-  flag: string;
-}
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
+import { TIMEZONE_KEY_MAP } from '#/utils/timezoneUtils';
+
+const { preferredKey, setTimezoneByKey, timezone } = useDisplayTimezone();
 
 const timezones = [
   {
     labelKey: 'page.header.brazilLocalTime',
     key: 'brazil',
-    timezone: 'America/Sao_Paulo', // Brazil/Brasília time
+    timezone: TIMEZONE_KEY_MAP.brazil,
     flag: '🇧🇷',
   },
   {
     labelKey: 'page.header.vietnamLocalTime',
     key: 'vietnam',
-    timezone: 'Asia/Ho_Chi_Minh', // Vietnam time
+    timezone: TIMEZONE_KEY_MAP.vietnam,
     flag: '🇻🇳',
   },
   {
     labelKey: 'page.header.chinaLocalTime',
     key: 'china',
-    timezone: 'Asia/Shanghai', // China/Beijing time
+    timezone: TIMEZONE_KEY_MAP.china,
     flag: '🇨🇳',
   },
 ] as const;
 
-// Create dropdown options
 const timezoneOptions = computed(() => {
   return timezones.map((tz) => ({
     label: `${tz.flag} ${$t(tz.labelKey)}`,
@@ -87,20 +84,14 @@ const timezoneOptions = computed(() => {
   }));
 });
 
-// Current selected timezone (default to Brazil since this is a Brazilian platform)
-const selectedTimezoneKey = ref('brazil');
-
-// Get saved timezone from localStorage on mount
-onMounted(() => {
-  const saved = localStorage.getItem('preferred_timezone');
-  if (saved && timezones.some((tz) => tz.key === saved)) {
-    selectedTimezoneKey.value = saved;
-  }
+const selectedTimezoneKey = computed({
+  get: () => preferredKey.value,
+  set: (key: string) => setTimezoneByKey(key),
 });
 
 const currentTimezone = computed(() => {
   const tz =
-    timezones.find((tz) => tz.key === selectedTimezoneKey.value) ||
+    timezones.find((item) => item.key === selectedTimezoneKey.value) ||
     timezones[0];
   return {
     ...tz,
@@ -108,18 +99,13 @@ const currentTimezone = computed(() => {
   };
 });
 
-// Current time in selected timezone
 const currentTime = ref('');
 let timeUpdateInterval: number | null = null;
 
 function updateTime() {
   const now = new Date();
-  const timezone = currentTimezone.value;
-  if (!timezone) return;
-
-  // Use Intl.DateTimeFormat for timezone conversion (built-in, no dependencies)
   const formatter = new Intl.DateTimeFormat('zh-CN', {
-    timeZone: timezone.timezone,
+    timeZone: timezone.value,
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
@@ -128,12 +114,8 @@ function updateTime() {
   currentTime.value = formatter.format(now);
 }
 
-// Handle timezone selection
 function handleSelectTimezone(key: string) {
-  selectedTimezoneKey.value = key;
-  // Save preference
-  localStorage.setItem('preferred_timezone', key);
-  // Update time immediately
+  setTimezoneByKey(key);
   updateTime();
 }
 

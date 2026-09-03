@@ -29,6 +29,7 @@
           <n-date-picker
             v-model:value="startDate"
             type="date"
+            :time-zone="timezone"
             :placeholder="$t('agency.auditTrail.selectStartDate')"
             style="width: 150px"
             @update:value="loadAuditTrail"
@@ -39,6 +40,7 @@
           <n-date-picker
             v-model:value="endDate"
             type="date"
+            :time-zone="timezone"
             :placeholder="$t('agency.auditTrail.selectEndDate')"
             style="width: 150px"
             @update:value="loadAuditTrail"
@@ -126,6 +128,8 @@ import {
   useMessage,
   type DataTableColumns,
 } from 'naive-ui';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 import {
   getAgentAuditTrailApi,
   type AgentAuditRecord,
@@ -140,7 +144,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const message = useMessage();
-const auditLoading = ref(false);
+const { timezone } = useDisplayTimezone();
 const auditRecords = ref<AgentAuditRecord[]>([]);
 const actionTypeFilter = ref('');
 const actionStatusFilter = ref('');
@@ -323,7 +327,7 @@ const auditColumns = computed<DataTableColumns<AgentAuditRecord>>(() => [
     width: 180,
     render: (row) =>
       h('div', { class: 'text-sm' }, [
-        h('div', { class: 'font-medium' }, formatDateTime(row.actionTime)),
+        h('div', { class: 'font-medium' }, renderTzDateTime(row.actionTime)),
       ]),
   },
   {
@@ -397,9 +401,6 @@ const handleViewDetails = (record: AgentAuditRecord) => {
     message.info($t('agency.auditTrail.noDetails'));
   }
 };
-
-const formatDateTime = (dateString: string) =>
-  new Date(dateString).toLocaleString();
 
 onMounted(() => {
   if (props.agentId) loadAuditTrail();

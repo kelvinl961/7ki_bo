@@ -82,6 +82,7 @@ import {
   useMessage,
   type DataTableColumns,
 } from 'naive-ui';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 import {
   getWithdrawAccountsByUserIdApi,
   toggleWithdrawAccountStatusApi,
@@ -240,9 +241,7 @@ const columns = computed<DataTableColumns<WithdrawAccount>>(() => [
     title: $t('user.withdrawAccount.addedTime'),
     key: 'createdAt',
     width: 160,
-    render: (row) => {
-      return new Date(row.createdAt).toLocaleString();
-    },
+    render: (row) => renderTzDateTime(row.createdAt),
   },
   {
     title: $t('common.status'),

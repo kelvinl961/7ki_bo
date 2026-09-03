@@ -161,11 +161,11 @@
             </n-descriptions-item>
 
             <n-descriptions-item :label="$t('activity.providentFund.k521b')">
-              {{ formatDateTime(mappedActivity.createdAt) }}
+              <TzDateTime :value="mappedActivity.createdAt" />
             </n-descriptions-item>
 
             <n-descriptions-item :label="$t('activity.detailModal.k66f4')">
-              {{ formatDateTime(mappedActivity.updatedAt) }}
+              <TzDateTime :value="mappedActivity.updatedAt" />
             </n-descriptions-item>
           </n-descriptions>
         </n-tab-pane>
@@ -182,7 +182,7 @@
                 <n-icon>
                   <TimeOutline />
                 </n-icon>
-                <span>{{ formatDateTime(mappedActivity.startsAt) }}</span>
+                <span><TzDateTime :value="mappedActivity.startsAt" /></span>
               </div>
             </n-descriptions-item>
 
@@ -191,7 +191,7 @@
                 <n-icon>
                   <TimeOutline />
                 </n-icon>
-                <span>{{ formatDateTime(mappedActivity.endsAt) }}</span>
+                <span><TzDateTime :value="mappedActivity.endsAt" /></span>
               </div>
             </n-descriptions-item>
 
@@ -339,7 +339,7 @@
             <n-timeline>
               <n-timeline-item
                 type="success"
-                :title="formatDateTime(mappedActivity.createdAt)"
+                :title="formatDateTimeInTimezone(mappedActivity.createdAt)"
                 :content="$t('activity.detailModal.k6d3b9')"
               />
               <n-timeline-item
@@ -348,7 +348,7 @@
                     ? 'success'
                     : 'info'
                 "
-                :title="formatDateTime(mappedActivity.startsAt)"
+                :title="formatDateTimeInTimezone(mappedActivity.startsAt)"
                 :content="$t('activity.detailModal.k6d3b10')"
               />
               <n-timeline-item
@@ -357,7 +357,7 @@
                     ? 'error'
                     : 'warning'
                 "
-                :title="formatDateTime(mappedActivity.endsAt)"
+                :title="formatDateTimeInTimezone(mappedActivity.endsAt)"
                 :content="$t('activity.detailModal.k6d3b11')"
               />
             </n-timeline>
@@ -373,7 +373,7 @@
                 :key="v.id"
                 type="info"
                 :title="`v${v.version}`"
-                :content="v.publishedAt ? formatDateTime(v.publishedAt) : `版本 ${v.version}`"
+                :content="v.publishedAt ? formatDateTimeInTimezone(v.publishedAt) : `版本 ${v.version}`"
               />
             </n-timeline>
           </n-spin>
@@ -427,6 +427,8 @@ import type { Activity } from '#/api/activity';
 import { getActivityVersions } from '#/api/activity';
 import { useActiveMemberTiers } from '#/composables/useActiveMemberTiers';
 import { formatActivityMemberParticipation } from '#/utils/activityMemberTier';
+import { formatDateTimeInTimezone } from '#/utils/timezoneUtils';
+import TzDateTime from '#/components/common/TzDateTime.vue';
 
 // Props & Emits
 interface Props {
@@ -535,30 +537,6 @@ const memberParticipationText = computed(() => {
 
   return formatActivityMemberParticipation(config, memberTierOptions.value);
 });
-
-// 工具函数
-const formatDateTime = (dateString: string | Date | null | undefined) => {
-  if (!dateString) {
-    return $t('activity.detailModal.k672a');
-  }
-
-  try {
-    const date = dateString instanceof Date ? dateString : new Date(dateString);
-    if (isNaN(date.getTime())) {
-      return $t('activity.detailModal.k65e02');
-    }
-    return date.toLocaleString('zh-CN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    });
-  } catch (error) {
-    return $t('activity.detailModal.k65e5');
-  }
-};
 
 const getDurationText = (
   startAt: string | Date | null | undefined,

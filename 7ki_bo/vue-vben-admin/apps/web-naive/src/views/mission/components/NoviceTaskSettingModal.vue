@@ -134,6 +134,7 @@
           <n-form-item label="限时设置" path="validationTime">
             <n-space>
               <n-date-picker
+                :time-zone="timezone"
                 v-model:value="validationStartTime"
                 type="datetime"
                 placeholder="开始时间"
@@ -141,6 +142,7 @@
               />
               <span>至</span>
               <n-date-picker
+                :time-zone="timezone"
                 v-model:value="validationEndTime"
                 type="datetime"
                 placeholder="结束时间"
@@ -341,6 +343,7 @@
         <n-grid-item>
           <n-form-item label="开始时间" path="startTime">
             <n-date-picker
+                :time-zone="timezone"
               v-model:value="startTime"
               type="datetime"
               placeholder="请选择开始时间"
@@ -353,6 +356,7 @@
         <n-grid-item>
           <n-form-item label="结束时间" path="endTime">
             <n-date-picker
+                :time-zone="timezone"
               v-model:value="endTime"
               type="datetime"
               placeholder="请选择结束时间"
@@ -408,6 +412,7 @@ import type {
   TaskCenterFormData,
   TaskCenterItem,
 } from '../../../api/taskCenter';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 
 interface Props {
   visible: boolean;
@@ -425,6 +430,7 @@ interface Emits {
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 
 // Form ref
 const formRef = ref<FormInst | null>(null);

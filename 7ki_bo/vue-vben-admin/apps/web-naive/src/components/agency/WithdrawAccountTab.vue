@@ -184,6 +184,7 @@ import {
   type DataTableColumns,
   type FormInst,
 } from 'naive-ui';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 import {
   getAgentWithdrawalAccountsApi,
   createWithdrawalAccountApi,
@@ -387,7 +388,7 @@ const columns = computed<DataTableColumns<AgentWithdrawalAccount>>(() => [
     title: $t('common.createTime'),
     key: 'createdAt',
     width: 180,
-    render: (row) => new Date(row.createdAt).toLocaleString(),
+    render: (row) => renderTzDateTime(row.createdAt),
   },
   {
     title: $t('common.actions'),

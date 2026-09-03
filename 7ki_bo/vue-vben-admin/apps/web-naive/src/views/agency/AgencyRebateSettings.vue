@@ -61,7 +61,7 @@
                   />
                   <n-statistic
                     :label="$t('agency.rebateSettings.lastUpdated')"
-                    :value="formatDate(statistics.lastUpdated)"
+                    :value="formatDateTimeInTimezone(statistics.lastUpdated)"
                   />
                 </div>
               </n-card>
@@ -194,7 +194,7 @@
                   />
                   <n-statistic
                     :label="$t('agency.rebateSettings.lastUpdated')"
-                    :value="formatDate(statistics.lastUpdated)"
+                    :value="formatDateTimeInTimezone(statistics.lastUpdated)"
                   />
                 </div>
               </n-card>
@@ -496,6 +496,8 @@ const SmartDataGrid = defineAsyncComponent(
   () => import('../../components/smart/SmartDataGrid/index.vue'),
 );
 import { Page } from '@vben/common-ui';
+import { formatDateTimeInTimezone } from '#/utils/timezoneUtils';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 import {
   NCard,
   NTabs,
@@ -788,9 +790,7 @@ const columns = computed<DataTableColumns<RebateConfig>>(() => [
     title: $t('agency.rebateSettings.lastUpdated'),
     key: 'updatedAt',
     width: 180,
-    render: (row) => {
-      return formatDate(row.updatedAt);
-    },
+    render: (row) => renderTzDateTime(row.updatedAt),
   },
   {
     title: $t('common.actions'),
@@ -854,12 +854,6 @@ const columns = computed<DataTableColumns<RebateConfig>>(() => [
     },
   },
 ]);
-
-// 格式化日期
-const formatDate = (date: string | undefined) => {
-  if (!date) return '-';
-  return new Date(date).toLocaleString('zh-CN');
-};
 
 // 加载数据
 const loadData = async () => {

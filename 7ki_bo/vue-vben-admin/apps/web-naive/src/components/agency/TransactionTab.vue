@@ -50,6 +50,7 @@
           <n-date-picker
             v-model:value="startDate"
             type="date"
+            :time-zone="timezone"
             :placeholder="$t('agency.transaction.selectStartDate')"
             style="width: 150px"
             @update:value="loadTransactions"
@@ -60,6 +61,7 @@
           <n-date-picker
             v-model:value="endDate"
             type="date"
+            :time-zone="timezone"
             :placeholder="$t('agency.transaction.selectEndDate')"
             style="width: 150px"
             @update:value="loadTransactions"
@@ -124,6 +126,8 @@ import {
   useMessage,
   type DataTableColumns,
 } from 'naive-ui';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 import {
   getAgentTransactionsApi,
   type AgentTransactionRecord,
@@ -138,6 +142,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 const transactionLoading = ref(false);
 const transactions = ref<AgentTransactionRecord[]>([]);
 const transactionTypeFilter = ref('');
@@ -314,7 +319,7 @@ const transactionColumns = computed<DataTableColumns<AgentTransactionRecord>>(
       width: 180,
       render: (row) =>
         h('div', { class: 'text-sm' }, [
-          h('div', { class: 'font-medium' }, formatDateTime(row.transactionTime)),
+          h('div', { class: 'font-medium' }, renderTzDateTime(row.transactionTime)),
         ]),
     },
     {
@@ -394,8 +399,6 @@ const handleExportData = () => {
 };
 
 const formatCurrency = (amount: number) => `R$ ${Number(amount).toFixed(2)}`;
-const formatDateTime = (dateString: string) =>
-  new Date(dateString).toLocaleString();
 
 onMounted(() => {
   if (props.agentId) loadTransactions();

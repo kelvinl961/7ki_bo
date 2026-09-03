@@ -21,6 +21,7 @@
             <n-date-picker
               v-model:value="dateRange"
               type="daterange"
+              :time-zone="currentTimezone"
               :shortcuts="dateShortcuts as any"
               :placeholder="dateRangePlaceholder"
               format="yyyy-MM-dd"
@@ -147,9 +148,10 @@ import { useMessage } from 'naive-ui';
 import { getDailyOperationsReport } from '#/api/operationsStatistics';
 import { exportGridData } from '#/utils/exportUtils';
 import {
-  getDisplayTimezone,
+  displayTimezoneRef,
   getNowInTimezone,
-  convertTimezoneToUTC,
+  displayCalendarRangeToPicker,
+  pickerTimestampToYmd,
 } from '#/utils/timezoneUtils';
 
 const message = useMessage();
@@ -233,26 +235,7 @@ const timeGranularity = ref('day');
 const dateRange = ref<[number, number] | null>(null);
 const currency = ref('BRL');
 
-// Map header timezone key to actual timezone string
-const timezoneKeyMap: Record<string, string> = {
-  brazil: 'America/Sao_Paulo',
-  vietnam: 'Asia/Ho_Chi_Minh',
-  china: 'Asia/Shanghai',
-};
-
-// Get timezone from header (stored in localStorage as 'preferred_timezone')
-// This automatically follows the header timezone selection
-const getHeaderTimezone = (): string => {
-  const headerTzKey = localStorage.getItem('preferred_timezone');
-  if (headerTzKey && timezoneKeyMap[headerTzKey]) {
-    return timezoneKeyMap[headerTzKey];
-  }
-  // Fallback to display timezone or default to Brazil
-  return getDisplayTimezone();
-};
-
-// Get current timezone string - reactive to header timezone changes
-const currentTimezone = computed(() => getHeaderTimezone());
+const currentTimezone = displayTimezoneRef;
 
 // Currency options
 const currencyOptions = [
@@ -278,102 +261,53 @@ const scrollXWidth = computed(() => {
   return Math.max(baseWidth, dynamicWidth);
 });
 
-// Date shortcuts - use selected timezone
+// Date shortcuts — Naive picker wall clock (00:00:00–23:59:59 of display-TZ calendar days)
 const dateShortcuts = computed(() => {
-  const tz = currentTimezone.value;
-  const tzNow = getNowInTimezone(tz);
+  const tzNow = getNowInTimezone();
+  const range = (
+    sy: number,
+    sm: number,
+    sd: number,
+    ey: number,
+    em: number,
+    ed: number,
+  ): [number, number] => displayCalendarRangeToPicker(sy, sm, sd, ey, em, ed);
 
   if (timeGranularity.value === 'day') {
     return {
-      [$t('common.today')]: (): [number, number] => {
-        const startUTC = convertTimezoneToUTC(
-          tzNow.year,
-          tzNow.month,
-          tzNow.day,
-          0,
-          0,
-          0,
-          tz,
-        );
-        const endUTC = convertTimezoneToUTC(
-          tzNow.year,
-          tzNow.month,
-          tzNow.day,
-          23,
-          59,
-          59,
-          tz,
-        );
-        return [startUTC.getTime(), endUTC.getTime()];
-      },
+      [$t('common.today')]: (): [number, number] =>
+        range(tzNow.year, tzNow.month, tzNow.day, tzNow.year, tzNow.month, tzNow.day),
       [$t('reports.shortcuts.yesterday')]: (): [number, number] => {
         const yesterday = new Date(tzNow.year, tzNow.month - 1, tzNow.day);
         yesterday.setDate(yesterday.getDate() - 1);
-        const startUTC = convertTimezoneToUTC(
-          yesterday.getFullYear(),
-          yesterday.getMonth() + 1,
-          yesterday.getDate(),
-          0,
-          0,
-          0,
-          tz,
-        );
-        const endUTC = convertTimezoneToUTC(
-          yesterday.getFullYear(),
-          yesterday.getMonth() + 1,
-          yesterday.getDate(),
-          23,
-          59,
-          59,
-          tz,
-        );
-        return [startUTC.getTime(), endUTC.getTime()];
+        const y = yesterday.getFullYear();
+        const m = yesterday.getMonth() + 1;
+        const d = yesterday.getDate();
+        return range(y, m, d, y, m, d);
       },
       [$t('reports.shortcuts.last3Days')]: (): [number, number] => {
         const threeDaysAgo = new Date(tzNow.year, tzNow.month - 1, tzNow.day);
         threeDaysAgo.setDate(threeDaysAgo.getDate() - 2);
-        const startUTC = convertTimezoneToUTC(
+        return range(
           threeDaysAgo.getFullYear(),
           threeDaysAgo.getMonth() + 1,
           threeDaysAgo.getDate(),
-          0,
-          0,
-          0,
-          tz,
-        );
-        const endUTC = convertTimezoneToUTC(
           tzNow.year,
           tzNow.month,
           tzNow.day,
-          23,
-          59,
-          59,
-          tz,
         );
-        return [startUTC.getTime(), endUTC.getTime()];
       },
       [$t('reports.shortcuts.last7Days')]: (): [number, number] => {
         const sevenDaysAgo = new Date(tzNow.year, tzNow.month - 1, tzNow.day);
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
-        const startUTC = convertTimezoneToUTC(
+        return range(
           sevenDaysAgo.getFullYear(),
           sevenDaysAgo.getMonth() + 1,
           sevenDaysAgo.getDate(),
-          0,
-          0,
-          0,
-          tz,
-        );
-        const endUTC = convertTimezoneToUTC(
           tzNow.year,
           tzNow.month,
           tzNow.day,
-          23,
-          59,
-          59,
-          tz,
         );
-        return [startUTC.getTime(), endUTC.getTime()];
       },
     };
   } else if (timeGranularity.value === 'week') {
@@ -386,25 +320,14 @@ const dateShortcuts = computed(() => {
         lastMonday.setDate(now.getDate() - daysFromMonday - 7);
         const lastSunday = new Date(now);
         lastSunday.setDate(now.getDate() - daysFromMonday - 1);
-        const startUTC = convertTimezoneToUTC(
+        return range(
           lastMonday.getFullYear(),
           lastMonday.getMonth() + 1,
           lastMonday.getDate(),
-          0,
-          0,
-          0,
-          tz,
-        );
-        const endUTC = convertTimezoneToUTC(
           lastSunday.getFullYear(),
           lastSunday.getMonth() + 1,
           lastSunday.getDate(),
-          23,
-          59,
-          59,
-          tz,
         );
-        return [startUTC.getTime(), endUTC.getTime()];
       },
       [$t('reports.shortcuts.weekBeforeLast')]: (): [number, number] => {
         const now = new Date(tzNow.year, tzNow.month - 1, tzNow.day);
@@ -414,25 +337,14 @@ const dateShortcuts = computed(() => {
         twoWeeksAgoMonday.setDate(now.getDate() - daysFromMonday - 14);
         const twoWeeksAgoSunday = new Date(now);
         twoWeeksAgoSunday.setDate(now.getDate() - daysFromMonday - 8);
-        const startUTC = convertTimezoneToUTC(
+        return range(
           twoWeeksAgoMonday.getFullYear(),
           twoWeeksAgoMonday.getMonth() + 1,
           twoWeeksAgoMonday.getDate(),
-          0,
-          0,
-          0,
-          tz,
-        );
-        const endUTC = convertTimezoneToUTC(
           twoWeeksAgoSunday.getFullYear(),
           twoWeeksAgoSunday.getMonth() + 1,
           twoWeeksAgoSunday.getDate(),
-          23,
-          59,
-          59,
-          tz,
         );
-        return [startUTC.getTime(), endUTC.getTime()];
       },
       [$t('reports.shortcuts.last4Weeks')]: (): [number, number] => {
         const now = new Date(tzNow.year, tzNow.month - 1, tzNow.day);
@@ -442,98 +354,39 @@ const dateShortcuts = computed(() => {
         fourWeeksAgoMonday.setDate(now.getDate() - daysFromMonday - 28);
         const lastSunday = new Date(now);
         lastSunday.setDate(now.getDate() - daysFromMonday - 1);
-        const startUTC = convertTimezoneToUTC(
+        return range(
           fourWeeksAgoMonday.getFullYear(),
           fourWeeksAgoMonday.getMonth() + 1,
           fourWeeksAgoMonday.getDate(),
-          0,
-          0,
-          0,
-          tz,
-        );
-        const endUTC = convertTimezoneToUTC(
           lastSunday.getFullYear(),
           lastSunday.getMonth() + 1,
           lastSunday.getDate(),
-          23,
-          59,
-          59,
-          tz,
         );
-        return [startUTC.getTime(), endUTC.getTime()];
       },
     };
   } else if (timeGranularity.value === 'month') {
     return {
-      [$t('common.thisMonth')]: (): [number, number] => {
-        const startUTC = convertTimezoneToUTC(
-          tzNow.year,
-          tzNow.month,
-          1,
-          0,
-          0,
-          0,
-          tz,
-        );
-        const endUTC = convertTimezoneToUTC(
-          tzNow.year,
-          tzNow.month,
-          tzNow.day,
-          23,
-          59,
-          59,
-          tz,
-        );
-        return [startUTC.getTime(), endUTC.getTime()];
-      },
+      [$t('common.thisMonth')]: (): [number, number] =>
+        range(tzNow.year, tzNow.month, 1, tzNow.year, tzNow.month, tzNow.day),
       [$t('reports.shortcuts.lastMonth')]: (): [number, number] => {
         const lastMonth = tzNow.month === 1 ? 12 : tzNow.month - 1;
         const lastMonthYear = tzNow.month === 1 ? tzNow.year - 1 : tzNow.year;
         const lastDay = new Date(lastMonthYear, lastMonth, 0).getDate();
-        const startUTC = convertTimezoneToUTC(
-          lastMonthYear,
-          lastMonth,
-          1,
-          0,
-          0,
-          0,
-          tz,
-        );
-        const endUTC = convertTimezoneToUTC(
-          lastMonthYear,
-          lastMonth,
-          lastDay,
-          23,
-          59,
-          59,
-          tz,
-        );
-        return [startUTC.getTime(), endUTC.getTime()];
+        return range(lastMonthYear, lastMonth, 1, lastMonthYear, lastMonth, lastDay);
       },
       [$t('reports.shortcuts.last3Months')]: (): [number, number] => {
         const threeMonthsAgo =
           tzNow.month <= 3 ? tzNow.month + 9 : tzNow.month - 3;
         const threeMonthsAgoYear =
           tzNow.month <= 3 ? tzNow.year - 1 : tzNow.year;
-        const startUTC = convertTimezoneToUTC(
+        return range(
           threeMonthsAgoYear,
           threeMonthsAgo,
           1,
-          0,
-          0,
-          0,
-          tz,
-        );
-        const endUTC = convertTimezoneToUTC(
           tzNow.year,
           tzNow.month,
           tzNow.day,
-          23,
-          59,
-          59,
-          tz,
         );
-        return [startUTC.getTime(), endUTC.getTime()];
       },
     };
   }
@@ -1377,93 +1230,44 @@ const onTimeGranularityChange = (value: string) => {
 
 // Update date range based on selected granularity - use timezone
 const updateDateRangeForGranularity = () => {
-  const tz = currentTimezone.value;
-  const tzNow = getNowInTimezone(tz);
-  let startUTC: Date;
-  let endUTC: Date;
+  const tzNow = getNowInTimezone();
 
   switch (timeGranularity.value) {
-    case 'day':
-      // Show current day only in timezone
-      startUTC = convertTimezoneToUTC(
-        tzNow.year,
-        tzNow.month,
-        tzNow.day,
-        0,
-        0,
-        0,
-        tz,
-      );
-      endUTC = convertTimezoneToUTC(
-        tzNow.year,
-        tzNow.month,
-        tzNow.day,
-        23,
-        59,
-        59,
-        tz,
-      );
-      break;
-    case 'week':
-      // Show last 7 days including today in timezone
+    case 'week': {
       const today = new Date(tzNow.year, tzNow.month - 1, tzNow.day);
       const sevenDaysAgo = new Date(today);
-      sevenDaysAgo.setDate(today.getDate() - 6); // 6 days ago + today = 7 days total
-
-      startUTC = convertTimezoneToUTC(
+      sevenDaysAgo.setDate(today.getDate() - 6);
+      dateRange.value = displayCalendarRangeToPicker(
         sevenDaysAgo.getFullYear(),
         sevenDaysAgo.getMonth() + 1,
         sevenDaysAgo.getDate(),
-        0,
-        0,
-        0,
-        tz,
-      );
-      endUTC = convertTimezoneToUTC(
         today.getFullYear(),
         today.getMonth() + 1,
         today.getDate(),
-        23,
-        59,
-        59,
-        tz,
       );
       break;
+    }
     case 'month':
-      // Show current month (1st to today) in timezone
-      startUTC = convertTimezoneToUTC(tzNow.year, tzNow.month, 1, 0, 0, 0, tz);
-      endUTC = convertTimezoneToUTC(
+      dateRange.value = displayCalendarRangeToPicker(
+        tzNow.year,
+        tzNow.month,
+        1,
         tzNow.year,
         tzNow.month,
         tzNow.day,
-        23,
-        59,
-        59,
-        tz,
       );
       break;
+    case 'day':
     default:
-      startUTC = convertTimezoneToUTC(
+      dateRange.value = displayCalendarRangeToPicker(
         tzNow.year,
         tzNow.month,
         tzNow.day,
-        0,
-        0,
-        0,
-        tz,
-      );
-      endUTC = convertTimezoneToUTC(
         tzNow.year,
         tzNow.month,
         tzNow.day,
-        23,
-        59,
-        59,
-        tz,
       );
   }
-
-  dateRange.value = [startUTC.getTime(), endUTC.getTime()];
 };
 
 // Watch for timezone changes from header
@@ -1495,96 +1299,8 @@ const fetchData = async () => {
   paginationPage.value = 1;
 
   try {
-    const tz = currentTimezone.value;
-
-    // The dateRange contains timestamps from the date picker
-    // The date picker shows dates in browser local time, but we need to interpret
-    // what date the user actually selected in the selected timezone
-    const startDate = new Date(dateRange.value[0]);
-    const endDate = new Date(dateRange.value[1]);
-
-    // Get date components in the selected timezone using formatToParts (more reliable)
-    const startTzParts = new Intl.DateTimeFormat('en-US', {
-      timeZone: tz,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-    }).formatToParts(startDate);
-
-    const endTzParts = new Intl.DateTimeFormat('en-US', {
-      timeZone: tz,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-    }).formatToParts(endDate);
-
-    // Extract date components (what the user selected in timezone)
-    const startYear = parseInt(
-      startTzParts.find((p) => p.type === 'year')!.value,
-    );
-    const startMonth = parseInt(
-      startTzParts.find((p) => p.type === 'month')!.value,
-    );
-    const startDay = parseInt(
-      startTzParts.find((p) => p.type === 'day')!.value,
-    );
-
-    const endYear = parseInt(endTzParts.find((p) => p.type === 'year')!.value);
-    const endMonth = parseInt(
-      endTzParts.find((p) => p.type === 'month')!.value,
-    );
-    const endDay = parseInt(endTzParts.find((p) => p.type === 'day')!.value);
-
-    // Convert timezone dates to UTC timestamps (start and end of day in selected timezone)
-    const startUTC = convertTimezoneToUTC(
-      startYear,
-      startMonth,
-      startDay,
-      0,
-      0,
-      0,
-      tz,
-    );
-    const endUTC = convertTimezoneToUTC(
-      endYear,
-      endMonth,
-      endDay,
-      23,
-      59,
-      59,
-      tz,
-    );
-
-    // Send the dates as the user selected them in the timezone (YYYY-MM-DD format)
-    // The backend should ideally handle timezone conversion, but currently it interprets dates as UTC
-    // For now, we send the dates as selected and the backend will query for those UTC days
-    // TODO: Backend should use TimezoneAwareDateService to properly handle timezone conversion
-    const startDateStr = `${startYear}-${String(startMonth).padStart(2, '0')}-${String(startDay).padStart(2, '0')}`;
-    const endDateStr = `${endYear}-${String(endMonth).padStart(2, '0')}-${String(endDay).padStart(2, '0')}`;
-
-    console.log('📅 Date conversion:', {
-      timezone: tz,
-      userSelectedInTimezone: {
-        start: `${startYear}-${String(startMonth).padStart(2, '0')}-${String(startDay).padStart(2, '0')}`,
-        end: `${endYear}-${String(endMonth).padStart(2, '0')}-${String(endDay).padStart(2, '0')}`,
-      },
-      utcTimestamps: {
-        start: startUTC.toISOString(),
-        end: endUTC.toISOString(),
-      },
-      sentToAPI: {
-        start: startDateStr,
-        end: endDateStr,
-      },
-    });
+    const startDateStr = pickerTimestampToYmd(dateRange.value[0]);
+    const endDateStr = pickerTimestampToYmd(dateRange.value[1]);
 
     // Add forceRefresh to bypass cache and get fresh data
     const result = await getDailyOperationsReport({

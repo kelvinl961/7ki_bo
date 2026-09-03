@@ -176,6 +176,7 @@ import {
   useMessage,
   type DataTableColumn,
 } from 'naive-ui';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 
 const message = useMessage();
 
@@ -276,7 +277,7 @@ const historyColumns: DataTableColumn<RefreshHistory>[] = [
     key: 'createdAt',
     width: 180,
     render(row: RefreshHistory) {
-      return new Date(row.createdAt).toLocaleString('zh-CN');
+      return renderTzDateTime(row.createdAt);
     },
   },
   {
@@ -284,9 +285,7 @@ const historyColumns: DataTableColumn<RefreshHistory>[] = [
     key: 'completedAt',
     width: 180,
     render(row: RefreshHistory) {
-      return row.completedAt
-        ? new Date(row.completedAt).toLocaleString('zh-CN')
-        : '--';
+      return row.completedAt ? renderTzDateTime(row.completedAt) : '--';
     },
   },
   {

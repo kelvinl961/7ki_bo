@@ -268,6 +268,7 @@ import {
   type FAQ,
   type FAQCategory,
 } from '#/api/operations/customerService';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 import { defineAsyncComponent } from 'vue';
 const MediaLibrarySelector = defineAsyncComponent(
@@ -438,11 +439,7 @@ const columns = computed<DataTableColumns<FAQ>>(() => [
     title: $t('common.operationTime'),
     key: 'createdAt',
     width: 180,
-    render: (row) => {
-      return row.createdAt
-        ? new Date(row.createdAt).toLocaleString('zh-CN')
-        : '-';
-    },
+    render: (row) => renderTzDateTime(row.createdAt),
   },
   {
     title: $t('common.actions'),

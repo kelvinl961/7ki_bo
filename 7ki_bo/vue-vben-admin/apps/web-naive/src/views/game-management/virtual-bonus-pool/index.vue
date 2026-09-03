@@ -161,6 +161,7 @@
 import { $t } from '@vben/locales';
 
 import { ref, reactive, computed, onMounted, h } from 'vue';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 import {
   NCard,
   NButton,
@@ -533,7 +534,7 @@ const columns: DataTableColumns<VirtualBonusPool> = [
     title: $t('common.operationTime'),
     key: 'operationTime',
     width: 160,
-    render: (row) => new Date(row.operationTime).toLocaleString('zh-CN'),
+    render: (row) => renderTzDateTime(row.operationTime),
     sorter: true,
   },
   {

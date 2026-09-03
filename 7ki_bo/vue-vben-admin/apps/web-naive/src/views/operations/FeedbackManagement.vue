@@ -91,6 +91,7 @@
 
           <n-date-picker
             v-model:value="filterForm.dateRange"
+            :time-zone="timezone"
             type="datetimerange"
             format="yyyy-MM-dd HH:mm:ss"
             :placeholder="$t('common.selectDateRange')"
@@ -151,7 +152,7 @@
               {{ currentFeedback.feedbackType }}
             </n-descriptions-item>
             <n-descriptions-item :label="$t('operations.feedback.submitTime')">
-              {{ formatDateTime(currentFeedback.createdAt) }}
+              <TzDateTime :value="currentFeedback.createdAt" />
             </n-descriptions-item>
             <n-descriptions-item :label="$t('common.status')">
               <n-tag :type="getStatusType(currentFeedback.status)">
@@ -201,7 +202,7 @@
               v-if="currentFeedback.repliedAt"
             >
               {{ $t('operations.replyTime') }}:
-              {{ formatDateTime(currentFeedback.repliedAt) }}
+              <TzDateTime :value="currentFeedback.repliedAt" />
             </div>
           </n-card>
         </div>
@@ -322,8 +323,11 @@ import {
 const UserDetailModal = defineAsyncComponent(
   () => import('#/components/user/UserDetailModal.vue'),
 );
-import { formatDateTime } from '#/utils/format';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import TzDateTime from '#/components/common/TzDateTime.vue';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 
+const { timezone } = useDisplayTimezone();
 const message = useMessage();
 
 const tableRef = ref();
@@ -467,7 +471,7 @@ const columns = computed<DataTableColumns<Feedback>>(() => [
     title: $t('operations.feedback.feedbackTime'),
     key: 'createdAt',
     width: 180,
-    render: (row) => formatDateTime(row.createdAt),
+    render: (row) => renderTzDateTime(row.createdAt),
   },
   {
     title: $t('operations.feedback.feedbackContent'),

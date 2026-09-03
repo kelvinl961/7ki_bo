@@ -218,11 +218,13 @@ const QuickDateSelect = defineAsyncComponent(
 
 // Import timezone utilities
 import {
+  displayCalendarRangeToPicker,
   formatDateTimeInTimezone,
   getNowInTimezone,
-  convertTimezoneToUTC,
-  getDisplayTimezone,
+  pickerRangeToUtcIso,
 } from '#/utils/timezoneUtils';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 import FieldSearchBar, {
   type FieldSearchBarOption,
 } from '#/components/filters/FieldSearchBar.vue';
@@ -230,6 +232,7 @@ import MemberAdvancedSearchModal from './MemberAdvancedSearchModal.vue';
 import { exportWithMapping } from '#/utils/exportUtils';
 
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 const EXPORT_MAX_ROWS = 50_000;
 const route = useRoute();
 
@@ -665,7 +668,10 @@ function getLastLoginIpRegionLine(row: UserItem): string {
   return pieces.length ? pieces.join(' ') : '-';
 }
 
-function renderLastLoginStackCell(ipRegionLine: string, timeLine: string) {
+function renderLastLoginStackCell(
+  ipRegionLine: string,
+  timeLine: string | ReturnType<typeof h>,
+) {
   return h(
     'div',
     {
@@ -1114,7 +1120,9 @@ const columns = computed<DataTableColumns<UserItem>>(() => {
     width: 172,
     align: 'center',
     render(row) {
-      return row.registrationTime ? formatDateTime(row.registrationTime) : '-';
+      return row.registrationTime
+        ? renderTzDateTime(row.registrationTime)
+        : '-';
     },
   },
   {
@@ -1125,7 +1133,7 @@ const columns = computed<DataTableColumns<UserItem>>(() => {
     render(row) {
       const top = getLastLoginIpRegionLine(row);
       const bottom = row.lastLoginTime
-        ? formatDateTime(row.lastLoginTime)
+        ? renderTzDateTime(row.lastLoginTime)
         : '-';
       return renderLastLoginStackCell(top, bottom);
     },
@@ -1203,56 +1211,16 @@ const handleQuickDateSelect = (value: 'day' | 'week' | 'month' | null) => {
       return;
   }
 
-  // ✅ SIMPLIFIED: Convert São Paulo time to UTC and store directly
-  // The date picker will display in browser timezone, but we'll use UTC timestamps for backend
-  const tz = getDisplayTimezone();
-
-  // Convert São Paulo time components to UTC
-  const startDateUTC = convertTimezoneToUTC(
+  const startDatePicker = displayCalendarRangeToPicker(
     startYear,
     startMonth,
     startDay,
-    0,
-    0,
-    0,
-    tz,
-  );
-  const endDateUTC = convertTimezoneToUTC(
     endYear,
     endMonth,
     endDay,
-    23,
-    59,
-    59,
-    tz,
   );
-
-  // Validate and store UTC timestamps directly
-  if (isNaN(startDateUTC.getTime()) || isNaN(endDateUTC.getTime())) {
-    console.error('❌ Failed to convert timezone dates to UTC');
-    // Fallback: approximate UTC (not ideal)
-    filterForm.dateRange = [
-      new Date(
-        Date.UTC(startYear, startMonth - 1, startDay, 3, 0, 0),
-      ).getTime(), // São Paulo is UTC-3
-      new Date(Date.UTC(endYear, endMonth - 1, endDay, 2, 59, 59)).getTime(),
-    ];
-    persistTimeFilter();
-  } else {
-    // Store UTC timestamps - these represent São Paulo time
-    filterForm.dateRange = [startDateUTC.getTime(), endDateUTC.getTime()];
-    persistTimeFilter();
-    console.log('📅 Quick date select:', {
-      saoPaulo: {
-        start: `${startYear}-${startMonth}-${startDay} 00:00:00`,
-        end: `${endYear}-${endMonth}-${endDay} 23:59:59`,
-      },
-      utcTimestamps: {
-        start: startDateUTC.toISOString(),
-        end: endDateUTC.toISOString(),
-      },
-    });
-  }
+  filterForm.dateRange = startDatePicker;
+  persistTimeFilter();
 };
 
 /** 默认选中「日」并填充今日日期范围（仅首次无历史设定时） */
@@ -1467,90 +1435,9 @@ function applyFiltersToUserListParams(params: UserListParams) {
   }
 
   if (filterForm.dateRange && filterForm.dateRange.length === 2) {
-    const [startTimestamp, endTimestamp] = filterForm.dateRange;
-    const tz = getDisplayTimezone();
-    const startDate = new Date(startTimestamp);
-    const endDate = new Date(endTimestamp);
-
-    if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
-      const startTzStr = new Intl.DateTimeFormat('en-US', {
-        timeZone: tz,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-      }).format(startDate);
-
-      const endTzStr = new Intl.DateTimeFormat('en-US', {
-        timeZone: tz,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-      }).format(endDate);
-
-      const [startDatePart, startTimePart] = startTzStr.split(', ');
-      const [endDatePart, endTimePart] = endTzStr.split(', ');
-
-      if (startDatePart && startTimePart && endDatePart && endTimePart) {
-        const [startM, startD, startY] = startDatePart.split('/');
-        const [startH, startMin, startSec] = startTimePart.split(':');
-        const [endM, endD, endY] = endDatePart.split('/');
-        const [endH, endMin, endSec] = endTimePart.split(':');
-
-        if (
-          startM &&
-          startD &&
-          startY &&
-          startH &&
-          startMin &&
-          endM &&
-          endD &&
-          endY &&
-          endH &&
-          endMin
-        ) {
-          const startUTC = convertTimezoneToUTC(
-            parseInt(startY),
-            parseInt(startM),
-            parseInt(startD),
-            parseInt(startH),
-            parseInt(startMin),
-            parseInt(startSec || '0'),
-            tz,
-          );
-          const endUTC = convertTimezoneToUTC(
-            parseInt(endY),
-            parseInt(endM),
-            parseInt(endD),
-            parseInt(endH),
-            parseInt(endMin),
-            parseInt(endSec || '59'),
-            tz,
-          );
-
-          if (!isNaN(startUTC.getTime()) && !isNaN(endUTC.getTime())) {
-            params.startDate = startUTC.toISOString();
-            params.endDate = endUTC.toISOString();
-          } else {
-            params.startDate = startDate.toISOString();
-            params.endDate = endDate.toISOString();
-          }
-        } else {
-          params.startDate = startDate.toISOString();
-          params.endDate = endDate.toISOString();
-        }
-      } else {
-        params.startDate = startDate.toISOString();
-        params.endDate = endDate.toISOString();
-      }
-    }
+    const { startDate, endDate } = pickerRangeToUtcIso(filterForm.dateRange);
+    params.startDate = startDate;
+    params.endDate = endDate;
     params.timeType = filterForm.timeType;
   }
 
@@ -1847,9 +1734,12 @@ onMounted(() => {
       filterForm.dateQuickSelect = null;
       filterForm.dateRange = null;
     });
-  } else if (!hasValidOpsDrillQuery() && !filterForm.dateRange) {
-    // 仅首次进入且无已保存/已修改的日期设定时，默认「日」
-    applyDefaultDayFilter();
+  } else if (!hasValidOpsDrillQuery()) {
+    if (filterForm.dateQuickSelect) {
+      handleQuickDateSelect(filterForm.dateQuickSelect);
+    } else if (!filterForm.dateRange) {
+      applyDefaultDayFilter();
+    }
   }
 
   // ✅ NEW: Handle special filter types (same_password, same_withdrawal_pin, etc.)
@@ -1911,6 +1801,12 @@ watch(() => filterForm.timeType, () => {
   persistTimeFilter();
 });
 
+watch(timezone, () => {
+  if (filterForm.dateQuickSelect) {
+    handleQuickDateSelect(filterForm.dateQuickSelect);
+  }
+});
+
 /** keep-alive 返回时：若内存被路由下钻清空，从 session 恢复用户之前的日期设定 */
 onActivated(() => {
   const query = route.query;
@@ -1931,7 +1827,11 @@ onActivated(() => {
   runWithoutTimeFilterPersist(() => {
     filterForm.timeType = saved.timeType;
     filterForm.dateQuickSelect = saved.dateQuickSelect;
-    filterForm.dateRange = saved.dateRange;
+    if (saved.dateQuickSelect) {
+      handleQuickDateSelect(saved.dateQuickSelect);
+    } else {
+      filterForm.dateRange = saved.dateRange;
+    }
   });
 });
 </script>

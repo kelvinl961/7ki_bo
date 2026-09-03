@@ -21,11 +21,16 @@
                 @update:value="onGlobalSwitch"
               />
               <n-text v-if="lwEnabledAt" depth="3" class="text-xs">
-                {{ $t('activity.common.enabledAt') }}{{ formatTs(lwEnabledAt) }}
+                {{ $t('activity.common.enabledAt') }}<TzDateTime :value="lwEnabledAt" fallback="" />
               </n-text>
             </template>
           </n-space>
           <n-space>
+            <n-button
+              v-if="activeTab === 'wheels'"
+              type="primary"
+              @click="openCreate"
+            >{{ $t('activity.luckyWheelEdit.k6dfb') }}</n-button>
             <n-button
               v-if="activeTab === 'wheels'"
               type="primary"
@@ -34,7 +39,7 @@
             <n-button
               v-if="showAddLuckyValueBtn"
               type="primary"
-              @click="showAddLuckyValue = true"
+              @click="openAddLuckyValue()"
             >{{ $t('activity.luckyWheelAddLuckyValue.k65b0') }}</n-button>
             <n-button
               v-if="showExportBtn"
@@ -289,11 +294,28 @@
         v-model:show="showEditModal"
         :wheel="editingWheel"
         :read-only="editReadOnly"
+        :create-mode="editCreateMode"
+        :default-currency="wheels[0]?.currency || 'BRL'"
         @saved="onWheelSaved"
       />
 
       <LuckyWheelAddLuckyValueModal
         v-model:show="showAddLuckyValue"
+        :initial-account="addLuckyValueAccount"
+        :initial-member-id="addLuckyValueMemberId"
+        @saved="reloadActive"
+      />
+
+      <LuckyWheelDeductLuckyValueModal
+        v-model:show="showDeductLuckyValue"
+        :user-ids="deductUserIds"
+        :remaining-by-user-id="deductRemainingByUserId"
+        @saved="reloadActive"
+      />
+
+      <LuckyWheelPhysicalOrderModal
+        v-model:show="showPhysicalOrderModal"
+        :order="editingPhysicalOrder"
         @saved="reloadActive"
       />
     </Page>
@@ -327,6 +349,8 @@ import {
   type DataTableSortState,
 } from 'naive-ui';
 import { Page } from '@vben/common-ui';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import TzDateTime from '#/components/common/TzDateTime.vue';
 import QuickDateSelect from '#/components/common/QuickDateSelect.vue';
 import TimezoneDatePicker from '#/components/common/TimezoneDatePicker.vue';
 import {
@@ -334,9 +358,13 @@ import {
   buildQuickDateRange,
   type QuickDateValue,
 } from '#/utils/quickDateRange';
+import { pickerRangeToUtcIso } from '#/utils/timezoneUtils';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 import LuckyWheelPublicConfigModal from './components/LuckyWheelPublicConfigModal.vue';
 import LuckyWheelEditModal from './components/LuckyWheelEditModal.vue';
 import LuckyWheelAddLuckyValueModal from './components/LuckyWheelAddLuckyValueModal.vue';
+import LuckyWheelDeductLuckyValueModal from './components/LuckyWheelDeductLuckyValueModal.vue';
+import LuckyWheelPhysicalOrderModal from './components/LuckyWheelPhysicalOrderModal.vue';
 import {
   BULK_ACTION_OPTION_KEYS,
   LUCKY_VALUE_CHANGE_TYPE_OPTION_KEYS,
@@ -353,6 +381,7 @@ import {
   type LuckyWheelPublicConfigSnapshot,
   normalizeLuckyWheelItem,
   normalizeLuckyWheelPublicConfig,
+  luckyWheelScheduleStatus,
   wheelTypeLabel,
 } from './components/luckyWheelTypes';
 import {
@@ -377,6 +406,7 @@ type TabName =
   | 'physical-orders';
 
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 const activeTab = ref<TabName>('wheels');
 
 const lwEnabled = ref(false);
@@ -386,8 +416,16 @@ const exportLoading = ref(false);
 const showPublicConfig = ref(false);
 const showEditModal = ref(false);
 const showAddLuckyValue = ref(false);
+const showDeductLuckyValue = ref(false);
+const addLuckyValueAccount = ref('');
+const addLuckyValueMemberId = ref<number | string | null>(null);
+const deductUserIds = ref<number[]>([]);
+const deductRemainingByUserId = ref<Record<number, number>>({});
+const showPhysicalOrderModal = ref(false);
 const editReadOnly = ref(false);
+const editCreateMode = ref(false);
 const editingWheel = ref<LuckyWheelItem | null>(null);
+const editingPhysicalOrder = ref<Record<string, any> | null>(null);
 const publicConfigSnapshot = ref<LuckyWheelPublicConfigSnapshot | null>(null);
 const wheels = ref<LuckyWheelItem[]>([]);
 
@@ -531,10 +569,119 @@ function displayValue(v: unknown) {
   return v;
 }
 
-function formatTs(iso: string | null | undefined) {
-  if (!iso) return '—';
-  const d = new Date(iso);
-  return Number.isNaN(d.getTime()) ? String(iso) : d.toLocaleString('zh-CN');
+function isOpaqueRefId(value: unknown) {
+  const s = String(value ?? '').trim();
+  if (!s || s === '—') return true;
+  if (s === 'system') return true;
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s);
+}
+
+function labelWheelType(type?: string | null) {
+  const key = String(type || '').toLowerCase();
+  const map: Record<string, string> = {
+    silver: $t('activity.luckyWheelUi.wheelSilver'),
+    gold: $t('activity.luckyWheelUi.wheelGold'),
+    diamond: $t('activity.luckyWheelUi.wheelDiamond'),
+    custom: $t('activity.luckyWheelUi.wheelCustom'),
+  };
+  return map[key] || type || '—';
+}
+
+function labelPromotionSource(source?: string | null) {
+  const key = String(source || '').toUpperCase();
+  const map: Record<string, string> = {
+    MANUAL: $t('activity.luckyWheelUi.sourceManual'),
+    LUCKY_SPIN: $t('activity.luckyWheelUi.sourceLuckySpin'),
+    LUCKY_SPIN_COMPENSATION: $t('activity.luckyWheelUi.sourceCompensation'),
+    BET: $t('activity.luckyWheelUi.sourceBet'),
+    DEPOSIT: $t('activity.luckyWheelUi.sourceDeposit'),
+    LUCKY_EXPIRY: $t('activity.luckyWheelUi.sourceExpiry'),
+    TASK: $t('activity.luckyWheelUi.sourceTask'),
+    SURPRISE: $t('activity.luckyWheelUi.sourceSurprise'),
+  };
+  return map[key] || displayValue(source);
+}
+
+function labelChangeType(changeType?: string | null) {
+  const key = String(changeType || '').toUpperCase();
+  const map: Record<string, string> = {
+    BET_EARN: $t('activity.luckyWheelUi.earn'),
+    DEPOSIT_EARN: $t('activity.luckyWheelUi.depositEarn'),
+    TASK_EARN: $t('activity.luckyWheelUi.taskEarn'),
+    SURPRISE_EARN: $t('activity.luckyWheelUi.surpriseEarn'),
+    MANUAL_ADD: $t('activity.luckyWheelUi.manualAdd'),
+    MANUAL_DEDUCT: $t('activity.luckyWheelUi.deduct'),
+    SPIN_CONSUME_SILVER: $t('activity.luckyWheelUi.consumeSilver'),
+    SPIN_CONSUME_GOLD: $t('activity.luckyWheelUi.consumeGold'),
+    SPIN_CONSUME_DIAMOND: $t('activity.luckyWheelUi.consumeDiamond'),
+    SPIN_CONSUME: $t('activity.luckyWheelUi.consume'),
+    EXPIRE_VOID: $t('activity.luckyWheelUi.expire'),
+    MALL_REDEEM_CONSUME: $t('activity.luckyWheelUi.mallRedeem'),
+    REDEEM_REFUND: $t('activity.luckyWheelUi.redeemRefund'),
+  };
+  return map[key] || displayValue(changeType);
+}
+
+function wheelTypeFromChangeType(changeType?: string | null) {
+  const key = String(changeType || '').toUpperCase();
+  if (key.includes('SILVER')) return 'silver';
+  if (key.includes('GOLD')) return 'gold';
+  if (key.includes('DIAMOND')) return 'diamond';
+  if (key === 'SPIN_CONSUME') return 'custom';
+  return null;
+}
+
+function labelPromotionType(row: {
+  changeType?: string | null;
+  metadata?: { wheelId?: string } | null;
+  promotionSource?: string | null;
+  promotionType?: string | null;
+}) {
+  const source = String(row.promotionSource || '').toUpperCase();
+  const change = String(row.changeType || '').toUpperCase();
+  const metaWheelId = row.metadata?.wheelId;
+  if (metaWheelId) {
+    const wheel = wheels.value.find((w) => w.id === metaWheelId);
+    if (wheel?.name) return wheel.name;
+  }
+
+  const fromChange = wheelTypeFromChangeType(change);
+  if (source === 'LUCKY_SPIN' || fromChange) {
+    return fromChange
+      ? labelWheelType(fromChange)
+      : $t('activity.luckyWheelUi.sourceLuckySpin');
+  }
+  if (source === 'MANUAL') {
+    return change === 'MANUAL_DEDUCT'
+      ? $t('activity.luckyWheelUi.deduct')
+      : $t('activity.luckyWheelUi.manual');
+  }
+  if (source === 'BET') return $t('activity.luckyWheelUi.sourceBet');
+  if (source === 'DEPOSIT') return $t('activity.luckyWheelUi.sourceDeposit');
+  if (source === 'LUCKY_EXPIRY') return $t('activity.luckyWheelUi.sourceExpiry');
+  if (source === 'LUCKY_SPIN_COMPENSATION') {
+    return $t('activity.luckyWheelUi.sourceCompensation');
+  }
+  if (source === 'TASK') return $t('activity.luckyWheelUi.sourceTask');
+  if (isOpaqueRefId(row.promotionType)) {
+    return labelPromotionSource(row.promotionSource);
+  }
+  return displayValue(row.promotionType);
+}
+
+function labelRewardType(type?: string | null) {
+  const key = String(type || '').toUpperCase();
+  const map: Record<string, string> = {
+    FIXED_CASH: $t('activity.luckyWheelUi.fixedBonus'),
+    FIXED_BONUS: $t('activity.luckyWheelUi.fixedBonus'),
+    RANDOM_CASH: $t('activity.luckyWheelUi.randomBonus'),
+    RANDOM_BONUS: $t('activity.luckyWheelUi.randomBonus'),
+    PHYSICAL: $t('activity.luckyWheelUi.physical'),
+    THANK_YOU: $t('activity.luckyWheelUi.none'),
+    NONE: $t('activity.luckyWheelUi.none'),
+    DISPLAY_ONLY: $t('activity.luckyWheelUi.displayOnly'),
+  };
+  return map[key] || displayValue(type);
 }
 
 function renderPrizeIcon(url: string | null | undefined) {
@@ -576,8 +723,8 @@ function isTimeFilteredTab(tab: TabName) {
 
 function rangeParams() {
   if (!dateRange.value) return {};
-  const [a, b] = dateRange.value;
-  return { from: new Date(a).toISOString(), to: new Date(b).toISOString() };
+  const { startDate, endDate } = pickerRangeToUtcIso(dateRange.value);
+  return { from: startDate, to: endDate };
 }
 
 function memberSearchParams() {
@@ -637,9 +784,37 @@ function toggleSelectCurrentPage(checked: boolean) {
   }
 }
 
+function openAddLuckyValue(row?: Record<string, any>) {
+  addLuckyValueAccount.value = row?.account ? String(row.account) : '';
+  addLuckyValueMemberId.value = row?.memberId ?? null;
+  showAddLuckyValue.value = true;
+}
+
+function openDeductLuckyValue(rows: Array<Record<string, any>>) {
+  const remaining: Record<number, number> = {};
+  const ids: number[] = [];
+  for (const row of rows) {
+    const userId = Number(row.memberId);
+    if (!Number.isInteger(userId) || userId <= 0) continue;
+    ids.push(userId);
+    remaining[userId] = Number(row.remainingLuckyValue || 0);
+  }
+  deductUserIds.value = [...new Set(ids)];
+  deductRemainingByUserId.value = remaining;
+  if (deductUserIds.value.length === 0) {
+    message.warning($t('activity.luckyWheelAddLuckyValue.memberIds'));
+    return;
+  }
+  showDeductLuckyValue.value = true;
+}
+
 function handleBulkAction(action: string | null) {
   if (!action) return;
   if (action === 'export') handleExport();
+  if (action === 'deduct' && activeTab.value === 'remaining-lucky-value') {
+    const selected = tableRows.value.filter((row) => checkedRowKeys.value.includes(rowKey(row)));
+    openDeductLuckyValue(selected);
+  }
   bulkAction.value = null;
 }
 
@@ -703,10 +878,23 @@ async function onWheelSwitch(row: LuckyWheelItem, enabled: boolean) {
   }
 }
 
+function openCreate() {
+  editingWheel.value = null;
+  editReadOnly.value = false;
+  editCreateMode.value = true;
+  showEditModal.value = true;
+}
+
 function openEdit(row: LuckyWheelItem, readOnly = false) {
   editingWheel.value = row;
   editReadOnly.value = readOnly;
+  editCreateMode.value = false;
   showEditModal.value = true;
+}
+
+function openPhysicalOrder(row: Record<string, any>) {
+  editingPhysicalOrder.value = row;
+  showPhysicalOrderModal.value = true;
 }
 
 const wheelColumns = computed<DataTableColumns<LuckyWheelItem>>(() => [
@@ -717,6 +905,29 @@ const wheelColumns = computed<DataTableColumns<LuckyWheelItem>>(() => [
     key: 'wheelType',
     width: 120,
     render: (row) => wheelTypeLabel(row.wheelType),
+  },
+  {
+    title: $t('activity.luckyWheelEdit.k8d452'),
+    key: 'schedule',
+    width: 210,
+    render: (row) => {
+      const status = luckyWheelScheduleStatus(row.startsAt, row.endsAt);
+      const statusLabel =
+        status === 'always'
+          ? $t('activity.luckyWheelEdit.k8d451')
+          : status === 'upcoming'
+            ? $t('activity.luckyWheelEdit.k8d448')
+            : status === 'ended'
+              ? $t('activity.luckyWheelEdit.k8d450')
+              : $t('activity.luckyWheelEdit.k8d449');
+      if (!row.startsAt && !row.endsAt) return statusLabel;
+      return h('span', [
+        `${statusLabel} · `,
+        renderTzDateTime(row.startsAt),
+        ' ~ ',
+        renderTzDateTime(row.endsAt),
+      ]);
+    },
   },
   { title: $t('activity.luckyWheelEdit.k5956'), key: 'prizeCount', width: 90, render: (r) => displayValue(r.prizeCount) },
   {
@@ -765,24 +976,24 @@ const wheelColumns = computed<DataTableColumns<LuckyWheelItem>>(() => [
       ]),
   },
   { title: $t('activity.activityList.k64cd'), key: 'updatedBy', width: 90, render: (r) => displayValue(r.updatedBy) },
-  { title: $t('activity.noviceWelfare.k64cd'), key: 'updatedAt', width: 160, render: (r) => formatTs(r.updatedAt) },
+  { title: $t('activity.noviceWelfare.k64cd'), key: 'updatedAt', width: 160, render: (r) => renderTzDateTime(r.updatedAt) },
 ]);
 
 const luckyValueRecordColumns = computed<DataTableColumns<any>>(() => [
   { title: $t('activity.rewardReport.k4f1a'), key: 'currency', width: 80, render: (r) => displayValue(r.currency) },
   { title: $t('activity.rewardReport.k4f1a2'), key: 'memberId', width: 90, render: (r) => displayValue(r.memberId) },
   { title: $t('activity.rewardReport.k4f1a3'), key: 'account', width: 120, render: (r) => displayValue(r.account) },
-  { title: $t('activity.rewardReport.k4f18'), key: 'promotionSource', width: 100, render: (r) => displayValue(r.promotionSource) },
-  { title: $t('activity.formModal.k4f182'), key: 'promotionType', width: 100, render: (r) => displayValue(r.promotionType) },
-  { title: $t('activity.luckyWheel.k53d8'), key: 'changeType', width: 90, render: (r) => displayValue(r.changeType) },
+  { title: $t('activity.rewardReport.k4f18'), key: 'promotionSource', width: 100, render: (r) => labelPromotionSource(r.promotionSource) },
+  { title: $t('activity.formModal.k4f182'), key: 'promotionType', width: 120, render: (r) => labelPromotionType(r) },
+  { title: $t('activity.luckyWheel.k53d8'), key: 'changeType', width: 120, render: (r) => labelChangeType(r.changeType) },
   { title: $t('activity.luckyWheel.k53d82'), key: 'balanceBefore', width: 90, render: (r) => displayValue(r.balanceBefore) },
   { title: $t('activity.luckyWheelAddLuckyValue.k53d8'), key: 'changeAmount', width: 110, ...sortable('changeAmount'), render: (r) => displayValue(r.changeAmount) },
   { title: $t('activity.luckyWheel.k53d83'), key: 'balanceAfter', width: 90, render: (r) => displayValue(r.balanceAfter) },
   { title: $t('activity.luckyWheel.k5e782'), key: 'luckyValuePeriod', width: 100, render: (r) => displayValue(r.luckyValuePeriod) },
-  { title: $t('activity.luckyWheel.k8fc7'), key: 'expireAt', width: 150, render: (r) => formatTs(r.expireAt) },
+  { title: $t('activity.luckyWheel.k8fc7'), key: 'expireAt', width: 150, render: (r) => renderTzDateTime(r.expireAt) },
   { title: $t('activity.distributeReward.k524d'), key: 'frontendRemark', width: 120, render: (r) => displayValue(r.frontendRemark) },
   { title: $t('activity.distributeReward.k540e'), key: 'backendRemark', width: 120, render: (r) => displayValue(r.backendRemark) },
-  { title: $t('activity.luckyWheel.k53d84'), key: 'createdAt', width: 150, render: (r) => formatTs(r.createdAt) },
+  { title: $t('activity.luckyWheel.k53d84'), key: 'createdAt', width: 150, render: (r) => renderTzDateTime(r.createdAt) },
 ]);
 
 const remainingColumns = computed<DataTableColumns<any>>(() => [
@@ -790,7 +1001,7 @@ const remainingColumns = computed<DataTableColumns<any>>(() => [
   { title: $t('activity.rewardReport.k4f1a'), key: 'currency', width: 80, render: (r) => displayValue(r.currency) },
   { title: $t('activity.rewardReport.k4f1a2'), key: 'memberId', width: 90, render: (r) => displayValue(r.memberId) },
   { title: $t('activity.rewardReport.k4f1a3'), key: 'account', width: 120, render: (r) => displayValue(r.account) },
-  { title: $t('activity.detailModal.k66f4'), key: 'updatedAt', width: 150, render: (r) => formatTs(r.updatedAt) },
+  { title: $t('activity.detailModal.k66f4'), key: 'updatedAt', width: 150, render: (r) => renderTzDateTime(r.updatedAt) },
   { title: $t('activity.luckyWheelPublicConfig.k83b7'), key: 'earnedLuckyValue', width: 110, ...sortable('earnedLuckyValue'), render: (r) => displayValue(r.earnedLuckyValue) },
   { title: $t('activity.luckyWheelEdit.k6d88'), key: 'consumedLuckyValue', width: 110, ...sortable('consumedLuckyValue'), render: (r) => displayValue(r.consumedLuckyValue) },
   { title: $t('activity.luckyWheel.k8fc72'), key: 'expiredLuckyValue', width: 110, ...sortable('expiredLuckyValue'), render: (r) => displayValue(r.expiredLuckyValue) },
@@ -799,8 +1010,20 @@ const remainingColumns = computed<DataTableColumns<any>>(() => [
   {
     title: $t('activity.rewardReport.k64cd'),
     key: 'actions',
-    width: 80,
-    render: () => h(NButton, { text: true, type: 'primary', disabled: true }, { default: () => $t('activity.rewardReport.k8be6') }),
+    width: 180,
+    render: (row) =>
+      h(NSpace, { size: 8 }, () => [
+        h(
+          NButton,
+          { text: true, type: 'primary', onClick: () => openAddLuckyValue(row) },
+          { default: () => $t('activity.luckyWheelAddLuckyValue.k65b0') },
+        ),
+        h(
+          NButton,
+          { text: true, type: 'warning', onClick: () => openDeductLuckyValue([row]) },
+          { default: () => $t('activity.luckyWheelAddLuckyValue.deductAction') },
+        ),
+      ]),
   },
   { title: $t('activity.activityList.k64cd'), key: 'operator', width: 90, render: (r) => displayValue(r.operator) },
 ]);
@@ -810,12 +1033,11 @@ const winningColumns = computed<DataTableColumns<any>>(() => [
   { title: $t('activity.rewardReport.k4f1a2'), key: 'memberId', width: 90, render: (r) => displayValue(r.memberId) },
   { title: $t('activity.rewardReport.k4f1a3'), key: 'account', width: 120, render: (r) => displayValue(r.account) },
   { title: $t('activity.luckyWheelEdit.k8f6c3'), key: 'wheelName', width: 110, render: (r) => displayValue(r.wheelName) },
-  { title: $t('activity.luckyWheelEdit.k8f6c'), key: 'wheelType', width: 100, ...sortable('wheelType'), render: (r) => displayValue(r.wheelTypeLabel ?? r.wheelType) },
+  { title: $t('activity.luckyWheelEdit.k8f6c'), key: 'wheelType', width: 100, ...sortable('wheelType'), render: (r) => labelWheelType(r.wheelType) },
   { title: $t('activity.luckyWheelEdit.k6d88'), key: 'luckyValueCost', width: 100, ...sortable('luckyValueCost'), render: (r) => displayValue(r.luckyValueCost) },
-  { title: $t('activity.rewardReport.k5956'), key: 'rewardType', width: 100, render: (r) => displayValue(r.rewardType) },
-  { title: $t('activity.luckyWheel.k5956'), key: 'prizeIcon', width: 80, render: (r) => renderPrizeIcon(r.prizeIcon) },
+  { title: $t('activity.rewardReport.k5956'), key: 'rewardType', width: 120, render: (r) => labelRewardType(r.rewardType) },
   { title: $t('activity.luckyWheelEdit.k59564'), key: 'reward', width: 90, ...sortable('reward'), render: (r) => displayValue(r.reward) },
-  { title: $t('activity.luckyWheel.k4e2d2'), key: 'wonAt', width: 150, render: (r) => formatTs(r.wonAt) },
+  { title: $t('activity.luckyWheel.k4e2d2'), key: 'wonAt', width: 150, render: (r) => renderTzDateTime(r.wonAt) },
 ]);
 
 const physicalOrderColumns = computed<DataTableColumns<any>>(() => [
@@ -826,14 +1048,14 @@ const physicalOrderColumns = computed<DataTableColumns<any>>(() => [
   { title: $t('activity.rewardReport.k4f1a3'), key: 'account', width: 120, render: (r) => displayValue(r.account) },
   { title: $t('activity.luckyWheel.k59562'), key: 'prizeIcon', width: 80, render: (r) => renderPrizeIcon(r.prizeIcon) },
   { title: $t('activity.formModal.k595612'), key: 'prizeName', width: 110, render: (r) => displayValue(r.prizeName) },
-  { title: $t('activity.luckyWheel.k4e2d2'), key: 'wonAt', width: 150, render: (r) => formatTs(r.wonAt) },
+  { title: $t('activity.luckyWheel.k4e2d2'), key: 'wonAt', width: 150, render: (r) => renderTzDateTime(r.wonAt) },
   { title: $t('activity.luckyWheel.k6536'), key: 'receiverName', width: 100, render: (r) => displayValue(r.receiverName) },
   { title: $t('activity.luckyWheel.k65362'), key: 'receiverAddress', width: 160, render: (r) => displayValue(r.receiverAddress) },
   { title: $t('activity.luckyWheel.k8054'), key: 'receiverPhone', width: 120, render: (r) => displayValue(r.receiverPhone) },
   { title: $t('activity.luckyWheel.k8ba22'), key: 'status', width: 90, ...sortable('status'), render: (r) => displayValue(r.statusLabel ?? r.status) },
   { title: $t('activity.luckyWheel.k5feb'), key: 'trackingNo', width: 130, render: (r) => displayValue(r.trackingNo) },
   { title: $t('activity.luckyWheel.k5feb2'), key: 'courierCompany', width: 100, render: (r) => displayValue(r.courierCompany) },
-  { title: $t('activity.luckyWheel.k53d1'), key: 'shippedAt', width: 150, render: (r) => formatTs(r.shippedAt) },
+  { title: $t('activity.luckyWheel.k53d1'), key: 'shippedAt', width: 150, render: (r) => renderTzDateTime(r.shippedAt) },
   { title: $t('activity.distributeReward.k524d'), key: 'frontendRemark', width: 120, render: (r) => displayValue(r.frontendRemark) },
   { title: $t('activity.distributeReward.k540e'), key: 'backendRemark', width: 120, render: (r) => displayValue(r.backendRemark) },
   {
@@ -843,7 +1065,7 @@ const physicalOrderColumns = computed<DataTableColumns<any>>(() => [
     render: () => h(NButton, { text: true, type: 'primary', disabled: true }, { default: () => $t('activity.rewardReport.k8be6') }),
   },
   { title: $t('activity.activityList.k64cd'), key: 'operator', width: 90, render: (r) => displayValue(r.operator) },
-  { title: $t('activity.noviceWelfare.k64cd'), key: 'operatedAt', width: 150, render: (r) => formatTs(r.operatedAt) },
+  { title: $t('activity.noviceWelfare.k64cd'), key: 'operatedAt', width: 150, render: (r) => renderTzDateTime(r.operatedAt) },
 ]);
 
 const activeColumns = computed(() => {
@@ -1009,12 +1231,19 @@ function onWheelSaved(updated: LuckyWheelItem) {
   const normalized = normalizeLuckyWheelItem(updated) ?? updated;
   const idx = wheels.value.findIndex((w) => w.id === normalized.id);
   if (idx >= 0) wheels.value[idx] = normalized;
+  else wheels.value = [normalized, ...wheels.value];
   reloadActive();
 }
 
 watch(activeTab, () => {
   pagination.page = 1;
   reloadActive();
+});
+
+watch(timezone, () => {
+  if (dateQuickSelect.value) {
+    handleQuickDateSelect(dateQuickSelect.value);
+  }
 });
 
 watch([() => filters.wheelType, () => filters.enabled], () => {

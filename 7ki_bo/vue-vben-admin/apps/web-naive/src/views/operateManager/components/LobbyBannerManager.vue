@@ -84,6 +84,7 @@
           <label class="mb-2 text-sm font-medium">{{ $t('operations.messageSettings.timeRange') }}</label>
           <n-date-picker
             v-model:value="timeRange"
+            :time-zone="timezone"
             type="daterange"
             :placeholder="$t('common.selectDateRange')"
             clearable
@@ -286,13 +287,13 @@
           <div>
             <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.startTime') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
-              {{ formatDate(detailData.startTime) }}
+              <TzDateTime :value="detailData.startTime" />
             </div>
           </div>
           <div>
             <label class="text-sm font-medium text-gray-600">{{ $t('operations.messageSettings.endTime') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
-              {{ formatDate(detailData.endTime) }}
+              <TzDateTime :value="detailData.endTime" />
             </div>
           </div>
         </div>
@@ -307,7 +308,7 @@
           <div>
             <label class="text-sm font-medium text-gray-600">{{ $t('common.operationTime') }}</label>
             <div class="mt-1 rounded bg-gray-50 p-2">
-              {{ formatDate(detailData.updatedAt) }}
+              <TzDateTime :value="detailData.updatedAt" />
             </div>
           </div>
         </div>
@@ -388,7 +389,12 @@ import {
   type SelectOption,
 } from 'naive-ui';
 import { notification } from '#/adapter/naive';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import TzDateTime from '#/components/common/TzDateTime.vue';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 import { getImageUrlByEnvironment } from '../../../utils/imageUtils';
+
+const { timezone } = useDisplayTimezone();
 const LobbyBannerFormModal = defineAsyncComponent(
   () => import('./LobbyBannerFormModal.vue'),
 );
@@ -574,7 +580,7 @@ const columns: DataTableColumns<LobbyBanner> = [
     key: 'startTime',
     width: 160,
     render(row) {
-      return formatDate(row.startTime);
+      return renderTzDateTime(row.startTime);
     },
   },
   {
@@ -582,7 +588,7 @@ const columns: DataTableColumns<LobbyBanner> = [
     key: 'endTime',
     width: 160,
     render(row) {
-      return formatDate(row.endTime);
+      return renderTzDateTime(row.endTime);
     },
   },
   {
@@ -621,7 +627,7 @@ const columns: DataTableColumns<LobbyBanner> = [
     key: 'updatedAt',
     width: 160,
     render(row) {
-      return formatDate(row.updatedAt);
+      return renderTzDateTime(row.updatedAt);
     },
   },
   {
@@ -981,18 +987,6 @@ const handleImageError = (event: Event) => {
 // 创建一个简单的占位符图片数据URL
 const placeholderImageUrl =
   'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5YWFhYSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkJhbm5lciBJbWFnZTwvdGV4dD48L3N2Zz4=';
-
-const formatDate = (date: string | Date | null) => {
-  if (!date) return '-';
-  try {
-    const dateObj = new Date(date);
-    if (isNaN(dateObj.getTime())) return '-';
-    return dateObj.toLocaleString('zh-CN');
-  } catch (error) {
-    console.error('Error formatting date:', error, date);
-    return '-';
-  }
-};
 
 const getLanguageText = (language: string): string => {
   const langMap: Record<string, string> = {

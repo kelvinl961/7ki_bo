@@ -1,12 +1,11 @@
 import {
-  convertTimezoneToUTC,
-  getDisplayTimezone,
+  displayCalendarRangeToPicker,
   getNowInTimezone,
 } from '#/utils/timezoneUtils';
 
 export type QuickDateValue = 'day' | 'week' | 'month';
 
-/** 与 all-members 页面一致的日/周/月快捷范围（展示时区 → UTC 时间戳） */
+/** Day/week/month shortcuts as Naive picker timestamps (wall clock 00:00:00–23:59:59). */
 export function buildQuickDateRange(value: QuickDateValue): [number, number] {
   const tzNow = getNowInTimezone();
 
@@ -49,34 +48,14 @@ export function buildQuickDateRange(value: QuickDateValue): [number, number] {
       throw new Error(`Unsupported quick date value: ${String(value)}`);
   }
 
-  const tz = getDisplayTimezone();
-  const startDateUTC = convertTimezoneToUTC(
+  return displayCalendarRangeToPicker(
     startYear,
     startMonth,
     startDay,
-    0,
-    0,
-    0,
-    tz,
-  );
-  const endDateUTC = convertTimezoneToUTC(
     endYear,
     endMonth,
     endDay,
-    23,
-    59,
-    59,
-    tz,
   );
-
-  if (Number.isNaN(startDateUTC.getTime()) || Number.isNaN(endDateUTC.getTime())) {
-    return [
-      new Date(Date.UTC(startYear, startMonth - 1, startDay, 3, 0, 0)).getTime(),
-      new Date(Date.UTC(endYear, endMonth - 1, endDay, 2, 59, 59)).getTime(),
-    ];
-  }
-
-  return [startDateUTC.getTime(), endDateUTC.getTime()];
 }
 
 export function applyDefaultDayQuickRange(): {

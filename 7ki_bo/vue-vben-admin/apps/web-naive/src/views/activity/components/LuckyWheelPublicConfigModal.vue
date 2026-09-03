@@ -4,7 +4,7 @@
     preset="card"
     :title="$t('activity.luckyWheelPublicConfig.k8f6c')"
     class="lucky-wheel-modal"
-    :style="{ width: '980px', maxWidth: '98vw' }"
+    :style="{ width: '1220px', maxWidth: '96vw' }"
     :bordered="false"
     :mask-closable="false"
     :segmented="{ content: true, footer: 'soft' }"
@@ -15,7 +15,7 @@
         <n-form
           :model="form"
           label-placement="left"
-          :label-width="212"
+          :label-width="176"
           label-align="right"
           require-mark-placement="right-hanging"
           class="lucky-wheel-setting-form"
@@ -23,6 +23,12 @@
         >
           <section class="lw-section">
             <div class="lw-section__title">{{ $t('activity.luckyWheelPublicConfig.k5e782') }}</div>
+            <n-form-item :label="$t('activity.luckyWheelPublicConfig.earnMode')" required>
+              <n-radio-group v-model:value="form.earnMode" class="lw-radio-row">
+                <n-radio value="BET">{{ $t('activity.luckyWheelPublicConfig.earnFromBet') }}</n-radio>
+                <n-radio value="DEPOSIT">{{ $t('activity.luckyWheelPublicConfig.earnFromDeposit') }}</n-radio>
+              </n-radio-group>
+            </n-form-item>
             <n-form-item :label="$t('activity.luckyWheelPublicConfig.k83b7')" required>
               <n-space align="center" :size="8" wrap>
                 <span class="lw-inline-field__hint">{{ $t('activity.formModal.k6bcf7') }}</span>
@@ -40,8 +46,8 @@
               <n-space align="center" :size="8">
                 <n-input-number
                   v-model:value="form.luckyValueValidDays"
-                  :min="1"
-                  :max="365"
+                  :min="0"
+                  :max="31"
                   :precision="0"
                   :show-button="false"
                   class="lw-input-xs"
@@ -461,6 +467,7 @@ const SYSTEM_RULE_PREVIEW = $t('activity.rulePreviews.luckyWheel');
 const systemRulePreview = computed(() => SYSTEM_RULE_PREVIEW);
 
 const form = reactive({
+  earnMode: 'BET' as 'BET' | 'DEPOSIT',
   luckyValuePerBet: 1,
   luckyValueValidDays: 31,
   claimEntrance: defaultClaimEntrance(),
@@ -486,6 +493,7 @@ const allMemberTiersSelected = computed(
 
 function applySnapshot(s: LuckyWheelPublicConfigSnapshot) {
   const snap = cloneLuckyWheelPublicConfig(s);
+  form.earnMode = snap.earnMode === 'DEPOSIT' ? 'DEPOSIT' : 'BET';
   form.luckyValuePerBet = snap.luckyValuePerBet;
   form.luckyValueValidDays = snap.luckyValueValidDays;
   form.claimEntrance = { ...snap.claimEntrance };
@@ -503,6 +511,7 @@ function applySnapshot(s: LuckyWheelPublicConfigSnapshot) {
 
 function toSnapshot(): LuckyWheelPublicConfigSnapshot {
   return {
+    earnMode: form.earnMode === 'DEPOSIT' ? 'DEPOSIT' : 'BET',
     luckyValuePerBet: form.luckyValuePerBet,
     luckyValueValidDays: form.luckyValueValidDays,
     claimEntrance: { ...form.claimEntrance },
@@ -604,7 +613,7 @@ async function handleSave() {
 
 <style scoped>
 .lw-scroll-inner {
-  padding: 20px 24px 8px;
+  padding: 24px 28px 12px;
 }
 .lucky-wheel-setting-form :deep(.n-form-item-feedback-wrapper) {
   min-height: 0;
@@ -616,6 +625,7 @@ async function handleSave() {
   line-height: 1.45;
   align-items: flex-start;
   padding-top: 6px;
+  padding-right: 16px;
 }
 .lucky-wheel-setting-form :deep(.n-form-item) {
   margin-bottom: 18px;
@@ -628,7 +638,7 @@ async function handleSave() {
   font-weight: 600;
   color: rgb(107 114 128);
   letter-spacing: 0.02em;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   padding-bottom: 8px;
   border-bottom: 1px solid rgb(243 244 246);
 }
@@ -713,6 +723,9 @@ async function handleSave() {
 }
 .lw-footer {
   padding: 12px 20px 16px;
+}
+.lucky-wheel-modal :deep(.n-form-item-blank) {
+  min-width: 0;
 }
 .lw-btn-cancel {
   min-width: 88px;

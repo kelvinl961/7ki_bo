@@ -146,6 +146,7 @@ import {
   useMessage,
   useDialog,
 } from 'naive-ui';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 import { defineAsyncComponent } from 'vue';
 const SmartDataGrid = defineAsyncComponent(
@@ -417,11 +418,8 @@ const columns: DataTableColumns<TaskCenter> = [
     title: $t('activity.noviceWelfare.k64cd'),
     key: 'updatedAt',
     width: 160,
-    render: (row) => {
-      return row.updatedAt
-        ? new Date(row.updatedAt).toLocaleString('zh-CN')
-        : '--';
-    },
+    render: (row) =>
+      row.updatedAt ? renderTzDateTime(row.updatedAt) : '--',
   },
 ];
 

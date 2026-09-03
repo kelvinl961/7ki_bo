@@ -295,6 +295,7 @@ import {
 } from 'naive-ui';
 
 import { Page } from '@vben/common-ui';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 
 import {
   createThirdPartyTrackingConfigApi,
@@ -691,7 +692,7 @@ const columns = computed<DataTableColumns<ThirdPartyTrackingConfig>>(() => [
     title: $t('operations.tracking.updatedAt'),
     key: 'updatedAt',
     width: 180,
-    render: (row) => new Date(row.updatedAt).toLocaleString('zh-CN'),
+    render: (row) => renderTzDateTime(row.updatedAt),
   },
   {
     title: $t('common.actions'),

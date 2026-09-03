@@ -38,8 +38,9 @@
               <n-date-picker
                 v-model:value="filters.dateRange"
                 type="daterange"
+                :time-zone="timezone"
                 format="yyyy-MM-dd"
-                placeholder:placeholder="$t('finance.selectDate')"
+                :placeholder="$t('finance.selectDate')"
                 clearable
                 size="small"
                 class="w-full"
@@ -51,7 +52,7 @@
             <n-form-item :label="$t('finance.memberAccount2')">
               <n-input
                 v-model:value="filters.memberAccount"
-                placeholder:placeholder="$t('finance.memberAccountOrRemark200')"
+                :placeholder="$t('finance.memberAccountOrRemark200')"
                 clearable
                 size="small"
               />
@@ -62,7 +63,7 @@
             <n-form-item :label="$t('finance.memberId')">
               <n-input
                 v-model:value="filters.userId"
-                placeholder:placeholder="$t('finance.pleaseEnterMemberId')"
+                :placeholder="$t('finance.pleaseEnterMemberId')"
                 clearable
                 size="small"
               />
@@ -73,7 +74,7 @@
             <n-form-item :label="$t('finance.orderNo')">
               <n-input
                 v-model:value="filters.orderId"
-                placeholder:placeholder="$t('finance.pleaseEnterOrder')"
+                :placeholder="$t('finance.pleaseEnterOrder')"
                 clearable
                 size="small"
               />
@@ -85,7 +86,7 @@
             <n-form-item :label="$t('finance.memberCurrency')">
               <n-select
                 v-model:value="filters.memberCurrency"
-                placeholder:placeholder="$t('finance.selectCurrency')"
+                :placeholder="$t('finance.selectCurrency')"
                 clearable
                 size="small"
                 :options="currencyOptions"
@@ -98,7 +99,7 @@
             <n-form-item :label="$t('finance.withdrawalAmount')">
               <n-input
                 v-model:value="filters.withdrawalAmount"
-                placeholder:placeholder="$t('finance.pleaseEnterAmount')"
+                :placeholder="$t('finance.pleaseEnterAmount')"
                 clearable
                 size="small"
               />
@@ -110,7 +111,7 @@
             <n-form-item :label="$t('finance.receivingMethod')">
               <n-select
                 v-model:value="filters.paymentMethod"
-                placeholder:placeholder="$t('finance.selectReceivingMethod')"
+                :placeholder="$t('finance.selectReceivingMethod')"
                 clearable
                 size="small"
                 :options="paymentMethodOptions"
@@ -246,8 +247,8 @@
       v-model:show="approvalModal.show"
       preset="dialog"
       :title="$t('finance.reviewPass')"
-      positive-text:positive-text="$t('finance.confirmPass')"
-      negative-text:negative-text="$t('common.cancel')"
+      :positive-text="$t('finance.confirmPass')"
+      :negative-text="$t('common.cancel')"
       @positive-click="handleApproval"
     >
       <div class="space-y-4">
@@ -275,7 +276,7 @@
             <n-input
               v-model:value="approvalModal.notes"
               type="textarea"
-              placeholder:placeholder="$t('finance.pleaseEnterReviewRemarkOptional')"
+              :placeholder="$t('finance.pleaseEnterReviewRemarkOptional')"
               :rows="3"
             />
           </n-form-item>
@@ -288,8 +289,8 @@
       v-model:show="rejectionModal.show"
       preset="dialog"
       :title="$t('finance.review')"
-      positive-text:positive-text="$t('finance.confirm1')"
-      negative-text:negative-text="$t('common.cancel')"
+      :positive-text="$t('finance.confirm1')"
+      :negative-text="$t('common.cancel')"
       @positive-click="handleRejection"
     >
       <div class="space-y-4">
@@ -316,7 +317,7 @@
           <n-form-item :label="$t('finance.text86')" required>
             <n-select
               v-model:value="rejectionModal.reason"
-              placeholder:placeholder="$t('finance.pleaseSelect')"
+              :placeholder="$t('finance.pleaseSelect')"
               :options="rejectionReasons"
             />
           </n-form-item>
@@ -326,7 +327,7 @@
             <n-input
               v-model:value="rejectionModal.notes"
               type="textarea"
-              placeholder:placeholder="$t('finance.pleaseEnterReviewRemarkOptional')"
+              :placeholder="$t('finance.pleaseEnterReviewRemarkOptional')"
               :rows="3"
             />
           </n-form-item>
@@ -339,14 +340,14 @@
       v-model:show="batchReasonModal.show"
       preset="dialog"
       :title="$t('finance.operationNote')"
-      positive-text:positive-text="$t('common.confirm')"
-      negative-text:negative-text="$t('common.cancel')"
+      :positive-text="$t('common.confirm')"
+      :negative-text="$t('common.cancel')"
       @positive-click="submitBatchReasonModal"
     >
       <n-input
         v-model:value="batchReasonModal.reason"
         type="textarea"
-        placeholder:placeholder="$t('finance.pleaseEnterOperationNoteRequired')"
+        :placeholder="$t('finance.pleaseEnterOperationNoteRequired')"
         :autosize="{ minRows: 3 }"
       />
     </n-modal>
@@ -356,8 +357,8 @@
       v-model:show="showFilterBatchModal"
       preset="dialog"
       :title="$t('finance.bulkActions')"
-      positive-text:positive-text="$t('common.confirm')"
-      negative-text:negative-text="$t('common.cancel')"
+      :positive-text="$t('common.confirm')"
+      :negative-text="$t('common.cancel')"
       @positive-click="submitFilterBatchModal"
     >
       <div class="space-y-4">
@@ -365,14 +366,14 @@
           <n-select
             v-model:value="filterBatchActionKey"
             :options="batchOperationDropdownOptionsSelect"
-            placeholder:placeholder="$t('finance.pleaseSelectActions')"
+            :placeholder="$t('finance.pleaseSelectActions')"
           />
         </n-form-item>
         <n-form-item :label="$t('finance.operationNote1')">
           <n-input
             v-model:value="filterBatchReason"
             type="textarea"
-            placeholder:placeholder="$t('finance.pleaseEnterOperationNote')"
+            :placeholder="$t('finance.pleaseEnterOperationNote')"
             :autosize="{ minRows: 2 }"
           />
         </n-form-item>
@@ -406,9 +407,7 @@
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-600">{{ $t('finance.applyTime') }}:</span>
-                <span>{{
-                  formatDateTime(detailModal.data.applicationTime)
-                }}</span>
+                <span><TzDateTime :value="detailModal.data.applicationTime" /></span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-600">{{ $t('common.status') }}:</span>
@@ -611,7 +610,7 @@
             <n-input
               v-model:value="forceCancelModal.frontendReason"
               type="textarea"
-              placeholder:placeholder="$t('finance.pleaseEnterCancelFrontend')"
+              :placeholder="$t('finance.pleaseEnterCancelFrontend')"
               :rows="4"
               :maxlength="1000"
             />
@@ -624,7 +623,7 @@
             <n-input
               v-model:value="forceCancelModal.backendReason"
               type="textarea"
-              placeholder:placeholder="$t('finance.pleaseEnterCancelBackend')"
+              :placeholder="$t('finance.pleaseEnterCancelBackend')"
               :rows="4"
               :maxlength="1000"
             />
@@ -855,7 +854,7 @@
             <n-input
               v-model:value="forceRejectModal.frontendReason"
               type="textarea"
-              placeholder:placeholder="$t('finance.pleaseEnterFrontend')"
+              :placeholder="$t('finance.pleaseEnterFrontend')"
               :rows="4"
               :maxlength="1000"
             />
@@ -868,7 +867,7 @@
             <n-input
               v-model:value="forceRejectModal.backendReason"
               type="textarea"
-              placeholder:placeholder="$t('finance.pleaseEnterBackend')"
+              :placeholder="$t('finance.pleaseEnterBackend')"
               :rows="4"
               :maxlength="1000"
             />
@@ -958,7 +957,11 @@ import {
 import { riskControlApi } from '#/api/finance/riskControl';
 import { useUserStore } from '@vben/stores';
 import { getGamePlatformListApi } from '#/api/game/platform';
-import { formatCurrency, formatDateTime } from '#/utils/format';
+import { formatCurrency } from '#/utils/format';
+import TzDateTime from '#/components/common/TzDateTime.vue';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
+import { formatIsoDateInTimezone } from '#/utils/timezoneUtils';
 const UserDetailModal = defineAsyncComponent(
   () => import('#/components/user/UserDetailModal.vue'),
 );
@@ -1031,6 +1034,7 @@ interface WithdrawalRecord {
 }
 
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 
 // Data and state
 const loading = ref(false);
@@ -1399,12 +1403,12 @@ const columns: DataTableColumns<WithdrawalRecord> = [
         h(
           'div',
           { class: 'text-xs' },
-          formatDateTime(row.appliedAt || row.applicationTime),
+          [renderTzDateTime(row.appliedAt || row.applicationTime)],
         ),
         h(
           'div',
           { class: 'text-xs text-gray-500' },
-          formatDateTime(row.updatedAt || row.completedTime),
+          [renderTzDateTime(row.updatedAt || row.completedTime)],
         ),
         h(
           'div',
@@ -2692,13 +2696,8 @@ const fetchData = async () => {
 
     // Add filters
     if (filters.dateRange) {
-      const startDate = new Date(filters.dateRange[0]);
-      startDate.setHours(0, 0, 0, 0);
-      params.startDate = startDate.toISOString().split('T')[0];
-
-      const endDate = new Date(filters.dateRange[1]);
-      endDate.setHours(23, 59, 59, 999);
-      params.endDate = endDate.toISOString().split('T')[0];
+      params.startDate = formatIsoDateInTimezone(filters.dateRange[0]);
+      params.endDate = formatIsoDateInTimezone(filters.dateRange[1]);
     }
 
     if (filters.memberId) params.memberId = filters.memberId;
@@ -3035,10 +3034,6 @@ const handleRejection = async () => {
 };
 
 // Utility functions
-const formatDateTime = (dateTime: string) => {
-  return new Date(dateTime).toLocaleString('zh-CN');
-};
-
 const getStatusType = (status: string) => {
   const statusMap: Record<string, string> = {
     pending: 'warning',

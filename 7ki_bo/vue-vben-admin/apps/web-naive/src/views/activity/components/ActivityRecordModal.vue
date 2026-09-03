@@ -58,6 +58,7 @@
             <n-date-picker
               v-model:value="filterForm.dateRange"
               type="daterange"
+              :time-zone="timezone"
               :placeholder="$t('activity.recordModal.k9009')"
               clearable
             />
@@ -133,6 +134,8 @@ import {
   NStatistic,
   useMessage,
 } from 'naive-ui';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 import {
   Search,
   Refresh,
@@ -177,6 +180,7 @@ const tableRef = ref();
 const filterFormRef = ref<FormInst>();
 const activityInfo = ref<any>(null);
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 
 // 筛选表单
 const filterForm = reactive<{
@@ -237,7 +241,7 @@ const columns = computed<DataTableColumns<ActivityRecord>>(() => [
         h(
           'span',
           { class: 'text-sm' },
-          new Date(row.participatedAt).toLocaleString(),
+          renderTzDateTime(row.participatedAt),
         ),
       ]),
   },

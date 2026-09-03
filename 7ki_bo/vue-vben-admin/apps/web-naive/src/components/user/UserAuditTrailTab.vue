@@ -17,6 +17,7 @@
           <n-date-picker
             v-model:value="dateRange"
             type="daterange"
+            :time-zone="timezone"
             :placeholder="$t('user.auditTrail.selectDateRange')"
             :shortcuts="dateShortcuts"
             @update:value="handleDateRangeChange"
@@ -124,7 +125,7 @@
       <!-- Query Status -->
       <div v-if="lastQueryInfo" class="mt-4 border-t border-gray-200 pt-3">
         <div class="flex items-center gap-4 text-sm text-gray-600">
-          <span>{{ $t('user.auditTrail.queryTime') }}: {{ lastQueryInfo.timestamp }}</span>
+          <span>{{ $t('user.auditTrail.queryTime') }}: <TzDateTime :value="lastQueryInfo.timestamp" /></span>
           <span>{{ $t('user.auditTrail.dataRange') }}: {{ lastQueryInfo.dateRange }}</span>
           <span>{{ $t('user.auditTrail.recordCount') }}: {{ lastQueryInfo.totalCount }}</span>
           <span>{{ $t('user.auditTrail.successRate') }}: {{ lastQueryInfo.successRate }}%</span>
@@ -246,7 +247,7 @@
       <div v-if="selectedAuditTrail" class="space-y-4">
         <n-descriptions bordered :column="2" size="small">
           <n-descriptions-item :label="$t('common.operationTime')">
-            {{ formatOperationTime(selectedAuditTrail.operationTime) }}
+            <TzDateTime :value="selectedAuditTrail.operationTime" />
           </n-descriptions-item>
           <n-descriptions-item :label="$t('user.auditTrail.userAccount')">
             {{ selectedAuditTrail.userAccount }}
@@ -353,11 +354,14 @@ import {
   NDescriptionsItem,
   NDivider,
 } from 'naive-ui';
+import TzDateTime from '#/components/common/TzDateTime.vue';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
+import { formatDateTimeInTimezone } from '#/utils/timezoneUtils';
 import {
   getUserAuditTrails,
   getAuditTrailStats,
   exportUserAuditTrails,
-  formatOperationTime,
   getResultLabel,
   getResultType,
   getSourceLabel,
@@ -379,6 +383,7 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const { timezone } = useDisplayTimezone();
 
 // ===================================
 // REACTIVE DATA
@@ -532,13 +537,7 @@ const auditTrailColumns = computed(() => [
     title: $t('common.operationTime'),
     key: 'operationTime',
     width: 160,
-    render: (row: UserAuditTrail) => {
-      return h(
-        'div',
-        { class: 'text-sm' },
-        formatOperationTime(row.operationTime),
-      );
-    },
+    render: (row: UserAuditTrail) => renderTzDateTime(row.operationTime),
   },
   {
     title: $t('user.auditTrail.actionItem'),
@@ -742,7 +741,7 @@ const loadAuditTrails = async () => {
 
     // Update query info
     lastQueryInfo.value = {
-      timestamp: new Date().toLocaleString('zh-CN'),
+      timestamp: new Date().toISOString(),
       dateRange: dateRange.value
         ? `${dateRange.value[0]} ~ ${dateRange.value[1]}`
         : $t('user.auditTrail.allData'),
@@ -891,6 +890,10 @@ const convertToCSV = (data: any[]): string => {
   for (const row of data) {
     const values = headers.map((header) => {
       const value = row[header];
+      if (header === 'operationTime' && value) {
+        const formatted = formatDateTimeInTimezone(value);
+        return `"${formatted.replace(/"/g, '""')}"`;
+      }
       return typeof value === 'string'
         ? `"${value.replace(/"/g, '""')}"`
         : value;

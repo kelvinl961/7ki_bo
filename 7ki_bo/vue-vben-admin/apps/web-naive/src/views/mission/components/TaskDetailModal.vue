@@ -111,11 +111,11 @@
           </n-descriptions-item>
 
           <n-descriptions-item :label="$t('common.createTime')">
-            {{ new Date(taskDetail.createdAt).toLocaleString() }}
+            <TzDateTime :value="taskDetail.createdAt" />
           </n-descriptions-item>
 
           <n-descriptions-item label="更新时间">
-            {{ new Date(taskDetail.updatedAt).toLocaleString() }}
+            <TzDateTime :value="taskDetail.updatedAt" />
           </n-descriptions-item>
 
           <n-descriptions-item
@@ -168,8 +168,10 @@
 <script setup lang="ts">
 import { $t } from '@vben/locales';
 
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, h } from 'vue';
 import { useMessage } from 'naive-ui';
+import TzDateTime from '#/components/common/TzDateTime.vue';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 import {
   getTaskCenterById,
   getCategoryLabel,
@@ -242,7 +244,7 @@ const participantColumns = [
     title: '参与时间',
     key: 'createdAt',
     width: 160,
-    render: (row: any) => new Date(row.createdAt).toLocaleString(),
+    render: (row: any) => renderTzDateTime(row.createdAt),
   },
 ];
 

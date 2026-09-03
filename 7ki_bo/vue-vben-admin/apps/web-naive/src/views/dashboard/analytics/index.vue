@@ -400,8 +400,7 @@ const currentRankings = computed(() => {
 
 // 方法
 const getTodayString = () => {
-  // 🌍 Use UTC-3 timezone (America/Sao_Paulo) for date calculations
-  return getTodayInTimezone('America/Sao_Paulo');
+  return getTodayInTimezone();
 };
 
 const diffPercents = ref<Record<string, string>>({});

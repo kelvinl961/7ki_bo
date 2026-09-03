@@ -149,6 +149,7 @@
           <n-form-item :label="$t('common.startTime')" path="effectiveStartTime">
             <n-date-picker
               v-model:value="formData.effectiveStartTime"
+              :time-zone="timezone"
               type="datetime"
               :placeholder="$t('brand.skin.selectStartTime')"
               style="width: 100%"
@@ -158,6 +159,7 @@
           <n-form-item :label="$t('common.endTime')" path="effectiveEndTime">
             <n-date-picker
               v-model:value="formData.effectiveEndTime"
+              :time-zone="timezone"
               type="datetime"
               :placeholder="$t('brand.skin.selectEndTime')"
               style="width: 100%"
@@ -482,13 +484,16 @@
             <div class="detail-item">
               <span class="text-gray-500">{{ $t('brand.skin.effectiveStart') }}</span>
               <div class="mt-1 font-medium">
-                {{ formatTime(formData.effectiveStartTime) || '—' }}
+                <TzDateTime :value="formData.effectiveStartTime" fallback="—" />
               </div>
             </div>
             <div class="detail-item">
               <span class="text-gray-500">{{ $t('brand.skin.effectiveEnd') }}</span>
               <div class="mt-1 font-medium">
-                {{ formatTime(formData.effectiveEndTime) || $t('brand.skin.permanentlyEffective') }}
+                <TzDateTime
+                  :value="formData.effectiveEndTime"
+                  :fallback="$t('brand.skin.permanentlyEffective')"
+                />
               </div>
             </div>
             
@@ -567,6 +572,8 @@ import {
 } from 'naive-ui';
 import { Page } from '@vben/common-ui';
 import { useSkinColorOptions } from '#/composables/useColorTheme';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
+import TzDateTime from '#/components/common/TzDateTime.vue';
 import { getColorPaletteById, getPrimaryColorById } from '#/utils/colorUtils';
 import type { ColorPalette } from '#/utils/colorUtils';
 import { getGameListApi } from '#/api/game/subgame';
@@ -591,6 +598,7 @@ const MediaLibrarySelector = defineAsyncComponent(
 );
 
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 const formRef = ref<FormInst | null>(null);
 const saving = ref(false);
 const syncing = ref(false);
@@ -868,12 +876,6 @@ async function onSkinColorChange(skinColorId: string | null) {
       $t('brand.skin.appliedAndSynced', [getSkinColorLabel(skinColorId)]),
     );
   }
-}
-
-function formatTime(timestamp: number | null): string {
-  if (timestamp == null) return '';
-  const d = new Date(timestamp);
-  return d.toLocaleString('zh-CN');
 }
 
 function flattenClientLanguages(map: ClientLanguagesMap): string[] {

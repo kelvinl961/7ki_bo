@@ -73,6 +73,7 @@ import {
   type TierMember,
   type TierMembersParams,
 } from '#/api/core/memberTier';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 
 interface Props {
   tierId: number;
@@ -202,8 +203,7 @@ const columns = computed<DataTableColumns<TierMember>>(() => [
     key: 'createdAt',
     width: 150,
     render: (row) => {
-      const date = new Date(row.createdAt);
-      return h('span', { class: 'text-sm' }, date.toLocaleDateString());
+      return h('span', { class: 'text-sm' }, [renderTzDateTime(row.createdAt)]);
     },
   },
   {
@@ -239,9 +239,9 @@ const columns = computed<DataTableColumns<TierMember>>(() => [
         relativeLabel = $t('user.tierMemberList.daysAgo', [diffDays]);
       }
 
-      return h('div', { class: 'text-sm' }, [
-        h('div', { class: color }, date.toLocaleDateString()),
-        h('div', { class: 'text-xs text-gray-500' }, relativeLabel),
+      return h('div', { class: color }, [
+        renderTzDateTime(row.lastLogin, 'date'),
+        h('span', { class: 'ml-1 text-xs' }, relativeLabel),
       ]);
     },
   },

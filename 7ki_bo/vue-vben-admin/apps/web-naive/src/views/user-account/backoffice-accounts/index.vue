@@ -134,14 +134,14 @@
             </n-tag>
           </n-descriptions-item>
           <n-descriptions-item :label="$t('common.createTime')">
-            {{ formatDateTime(currentAccount.createdDate) }}
+            <TzDateTime :value="currentAccount.createdDate" />
           </n-descriptions-item>
           <n-descriptions-item :label="$t('user.backofficeAccount.lastLogin')">
-            {{
-              currentAccount.lastLoginDate
-                ? formatDateTime(currentAccount.lastLoginDate)
-                : $t('user.backofficeAccount.neverLoggedIn')
-            }}
+            <TzDateTime
+              v-if="currentAccount.lastLoginDate"
+              :value="currentAccount.lastLoginDate"
+            />
+            <span v-else>{{ $t('user.backofficeAccount.neverLoggedIn') }}</span>
           </n-descriptions-item>
           <n-descriptions-item :label="$t('user.backofficeAccount.lastLoginIp')">
             {{ currentAccount.lastLoginIp || $t('user.backofficeAccount.none') }}
@@ -283,6 +283,8 @@ import {
   type FormInst,
   type FormRules,
 } from 'naive-ui';
+import TzDateTime from '#/components/common/TzDateTime.vue';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 import {
   getBackofficeAccountsApi,
   createBackofficeAccountApi,
@@ -396,29 +398,6 @@ const statusOptions = computed(() => [
   { label: $t('common.disable'), value: 0 },
 ]);
 
-const formatDateTime = (dateString: string | null | undefined) => {
-  if (!dateString) return $t('user.backofficeAccount.none');
-
-  try {
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) {
-      return $t('user.backofficeAccount.invalidDate');
-    }
-    return date.toLocaleString('zh-CN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-    });
-  } catch (error) {
-    console.warn('Invalid date string:', dateString, error);
-    return $t('user.backofficeAccount.invalidDate');
-  }
-};
-
 const getRoleType = (
   role: string,
 ): 'error' | 'warning' | 'info' | 'success' | 'default' => {
@@ -493,7 +472,7 @@ const columns = computed<DataTableColumns<BackofficeAccount>>(() => [
     key: 'createdDate',
     width: 160,
     render(row) {
-      return formatDateTime(row.createdDate);
+      return renderTzDateTime(row.createdDate);
     },
   },
   {
@@ -502,11 +481,7 @@ const columns = computed<DataTableColumns<BackofficeAccount>>(() => [
     width: 160,
     render(row) {
       if (!row.lastLoginDate) return $t('user.backofficeAccount.neverLoggedIn');
-      const formatted = formatDateTime(row.lastLoginDate);
-      return formatted === $t('user.backofficeAccount.none') ||
-        formatted === $t('user.backofficeAccount.invalidDate')
-        ? $t('user.backofficeAccount.neverLoggedIn')
-        : formatted;
+      return renderTzDateTime(row.lastLoginDate);
     },
   },
   {

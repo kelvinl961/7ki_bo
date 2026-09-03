@@ -145,6 +145,7 @@ import {
 } from '#/api/activity';
 import { useActiveMemberTiers } from '#/composables/useActiveMemberTiers';
 import { formatActivityMemberParticipation } from '#/utils/activityMemberTier';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 // ✅ PERFORMANCE FIX: Lazy load modal components - they only load when modals are opened
 const ActivityDetailModal = defineAsyncComponent(
   () => import('./ActivityDetailModal.vue'),
@@ -293,8 +294,14 @@ const columns = computed<DataTableColumns<Activity>>(() => [
     width: 200,
     render: (row) =>
       h('div', {}, [
-        h('div', {}, $t('activity.common.startLabel', [new Date(row.startAt).toLocaleString()])),
-        h('div', {}, $t('activity.common.endLabel', [new Date(row.endAt).toLocaleString()])),
+        h('div', {}, [
+          $t('activity.common.startLabel', ['']),
+          renderTzDateTime(row.startAt),
+        ]),
+        h('div', {}, [
+          $t('activity.common.endLabel', ['']),
+          renderTzDateTime(row.endAt),
+        ]),
       ]),
   },
   {
@@ -354,7 +361,7 @@ const columns = computed<DataTableColumns<Activity>>(() => [
     title: $t('activity.detailModal.k66f4'),
     key: 'updatedAt',
     width: 160,
-    render: (row) => new Date(row.updatedAt).toLocaleString(),
+    render: (row) => renderTzDateTime(row.updatedAt),
   },
   {
     title: $t('activity.rewardReport.k64cd'),

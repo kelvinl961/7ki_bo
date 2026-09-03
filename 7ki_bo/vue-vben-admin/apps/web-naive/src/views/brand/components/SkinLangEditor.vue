@@ -332,10 +332,10 @@
             <!-- Timestamps -->
             <div class="form-section">
               <n-form-item :label="$t('brand.skinLang.lastUpdateTime')">
-                <n-text depth="3">{{ formatDate(formModel.updatedAt) }}</n-text>
+                <n-text depth="3"><TzDateTime :value="formModel.updatedAt" /></n-text>
               </n-form-item>
               <n-form-item :label="$t('brand.skinLang.nextPreviewUpdateTime')">
-                <n-text depth="3">{{ formatDate(nextUpdateTime) }}</n-text>
+                <n-text depth="3"><TzDateTime :value="nextUpdateTime" /></n-text>
               </n-form-item>
             </div>
           </n-form>
@@ -529,6 +529,7 @@
 import { $t } from '@vben/locales';
 
 import { ref, reactive, computed, watch, nextTick, onMounted, onUnmounted } from 'vue';
+import TzDateTime from '#/components/common/TzDateTime.vue';
 import {
   NModal,
   NForm,
@@ -1550,11 +1551,6 @@ const getSkinColorLabel = (value: string) => {
 };
 
 // Methods
-const formatDate = (date: string | undefined) => {
-  if (!date) return '-';
-  return new Date(date).toLocaleString('zh-CN');
-};
-
 const handleSubmit = async () => {
   if (!formRef.value) return;
 

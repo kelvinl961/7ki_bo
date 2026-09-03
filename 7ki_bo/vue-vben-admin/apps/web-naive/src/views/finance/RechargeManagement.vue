@@ -21,6 +21,7 @@
               <n-date-picker
                 v-model:value="filterForm.dateRange"
                 type="datetimerange"
+                :time-zone="timezone"
                 format="yyyy-MM-dd HH:mm:ss"
                 placeholder:placeholder="$t('finance.selectDateRange')"
                 style="width: 350px"
@@ -205,6 +206,7 @@
                 v-if="statsForm.timeRange === 'custom'"
                 v-model:value="statsForm.dateRange"
                 type="datetimerange"
+                :time-zone="timezone"
                 format="yyyy-MM-dd HH:mm:ss"
                 placeholder:placeholder="$t('finance.selectTimeRange')"
                 style="width: 350px"
@@ -611,36 +613,21 @@
               <tr>
                 <td class="text-gray-600">{{ $t('finance.createTime') }}</td>
                 <td class="text-right">
-                  {{
-                    formatDateTime(
-                      orderDetails.appliedAt,
-                      'yyyy-MM-dd HH:mm:ss',
-                    )
-                  }}
+                  <TzDateTime :value="orderDetails.appliedAt" />
                 </td>
               </tr>
               <tr>
                 <td class="text-gray-600">{{ $t('finance.successTime') }}</td>
                 <td class="text-right">
-                  {{
-                    orderDetails.confirmTime
-                      ? formatDateTime(
-                          orderDetails.confirmTime,
-                          'yyyy-MM-dd HH:mm:ss',
-                        )
-                      : '-'
-                  }}
+                  <TzDateTime :value="orderDetails.confirmTime" />
                 </td>
               </tr>
               <tr>
                 <td class="text-gray-600">{{ $t('finance.time') }}</td>
                 <td class="text-right">
-                  {{
-                    formatDateTime(
-                      orderDetails.updatedAt || orderDetails.appliedAt,
-                      'yyyy-MM-dd HH:mm:ss',
-                    )
-                  }}
+                  <TzDateTime
+                    :value="orderDetails.updatedAt || orderDetails.appliedAt"
+                  />
                 </td>
               </tr>
             </tbody>
@@ -800,9 +787,14 @@ const UserDetailModal = defineAsyncComponent(
 // ECharts imports
 import type { EchartsUIType } from '@vben/plugins/echarts';
 import { EchartsUI, useEcharts } from '@vben/plugins/echarts';
+import TzDateTime from '#/components/common/TzDateTime.vue';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
+import { formatDateTimeInTimezone } from '#/utils/timezoneUtils';
 
 // Reactive data
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 const activeTab = ref('all-recharges');
 const loading = ref(false);
 const modalLoading = ref(false);
@@ -1298,29 +1290,6 @@ const groupByOptions = [
   { label: $t('finance.month'), value: 'month' },
 ];
 
-const formatDateTime = (dateString: string, format?: string): string => {
-  const date = new Date(dateString);
-  if (format === 'yyyy-MM-dd') {
-    return date.toLocaleDateString('pt-BR');
-  } else if (format === 'HH:mm:ss') {
-    return date.toLocaleTimeString('pt-BR');
-  } else if (format === 'MM-dd HH:mm') {
-    return (
-      date.toLocaleDateString('pt-BR', { month: '2-digit', day: '2-digit' }) +
-      ' ' +
-      date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
-    );
-  }
-  return (
-    date.toLocaleDateString('pt-BR') +
-    ' ' +
-    date.toLocaleTimeString('pt-BR', {
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  );
-};
-
 const getStatusColor = (
   status: string,
 ): 'default' | 'error' | 'primary' | 'success' | 'info' | 'warning' => {
@@ -1679,7 +1648,7 @@ const columns: DataTableColumns<RechargeOrder> = [
         h(
           'div',
           { class: 'text-gray-400 text-xs mt-1' },
-          formatDateTime(row.appliedAt, 'MM-dd HH:mm'),
+          [renderTzDateTime(row.appliedAt)],
         ),
       ]),
   },
@@ -1739,11 +1708,11 @@ const columns: DataTableColumns<RechargeOrder> = [
     sorter: 'default',
     render: (row) =>
       h('div', { class: 'text-xs' }, [
-        h('div', formatDateTime(row.appliedAt, 'yyyy-MM-dd')),
+        renderTzDateTime(row.appliedAt, 'date'),
         h(
           'div',
           { class: 'text-gray-500' },
-          formatDateTime(row.appliedAt, 'HH:mm:ss'),
+          [renderTzDateTime(row.appliedAt, 'time')],
         ),
       ]),
   },
@@ -1758,11 +1727,11 @@ const columns: DataTableColumns<RechargeOrder> = [
         { class: 'text-xs' },
         row.confirmTime
           ? [
-              h('div', formatDateTime(row.confirmTime, 'yyyy-MM-dd')),
+              renderTzDateTime(row.confirmTime, 'date'),
               h(
                 'div',
                 { class: 'text-gray-500' },
-                formatDateTime(row.confirmTime, 'HH:mm:ss'),
+                [renderTzDateTime(row.confirmTime, 'time')],
               ),
             ]
           : h(NText, { depth: 3 }, { default: () => '-' }),
@@ -1775,11 +1744,11 @@ const columns: DataTableColumns<RechargeOrder> = [
     sorter: 'default',
     render: (row) =>
       h('div', { class: 'text-xs' }, [
-        h('div', formatDateTime(row.updatedAt || row.appliedAt, 'yyyy-MM-dd')),
+        renderTzDateTime(row.updatedAt || row.appliedAt, 'date'),
         h(
           'div',
           { class: 'text-gray-500' },
-          formatDateTime(row.updatedAt || row.appliedAt, 'HH:mm:ss'),
+          [renderTzDateTime(row.updatedAt || row.appliedAt, 'time')],
         ),
       ]),
   },
@@ -2271,7 +2240,7 @@ const handleExport = async () => {
       record.accountName,
       record.vipLevel || 'VIP0',
       record.memberTag || '',
-      formatDateTime(record.appliedAt, 'yyyy-MM-dd HH:mm:ss'),
+      formatDateTimeInTimezone(record.appliedAt),
       record.rechargeAmount,
       record.currency || 'BRL',
       record.actualReceived,

@@ -521,9 +521,9 @@
           >
             <div class="flex items-center justify-between">
               <span class="font-medium">{{ log.status }}</span>
-              <span class="text-sm text-gray-500">{{
-                formatDateTime(log.timestamp)
-              }}</span>
+              <span class="text-sm text-gray-500">
+                <TzDateTime :value="log.timestamp" />
+              </span>
             </div>
             <div class="mt-1 text-sm text-gray-600">
               {{ $t('user.profile.similarity') }}: {{ (log.confidence * 100).toFixed(1) }}% | IP:
@@ -600,6 +600,7 @@ import {
   type UploadFileInfo,
 } from 'naive-ui';
 import { PersonOutline } from '@vicons/ionicons5';
+import TzDateTime from '#/components/common/TzDateTime.vue';
 import {
   getUserProfileApi,
   updateUserProfileApi,
@@ -846,11 +847,6 @@ const handleRefreshProfile = () => {
 const formatDate = (dateStr: string) => {
   if (!dateStr) return '';
   return new Date(dateStr).toLocaleDateString('zh-CN');
-};
-
-const formatDateTime = (dateStr: string) => {
-  if (!dateStr) return '';
-  return new Date(dateStr).toLocaleString('zh-CN');
 };
 
 // Lifecycle

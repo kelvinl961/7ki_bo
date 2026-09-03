@@ -343,6 +343,7 @@
                 <n-date-picker
                   v-model:value="form.regTimeRange"
                   type="datetimerange"
+                  :time-zone="timezone"
                   clearable
                   size="small"
                   format="yyyy-MM-dd HH:mm:ss"
@@ -430,6 +431,7 @@
                 <n-date-picker
                   v-model:value="form.lastLoginRange"
                   type="datetimerange"
+                  :time-zone="timezone"
                   clearable
                   size="small"
                 />
@@ -549,6 +551,7 @@
                 <n-date-picker
                   v-model:value="form.firstDepositRange"
                   type="datetimerange"
+                  :time-zone="timezone"
                   clearable
                   size="small"
                   format="yyyy-MM-dd HH:mm:ss"
@@ -579,6 +582,7 @@
                 <n-date-picker
                   v-model:value="form.lastDepositRange"
                   type="datetimerange"
+                  :time-zone="timezone"
                   clearable
                   size="small"
                 />
@@ -613,6 +617,7 @@
                 <n-date-picker
                   v-model:value="form.lastDepositRange"
                   type="datetimerange"
+                  :time-zone="timezone"
                   clearable
                   size="small"
                   format="yyyy-MM-dd HH:mm:ss"
@@ -626,6 +631,7 @@
                 <n-date-picker
                   v-model:value="form.lastWithdrawRange"
                   type="datetimerange"
+                  :time-zone="timezone"
                   clearable
                   size="small"
                   format="yyyy-MM-dd HH:mm:ss"
@@ -744,6 +750,7 @@ import {
   NTag,
 } from 'naive-ui';
 import { ref, reactive, watch, computed, h, type ComputedRef } from 'vue';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 import type {
   AdminFilterClause,
   MemberAdvancedListBody,
@@ -761,6 +768,7 @@ const subTab = ref('reg');
 const SECTION_FORM_ROW_GAP = 15;
 
 const ALL = '__all__';
+const { timezone } = useDisplayTimezone();
 
 const memberTierOptions = ref<{ label: string; value: string }[]>([]);
 const vipLevelOptions = ref<{ label: string; value: string }[]>([]);

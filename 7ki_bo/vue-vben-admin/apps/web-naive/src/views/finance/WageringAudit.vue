@@ -29,6 +29,7 @@
                   <n-date-picker
                     v-model:value="dateRange"
                     type="datetimerange"
+                    :time-zone="timezone"
                     clearable
                     size="small"
                     :shortcuts="dateShortcuts as any"
@@ -302,7 +303,7 @@
         <!-- 投注任务(稽核)信息 -->
         <n-card :title="$t('finance.wageringTaskAuditInfo')" size="small" class="mb-4">
           <n-descriptions :column="2" label-placement="left" label-style="width: 140px">
-            <n-descriptions-item :label="$t('finance.taskCreateTime')">{{ formatDateTime(currentDetailRow.createdAt) }}</n-descriptions-item>
+            <n-descriptions-item :label="$t('finance.taskCreateTime')"><TzDateTime :value="currentDetailRow.createdAt" /></n-descriptions-item>
             <n-descriptions-item :label="$t('finance.withdrawal2')">-</n-descriptions-item>
             <n-descriptions-item :label="$t('finance.type')">{{ getSourceTypeLabel(currentDetailRow.sourceType) }}</n-descriptions-item>
             <n-descriptions-item :label="$t('finance.text89')">{{ translateSourceDescription(currentDetailRow.sourceDescription) }}</n-descriptions-item>
@@ -332,7 +333,7 @@
             }}</n-descriptions-item>
             <n-descriptions-item :label="$t('finance.taskStatus')">{{ getStatusLabel(currentDetailRow.status) }}</n-descriptions-item>
             <n-descriptions-item :label="$t('finance.operator')">-</n-descriptions-item>
-            <n-descriptions-item :label="$t('finance.actionsTime')">{{ formatDateTime(currentDetailRow.createdAt) }}</n-descriptions-item>
+            <n-descriptions-item :label="$t('finance.actionsTime')"><TzDateTime :value="currentDetailRow.createdAt" /></n-descriptions-item>
           </n-descriptions>
         </n-card>
 
@@ -426,10 +427,14 @@ import {
   type WageringAuditFilters,
 } from '#/api/finance/wageringAudit';
 import type { DataTableColumns } from 'naive-ui';
+import TzDateTime from '#/components/common/TzDateTime.vue';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 
 const route = useRoute();
 const router = useRouter();
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 const dialog = useDialog();
 
 // State
@@ -775,25 +780,25 @@ const columns: DataTableColumns<WageringAuditItem> = [
     title: $t('finance.createTime'),
     key: 'createdAt',
     width: 160,
-    render: (row) => formatDateTime(row.createdAt),
+    render: (row) => renderTzDateTime(row.createdAt),
   },
   {
     title: $t('finance.time2'),
     key: 'activatedAt',
     width: 160,
-    render: (row) => (row.activatedAt ? formatDateTime(row.activatedAt) : '-'),
+    render: (row) => renderTzDateTime(row.activatedAt),
   },
   {
     title: $t('finance.completeTime'),
     key: 'completedAt',
     width: 160,
-    render: (row) => (row.completedAt ? formatDateTime(row.completedAt) : '-'),
+    render: (row) => renderTzDateTime(row.completedAt),
   },
   {
     title: $t('finance.time3'),
     key: 'expiresAt',
     width: 160,
-    render: (row) => (row.expiresAt ? formatDateTime(row.expiresAt) : '-'),
+    render: (row) => renderTzDateTime(row.expiresAt),
   },
   {
     title: $t('common.actions'),
@@ -1315,19 +1320,6 @@ const formatCurrency = (value: number | string | null): string => {
   if (value === null || value === undefined) return '0.00';
   const num = typeof value === 'string' ? parseFloat(value) : value;
   return num.toFixed(2);
-};
-
-const formatDateTime = (dateStr: string): string => {
-  const date = new Date(dateStr);
-  return date.toLocaleString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-  });
 };
 
 const refreshAutomaticReleaseThreshold = async () => {

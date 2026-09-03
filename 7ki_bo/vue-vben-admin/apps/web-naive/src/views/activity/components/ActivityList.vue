@@ -220,6 +220,7 @@ import {
 } from '#/api/activity';
 import { useActiveMemberTiers } from '#/composables/useActiveMemberTiers';
 import { formatActivityMemberParticipation } from '#/utils/activityMemberTier';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 // ✅ PERFORMANCE FIX: Lazy load modal components - they only load when modals are opened
 const ActivityFormModal = defineAsyncComponent(
   () => import('./ActivityFormModal.vue'),
@@ -446,8 +447,14 @@ const columns = computed<DataTableColumns<Activity>>(() => [
         }
 
         return h('div', {}, [
-          h('div', {}, $t('activity.common.startLabel', [startsAt.toLocaleString()])),
-          h('div', {}, $t('activity.common.endLabel', [endsAt.toLocaleString()])),
+          h('div', {}, [
+            $t('activity.common.startLabel', ['']),
+            renderTzDateTime(startsAt),
+          ]),
+          h('div', {}, [
+            $t('activity.common.endLabel', ['']),
+            renderTzDateTime(endsAt),
+          ]),
         ]);
       } catch (error) {
         return $t('activity.activityList.k65f6');
@@ -500,12 +507,12 @@ const columns = computed<DataTableColumns<Activity>>(() => [
         ) {
           const date = new Date(row.updatedAt);
           if (!isNaN(date.getTime())) {
-            return date.toLocaleString('zh-CN');
+            return renderTzDateTime(date);
           }
         } else if (row.updatedAt && typeof row.updatedAt === 'string') {
           const date = new Date(row.updatedAt);
           if (!isNaN(date.getTime())) {
-            return date.toLocaleString('zh-CN');
+            return renderTzDateTime(date);
           }
         }
         return $t('activity.detailModal.k672a');

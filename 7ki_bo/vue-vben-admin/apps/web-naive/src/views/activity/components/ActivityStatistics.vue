@@ -147,7 +147,7 @@
 <script setup lang="ts">
 import { $t } from '@vben/locales';
 
-import { ref, reactive, onMounted, computed } from 'vue';
+import { ref, reactive, onMounted, computed, h, watch } from 'vue';
 import {
   NCard,
   NForm,
@@ -179,14 +179,16 @@ const QuickDateSelect = defineAsyncComponent(
   () => import('#/components/common/QuickDateSelect.vue'),
 );
 import {
-  formatDateTimeInTimezone,
+  displayCalendarRangeToPicker,
   getNowInTimezone,
-  convertTimezoneToUTC,
-  getDisplayTimezone,
+  pickerRangeToUtcIso,
 } from '#/utils/timezoneUtils';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 
 // State
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 const loading = ref(false);
 const exporting = ref(false);
 
@@ -279,6 +281,16 @@ const columns: DataTableColumns<ActivityStatistics> = [
     width: 300,
     ellipsis: {
       tooltip: true,
+    },
+    render(row) {
+      if (row.startsAt || row.endsAt) {
+        return h('span', [
+          renderTzDateTime(row.startsAt),
+          ' ~ ',
+          renderTzDateTime(row.endsAt),
+        ]);
+      }
+      return row.activityTime || '-';
     },
   },
   {
@@ -406,8 +418,7 @@ const paginationConfig = computed(() => ({
 const handleQuickDateSelect = (value: 'day' | 'week' | 'month' | null) => {
   if (!value) return;
 
-  const tz = getDisplayTimezone();
-  const tzNow = getNowInTimezone(tz);
+  const tzNow = getNowInTimezone();
 
   let startYear: number, startMonth: number, startDay: number;
   let endYear: number, endMonth: number, endDay: number;
@@ -443,27 +454,14 @@ const handleQuickDateSelect = (value: 'day' | 'week' | 'month' | null) => {
     endDay = tzNow.day;
   }
 
-  // Convert to UTC timestamps
-  const startDateUTC = convertTimezoneToUTC(
+  dateRange.value = displayCalendarRangeToPicker(
     startYear,
     startMonth,
     startDay,
-    0,
-    0,
-    0,
-    tz,
-  );
-  const endDateUTC = convertTimezoneToUTC(
     endYear,
     endMonth,
     endDay,
-    23,
-    59,
-    59,
-    tz,
   );
-
-  dateRange.value = [startDateUTC.getTime(), endDateUTC.getTime()];
 };
 
 // Methods
@@ -475,56 +473,9 @@ const getQueryParams = () => {
 
   // Add date range - convert from display timezone to UTC
   if (dateRange.value && dateRange.value[0] && dateRange.value[1]) {
-    const tz = getDisplayTimezone();
-    const [start, end] = dateRange.value;
-    const startDateObj = new Date(start);
-    const endDateObj = new Date(end);
-
-    // Get date components in display timezone
-    const startTz = new Intl.DateTimeFormat('en-US', {
-      timeZone: tz,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-    }).formatToParts(startDateObj);
-
-    const endTz = new Intl.DateTimeFormat('en-US', {
-      timeZone: tz,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false,
-    }).formatToParts(endDateObj);
-
-    const startUTC = convertTimezoneToUTC(
-      parseInt(startTz.find((p) => p.type === 'year')!.value),
-      parseInt(startTz.find((p) => p.type === 'month')!.value),
-      parseInt(startTz.find((p) => p.type === 'day')!.value),
-      parseInt(startTz.find((p) => p.type === 'hour')!.value),
-      parseInt(startTz.find((p) => p.type === 'minute')!.value),
-      parseInt(startTz.find((p) => p.type === 'second')!.value),
-      tz,
-    );
-
-    const endUTC = convertTimezoneToUTC(
-      parseInt(endTz.find((p) => p.type === 'year')!.value),
-      parseInt(endTz.find((p) => p.type === 'month')!.value),
-      parseInt(endTz.find((p) => p.type === 'day')!.value),
-      parseInt(endTz.find((p) => p.type === 'hour')!.value),
-      parseInt(endTz.find((p) => p.type === 'minute')!.value),
-      parseInt(endTz.find((p) => p.type === 'second')!.value),
-      tz,
-    );
-
-    params.startDate = startUTC.toISOString();
-    params.endDate = endUTC.toISOString();
+    const { startDate, endDate } = pickerRangeToUtcIso(dateRange.value);
+    params.startDate = startDate;
+    params.endDate = endDate;
   }
 
   // Add filters
@@ -619,8 +570,11 @@ onMounted(() => {
   loadOverview();
 });
 
-// Import h function for render functions
-import { h } from 'vue';
+watch(timezone, () => {
+  if (dateQuickSelect.value) {
+    handleQuickDateSelect(dateQuickSelect.value);
+  }
+});
 </script>
 
 <style scoped>

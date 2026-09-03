@@ -120,6 +120,7 @@ import {
   type FormInst,
   type FormRules,
 } from 'naive-ui';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 import { notification } from '#/adapter/naive';
 import {
   getGameWalletStatusApi,
@@ -203,7 +204,7 @@ const sessionColumns = computed<DataTableColumns<GameWalletStatusData['activeSes
       key: 'sessionStart',
       width: 160,
       render: (row) =>
-        row.sessionStart ? new Date(row.sessionStart).toLocaleString() : '--',
+        row.sessionStart ? renderTzDateTime(row.sessionStart) : '--',
     },
   ],
 );

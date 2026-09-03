@@ -5,6 +5,8 @@
 
 import type { DataTableColumns, MessageApiInst } from 'naive-ui';
 
+import { formatDateInTimezone, formatDateTimeInTimezone } from '#/utils/timezoneUtils';
+
 /**
  * Column definition for export (simplified from Naive UI's complex structure)
  */
@@ -112,11 +114,11 @@ function formatCellValue(
     }
 
     case 'date': {
-      return new Date(value).toLocaleDateString('zh-CN');
+      return formatDateInTimezone(value);
     }
 
     case 'datetime': {
-      return new Date(value).toLocaleString('zh-CN');
+      return formatDateTimeInTimezone(value);
     }
 
     case 'number': {

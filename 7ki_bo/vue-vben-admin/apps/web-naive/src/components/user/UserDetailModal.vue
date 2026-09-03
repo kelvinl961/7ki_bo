@@ -383,10 +383,8 @@
                         </span>
                         <span v-else>--</span>
                         <span class="text-gray-500"
-                          >{{ $t('user.userDetail.registerTimeLabel') }}
-                          {{
-                            formatDateTime(userDetail.registrationTime)
-                          }}
+                          >                          {{ $t('user.userDetail.registerTimeLabel') }}
+                          <TzDateTime :value="userDetail.registrationTime" />
                           {{ $t('user.userDetail.registeredDays', [0]) }} {{ $t('user.userDetail.sameIpCount') }}(
                           <span
                             v-if="
@@ -941,7 +939,7 @@
                         <span class="text-gray-500">
                           ({{ userDetail.lastLoginLocation || '--' }})
                           {{ $t('user.userDetail.loginTimeLabel') }}
-                          {{ formatDateTime(userDetail.lastLoginTime) }}
+                          <TzDateTime :value="userDetail.lastLoginTime" />
                           {{ $t('user.userDetail.sameLastLoginIpCount') }}(
                           <span
                             v-if="
@@ -1712,7 +1710,8 @@ import { $t } from '@vben/locales';
 
 import { ref, computed, watch, reactive, h, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { formatDateTimeInTimezone } from '#/utils/timezoneUtils';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import TzDateTime from '#/components/common/TzDateTime.vue';
 import {
   translateTransactionType,
   translateSubcategory,
@@ -1770,6 +1769,8 @@ import RtpControlTab from './RtpControlTab.vue';
 import AssociationsTab from './AssociationsTab.vue';
 import ManualPullbackModal from './ManualPullbackModal.vue';
 import TimezoneDatePicker from '#/components/common/TimezoneDatePicker.vue';
+import { buildQuickDateRange } from '#/utils/quickDateRange';
+import { pickerTimestampToYmd } from '#/utils/timezoneUtils';
 
 interface Props {
   visible: boolean;
@@ -2176,27 +2177,7 @@ const transactionColumns = computed<DataTableColumns<WalletTransaction>>(() => [
     render: (row) => {
       const transactionTime = row.createdAt;
       if (!transactionTime) return h('span', { class: 'text-gray-400' }, '-');
-
-      try {
-        const date = new Date(transactionTime);
-        if (!isNaN(date.getTime())) {
-          return h(
-            'span',
-            { class: 'text-sm' },
-            date.toLocaleString('zh-CN', {
-              year: 'numeric',
-              month: '2-digit',
-              day: '2-digit',
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit',
-            }),
-          );
-        }
-      } catch (error) {
-        console.warn('Date parsing error:', error);
-      }
-      return h('span', { class: 'text-gray-400' }, '-');
+      return h('span', { class: 'text-sm' }, renderTzDateTime(transactionTime));
     },
   },
   {
@@ -2609,18 +2590,6 @@ const handleEdit = () => {
   message.info($t('user.userDetail.editDeveloping'));
 };
 
-const formatDateTime = (dateString: string | null | undefined) => {
-  if (!dateString) return $t('user.userDetail.invalidDate');
-
-  try {
-    // Use timezone conversion utility
-    return formatDateTimeInTimezone(dateString);
-  } catch (error) {
-    console.warn('Date formatting error:', error, 'Input:', dateString);
-    return $t('user.userDetail.invalidDate');
-  }
-};
-
 const getStatusType = (
   status: string,
 ): 'success' | 'error' | 'warning' | 'default' => {
@@ -2868,14 +2837,10 @@ const loadTransactionRecords = async () => {
       date: dateValue,
       category: 'all', // Show all categories of wallet transactions
       startDate: transactionDateRange.value?.[0]
-        ? new Date(transactionDateRange.value[0])
-            .toISOString()
-            .split('T')[0]
+        ? pickerTimestampToYmd(transactionDateRange.value[0])
         : undefined,
       endDate: transactionDateRange.value?.[1]
-        ? new Date(transactionDateRange.value[1])
-            .toISOString()
-            .split('T')[0]
+        ? pickerTimestampToYmd(transactionDateRange.value[1])
         : undefined,
       forceRefresh: true, // 🎯 Force refresh to bypass cache
     };
@@ -2944,53 +2909,10 @@ const handleViewTransactionHistory = () => {
 
 // Helper function to set date range based on quick filter selection
 const setDateRangeFromFilter = (filterType: 'today' | 'week' | 'month') => {
-  const now = new Date();
-  const endOfToday = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate(),
-    23,
-    59,
-    59,
-  );
-
   transactionTypeFilter.value = filterType;
-
-  switch (filterType) {
-    case 'today':
-      // Today: start of today to end of today
-      const startOfToday = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate(),
-        0,
-        0,
-        0,
-      );
-      transactionDateRange.value = [
-        startOfToday.getTime(),
-        endOfToday.getTime(),
-      ];
-      break;
-
-    case 'week':
-      // Last 7 days: 7 days ago to today
-      const weekAgo = new Date(now);
-      weekAgo.setDate(weekAgo.getDate() - 7);
-      weekAgo.setHours(0, 0, 0, 0);
-      transactionDateRange.value = [weekAgo.getTime(), endOfToday.getTime()];
-      break;
-
-    case 'month':
-      // Last 30 days: 30 days ago to today
-      const monthAgo = new Date(now);
-      monthAgo.setDate(monthAgo.getDate() - 30);
-      monthAgo.setHours(0, 0, 0, 0);
-      transactionDateRange.value = [monthAgo.getTime(), endOfToday.getTime()];
-      break;
-  }
-
-  // Reset pagination and load records
+  const quick =
+    filterType === 'today' ? 'day' : filterType === 'week' ? 'week' : 'month';
+  transactionDateRange.value = buildQuickDateRange(quick);
   transactionPagination.page = 1;
   loadTransactionRecords();
 };

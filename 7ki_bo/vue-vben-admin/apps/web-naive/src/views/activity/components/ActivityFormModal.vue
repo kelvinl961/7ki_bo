@@ -106,6 +106,7 @@
                       >
                     <div class="flex gap-3">
                       <n-date-picker
+                        :time-zone="timezone"
                         v-model:value="formData.startTime"
                         type="datetime"
                         :placeholder="$t('activity.detailModal.k6d3b5')"
@@ -115,6 +116,7 @@
                       />
                       <span class="self-center text-gray-400">-</span>
                       <n-date-picker
+                        :time-zone="timezone"
                         v-model:value="formData.endTime"
                         type="datetime"
                         :placeholder="$t('activity.detailModal.k6d3b6')"
@@ -141,6 +143,7 @@
                       >
                     <div class="flex gap-3">
                       <n-date-picker
+                        :time-zone="timezone"
                         v-model:value="formData.displayStartTime"
                         type="datetime"
                         :placeholder="$t('activity.formModal.k5ba2')"
@@ -150,6 +153,7 @@
                       />
                       <span class="self-center text-gray-400">-</span>
                       <n-date-picker
+                        :time-zone="timezone"
                         v-model:value="formData.displayEndTime"
                         type="datetime"
                         :placeholder="$t('activity.formModal.k5ba22')"
@@ -3037,6 +3041,7 @@
                               >{{ $t('activity.formModal.k67097') }}</label
                             >
                             <n-date-picker
+                        :time-zone="timezone"
                               v-model:value="item.startTime"
                               :placeholder="$t('activity.formModal.k5f00')"
                               class="w-full"
@@ -3049,6 +3054,7 @@
                               >{{ $t('activity.formModal.k67098') }}</label
                             >
                             <n-date-picker
+                        :time-zone="timezone"
                               v-model:value="item.endTime"
                               :placeholder="$t('activity.formModal.k7ed3')"
                               class="w-full"
@@ -4492,6 +4498,7 @@ import {
 import { useAppConfig } from '@vben/hooks';
 import { useAccessStore } from '@vben/stores';
 import { createActivity, updateActivityV2 } from '#/api/activity';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 import type { Activity, CreateActivityInput } from '#/api/activity';
 import { useActiveMemberTiers } from '#/composables/useActiveMemberTiers';
 import {
@@ -4536,6 +4543,7 @@ const emit = defineEmits<{
 
 // Composables
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 const { apiURL } = useAppConfig(import.meta.env, import.meta.env.PROD);
 const accessStore = useAccessStore();
 

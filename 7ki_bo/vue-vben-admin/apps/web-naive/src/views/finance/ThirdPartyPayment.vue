@@ -297,6 +297,7 @@
 import { $t } from '@vben/locales';
 
 import { ref, reactive, onMounted, h } from 'vue';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking page load
 import { defineAsyncComponent } from 'vue';
 const SmartDataGrid = defineAsyncComponent(
@@ -581,24 +582,7 @@ const columns: DataTableColumns<ThirdPartyWithdrawalProvider> = [
     title: $t('finance.actionsTime'),
     key: 'updatedAt',
     width: 160,
-    render: (row) =>
-      h(
-        'div',
-        { class: 'text-center text-xs' },
-        row.updatedAt
-          ? new Date(row.updatedAt)
-              .toLocaleString('zh-CN', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false,
-              })
-              .replace(/\//g, '-')
-          : '-',
-      ),
+    render: (row) => renderTzDateTime(row.updatedAt),
   },
   {
     title: $t('finance.enable'),

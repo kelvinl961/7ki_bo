@@ -57,21 +57,7 @@ import {
   type LoginDevice,
   type LoginLog,
 } from '#/api/core/login-devices';
-
-function formatDate(dateValue: string | Date | null | undefined): string {
-  try {
-    if (!dateValue) return '-';
-    const date =
-      typeof dateValue === 'string' ? new Date(dateValue) : dateValue;
-    if (isNaN(date.getTime())) {
-      return $t('user.loginDevices.invalidDate');
-    }
-    return date.toLocaleString();
-  } catch (error) {
-    console.error('Error formatting date:', dateValue, error);
-    return $t('user.loginDevices.dateParseError');
-  }
-}
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 
 interface Props {
   userId: number;
@@ -131,13 +117,13 @@ const columns = computed(() => [
     title: $t('user.loginDevices.firstLogin'),
     key: 'firstSeen',
     width: 180,
-    render: (row: LoginDevice) => formatDate(row.firstSeen),
+    render: (row: LoginDevice) => renderTzDateTime(row.firstSeen),
   },
   {
     title: $t('user.loginDevices.lastLogin'),
     key: 'lastSeen',
     width: 180,
-    render: (row: LoginDevice) => formatDate(row.lastSeen),
+    render: (row: LoginDevice) => renderTzDateTime(row.lastSeen),
   },
   {
     title: $t('user.loginDevices.loginCount'),
@@ -157,7 +143,7 @@ const logsColumns = computed(() => [
     title: $t('common.time'),
     key: 'createdAt',
     width: 180,
-    render: (row: LoginLog) => formatDate(row.createdAt),
+    render: (row: LoginLog) => renderTzDateTime(row.createdAt),
   },
   { title: 'IP', key: 'ip', width: 140 },
   { title: 'UA', key: 'userAgent', width: 500 },

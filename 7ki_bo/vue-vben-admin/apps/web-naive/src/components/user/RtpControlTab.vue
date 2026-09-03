@@ -178,6 +178,7 @@ import {
   useMessage,
   type DataTableColumns,
 } from 'naive-ui';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 import {
   getPlayerRtpHistoryApi,
   getPlayerRtpVendorsApi,
@@ -608,9 +609,7 @@ const historyColumns = computed<DataTableColumns<any>>(() => [
     title: $t('user.rtpControl.setTime'),
     key: 'createdAt',
     width: 100,
-    render: (row) => {
-      return h('span', new Date(row.createdAt).toLocaleString('zh-CN'));
-    },
+    render: (row) => renderTzDateTime(row.createdAt),
   },
   {
     title: $t('user.rtpControl.playerId'),

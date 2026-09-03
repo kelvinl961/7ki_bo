@@ -110,6 +110,7 @@
           <div class="grid grid-cols-2 gap-4">
             <n-form-item :label="$t('operations.messageSettings.startTime')" path="startTime">
               <n-date-picker
+                :time-zone="timezone"
                 v-model:value="formData.startTime"
                 type="datetime"
                 :placeholder="$t('operations.messageSettings.startTime')"
@@ -119,6 +120,7 @@
 
             <n-form-item :label="$t('operations.messageSettings.endTime')" path="endTime">
               <n-date-picker
+                :time-zone="timezone"
                 v-model:value="formData.endTime"
                 type="datetime"
                 :placeholder="$t('operations.messageSettings.endTime')"
@@ -318,6 +320,9 @@ import {
   type FormRules,
 } from 'naive-ui';
 import { createGG, updateGG, type GGMessage } from '#/api/operationMessageGG';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
+
+const { timezone } = useDisplayTimezone();
 
 // Props
 interface Props {

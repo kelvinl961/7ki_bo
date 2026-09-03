@@ -61,7 +61,7 @@
             </div>
             <div class="file-stats">
               <span>{{ $t('media.usageTimes', [file.usageCount || 0]) }}</span>
-              <span>{{ formatDate(file.createdAt) }}</span>
+              <span><TzDateTime :value="file.createdAt" /></span>
             </div>
           </div>
 
@@ -121,6 +121,7 @@ import {
   deleteMediaFile,
   type MediaFile,
 } from '#/api/mediaLibrary';
+import TzDateTime from '#/components/common/TzDateTime.vue';
 
 defineOptions({
   name: 'MediaManagerIndex',
@@ -247,14 +248,6 @@ const formatFileSize = (bytes: number): string => {
   const sizes = ['B', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
-};
-
-const formatDate = (dateString: string): string => {
-  return new Date(dateString).toLocaleDateString('zh-CN', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
 };
 
 const copyFileUrl = async (file: MediaFile) => {

@@ -85,6 +85,7 @@
           <label class="mb-2 text-sm font-medium">{{ $t('operations.messageSettings.timeRange') }}</label>
           <n-date-picker
             v-model:value="filters.timeRange"
+            :time-zone="timezone"
             type="daterange"
             clearable
             style="width: 240px"
@@ -205,6 +206,10 @@ import {
   type PMDMessage,
   type PMDListParams,
 } from '#/api/operationMessagePMD';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
+
+const { timezone } = useDisplayTimezone();
 
 // Note: PMDMessage and PMDListParams types are imported from the API module
 const OperationMessagePMDFormModal = defineAsyncComponent(
@@ -335,13 +340,13 @@ const columns: DataTableColumns<PMDMessage> = [
     title: $t('operations.messageSettings.startTime'),
     key: 'startTime',
     width: 160,
-    render: (row) => formatDate(row.startTime),
+    render: (row) => renderTzDateTime(row.startTime),
   },
   {
     title: $t('operations.messageSettings.endTime'),
     key: 'endTime',
     width: 160,
-    render: (row) => formatDate(row.endTime),
+    render: (row) => renderTzDateTime(row.endTime),
   },
   {
     title: $t('operations.form.displayDurationSec'),
@@ -401,7 +406,7 @@ const columns: DataTableColumns<PMDMessage> = [
     title: $t('common.operationTime'),
     key: 'updatedAt',
     width: 160,
-    render: (row) => formatDate(row.updatedAt),
+    render: (row) => renderTzDateTime(row.updatedAt),
   },
   {
     title: $t('common.actions'),
@@ -718,11 +723,6 @@ const clearSelection = () => {
 const selectAll = () => {
   selectedRowKeys.value = tableData.value.map((pmd) => pmd.id);
   console.log('All selected');
-};
-
-const formatDate = (date: string | Date | null) => {
-  if (!date) return '-';
-  return new Date(date).toLocaleString('zh-CN');
 };
 
 // 初始化

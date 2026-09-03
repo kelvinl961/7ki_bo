@@ -43,14 +43,14 @@
                   >开始时间</label
                 >
                 <div class="text-sm">
-                  {{ formatDateTime(activity.startsAt) }}
+                  <TzDateTime :value="activity.startsAt" />
                 </div>
               </div>
               <div v-if="activity.endsAt">
                 <label class="text-sm font-medium text-gray-600"
                   >结束时间</label
                 >
-                <div class="text-sm">{{ formatDateTime(activity.endsAt) }}</div>
+                <div class="text-sm"><TzDateTime :value="activity.endsAt" /></div>
               </div>
             </div>
           </div>
@@ -229,7 +229,7 @@
           class="mb-6"
         >
           <n-alert type="info" title="下次可参与时间">
-            {{ formatDateTime(activity.userStatus.nextEligibleAt) }}
+            <TzDateTime :value="activity.userStatus.nextEligibleAt" />
           </n-alert>
         </div>
       </div>
@@ -273,6 +273,7 @@ import {
   useMessage,
 } from 'naive-ui';
 import { CheckmarkCircle, Warning, Gift } from '@vicons/ionicons5';
+import TzDateTime from '#/components/common/TzDateTime.vue';
 import type { UserActivity, ActivityUnit } from '#/api/activityClaim';
 
 // Props & Emits
@@ -473,16 +474,6 @@ const getWindowTypeText = (type?: string): string => {
   }
 };
 
-const formatDateTime = (dateString: string): string => {
-  const date = new Date(dateString);
-  return date.toLocaleString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-};
 </script>
 
 <style scoped>

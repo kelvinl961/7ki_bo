@@ -128,6 +128,7 @@
           <div class="grid grid-cols-2 gap-4">
             <n-form-item :label="$t('operations.messageSettings.startTime')" path="startTime">
               <n-date-picker
+                :time-zone="timezone"
                 v-model:value="formData.startTime"
                 type="datetime"
                 :placeholder="$t('operations.messageSettings.startTime')"
@@ -145,6 +146,7 @@
 
             <n-form-item :label="$t('operations.form.endTimeOptional')" path="endTime">
               <n-date-picker
+                :time-zone="timezone"
                 v-model:value="formData.endTime"
                 type="datetime"
                 :placeholder="$t('operations.messageSettings.endTime')"
@@ -372,6 +374,7 @@ import {
   type LobbyPopModal,
   type LobbyPopModalCreateRequest,
 } from '#/api/lobbyPopModal';
+import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 // ✅ PERFORMANCE FIX: Lazy load components to avoid blocking modal load
 import { defineAsyncComponent } from 'vue';
 const MediaLibrarySelector = defineAsyncComponent(
@@ -409,6 +412,7 @@ const modalShow = computed({
 const activeTab = ref('basic');
 const submitting = ref(false);
 const message = useMessage();
+const { timezone } = useDisplayTimezone();
 
 // 表单引用
 const basicFormRef = ref<FormInst | null>(null);

@@ -313,6 +313,7 @@ import {
   useMessage,
   type DataTableColumn,
 } from 'naive-ui';
+import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 
 const message = useMessage();
 
@@ -541,7 +542,7 @@ const columns: DataTableColumn<HealthRecord>[] = [
     key: 'lastCheckTime',
     width: 180,
     render(row: HealthRecord) {
-      return new Date(row.lastCheckTime).toLocaleString('zh-CN');
+      return renderTzDateTime(row.lastCheckTime);
     },
   },
   {
@@ -716,7 +717,7 @@ const fetchHealthData = async () => {
             domainName: check.domain?.domainName || 'Unknown',
             status: check.status || 'UNKNOWN',
             healthScore: check.healthScore || 0,
-            lastCheckTime: new Date(check.checkTime).toLocaleString('zh-CN'),
+            lastCheckTime: check.checkTime,
             useType: check.domain?.useType,
           });
         }

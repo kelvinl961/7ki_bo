@@ -2,6 +2,17 @@
 /**
  * 新砍一刀 / soft gameplay config fields — persists canonical API keys.
  */
+import {
+  NButton,
+  NCheckbox,
+  NInput,
+  NInputNumber,
+  NRadio,
+  NRadioGroup,
+  NSelect,
+  NSpace,
+} from 'naive-ui';
+
 defineProps<{
   formData: Record<string, any>;
 }>();

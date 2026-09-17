@@ -110,9 +110,13 @@ export interface CreateGameParams {
 }
 
 export interface UpdateGameParams {
+  platformId?: number;
+  gameId?: string;
   gameDisplayId?: string;
   gameName?: string;
-  gameNameEn?: string;
+  vendor?: string;
+  /** null clears English name */
+  gameNameEn?: string | null;
   gameType?: string;
   gameTypeEnum?:
     | 'ARCADE'

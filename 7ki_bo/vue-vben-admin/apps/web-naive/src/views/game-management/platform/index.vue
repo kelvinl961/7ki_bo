@@ -298,6 +298,7 @@ const showPublicConfigModal = ref(false);
 const tableData = ref<GamePlatformItem[]>([]);
 const checkedRowKeys = ref<number[]>([]);
 const editingPlatform = ref<GamePlatformItem | null>(null);
+const editingSortOrder = ref<{ id: number; value: number } | null>(null);
 const formRef = ref<FormInst | null>(null);
 const imagePreview = ref('');
 
@@ -386,10 +387,76 @@ const columns: DataTableColumns<GamePlatformItem> = [
   {
     title: $t('game.subgame.sortOrder'),
     key: 'sortOrder',
-    width: 80,
+    width: 180,
     render(row) {
+      const isEditing = editingSortOrder.value?.id === Number(row.id);
+
+      if (isEditing) {
+        return h('div', { class: 'flex items-center gap-1' }, [
+          h(NInputNumber, {
+            value: editingSortOrder.value?.value,
+            size: 'medium',
+            min: 0,
+            max: 9999,
+            style: 'width: 100px',
+            autofocus: true,
+            showButton: false,
+            'onUpdate:value': (val: number | null) => {
+              if (editingSortOrder.value) {
+                editingSortOrder.value.value = val ?? 0;
+              }
+            },
+            onKeyup: (e: KeyboardEvent) => {
+              if (e.key === 'Enter') {
+                handleSaveSortOrder(row);
+              } else if (e.key === 'Escape') {
+                editingSortOrder.value = null;
+              }
+            },
+          }),
+          h(
+            NButton,
+            {
+              size: 'tiny',
+              type: 'primary',
+              onClick: () => handleSaveSortOrder(row),
+            },
+            { default: () => '✓' },
+          ),
+          h(
+            NButton,
+            {
+              size: 'tiny',
+              onClick: () => {
+                editingSortOrder.value = null;
+              },
+            },
+            { default: () => '✕' },
+          ),
+        ]);
+      }
+
       return h('div', { class: 'flex items-center gap-1' }, [
-        h('span', row.sortOrder),
+        h(
+          'div',
+          {
+            class:
+              'flex items-center gap-2 cursor-pointer hover:bg-blue-50 px-2 py-1 rounded border border-transparent hover:border-blue-200 transition-all',
+            onClick: () => {
+              editingSortOrder.value = {
+                id: Number(row.id),
+                value: row.sortOrder ?? 0,
+              };
+            },
+          },
+          [
+            h(
+              'span',
+              { class: 'font-mono text-md text-blue-600 min-w-[24px]' },
+              row.sortOrder ?? 0,
+            ),
+          ],
+        ),
         h(
           NButton,
           {
@@ -726,6 +793,36 @@ const handleHorizontalImageSelected = (file: any) => {
 const handleLogoSelected = (file: any) => {
   if (file) {
     formData.logoUrl = file.url;
+  }
+};
+
+
+const handleSaveSortOrder = async (record: GamePlatformItem) => {
+  if (!editingSortOrder.value) return;
+
+  const newSortOrder = editingSortOrder.value.value;
+  const oldSortOrder = record.sortOrder;
+  editingSortOrder.value = null;
+
+  try {
+    const index = tableData.value.findIndex((p) => p.id === record.id);
+    if (index !== -1 && tableData.value[index]) {
+      tableData.value[index].sortOrder = newSortOrder;
+    }
+
+    tableData.value = [...tableData.value].sort((a, b) => {
+      const aOrder = a.sortOrder ?? 9999;
+      const bOrder = b.sortOrder ?? 9999;
+      return aOrder - bOrder;
+    });
+
+    await updateGamePlatformApi(record.id, { sortOrder: newSortOrder });
+    message.success($t('game.hotGameExtra.sortUpdated', [oldSortOrder, newSortOrder]));
+    loadPlatformList();
+  } catch (error: any) {
+    console.error('更新平台排序失败:', error);
+    message.error(error?.message || $t('game.hotGameExtra.sortUpdateFailed'));
+    loadPlatformList();
   }
 };
 

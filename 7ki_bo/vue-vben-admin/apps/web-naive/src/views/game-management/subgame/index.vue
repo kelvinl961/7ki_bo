@@ -1292,7 +1292,8 @@ const handleSubmit = async () => {
       gameDisplayId: formData.gameDisplayId || undefined,
       gameName: formData.gameName,
       vendor: formData.vendor,
-      gameNameEn: formData.gameNameEn || undefined,
+      // Always send on save so Zod/DB receive the field (undefined is stripped by JSON.stringify)
+      gameNameEn: formData.gameNameEn?.trim() ? formData.gameNameEn.trim() : null,
       
       gameType: normalizeGameTypeEnum(formData.gameType) || formData.gameType,
       currency: formData.currency,
@@ -1383,6 +1384,12 @@ const handleSubmit = async () => {
 
       gameResult = await updateGameApi(editingGameId, data);
 
+      // Prefer server payload so gameNameEn / displayId match DB
+      const saved =
+        (gameResult as any)?.data && typeof (gameResult as any).data === 'object'
+          ? (gameResult as any).data
+          : gameResult;
+
       // ✅ FIX: Use the stored editingGameId instead of editingGame.value.id to prevent race conditions
       // Immediately update the local table data for instant UI reflection
       const gameIndex = tableData.value.findIndex(
@@ -1396,7 +1403,12 @@ const handleSubmit = async () => {
         const updatedGame = {
           ...existingGame,
           ...data,
+          ...(saved && typeof saved === 'object' ? saved : {}),
           id: existingGame.id, // ✅ Ensure ID is never changed
+          gameNameEn:
+            saved?.gameNameEn !== undefined
+              ? saved.gameNameEn
+              : data.gameNameEn,
           updatedAt: new Date().toISOString(),
         } as GameItem;
 

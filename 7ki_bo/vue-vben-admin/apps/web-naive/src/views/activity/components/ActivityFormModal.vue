@@ -5900,6 +5900,41 @@ function resolveActivityTitle(item: any): string {
   return fromLocales || item?.title || item?.config?.title || '';
 }
 
+/** Build locales for create/update from primary title + 更多语言 translations. */
+function buildLocalesForSubmit(): Array<{
+  locale: string;
+  title: string;
+  description: string;
+}> {
+  const description = resolveRulesForSubmit();
+  const primary = (formData.title || '').trim();
+  const codes = ['zh-CN', 'en-US', 'pt-BR'] as const;
+  const out: Array<{ locale: string; title: string; description: string }> = [];
+  for (const code of codes) {
+    const translated = (formData.translations[code] || '').trim();
+    const title = translated || primary;
+    if (!title) continue;
+    out.push({ locale: code, title, description });
+  }
+  if (out.length === 0 && primary) {
+    out.push({ locale: 'zh-CN', title: primary, description });
+  }
+  return out;
+}
+
+function hydrateTranslationsFromLocales(
+  locales: Array<{ locale?: string; title?: string }> | undefined,
+): Record<string, string> {
+  const next: Record<string, string> = {};
+  if (!Array.isArray(locales)) return next;
+  for (const row of locales) {
+    if (row?.locale && typeof row.title === 'string' && row.title.trim()) {
+      next[row.locale] = row.title;
+    }
+  }
+  return next;
+}
+
 // URL validation for custom target URL
 const isValidUrl = (url: string): boolean => {
   if (!url || !url.trim()) {
@@ -6823,6 +6858,7 @@ const handleSubmit = async () => {
             }
           : {}),
         config: configPayload,
+        locales: buildLocalesForSubmit(),
       };
 
       console.log('🚀 Debug - Final UPDATE payload:', updatePayload);
@@ -6913,18 +6949,7 @@ const handleSubmit = async () => {
           : {}),
         config: configPayload,
         createdBy: 1,
-        locales: [
-          {
-            locale: 'pt-BR',
-            title: formData.title,
-            description: resolveRulesForSubmit(),
-          },
-          {
-            locale: 'zh-CN',
-            title: formData.title,
-            description: resolveRulesForSubmit(),
-          },
-        ],
+        locales: buildLocalesForSubmit(),
       };
 
       console.log('🚀 Debug - Final CREATE payload:', createPayload);
@@ -7683,6 +7708,11 @@ watch(
       // Populate form with editing item data (prefer values from config)
       Object.assign(formData, {
         title: resolveActivityTitle(newItem),
+        translations: hydrateTranslationsFromLocales(
+          (newItem as any).locales as
+            | Array<{ locale?: string; title?: string }>
+            | undefined,
+        ),
         activityType: (() => {
           const raw = (newItem as any).type || 'recharge';
           // Legacy BO used "invest"; API canonical type is "investment"

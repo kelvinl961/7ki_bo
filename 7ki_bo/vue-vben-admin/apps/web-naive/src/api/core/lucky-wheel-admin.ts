@@ -42,6 +42,7 @@ type BackendWheel = {
   wheelAssetUrl?: string | null;
   frameAssetUrl?: string | null;
   pointerAssetUrl?: string | null;
+  hubAssetUrl?: string | null;
   modalAssetUrl?: string | null;
   modalTopAssetUrl?: string | null;
   modalBottomAssetUrl?: string | null;
@@ -81,6 +82,8 @@ type BackendGlobalConfig = {
   restrictionConfig?: Record<string, unknown>;
   ruleDisplayMode: 'system' | 'custom';
   customRuleText?: string | null;
+  entryIconUrl?: string | null;
+  metadata?: Record<string, unknown>;
   updatedAt?: string | null;
 };
 
@@ -213,6 +216,7 @@ function mapWheel(row: BackendWheel): LuckyWheelItem {
     wheelAssetUrl: row.wheelAssetUrl ?? null,
     frameAssetUrl: row.frameAssetUrl ?? null,
     pointerAssetUrl: row.pointerAssetUrl ?? null,
+    hubAssetUrl: row.hubAssetUrl ?? null,
     modalAssetUrl: row.modalAssetUrl ?? null,
     modalTopAssetUrl: row.modalTopAssetUrl ?? null,
     modalBottomAssetUrl: row.modalBottomAssetUrl ?? null,
@@ -283,6 +287,11 @@ function mapGlobalConfig(row: BackendGlobalConfig): LuckyWheelPublicConfigSnapsh
       ((row.validWageringConfig as { selectedPlatforms?: never[] })?.selectedPlatforms as never[]) || [],
     ruleDescriptionMode: row.ruleDisplayMode || 'system',
     ruleDescriptionCustom: row.customRuleText || '',
+    entryIconUrl:
+      (typeof row.entryIconUrl === 'string' && row.entryIconUrl.trim()) ||
+      (typeof row.metadata?.entryIconUrl === 'string' &&
+        (row.metadata.entryIconUrl as string).trim()) ||
+      null,
   };
 }
 
@@ -290,6 +299,10 @@ function mapPublicConfigToBackend(
   snapshot: LuckyWheelPublicConfigSnapshot,
   enabled: boolean,
 ): Record<string, unknown> {
+  const entryIconUrl =
+    typeof snapshot.entryIconUrl === 'string' && snapshot.entryIconUrl.trim()
+      ? snapshot.entryIconUrl.trim()
+      : null;
   return {
     currency: DEFAULT_CURRENCY,
     enabled,
@@ -312,7 +325,8 @@ function mapPublicConfigToBackend(
     ruleDisplayMode: snapshot.ruleDescriptionMode,
     customRuleText: snapshot.ruleDescriptionCustom,
     customRuleI18n: {},
-    metadata: {},
+    entryIconUrl,
+    metadata: { entryIconUrl },
   };
 }
 
@@ -343,6 +357,7 @@ function mapWheelPayload(payload: Partial<LuckyWheelItem>, options?: { forCreate
     wheelAssetUrl: toNullableAssetUrl(payload.wheelAssetUrl),
     frameAssetUrl: toNullableAssetUrl(payload.frameAssetUrl),
     pointerAssetUrl: toNullableAssetUrl(payload.pointerAssetUrl),
+    hubAssetUrl: toNullableAssetUrl(payload.hubAssetUrl),
     modalAssetUrl: toNullableAssetUrl(payload.modalAssetUrl),
     modalTopAssetUrl: toNullableAssetUrl(payload.modalTopAssetUrl),
     modalBottomAssetUrl: toNullableAssetUrl(payload.modalBottomAssetUrl),

@@ -58,6 +58,8 @@ export interface LuckyWheelPublicConfigSnapshot {
   auditSelectedPlatforms: SelectedPlatform[];
   ruleDescriptionMode: 'system' | 'custom';
   ruleDescriptionCustom: string;
+  /** Grid / nav / announcement list icon (global) */
+  entryIconUrl: string | null;
 }
 
 export interface LuckyWheelPrizeItem {
@@ -93,6 +95,7 @@ export interface LuckyWheelItem {
   wheelAssetUrl: string | null;
   frameAssetUrl: string | null;
   pointerAssetUrl: string | null;
+  hubAssetUrl: string | null;
   modalAssetUrl: string | null;
   modalTopAssetUrl: string | null;
   modalBottomAssetUrl: string | null;
@@ -134,6 +137,7 @@ export function defaultLuckyWheelPublicConfig(): LuckyWheelPublicConfigSnapshot 
     auditSelectedPlatforms: [],
     ruleDescriptionMode: 'system',
     ruleDescriptionCustom: '',
+    entryIconUrl: null,
   };
 }
 
@@ -221,6 +225,7 @@ export function normalizeLuckyWheelItem(raw: unknown): LuckyWheelItem | null {
     wheelAssetUrl: nullableUrl(r.wheelAssetUrl),
     frameAssetUrl: nullableUrl(r.frameAssetUrl),
     pointerAssetUrl: nullableUrl(r.pointerAssetUrl),
+    hubAssetUrl: nullableUrl(r.hubAssetUrl),
     modalAssetUrl: nullableUrl(r.modalAssetUrl),
     modalTopAssetUrl: nullableUrl(r.modalTopAssetUrl),
     modalBottomAssetUrl: nullableUrl(r.modalBottomAssetUrl),
@@ -322,6 +327,7 @@ export function normalizeLuckyWheelPublicConfig(
       typeof r.ruleDescriptionCustom === 'string'
         ? r.ruleDescriptionCustom
         : base.ruleDescriptionCustom,
+    entryIconUrl: nullableUrl(r.entryIconUrl),
   };
 }
 

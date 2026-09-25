@@ -55,6 +55,15 @@
                 <span class="lw-inline-field__hint">{{ $t('activity.detailModal.k5929') }}</span>
               </n-space>
             </n-form-item>
+            <n-form-item :label="$t('activity.luckyWheelPublicConfig.entryIcon')" label-placement="top">
+              <MediaLibrarySelector
+                v-model="form.entryIconUrl"
+                category="promotion"
+                :accept-types="['image']"
+                :placeholder="$t('activity.luckyWheelEdit.k8d446')"
+              />
+              <div class="lw-asset-group__hint">{{ $t('activity.luckyWheelPublicConfig.entryIconHint') }}</div>
+            </n-form-item>
           </section>
 
           <section class="lw-section lw-section--tight">
@@ -432,6 +441,7 @@ import {
   useMessage,
 } from 'naive-ui';
 import PlatformGameSelector from '#/components/activity/PlatformGameSelector.vue';
+import MediaLibrarySelector from '#/components/MediaLibrarySelector.vue';
 import { putLuckyWheelAdminPublicConfigApi } from '#/api/core/lucky-wheel-admin';
 import { getActiveMemberTiersApi } from '#/api/core/memberTier';
 import { MORE_RESTRICTION_TOGGLE_OPTIONS } from './providentFundUiConstants';
@@ -482,6 +492,7 @@ const form = reactive({
   auditSelectedPlatforms: [] as LuckyWheelPublicConfigSnapshot['auditSelectedPlatforms'],
   ruleDescriptionMode: 'system' as 'system' | 'custom',
   ruleDescriptionCustom: '',
+  entryIconUrl: '',
 });
 
 const allMemberTierIds = computed(() => memberTierOptions.value.map((i) => i.id));
@@ -507,6 +518,7 @@ function applySnapshot(s: LuckyWheelPublicConfigSnapshot) {
     : [];
   form.ruleDescriptionMode = snap.ruleDescriptionMode;
   form.ruleDescriptionCustom = snap.ruleDescriptionCustom;
+  form.entryIconUrl = snap.entryIconUrl ?? '';
 }
 
 function toSnapshot(): LuckyWheelPublicConfigSnapshot {
@@ -523,6 +535,7 @@ function toSnapshot(): LuckyWheelPublicConfigSnapshot {
     auditSelectedPlatforms: JSON.parse(JSON.stringify(form.auditSelectedPlatforms)),
     ruleDescriptionMode: form.ruleDescriptionMode,
     ruleDescriptionCustom: form.ruleDescriptionCustom,
+    entryIconUrl: form.entryIconUrl.trim() || null,
   };
 }
 

@@ -514,9 +514,11 @@
                   <td class="value-cell">
                     <div class="cell-content">
                       <div class="content-left">
-                        <span class="text-blue-600">{{
-                          userDetail.totalDeposit.toFixed(2)
-                        }}</span>
+                        <span class="text-blue-600"
+                          >{{ userDetail.totalDeposit.toFixed(2) }}
+                          ({{ userDetail.totalDepositCount || 0
+                          }}{{ $t('user.userDetail.times') }})</span
+                        >
                         <span class="text-gray-500"
                           >{{ $t('user.userDetail.last24hDeposit') }}
                           {{
@@ -567,9 +569,11 @@
                   <td class="value-cell">
                     <div class="cell-content">
                       <div class="content-left">
-                        <span class="text-blue-600">{{
-                          userDetail.totalWithdraw.toFixed(2)
-                        }}</span>
+                        <span class="text-blue-600"
+                          >{{ userDetail.totalWithdraw.toFixed(2) }}
+                          ({{ userDetail.totalWithdrawCount || 0
+                          }}{{ $t('user.userDetail.times') }})</span
+                        >
                         <span class="text-gray-500"
                           >{{ $t('user.userDetail.last24hWithdraw') }}
                           {{
@@ -1246,11 +1250,28 @@
                   :options="transactionStatusOptions"
                 />
                 <n-select
-                  v-model:value="transactionCategoryFilter"
+                  :value="transactionCategoryFilter"
                   :placeholder="$t('user.userDetail.transactionCategory')"
                   clearable
-                  style="width: 140px"
+                  filterable
+                  multiple
+                  :max-tag-count="1"
+                  :render-tag="renderCategoryFilterTag"
+                  style="width: 220px"
                   :options="categoryFilterOptions"
+                  @update:value="handleTransactionCategoryChange"
+                />
+                <n-select
+                  v-if="showSubCategoryFilter"
+                  v-model:value="transactionSubCategoryFilter"
+                  :placeholder="$t('user.userDetail.transactionSubCategory')"
+                  clearable
+                  filterable
+                  multiple
+                  max-tag-count="responsive"
+                  style="width: 220px"
+                  :options="subCategoryFilterOptions"
+                  :loading="subCategoryOptionsLoading"
                 />
                 <n-input
                   v-model:value="transactionSearchId"
@@ -1289,6 +1310,7 @@
                 </div>
               </template>
               <n-data-table
+                class="funding-tx-table"
                 :loading="transactionLoading"
                 :columns="transactionColumns"
                 :data="transactionRecords"
@@ -1296,6 +1318,7 @@
                 :remote="true"
                 size="small"
                 :row-key="(row: WalletTransaction) => row.id"
+                :row-class-name="fundingTxRowClassName"
                 :scroll-x="1500"
                 @update:page="transactionPagination.onUpdatePage"
                 @update:page-size="transactionPagination.onUpdatePageSize"
@@ -1759,6 +1782,7 @@ import {
   manualAssignUserTierApi,
   type MemberTier,
 } from '#/api/core/memberTier';
+import { getEnabledGamePlatforms } from '#/api/game/gamePlatform';
 import ContactTab from './ContactTab.vue';
 import ProfileTab from './ProfileTab.vue';
 import WithdrawAccountTab from './WithdrawAccountTab.vue';
@@ -1768,6 +1792,7 @@ import LoginDevicesTab from './LoginDevicesTab.vue';
 import RtpControlTab from './RtpControlTab.vue';
 import AssociationsTab from './AssociationsTab.vue';
 import ManualPullbackModal from './ManualPullbackModal.vue';
+import TransferSessionExpandPanel from './TransferSessionExpandPanel.vue';
 import TimezoneDatePicker from '#/components/common/TimezoneDatePicker.vue';
 import { buildQuickDateRange } from '#/utils/quickDateRange';
 import { pickerTimestampToYmd } from '#/utils/timezoneUtils';
@@ -1885,24 +1910,423 @@ const withdrawalPinForm = ref({
 // Transaction filters - default to today (日)
 const transactionTypeFilter = ref('today');
 const transactionStatusFilter = ref('');
-const transactionCategoryFilter = ref('');
+/** Sentinel value for 账变大类「全部」 (select all). */
+const CATEGORY_ALL = '__all__';
+const transactionCategoryFilter = ref<string[]>([]);
+const transactionSubCategoryFilter = ref<string[]>([]);
 const transactionSearchId = ref('');
 const transactionDateRange = ref<[number, number] | null>(null);
+const subCategoryOptionsLoading = ref(false);
+const fundSwitchProviderOptions = ref<{ label: string; value: string }[]>([]);
 
-// Category filter options - matching screenshot "账变大类"
-const categoryFilterOptions = computed(() => [
-  { label: $t('user.userDetail.walletAll'), value: '' },
-  { label: $t('user.userDetail.categoryDeposit'), value: 'deposit' },
-  { label: $t('user.userDetail.categoryWithdrawal'), value: 'withdrawal' },
-  { label: $t('user.userDetail.categoryGameTransfer'), value: 'game_transfer' },
-  { label: $t('user.userDetail.categoryBet'), value: 'bet' },
-  { label: $t('user.userDetail.categoryWin'), value: 'win' },
-  { label: $t('user.userDetail.categoryBonus'), value: 'bonus' },
+// Real product 大类 keys (no 全部 sentinel)
+const categoryValueOptions = computed(() => [
+  { label: $t('user.userDetail.categoryFundSwitch'), value: 'fund_switch' },
+  {
+    label: $t('user.userDetail.categoryMemberRecharge'),
+    value: 'member_recharge',
+  },
+  {
+    label: $t('user.userDetail.categoryMemberWithdrawal'),
+    value: 'member_withdrawal',
+  },
+  {
+    label: $t('user.userDetail.categoryBankMerchantSettlement'),
+    value: 'bank_merchant_settlement',
+  },
+  {
+    label: $t('user.userDetail.categoryFundAdjustment'),
+    value: 'fund_adjustment',
+  },
+  {
+    label: $t('user.userDetail.categoryActivityReward'),
+    value: 'activity_reward',
+  },
   { label: $t('user.userDetail.categoryRebate'), value: 'rebate' },
   { label: $t('user.userDetail.categoryCommission'), value: 'commission' },
-  { label: $t('user.userDetail.categoryManualCredit'), value: 'manual_credit' },
-  { label: $t('user.userDetail.categoryManualDebit'), value: 'manual_debit' },
+  {
+    label: $t('user.userDetail.categoryInterestTreasure'),
+    value: 'interest_treasure',
+  },
+  { label: $t('user.userDetail.categoryTaskReward'), value: 'task_reward' },
+  { label: $t('user.userDetail.categoryVipReward'), value: 'vip_reward' },
+  { label: $t('user.userDetail.categoryDepositBonus'), value: 'deposit_bonus' },
+  {
+    label: $t('user.userDetail.categoryGeneralReward'),
+    value: 'general_reward',
+  },
+  {
+    label: $t('user.userDetail.categoryGuaranteeClaim'),
+    value: 'guarantee_claim',
+  },
+  { label: $t('user.userDetail.categoryAgentTransfer'), value: 'agent_transfer' },
+  { label: $t('user.userDetail.categoryCreditLoan'), value: 'credit_loan' },
+  {
+    label: $t('user.userDetail.categoryClubMemberRecharge'),
+    value: 'club_member_recharge',
+  },
+  { label: $t('user.userDetail.categoryClubActivity'), value: 'club_activity' },
+  { label: $t('user.userDetail.categorySvipReward'), value: 'svip_reward' },
+  { label: $t('user.userDetail.categoryLuckyWheel'), value: 'lucky_wheel' },
+  {
+    label: $t('user.userDetail.categoryProvidentFund'),
+    value: 'provident_fund',
+  },
+  { label: $t('user.userDetail.categoryMysteryBox'), value: 'mystery_box' },
+  { label: $t('user.userDetail.categoryAgent'), value: 'agent' },
+  {
+    label: $t('user.userDetail.categoryClubMemberWithdrawal'),
+    value: 'club_member_withdrawal',
+  },
+  {
+    label: $t('user.userDetail.categorySurpriseReward'),
+    value: 'surprise_reward',
+  },
+  { label: $t('user.userDetail.categoryTipReward'), value: 'tip_reward' },
+  {
+    label: $t('user.userDetail.categoryThirdPartyCoinExchange'),
+    value: 'third_party_coin_exchange',
+  },
+  {
+    label: $t('user.userDetail.categoryPointsLottery'),
+    value: 'points_lottery',
+  },
+  {
+    label: $t('user.userDetail.categoryDiscountCoupon'),
+    value: 'discount_coupon',
+  },
+  { label: $t('user.userDetail.categoryPromoMall'), value: 'promo_mall' },
+  {
+    label: $t('user.userDetail.categorySpecialInviteReward'),
+    value: 'special_invite_reward',
+  },
 ]);
+
+const allCategoryValues = computed(() =>
+  categoryValueOptions.value.map((o) => o.value),
+);
+
+// Category filter options — 全部 first, then product 大类
+const categoryFilterOptions = computed(() => [
+  { label: $t('user.userDetail.walletAll'), value: CATEGORY_ALL },
+  ...categoryValueOptions.value,
+]);
+
+/** Real keys first so tag shows 资金切换 +N; 全部 last so checkbox stays checked. */
+function selectAllCategories(): string[] {
+  return [...allCategoryValues.value, CATEGORY_ALL];
+}
+
+function isAllCategoriesSelected(vals: string[]): boolean {
+  const allValues = allCategoryValues.value;
+  if (allValues.length === 0) return vals.includes(CATEGORY_ALL);
+  return allValues.every((v) => vals.includes(v));
+}
+
+/** Hide 全部 from tags so UI shows 资金切换 +N like product mock. */
+function renderCategoryFilterTag({
+  option,
+  handleClose,
+}: {
+  option: { label?: string; value?: string | number };
+  handleClose: () => void;
+}) {
+  if (option.value === CATEGORY_ALL) {
+    return null;
+  }
+  return h(
+    NTag,
+    {
+      size: 'small',
+      closable: true,
+      bordered: false,
+      onMousedown: (e: MouseEvent) => {
+        e.preventDefault();
+      },
+      onClose: (e: MouseEvent) => {
+        e.stopPropagation();
+        handleClose();
+      },
+    },
+    { default: () => option.label ?? String(option.value ?? '') },
+  );
+}
+
+const withdrawalSubCategoryOptions = computed(() => [
+  {
+    label: $t('user.userDetail.subWithdrawalFreeze'),
+    value: 'withdrawal_freeze',
+  },
+  {
+    label: $t('user.userDetail.subWithdrawalUnfreeze'),
+    value: 'withdrawal_unfreeze',
+  },
+  { label: $t('user.userDetail.subWithdrawing'), value: 'withdrawing' },
+  {
+    label: $t('user.userDetail.subWithdrawalSuccess'),
+    value: 'withdrawal_success',
+  },
+]);
+
+const vipSubCategoryOptions = computed(() => [
+  { label: $t('user.userDetail.subVipMonthly'), value: 'VIP_MONTHLY_REWARD' },
+  { label: $t('user.userDetail.subVipWeekly'), value: 'VIP_WEEKLY_REWARD' },
+  { label: $t('user.userDetail.subVipUpgrade'), value: 'VIP_UPGRADE_BONUS' },
+  { label: $t('user.userDetail.subVipBirthday'), value: 'VIP_BIRTHDAY_REWARD' },
+]);
+
+/** Activity 大类 → activityType / subcategoryDetails keys. */
+const activitySubCategoryOptions = computed(() => {
+  const keys = [
+    'checkin',
+    'wagering',
+    'rescue',
+    'promotion',
+    'redpacket',
+    'newbie',
+    'recharge',
+    'luckywager',
+    'investment',
+    'agent',
+    'collect',
+    'guessing',
+    'custom',
+    'withdrawal',
+    'soft',
+    'newblade',
+    'return_bonus',
+    'ranking',
+    'lottery_assist',
+    'newbie_rescue',
+    'feedback',
+    'referral',
+  ] as const;
+  return keys.map((value) => ({
+    label: fundingSubLabel(value),
+    value,
+  }));
+});
+
+const memberRechargeSubCategoryOptions = computed(() => [
+  {
+    label: fundingSubLabel('online_recharge'),
+    value: 'online_recharge',
+  },
+]);
+
+const commissionSubCategoryOptions = computed(() => [
+  { label: fundingSubLabel('claimed'), value: 'claimed' },
+]);
+
+const depositBonusSubCategoryOptions = computed(() => [
+  { label: fundingSubLabel('bonus'), value: 'bonus' },
+]);
+
+/** Single-option 小类 for atomic 大类 (label = 大类 name, value filters metadata). */
+function singletonSubOptions(
+  value: string,
+  labelKey?: string,
+): { label: string; value: string }[] {
+  const fromCat = categoryValueOptions.value.find((o) => o.value === value);
+  const label = labelKey
+    ? fundingSubLabel(labelKey, fromCat?.label)
+    : (fromCat?.label ?? fundingSubLabel(value));
+  return [{ label, value: labelKey || value }];
+}
+
+function fundingSubLabel(key: string, fallback?: string): string {
+  const i18nKey = `finance.txSubs.${key}`;
+  try {
+    const translated = $t(i18nKey);
+    if (translated && translated !== i18nKey) return translated;
+  } catch {
+    // fall through
+  }
+  const userKey = `user.userDetail.subFunding_${key}`;
+  try {
+    const translated = $t(userKey);
+    if (translated && translated !== userKey) return translated;
+  } catch {
+    // fall through
+  }
+  return fallback || key;
+}
+
+const fundAdjustmentSubCategoryOptions = computed(() => {
+  const map = subTypeOptionsMap.value;
+  const seen = new Set<string>();
+  const opts: { label: string; value: string }[] = [];
+  for (const list of Object.values(map)) {
+    for (const item of list) {
+      if (seen.has(item.value)) continue;
+      seen.add(item.value);
+      opts.push(item);
+    }
+  }
+  return opts;
+});
+
+const selectedCategories = computed(() => {
+  const raw = transactionCategoryFilter.value || [];
+  // 全部 / empty → no specific 大类 (API treats as all types; 小类 hidden)
+  if (
+    raw.length === 0 ||
+    raw.includes(CATEGORY_ALL) ||
+    isAllCategoriesSelected(raw)
+  ) {
+    return [];
+  }
+  return raw.filter((c) => c && c !== CATEGORY_ALL);
+});
+
+/** Every product 大类 contributes 小类 options (fund_switch → providers). */
+const FACET_CATEGORY_KEYS = computed(
+  () => allCategoryValues.value as readonly string[],
+);
+
+const showSubCategoryFilter = computed(() =>
+  selectedCategories.value.some((c) =>
+    FACET_CATEGORY_KEYS.value.includes(c),
+  ),
+);
+
+const subCategoryFilterOptions = computed(() => {
+  const cats = selectedCategories.value;
+  const opts: { label: string; value: string }[] = [];
+  const seen = new Set<string>();
+  const pushUnique = (list: { label: string; value: string }[]) => {
+    for (const item of list) {
+      if (seen.has(item.value)) continue;
+      seen.add(item.value);
+      opts.push(item);
+    }
+  };
+
+  for (const cat of cats) {
+    switch (cat) {
+      case 'fund_switch':
+        pushUnique(fundSwitchProviderOptions.value);
+        break;
+      case 'member_withdrawal':
+        pushUnique(withdrawalSubCategoryOptions.value);
+        break;
+      case 'fund_adjustment':
+        pushUnique(fundAdjustmentSubCategoryOptions.value);
+        break;
+      case 'vip_reward':
+        pushUnique(vipSubCategoryOptions.value);
+        break;
+      case 'activity_reward':
+        pushUnique(activitySubCategoryOptions.value);
+        break;
+      case 'member_recharge':
+        pushUnique(memberRechargeSubCategoryOptions.value);
+        break;
+      case 'commission':
+        pushUnique(commissionSubCategoryOptions.value);
+        break;
+      case 'deposit_bonus':
+        pushUnique(depositBonusSubCategoryOptions.value);
+        break;
+      case 'task_reward':
+        pushUnique(singletonSubOptions('task_reward', 'task_reward'));
+        break;
+      case 'rebate':
+        pushUnique(singletonSubOptions('rebate'));
+        break;
+      default:
+        // Atomic / unimplemented 大类: one 小类 option matching the 大类 key
+        pushUnique(singletonSubOptions(cat));
+        break;
+    }
+  }
+  return opts;
+});
+
+async function ensureFundSwitchProviderOptions() {
+  if (fundSwitchProviderOptions.value.length > 0) return;
+  subCategoryOptionsLoading.value = true;
+  try {
+    const platforms = await getEnabledGamePlatforms();
+    fundSwitchProviderOptions.value = (platforms || [])
+      .filter((p) => p.isEnabled !== false)
+      .map((p) => ({
+        label: p.platformName || p.platformId,
+        value: p.platformId,
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+  } catch (err) {
+    console.warn('Failed to load enabled game platforms for 小类:', err);
+    fundSwitchProviderOptions.value = [];
+  } finally {
+    subCategoryOptionsLoading.value = false;
+  }
+}
+
+const handleTransactionCategoryChange = async (value: string[] | null) => {
+  // Controlled select (:value, not v-model) so `prev` is still the old selection
+  const next = value || [];
+  const prev = transactionCategoryFilter.value || [];
+  const prevHadAll = prev.includes(CATEGORY_ALL) || isAllCategoriesSelected(prev);
+  const nextHasAllSentinel = next.includes(CATEGORY_ALL);
+
+  // Click 全部 when not fully selected → select all
+  if (nextHasAllSentinel && !prevHadAll) {
+    transactionCategoryFilter.value = selectAllCategories();
+    transactionSubCategoryFilter.value = [];
+    return;
+  }
+
+  // Click 全部 OFF (or clear) while fully selected → deselect all
+  if (prevHadAll && !nextHasAllSentinel) {
+    const cleanedTry = next.filter((v) => v !== CATEGORY_ALL);
+    // Unchecked 全部 while everything was selected → clear all
+    if (cleanedTry.length === 0 || isAllCategoriesSelected(cleanedTry)) {
+      transactionCategoryFilter.value = [];
+      transactionSubCategoryFilter.value = [];
+      return;
+    }
+    // Unchecked one real 大类 while 全部 was on → keep remaining, drop 全部
+    transactionCategoryFilter.value = cleanedTry;
+  } else {
+    const cleaned = next.filter((v) => v !== CATEGORY_ALL);
+
+    if (cleaned.length === 0) {
+      transactionCategoryFilter.value = [];
+      transactionSubCategoryFilter.value = [];
+      return;
+    }
+
+    // Manually selected every 大类 → also check 全部
+    if (isAllCategoriesSelected(cleaned)) {
+      transactionCategoryFilter.value = selectAllCategories();
+      transactionSubCategoryFilter.value = [];
+      return;
+    }
+
+    transactionCategoryFilter.value = cleaned;
+  }
+
+  const cleaned = (transactionCategoryFilter.value || []).filter(
+    (v) => v !== CATEGORY_ALL,
+  );
+
+  if (cleaned.includes('fund_switch')) {
+    await ensureFundSwitchProviderOptions();
+  }
+
+  if (
+    !cleaned.some((c) => FACET_CATEGORY_KEYS.value.includes(c))
+  ) {
+    transactionSubCategoryFilter.value = [];
+    return;
+  }
+
+  const allowed = new Set(subCategoryFilterOptions.value.map((o) => o.value));
+  transactionSubCategoryFilter.value = (
+    transactionSubCategoryFilter.value || []
+  ).filter((v) => allowed.has(v));
+};
 
 // Form data
 const newStatus = ref('');
@@ -2142,8 +2566,34 @@ const manualTransactionRules = computed(() => ({
   },
 }));
 
+function fundingTxRowClassName(row: WalletTransaction): string {
+  if (row.type === 'transfer_in' || row.type === 'transfer_out') {
+    return 'funding-tx-transfer-row';
+  }
+  return '';
+}
+
 // Transaction table columns - matching screenshot exactly
 const transactionColumns = computed<DataTableColumns<WalletTransaction>>(() => [
+  {
+    type: 'expand',
+    expandable: (row) =>
+      row.type === 'transfer_in' || row.type === 'transfer_out',
+    renderExpand: (row) => {
+      const uid = Number(props.userId);
+      if (!uid || Number.isNaN(uid)) {
+        return h(
+          'div',
+          { class: 'py-2 text-sm text-gray-400' },
+          $t('user.userDetail.sessionDetailEmpty'),
+        );
+      }
+      return h(TransferSessionExpandPanel, {
+        userId: uid,
+        txId: String(row.id),
+      });
+    },
+  },
   {
     title: $t('user.userDetail.orderNo'),
     key: 'id',
@@ -2830,12 +3280,37 @@ const loadTransactionRecords = async () => {
       | 'month'
       | 'all'
       | 'custom';
+    const rawCats = transactionCategoryFilter.value || [];
+    const categories =
+      rawCats.includes(CATEGORY_ALL) ||
+      rawCats.length === 0 ||
+      isAllCategoriesSelected(rawCats)
+        ? []
+        : rawCats.filter((c) => c && c !== CATEGORY_ALL);
+    const subSelected = transactionSubCategoryFilter.value || [];
     const params = {
       userId: Number(props.userId),
       page: transactionPagination.page,
       pageSize: transactionPagination.pageSize,
       date: dateValue,
-      category: 'all', // Show all categories of wallet transactions
+      category: 'all',
+      categories: categories.length > 0 ? categories : undefined,
+      providers: (() => {
+        if (!categories.includes('fund_switch') || subSelected.length === 0) {
+          return undefined;
+        }
+        const p = subSelected.filter((v) =>
+          fundSwitchProviderOptions.value.some((o) => o.value === v),
+        );
+        return p.length > 0 ? p : undefined;
+      })(),
+      subcategories: (() => {
+        if (subSelected.length === 0) return undefined;
+        const nonProvider = subSelected.filter(
+          (v) => !fundSwitchProviderOptions.value.some((o) => o.value === v),
+        );
+        return nonProvider.length > 0 ? nonProvider : undefined;
+      })(),
       startDate: transactionDateRange.value?.[0]
         ? pickerTimestampToYmd(transactionDateRange.value[0])
         : undefined,
@@ -2924,7 +3399,8 @@ const handleTransactionDateRangeChange = () => {
 const handleResetTransactionFilter = () => {
   transactionTypeFilter.value = 'today'; // Reset to today (default)
   transactionStatusFilter.value = '';
-  transactionCategoryFilter.value = '';
+  transactionCategoryFilter.value = [];
+  transactionSubCategoryFilter.value = [];
   transactionSearchId.value = '';
   transactionDateRange.value = null;
   transactionPagination.page = 1;
@@ -3496,5 +3972,14 @@ const handleFilterByLastLoginFingerprint = () => {
 
 .transaction-records .n-tag {
   border-radius: 4px;
+}
+
+.funding-tx-table :deep(.funding-tx-transfer-row) {
+  background-color: #f8fafc;
+}
+
+.funding-tx-table :deep(.n-data-table-tr--expanded),
+.funding-tx-table :deep(tr.n-data-table-tr--expanded) {
+  background-color: #eef6ff;
 }
 </style>

@@ -5040,7 +5040,7 @@ const formData = reactive({
   newbladeResetMode: 'once' as 'once' | 'custom_days',
   newbladeResetDays: 7,
   newbladeAllowReenterAfterClaim: false,
-  newbladeDistributionMethod: 'player_claim_expires',
+  newbladeDistributionMethod: 'player_claim_auto_after_expire',
   newbladeRewardExpirationDays: 1,
   newbladeFinalRewardType: 'fixed' as 'fixed' | 'random',
   newbladeFinalRewardFixed: 100,
@@ -5054,10 +5054,11 @@ const formData = reactive({
   newbladeRequiredDrawsMin: 10,
   newbladeRequiredDrawsMax: 20,
   newbladeRequiredDrawsExpected: 10,
-  newbladeGiftDailyLogin: true,
+  newbladeGiftDailyLogin: false,
   newbladeGiftOnlineMinutes: 0,
+  newbladeGiftOnlineHours: null as number | null,
   newbladeHomeSpinReminder: false,
-  newbladeAccumulateTasks: true,
+  newbladeAccumulateTasks: false,
   newbladeTasks: [{ id: 'invite_1', type: 'invite', value: 1, weight: 1 }] as {
     id: string;
     type: string;
@@ -5072,12 +5073,36 @@ const formData = reactive({
   newbladePopupStyle: 'lottery' as 'lottery' | 'promo_image',
   newbladeDisplayOnAgentPage: false,
   newbladeWheelSlotCount: 4,
+  newbladeWheelSlots: [
+    { type: 'random', amount: 0, weight: 1, icon: '' },
+    { type: 'fixed', amount: 0, weight: 0, icon: '' },
+    { type: 'fixed', amount: 0, weight: 0, icon: '' },
+    { type: 'fixed', amount: 0, weight: 0, icon: '' },
+  ] as Array<{
+    type: string;
+    amount?: number;
+    weight?: number;
+    icon?: string;
+    label?: string;
+  }>,
   newbladeDrawStyle: 'turntable_1',
   newbladeBgColor: '#0d4f3c',
   newbladeFirstDrawStyle: 'chest',
+  newbladeHubAssetUrl:
+    'http://media.cheshi8899.com/media/media-1787060941699-101343003-kyd_style_1_zp_2_2.avif',
+  newbladeWheelAssetUrl:
+    'http://media.cheshi8899.com/media/media-1787060960569-287791186.webp',
+  newbladeSegmentAssetUrl:
+    'http://media.cheshi8899.com/media/media-1787060969798-853196446-kyd_style_1_zp_4.avif',
+  newbladeWinEffectAssetUrl:
+    'http://media.cheshi8899.com/media/media-1787095174855-312850869.png',
+  newbladeFrameAssetUrl:
+    'http://media.cheshi8899.com/media/media-1787095251131-193211716.webp',
+  newbladeSpinAssetUrl:
+    'http://media.cheshi8899.com/media/media-1787097571130-8116396.webp',
   newbladeEnableWinningAnnouncement: false,
   newbladeEnableBurstNotify: false,
-  newbladePromoShareImagesText: '',
+  newbladePromoShareImages: [] as string[],
   newbladeShareShowActivityName: true,
   newbladeShareShowInviteCode: true,
   newbladeShareShowMemberAccount: false,
@@ -5786,7 +5811,7 @@ const handleModalClose = () => {
     newbladeResetMode: 'once',
     newbladeResetDays: 7,
     newbladeAllowReenterAfterClaim: false,
-    newbladeDistributionMethod: 'player_claim_expires',
+    newbladeDistributionMethod: 'player_claim_auto_after_expire',
     newbladeRewardExpirationDays: 1,
     newbladeFinalRewardType: 'fixed',
     newbladeFinalRewardFixed: 100,
@@ -5800,10 +5825,11 @@ const handleModalClose = () => {
     newbladeRequiredDrawsMin: 10,
     newbladeRequiredDrawsMax: 20,
     newbladeRequiredDrawsExpected: 10,
-    newbladeGiftDailyLogin: true,
+    newbladeGiftDailyLogin: false,
     newbladeGiftOnlineMinutes: 0,
+    newbladeGiftOnlineHours: null,
     newbladeHomeSpinReminder: false,
-    newbladeAccumulateTasks: true,
+    newbladeAccumulateTasks: false,
     newbladeTasks: [{ id: 'invite_1', type: 'invite', value: 1, weight: 1 }],
     newbladeValidMemberMode: 'register_login',
     newbladeSameIpLimit: 0,
@@ -5813,12 +5839,30 @@ const handleModalClose = () => {
     newbladePopupStyle: 'lottery',
     newbladeDisplayOnAgentPage: false,
     newbladeWheelSlotCount: 4,
+    newbladeWheelSlots: [
+      { type: 'random', amount: 0, weight: 1, icon: '' },
+      { type: 'fixed', amount: 0, weight: 0, icon: '' },
+      { type: 'fixed', amount: 0, weight: 0, icon: '' },
+      { type: 'fixed', amount: 0, weight: 0, icon: '' },
+    ],
     newbladeDrawStyle: 'turntable_1',
     newbladeBgColor: '#0d4f3c',
     newbladeFirstDrawStyle: 'chest',
+    newbladeHubAssetUrl:
+      'http://media.cheshi8899.com/media/media-1787060941699-101343003-kyd_style_1_zp_2_2.avif',
+    newbladeWheelAssetUrl:
+      'http://media.cheshi8899.com/media/media-1787060960569-287791186.webp',
+    newbladeSegmentAssetUrl:
+      'http://media.cheshi8899.com/media/media-1787060969798-853196446-kyd_style_1_zp_4.avif',
+    newbladeWinEffectAssetUrl:
+      'http://media.cheshi8899.com/media/media-1787095174855-312850869.png',
+    newbladeFrameAssetUrl:
+      'http://media.cheshi8899.com/media/media-1787095251131-193211716.webp',
+    newbladeSpinAssetUrl:
+      'http://media.cheshi8899.com/media/media-1787097571130-8116396.webp',
     newbladeEnableWinningAnnouncement: false,
     newbladeEnableBurstNotify: false,
-    newbladePromoShareImagesText: '',
+    newbladePromoShareImages: [],
     newbladeShareShowActivityName: true,
     newbladeShareShowInviteCode: true,
     newbladeShareShowMemberAccount: false,
@@ -6645,10 +6689,11 @@ const handleSubmit = async () => {
       formData.activityType === 'newblade' ||
       formData.activityType === 'soft'
     ) {
-      const promoImages = String(formData.newbladePromoShareImagesText || '')
-        .split(/[,\n]/)
-        .map((s: string) => s.trim())
-        .filter(Boolean);
+      const promoImages = Array.isArray(formData.newbladePromoShareImages)
+        ? formData.newbladePromoShareImages
+            .map((s: string) => String(s || '').trim())
+            .filter(Boolean)
+        : [];
       Object.assign(configPayload, {
         resetMode: formData.newbladeResetMode,
         resetDays: formData.newbladeResetDays,
@@ -6668,7 +6713,11 @@ const handleSubmit = async () => {
         requiredDrawsMax: formData.newbladeRequiredDrawsMax,
         requiredDrawsExpected: formData.newbladeRequiredDrawsExpected,
         giftDailyLogin: Boolean(formData.newbladeGiftDailyLogin),
-        giftOnlineMinutes: formData.newbladeGiftOnlineMinutes || 0,
+        giftOnlineMinutes: (() => {
+          const hours = Number(formData.newbladeGiftOnlineHours);
+          if (hours > 0) return Math.min(24, Math.floor(hours)) * 60;
+          return Number(formData.newbladeGiftOnlineMinutes) || 0;
+        })(),
         homeSpinReminder: Boolean(formData.newbladeHomeSpinReminder),
         accumulateTasks: Boolean(formData.newbladeAccumulateTasks),
         tasks: Array.isArray(formData.newbladeTasks)
@@ -6687,9 +6736,39 @@ const handleSubmit = async () => {
         popupStyle: formData.newbladePopupStyle || 'lottery',
         displayOnAgentPage: Boolean(formData.newbladeDisplayOnAgentPage),
         wheelSlotCount: formData.newbladeWheelSlotCount || 4,
+        wheelSlots: Array.isArray(formData.newbladeWheelSlots)
+          ? formData.newbladeWheelSlots
+              .slice(0, Number(formData.newbladeWheelSlotCount) || 4)
+              .map((s: any) => ({
+                type: ['fixed', 'random', 'miss'].includes(s?.type)
+                  ? s.type
+                  : 'fixed',
+                amount:
+                  s?.type === 'fixed' ? Number(s.amount) || 0 : undefined,
+                weight:
+                  s?.type === 'fixed'
+                    ? 0
+                    : Math.max(0, Number(s?.weight) || 1),
+                label:
+                  s?.type === 'miss'
+                    ? '谢谢惠顾'
+                    : s?.type === 'random'
+                      ? '?'
+                      : String(s?.amount ?? ''),
+                icon: s?.icon ? String(s.icon).trim() : undefined,
+              }))
+          : [],
         drawStyle: formData.newbladeDrawStyle || 'turntable_1',
         bgColor: formData.newbladeBgColor || '#0d4f3c',
         firstDrawStyle: formData.newbladeFirstDrawStyle || 'chest',
+        hubAssetUrl: String(formData.newbladeHubAssetUrl || '').trim() || undefined,
+        wheelAssetUrl: String(formData.newbladeWheelAssetUrl || '').trim() || undefined,
+        segmentAssetUrl:
+          String(formData.newbladeSegmentAssetUrl || '').trim() || undefined,
+        winEffectAssetUrl:
+          String(formData.newbladeWinEffectAssetUrl || '').trim() || undefined,
+        frameAssetUrl: String(formData.newbladeFrameAssetUrl || '').trim() || undefined,
+        spinAssetUrl: String(formData.newbladeSpinAssetUrl || '').trim() || undefined,
         enableWinningAnnouncement: Boolean(
           formData.newbladeEnableWinningAnnouncement,
         ),
@@ -8213,9 +8292,16 @@ watch(
         formData.newbladeGiftOnlineMinutes = Number(
           cfg.giftOnlineMinutes ?? 0,
         );
+        formData.newbladeGiftOnlineHours =
+          formData.newbladeGiftOnlineMinutes > 0
+            ? Math.min(
+                24,
+                Math.max(1, Math.round(formData.newbladeGiftOnlineMinutes / 60)),
+              )
+            : null;
         formData.newbladeHomeSpinReminder = Boolean(cfg.homeSpinReminder);
         formData.newbladeAccumulateTasks = Boolean(
-          cfg.accumulateTasks ?? cfg.allowAccumulate ?? true,
+          cfg.accumulateTasks ?? cfg.allowAccumulate ?? false,
         );
         formData.newbladeTasks = Array.isArray(cfg.tasks) && cfg.tasks.length
           ? cfg.tasks.map((t: any, i: number) => ({
@@ -8245,18 +8331,61 @@ watch(
         )
           ? Number(cfg.wheelSlotCount ?? cfg.turntableCount)
           : 4;
+        const slotCount = formData.newbladeWheelSlotCount;
+        const rawSlots = Array.isArray(cfg.wheelSlots) ? cfg.wheelSlots : [];
+        formData.newbladeWheelSlots = Array.from(
+          { length: slotCount },
+          (_, i) => {
+            const s = rawSlots[i] || {};
+            const type = ['fixed', 'random', 'miss'].includes(String(s.type))
+              ? String(s.type)
+              : i === 0
+                ? 'random'
+                : 'fixed';
+            return {
+              type,
+              amount: Number(s.amount) || 0,
+              weight: Number(s.weight) || (type === 'fixed' ? 0 : 1),
+              icon: s.icon ? String(s.icon) : '',
+              label: s.label ? String(s.label) : '',
+            };
+          },
+        );
         formData.newbladeDrawStyle = cfg.drawStyle || 'turntable_1';
         formData.newbladeBgColor =
           cfg.bgColor || cfg.backgroundColor || '#0d4f3c';
         formData.newbladeFirstDrawStyle = cfg.firstDrawStyle || 'chest';
+        formData.newbladeHubAssetUrl =
+          cfg.hubAssetUrl ||
+          'http://media.cheshi8899.com/media/media-1787060941699-101343003-kyd_style_1_zp_2_2.avif';
+        formData.newbladeWheelAssetUrl =
+          cfg.wheelAssetUrl ||
+          'http://media.cheshi8899.com/media/media-1787060960569-287791186.webp';
+        formData.newbladeSegmentAssetUrl =
+          cfg.segmentAssetUrl ||
+          'http://media.cheshi8899.com/media/media-1787060969798-853196446-kyd_style_1_zp_4.avif';
+        formData.newbladeWinEffectAssetUrl =
+          cfg.winEffectAssetUrl ||
+          'http://media.cheshi8899.com/media/media-1787095174855-312850869.png';
+        formData.newbladeFrameAssetUrl =
+          cfg.frameAssetUrl ||
+          'http://media.cheshi8899.com/media/media-1787095251131-193211716.webp';
+        formData.newbladeSpinAssetUrl =
+          cfg.spinAssetUrl ||
+          'http://media.cheshi8899.com/media/media-1787097571130-8116396.webp';
         formData.newbladeEnableWinningAnnouncement = Boolean(
           cfg.enableWinningAnnouncement,
         );
         formData.newbladeEnableBurstNotify = Boolean(cfg.enableBurstNotify);
         const images = cfg.promoShareImages ?? cfg.shareImages ?? [];
-        formData.newbladePromoShareImagesText = Array.isArray(images)
-          ? images.join(', ')
-          : '';
+        formData.newbladePromoShareImages = Array.isArray(images)
+          ? images.map((u: unknown) => String(u || '').trim()).filter(Boolean)
+          : typeof images === 'string' && images
+            ? String(images)
+                .split(/[,\n]/)
+                .map((s: string) => s.trim())
+                .filter(Boolean)
+            : [];
         const overlay = cfg.shareOverlayFlags || {};
         formData.newbladeShareShowActivityName =
           overlay.showActivityName !== false;

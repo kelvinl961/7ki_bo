@@ -2740,6 +2740,16 @@
                     </div>
                   </template>
 
+                  <!-- 新砍一刀 / soft gameplay fields -->
+                  <template
+                    v-if="
+                      formData.activityType === 'newblade' ||
+                      formData.activityType === 'soft'
+                    "
+                  >
+                    <NewbladeConfigFields :form-data="formData" />
+                  </template>
+
                   <!-- Guessing/Competition Specific Fields (only for 竞猜 type) -->
                   <template v-if="formData.activityType === 'guessing'">
                     <!-- Team/Match Configuration -->
@@ -4511,6 +4521,9 @@ import { defineAsyncComponent } from 'vue';
 const MediaLibrarySelector = defineAsyncComponent(
   () => import('#/components/MediaLibrarySelector.vue'),
 );
+const NewbladeConfigFields = defineAsyncComponent(
+  () => import('./NewbladeConfigFields.vue'),
+);
 const RichTextEditor = defineAsyncComponent(
   () => import('#/components/common/RichTextEditor.vue'),
 );
@@ -5022,6 +5035,77 @@ const formData = reactive({
   collectConditions: [
     { type: 'valid_bet', conditionValue: '', dailyCountLimit: '' },
   ] as { type: string; conditionValue: string; dailyCountLimit: string }[],
+
+  // 新砍一刀 / soft
+  newbladeResetMode: 'once' as 'once' | 'custom_days',
+  newbladeResetDays: 7,
+  newbladeAllowReenterAfterClaim: false,
+  newbladeDistributionMethod: 'player_claim_auto_after_expire',
+  newbladeRewardExpirationDays: 1,
+  newbladeFinalRewardType: 'fixed' as 'fixed' | 'random',
+  newbladeFinalRewardFixed: 100,
+  newbladeFinalRewardMin: 100,
+  newbladeFinalRewardMax: 1000,
+  newbladeFinalRewardExpected: 300,
+  newbladeFirstSpinMin: 10,
+  newbladeFirstSpinMax: 90,
+  newbladeFirstSpinExpected: 50,
+  newbladeFirstSpinRequiresTask: false,
+  newbladeRequiredDrawsMin: 10,
+  newbladeRequiredDrawsMax: 20,
+  newbladeRequiredDrawsExpected: 10,
+  newbladeGiftDailyLogin: false,
+  newbladeGiftOnlineMinutes: 0,
+  newbladeGiftOnlineHours: null as number | null,
+  newbladeHomeSpinReminder: false,
+  newbladeAccumulateTasks: false,
+  newbladeTasks: [{ id: 'invite_1', type: 'invite', value: 1, weight: 1 }] as {
+    id: string;
+    type: string;
+    value: number;
+    weight: number;
+  }[],
+  newbladeValidMemberMode: 'register_login' as 'register_login' | 'strict',
+  newbladeSameIpLimit: 0,
+  newbladeSameDeviceLimit: 0,
+  newbladeBeforeLoginPopup: 'none',
+  newbladeAfterLoginPopup: 'none',
+  newbladePopupStyle: 'lottery' as 'lottery' | 'promo_image',
+  newbladeDisplayOnAgentPage: false,
+  newbladeWheelSlotCount: 4,
+  newbladeWheelSlots: [
+    { type: 'random', amount: 0, weight: 1, icon: '' },
+    { type: 'fixed', amount: 0, weight: 0, icon: '' },
+    { type: 'fixed', amount: 0, weight: 0, icon: '' },
+    { type: 'fixed', amount: 0, weight: 0, icon: '' },
+  ] as Array<{
+    type: string;
+    amount?: number;
+    weight?: number;
+    icon?: string;
+    label?: string;
+  }>,
+  newbladeDrawStyle: 'turntable_1',
+  newbladeBgColor: '#0d4f3c',
+  newbladeFirstDrawStyle: 'chest',
+  newbladeHubAssetUrl:
+    'http://media.cheshi8899.com/media/media-1787060941699-101343003-kyd_style_1_zp_2_2.avif',
+  newbladeWheelAssetUrl:
+    'http://media.cheshi8899.com/media/media-1787060960569-287791186.webp',
+  newbladeSegmentAssetUrl:
+    'http://media.cheshi8899.com/media/media-1787060969798-853196446-kyd_style_1_zp_4.avif',
+  newbladeWinEffectAssetUrl:
+    'http://media.cheshi8899.com/media/media-1787095174855-312850869.png',
+  newbladeFrameAssetUrl:
+    'http://media.cheshi8899.com/media/media-1787095251131-193211716.webp',
+  newbladeSpinAssetUrl:
+    'http://media.cheshi8899.com/media/media-1787097571130-8116396.webp',
+  newbladeEnableWinningAnnouncement: false,
+  newbladeEnableBurstNotify: false,
+  newbladePromoShareImages: [] as string[],
+  newbladeShareShowActivityName: true,
+  newbladeShareShowInviteCode: true,
+  newbladeShareShowMemberAccount: false,
 
   // Guessing/Competition Specific Fields
   guessingTeams: [
@@ -5723,6 +5807,66 @@ const handleModalClose = () => {
       { type: 'valid_bet', conditionValue: '', dailyCountLimit: '' },
     ],
 
+    // 新砍一刀 / soft
+    newbladeResetMode: 'once',
+    newbladeResetDays: 7,
+    newbladeAllowReenterAfterClaim: false,
+    newbladeDistributionMethod: 'player_claim_auto_after_expire',
+    newbladeRewardExpirationDays: 1,
+    newbladeFinalRewardType: 'fixed',
+    newbladeFinalRewardFixed: 100,
+    newbladeFinalRewardMin: 100,
+    newbladeFinalRewardMax: 1000,
+    newbladeFinalRewardExpected: 300,
+    newbladeFirstSpinMin: 10,
+    newbladeFirstSpinMax: 90,
+    newbladeFirstSpinExpected: 50,
+    newbladeFirstSpinRequiresTask: false,
+    newbladeRequiredDrawsMin: 10,
+    newbladeRequiredDrawsMax: 20,
+    newbladeRequiredDrawsExpected: 10,
+    newbladeGiftDailyLogin: false,
+    newbladeGiftOnlineMinutes: 0,
+    newbladeGiftOnlineHours: null,
+    newbladeHomeSpinReminder: false,
+    newbladeAccumulateTasks: false,
+    newbladeTasks: [{ id: 'invite_1', type: 'invite', value: 1, weight: 1 }],
+    newbladeValidMemberMode: 'register_login',
+    newbladeSameIpLimit: 0,
+    newbladeSameDeviceLimit: 0,
+    newbladeBeforeLoginPopup: 'none',
+    newbladeAfterLoginPopup: 'none',
+    newbladePopupStyle: 'lottery',
+    newbladeDisplayOnAgentPage: false,
+    newbladeWheelSlotCount: 4,
+    newbladeWheelSlots: [
+      { type: 'random', amount: 0, weight: 1, icon: '' },
+      { type: 'fixed', amount: 0, weight: 0, icon: '' },
+      { type: 'fixed', amount: 0, weight: 0, icon: '' },
+      { type: 'fixed', amount: 0, weight: 0, icon: '' },
+    ],
+    newbladeDrawStyle: 'turntable_1',
+    newbladeBgColor: '#0d4f3c',
+    newbladeFirstDrawStyle: 'chest',
+    newbladeHubAssetUrl:
+      'http://media.cheshi8899.com/media/media-1787060941699-101343003-kyd_style_1_zp_2_2.avif',
+    newbladeWheelAssetUrl:
+      'http://media.cheshi8899.com/media/media-1787060960569-287791186.webp',
+    newbladeSegmentAssetUrl:
+      'http://media.cheshi8899.com/media/media-1787060969798-853196446-kyd_style_1_zp_4.avif',
+    newbladeWinEffectAssetUrl:
+      'http://media.cheshi8899.com/media/media-1787095174855-312850869.png',
+    newbladeFrameAssetUrl:
+      'http://media.cheshi8899.com/media/media-1787095251131-193211716.webp',
+    newbladeSpinAssetUrl:
+      'http://media.cheshi8899.com/media/media-1787097571130-8116396.webp',
+    newbladeEnableWinningAnnouncement: false,
+    newbladeEnableBurstNotify: false,
+    newbladePromoShareImages: [],
+    newbladeShareShowActivityName: true,
+    newbladeShareShowInviteCode: true,
+    newbladeShareShowMemberAccount: false,
+
     // Guessing/Competition Specific Fields
     guessingTeams: [
       { chineseName: '', englishName: '', icon: '' },
@@ -5798,6 +5942,41 @@ function resolveActivityTitle(item: any): string {
     if (candidate && candidate !== placeholder) return candidate;
   }
   return fromLocales || item?.title || item?.config?.title || '';
+}
+
+/** Build locales for create/update from primary title + 更多语言 translations. */
+function buildLocalesForSubmit(): Array<{
+  locale: string;
+  title: string;
+  description: string;
+}> {
+  const description = resolveRulesForSubmit();
+  const primary = (formData.title || '').trim();
+  const codes = ['zh-CN', 'en-US', 'pt-BR'] as const;
+  const out: Array<{ locale: string; title: string; description: string }> = [];
+  for (const code of codes) {
+    const translated = (formData.translations[code] || '').trim();
+    const title = translated || primary;
+    if (!title) continue;
+    out.push({ locale: code, title, description });
+  }
+  if (out.length === 0 && primary) {
+    out.push({ locale: 'zh-CN', title: primary, description });
+  }
+  return out;
+}
+
+function hydrateTranslationsFromLocales(
+  locales: Array<{ locale?: string; title?: string }> | undefined,
+): Record<string, string> {
+  const next: Record<string, string> = {};
+  if (!Array.isArray(locales)) return next;
+  for (const row of locales) {
+    if (row?.locale && typeof row.title === 'string' && row.title.trim()) {
+      next[row.locale] = row.title;
+    }
+  }
+  return next;
 }
 
 // URL validation for custom target URL
@@ -6505,6 +6684,104 @@ const handleSubmit = async () => {
       })(),
     };
 
+    // 新砍一刀 / soft — only persist gameplay keys for these types
+    if (
+      formData.activityType === 'newblade' ||
+      formData.activityType === 'soft'
+    ) {
+      const promoImages = Array.isArray(formData.newbladePromoShareImages)
+        ? formData.newbladePromoShareImages
+            .map((s: string) => String(s || '').trim())
+            .filter(Boolean)
+        : [];
+      Object.assign(configPayload, {
+        resetMode: formData.newbladeResetMode,
+        resetDays: formData.newbladeResetDays,
+        allowReenterAfterClaim: Boolean(formData.newbladeAllowReenterAfterClaim),
+        distributionMethod: formData.newbladeDistributionMethod,
+        rewardExpirationDays: formData.newbladeRewardExpirationDays,
+        finalRewardType: formData.newbladeFinalRewardType,
+        finalRewardFixed: formData.newbladeFinalRewardFixed,
+        finalRewardMin: formData.newbladeFinalRewardMin,
+        finalRewardMax: formData.newbladeFinalRewardMax,
+        finalRewardExpected: formData.newbladeFinalRewardExpected,
+        firstSpinMin: formData.newbladeFirstSpinMin,
+        firstSpinMax: formData.newbladeFirstSpinMax,
+        firstSpinExpected: formData.newbladeFirstSpinExpected,
+        firstSpinRequiresTask: Boolean(formData.newbladeFirstSpinRequiresTask),
+        requiredDrawsMin: formData.newbladeRequiredDrawsMin,
+        requiredDrawsMax: formData.newbladeRequiredDrawsMax,
+        requiredDrawsExpected: formData.newbladeRequiredDrawsExpected,
+        giftDailyLogin: Boolean(formData.newbladeGiftDailyLogin),
+        giftOnlineMinutes: (() => {
+          const hours = Number(formData.newbladeGiftOnlineHours);
+          if (hours > 0) return Math.min(24, Math.floor(hours)) * 60;
+          return Number(formData.newbladeGiftOnlineMinutes) || 0;
+        })(),
+        homeSpinReminder: Boolean(formData.newbladeHomeSpinReminder),
+        accumulateTasks: Boolean(formData.newbladeAccumulateTasks),
+        tasks: Array.isArray(formData.newbladeTasks)
+          ? formData.newbladeTasks.map((t: any, i: number) => ({
+              id: t.id || `task_${i}`,
+              type: t.type || 'invite',
+              value: Number(t.value) || 1,
+              weight: Number(t.weight) || 1,
+            }))
+          : [],
+        validMemberMode: formData.newbladeValidMemberMode,
+        sameIpLimit: formData.newbladeSameIpLimit || 0,
+        sameDeviceLimit: formData.newbladeSameDeviceLimit || 0,
+        beforeLoginPopup: formData.newbladeBeforeLoginPopup || 'none',
+        afterLoginPopup: formData.newbladeAfterLoginPopup || 'none',
+        popupStyle: formData.newbladePopupStyle || 'lottery',
+        displayOnAgentPage: Boolean(formData.newbladeDisplayOnAgentPage),
+        wheelSlotCount: formData.newbladeWheelSlotCount || 4,
+        wheelSlots: Array.isArray(formData.newbladeWheelSlots)
+          ? formData.newbladeWheelSlots
+              .slice(0, Number(formData.newbladeWheelSlotCount) || 4)
+              .map((s: any) => ({
+                type: ['fixed', 'random', 'miss'].includes(s?.type)
+                  ? s.type
+                  : 'fixed',
+                amount:
+                  s?.type === 'fixed' ? Number(s.amount) || 0 : undefined,
+                weight:
+                  s?.type === 'fixed'
+                    ? 0
+                    : Math.max(0, Number(s?.weight) || 1),
+                label:
+                  s?.type === 'miss'
+                    ? '谢谢惠顾'
+                    : s?.type === 'random'
+                      ? '?'
+                      : String(s?.amount ?? ''),
+                icon: s?.icon ? String(s.icon).trim() : undefined,
+              }))
+          : [],
+        drawStyle: formData.newbladeDrawStyle || 'turntable_1',
+        bgColor: formData.newbladeBgColor || '#0d4f3c',
+        firstDrawStyle: formData.newbladeFirstDrawStyle || 'chest',
+        hubAssetUrl: String(formData.newbladeHubAssetUrl || '').trim() || undefined,
+        wheelAssetUrl: String(formData.newbladeWheelAssetUrl || '').trim() || undefined,
+        segmentAssetUrl:
+          String(formData.newbladeSegmentAssetUrl || '').trim() || undefined,
+        winEffectAssetUrl:
+          String(formData.newbladeWinEffectAssetUrl || '').trim() || undefined,
+        frameAssetUrl: String(formData.newbladeFrameAssetUrl || '').trim() || undefined,
+        spinAssetUrl: String(formData.newbladeSpinAssetUrl || '').trim() || undefined,
+        enableWinningAnnouncement: Boolean(
+          formData.newbladeEnableWinningAnnouncement,
+        ),
+        enableBurstNotify: Boolean(formData.newbladeEnableBurstNotify),
+        promoShareImages: promoImages,
+        shareOverlayFlags: {
+          showActivityName: Boolean(formData.newbladeShareShowActivityName),
+          showInviteCode: Boolean(formData.newbladeShareShowInviteCode),
+          showMemberAccount: Boolean(formData.newbladeShareShowMemberAccount),
+        },
+      });
+    }
+
     console.log('🔍 Debug - ConfigPayload before submission:', configPayload);
 
     // Promotion uses promotionWageringPlatform* — do not persist wagering-activity defaults into config
@@ -6660,6 +6937,7 @@ const handleSubmit = async () => {
             }
           : {}),
         config: configPayload,
+        locales: buildLocalesForSubmit(),
       };
 
       console.log('🚀 Debug - Final UPDATE payload:', updatePayload);
@@ -6750,18 +7028,7 @@ const handleSubmit = async () => {
           : {}),
         config: configPayload,
         createdBy: 1,
-        locales: [
-          {
-            locale: 'pt-BR',
-            title: formData.title,
-            description: resolveRulesForSubmit(),
-          },
-          {
-            locale: 'zh-CN',
-            title: formData.title,
-            description: resolveRulesForSubmit(),
-          },
-        ],
+        locales: buildLocalesForSubmit(),
       };
 
       console.log('🚀 Debug - Final CREATE payload:', createPayload);
@@ -7520,6 +7787,11 @@ watch(
       // Populate form with editing item data (prefer values from config)
       Object.assign(formData, {
         title: resolveActivityTitle(newItem),
+        translations: hydrateTranslationsFromLocales(
+          (newItem as any).locales as
+            | Array<{ locale?: string; title?: string }>
+            | undefined,
+        ),
         activityType: (() => {
           const raw = (newItem as any).type || 'recharge';
           // Legacy BO used "invest"; API canonical type is "investment"
@@ -7959,6 +8231,169 @@ watch(
           directPopupAfterRecharge: formData.directPopupAfterRecharge,
           rewardExpirationDays: formData.rewardExpirationDays,
         });
+      }
+
+      // 新砍一刀 / soft
+      if (
+        (newItem as any).type === 'newblade' ||
+        (newItem as any).type === 'soft'
+      ) {
+        const cfg = ((newItem as any).config || {}) as Record<string, any>;
+        formData.newbladeResetMode =
+          cfg.resetMode === 'custom_days' ||
+          cfg.resetMode === 'custom' ||
+          cfg.resetMode === 'days'
+            ? 'custom_days'
+            : 'once';
+        formData.newbladeResetDays = Number(cfg.resetDays ?? 7) || 7;
+        formData.newbladeAllowReenterAfterClaim = Boolean(
+          cfg.allowReenterAfterClaim ?? cfg.reenterAfterClaim ?? false,
+        );
+        formData.newbladeDistributionMethod =
+          cfg.distributionMethod || 'player_claim_expires';
+        formData.newbladeRewardExpirationDays = Number(
+          cfg.rewardExpirationDays ?? cfg.claimExpiryDays ?? 1,
+        );
+        formData.newbladeFinalRewardType =
+          cfg.finalRewardType === 'random' ? 'random' : 'fixed';
+        formData.newbladeFinalRewardFixed = Number(
+          cfg.finalRewardFixed ?? cfg.rewardAmount ?? 100,
+        );
+        formData.newbladeFinalRewardMin = Number(cfg.finalRewardMin ?? 100);
+        formData.newbladeFinalRewardMax = Number(cfg.finalRewardMax ?? 1000);
+        formData.newbladeFinalRewardExpected = Number(
+          cfg.finalRewardExpected ?? cfg.expectedBonus ?? 300,
+        );
+        formData.newbladeFirstSpinMin = Number(
+          cfg.firstSpinMin ?? cfg.firstWinMin ?? 10,
+        );
+        formData.newbladeFirstSpinMax = Number(
+          cfg.firstSpinMax ?? cfg.firstWinMax ?? 90,
+        );
+        formData.newbladeFirstSpinExpected = Number(
+          cfg.firstSpinExpected ?? cfg.firstWinExpected ?? 50,
+        );
+        formData.newbladeFirstSpinRequiresTask = Boolean(
+          cfg.firstSpinRequiresTask ?? false,
+        );
+        formData.newbladeRequiredDrawsMin = Number(
+          cfg.requiredDrawsMin ?? 10,
+        );
+        formData.newbladeRequiredDrawsMax = Number(
+          cfg.requiredDrawsMax ?? 20,
+        );
+        formData.newbladeRequiredDrawsExpected = Number(
+          cfg.requiredDrawsExpected ?? formData.newbladeRequiredDrawsMin,
+        );
+        formData.newbladeGiftDailyLogin =
+          cfg.giftDailyLogin !== undefined
+            ? Boolean(cfg.giftDailyLogin)
+            : true;
+        formData.newbladeGiftOnlineMinutes = Number(
+          cfg.giftOnlineMinutes ?? 0,
+        );
+        formData.newbladeGiftOnlineHours =
+          formData.newbladeGiftOnlineMinutes > 0
+            ? Math.min(
+                24,
+                Math.max(1, Math.round(formData.newbladeGiftOnlineMinutes / 60)),
+              )
+            : null;
+        formData.newbladeHomeSpinReminder = Boolean(cfg.homeSpinReminder);
+        formData.newbladeAccumulateTasks = Boolean(
+          cfg.accumulateTasks ?? cfg.allowAccumulate ?? false,
+        );
+        formData.newbladeTasks = Array.isArray(cfg.tasks) && cfg.tasks.length
+          ? cfg.tasks.map((t: any, i: number) => ({
+              id: t.id || `task_${i}`,
+              type: t.type || 'invite',
+              value: Number(t.value ?? t.threshold ?? 1) || 1,
+              weight: Number(t.weight ?? 1) || 1,
+            }))
+          : [{ id: 'invite_1', type: 'invite', value: 1, weight: 1 }];
+        formData.newbladeValidMemberMode =
+          cfg.validMemberMode === 'strict' ? 'strict' : 'register_login';
+        formData.newbladeSameIpLimit = Number(
+          cfg.sameIpLimit ?? cfg.promotionSameIPLimit ?? 0,
+        );
+        formData.newbladeSameDeviceLimit = Number(
+          cfg.sameDeviceLimit ?? cfg.promotionSameDeviceLimit ?? 0,
+        );
+        formData.newbladeBeforeLoginPopup = cfg.beforeLoginPopup || 'none';
+        formData.newbladeAfterLoginPopup = cfg.afterLoginPopup || 'none';
+        formData.newbladePopupStyle =
+          cfg.popupStyle === 'promo_image' ? 'promo_image' : 'lottery';
+        formData.newbladeDisplayOnAgentPage = Boolean(
+          cfg.displayOnAgentPage ?? cfg.promotionDisplayOnAgentPage,
+        );
+        formData.newbladeWheelSlotCount = [4, 6, 8, 10, 12].includes(
+          Number(cfg.wheelSlotCount ?? cfg.turntableCount),
+        )
+          ? Number(cfg.wheelSlotCount ?? cfg.turntableCount)
+          : 4;
+        const slotCount = formData.newbladeWheelSlotCount;
+        const rawSlots = Array.isArray(cfg.wheelSlots) ? cfg.wheelSlots : [];
+        formData.newbladeWheelSlots = Array.from(
+          { length: slotCount },
+          (_, i) => {
+            const s = rawSlots[i] || {};
+            const type = ['fixed', 'random', 'miss'].includes(String(s.type))
+              ? String(s.type)
+              : i === 0
+                ? 'random'
+                : 'fixed';
+            return {
+              type,
+              amount: Number(s.amount) || 0,
+              weight: Number(s.weight) || (type === 'fixed' ? 0 : 1),
+              icon: s.icon ? String(s.icon) : '',
+              label: s.label ? String(s.label) : '',
+            };
+          },
+        );
+        formData.newbladeDrawStyle = cfg.drawStyle || 'turntable_1';
+        formData.newbladeBgColor =
+          cfg.bgColor || cfg.backgroundColor || '#0d4f3c';
+        formData.newbladeFirstDrawStyle = cfg.firstDrawStyle || 'chest';
+        formData.newbladeHubAssetUrl =
+          cfg.hubAssetUrl ||
+          'http://media.cheshi8899.com/media/media-1787060941699-101343003-kyd_style_1_zp_2_2.avif';
+        formData.newbladeWheelAssetUrl =
+          cfg.wheelAssetUrl ||
+          'http://media.cheshi8899.com/media/media-1787060960569-287791186.webp';
+        formData.newbladeSegmentAssetUrl =
+          cfg.segmentAssetUrl ||
+          'http://media.cheshi8899.com/media/media-1787060969798-853196446-kyd_style_1_zp_4.avif';
+        formData.newbladeWinEffectAssetUrl =
+          cfg.winEffectAssetUrl ||
+          'http://media.cheshi8899.com/media/media-1787095174855-312850869.png';
+        formData.newbladeFrameAssetUrl =
+          cfg.frameAssetUrl ||
+          'http://media.cheshi8899.com/media/media-1787095251131-193211716.webp';
+        formData.newbladeSpinAssetUrl =
+          cfg.spinAssetUrl ||
+          'http://media.cheshi8899.com/media/media-1787097571130-8116396.webp';
+        formData.newbladeEnableWinningAnnouncement = Boolean(
+          cfg.enableWinningAnnouncement,
+        );
+        formData.newbladeEnableBurstNotify = Boolean(cfg.enableBurstNotify);
+        const images = cfg.promoShareImages ?? cfg.shareImages ?? [];
+        formData.newbladePromoShareImages = Array.isArray(images)
+          ? images.map((u: unknown) => String(u || '').trim()).filter(Boolean)
+          : typeof images === 'string' && images
+            ? String(images)
+                .split(/[,\n]/)
+                .map((s: string) => s.trim())
+                .filter(Boolean)
+            : [];
+        const overlay = cfg.shareOverlayFlags || {};
+        formData.newbladeShareShowActivityName =
+          overlay.showActivityName !== false;
+        formData.newbladeShareShowInviteCode =
+          overlay.showInviteCode !== false;
+        formData.newbladeShareShowMemberAccount = Boolean(
+          overlay.showMemberAccount,
+        );
       }
 
       // Load wagering specific configuration

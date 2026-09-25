@@ -1096,6 +1096,12 @@ export interface WalletTransactionListParams {
   pageSize?: number;
   date?: 'all' | 'custom' | 'month' | 'today' | 'week' | 'yesterday';
   category?: string;
+  /** Multi-select 大类 keys. */
+  categories?: string[];
+  /** Game provider codes for 资金切换 小类 (comma-joined on wire). */
+  providers?: string[];
+  /** Metadata subcategory / manual subtype keys. */
+  subcategories?: string[];
   startDate?: string;
   endDate?: string;
   forceRefresh?: boolean;
@@ -1136,6 +1142,9 @@ export async function getUserWalletTransactionsApi(
     pageSize = 20,
     date = 'all',
     category = 'all',
+    categories,
+    providers,
+    subcategories,
     startDate,
     endDate,
     forceRefresh = false,
@@ -1148,6 +1157,15 @@ export async function getUserWalletTransactionsApi(
     category,
   });
 
+  if (categories?.length) {
+    queryParams.append('categories', categories.join(','));
+  }
+  if (providers?.length) {
+    queryParams.append('providers', providers.join(','));
+  }
+  if (subcategories?.length) {
+    queryParams.append('subcategories', subcategories.join(','));
+  }
   if (startDate) queryParams.append('startDate', startDate);
   if (endDate) queryParams.append('endDate', endDate);
   if (forceRefresh) queryParams.append('forceRefresh', 'true');
@@ -1184,6 +1202,59 @@ export async function getUserWalletTransactionsApi(
     cached: response.cached,
     cacheSource: response.cacheSource,
   };
+}
+
+/** Nested session bet summary for funding transfer_in / transfer_out expand. */
+export interface FundingTransferSessionSummaryRow {
+  startTime: string | Date | null;
+  endTime: string | Date | null;
+  platform: string;
+  category: string;
+  gameName: string;
+  betCount: number;
+  betAmount: number;
+  validBet: number;
+  withholdingTax: number;
+  memberWinLoss: number;
+}
+
+export interface FundingTransferSessionSummaryTotals {
+  betCount: number;
+  betAmount: number;
+  validBet: number;
+  withholdingTax: number;
+  memberWinLoss: number;
+}
+
+export interface FundingTransferSessionSummaryData {
+  txId: string;
+  transferType: 'transfer_in' | 'transfer_out' | string;
+  session: {
+    sessionId: string;
+    start: string | Date | null;
+    end: string | Date | null;
+    provider: string | null;
+  };
+  rows: FundingTransferSessionSummaryRow[];
+  totals: FundingTransferSessionSummaryTotals;
+}
+
+/**
+ * GET /api/user-history/admin/users/:userId/funding-changes/:txId/session-summary
+ * Lazy-load per-session bet aggregates for BO expand on 资金切换 rows.
+ */
+export async function getFundingTransferSessionSummaryApi(
+  userId: number,
+  txId: string | number,
+): Promise<FundingTransferSessionSummaryData> {
+  const response = await requestClient.get(
+    `/user-history/admin/users/${userId}/funding-changes/${txId}/session-summary`,
+  );
+  const data =
+    (response as any)?.data?.data ??
+    (response as any)?.data ??
+    response;
+  return data as FundingTransferSessionSummaryData;
 }
 
 /** Active game session + stuck balance preview for BO 人工拉回 */

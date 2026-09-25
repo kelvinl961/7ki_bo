@@ -178,6 +178,14 @@
             <div class="lw-asset-group">
               <div class="lw-asset-group__title">{{ $t('activity.luckyWheelEdit.assetGroupWheel') }}</div>
               <div class="lw-asset-grid">
+                <n-form-item :label="$t('activity.luckyWheelEdit.k8d443')" label-placement="top">
+                  <MediaLibrarySelector
+                    v-model="form.wheelAssetUrl"
+                    category="promotion"
+                    :accept-types="['image']"
+                    :placeholder="$t('activity.luckyWheelEdit.k8d446')"
+                  />
+                </n-form-item>
                 <n-form-item :label="$t('activity.luckyWheelEdit.k8d442')" label-placement="top">
                   <MediaLibrarySelector
                     v-model="form.bannerAssetUrl"
@@ -186,9 +194,17 @@
                     :placeholder="$t('activity.luckyWheelEdit.k8d446')"
                   />
                 </n-form-item>
-                <n-form-item :label="$t('activity.luckyWheelEdit.k8d443')" label-placement="top">
+                <n-form-item :label="$t('activity.luckyWheelEdit.k8d444')" label-placement="top">
                   <MediaLibrarySelector
-                    v-model="form.wheelAssetUrl"
+                    v-model="form.pointerAssetUrl"
+                    category="promotion"
+                    :accept-types="['image']"
+                    :placeholder="$t('activity.luckyWheelEdit.k8d446')"
+                  />
+                </n-form-item>
+                <n-form-item :label="$t('activity.luckyWheelEdit.hubAsset')" label-placement="top">
+                  <MediaLibrarySelector
+                    v-model="form.hubAssetUrl"
                     category="promotion"
                     :accept-types="['image']"
                     :placeholder="$t('activity.luckyWheelEdit.k8d446')"
@@ -210,15 +226,8 @@
                     :placeholder="$t('activity.luckyWheelEdit.k8d446')"
                   />
                 </n-form-item>
-                <n-form-item :label="$t('activity.luckyWheelEdit.k8d444')" label-placement="top">
-                  <MediaLibrarySelector
-                    v-model="form.pointerAssetUrl"
-                    category="promotion"
-                    :accept-types="['image']"
-                    :placeholder="$t('activity.luckyWheelEdit.k8d446')"
-                  />
-                </n-form-item>
               </div>
+              <div class="lw-asset-group__hint">{{ $t('activity.luckyWheelEdit.k8d447') }}</div>
             </div>
 
             <div class="lw-asset-group">
@@ -416,6 +425,7 @@ const form = reactive({
   wheelAssetUrl: '',
   frameAssetUrl: '',
   pointerAssetUrl: '',
+  hubAssetUrl: '',
   modalTopAssetUrl: '',
   modalBottomAssetUrl: '',
   spinAssetUrl: '',
@@ -642,6 +652,7 @@ function applyWheel(w: LuckyWheelItem) {
   form.wheelAssetUrl = w.wheelAssetUrl ?? '';
   form.frameAssetUrl = w.frameAssetUrl ?? '';
   form.pointerAssetUrl = w.pointerAssetUrl ?? '';
+  form.hubAssetUrl = w.hubAssetUrl ?? '';
   form.modalTopAssetUrl = w.modalTopAssetUrl ?? '';
   form.modalBottomAssetUrl = w.modalBottomAssetUrl ?? '';
   form.spinAssetUrl = w.spinAssetUrl ?? '';
@@ -672,6 +683,7 @@ function applyCreateDefaults() {
   form.wheelAssetUrl = '';
   form.frameAssetUrl = '';
   form.pointerAssetUrl = '';
+  form.hubAssetUrl = '';
   form.modalTopAssetUrl = '';
   form.modalBottomAssetUrl = '';
   form.spinAssetUrl = '';
@@ -790,6 +802,7 @@ async function handleSave() {
       wheelAssetUrl: form.wheelAssetUrl.trim() || null,
       frameAssetUrl: form.frameAssetUrl.trim() || null,
       pointerAssetUrl: form.pointerAssetUrl.trim() || null,
+      hubAssetUrl: form.hubAssetUrl.trim() || null,
       modalTopAssetUrl: form.modalTopAssetUrl.trim() || null,
       modalBottomAssetUrl: form.modalBottomAssetUrl.trim() || null,
       spinAssetUrl: form.spinAssetUrl.trim() || null,
@@ -870,6 +883,12 @@ async function handleSave() {
   font-weight: 600;
   color: rgb(55 65 81);
   margin-bottom: 8px;
+}
+.lw-asset-group__hint {
+  margin: 4px 0 10px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: rgb(107 114 128);
 }
 .lw-asset-grid {
   display: grid;

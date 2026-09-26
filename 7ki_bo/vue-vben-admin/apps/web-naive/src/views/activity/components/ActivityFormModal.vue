@@ -5373,10 +5373,19 @@ const mapFrontendToBackendDistributionMethod = (
 ): string => {
   const mapping: Record<string, string> = {
     expired_auto: 'auto_claim',
+    expired_invalid: 'manual_review', // 玩家自领-过期作废
+    manual_distribution: 'manual_review',
     self_claim_expire: 'manual_review',
     manual: 'manual_review',
     auto: 'direct',
+    daily_auto: 'auto_claim',
+    daily_claim: 'auto_claim',
     bonus: 'bonus_wallet',
+    // already-backend values
+    direct: 'direct',
+    bonus_wallet: 'bonus_wallet',
+    manual_review: 'manual_review',
+    auto_claim: 'auto_claim',
   };
   return mapping[frontendValue] || 'auto_claim';
 };
@@ -5494,6 +5503,22 @@ const mapBackendToFrontendDistributionMethod = (
     manual_review: 'self_claim_expire',
     direct: 'auto',
     bonus_wallet: 'bonus',
+  };
+  return mapping[backendValue || ''] || 'expired_auto';
+};
+
+/** Agent BO radios: expired_invalid | expired_auto | manual_distribution */
+const mapBackendToFrontendAgentDistributionMethod = (
+  backendValue?: string,
+): string => {
+  const mapping: Record<string, string> = {
+    auto_claim: 'expired_auto',
+    manual_review: 'expired_invalid',
+    direct: 'expired_auto',
+    bonus_wallet: 'expired_auto',
+    expired_auto: 'expired_auto',
+    expired_invalid: 'expired_invalid',
+    manual_distribution: 'manual_distribution',
   };
   return mapping[backendValue || ''] || 'expired_auto';
 };
@@ -6523,9 +6548,11 @@ const handleSubmit = async () => {
             startTime: time.startTime,
             endTime: time.endTime,
           })) || [],
-      // Agent specific fields
+      // Agent specific fields — map BO radio values to API enums
       agentDisplayOnAgentPage: formData.agentDisplayOnAgentPage,
-      agentDistributionMethod: formData.agentDistributionMethod,
+      agentDistributionMethod: mapFrontendToBackendDistributionMethod(
+        formData.agentDistributionMethod,
+      ),
       agentRewardClaimExpiryDays: formData.agentRewardClaimExpiryDays,
       agentRewardCycle: formData.agentRewardCycle,
       agentRewardType: formData.agentRewardType,
@@ -8650,8 +8677,9 @@ watch(
       const cfg = (newItem as any).config || {};
       formData.agentDisplayOnAgentPage =
         cfg.agentDisplayOnAgentPage ?? formData.agentDisplayOnAgentPage;
-      formData.agentDistributionMethod =
-        cfg.agentDistributionMethod || formData.agentDistributionMethod;
+      formData.agentDistributionMethod = mapBackendToFrontendAgentDistributionMethod(
+        cfg.agentDistributionMethod || formData.agentDistributionMethod,
+      );
       formData.agentRewardClaimExpiryDays =
         cfg.agentRewardClaimExpiryDays || formData.agentRewardClaimExpiryDays;
       formData.agentRewardCycle =

@@ -6538,6 +6538,32 @@ const handleSubmit = async () => {
           minRecharge: parseFloat(String(setting.rebateAmount)) || 0,
         })) || [],
 
+      // Investment specific fields — must live in config JSON or BO reopens empty
+      ...(formData.activityType === 'investment'
+        ? {
+            investmentType: formData.investmentType || 'fixed_amount',
+            rewardDays: Number(formData.rewardDays) > 0 ? Number(formData.rewardDays) : 1,
+            investmentDistributionMethod: (() => {
+              const raw = formData.investmentDistributionMethod || 'daily_auto';
+              // Map BO “expired_auto” to player daily claim (service understands daily_claim)
+              if (raw === 'expired_auto') return 'daily_claim';
+              return raw;
+            })(),
+            investmentSettings: (formData.investmentSettings || [])
+              .map((s) => ({
+                investmentAmount: parseFloat(String(s.investmentAmount)),
+                giftAmount: parseFloat(String(s.giftAmount)),
+              }))
+              .filter(
+                (s) =>
+                  Number.isFinite(s.investmentAmount) &&
+                  s.investmentAmount > 0 &&
+                  Number.isFinite(s.giftAmount) &&
+                  s.giftAmount >= 0,
+              ),
+          }
+        : {}),
+
       // Return bonus specific fields
       inactiveDaysMin:
         formData.activityType === 'return_bonus'
@@ -8639,6 +8665,28 @@ watch(
           rebateAmount: String(s.rebateAmount ?? s.minRecharge ?? ''),
           rewardAmount: String(s.rewardAmount ?? s.rewardValue ?? ''),
         }));
+      }
+
+      // Investment — hydrate from config (previously never loaded → settings looked "gone")
+      if ((newItem as any).type === 'investment' || (newItem as any).type === 'invest') {
+        formData.investmentType =
+          cfg.investmentType || formData.investmentType || 'fixed_amount';
+        formData.rewardDays =
+          Number(cfg.rewardDays) > 0
+            ? Number(cfg.rewardDays)
+            : formData.rewardDays || 3;
+        const dist = cfg.investmentDistributionMethod;
+        // Reverse-map daily_claim → BO radio expired_auto when that was the stored synonym
+        formData.investmentDistributionMethod =
+          dist === 'daily_claim'
+            ? 'expired_auto'
+            : dist || formData.investmentDistributionMethod || 'daily_auto';
+        if (Array.isArray(cfg.investmentSettings) && cfg.investmentSettings.length) {
+          formData.investmentSettings = cfg.investmentSettings.map((s: any) => ({
+            investmentAmount: String(s.investmentAmount ?? s.minAmount ?? ''),
+            giftAmount: String(s.giftAmount ?? ''),
+          }));
+        }
       }
 
       formData.inactiveDaysMin =

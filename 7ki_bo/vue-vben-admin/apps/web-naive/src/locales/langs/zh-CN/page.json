@@ -61,7 +61,9 @@
     "mediaFileManagement": "媒体文件管理",
     "mediaFiles": "媒体文件",
     "mediaLibraryManagement": "媒体库管理",
-    "mediaLibrary": "媒体库"
+    "mediaLibrary": "媒体库",
+    "playerRebate": "返水",
+    "interestTreasure": "利息宝"
   },
   "dashboard": {
     "title": "概览",

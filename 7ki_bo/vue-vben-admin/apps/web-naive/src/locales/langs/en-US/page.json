@@ -61,7 +61,9 @@
     "mediaFileManagement": "Media File Management",
     "mediaFiles": "Media Files",
     "mediaLibraryManagement": "Media Library Management",
-    "mediaLibrary": "Media Library"
+    "mediaLibrary": "Media Library",
+    "playerRebate": "Player Rebate",
+    "interestTreasure": "Interest Treasure"
   },
   "dashboard": {
     "title": "Dashboard",

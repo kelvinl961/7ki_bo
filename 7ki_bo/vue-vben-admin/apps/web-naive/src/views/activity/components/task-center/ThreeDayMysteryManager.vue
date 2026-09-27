@@ -1,41 +1,9 @@
 <template>
-  <div class="three-day-mystery-manager">
-    <n-card>
-      <n-empty :description="$t('activity.threeDayMystery.k4e09')">
-        <template #icon>
-          <SparklesOutline size="48" />
-        </template>
-        <template #extra>
-          <n-button size="small" @click="handleComingSoon">{{ $t('activity.shareManagement.k656c') }}</n-button>
-        </template>
-      </n-empty>
-    </n-card>
-  </div>
+  <PeriodicTaskManager
+    category="THREE_DAY_MYSTERY"
+    title="三日神秘任务（同币种每日抽取；中断从第1天重来）"
+  />
 </template>
-
 <script setup lang="ts">
-import { $t } from '@vben/locales';
-
-import { NCard, NEmpty, NButton, useMessage } from 'naive-ui';
-import { SparklesOutline } from '@vicons/ionicons5';
-
-const message = useMessage();
-
-const handleComingSoon = () => {
-  message.info($t('activity.threeDayMystery.k4e09k656c'));
-};
+import PeriodicTaskManager from './PeriodicTaskManager.vue';
 </script>
-
-<style scoped>
-.three-day-mystery-manager {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-:deep(.n-card) {
-  width: 400px;
-  text-align: center;
-}
-</style>

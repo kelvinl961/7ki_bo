@@ -40,9 +40,19 @@
           <ThreeDayMysteryManager />
         </n-tab-pane>
 
-        <!-- 活跃度设置 -->
-        <n-tab-pane name="activity_setting" :tab="$t('activity.taskCenter.k6d3b')">
+        <!-- 活跃度宝箱 -->
+        <n-tab-pane name="activity_setting" tab="活跃度宝箱">
           <ActivitySettingManager />
+        </n-tab-pane>
+
+        <!-- 活跃度记录 -->
+        <n-tab-pane name="activity_ledger" tab="活跃度记录">
+          <ActivityLedgerManager />
+        </n-tab-pane>
+
+        <!-- 剩余活跃度 -->
+        <n-tab-pane name="activity_balance" tab="剩余活跃度">
+          <ActivityBalanceManager />
         </n-tab-pane>
       </n-tabs>
     </Page>
@@ -56,7 +66,6 @@ import { ref, onMounted, defineAsyncComponent } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { NBreadcrumb, NBreadcrumbItem, NTabs, NTabPane } from 'naive-ui';
 import { Page } from '@vben/common-ui';
-// ✅ PERFORMANCE FIX: Lazy load tab components - they only load when their tab is opened
 const NoviceWelfareManager = defineAsyncComponent(
   () => import('./components/task-center/NoviceWelfareManager.vue'),
 );
@@ -72,14 +81,18 @@ const ThreeDayMysteryManager = defineAsyncComponent(
 const ActivitySettingManager = defineAsyncComponent(
   () => import('./components/task-center/ActivitySettingManager.vue'),
 );
+const ActivityLedgerManager = defineAsyncComponent(
+  () => import('./components/task-center/ActivityLedgerManager.vue'),
+);
+const ActivityBalanceManager = defineAsyncComponent(
+  () => import('./components/task-center/ActivityBalanceManager.vue'),
+);
 
 const route = useRoute();
 const router = useRouter();
 
-// 当前激活的标签页 - 默认显示新人福利
 const activeTab = ref('novice_welfare');
 
-// 处理标签页切换
 const handleTabChange = (value: string) => {
   router.push({
     path: route.path,
@@ -90,12 +103,7 @@ const handleTabChange = (value: string) => {
   });
 };
 
-// 从URL参数初始化标签页
 onMounted(() => {
-  console.log('🚀 TaskCenter page mounted');
-  console.log('📍 Current route:', route.path);
-  console.log('🔗 Query params:', route.query);
-
   const tabFromUrl = route.query.activeName as string;
   if (
     tabFromUrl &&
@@ -105,12 +113,12 @@ onMounted(() => {
       'weekly_task',
       'three_day_mystery',
       'activity_setting',
+      'activity_ledger',
+      'activity_balance',
     ].includes(tabFromUrl)
   ) {
     activeTab.value = tabFromUrl;
   }
-
-  console.log(' Active tab:', activeTab.value);
 });
 </script>
 

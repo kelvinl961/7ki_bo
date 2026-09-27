@@ -61,7 +61,9 @@
     "mediaFileManagement": "Quản lý tệp media",
     "mediaFiles": "Tệp media",
     "mediaLibraryManagement": "Quản lý thư viện media",
-    "mediaLibrary": "Thư viện media"
+    "mediaLibrary": "Thư viện media",
+    "playerRebate": "Hoàn trả",
+    "interestTreasure": "Bảo lãi"
   },
   "dashboard": {
     "title": "Bảng điều khiển",

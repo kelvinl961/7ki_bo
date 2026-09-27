@@ -1851,8 +1851,8 @@
                         v-model:value="formData.investmentDistributionMethod"
                       >
                         <n-space>
-                          <n-radio value="daily_auto"
-                            >{{ $t('activity.formModal.k73a9k6bcf') }}</n-radio
+                          <n-radio value="expired_forfeit"
+                            >{{ $t('activity.formModal.k73a9k8fc7') }}</n-radio
                           >
                           <n-radio value="expired_auto"
                             >{{ $t('activity.formModal.k73a9k8fc72') }}</n-radio
@@ -4965,7 +4965,7 @@ const formData = reactive({
   // Investment Specific Fields
   investmentType: 'fixed_amount',
   rewardDays: 3,
-  investmentDistributionMethod: 'daily_auto',
+  investmentDistributionMethod: 'expired_forfeit',
   investmentSettings: [{ investmentAmount: '', giftAmount: '' }] as {
     investmentAmount: string;
     giftAmount: string;
@@ -5771,7 +5771,7 @@ const handleModalClose = () => {
     // Investment Specific Fields
     investmentType: 'fixed_amount',
     rewardDays: 3,
-    investmentDistributionMethod: 'daily_auto',
+    investmentDistributionMethod: 'expired_forfeit',
     investmentSettings: [{ investmentAmount: '', giftAmount: '' }],
 
     // Promotion Specific Fields
@@ -6571,10 +6571,18 @@ const handleSubmit = async () => {
             investmentType: formData.investmentType || 'fixed_amount',
             rewardDays: Number(formData.rewardDays) > 0 ? Number(formData.rewardDays) : 1,
             investmentDistributionMethod: (() => {
-              const raw = formData.investmentDistributionMethod || 'daily_auto';
-              // Map BO “expired_auto” to player daily claim (service understands daily_claim)
-              if (raw === 'expired_auto') return 'daily_claim';
-              return raw;
+              const raw =
+                formData.investmentDistributionMethod || 'expired_forfeit';
+              // Persist product values as-is (玩家自领 only)
+              if (raw === 'expired_auto') return 'expired_auto';
+              if (raw === 'expired_forfeit' || raw === 'expired_invalid') {
+                return 'expired_forfeit';
+              }
+              // Legacy daily_auto → forfeit (no same-day auto credit)
+              if (raw === 'daily_auto' || raw === 'daily_claim') {
+                return 'expired_forfeit';
+              }
+              return 'expired_forfeit';
             })(),
             investmentSettings: (formData.investmentSettings || [])
               .map((s) => ({
@@ -8704,11 +8712,13 @@ watch(
             ? Number(cfg.rewardDays)
             : formData.rewardDays || 3;
         const dist = cfg.investmentDistributionMethod;
-        // Reverse-map daily_claim → BO radio expired_auto when that was the stored synonym
-        formData.investmentDistributionMethod =
-          dist === 'daily_claim'
-            ? 'expired_auto'
-            : dist || formData.investmentDistributionMethod || 'daily_auto';
+        // Map stored / legacy values onto BO radios
+        if (dist === 'expired_auto' || dist === 'end_auto' || dist === 'auto_claim') {
+          formData.investmentDistributionMethod = 'expired_auto';
+        } else {
+          // expired_forfeit | daily_auto | daily_claim | …
+          formData.investmentDistributionMethod = 'expired_forfeit';
+        }
         if (Array.isArray(cfg.investmentSettings) && cfg.investmentSettings.length) {
           formData.investmentSettings = cfg.investmentSettings.map((s: any) => ({
             investmentAmount: String(s.investmentAmount ?? s.minAmount ?? ''),

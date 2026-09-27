@@ -212,7 +212,6 @@
                         v-model:value="formData.distributionMethod"
                       >
                         <n-space vertical>
-                          <n-radio value="auto_claim">{{ $t('activity.formModal.k7cfb2') }}</n-radio>
                           <n-radio value="player_claim_expires"
                             >{{ $t('activity.formModal.k73a9k8fc7') }}</n-radio
                           >
@@ -1851,8 +1850,8 @@
                         v-model:value="formData.investmentDistributionMethod"
                       >
                         <n-space>
-                          <n-radio value="daily_auto"
-                            >{{ $t('activity.formModal.k73a9k6bcf') }}</n-radio
+                          <n-radio value="expired_forfeit"
+                            >{{ $t('activity.formModal.k73a9k8fc7') }}</n-radio
                           >
                           <n-radio value="expired_auto"
                             >{{ $t('activity.formModal.k73a9k8fc72') }}</n-radio
@@ -2439,84 +2438,435 @@
 
                   <!-- Return Bonus Specific Fields (回归彩金) -->
                   <template v-if="formData.activityType === 'return_bonus'">
+                    <!-- Gap type editor: 未登录天数范围 | 未充值天数范围 -->
                     <div>
-                      <label class="mb-2 block text-sm font-medium text-gray-700">未登录最少天数</label>
-                      <n-input-number
-                        v-model:value="formData.inactiveDaysMin"
-                        :min="1"
-                        class="w-full"
-                        placeholder="7"
-                      />
+                      <label class="mb-2 block text-sm font-medium text-gray-700"
+                        >天数范围类型</label
+                      >
+                      <n-radio-group
+                        v-model:value="formData.returnBonusEditorKind"
+                      >
+                        <n-space>
+                          <n-radio value="login_gap">未登录天数范围</n-radio>
+                          <n-radio value="deposit_gap">未充值天数范围</n-radio>
+                        </n-space>
+                      </n-radio-group>
                     </div>
+
+                    <!-- Active gap day range min–max -->
+                    <div
+                      v-if="formData.returnBonusEditorKind === 'login_gap'"
+                      class="flex items-end gap-3"
+                    >
+                      <div class="flex-1">
+                        <label class="mb-2 block text-sm font-medium text-gray-700"
+                          >未登录天数（最少）</label
+                        >
+                        <n-input-number
+                          v-model:value="formData.inactiveDaysMin"
+                          :min="0"
+                          class="w-full"
+                          placeholder="7"
+                        />
+                      </div>
+                      <div class="flex-1">
+                        <label class="mb-2 block text-sm font-medium text-gray-700"
+                          >未登录天数（最多，0=不限）</label
+                        >
+                        <n-input-number
+                          v-model:value="formData.inactiveDaysMax"
+                          :min="0"
+                          class="w-full"
+                          placeholder="0"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      v-else
+                      class="flex items-end gap-3"
+                    >
+                      <div class="flex-1">
+                        <label class="mb-2 block text-sm font-medium text-gray-700"
+                          >未充值天数（最少）</label
+                        >
+                        <n-input-number
+                          v-model:value="formData.depositInactiveDaysMin"
+                          :min="0"
+                          class="w-full"
+                          placeholder="7"
+                        />
+                      </div>
+                      <div class="flex-1">
+                        <label class="mb-2 block text-sm font-medium text-gray-700"
+                          >未充值天数（最多，0=不限）</label
+                        >
+                        <n-input-number
+                          v-model:value="formData.depositInactiveDaysMax"
+                          :min="0"
+                          class="w-full"
+                          placeholder="0"
+                        />
+                      </div>
+                    </div>
+
+                    <!-- 派发方式 -->
                     <div>
-                      <label class="mb-2 block text-sm font-medium text-gray-700">回归奖励金额</label>
-                      <n-input-number
-                        v-model:value="formData.rewardAmount"
-                        :min="0"
-                        :precision="2"
-                        class="w-full"
-                      />
+                      <label
+                        class="mb-2 block text-sm font-medium text-gray-700"
+                        >{{ $t('activity.formModal.k6d3e') }}</label
+                      >
+                      <n-radio-group
+                        v-model:value="formData.distributionMethod"
+                      >
+                        <n-space>
+                          <n-radio value="player_claim_expires"
+                            >{{ $t('activity.formModal.k73a9k8fc7') }}</n-radio
+                          >
+                          <n-radio value="player_claim_auto_after_expire"
+                            >{{ $t('activity.formModal.k73a9k8fc72') }}</n-radio
+                          >
+                        </n-space>
+                      </n-radio-group>
                     </div>
-                    <div class="flex items-center justify-between">
-                      <label class="block text-sm font-medium text-gray-700">登录奖励需先充值</label>
-                      <n-switch v-model:value="formData.requiresDeposit" />
-                    </div>
-                    <div v-if="formData.requiresDeposit">
-                      <label class="mb-2 block text-sm font-medium text-gray-700">最低充值金额</label>
-                      <n-input-number
-                        v-model:value="formData.minDepositAmount"
-                        :min="0"
-                        :precision="2"
-                        class="w-full"
-                      />
-                    </div>
+
+                    <!-- 奖励领取过期天数 0–31 -->
                     <div>
-                      <label class="mb-2 block text-sm font-medium text-gray-700">未充值最少天数</label>
+                      <label
+                        class="mb-2 block text-sm font-medium text-gray-700"
+                      >
+                        {{ $t('activity.labels.lihat34') }}
+                      </label>
                       <n-input-number
-                        v-model:value="formData.depositInactiveDaysMin"
+                        v-model:value="formData.rewardClaimExpiryDays"
                         :min="0"
+                        :max="31"
                         class="w-full"
-                        placeholder="7"
+                        placeholder="1"
                       />
                     </div>
+
+                    <!-- 活动条件 -->
                     <div>
-                      <label class="mb-2 block text-sm font-medium text-gray-700">充值回归奖励金额</label>
-                      <n-input-number
-                        v-model:value="formData.depositRewardAmount"
-                        :min="0"
-                        :precision="2"
-                        class="w-full"
-                      />
+                      <label class="mb-2 block text-sm font-medium text-gray-700"
+                        >活动条件</label
+                      >
+                      <n-radio-group
+                        v-model:value="formData.activityCondition"
+                      >
+                        <n-space>
+                          <n-radio value="hist_recharge">历史充值</n-radio>
+                          <n-radio value="hist_wager">历史打码</n-radio>
+                          <n-radio value="hist_loss">历史亏损</n-radio>
+                          <n-radio value="hist_recharge_count"
+                            >历史充值次数</n-radio
+                          >
+                          <n-radio value="none">无条件</n-radio>
+                        </n-space>
+                      </n-radio-group>
+                    </div>
+
+                    <!-- 奖金方式 -->
+                    <div>
+                      <label class="mb-2 block text-sm font-medium text-gray-700"
+                        >奖金方式</label
+                      >
+                      <n-radio-group v-model:value="formData.rewardMethod">
+                        <n-space>
+                          <n-radio value="fixed">{{
+                            $t('activity.formModal.k56fa3')
+                          }}</n-radio>
+                          <n-radio value="random">{{
+                            $t('activity.formModal.k968f')
+                          }}</n-radio>
+                        </n-space>
+                      </n-radio-group>
+                    </div>
+
+                    <!-- Tier table -->
+                    <div>
+                      <label
+                        class="mb-3 block text-sm font-medium text-gray-700"
+                        >奖励档位</label
+                      >
+                      <p class="mb-2 text-xs text-gray-500">
+                        * 满足条件时按最高达标档位发放奖励
+                      </p>
+                      <div class="space-y-3">
+                        <div
+                          v-for="(item, index) in formData.rewardTiers"
+                          :key="index"
+                          class="flex items-end gap-3"
+                        >
+                          <div class="flex-1">
+                            <label class="mb-1 block text-xs text-gray-600">{{
+                              returnBonusThresholdLabel
+                            }}</label>
+                            <n-input
+                              v-model:value="item.threshold"
+                              placeholder="0"
+                              class="w-full"
+                            />
+                          </div>
+                          <template v-if="formData.rewardMethod === 'random'">
+                            <div class="flex-1">
+                              <label class="mb-1 block text-xs text-gray-600"
+                                >奖励最小</label
+                              >
+                              <n-input
+                                v-model:value="item.rewardAmountMin"
+                                placeholder="0"
+                                class="w-full"
+                              />
+                            </div>
+                            <div class="flex-1">
+                              <label class="mb-1 block text-xs text-gray-600"
+                                >奖励最大</label
+                              >
+                              <n-input
+                                v-model:value="item.rewardAmountMax"
+                                placeholder="0"
+                                class="w-full"
+                              />
+                            </div>
+                          </template>
+                          <div v-else class="flex-1">
+                            <label class="mb-1 block text-xs text-gray-600"
+                              >奖励金额</label
+                            >
+                            <n-input
+                              v-model:value="item.rewardAmount"
+                              placeholder="0"
+                              class="w-full"
+                            />
+                          </div>
+                          <n-button
+                            v-if="formData.rewardTiers.length > 1"
+                            size="small"
+                            type="error"
+                            class="mb-1"
+                            @click="removeReturnBonusTier(index)"
+                          >
+                            <n-icon size="16">
+                              <Close />
+                            </n-icon>
+                          </n-button>
+                        </div>
+                        <n-button
+                          size="small"
+                          type="primary"
+                          class="w-full"
+                          @click="addReturnBonusTier"
+                        >
+                          <n-icon size="16" class="mr-1">
+                            <Add />
+                          </n-icon>{{ $t('activity.formModal.k6dfb') }}</n-button
+                        >
+                      </div>
                     </div>
                   </template>
 
                   <!-- Ranking Specific Fields (排行榜) -->
                   <template v-if="formData.activityType === 'ranking'">
+                    <!-- 排行指标 -->
                     <div>
                       <label class="mb-2 block text-sm font-medium text-gray-700">排行指标</label>
                       <n-radio-group v-model:value="formData.rankingMetric">
                         <n-space>
-                          <n-radio value="wagering">打码</n-radio>
-                          <n-radio value="recharge">充值</n-radio>
+                          <n-radio value="cum_recharge">{{
+                            $t('activity.formModal.k7d2f2')
+                          }}</n-radio>
+                          <n-radio value="single_recharge">{{
+                            $t('activity.formModal.k5355')
+                          }}</n-radio>
+                          <n-radio value="cum_wager">{{
+                            $t('activity.formModal.k7d2f3')
+                          }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
+
+                    <!-- 充值方式 + 最低充值金额（充值类指标） -->
+                    <template v-if="isRankingRechargeMetric">
+                      <div>
+                        <label class="mb-2 block text-sm font-medium text-gray-700">{{
+                          $t('activity.labels.luyqxz7')
+                        }}</label>
+                        <n-checkbox-group
+                          v-model:value="formData.rankingDepositMethods"
+                          @update:value="handleRankingDepositMethodChange"
+                        >
+                          <div class="grid grid-cols-2 gap-2">
+                            <n-checkbox value="all">{{
+                              $t('activity.formModal.k51683')
+                            }}</n-checkbox>
+                            <n-checkbox value="pix">PIX</n-checkbox>
+                            <n-checkbox value="customer_service">{{
+                              $t('activity.formModal.k5ba23')
+                            }}</n-checkbox>
+                            <n-checkbox value="merchant">{{
+                              $t('activity.formModal.k94f6')
+                            }}</n-checkbox>
+                          </div>
+                        </n-checkbox-group>
+                      </div>
+                      <div>
+                        <label class="mb-2 block text-sm font-medium text-gray-700"
+                          >最低充值金额</label
+                        >
+                        <n-input-number
+                          v-model:value="formData.rankingMinDepositAmount"
+                          :min="0"
+                          :precision="2"
+                          class="w-full"
+                          placeholder="0"
+                        />
+                      </div>
+                    </template>
+
+                    <!-- 统计周期 -->
                     <div>
-                      <label class="mb-2 block text-sm font-medium text-gray-700">统计周期</label>
+                      <label class="mb-2 block text-sm font-medium text-gray-700"
+                        >统计周期
+                        <n-icon size="16" class="ml-1 text-blue-500">
+                          <HelpCircle />
+                        </n-icon>
+                      </label>
                       <n-radio-group v-model:value="formData.rankingPeriod">
                         <n-space>
-                          <n-radio value="daily">日</n-radio>
-                          <n-radio value="weekly">周</n-radio>
-                          <n-radio value="monthly">月</n-radio>
+                          <n-radio value="daily">日榜</n-radio>
+                          <n-radio value="weekly">周榜</n-radio>
+                          <n-radio value="monthly">月榜</n-radio>
+                        </n-space>
+                      </n-radio-group>
+                      <p class="mt-1 text-xs text-gray-500">
+                        日榜：每日 0 点重置；周榜：每周一 0 点重置；月榜：每月 1 日 0
+                        点重置。结算后按派发方式发放奖励。
+                      </p>
+                    </div>
+
+                    <!-- 是否限时 -->
+                    <div class="flex items-center justify-between">
+                      <label class="block text-sm font-medium text-gray-700">{{
+                        $t('activity.formModal.k662f')
+                      }}</label>
+                      <n-switch v-model:value="formData.isTimeLimited" />
+                    </div>
+
+                    <template v-if="formData.isTimeLimited">
+                      <div>
+                        <label class="mb-2 block text-sm font-medium text-gray-700"
+                          >限时窗口类型</label
+                        >
+                        <n-radio-group
+                          v-model:value="formData.rankingTimeWindowType"
+                        >
+                          <n-space>
+                            <n-radio value="calendar_day">按自然日</n-radio>
+                            <n-radio value="fixed_weekly">固定周窗口</n-radio>
+                            <n-radio value="fixed_monthly">固定月窗口</n-radio>
+                          </n-space>
+                        </n-radio-group>
+                      </div>
+                      <div class="flex items-end gap-3">
+                        <div class="flex-1">
+                          <label class="mb-1 block text-xs text-gray-600"
+                            >开始时间</label
+                          >
+                          <n-time-picker
+                            v-model:formatted-value="formData.rankingTimeStart"
+                            value-format="HH:mm:ss"
+                            format="HH:mm:ss"
+                            class="w-full"
+                            clearable
+                          />
+                        </div>
+                        <div class="flex-1">
+                          <label class="mb-1 block text-xs text-gray-600"
+                            >结束时间</label
+                          >
+                          <n-time-picker
+                            v-model:formatted-value="formData.rankingTimeEnd"
+                            value-format="HH:mm:ss"
+                            format="HH:mm:ss"
+                            class="w-full"
+                            clearable
+                          />
+                        </div>
+                      </div>
+                    </template>
+
+                    <!-- 派发方式 -->
+                    <div>
+                      <label class="mb-2 block text-sm font-medium text-gray-700">{{
+                        $t('activity.formModal.k6d3e')
+                      }}</label>
+                      <n-radio-group v-model:value="formData.distributionMethod">
+                        <n-space vertical>
+                          <n-radio value="player_claim_expires">{{
+                            $t('activity.formModal.k73a9k8fc7')
+                          }}</n-radio>
+                          <n-radio value="player_claim_auto_after_expire">{{
+                            $t('activity.formModal.k73a9k8fc72')
+                          }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
+
+                    <!-- 领取时间 -->
                     <div>
-                      <label class="mb-2 block text-sm font-medium text-gray-700">机器人数量</label>
-                      <n-input-number v-model:value="formData.robotCount" :min="0" :max="100" class="w-full" />
+                      <label class="mb-2 block text-sm font-medium text-gray-700">{{
+                        $t('activity.rewardReport.k98862')
+                      }}</label>
+                      <n-radio-group v-model:value="formData.claimTime">
+                        <n-space>
+                          <n-radio value="next_day">{{
+                            $t('activity.formModal.k6b21')
+                          }}</n-radio>
+                          <n-radio value="daily">{{
+                            $t('activity.formModal.k6bcf')
+                          }}</n-radio>
+                        </n-space>
+                      </n-radio-group>
                     </div>
+
+                    <!-- 选择时间 -->
                     <div>
-                      <label class="mb-3 block text-sm font-medium text-gray-700">名次奖励区间</label>
+                      <label class="mb-2 block text-sm font-medium text-gray-700">{{
+                        $t('activity.formModal.k90096')
+                      }}</label>
+                      <div class="flex items-center gap-2">
+                        <n-input-number
+                          v-model:value="formData.selectTime"
+                          placeholder="0"
+                          class="w-32"
+                          :min="0"
+                          :max="23"
+                        />
+                        <span class="text-sm text-gray-500">{{
+                          $t('activity.formModal.k4ee5')
+                        }}</span>
+                      </div>
+                    </div>
+
+                    <!-- 奖励领取过期天数 -->
+                    <div>
+                      <label class="mb-2 block text-sm font-medium text-gray-700">{{
+                        $t('activity.labels.lihat34')
+                      }}</label>
+                      <n-input-number
+                        v-model:value="formData.rewardClaimExpiryDays"
+                        :min="0"
+                        :max="31"
+                        class="w-full"
+                        placeholder="1"
+                      />
+                    </div>
+
+                    <!-- 名次奖励区间 -->
+                    <div>
+                      <label class="mb-3 block text-sm font-medium text-gray-700"
+                        >名次奖励区间</label
+                      >
                       <div class="space-y-3">
                         <div
                           v-for="(item, index) in formData.rankingRewards"
@@ -2524,16 +2874,45 @@
                           class="flex items-end gap-3"
                         >
                           <div class="flex-1">
-                            <label class="mb-1 block text-xs text-gray-600">名次起</label>
-                            <n-input-number v-model:value="item.rankFrom" :min="1" class="w-full" />
+                            <label class="mb-1 block text-xs text-gray-600"
+                              >名次起</label
+                            >
+                            <n-input-number
+                              v-model:value="item.rankFrom"
+                              :min="1"
+                              class="w-full"
+                            />
                           </div>
                           <div class="flex-1">
-                            <label class="mb-1 block text-xs text-gray-600">名次止</label>
-                            <n-input-number v-model:value="item.rankTo" :min="1" class="w-full" />
+                            <label class="mb-1 block text-xs text-gray-600"
+                              >名次止</label
+                            >
+                            <n-input-number
+                              v-model:value="item.rankTo"
+                              :min="1"
+                              class="w-full"
+                            />
                           </div>
                           <div class="flex-1">
-                            <label class="mb-1 block text-xs text-gray-600">奖励金额</label>
-                            <n-input-number v-model:value="item.rewardValue" :min="0" :precision="2" class="w-full" />
+                            <label class="mb-1 block text-xs text-gray-600"
+                              >奖励金额</label
+                            >
+                            <n-input-number
+                              v-model:value="item.rewardValue"
+                              :min="0"
+                              :precision="2"
+                              class="w-full"
+                            />
+                          </div>
+                          <div class="flex-1">
+                            <label class="mb-1 block text-xs text-gray-600"
+                              >机器人数量</label
+                            >
+                            <n-input-number
+                              v-model:value="item.robotCount"
+                              :min="0"
+                              class="w-full"
+                            />
                           </div>
                           <n-button
                             v-if="formData.rankingRewards.length > 1"
@@ -2545,9 +2924,283 @@
                             <n-icon size="16"><Close /></n-icon>
                           </n-button>
                         </div>
-                        <n-button size="small" type="primary" class="w-full" @click="addRankingReward">
-                          <n-icon size="16" class="mr-1"><Add /></n-icon>添加区间
+                        <p class="text-xs text-gray-500">
+                          机器人将随机占用该名次区间内的名次，数量不可超过区间名次数。
+                        </p>
+                        <n-button
+                          size="small"
+                          type="primary"
+                          class="w-full"
+                          @click="addRankingReward"
+                        >
+                          <n-icon size="16" class="mr-1"><Add /></n-icon
+                          >添加区间
                         </n-button>
+                      </div>
+                    </div>
+                  </template>
+
+                  <!-- Lottery Assist (抽奖助力) -->
+                  <template v-if="formData.activityType === 'lottery_assist'">
+                    <div>
+                      <label class="mb-2 block text-sm font-medium text-gray-700"
+                        >重置周期</label
+                      >
+                      <n-radio-group v-model:value="formData.laResetCycle">
+                        <div class="flex flex-wrap gap-3">
+                          <n-radio value="once">一次性</n-radio>
+                          <n-radio value="daily">每日</n-radio>
+                          <n-radio value="weekly">每周</n-radio>
+                          <n-radio value="monthly">每月</n-radio>
+                        </div>
+                      </n-radio-group>
+                    </div>
+                    <div>
+                      <label class="mb-2 block text-sm font-medium text-gray-700"
+                        >派发方式</label
+                      >
+                      <n-radio-group
+                        v-model:value="formData.distributionMethod"
+                      >
+                        <div class="flex flex-wrap gap-3">
+                          <n-radio value="player_claim_expires"
+                            >玩家自领 过期作废</n-radio
+                          >
+                          <n-radio value="player_claim_auto_after_expire"
+                            >玩家自领 过期自动派发</n-radio
+                          >
+                        </div>
+                      </n-radio-group>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                      <div>
+                        <label
+                          class="mb-2 block text-sm font-medium text-gray-700"
+                          >领取时间</label
+                        >
+                        <n-select
+                          v-model:value="formData.claimTime"
+                          :options="[
+                            { label: '实时', value: 'real_time' },
+                            { label: '次日', value: 'next_day' },
+                            { label: '每日指定', value: 'daily' },
+                          ]"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          class="mb-2 block text-sm font-medium text-gray-700"
+                          >奖励过期(天) 0–31</label
+                        >
+                        <n-input-number
+                          v-model:value="formData.rewardClaimExpiryDays"
+                          :min="0"
+                          :max="31"
+                          class="w-full"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label class="mb-2 block text-sm font-medium text-gray-700"
+                        >固定总奖金</label
+                      >
+                      <n-input-number
+                        v-model:value="formData.laTotalBonusAmount"
+                        :min="0"
+                        :precision="2"
+                        class="w-full"
+                      />
+                      <p class="mt-1 text-xs text-gray-500">
+                        每组第一次+第二次金额须等于此总值
+                      </p>
+                    </div>
+                    <div>
+                      <label class="mb-2 block text-sm font-medium text-gray-700"
+                        >奖励组合数量 (2–5)</label
+                      >
+                      <n-input-number
+                        v-model:value="formData.laCombinationCount"
+                        :min="2"
+                        :max="5"
+                        class="w-full"
+                        @update:value="syncLaCombinations"
+                      />
+                    </div>
+                    <div class="space-y-4">
+                      <div
+                        v-for="(combo, index) in formData.laCombinations"
+                        :key="combo.id || index"
+                        class="rounded-lg border border-gray-200 p-3 space-y-2"
+                      >
+                        <div class="text-sm font-medium text-gray-800">
+                          组合 {{ index + 1 }}
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                          <div>
+                            <label class="mb-1 block text-xs text-gray-600"
+                              >概率 %</label
+                            >
+                            <n-input-number
+                              v-model:value="combo.probability"
+                              :min="0"
+                              :max="100"
+                              :precision="2"
+                              class="w-full"
+                            />
+                          </div>
+                          <div>
+                            <label class="mb-1 block text-xs text-gray-600"
+                              >第1次金额</label
+                            >
+                            <n-input-number
+                              v-model:value="combo.firstAmount"
+                              :min="0"
+                              :precision="2"
+                              class="w-full"
+                            />
+                          </div>
+                          <div>
+                            <label class="mb-1 block text-xs text-gray-600"
+                              >第2次金额</label
+                            >
+                            <n-input-number
+                              v-model:value="combo.secondAmount"
+                              :min="0"
+                              :precision="2"
+                              class="w-full"
+                            />
+                          </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                          <MediaLibrarySelector
+                            v-model="combo.firstIconUrl"
+                            category="activity"
+                            placeholder="第1次图标"
+                            size="small"
+                          />
+                          <MediaLibrarySelector
+                            v-model="combo.secondIconUrl"
+                            category="activity"
+                            placeholder="第2次图标"
+                            size="small"
+                          />
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                          <div>
+                            <label class="mb-1 block text-xs text-gray-600"
+                              >第2次任务类型</label
+                            >
+                            <n-select
+                              v-model:value="combo.taskType"
+                              :options="laTaskTypeOptions"
+                            />
+                          </div>
+                          <div>
+                            <label class="mb-1 block text-xs text-gray-600"
+                              >任务目标值</label
+                            >
+                            <n-input-number
+                              v-model:value="combo.taskValue"
+                              :min="0"
+                              :precision="2"
+                              class="w-full"
+                            />
+                          </div>
+                        </div>
+                        <p
+                          v-if="
+                            Math.abs(
+                              Number(combo.firstAmount || 0) +
+                                Number(combo.secondAmount || 0) -
+                                Number(formData.laTotalBonusAmount || 0),
+                            ) > 0.009
+                          "
+                          class="text-xs text-red-500"
+                        >
+                          第1次+第2次须等于固定总奖金
+                          {{ formData.laTotalBonusAmount }}
+                        </p>
+                      </div>
+                      <p
+                        v-if="
+                          Math.abs(
+                            formData.laCombinations.reduce(
+                              (s, c) => s + Number(c.probability || 0),
+                              0,
+                            ) - 100,
+                          ) > 0.5
+                        "
+                        class="text-xs text-amber-600"
+                      >
+                        提示：各组概率之和建议为 100%
+                      </p>
+                    </div>
+                    <div>
+                      <label class="mb-2 block text-sm font-medium text-gray-700"
+                        >展示假大奖 / 无奖</label
+                      >
+                      <n-switch v-model:value="formData.laShowFakeGrandPrize" />
+                    </div>
+                    <div
+                      v-if="formData.laShowFakeGrandPrize"
+                      class="grid grid-cols-2 gap-3"
+                    >
+                      <div>
+                        <label
+                          class="mb-2 block text-sm font-medium text-gray-700"
+                          >展示奖金下限</label
+                        >
+                        <n-input-number
+                          v-model:value="formData.laDisplayBonusMin"
+                          :min="0"
+                          :precision="2"
+                          class="w-full"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          class="mb-2 block text-sm font-medium text-gray-700"
+                          >展示奖金上限</label
+                        >
+                        <n-input-number
+                          v-model:value="formData.laDisplayBonusMax"
+                          :min="0"
+                          :precision="2"
+                          class="w-full"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label class="mb-2 block text-sm font-medium text-gray-700"
+                        >转盘样式 (1–5)</label
+                      >
+                      <n-input-number
+                        v-model:value="formData.laWheelStyle"
+                        :min="1"
+                        :max="5"
+                        class="w-full"
+                      />
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                      <div>
+                        <label
+                          class="mb-2 block text-sm font-medium text-gray-700"
+                          >登录前弹窗</label
+                        >
+                        <n-input
+                          v-model:value="formData.laPopupBeforeLogin"
+                          placeholder="可选"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          class="mb-2 block text-sm font-medium text-gray-700"
+                          >登录后弹窗</label
+                        >
+                        <n-input
+                          v-model:value="formData.laPopupAfterLogin"
+                          placeholder="可选"
+                        />
                       </div>
                     </div>
                   </template>
@@ -2581,14 +3234,25 @@
                           />
                         </div>
 
-                        <!-- Character Display -->
-                        <div class="flex justify-center gap-2">
+                        <!-- Character Display + Images -->
+                        <div class="flex flex-wrap justify-center gap-3">
                           <div
                             v-for="(char, index) in formData.collectCharacters"
                             :key="index"
-                            class="flex h-20 w-16 items-center justify-center rounded-lg border-2 border-yellow-400 bg-red-500 text-2xl font-bold text-white"
+                            class="flex w-24 flex-col items-center gap-2"
                           >
-                            {{ char }}
+                            <div
+                              class="flex h-16 w-16 items-center justify-center rounded-lg border-2 border-yellow-400 bg-red-500 text-2xl font-bold text-white"
+                            >
+                              {{ char }}
+                            </div>
+                            <MediaLibrarySelector
+                              v-model="formData.collectCharacterImages[char]"
+                              category="collect"
+                              :placeholder="$t('activity.formModal.k9009')"
+                              size="small"
+                              class="w-full"
+                            />
                           </div>
                         </div>
                       </div>
@@ -2619,9 +3283,10 @@
                       >
                       <n-input-number
                         v-model:value="formData.collectRewardClaimExpiryDays"
-                        placeholder="1"
+                        placeholder="0"
                         class="w-full"
-                        :min="1"
+                        :min="0"
+                        :max="31"
                       />
                     </div>
 
@@ -2736,6 +3401,45 @@
                           <n-icon size="16" class="mr-1">
                             <Add />
                           </n-icon>{{ $t('activity.formModal.k6dfb6') }}</n-button>
+                      </div>
+
+                      <!-- 有效下级 thresholds (when invite condition selected) -->
+                      <div
+                        v-if="showCollectValidDownline"
+                        class="mt-4 space-y-3 rounded border border-orange-200 bg-orange-50 p-3"
+                      >
+                        <label
+                          class="block text-sm font-medium text-gray-700"
+                          >有效下级</label
+                        >
+                        <div class="flex gap-3">
+                          <div class="flex-1">
+                            <label class="mb-1 block text-xs text-gray-600"
+                              >最低充值</label
+                            >
+                            <n-input
+                              v-model:value="
+                                formData.collectValidDownline.minRecharge
+                              "
+                              placeholder="0"
+                              size="small"
+                              class="w-full"
+                            />
+                          </div>
+                          <div class="flex-1">
+                            <label class="mb-1 block text-xs text-gray-600"
+                              >最低打码</label
+                            >
+                            <n-input
+                              v-model:value="
+                                formData.collectValidDownline.minWagering
+                              "
+                              placeholder="0"
+                              size="small"
+                              class="w-full"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </template>
@@ -3303,13 +4007,12 @@
                           <n-radio value="player_claim_auto_after_expire"
                             >{{ $t('activity.formModal.k73a9k8fc72') }}</n-radio
                           >
-                          <n-radio value="auto_claim">{{ $t('activity.formModal.k7cfb2') }}</n-radio>
                         </n-space>
                       </n-radio-group>
                     </div>
 
-                    <!-- Claim Time (hide when distribution method is auto_claim) -->
-                    <div v-if="formData.distributionMethod !== 'auto_claim'">
+                    <!-- Claim Time -->
+                    <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
                         >{{ $t('activity.rewardReport.k98862') }}</label
@@ -3344,8 +4047,8 @@
                     </div>
 
                     <!-- Missing Fields from Screenshot -->
-                    <!-- Reward Expiration Days (hide when distribution method is auto_claim) -->
-                    <div v-if="formData.distributionMethod !== 'auto_claim'">
+                    <!-- Reward Expiration Days -->
+                    <div>
                       <label
                         class="mb-2 block text-sm font-medium text-gray-700"
                       >
@@ -4965,7 +5668,7 @@ const formData = reactive({
   // Investment Specific Fields
   investmentType: 'fixed_amount',
   rewardDays: 3,
-  investmentDistributionMethod: 'daily_auto',
+  investmentDistributionMethod: 'expired_forfeit',
   investmentSettings: [{ investmentAmount: '', giftAmount: '' }] as {
     investmentAmount: string;
     giftAmount: string;
@@ -5006,28 +5709,103 @@ const formData = reactive({
     rewardAmount: string;
   }[],
 
-  // Return Bonus Specific Fields
+  // Return Bonus Specific Fields (回归彩金)
+  returnBonusEditorKind: 'login_gap' as 'login_gap' | 'deposit_gap',
   inactiveDaysMin: 7,
+  inactiveDaysMax: 0,
   rewardAmount: 0,
   requiresDeposit: false,
   minDepositAmount: 0,
   depositInactiveDaysMin: 7,
+  depositInactiveDaysMax: 0,
   depositRewardAmount: 0,
+  activityCondition: 'hist_recharge' as
+    | 'hist_recharge'
+    | 'hist_wager'
+    | 'hist_loss'
+    | 'hist_recharge_count'
+    | 'none',
+  rewardMethod: 'fixed' as 'fixed' | 'random',
+  rewardTiers: [
+    { threshold: '', rewardAmount: '', rewardAmountMin: '', rewardAmountMax: '' },
+  ] as {
+    threshold: string;
+    rewardAmount: string;
+    rewardAmountMin: string;
+    rewardAmountMax: string;
+  }[],
 
   // Ranking Specific Fields
-  rankingMetric: 'wagering' as 'wagering' | 'recharge',
+  rankingMetric: 'cum_wager' as
+    | 'cum_recharge'
+    | 'single_recharge'
+    | 'cum_wager',
   rankingPeriod: 'daily' as 'daily' | 'weekly' | 'monthly',
+  rankingDepositMethods: ['all'] as string[],
+  rankingMinDepositAmount: 0,
+  rankingTimeWindowType: 'calendar_day' as
+    | 'calendar_day'
+    | 'fixed_weekly'
+    | 'fixed_monthly',
+  rankingTimeStart: null as string | null,
+  rankingTimeEnd: null as string | null,
   robotCount: 0,
-  rankingRewards: [{ rankFrom: 1, rankTo: 1, rewardValue: 0 }] as {
+  rankingRewards: [
+    { rankFrom: 1, rankTo: 1, rewardValue: 0, robotCount: 0 },
+  ] as {
     rankFrom: number;
     rankTo: number;
     rewardValue: number;
+    robotCount: number;
   }[],
+
+  // Lottery Assist (抽奖助力)
+  laResetCycle: 'once' as 'once' | 'daily' | 'weekly' | 'monthly',
+  laTotalBonusAmount: 100,
+  laCombinationCount: 2,
+  laCombinations: [
+    {
+      id: 'combo_1',
+      probability: 50,
+      firstAmount: 30,
+      secondAmount: 70,
+      firstIconUrl: '',
+      secondIconUrl: '',
+      taskType: 'invite_register',
+      taskValue: 1,
+    },
+    {
+      id: 'combo_2',
+      probability: 50,
+      firstAmount: 40,
+      secondAmount: 60,
+      firstIconUrl: '',
+      secondIconUrl: '',
+      taskType: 'invite_register',
+      taskValue: 1,
+    },
+  ] as {
+    id: string;
+    probability: number;
+    firstAmount: number;
+    secondAmount: number;
+    firstIconUrl: string;
+    secondIconUrl: string;
+    taskType: string;
+    taskValue: number;
+  }[],
+  laShowFakeGrandPrize: false,
+  laDisplayBonusMin: 0,
+  laDisplayBonusMax: 0,
+  laWheelStyle: 1,
+  laPopupBeforeLogin: '',
+  laPopupAfterLogin: '',
 
   // Collect Characters Specific Fields
   collectCombinationType: 'festival',
   collectCombinationName: 'new_year_luck',
   collectCharacters: ['新', '年', '大', '吉'],
+  collectCharacterImages: {} as Record<string, string>,
   collectDistributionMethod: 'monthly',
   collectRewardClaimExpiryDays: 1,
   collectActualDistributionAmount: '',
@@ -5035,6 +5813,10 @@ const formData = reactive({
   collectConditions: [
     { type: 'valid_bet', conditionValue: '', dailyCountLimit: '' },
   ] as { type: string; conditionValue: string; dailyCountLimit: string }[],
+  collectValidDownline: { minRecharge: '', minWagering: '' } as {
+    minRecharge: string;
+    minWagering: string;
+  },
 
   // 新砍一刀 / soft
   newbladeResetMode: 'once' as 'once' | 'custom_days',
@@ -5371,14 +6153,28 @@ const mapFrontendToBackendRewardType = (frontendValue: string): string => {
 const mapFrontendToBackendDistributionMethod = (
   frontendValue: string,
 ): string => {
+  // 玩家自领 only: never map 过期自动派发 → immediate auto_claim
   const mapping: Record<string, string> = {
-    expired_auto: 'auto_claim',
-    self_claim_expire: 'manual_review',
+    expired_auto: 'player_claim_auto_after_expire',
+    expired_invalid: 'player_claim_expires',
+    expired_forfeit: 'player_claim_expires',
+    manual_distribution: 'manual_review',
+    self_claim_expire: 'player_claim_expires',
+    self_claim_auto: 'player_claim_auto_after_expire',
     manual: 'manual_review',
-    auto: 'direct',
+    auto: 'player_claim_auto_after_expire',
+    daily_auto: 'player_claim_auto_after_expire',
+    daily_claim: 'player_claim_expires',
     bonus: 'bonus_wallet',
+    // already-backend / radio values
+    direct: 'direct',
+    bonus_wallet: 'bonus_wallet',
+    manual_review: 'manual_review',
+    auto_claim: 'player_claim_auto_after_expire', // legacy hydrate → save as 过期自动派发
+    player_claim_expires: 'player_claim_expires',
+    player_claim_auto_after_expire: 'player_claim_auto_after_expire',
   };
-  return mapping[frontendValue] || 'auto_claim';
+  return mapping[frontendValue] || 'player_claim_expires';
 };
 
 // Map rescue distribution method (BO radio → API). Do not collapse both self-claim options to auto_claim.
@@ -5490,12 +6286,37 @@ const mapBackendToFrontendDistributionMethod = (
   backendValue?: string,
 ): string => {
   const mapping: Record<string, string> = {
-    auto_claim: 'expired_auto',
-    manual_review: 'self_claim_expire',
-    direct: 'auto',
+    auto_claim: 'expired_auto', // legacy immediate → edit as 过期自动派发
+    player_claim_auto_after_expire: 'expired_auto',
+    player_claim_expires: 'expired_invalid',
+    expired_auto: 'expired_auto',
+    expired_forfeit: 'expired_invalid',
+    expired_invalid: 'expired_invalid',
+    manual_review: 'manual_distribution',
+    manual_distribution: 'manual_distribution',
+    direct: 'expired_auto',
     bonus_wallet: 'bonus',
   };
-  return mapping[backendValue || ''] || 'expired_auto';
+  return mapping[backendValue || ''] || 'expired_invalid';
+};
+
+/** Agent BO radios: expired_invalid | expired_auto | manual_distribution */
+const mapBackendToFrontendAgentDistributionMethod = (
+  backendValue?: string,
+): string => {
+  const mapping: Record<string, string> = {
+    auto_claim: 'expired_auto', // legacy → 过期自动派发
+    player_claim_auto_after_expire: 'expired_auto',
+    player_claim_expires: 'expired_invalid',
+    expired_auto: 'expired_auto',
+    expired_forfeit: 'expired_invalid',
+    expired_invalid: 'expired_invalid',
+    manual_review: 'manual_distribution',
+    manual_distribution: 'manual_distribution',
+    direct: 'expired_auto',
+    bonus_wallet: 'expired_auto',
+  };
+  return mapping[backendValue || ''] || 'expired_invalid';
 };
 
 // Newbie bonus mapping functions
@@ -5746,7 +6567,7 @@ const handleModalClose = () => {
     // Investment Specific Fields
     investmentType: 'fixed_amount',
     rewardDays: 3,
-    investmentDistributionMethod: 'daily_auto',
+    investmentDistributionMethod: 'expired_forfeit',
     investmentSettings: [{ investmentAmount: '', giftAmount: '' }],
 
     // Promotion Specific Fields
@@ -5781,24 +6602,75 @@ const handleModalClose = () => {
     agentRewardAmountType: 'fixed_amount',
     agentRewardSettings: [{ rebateAmount: '', rewardAmount: '' }],
 
-    // Return Bonus Specific Fields
+    // Return Bonus Specific Fields (回归彩金)
+    returnBonusEditorKind: 'login_gap',
     inactiveDaysMin: 7,
+    inactiveDaysMax: 0,
     rewardAmount: 0,
     requiresDeposit: false,
     minDepositAmount: 0,
     depositInactiveDaysMin: 7,
+    depositInactiveDaysMax: 0,
     depositRewardAmount: 0,
+    activityCondition: 'hist_recharge',
+    rewardMethod: 'fixed',
+    rewardTiers: [
+      {
+        threshold: '',
+        rewardAmount: '',
+        rewardAmountMin: '',
+        rewardAmountMax: '',
+      },
+    ],
 
     // Ranking Specific Fields
-    rankingMetric: 'wagering',
+    rankingMetric: 'cum_wager',
     rankingPeriod: 'daily',
+    rankingDepositMethods: ['all'],
+    rankingMinDepositAmount: 0,
+    rankingTimeWindowType: 'calendar_day',
+    rankingTimeStart: null,
+    rankingTimeEnd: null,
     robotCount: 0,
-    rankingRewards: [{ rankFrom: 1, rankTo: 1, rewardValue: 0 }],
+    rankingRewards: [{ rankFrom: 1, rankTo: 1, rewardValue: 0, robotCount: 0 }],
+
+    laResetCycle: 'once',
+    laTotalBonusAmount: 100,
+    laCombinationCount: 2,
+    laCombinations: [
+      {
+        id: 'combo_1',
+        probability: 50,
+        firstAmount: 30,
+        secondAmount: 70,
+        firstIconUrl: '',
+        secondIconUrl: '',
+        taskType: 'invite_register',
+        taskValue: 1,
+      },
+      {
+        id: 'combo_2',
+        probability: 50,
+        firstAmount: 40,
+        secondAmount: 60,
+        firstIconUrl: '',
+        secondIconUrl: '',
+        taskType: 'invite_register',
+        taskValue: 1,
+      },
+    ],
+    laShowFakeGrandPrize: false,
+    laDisplayBonusMin: 0,
+    laDisplayBonusMax: 0,
+    laWheelStyle: 1,
+    laPopupBeforeLogin: '',
+    laPopupAfterLogin: '',
 
     // Collect Characters Specific Fields
     collectCombinationType: 'festival',
     collectCombinationName: 'new_year_luck',
     collectCharacters: ['新', '年', '大', '吉'],
+    collectCharacterImages: {},
     collectDistributionMethod: 'monthly',
     collectRewardClaimExpiryDays: 1,
     collectActualDistributionAmount: '',
@@ -5806,6 +6678,7 @@ const handleModalClose = () => {
     collectConditions: [
       { type: 'valid_bet', conditionValue: '', dailyCountLimit: '' },
     ],
+    collectValidDownline: { minRecharge: '', minWagering: '' },
 
     // 新砍一刀 / soft
     newbladeResetMode: 'once',
@@ -6523,9 +7396,11 @@ const handleSubmit = async () => {
             startTime: time.startTime,
             endTime: time.endTime,
           })) || [],
-      // Agent specific fields
+      // Agent specific fields — map BO radio values to API enums
       agentDisplayOnAgentPage: formData.agentDisplayOnAgentPage,
-      agentDistributionMethod: formData.agentDistributionMethod,
+      agentDistributionMethod: mapFrontendToBackendDistributionMethod(
+        formData.agentDistributionMethod,
+      ),
       agentRewardClaimExpiryDays: formData.agentRewardClaimExpiryDays,
       agentRewardCycle: formData.agentRewardCycle,
       agentRewardType: formData.agentRewardType,
@@ -6544,10 +7419,18 @@ const handleSubmit = async () => {
             investmentType: formData.investmentType || 'fixed_amount',
             rewardDays: Number(formData.rewardDays) > 0 ? Number(formData.rewardDays) : 1,
             investmentDistributionMethod: (() => {
-              const raw = formData.investmentDistributionMethod || 'daily_auto';
-              // Map BO “expired_auto” to player daily claim (service understands daily_claim)
-              if (raw === 'expired_auto') return 'daily_claim';
-              return raw;
+              const raw =
+                formData.investmentDistributionMethod || 'expired_forfeit';
+              // Persist product values as-is (玩家自领 only)
+              if (raw === 'expired_auto') return 'expired_auto';
+              if (raw === 'expired_forfeit' || raw === 'expired_invalid') {
+                return 'expired_forfeit';
+              }
+              // Legacy daily_auto → forfeit (no same-day auto credit)
+              if (raw === 'daily_auto' || raw === 'daily_claim') {
+                return 'expired_forfeit';
+              }
+              return 'expired_forfeit';
             })(),
             investmentSettings: (formData.investmentSettings || [])
               .map((s) => ({
@@ -6564,68 +7447,284 @@ const handleSubmit = async () => {
           }
         : {}),
 
-      // Return bonus specific fields
-      inactiveDaysMin:
-        formData.activityType === 'return_bonus'
-          ? formData.inactiveDaysMin || 0
-          : undefined,
+      // Return bonus specific fields (回归彩金)
       ...(formData.activityType === 'return_bonus'
-        ? {
-            rewardAmount: formData.rewardAmount || 0,
-            requiresDeposit: formData.requiresDeposit,
-            minDepositAmount: formData.minDepositAmount || 0,
-            depositInactiveDaysMin: formData.depositInactiveDaysMin || 0,
-            depositRewardAmount: formData.depositRewardAmount || 0,
-            enableDepositGap: (formData.depositRewardAmount || 0) > 0,
-            depositGapRewardAmount: formData.depositRewardAmount || 0,
-            returnBonusRewards: (() => {
-              const rules: Array<Record<string, unknown>> = [
-                {
-                  rule: 'login_gap',
-                  inactiveDaysMin: formData.inactiveDaysMin || 0,
-                  rewardAmount: formData.rewardAmount || 0,
-                  requiresDeposit: formData.requiresDeposit,
-                  minDepositAmount: formData.minDepositAmount || 0,
-                },
-              ];
-              if ((formData.depositRewardAmount || 0) > 0) {
-                rules.push({
-                  rule: 'deposit_gap',
-                  inactiveDaysMin:
-                    formData.depositInactiveDaysMin ||
-                    formData.inactiveDaysMin ||
-                    0,
-                  rewardAmount: formData.depositRewardAmount || 0,
-                  requiresDeposit: true,
-                  minDepositAmount: formData.minDepositAmount || 0,
-                });
-              }
-              return rules.slice(0, 2);
-            })(),
-          }
+        ? (() => {
+            const loginMin = Number(formData.inactiveDaysMin) || 0;
+            const loginMax = Number(formData.inactiveDaysMax) || 0;
+            const depositMin = Number(formData.depositInactiveDaysMin) || 0;
+            const depositMax = Number(formData.depositInactiveDaysMax) || 0;
+            const loginReward = Number(formData.rewardAmount) || 0;
+            const depositReward = Number(formData.depositRewardAmount) || 0;
+            const lines: Array<Record<string, unknown>> = [
+              {
+                id: 'login_gap',
+                rule: 'login_gap',
+                kind: 'login_gap',
+                inactiveDaysMin: loginMin,
+                inactiveDaysMax: loginMax,
+                rewardAmount: loginReward,
+                requiresDeposit: formData.requiresDeposit,
+                minDepositAmount: formData.minDepositAmount || 0,
+              },
+              {
+                id: 'deposit_gap',
+                rule: 'deposit_gap',
+                kind: 'deposit_gap',
+                inactiveDaysMin: depositMin || loginMin,
+                inactiveDaysMax: depositMax,
+                rewardAmount: depositReward,
+                requiresDeposit: true,
+                minDepositAmount: formData.minDepositAmount || 0,
+              },
+            ];
+            const cappedLines = lines.slice(0, 2);
+            const tiers = (formData.rewardTiers || [])
+              .map((t) => {
+                const threshold = parseFloat(String(t.threshold));
+                if (!Number.isFinite(threshold)) return null;
+                if (formData.rewardMethod === 'random') {
+                  const min = parseFloat(String(t.rewardAmountMin ?? ''));
+                  const max = parseFloat(String(t.rewardAmountMax ?? ''));
+                  return {
+                    threshold,
+                    rewardAmountMin: Number.isFinite(min) ? min : 0,
+                    rewardAmountMax: Number.isFinite(max) ? max : 0,
+                  };
+                }
+                const amount = parseFloat(String(t.rewardAmount ?? ''));
+                return {
+                  threshold,
+                  rewardAmount: Number.isFinite(amount) ? amount : 0,
+                };
+              })
+              .filter(Boolean);
+
+            let dist = String(formData.distributionMethod || '');
+            if (dist === 'auto_claim' || dist === 'expired_auto') {
+              dist = 'player_claim_auto_after_expire';
+            } else if (
+              dist !== 'player_claim_auto_after_expire' &&
+              dist !== 'player_claim_expires'
+            ) {
+              dist = 'player_claim_expires';
+            }
+            const expiryDays = Math.max(
+              0,
+              Math.min(31, Number(formData.rewardClaimExpiryDays ?? 1) || 0),
+            );
+
+            return {
+              inactiveDaysMin: loginMin,
+              inactiveDaysMax: loginMax,
+              rewardAmount: loginReward,
+              requiresDeposit: formData.requiresDeposit,
+              minDepositAmount: formData.minDepositAmount || 0,
+              depositInactiveDaysMin: depositMin,
+              depositInactiveDaysMax: depositMax,
+              depositRewardAmount: depositReward,
+              enableDepositGap: depositMin > 0 || depositReward > 0,
+              depositGapRewardAmount: depositReward,
+              distributionMethod: dist,
+              rewardClaimExpiryDays: expiryDays,
+              activityCondition: formData.activityCondition || 'hist_recharge',
+              rewardMethod: formData.rewardMethod || 'fixed',
+              rewardTiers: tiers,
+              returnBonusRewards: cappedLines,
+              rewardLines: cappedLines,
+            };
+          })()
         : {}),
 
-      // Ranking specific fields
-      rankingMetric:
-        formData.activityType === 'ranking'
-          ? formData.rankingMetric
-          : undefined,
-      rankingPeriod:
-        formData.activityType === 'ranking'
-          ? formData.rankingPeriod
-          : undefined,
-      robotCount:
-        formData.activityType === 'ranking' ? formData.robotCount || 0 : undefined,
-      rankingRobotCount:
-        formData.activityType === 'ranking' ? formData.robotCount || 0 : undefined,
-      rankingRewards:
-        formData.activityType === 'ranking'
-          ? formData.rankingRewards?.map((r) => ({
-              rankFrom: Number(r.rankFrom) || 1,
-              rankTo: Number(r.rankTo) || 1,
-              rewardValue: Number(r.rewardValue) || 0,
-            })) || []
-          : undefined,
+      // Ranking specific fields — only when activityType === ranking
+      ...(formData.activityType === 'ranking'
+        ? (() => {
+            const rewards =
+              formData.rankingRewards?.map((r) => ({
+                rankFrom: Number(r.rankFrom) || 1,
+                rankTo: Number(r.rankTo) || 1,
+                rewardValue: Number(r.rewardValue) || 0,
+                robotCount: Math.max(0, Number(r.robotCount) || 0),
+              })) || [];
+            const robotSum = rewards.reduce(
+              (sum, r) => sum + (Number(r.robotCount) || 0),
+              0,
+            );
+            let dist = String(formData.distributionMethod || '');
+            if (dist === 'auto_claim' || dist === 'expired_auto') {
+              dist = 'player_claim_auto_after_expire';
+            } else if (dist === 'expired_forfeit') {
+              dist = 'player_claim_expires';
+            }
+            if (
+              dist !== 'player_claim_auto_after_expire' &&
+              dist !== 'player_claim_expires'
+            ) {
+              dist = 'player_claim_expires';
+            }
+            const expiryDays = Math.max(
+              0,
+              Math.min(31, Number(formData.rewardClaimExpiryDays ?? 1) || 0),
+            );
+            const claim =
+              formData.claimTime === 'daily' ? 'daily' : 'next_day';
+            const isRechargeMetric =
+              formData.rankingMetric === 'cum_recharge' ||
+              formData.rankingMetric === 'single_recharge';            const rawMethods = (formData.rankingDepositMethods || []).map(
+              String,
+            );
+            // "all" / empty → no channel filter on API side
+            const depositMethods =
+              !isRechargeMetric ||
+              rawMethods.length === 0 ||
+              rawMethods.includes('all')
+                ? []
+                : rawMethods.filter(Boolean);
+            return {
+              rankingMetric: formData.rankingMetric || 'cum_wager',
+              rankingPeriod: formData.rankingPeriod || 'daily',
+              depositMethods: isRechargeMetric ? depositMethods : undefined,
+              minDepositAmount: isRechargeMetric
+                ? Number(formData.rankingMinDepositAmount) || 0
+                : undefined,
+              isTimeLimited: Boolean(formData.isTimeLimited),
+              rankingTimeWindowType: formData.isTimeLimited
+                ? formData.rankingTimeWindowType || 'calendar_day'
+                : undefined,
+              rankingTimeStart: formData.isTimeLimited
+                ? formData.rankingTimeStart || undefined
+                : undefined,
+              rankingTimeEnd: formData.isTimeLimited
+                ? formData.rankingTimeEnd || undefined
+                : undefined,
+              distributionMethod: dist,
+              claimTime: claim,
+              selectTime: formData.selectTime ?? 0,
+              rewardClaimExpiryDays: expiryDays,
+              robotCount: robotSum,
+              rankingRobotCount: robotSum,
+              rankingRewards: rewards,
+            };
+          })()
+        : {}),
+
+      // Lottery assist
+      ...(formData.activityType === 'lottery_assist'
+        ? (() => {
+            let dist = String(formData.distributionMethod || '');
+            if (dist === 'auto_claim' || dist === 'expired_auto') {
+              dist = 'player_claim_auto_after_expire';
+            } else if (
+              dist === 'expired_forfeit' ||
+              dist === 'expired_invalid'
+            ) {
+              dist = 'player_claim_expires';
+            }
+            if (
+              dist !== 'player_claim_auto_after_expire' &&
+              dist !== 'player_claim_expires'
+            ) {
+              dist = 'player_claim_expires';
+            }
+            const expiryDays = Math.max(
+              0,
+              Math.min(31, Number(formData.rewardClaimExpiryDays ?? 1) || 0),
+            );
+            const count = Math.min(
+              5,
+              Math.max(2, Number(formData.laCombinationCount) || 2),
+            );
+            const total = Number(formData.laTotalBonusAmount) || 0;
+            const combinations = (formData.laCombinations || [])
+              .slice(0, count)
+              .map((c, i) => {
+                let first = Number(c.firstAmount) || 0;
+                let second = Number(c.secondAmount) || 0;
+                if (total > 0 && Math.abs(first + second - total) > 0.009) {
+                  second = Math.max(
+                    0,
+                    Math.round((total - first) * 100) / 100,
+                  );
+                }
+                return {
+                  id: String(c.id || `combo_${i + 1}`),
+                  probability: Number(c.probability) || 0,
+                  firstAmount: first,
+                  secondAmount: second,
+                  firstIconUrl: c.firstIconUrl || undefined,
+                  secondIconUrl: c.secondIconUrl || undefined,
+                  taskType: c.taskType || 'invite_register',
+                  taskValue: Number(c.taskValue) || 0,
+                };
+              });
+            const claim =
+              formData.claimTime === 'daily'
+                ? 'daily'
+                : formData.claimTime === 'real_time'
+                  ? 'real_time'
+                  : 'next_day';
+            return {
+              resetCycle: formData.laResetCycle || 'once',
+              distributionMethod: dist,
+              claimTime: claim,
+              selectTime: formData.selectTime ?? 0,
+              rewardClaimExpiryDays: expiryDays,
+              totalBonusAmount: total,
+              combinationCount: count,
+              combinations,
+              showFakeGrandPrize: Boolean(formData.laShowFakeGrandPrize),
+              displayBonusMin: Number(formData.laDisplayBonusMin) || 0,
+              displayBonusMax: Number(formData.laDisplayBonusMax) || 0,
+              wheelStyle: Math.min(
+                5,
+                Math.max(1, Number(formData.laWheelStyle) || 1),
+              ),
+              popupBeforeLogin: formData.laPopupBeforeLogin || undefined,
+              popupAfterLogin: formData.laPopupAfterLogin || undefined,
+            };
+          })()
+        : {}),
+
+      // Collect characters — must live in config JSON or BO reopens empty
+      ...(formData.activityType === 'collect'
+        ? {
+            collectCombinationType: formData.collectCombinationType,
+            collectCombinationName: formData.collectCombinationName,
+            collectCharacters: [...(formData.collectCharacters || [])],
+            collectCharacterImages: {
+              ...(formData.collectCharacterImages || {}),
+            },
+            collectDistributionMethod:
+              formData.collectDistributionMethod || 'monthly',
+            collectRewardClaimExpiryDays: (() => {
+              const n = Number(formData.collectRewardClaimExpiryDays);
+              if (!Number.isFinite(n) || n < 0) return 0;
+              return Math.min(31, Math.floor(n));
+            })(),
+            collectActualDistributionAmount:
+              parseFloat(String(formData.collectActualDistributionAmount)) ||
+              0,
+            collectDisplayedDistributionAmount:
+              parseFloat(
+                String(formData.collectDisplayedDistributionAmount),
+              ) || 0,
+            collectConditions: (formData.collectConditions || []).map((c) => ({
+              type: c.type,
+              value: parseFloat(String(c.conditionValue)) || 0,
+              dailyLimit: parseFloat(String(c.dailyCountLimit)) || 0,
+            })),
+            collectValidDownline: {
+              minRecharge:
+                parseFloat(
+                  String(formData.collectValidDownline?.minRecharge),
+                ) || 0,
+              minWagering:
+                parseFloat(
+                  String(formData.collectValidDownline?.minWagering),
+                ) || 0,
+            },
+          }
+        : {}),
 
       // Newbie Bonus specific fields - save all to database with proper mapping
       newbiePromotionType: mapNewbiePromotionTypeToBackend(
@@ -7624,6 +8723,63 @@ const removeAgentRewardSetting = (index: number) => {
   formData.agentRewardSettings.splice(index, 1);
 };
 
+const returnBonusThresholdLabel = computed(() => {
+  switch (formData.activityCondition) {
+    case 'hist_recharge':
+      return '历史充值门槛';
+    case 'hist_wager':
+      return '历史打码门槛';
+    case 'hist_loss':
+      return '历史亏损门槛';
+    case 'hist_recharge_count':
+      return '历史充值次数门槛';
+    default:
+      return '门槛';
+  }
+});
+
+const addReturnBonusTier = () => {
+  formData.rewardTiers.push({
+    threshold: '',
+    rewardAmount: '',
+    rewardAmountMin: '',
+    rewardAmountMax: '',
+  });
+};
+
+const removeReturnBonusTier = (index: number) => {
+  formData.rewardTiers.splice(index, 1);
+};
+
+const normalizeRankingMetricForForm = (
+  raw: string,
+): 'cum_recharge' | 'single_recharge' | 'cum_wager' => {
+  const m = String(raw || 'cum_wager').toLowerCase();
+  if (m === 'recharge' || m === 'cum_recharge') return 'cum_recharge';
+  if (m === 'single_recharge' || m === 'single_deposit') return 'single_recharge';
+  if (m === 'wagering' || m === 'cum_wager') return 'cum_wager';
+  return 'cum_wager';
+};
+
+const isRankingRechargeMetric = computed(
+  () =>
+    formData.rankingMetric === 'cum_recharge' ||
+    formData.rankingMetric === 'single_recharge',
+);
+
+const handleRankingDepositMethodChange = (values: (string | number)[]) => {
+  if (values.includes('all')) {
+    formData.rankingDepositMethods = [
+      'all',
+      'pix',
+      'customer_service',
+      'merchant',
+    ];
+  } else {
+    formData.rankingDepositMethods = values.map((v) => v.toString());
+  }
+};
+
 const addRankingReward = () => {
   const last = formData.rankingRewards[formData.rankingRewards.length - 1];
   const nextFrom = (last?.rankTo || 0) + 1;
@@ -7631,11 +8787,50 @@ const addRankingReward = () => {
     rankFrom: nextFrom,
     rankTo: nextFrom,
     rewardValue: 0,
+    robotCount: 0,
   });
 };
 
 const removeRankingReward = (index: number) => {
   formData.rankingRewards.splice(index, 1);
+};
+
+const laTaskTypeOptions = [
+  { label: '邀请人数-注册成功', value: 'invite_register' },
+  { label: '下载并登录APP', value: 'download_app_login' },
+  { label: '下级打码人数', value: 'downline_wager_count' },
+  { label: '下级首充人数', value: 'downline_first_recharge_count' },
+  { label: '下级充值次数', value: 'downline_recharge_count' },
+  { label: '下级累计充值', value: 'downline_cum_recharge' },
+  { label: '下级累计打码', value: 'downline_cum_wager' },
+  { label: '下级累计提现', value: 'downline_cum_withdraw' },
+  { label: '下级提现次数', value: 'downline_withdraw_count' },
+  { label: '本人单笔充值', value: 'self_single_recharge' },
+  { label: '本人单笔打码', value: 'self_single_wager' },
+  { label: '本人累计充值', value: 'self_cum_recharge' },
+  { label: '本人累计打码', value: 'self_cum_wager' },
+];
+
+const defaultLaCombo = (index: number) => ({
+  id: `combo_${index + 1}`,
+  probability: 0,
+  firstAmount: 0,
+  secondAmount: Number(formData.laTotalBonusAmount) || 0,
+  firstIconUrl: '',
+  secondIconUrl: '',
+  taskType: 'invite_register',
+  taskValue: 1,
+});
+
+const syncLaCombinations = (count?: number | null) => {
+  const n = Math.min(5, Math.max(2, Number(count ?? formData.laCombinationCount) || 2));
+  formData.laCombinationCount = n;
+  while (formData.laCombinations.length < n) {
+    formData.laCombinations.push(defaultLaCombo(formData.laCombinations.length));
+  }
+  if (formData.laCombinations.length > n) {
+    formData.laCombinations.splice(n);
+  }
 };
 
 // Methods for Collect Characters Specific Fields
@@ -7681,7 +8876,14 @@ const collectConditionTypeOptions = [
   { label: $t('activity.formModal.k6709'), value: 'valid_bet' },
   { label: $t('activity.formModal.k5145'), value: 'recharge_amount' },
   { label: $t('activity.formModal.k767b3'), value: 'login_count' },
+  { label: $t('activity.formModal.k67096'), value: 'effective_invite' },
 ];
+
+const showCollectValidDownline = computed(() =>
+  (formData.collectConditions || []).some(
+    (c) => c.type === 'effective_invite' || c.type === 'invite_count',
+  ),
+);
 
 // Methods for Guessing/Competition Specific Fields
 const addGuessingTeam = () => {
@@ -8177,6 +9379,10 @@ watch(
           (newItem as any).distributionMethod ??
           (newItem as any).config?.distributionMethod ??
           'player_claim_expires';
+        // Legacy immediate auto_claim → edit/save as 过期自动派发
+        if (formData.distributionMethod === 'auto_claim') {
+          formData.distributionMethod = 'player_claim_auto_after_expire';
+        }
         formData.claimTime =
           (newItem as any).claimTime ??
           (newItem as any).config?.claimTime ??
@@ -8430,6 +9636,9 @@ watch(
       if ((newItem as any).type !== 'recharge') {
         formData.distributionMethod =
           (newItem as any).config?.distributionMethod || 'player_claim_expires';
+        if (formData.distributionMethod === 'auto_claim') {
+          formData.distributionMethod = 'player_claim_auto_after_expire';
+        }
         formData.claimTime = (newItem as any).config?.claimTime || 'next_day';
       }
       formData.selectTime = (newItem as any).config?.selectTime || 0;
@@ -8650,8 +9859,9 @@ watch(
       const cfg = (newItem as any).config || {};
       formData.agentDisplayOnAgentPage =
         cfg.agentDisplayOnAgentPage ?? formData.agentDisplayOnAgentPage;
-      formData.agentDistributionMethod =
-        cfg.agentDistributionMethod || formData.agentDistributionMethod;
+      formData.agentDistributionMethod = mapBackendToFrontendAgentDistributionMethod(
+        cfg.agentDistributionMethod || formData.agentDistributionMethod,
+      );
       formData.agentRewardClaimExpiryDays =
         cfg.agentRewardClaimExpiryDays || formData.agentRewardClaimExpiryDays;
       formData.agentRewardCycle =
@@ -8676,11 +9886,13 @@ watch(
             ? Number(cfg.rewardDays)
             : formData.rewardDays || 3;
         const dist = cfg.investmentDistributionMethod;
-        // Reverse-map daily_claim → BO radio expired_auto when that was the stored synonym
-        formData.investmentDistributionMethod =
-          dist === 'daily_claim'
-            ? 'expired_auto'
-            : dist || formData.investmentDistributionMethod || 'daily_auto';
+        // Map stored / legacy values onto BO radios
+        if (dist === 'expired_auto' || dist === 'end_auto' || dist === 'auto_claim') {
+          formData.investmentDistributionMethod = 'expired_auto';
+        } else {
+          // expired_forfeit | daily_auto | daily_claim | …
+          formData.investmentDistributionMethod = 'expired_forfeit';
+        }
         if (Array.isArray(cfg.investmentSettings) && cfg.investmentSettings.length) {
           formData.investmentSettings = cfg.investmentSettings.map((s: any) => ({
             investmentAmount: String(s.investmentAmount ?? s.minAmount ?? ''),
@@ -8689,39 +9901,327 @@ watch(
         }
       }
 
-      formData.inactiveDaysMin =
-        Number(cfg.inactiveDaysMin) || formData.inactiveDaysMin;
-      formData.rewardAmount =
-        Number(cfg.rewardAmount ?? cfg.returnBonusRewards?.[0]?.rewardAmount) ||
-        formData.rewardAmount;
-      formData.requiresDeposit =
-        cfg.requiresDeposit ?? formData.requiresDeposit;
-      formData.minDepositAmount =
-        Number(cfg.minDepositAmount) || formData.minDepositAmount;
-      formData.depositInactiveDaysMin =
-        Number(
-          cfg.depositInactiveDaysMin ??
-            cfg.returnBonusRewards?.find((r: any) => r.rule === 'deposit_gap')
-              ?.inactiveDaysMin,
-        ) || formData.depositInactiveDaysMin;
-      formData.depositRewardAmount =
-        Number(
-          cfg.depositRewardAmount ??
-            cfg.depositGapRewardAmount ??
-            cfg.returnBonusRewards?.find((r: any) => r.rule === 'deposit_gap')
-              ?.rewardAmount,
-        ) || formData.depositRewardAmount;
+      // Return bonus (回归彩金) — hydrate from config
+      if (
+        (newItem as any).type === 'return_bonus' ||
+        (newItem as any).activityType === 'return_bonus'
+      ) {
+        const lines: any[] = Array.isArray(cfg.returnBonusRewards)
+          ? cfg.returnBonusRewards
+          : Array.isArray(cfg.rewardLines)
+            ? cfg.rewardLines
+            : [];
+        const loginLine =
+          lines.find(
+            (r: any) =>
+              String(r.rule || r.kind || r.id || '') === 'login_gap',
+          ) || lines[0];
+        const depositLine = lines.find(
+          (r: any) =>
+            String(r.rule || r.kind || r.id || '') === 'deposit_gap',
+        );
 
-      formData.rankingMetric = cfg.rankingMetric || formData.rankingMetric;
-      formData.rankingPeriod = cfg.rankingPeriod || formData.rankingPeriod;
-      formData.robotCount =
-        Number(cfg.robotCount ?? cfg.rankingRobotCount) || formData.robotCount;
-      if (Array.isArray(cfg.rankingRewards) && cfg.rankingRewards.length) {
-        formData.rankingRewards = cfg.rankingRewards.map((r: any) => ({
-          rankFrom: Number(r.rankFrom) || 1,
-          rankTo: Number(r.rankTo) || 1,
-          rewardValue: Number(r.rewardValue ?? r.rewardAmount) || 0,
-        }));
+        formData.returnBonusEditorKind = 'login_gap';
+        formData.inactiveDaysMin =
+          Number(
+            cfg.inactiveDaysMin ?? loginLine?.inactiveDaysMin,
+          ) || formData.inactiveDaysMin;
+        formData.inactiveDaysMax =
+          Number(
+            cfg.inactiveDaysMax ?? loginLine?.inactiveDaysMax ?? 0,
+          ) || 0;
+        formData.rewardAmount =
+          Number(
+            cfg.rewardAmount ?? loginLine?.rewardAmount,
+          ) || formData.rewardAmount;
+        formData.requiresDeposit =
+          cfg.requiresDeposit ??
+          loginLine?.requiresDeposit ??
+          formData.requiresDeposit;
+        formData.minDepositAmount =
+          Number(
+            cfg.minDepositAmount ?? loginLine?.minDepositAmount,
+          ) || formData.minDepositAmount;
+        formData.depositInactiveDaysMin =
+          Number(
+            cfg.depositInactiveDaysMin ?? depositLine?.inactiveDaysMin,
+          ) || formData.depositInactiveDaysMin;
+        formData.depositInactiveDaysMax =
+          Number(
+            cfg.depositInactiveDaysMax ?? depositLine?.inactiveDaysMax ?? 0,
+          ) || 0;
+        formData.depositRewardAmount =
+          Number(
+            cfg.depositRewardAmount ??
+              cfg.depositGapRewardAmount ??
+              depositLine?.rewardAmount,
+          ) || formData.depositRewardAmount;
+
+        let dist =
+          cfg.distributionMethod ||
+          formData.distributionMethod ||
+          'player_claim_expires';
+        if (
+          dist === 'auto_claim' ||
+          dist === 'expired_auto' ||
+          dist === 'expired_forfeit'
+        ) {
+          dist =
+            dist === 'expired_forfeit'
+              ? 'player_claim_expires'
+              : 'player_claim_auto_after_expire';
+        }
+        if (
+          dist !== 'player_claim_expires' &&
+          dist !== 'player_claim_auto_after_expire'
+        ) {
+          dist = 'player_claim_expires';
+        }
+        formData.distributionMethod = dist;
+
+        const expiry = Number(cfg.rewardClaimExpiryDays);
+        formData.rewardClaimExpiryDays = Number.isFinite(expiry)
+          ? Math.max(0, Math.min(31, Math.floor(expiry)))
+          : formData.rewardClaimExpiryDays;
+
+        const cond = String(cfg.activityCondition || '');
+        formData.activityCondition = (
+          [
+            'hist_recharge',
+            'hist_wager',
+            'hist_loss',
+            'hist_recharge_count',
+            'none',
+          ].includes(cond)
+            ? cond
+            : 'hist_recharge'
+        ) as typeof formData.activityCondition;
+
+        formData.rewardMethod =
+          cfg.rewardMethod === 'random' ? 'random' : 'fixed';
+
+        if (Array.isArray(cfg.rewardTiers) && cfg.rewardTiers.length) {
+          formData.rewardTiers = cfg.rewardTiers.map((t: any) => ({
+            threshold: String(t.threshold ?? ''),
+            rewardAmount: String(t.rewardAmount ?? ''),
+            rewardAmountMin: String(t.rewardAmountMin ?? ''),
+            rewardAmountMax: String(t.rewardAmountMax ?? ''),
+          }));
+        }
+      }
+
+      // Ranking (排行榜) — hydrate from config
+      if (
+        (newItem as any).type === 'ranking' ||
+        (newItem as any).activityType === 'ranking'
+      ) {
+        formData.rankingMetric = normalizeRankingMetricForForm(
+          cfg.rankingMetric || formData.rankingMetric,
+        );
+        formData.rankingPeriod = (
+          ['daily', 'weekly', 'monthly'].includes(String(cfg.rankingPeriod))
+            ? cfg.rankingPeriod
+            : formData.rankingPeriod
+        ) as typeof formData.rankingPeriod;
+
+        const methods = Array.isArray(cfg.depositMethods)
+          ? cfg.depositMethods.map(String)
+          : Array.isArray(cfg.rechargeMethods)
+            ? cfg.rechargeMethods.map(String)
+            : formData.rankingDepositMethods;
+        formData.rankingDepositMethods =
+          methods.length === 0 || methods.includes('all')
+            ? ['all', 'pix', 'customer_service', 'merchant']
+            : methods;
+
+        const minDep = Number(cfg.minDepositAmount);
+        formData.rankingMinDepositAmount = Number.isFinite(minDep)
+          ? Math.max(0, minDep)
+          : formData.rankingMinDepositAmount;
+
+        formData.isTimeLimited = Boolean(
+          cfg.isTimeLimited ?? formData.isTimeLimited,
+        );
+        const tw = String(cfg.rankingTimeWindowType || '');
+        formData.rankingTimeWindowType = (
+          ['calendar_day', 'fixed_weekly', 'fixed_monthly'].includes(tw)
+            ? tw
+            : formData.rankingTimeWindowType
+        ) as typeof formData.rankingTimeWindowType;
+        formData.rankingTimeStart = cfg.rankingTimeStart
+          ? String(cfg.rankingTimeStart)
+          : formData.rankingTimeStart;
+        formData.rankingTimeEnd = cfg.rankingTimeEnd
+          ? String(cfg.rankingTimeEnd)
+          : formData.rankingTimeEnd;
+
+        let dist =
+          cfg.distributionMethod ||
+          formData.distributionMethod ||
+          'player_claim_expires';
+        if (
+          dist === 'auto_claim' ||
+          dist === 'expired_auto' ||
+          dist === 'expired_forfeit'
+        ) {
+          dist =
+            dist === 'expired_forfeit'
+              ? 'player_claim_expires'
+              : 'player_claim_auto_after_expire';
+        }
+        if (
+          dist !== 'player_claim_expires' &&
+          dist !== 'player_claim_auto_after_expire'
+        ) {
+          dist = 'player_claim_expires';
+        }
+        formData.distributionMethod = dist;
+
+        const claim = String(cfg.claimTime || formData.claimTime || 'next_day');
+        formData.claimTime = claim === 'daily' ? 'daily' : 'next_day';
+        formData.selectTime =
+          cfg.selectTime != null
+            ? Number(cfg.selectTime) || 0
+            : formData.selectTime;
+
+        const expiry = Number(cfg.rewardClaimExpiryDays);
+        formData.rewardClaimExpiryDays = Number.isFinite(expiry)
+          ? Math.max(0, Math.min(31, Math.floor(expiry)))
+          : formData.rewardClaimExpiryDays;
+
+        formData.robotCount =
+          Number(cfg.robotCount ?? cfg.rankingRobotCount) || formData.robotCount;
+        if (Array.isArray(cfg.rankingRewards) && cfg.rankingRewards.length) {
+          formData.rankingRewards = cfg.rankingRewards.map((r: any) => ({
+            rankFrom: Number(r.rankFrom) || 1,
+            rankTo: Number(r.rankTo) || 1,
+            rewardValue: Number(r.rewardValue ?? r.rewardAmount) || 0,
+            robotCount: Math.max(0, Number(r.robotCount) || 0),
+          }));
+        }
+      }
+
+      // Lottery assist — hydrate from config
+      if (
+        (newItem as any).type === 'lottery_assist' ||
+        (newItem as any).activityType === 'lottery_assist'
+      ) {
+        const rc = String(cfg.resetCycle || formData.laResetCycle || 'once');
+        formData.laResetCycle = (
+          ['once', 'daily', 'weekly', 'monthly'].includes(rc)
+            ? rc
+            : 'once'
+        ) as typeof formData.laResetCycle;
+        formData.laTotalBonusAmount =
+          Number(cfg.totalBonusAmount) || formData.laTotalBonusAmount;
+        formData.laCombinationCount = Math.min(
+          5,
+          Math.max(2, Number(cfg.combinationCount) || 2),
+        );
+        if (Array.isArray(cfg.combinations) && cfg.combinations.length) {
+          formData.laCombinations = cfg.combinations
+            .slice(0, 5)
+            .map((c: any, i: number) => ({
+              id: String(c.id || `combo_${i + 1}`),
+              probability: Number(c.probability) || 0,
+              firstAmount: Number(c.firstAmount) || 0,
+              secondAmount: Number(c.secondAmount) || 0,
+              firstIconUrl: String(c.firstIconUrl || ''),
+              secondIconUrl: String(c.secondIconUrl || ''),
+              taskType: String(c.taskType || 'invite_register'),
+              taskValue: Number(c.taskValue) || 0,
+            }));
+          formData.laCombinationCount = Math.min(
+            5,
+            Math.max(2, formData.laCombinations.length),
+          );
+        }
+        formData.laShowFakeGrandPrize = Boolean(cfg.showFakeGrandPrize);
+        formData.laDisplayBonusMin = Number(cfg.displayBonusMin) || 0;
+        formData.laDisplayBonusMax = Number(cfg.displayBonusMax) || 0;
+        formData.laWheelStyle = Math.min(
+          5,
+          Math.max(1, Number(cfg.wheelStyle) || 1),
+        );
+        formData.laPopupBeforeLogin = String(cfg.popupBeforeLogin || '');
+        formData.laPopupAfterLogin = String(cfg.popupAfterLogin || '');
+        let dist = String(cfg.distributionMethod || formData.distributionMethod);
+        if (dist === 'auto_claim' || dist === 'expired_auto') {
+          dist = 'player_claim_auto_after_expire';
+        } else if (
+          dist === 'expired_forfeit' ||
+          dist === 'expired_invalid'
+        ) {
+          dist = 'player_claim_expires';
+        }
+        if (
+          dist !== 'player_claim_auto_after_expire' &&
+          dist !== 'player_claim_expires'
+        ) {
+          dist = 'player_claim_expires';
+        }
+        formData.distributionMethod = dist;
+        const claim = String(cfg.claimTime || formData.claimTime || 'real_time');
+        formData.claimTime =
+          claim === 'daily' || claim === 'next_day' || claim === 'real_time'
+            ? claim
+            : 'real_time';
+        const expiry = Number(cfg.rewardClaimExpiryDays);
+        formData.rewardClaimExpiryDays = Number.isFinite(expiry)
+          ? Math.max(0, Math.min(31, Math.floor(expiry)))
+          : formData.rewardClaimExpiryDays;
+      }
+
+      // Collect characters — hydrate from config
+      if (
+        (newItem as any).type === 'collect' ||
+        (newItem as any).activityType === 'collect'
+      ) {
+        formData.collectCombinationType =
+          cfg.collectCombinationType || formData.collectCombinationType;
+        formData.collectCombinationName =
+          cfg.collectCombinationName || formData.collectCombinationName;
+        if (
+          Array.isArray(cfg.collectCharacters) &&
+          cfg.collectCharacters.length
+        ) {
+          formData.collectCharacters = [...cfg.collectCharacters];
+        }
+        formData.collectCharacterImages =
+          cfg.collectCharacterImages &&
+          typeof cfg.collectCharacterImages === 'object'
+            ? { ...cfg.collectCharacterImages }
+            : {};
+        formData.collectDistributionMethod =
+          cfg.collectDistributionMethod || formData.collectDistributionMethod;
+        if (cfg.collectRewardClaimExpiryDays != null) {
+          const n = Number(cfg.collectRewardClaimExpiryDays);
+          formData.collectRewardClaimExpiryDays = Number.isFinite(n)
+            ? Math.min(31, Math.max(0, Math.floor(n)))
+            : formData.collectRewardClaimExpiryDays;
+        }
+        formData.collectActualDistributionAmount =
+          cfg.collectActualDistributionAmount != null
+            ? String(cfg.collectActualDistributionAmount)
+            : formData.collectActualDistributionAmount;
+        formData.collectDisplayedDistributionAmount =
+          cfg.collectDisplayedDistributionAmount != null
+            ? String(cfg.collectDisplayedDistributionAmount)
+            : formData.collectDisplayedDistributionAmount;
+        if (
+          Array.isArray(cfg.collectConditions) &&
+          cfg.collectConditions.length
+        ) {
+          formData.collectConditions = cfg.collectConditions.map((c: any) => ({
+            type: c.type || 'valid_bet',
+            conditionValue: String(c.conditionValue ?? c.value ?? ''),
+            dailyCountLimit: String(c.dailyCountLimit ?? c.dailyLimit ?? ''),
+          }));
+        }
+        formData.collectValidDownline = {
+          minRecharge: String(cfg.collectValidDownline?.minRecharge ?? ''),
+          minWagering: String(cfg.collectValidDownline?.minWagering ?? ''),
+        };
       }
 
       // ========================================

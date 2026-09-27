@@ -64,6 +64,26 @@ const routes: RouteRecordRaw[] = [
       {
         meta: {
           keepAlive: true,
+          title: 'page.menu.playerRebate',
+        },
+        name: 'PlayerRebate',
+        path: '/preferentialActivitiesNew/player-rebate',
+        // @ts-ignore
+        component: () => import('#/views/activity/PlayerRebate.vue'),
+      },
+      {
+        meta: {
+          keepAlive: true,
+          title: 'page.menu.interestTreasure',
+        },
+        name: 'InterestTreasure',
+        path: '/preferentialActivitiesNew/interest-treasure',
+        // @ts-ignore
+        component: () => import('#/views/activity/InterestTreasure.vue'),
+      },
+      {
+        meta: {
+          keepAlive: true,
           title: 'page.menu.luckyWheel',
         },
         name: 'LuckyWheel',

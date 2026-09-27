@@ -412,7 +412,7 @@
 <script setup lang="ts">
 import { $t } from '@vben/locales';
 
-import { ref, reactive, onMounted, h } from 'vue';
+import { ref, reactive, onMounted, watch, h } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
   NBreadcrumb,
@@ -471,6 +471,11 @@ import type { DataTableColumns } from 'naive-ui';
 import { renderTzDateTime } from '#/components/common/tzDateTimeRender';
 import { useDisplayTimezone } from '#/composables/useDisplayTimezone';
 import {
+  displayCalendarRangeToPicker,
+  getNowInTimezone,
+  pickerRangeToUtcIso,
+} from '#/utils/timezoneUtils';
+import {
   getGameCategoryLabel,
   getLocalizedGameName,
 } from '#/utils/gameTypeI18n';
@@ -478,10 +483,64 @@ import {
 const route = useRoute();
 const router = useRouter();
 const message = useMessage();
+/** Live IANA from header timezone selector (brazil / vietnam / china / …). */
 const { timezone } = useDisplayTimezone();
 
 const translateGameCategory = (category: string): string =>
   getGameCategoryLabel(category);
+
+/**
+ * Calendar day range in the *currently selected* display timezone
+ * (not browser local, not a hardcoded Sao Paulo offset).
+ */
+function displayDayRange(
+  startOffsetDays: number,
+  endOffsetDays = 0,
+): [number, number] {
+  const tzNow = getNowInTimezone(timezone.value);
+  const startBase = new Date(tzNow.year, tzNow.month - 1, tzNow.day);
+  startBase.setDate(startBase.getDate() + startOffsetDays);
+  const endBase = new Date(tzNow.year, tzNow.month - 1, tzNow.day);
+  endBase.setDate(endBase.getDate() + endOffsetDays);
+  return displayCalendarRangeToPicker(
+    startBase.getFullYear(),
+    startBase.getMonth() + 1,
+    startBase.getDate(),
+    endBase.getFullYear(),
+    endBase.getMonth() + 1,
+    endBase.getDate(),
+  );
+}
+
+/**
+ * Picker wall-clock Y-M-D H:M:S → UTC ISO using the header-selected timezone.
+ * Changing timezone changes the UTC bounds for the same picker labels.
+ */
+function rangeToApiDates(range: [number, number]): {
+  startDate: string;
+  endDate: string;
+} {
+  return pickerRangeToUtcIso(range, timezone.value);
+}
+
+/** Keep custom picker calendar days; reinterpret under the active display TZ on fetch. */
+function rematerializePickerRange(
+  range: [number, number],
+): [number, number] {
+  const start = new Date(range[0]);
+  const end = new Date(range[1]);
+  return displayCalendarRangeToPicker(
+    start.getFullYear(),
+    start.getMonth() + 1,
+    start.getDate(),
+    end.getFullYear(),
+    end.getMonth() + 1,
+    end.getDate(),
+    end.getHours(),
+    end.getMinutes(),
+    end.getSeconds(),
+  );
+}
 
 // State
 const loading = ref(false);
@@ -492,6 +551,8 @@ const showUserDetailModal = ref(false);
 const currentUserId = ref<number>(0);
 const tableData = ref<BetTransactionItem[]>([]);
 const dateRange = ref<[number, number] | null>(null);
+/** When set, timezone changes re-apply this relative preset in the new TZ. */
+const detailsDatePreset = ref<'today' | null>('today');
 const consolidateView = ref(false); // Default to consolidated view
 
 // Statistics State
@@ -556,55 +617,40 @@ const providerOptions = ref<Array<{ label: string; value: string }>>([]);
 const categoryOptions = ref<Array<{ label: string; value: string }>>([]);
 const typeOptions = ref<Array<{ label: string; value: string }>>([]);
 
-// Date Shortcuts
+// Date Shortcuts (display timezone calendar days)
 const dateShortcuts = {
-  [$t('game.betRecordsExtra2.today')]: (): [number, number] => {
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-    const end = new Date();
-    end.setHours(23, 59, 59, 999);
-    return [now.getTime(), end.getTime()];
-  },
-  [$t('game.betRecordsExtra2.yesterday')]: (): [number, number] => {
-    const now = new Date();
-    now.setDate(now.getDate() - 1);
-    now.setHours(0, 0, 0, 0);
-    const end = new Date(now);
-    end.setHours(23, 59, 59, 999);
-    return [now.getTime(), end.getTime()];
-  },
-  [$t('game.betRecordsExtra2.last7Days')]: (): [number, number] => {
-    const now = new Date();
-    now.setDate(now.getDate() - 6);
-    now.setHours(0, 0, 0, 0);
-    const end = new Date();
-    end.setHours(23, 59, 59, 999);
-    return [now.getTime(), end.getTime()];
-  },
-  [$t('game.betRecordsExtra2.last30Days')]: (): [number, number] => {
-    const now = new Date();
-    now.setDate(now.getDate() - 29);
-    now.setHours(0, 0, 0, 0);
-    const end = new Date();
-    end.setHours(23, 59, 59, 999);
-    return [now.getTime(), end.getTime()];
-  },
+  [$t('game.betRecordsExtra2.today')]: (): [number, number] => displayDayRange(0, 0),
+  [$t('game.betRecordsExtra2.yesterday')]: (): [number, number] =>
+    displayDayRange(-1, -1),
+  [$t('game.betRecordsExtra2.last7Days')]: (): [number, number] =>
+    displayDayRange(-6, 0),
+  [$t('game.betRecordsExtra2.last30Days')]: (): [number, number] =>
+    displayDayRange(-29, 0),
   [$t('game.betRecordsExtra2.thisMonth')]: (): [number, number] => {
-    const now = new Date();
-    now.setDate(1);
-    now.setHours(0, 0, 0, 0);
-    const end = new Date();
-    end.setHours(23, 59, 59, 999);
-    return [now.getTime(), end.getTime()];
+    const tzNow = getNowInTimezone(timezone.value);
+    return displayCalendarRangeToPicker(
+      tzNow.year,
+      tzNow.month,
+      1,
+      tzNow.year,
+      tzNow.month,
+      tzNow.day,
+    );
   },
   [$t('game.betRecordsExtra2.lastMonth')]: (): [number, number] => {
-    const now = new Date();
-    now.setMonth(now.getMonth() - 1);
-    now.setDate(1);
-    now.setHours(0, 0, 0, 0);
-    const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-    end.setHours(23, 59, 59, 999);
-    return [now.getTime(), end.getTime()];
+    const tzNow = getNowInTimezone(timezone.value);
+    const firstThisMonth = new Date(tzNow.year, tzNow.month - 1, 1);
+    const lastPrev = new Date(firstThisMonth.getTime());
+    lastPrev.setDate(0);
+    const firstPrev = new Date(lastPrev.getFullYear(), lastPrev.getMonth(), 1);
+    return displayCalendarRangeToPicker(
+      firstPrev.getFullYear(),
+      firstPrev.getMonth() + 1,
+      1,
+      lastPrev.getFullYear(),
+      lastPrev.getMonth() + 1,
+      lastPrev.getDate(),
+    );
   },
 };
 
@@ -863,10 +909,11 @@ const loadData = async () => {
       ...filters,
     };
 
-    // Add date range (preserve user-selected start/end time, do not force 23:59:59)
+    // Add date range (display-TZ wall clock → UTC ISO)
     if (dateRange.value) {
-      params.startDate = new Date(dateRange.value[0]).toISOString();
-      params.endDate = new Date(dateRange.value[1]).toISOString();
+      const { startDate, endDate } = rangeToApiDates(dateRange.value);
+      params.startDate = startDate;
+      params.endDate = endDate;
     }
 
     const response = await getBetTransactionsApi(params);
@@ -1038,6 +1085,7 @@ const loadFilterOptions = async () => {
 const handleDateRangeUpdate = (value: [number, number] | null) => {
   // Preserve user-selected end time (datetimerange), do not override to 23:59:59
   dateRange.value = value;
+  detailsDatePreset.value = null;
 };
 
 const handleStatsDateRangeUpdate = (value: [number, number] | null) => {
@@ -1055,6 +1103,7 @@ const handleReset = () => {
     filters[key as keyof typeof filters] = undefined;
   });
   dateRange.value = null;
+  detailsDatePreset.value = null;
   consolidateView.value = false; // Reset to default consolidated view
   paginationReactive.page = 1;
   loadData();
@@ -1344,29 +1393,15 @@ const statsGameColumns: DataTableColumns<any> = [
 
 // Statistics Methods
 const handleStatsDateTypeChange = (value: string) => {
-  // Update date range based on selected type
   if (value === 'day') {
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-    const end = new Date();
-    end.setHours(23, 59, 59, 999);
-    statsDateRange.value = [now.getTime(), end.getTime()];
+    statsDateRange.value = displayDayRange(0, 0);
   } else if (value === 'week') {
-    const now = new Date();
-    now.setDate(now.getDate() - 6);
-    now.setHours(0, 0, 0, 0);
-    const end = new Date();
-    end.setHours(23, 59, 59, 999);
-    statsDateRange.value = [now.getTime(), end.getTime()];
+    statsDateRange.value = displayDayRange(-6, 0);
   } else if (value === 'month') {
-    const now = new Date();
-    now.setDate(now.getDate() - 29);
-    now.setHours(0, 0, 0, 0);
-    const end = new Date();
-    end.setHours(23, 59, 59, 999);
-    statsDateRange.value = [now.getTime(), end.getTime()];
+    statsDateRange.value = displayDayRange(-29, 0);
   }
 };
+
 
 const handleStatsSearch = async () => {
   if (!statsFilters.memberAccount || statsFilters.memberAccount.trim() === '') {
@@ -1380,10 +1415,11 @@ const handleStatsSearch = async () => {
       username: statsFilters.memberAccount,
     };
 
-    // Add date range if selected
+    // Add date range if selected (display-TZ → UTC)
     if (statsDateRange.value) {
-      params.startDate = new Date(statsDateRange.value[0]).toISOString();
-      params.endDate = new Date(statsDateRange.value[1]).toISOString();
+      const { startDate, endDate } = rangeToApiDates(statsDateRange.value);
+      params.startDate = startDate;
+      params.endDate = endDate;
     }
 
     const response = await getBetTransactionStatisticsApi(params);
@@ -1463,13 +1499,7 @@ const handleStatsSearch = async () => {
 const handleStatsReset = () => {
   statsFilters.memberAccount = undefined;
   statsDateType.value = 'week';
-  // Set default week range
-  const now = new Date();
-  now.setDate(now.getDate() - 6);
-  now.setHours(0, 0, 0, 0);
-  const end = new Date();
-  end.setHours(23, 59, 59, 999);
-  statsDateRange.value = [now.getTime(), end.getTime()];
+  statsDateRange.value = displayDayRange(-6, 0);
   statsData.value = {};
   statsGameData.value = [];
   statsGamePagination.page = 1;
@@ -1481,6 +1511,28 @@ const formatCurrency = (value: number | string | null): string => {
   const num = typeof value === 'string' ? parseFloat(value) : value;
   return num.toFixed(2);
 };
+
+/** Header timezone changed → recompute bounds from selected IANA, then refresh. */
+watch(timezone, () => {
+  if (detailsDatePreset.value === 'today') {
+    dateRange.value = displayDayRange(0, 0);
+  } else if (dateRange.value) {
+    dateRange.value = rematerializePickerRange(dateRange.value);
+  }
+
+  if (statsDateType.value) {
+    handleStatsDateTypeChange(statsDateType.value);
+  } else if (statsDateRange.value) {
+    statsDateRange.value = rematerializePickerRange(statsDateRange.value);
+  }
+
+  if (activeTab.value === 'details') {
+    paginationReactive.page = 1;
+    loadData();
+  } else if (statsFilters.memberAccount?.trim()) {
+    handleStatsSearch();
+  }
+});
 
 // Lifecycle
 onMounted(() => {
@@ -1498,20 +1550,12 @@ onMounted(() => {
     message.success($t('game.betRecordsExtra2.filteredUser', [userName || userAccount]));
   }
 
-  // Set default date range to today for details tab
-  const now = new Date();
-  now.setHours(0, 0, 0, 0);
-  const end = new Date();
-  end.setHours(23, 59, 59, 999);
-  dateRange.value = [now.getTime(), end.getTime()];
+  // Default "today" = calendar day in header-selected display timezone
+  detailsDatePreset.value = 'today';
+  dateRange.value = displayDayRange(0, 0);
 
   // Set default week range for statistics tab
-  const weekStart = new Date();
-  weekStart.setDate(weekStart.getDate() - 6);
-  weekStart.setHours(0, 0, 0, 0);
-  const weekEnd = new Date();
-  weekEnd.setHours(23, 59, 59, 999);
-  statsDateRange.value = [weekStart.getTime(), weekEnd.getTime()];
+  statsDateRange.value = displayDayRange(-6, 0);
 
   loadFilterOptions();
   loadData();

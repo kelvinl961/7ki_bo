@@ -61,11 +61,15 @@ export async function registerApi(data: AuthApi.RegisterParams) {
 
 /**
  * 刷新accessToken
+ * Always send X-Auth-Realm: admin — same browser may also hold customer_refreshToken
+ * from the player client; without realm, API prefers customer and BO F5 looks like a kick.
  */
 export async function refreshTokenApi() {
   const { useAccessStore } = await import('@vben/stores');
   const token = useAccessStore().accessToken;
-  const headers: Record<string, string> = {};
+  const headers: Record<string, string> = {
+    'X-Auth-Realm': 'admin',
+  };
   if (token && typeof token === 'string' && token.length > 10) {
     headers.Authorization = `Bearer ${token}`;
   }
@@ -88,6 +92,7 @@ export async function logoutApi() {
     {},
     {
       withCredentials: true,
+      headers: { 'X-Auth-Realm': 'admin' },
     },
   );
 }

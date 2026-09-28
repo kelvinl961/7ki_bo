@@ -188,6 +188,8 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
 
       // 📱 Add device-id header for device tracking
       config.headers['device-id'] = getDeviceId();
+      // Realm: separate BO cookies from player client on same browser
+      config.headers['X-Auth-Realm'] = 'admin';
       // White-label merchant scope (re-enable when backend expects X-Merchant-Scope)
       // config.headers['x-merchant-scope'] = getMerchantScope();
 

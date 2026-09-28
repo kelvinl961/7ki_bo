@@ -100,10 +100,9 @@ export const useAccessStore = defineStore('core-access', {
     },
   },
   persist: {
-    // 持久化
+    // Track 1: access/refresh JWTs stay in memory; refresh cookie is httpOnly.
+    // Keep non-secret UX state only.
     pick: [
-      'accessToken',
-      'refreshToken',
       'accessCodes',
       'isLockScreen',
       'lockScreenPassword',

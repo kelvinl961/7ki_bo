@@ -365,7 +365,6 @@ function setupNotificationStream() {
     // Get token from access store or localStorage fallback
     const token = accessStore.accessToken || 
                   localStorage.getItem('token') || 
-                  localStorage.getItem('accessToken') || 
                   localStorage.getItem('authToken');
     
     if (!token) {

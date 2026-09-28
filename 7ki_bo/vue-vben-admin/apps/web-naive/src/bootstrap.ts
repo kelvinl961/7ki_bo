@@ -3,7 +3,7 @@ import { createApp, watchEffect } from 'vue';
 import { registerAccessDirective } from '@vben/access';
 import { registerLoadingDirective } from '@vben/common-ui';
 import { preferences } from '@vben/preferences';
-import { initStores } from '@vben/stores';
+import { initStores, useAccessStore } from '@vben/stores';
 import '@vben/styles';
 import '@vben/styles/naive';
 
@@ -43,8 +43,23 @@ async function bootstrap(namespace: string) {
   // 配置 pinia-tore
   await initStores(app, { namespace });
 
+  // Track 1: never trust persisted JWTs — mint access token from httpOnly refresh cookie.
+  try {
+    const accessStore = useAccessStore();
+    accessStore.setAccessToken(null);
+    accessStore.setRefreshToken(null);
+    const { refreshTokenApi } = await import('#/api/core/auth');
+    const resp = await refreshTokenApi();
+    const newToken =
+      (resp as any)?.data?.data || (resp as any)?.data || (resp as any);
+    if (typeof newToken === 'string' && newToken.length > 10) {
+      accessStore.setAccessToken(newToken);
+    }
+  } catch {
+    // No refresh cookie / expired — stay logged out (login page).
+  }
+
   // 🔧 REMOVED: Don't set dev token in bootstrap - it caused a redirect loop:
-  // dev token → redirect to /home → fetchUserInfo 401 → clear token → layout requests with dev token → 401 → redirect to login → reload → repeat.
   // In dev, use real login; no token = stay on login page.
 
   // 安装权限指令

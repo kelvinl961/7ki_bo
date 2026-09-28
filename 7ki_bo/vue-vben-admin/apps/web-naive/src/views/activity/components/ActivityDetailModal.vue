@@ -260,7 +260,7 @@
               <div
                 v-if="isRulesHtml(mappedActivity.rules)"
                 class="activity-detail-rules-html rounded-lg bg-yellow-50 p-3 text-sm text-gray-700"
-                v-html="mappedActivity.rules"
+                v-html="sanitizedRulesHtml"
               />
               <div
                 v-else
@@ -428,6 +428,7 @@ import { getActivityVersions } from '#/api/activity';
 import { useActiveMemberTiers } from '#/composables/useActiveMemberTiers';
 import { formatActivityMemberParticipation } from '#/utils/activityMemberTier';
 import { formatDateTimeInTimezone } from '#/utils/timezoneUtils';
+import { sanitizeRichTextHtml } from '#/utils/sanitizeHtml';
 import TzDateTime from '#/components/common/TzDateTime.vue';
 
 // Props & Emits
@@ -527,6 +528,10 @@ const mappedActivity = computed(() => {
       $t('activity.statuses.system'),
   };
 });
+
+const sanitizedRulesHtml = computed(() =>
+  sanitizeRichTextHtml(mappedActivity.value?.rules || ''),
+);
 
 const memberParticipationText = computed(() => {
   if (!props.activity) return $t('activity.detailModal.k5168');

@@ -63,11 +63,18 @@ export async function registerApi(data: AuthApi.RegisterParams) {
  * 刷新accessToken
  */
 export async function refreshTokenApi() {
+  const { useAccessStore } = await import('@vben/stores');
+  const token = useAccessStore().accessToken;
+  const headers: Record<string, string> = {};
+  if (token && typeof token === 'string' && token.length > 10) {
+    headers.Authorization = `Bearer ${token}`;
+  }
   return baseRequestClient.post<AuthApi.RefreshTokenResult>(
     '/auth/refresh',
     {},
     {
       withCredentials: true, // 🍪 CRITICAL: Send cookies with refresh request
+      headers,
     },
   );
 }

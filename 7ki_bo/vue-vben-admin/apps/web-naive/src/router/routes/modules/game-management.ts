@@ -31,6 +31,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           keepAlive: true,
           title: 'page.menu.betRecords',
+          fullPathKey: false, // 子 tab 切换不新开标签页
         },
       },
       {

@@ -100,13 +100,15 @@ export const useAccessStore = defineStore('core-access', {
     },
   },
   persist: {
-    // Track 1: access/refresh JWTs stay in memory; refresh cookie is httpOnly.
-    // Keep non-secret UX state only.
+    // Survive F5 within the tab. Refresh cookie is still SoT after access JWT expiry.
+    // sessionStorage (not localStorage) limits XSS blast radius vs permanent disk.
     pick: [
       'accessCodes',
+      'accessToken',
       'isLockScreen',
       'lockScreenPassword',
     ],
+    storage: sessionStorage,
   },
   state: (): AccessState => ({
     accessCodes: [],

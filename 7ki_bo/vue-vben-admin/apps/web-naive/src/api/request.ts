@@ -116,6 +116,7 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
         {},
         {
           withCredentials: true,
+          headers: { 'X-Auth-Realm': 'admin' },
         },
       )
       .catch(() => {
@@ -146,6 +147,10 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
       // Backend returns { code: 0, data: token, status: 200 }
       // Axios wraps it as resp.data = { code: 0, data: token, status: 200 }
       const newToken = (resp as any)?.data?.data || (resp as any)?.data || resp;
+      const { isBoAdminAccessToken } = await import('#/utils/boAccessToken');
+      if (!isBoAdminAccessToken(newToken)) {
+        throw new Error('Refresh returned non-admin token');
+      }
       accessStore.setAccessToken(newToken);
       return newToken;
     } catch (error) {
@@ -188,6 +193,8 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
 
       // 📱 Add device-id header for device tracking
       config.headers['device-id'] = getDeviceId();
+      // Realm: separate BO cookies from player client on same browser
+      config.headers['X-Auth-Realm'] = 'admin';
       // White-label merchant scope (re-enable when backend expects X-Merchant-Scope)
       // config.headers['x-merchant-scope'] = getMerchantScope();
 

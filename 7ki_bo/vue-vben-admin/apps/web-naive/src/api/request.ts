@@ -116,6 +116,7 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
         {},
         {
           withCredentials: true,
+          headers: { 'X-Auth-Realm': 'admin' },
         },
       )
       .catch(() => {

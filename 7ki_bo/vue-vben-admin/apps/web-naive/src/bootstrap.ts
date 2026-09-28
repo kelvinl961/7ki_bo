@@ -43,20 +43,26 @@ async function bootstrap(namespace: string) {
   // 配置 pinia-tore
   await initStores(app, { namespace });
 
-  // Track 1: never trust persisted JWTs — mint access token from httpOnly refresh cookie.
+  // Hydrate access token from httpOnly refresh cookie (preferred).
+  // Do NOT wipe a sessionStorage-restored token before refresh — that caused F5 logout
+  // whenever the refresh cookie was missing (cross-origin localhost → test-api).
   try {
     const accessStore = useAccessStore();
-    accessStore.setAccessToken(null);
     accessStore.setRefreshToken(null);
     const { refreshTokenApi } = await import('#/api/core/auth');
     const resp = await refreshTokenApi();
+    // baseRequestClient returns raw AxiosResponse: resp.data = { code, data: token }
+    const body = (resp as any)?.data ?? resp;
     const newToken =
-      (resp as any)?.data?.data || (resp as any)?.data || (resp as any);
+      (typeof body === 'string' && body.length > 10 ? body : null) ||
+      (typeof body?.data === 'string' ? body.data : null) ||
+      (typeof body?.token === 'string' ? body.token : null);
     if (typeof newToken === 'string' && newToken.length > 10) {
       accessStore.setAccessToken(newToken);
     }
-  } catch {
-    // No refresh cookie / expired — stay logged out (login page).
+  } catch (e) {
+    // Keep persisted accessToken if still present — interceptor will refresh or kick later.
+    console.warn('[bootstrap] refresh hydrate failed; keeping persisted access token if any', e);
   }
 
   // 🔧 REMOVED: Don't set dev token in bootstrap - it caused a redirect loop:

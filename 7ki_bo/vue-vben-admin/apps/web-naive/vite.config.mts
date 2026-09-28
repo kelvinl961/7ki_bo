@@ -70,6 +70,21 @@ export default defineConfig(async (config?: ConfigEnv) => {
             timeout: 60000,
             proxyTimeout: 60000,
             secure: false,
+            // Upstream sets SameSite=None; Secure — browser will NOT store Secure
+            // cookies on http://localhost. Rewrite so refresh cookie survives F5.
+            configure(proxy) {
+              proxy.on('proxyRes', (proxyRes) => {
+                const raw = proxyRes.headers['set-cookie'];
+                if (!raw) return;
+                const list = Array.isArray(raw) ? raw : [raw];
+                proxyRes.headers['set-cookie'] = list.map((c) =>
+                  String(c)
+                    .replace(/;\s*Secure/gi, '')
+                    .replace(/;\s*SameSite=None/gi, '; SameSite=Lax')
+                    .replace(/;\s*Domain=[^;]*/gi, ''),
+                );
+              });
+            },
           },
         },
       },

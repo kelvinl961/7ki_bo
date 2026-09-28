@@ -147,6 +147,10 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
       // Backend returns { code: 0, data: token, status: 200 }
       // Axios wraps it as resp.data = { code: 0, data: token, status: 200 }
       const newToken = (resp as any)?.data?.data || (resp as any)?.data || resp;
+      const { isBoAdminAccessToken } = await import('#/utils/boAccessToken');
+      if (!isBoAdminAccessToken(newToken)) {
+        throw new Error('Refresh returned non-admin token');
+      }
       accessStore.setAccessToken(newToken);
       return newToken;
     } catch (error) {

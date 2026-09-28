@@ -43,12 +43,23 @@ async function bootstrap(namespace: string) {
   // 配置 pinia-tore
   await initStores(app, { namespace });
 
-  // Hydrate access token from httpOnly refresh cookie (preferred).
-  // Do NOT wipe a sessionStorage-restored token before refresh — that caused F5 logout
-  // whenever the refresh cookie was missing (cross-origin localhost → test-api).
+  // Hydrate access token from httpOnly admin refresh cookie.
+  // Never keep a player JWT in BO (causes 403 "current: none" / "Admin access required").
+  const accessStore = useAccessStore();
+  accessStore.setRefreshToken(null);
+
+  const { isBoAdminAccessToken, isAccessTokenExpired } = await import(
+    '#/utils/boAccessToken'
+  );
+
+  if (accessStore.accessToken && !isBoAdminAccessToken(accessStore.accessToken)) {
+    console.warn(
+      '[bootstrap] Clearing non-admin access token (player JWT leaked into BO)',
+    );
+    accessStore.setAccessToken(null);
+  }
+
   try {
-    const accessStore = useAccessStore();
-    accessStore.setRefreshToken(null);
     const { refreshTokenApi } = await import('#/api/core/auth');
     const resp = await refreshTokenApi();
     // baseRequestClient returns raw AxiosResponse: resp.data = { code, data: token }
@@ -57,12 +68,32 @@ async function bootstrap(namespace: string) {
       (typeof body === 'string' && body.length > 10 ? body : null) ||
       (typeof body?.data === 'string' ? body.data : null) ||
       (typeof body?.token === 'string' ? body.token : null);
-    if (typeof newToken === 'string' && newToken.length > 10) {
+    if (isBoAdminAccessToken(newToken)) {
       accessStore.setAccessToken(newToken);
+    } else if (newToken) {
+      console.warn(
+        '[bootstrap] Refresh returned non-admin token — clearing BO session',
+      );
+      accessStore.setAccessToken(null);
     }
   } catch (e) {
-    // Keep persisted accessToken if still present — interceptor will refresh or kick later.
-    console.warn('[bootstrap] refresh hydrate failed; keeping persisted access token if any', e);
+    const kept = accessStore.accessToken;
+    if (
+      !kept ||
+      !isBoAdminAccessToken(kept) ||
+      isAccessTokenExpired(kept)
+    ) {
+      accessStore.setAccessToken(null);
+      console.warn(
+        '[bootstrap] refresh hydrate failed; no valid admin token — login required',
+        e,
+      );
+    } else {
+      console.warn(
+        '[bootstrap] refresh hydrate failed; keeping unexpired admin access token',
+        e,
+      );
+    }
   }
 
   // 🔧 REMOVED: Don't set dev token in bootstrap - it caused a redirect loop:

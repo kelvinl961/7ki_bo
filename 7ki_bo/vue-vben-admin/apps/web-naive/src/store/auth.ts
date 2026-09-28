@@ -73,6 +73,13 @@ export const useAuthStore = defineStore('auth', () => {
       const { accessToken, id, realName, roles, username, homePath } =
         response as any;
 
+      const { isBoAdminAccessToken } = await import('#/utils/boAccessToken');
+      if (!isBoAdminAccessToken(accessToken)) {
+        throw new Error(
+          'Login did not return an admin access token. Check API /auth/admin/login.',
+        );
+      }
+
       // 如果成功获取到 token
       if (accessToken) {
         // 将 token 存储到 accessStore 中

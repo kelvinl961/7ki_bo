@@ -165,7 +165,7 @@ export function getRechargeOrderList(params: RechargeOrderListParams = {}) {
 // 获取单个充值订单
 export function getRechargeOrder(id: string) {
   return requestClient.get<{ data: RechargeOrder; success: boolean }>(
-    `/recharge-orders/${id}`,
+    `/wallet/recharge-orders/${id}`,
   );
 }
 
@@ -175,7 +175,7 @@ export function createRechargeOrder(data: CreateRechargeOrderData) {
     data: RechargeOrder;
     message: string;
     success: boolean;
-  }>('/recharge-orders', data);
+  }>('/wallet/recharge-orders', data);
 }
 
 // 更新充值订单
@@ -184,13 +184,13 @@ export function updateRechargeOrder(id: string, data: UpdateRechargeOrderData) {
     data: RechargeOrder;
     message: string;
     success: boolean;
-  }>(`/recharge-orders/${id}`, data);
+  }>(`/wallet/recharge-orders/${id}`, data);
 }
 
 // 删除充值订单
 export function deleteRechargeOrder(id: string) {
   return requestClient.delete<{ message: string; success: boolean }>(
-    `/recharge-orders/${id}`,
+    `/wallet/recharge-orders/${id}`,
   );
 }
 
@@ -225,7 +225,7 @@ export function getRechargeStatistics(params?: {
       }>;
     };
     success: boolean;
-  }>('/recharge-orders/statistics', {
+  }>('/wallet/recharge-orders/statistics', {
     params,
   });
 }
@@ -236,7 +236,7 @@ export function exportRechargeOrders(params: RechargeOrderListParams = {}) {
     data: RechargeOrder[];
     message: string;
     success: boolean;
-  }>('/recharge-orders/export', {
+  }>('/wallet/recharge-orders/export', {
     params,
   });
 }

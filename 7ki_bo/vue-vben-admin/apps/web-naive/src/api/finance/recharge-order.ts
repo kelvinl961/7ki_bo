@@ -73,7 +73,7 @@ export async function getRechargeOrderList(params: RechargeOrderListParams) {
  * Create preset order
  */
 export async function createPresetOrder(data: any) {
-  return requestClient.post<ApiResponse<any>>('/recharge-orders/preset', data);
+  return requestClient.post<ApiResponse<any>>('/wallet/recharge-orders/preset', data);
 }
 
 /**
@@ -81,7 +81,7 @@ export async function createPresetOrder(data: any) {
  */
 export async function createSupplementOrder(data: any) {
   return requestClient.post<ApiResponse<any>>(
-    '/recharge-orders/supplement',
+    '/wallet/recharge-orders/supplement',
     data,
   );
 }
@@ -90,7 +90,7 @@ export async function createSupplementOrder(data: any) {
  * Export recharge orders
  */
 export async function exportRechargeOrders(params: RechargeOrderListParams) {
-  return requestClient.get<Blob>('/recharge-orders/export', {
+  return requestClient.get<Blob>('/wallet/recharge-orders/export', {
     params,
     responseType: 'blob',
   });
@@ -100,7 +100,7 @@ export async function exportRechargeOrders(params: RechargeOrderListParams) {
  * Bulk process orders
  */
 export async function bulkProcessOrders(orderIds: string[]) {
-  return requestClient.post<ApiResponse<any>>('/recharge-orders/bulk-process', {
+  return requestClient.post<ApiResponse<any>>('/wallet/recharge-orders/bulk-process', {
     orderIds,
   });
 }
@@ -109,7 +109,7 @@ export async function bulkProcessOrders(orderIds: string[]) {
  * Bulk cancel orders
  */
 export async function bulkCancelOrders(orderIds: string[]) {
-  return requestClient.post<ApiResponse<any>>('/recharge-orders/bulk-cancel', {
+  return requestClient.post<ApiResponse<any>>('/wallet/recharge-orders/bulk-cancel', {
     orderIds,
   });
 }
@@ -118,7 +118,7 @@ export async function bulkCancelOrders(orderIds: string[]) {
  * Get order statistics
  */
 export async function getOrderStatistics(params: RechargeOrderListParams) {
-  return requestClient.get<ApiResponse<any>>('/recharge-orders/statistics', {
+  return requestClient.get<ApiResponse<any>>('/wallet/recharge-orders/statistics', {
     params,
   });
 }

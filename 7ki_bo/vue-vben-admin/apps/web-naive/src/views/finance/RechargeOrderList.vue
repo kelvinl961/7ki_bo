@@ -7825,7 +7825,6 @@ const setupRealTimeUpdates = () => {
     // Connect to admin deposit updates channel
     const token = accessStore.accessToken || 
                   localStorage.getItem('token') || 
-                  localStorage.getItem('accessToken') || 
                   localStorage.getItem('authToken');
     
     if (!token) {

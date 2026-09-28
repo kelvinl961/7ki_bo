@@ -2,22 +2,31 @@
   <n-modal
     v-model:show="show"
     preset="card"
-    :title="isEdit ? '编辑任务' : '新增每日任务'"
+    :title="isEdit ? '编辑每日任务' : '新增每日任务'"
     style="width: 90vw; max-width: 720px"
-    @update:show="(v) => emit('update:show', v)"
+    to="body"
+    :z-index="5100"
+    :mask-closable="false"
   >
     <n-form label-placement="left" label-width="120" size="medium">
       <n-form-item label="选择币种" required>
-        <n-checkbox-group v-model:value="form.currencies">
-          <n-space>
-            <n-checkbox
-              v-for="c in currencyOptions"
-              :key="c.value"
-              :value="c.value"
-              :label="c.label"
-            />
-          </n-space>
-        </n-checkbox-group>
+        <n-space>
+          <n-checkbox
+            :checked="currencySelectAll"
+            @update:checked="onCurrencySelectAll"
+            >全选</n-checkbox
+          >
+          <n-checkbox-group v-model:value="form.currencies">
+            <n-space>
+              <n-checkbox
+                v-for="c in currencyOptions"
+                :key="c.value"
+                :value="c.value"
+                :label="c.label"
+              />
+            </n-space>
+          </n-checkbox-group>
+        </n-space>
       </n-form-item>
 
       <n-form-item label="任务活动日期" required>
@@ -26,6 +35,8 @@
           type="datetimerange"
           clearable
           class="w-full"
+          start-placeholder="开始时间"
+          end-placeholder="结束时间"
         />
       </n-form-item>
 
@@ -33,19 +44,20 @@
         <n-select v-model:value="form.goalType" :options="goalOptions" />
       </n-form-item>
 
-      <n-form-item
-        v-if="isRechargeGoal"
-        label="充值方式"
-        required
-      >
-        <n-checkbox-group v-model:value="form.depositMethods">
-          <n-space>
-            <n-checkbox value="all" label="全选" />
-            <n-checkbox value="PIX" label="PIX" />
-            <n-checkbox value="Paystack" label="Paystack" />
-            <n-checkbox value="crypto" label="数字币app" />
-          </n-space>
-        </n-checkbox-group>
+      <n-form-item v-if="isRechargeGoal" label="充值方式" required>
+        <n-space>
+          <n-checkbox
+            :checked="depositSelectAll"
+            @update:checked="onDepositSelectAll"
+            >全选</n-checkbox
+          >
+          <n-checkbox-group v-model:value="form.depositMethods">
+            <n-space>
+              <n-checkbox value="withdraw_to_recharge" label="提现转充值" />
+              <n-checkbox value="pix" label="pix" />
+            </n-space>
+          </n-checkbox-group>
+        </n-space>
       </n-form-item>
 
       <n-form-item
@@ -66,8 +78,14 @@
         </n-radio-group>
       </n-form-item>
 
+      <div class="mb-2 flex gap-4 text-xs font-medium text-gray-600">
+        <span class="flex-1">{{ thresholdLabel }}</span>
+        <span class="flex-1">奖励金额</span>
+        <span class="w-24">额外奖励</span>
+      </div>
+
       <div class="mb-2 rounded bg-amber-50 px-3 py-2 text-xs text-amber-700">
-        满足所有阶梯奖励均可领取，每个阶梯奖励只能领取一次
+        ● 满足所有阶梯奖励均可领取, 每个阶梯奖励只能领取一次
       </div>
 
       <div
@@ -79,14 +97,31 @@
           <n-input-number
             v-model:value="tier.threshold"
             :min="0"
-            placeholder="目标阈值"
+            :placeholder="`请输入${thresholdLabel}`"
             class="flex-1"
           />
+          <template v-if="form.rewardMode === 'random'">
+            <n-input-number
+              v-model:value="tier.cashAmountMin"
+              :min="0"
+              :precision="2"
+              placeholder="最小"
+              class="w-24"
+            />
+            <n-input-number
+              v-model:value="tier.cashAmountMax"
+              :min="0"
+              :precision="2"
+              placeholder="最大"
+              class="w-24"
+            />
+          </template>
           <n-input-number
+            v-else
             v-model:value="tier.cashAmount"
             :min="0"
             :precision="2"
-            placeholder="奖励金额"
+            placeholder="请输入奖励金额"
             class="flex-1"
           />
           <n-switch v-model:value="tier.extraEnabled" />
@@ -107,24 +142,27 @@
           <n-input-number
             v-model:value="tier.extraAmount"
             :min="0"
-            placeholder="额外奖励"
+            placeholder="请输入活跃度数量"
           />
           <n-input-number
             v-model:value="tier.extraValidDays"
             :min="1"
             :max="31"
-            placeholder="有效天数 1-31"
+            placeholder="请输入有效天数, 1-31天"
           />
         </div>
       </div>
 
       <n-form-item label="加倍奖励">
         <div class="flex w-full flex-col gap-2">
-          <n-switch v-model:value="enableDouble" />
-          <p v-if="!canDouble" class="text-xs text-amber-600">
-            奖励金额为0，无法生成加倍奖励（需主奖励现金 &gt; 1）
+          <div class="flex items-center gap-2">
+            <n-switch v-model:value="enableDouble" />
+            <span class="text-sm">{{ enableDouble ? '开' : '关' }}</span>
+          </div>
+          <p v-if="enableDouble && !canDouble" class="text-xs text-amber-600">
+            奖励金额需大于 1 才能配置加倍奖励
           </p>
-          <div v-else class="flex gap-2">
+          <div v-else-if="enableDouble" class="flex gap-2">
             <n-select
               v-model:value="form.doubleRewardSchemeId"
               :options="doubleOptions"
@@ -141,14 +179,20 @@
       </n-form-item>
 
       <n-form-item label="标题" required>
-        <n-input v-model:value="form.title" maxlength="100" />
+        <n-input
+          v-model:value="form.title"
+          maxlength="100"
+          placeholder="请输入任务标题"
+        />
       </n-form-item>
     </n-form>
 
     <template #footer>
       <div class="flex justify-end gap-2">
         <n-button @click="show = false">取消</n-button>
-        <n-button type="primary" :loading="saving" @click="submit">确认</n-button>
+        <n-button type="primary" :loading="saving" @click="submit"
+          >确认</n-button
+        >
       </div>
     </template>
   </n-modal>
@@ -163,10 +207,35 @@ import {
   type PeriodicTaskPayload,
 } from '#/api/taskCenterPeriodic';
 
+interface TierForm {
+  threshold: number;
+  cashAmount: number;
+  cashAmountMin: number | null;
+  cashAmountMax: number | null;
+  extraEnabled: boolean;
+  extraType: string | null;
+  extraAmount: number;
+  extraValidDays: number;
+}
+
+interface EditItem {
+  id?: number;
+  title?: string;
+  currencies?: string[];
+  goalType?: string;
+  depositMethods?: string[];
+  inviteValidity?: string | null;
+  rewardMode?: string;
+  doubleRewardSchemeId?: string | null;
+  startsAt?: string;
+  endsAt?: string;
+  tiers?: Array<Record<string, unknown>>;
+}
+
 const props = defineProps<{
   show: boolean;
   category: PeriodicCategory;
-  editItem?: any | null;
+  editItem?: EditItem | null;
 }>();
 const emit = defineEmits<{
   (e: 'update:show', v: boolean): void;
@@ -184,13 +253,7 @@ const show = computed({
 });
 const isEdit = computed(() => Boolean(props.editItem?.id));
 
-const currencyOptions = [
-  { label: '巴西(BRL)', value: 'BRL' },
-  { label: '加纳(GHS)', value: 'GHS' },
-  { label: 'XAF', value: 'XAF' },
-  { label: '老挝(LAK)', value: 'LAK' },
-  { label: '柬埔寨(KHR1)', value: 'KHR' },
-];
+const currencyOptions = [{ label: '巴西(BRL)', value: 'BRL' }];
 
 const goalOptions = [
   { label: '累计充值', value: 'cum_recharge' },
@@ -214,11 +277,15 @@ const extraTypeOptions = [
 
 const doubleOptions: { label: string; value: string }[] = [];
 
-const emptyTier = () => ({
+const DEPOSIT_ALL = ['withdraw_to_recharge', 'pix'];
+
+const emptyTier = (): TierForm => ({
   threshold: 0,
   cashAmount: 0,
-  extraEnabled: false,
-  extraType: 'activity_points' as string | null,
+  cashAmountMin: null,
+  cashAmountMax: null,
+  extraEnabled: true,
+  extraType: 'activity_points',
   extraAmount: 0,
   extraValidDays: 7,
 });
@@ -227,11 +294,11 @@ const form = reactive({
   title: '',
   currencies: ['BRL'] as string[],
   goalType: 'cum_recharge',
-  depositMethods: ['all'] as string[],
+  depositMethods: [...DEPOSIT_ALL] as string[],
   inviteValidity: 'register_login' as string | null,
   rewardMode: 'fixed' as 'fixed' | 'random',
   doubleRewardSchemeId: null as string | null,
-  tiers: [emptyTier()],
+  tiers: [emptyTier()] as TierForm[],
 });
 
 const isRechargeGoal = computed(
@@ -239,9 +306,33 @@ const isRechargeGoal = computed(
     form.goalType === 'cum_recharge' || form.goalType === 'single_recharge',
 );
 
+const thresholdLabel = computed(() => {
+  if (form.goalType === 'cum_recharge') return '累计充值金额';
+  if (form.goalType === 'single_recharge') return '单笔充值金额';
+  return '目标阈值';
+});
+
+const currencySelectAll = computed(
+  () => form.currencies.length === currencyOptions.length,
+);
+
+const depositSelectAll = computed(
+  () =>
+    DEPOSIT_ALL.every((m) => form.depositMethods.includes(m)) &&
+    form.depositMethods.length >= DEPOSIT_ALL.length,
+);
+
 const canDouble = computed(() =>
   form.tiers.some((t) => Number(t.cashAmount || 0) > 1),
 );
+
+function onCurrencySelectAll(checked: boolean) {
+  form.currencies = checked ? currencyOptions.map((c) => c.value) : [];
+}
+
+function onDepositSelectAll(checked: boolean) {
+  form.depositMethods = checked ? [...DEPOSIT_ALL] : [];
+}
 
 watch(
   () => props.show,
@@ -250,22 +341,29 @@ watch(
     if (props.editItem) {
       const it = props.editItem;
       form.title = it.title || '';
-      form.currencies = Array.isArray(it.currencies) ? [...it.currencies] : ['BRL'];
+      form.currencies = Array.isArray(it.currencies)
+        ? [...it.currencies]
+        : ['BRL'];
       form.goalType = it.goalType || 'cum_recharge';
       form.depositMethods = Array.isArray(it.depositMethods)
         ? [...it.depositMethods]
-        : ['all'];
+        : [...DEPOSIT_ALL];
       form.inviteValidity = it.inviteValidity || 'register_login';
-      form.rewardMode = it.rewardMode || 'fixed';
+      form.rewardMode =
+        it.rewardMode === 'random' ? 'random' : 'fixed';
       form.doubleRewardSchemeId = it.doubleRewardSchemeId || null;
       enableDouble.value = Boolean(it.doubleRewardSchemeId);
       form.tiers =
         Array.isArray(it.tiers) && it.tiers.length
-          ? it.tiers.map((t: any) => ({
+          ? it.tiers.map((t) => ({
               threshold: Number(t.threshold) || 0,
               cashAmount: Number(t.cashAmount) || 0,
+              cashAmountMin:
+                t.cashAmountMin != null ? Number(t.cashAmountMin) : null,
+              cashAmountMax:
+                t.cashAmountMax != null ? Number(t.cashAmountMax) : null,
               extraEnabled: Boolean(t.extraEnabled),
-              extraType: t.extraType || 'activity_points',
+              extraType: (t.extraType as string) || 'activity_points',
               extraAmount: Number(t.extraAmount) || 0,
               extraValidDays: Number(t.extraValidDays) || 7,
             }))
@@ -280,7 +378,7 @@ watch(
       form.title = '';
       form.currencies = ['BRL'];
       form.goalType = 'cum_recharge';
-      form.depositMethods = ['all'];
+      form.depositMethods = [...DEPOSIT_ALL];
       form.inviteValidity = 'register_login';
       form.rewardMode = 'fixed';
       form.doubleRewardSchemeId = null;
@@ -336,6 +434,10 @@ async function submit() {
     tiers: form.tiers.map((t, i) => ({
       threshold: Number(t.threshold) || 0,
       cashAmount: Number(t.cashAmount) || 0,
+      cashAmountMin:
+        form.rewardMode === 'random' ? Number(t.cashAmountMin) || 0 : null,
+      cashAmountMax:
+        form.rewardMode === 'random' ? Number(t.cashAmountMax) || 0 : null,
       extraEnabled: Boolean(t.extraEnabled),
       extraType: t.extraEnabled ? t.extraType : null,
       extraAmount: t.extraEnabled ? Number(t.extraAmount) || 0 : null,
@@ -345,7 +447,7 @@ async function submit() {
   };
   saving.value = true;
   try {
-    if (isEdit.value) {
+    if (isEdit.value && props.editItem?.id) {
       await taskCenterPeriodicApi.update(props.editItem.id, payload);
     } else {
       await taskCenterPeriodicApi.create(payload);
@@ -353,8 +455,8 @@ async function submit() {
     message.success('已保存');
     show.value = false;
     emit('saved');
-  } catch (e: any) {
-    message.error(e?.message || '保存失败');
+  } catch (e: unknown) {
+    message.error(e instanceof Error ? e.message : '保存失败');
   } finally {
     saving.value = false;
   }

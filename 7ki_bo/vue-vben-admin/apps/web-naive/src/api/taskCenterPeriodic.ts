@@ -52,6 +52,19 @@ export const taskCenterPeriodicApi = {
     requestClient.put(`/task-center/admin/periodic/${id}`, body),
   setStatus: (id: number, isActive: boolean) =>
     requestClient.put(`/task-center/admin/periodic/${id}/status`, { isActive }),
+  getCategorySettings: (category: PeriodicCategory = 'DAILY_TASK') =>
+    requestClient.get<{ data: Record<string, unknown>; success: boolean }>(
+      '/task-center/admin/category-settings',
+      { params: { category } },
+    ),
+  updateCategorySettings: (
+    category: PeriodicCategory,
+    body: Record<string, unknown>,
+  ) =>
+    requestClient.put<{ data: Record<string, unknown>; success: boolean }>(
+      `/task-center/admin/category-settings?category=${encodeURIComponent(category)}`,
+      body,
+    ),
   listChests: () => requestClient.get('/task-center/admin/chests'),
   createChest: (body: Record<string, unknown>) =>
     requestClient.post('/task-center/admin/chests', body),

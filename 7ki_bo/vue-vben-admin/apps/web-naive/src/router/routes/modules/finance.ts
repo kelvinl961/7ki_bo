@@ -42,6 +42,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           keepAlive: true,
           title: 'page.menu.wageringAudit',
+          fullPathKey: false, // 子 tab 切换不新开标签页
         },
         name: 'WageringAudit',
         path: '/finance/wagering-audit',

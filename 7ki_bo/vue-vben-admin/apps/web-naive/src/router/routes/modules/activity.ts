@@ -15,6 +15,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           keepAlive: true,
           title: 'page.menu.activityCenter',
+          fullPathKey: false, // 子 tab 切换不新开标签页
         },
         name: 'ActivityCenter',
         path: '/preferentialActivitiesNew/activityCenter',
@@ -25,6 +26,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           keepAlive: true,
           title: 'page.menu.taskCenter',
+          fullPathKey: false, // 子 tab 切换不新开标签页
         },
         name: 'TaskCenter',
         path: '/preferentialActivitiesNew/taskCenter',

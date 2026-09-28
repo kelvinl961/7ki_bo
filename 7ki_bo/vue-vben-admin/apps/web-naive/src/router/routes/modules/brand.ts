@@ -36,6 +36,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           keepAlive: true,
           title: 'page.menu.domainManagement',
+          fullPathKey: false, // 子 tab 切换不新开标签页
         },
         name: 'DomainManagement',
         path: '/operateManager/domainManagement',
@@ -47,6 +48,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           keepAlive: true,
           title: 'page.menu.messageSettings',
+          fullPathKey: false, // 子 tab 切换不新开标签页
         },
         name: 'SystemMessageSet',
         path: '/operateManager/systemMessageSet',

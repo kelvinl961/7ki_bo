@@ -62,7 +62,7 @@
 <script setup lang="ts">
 import { $t } from '@vben/locales';
 
-import { ref, onMounted, defineAsyncComponent } from 'vue';
+import { ref, onMounted, watch, defineAsyncComponent } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { NBreadcrumb, NBreadcrumbItem, NTabs, NTabPane } from 'naive-ui';
 import { Page } from '@vben/common-ui';
@@ -91,10 +91,28 @@ const ActivityBalanceManager = defineAsyncComponent(
 const route = useRoute();
 const router = useRouter();
 
-const activeTab = ref('novice_welfare');
+const TAB_NAMES = [
+  'novice_welfare',
+  'daily_task',
+  'weekly_task',
+  'three_day_mystery',
+  'activity_setting',
+  'activity_ledger',
+  'activity_balance',
+] as const;
+
+const activeTab = ref<string>('novice_welfare');
+
+const syncTabFromQuery = () => {
+  const tabFromUrl = route.query.activeName as string;
+  if (tabFromUrl && (TAB_NAMES as readonly string[]).includes(tabFromUrl)) {
+    activeTab.value = tabFromUrl;
+  }
+};
 
 const handleTabChange = (value: string) => {
-  router.push({
+  activeTab.value = value;
+  router.replace({
     path: route.path,
     query: {
       ...route.query,
@@ -103,23 +121,8 @@ const handleTabChange = (value: string) => {
   });
 };
 
-onMounted(() => {
-  const tabFromUrl = route.query.activeName as string;
-  if (
-    tabFromUrl &&
-    [
-      'novice_welfare',
-      'daily_task',
-      'weekly_task',
-      'three_day_mystery',
-      'activity_setting',
-      'activity_ledger',
-      'activity_balance',
-    ].includes(tabFromUrl)
-  ) {
-    activeTab.value = tabFromUrl;
-  }
-});
+onMounted(syncTabFromQuery);
+watch(() => route.query.activeName, syncTabFromQuery);
 </script>
 
 <style scoped>

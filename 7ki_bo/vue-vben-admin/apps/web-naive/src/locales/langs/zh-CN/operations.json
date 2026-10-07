@@ -548,6 +548,19 @@
     "scopeWeb": "Web埋点",
     "scopeThirdParty": "三方统计代码"
   },
+  "clientMaintenance": {
+    "title": "客户端维护",
+    "description": "打开后，这个品牌的玩家端会显示维护页。关闭后，已经打开页面的玩家大约 15 秒内会回到正常页面。",
+    "switch": "维护页",
+    "switchOn": "开启",
+    "switchOff": "关闭",
+    "message": "提示文案",
+    "messagePlaceholder": "可选。留空则继续使用页面上的默认文案。",
+    "save": "保存",
+    "saved": "已保存",
+    "loadFailed": "读取维护设置失败",
+    "saveFailed": "保存维护设置失败"
+  },
   "layout": {
     "title": "版式个性化",
     "description": "配置广告图、大奖记录开关与「我的页面样式」。右侧预览为示意效果，开关与样式会即时反映；保存后约 10 分钟在客户端生效。",

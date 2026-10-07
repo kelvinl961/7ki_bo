@@ -548,6 +548,19 @@
     "scopeWeb": "Theo dõi Web",
     "scopeThirdParty": "Mã thống kê bên thứ ba"
   },
+  "clientMaintenance": {
+    "title": "Bảo trì client",
+    "description": "Bật trang bảo trì cho app người chơi của thương hiệu này. Sau khi tắt, người chơi đang mở trang sẽ trở lại sau khoảng 15 giây.",
+    "switch": "Trang bảo trì",
+    "switchOn": "Bật",
+    "switchOff": "Tắt",
+    "message": "Nội dung",
+    "messagePlaceholder": "Không bắt buộc. Để trống để giữ nội dung mặc định trên trang.",
+    "save": "Lưu",
+    "saved": "Đã lưu",
+    "loadFailed": "Không tải được cài đặt bảo trì",
+    "saveFailed": "Không lưu được cài đặt bảo trì"
+  },
   "layout": {
     "title": "Cá nhân hóa bố cục",
     "description": "Cấu hình banner quảng cáo, kỷ lục giải thưởng và kiểu trang Của tôi. Xem trước bên phải cập nhật ngay; sau khi lưu có hiệu lực trên client ~10 phút.",

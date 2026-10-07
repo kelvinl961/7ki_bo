@@ -67,6 +67,16 @@ const routes: RouteRecordRaw[] = [
         component: () =>
           import('../../../views/operateManager/LayoutDesign.vue'),
       },
+      {
+        meta: {
+          keepAlive: true,
+          title: 'page.menu.clientMaintenance',
+        },
+        name: 'ClientMaintenance',
+        path: '/operateManager/clientMaintenance',
+        component: () =>
+          import('../../../views/operateManager/ClientMaintenance.vue'),
+      },
     ],
   },
 ];

@@ -548,6 +548,19 @@
     "scopeWeb": "Web Tracking",
     "scopeThirdParty": "Third-Party Analytics Code"
   },
+  "clientMaintenance": {
+    "title": "Client Maintenance",
+    "description": "Turn on the maintenance page for this brand's player app. Players already on the site leave it within about 15 seconds after you turn it off.",
+    "switch": "Maintenance page",
+    "switchOn": "On",
+    "switchOff": "Off",
+    "message": "Message",
+    "messagePlaceholder": "Optional. Leave empty to keep the default maintenance text.",
+    "save": "Save",
+    "saved": "Saved",
+    "loadFailed": "Failed to load maintenance settings",
+    "saveFailed": "Failed to save maintenance settings"
+  },
   "layout": {
     "title": "Layout Personalization",
     "description": "Configure ad banner, grand prize records, and My Page style. The right-hand preview updates live; changes take effect on the client in ~10 minutes after save.",

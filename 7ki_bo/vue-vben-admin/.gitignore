@@ -49,3 +49,6 @@ vite.config.ts.*
 *.sw?
 .history
 
+# TinyMCE is copied from node_modules at build/dev start
+apps/web-naive/public/tinymce
+

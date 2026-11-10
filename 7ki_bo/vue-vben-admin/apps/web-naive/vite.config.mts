@@ -1,7 +1,24 @@
 import { defineConfig } from '@vben/vite-config';
-import type { ConfigEnv } from 'vite';
+import type { ConfigEnv, Plugin } from 'vite';
 import { loadEnv } from 'vite';
-import { resolve } from 'path';
+import { createRequire } from 'node:module';
+import { cpSync, existsSync, rmSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+
+const require = createRequire(import.meta.url);
+
+function copyTinymceToPublic(force: boolean): Plugin {
+  const dest = resolve(__dirname, 'public/tinymce');
+  return {
+    name: 'copy-tinymce-to-public',
+    buildStart() {
+      if (!force && existsSync(dest)) return;
+      const src = dirname(require.resolve('tinymce/package.json'));
+      rmSync(dest, { recursive: true, force: true });
+      cpSync(src, dest, { recursive: true });
+    },
+  };
+}
 
 export default defineConfig(async (config?: ConfigEnv) => {
   const isBuild = config?.command === 'build';
@@ -16,6 +33,7 @@ export default defineConfig(async (config?: ConfigEnv) => {
       nitroMock: false,
     },
     vite: {
+      plugins: [copyTinymceToPublic(isBuild)],
       build: {
         chunkSizeWarningLimit: 2000,
         reportCompressedSize: false, 

@@ -3,6 +3,7 @@
     <Editor
       v-model="content"
       license-key="gpl"
+      :tinymce-script-src="tinymceScriptSrc"
       :init="editorInit"
       :disabled="disabled"
     />
@@ -16,25 +17,6 @@
 import { computed, ref, watch } from 'vue';
 import { useMessage } from 'naive-ui';
 import Editor from '@tinymce/tinymce-vue';
-
-import 'tinymce/tinymce';
-import 'tinymce/icons/default/icons.min.js';
-import 'tinymce/themes/silver/theme.min.js';
-import 'tinymce/models/dom/model.min.js';
-import 'tinymce/skins/ui/oxide/skin.min.css';
-import 'tinymce/skins/ui/oxide/content.min.css';
-import 'tinymce/skins/content/default/content.min.css';
-import 'tinymce/plugins/advlist/plugin.min.js';
-import 'tinymce/plugins/autolink/plugin.min.js';
-import 'tinymce/plugins/lists/plugin.min.js';
-import 'tinymce/plugins/link/plugin.min.js';
-import 'tinymce/plugins/image/plugin.min.js';
-import 'tinymce/plugins/media/plugin.min.js';
-import 'tinymce/plugins/table/plugin.min.js';
-import 'tinymce/plugins/code/plugin.min.js';
-import 'tinymce/plugins/help/plugin.min.js';
-import 'tinymce/plugins/wordcount/plugin.min.js';
-import 'tinymce/plugins/quickbars/plugin.min.js';
 
 import { uploadSingleImage } from '#/api/upload';
 import { uploadMediaFile } from '#/api/mediaLibrary';
@@ -64,6 +46,7 @@ const emit = defineEmits<{
 
 const message = useMessage();
 const content = ref(props.modelValue || '');
+const tinymceScriptSrc = `${import.meta.env.BASE_URL}tinymce/tinymce.min.js`;
 
 watch(
   () => props.modelValue,
@@ -108,6 +91,9 @@ const editorInit = computed(() => ({
   menubar: false,
   branding: false,
   promotion: false,
+  license_key: 'gpl',
+  base_url: `${import.meta.env.BASE_URL}tinymce`.replace(/\/$/, ''),
+  suffix: '.min',
   placeholder: props.placeholder,
   plugins:
     'advlist autolink lists link image media table code help wordcount quickbars',

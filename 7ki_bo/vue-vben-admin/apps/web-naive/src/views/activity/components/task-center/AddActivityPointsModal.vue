@@ -73,21 +73,22 @@
         </n-form-item>
 
         <div class="usage-box">
-          <div class="font-medium mb-1">使用说明</div>
-          <div>1. 建议每个文档会员数量为1,000,000以下，超出请批次上传</div>
-          <div>2. 上传文档的大小不超过50M</div>
-          <div>3. 每个会员单次增加活跃度1-999,999,999正整数</div>
-          <div>
-            4.
-            <a class="template-link" href="#" @click.prevent="downloadTemplate"
-              >模板下载</a
-            >
-          </div>
+          <div class="font-medium mb-1">使用说明:</div>
+          <ul>
+            <li>建议每个文档会员数量为1,000,000以下，超出请批次上传</li>
+            <li>上传文档的大小不超过50M</li>
+            <li>每个会员单次增加活跃度1-999,999,999正整数</li>
+            <li>
+              <a class="template-link" href="#" @click.prevent="downloadTemplate"
+                >模板下载</a
+              >
+            </li>
+          </ul>
         </div>
       </template>
 
       <template v-if="form.addMode === 'multi'">
-        <n-form-item label="前台备注">
+        <n-form-item label="前台备注" class="front-remark">
           <n-input
             v-model:value="form.frontRemark"
             type="textarea"
@@ -123,7 +124,19 @@
 
 <script setup lang="ts">
 import { reactive, ref, watch } from 'vue';
-import { useMessage, type UploadFileInfo } from 'naive-ui';
+import {
+  NButton,
+  NForm,
+  NFormItem,
+  NInput,
+  NInputNumber,
+  NModal,
+  NRadio,
+  NRadioGroup,
+  NUpload,
+  useMessage,
+  type UploadFileInfo,
+} from 'naive-ui';
 import { taskCenterPeriodicApi } from '#/api/taskCenterPeriodic';
 
 const props = defineProps<{ show: boolean }>();
@@ -204,6 +217,14 @@ async function submit() {
         .map((s) => s.trim())
         .filter(Boolean)
         .slice(0, 200);
+      const rawCount = form.memberInput
+        .split(/[,，;\s]+/)
+        .map((s) => s.trim())
+        .filter(Boolean).length;
+      if (rawCount > 200) {
+        message.warning('最多支持200个会员');
+        return;
+      }
       if (!identifiers.length) {
         message.warning('请输入会员账号或ID');
         return;
@@ -264,11 +285,18 @@ async function submit() {
   background: #e8f3ff;
   border-radius: 6px;
   font-size: 13px;
-  line-height: 1.6;
+  line-height: 1.7;
   color: #333;
+}
+.usage-box ul {
+  margin: 0;
+  padding-left: 1.2em;
 }
 .template-link {
   color: #2080f0;
   cursor: pointer;
+}
+.front-remark :deep(.n-form-item-label__text) {
+  color: #f0a020;
 }
 </style>

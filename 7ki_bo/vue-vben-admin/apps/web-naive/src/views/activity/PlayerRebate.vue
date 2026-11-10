@@ -78,9 +78,11 @@ import {
   type PlayerRebateRule,
   type PlayerRebateSettings,
 } from '#/api/playerRebate';
+import { useActiveMemberTiers } from '#/composables/useActiveMemberTiers';
 
 const message = useMessage();
 const dialog = useDialog();
+const { labelById, load: loadMemberTiers } = useActiveMemberTiers();
 
 const loading = ref(false);
 const switchLoading = ref(false);
@@ -99,6 +101,18 @@ const currencyOptions = [
   { label: 'KHR', value: 'KHR' },
 ];
 
+function formatMemberTierLabels(ids: number[] | undefined): string {
+  if (!ids?.length) return '—';
+  // useActiveMemberTiers labelById keys are string ids (MemberTierOption.id)
+  return [...ids]
+    .sort((a, b) => Number(a) - Number(b))
+    .map((id) => {
+      const key = String(id);
+      return labelById.value.get(key) || `层级${key}`;
+    })
+    .join('、');
+}
+
 const columns: DataTableColumns<PlayerRebateRule> = [
   { title: 'ID', key: 'id', width: 70 },
   { title: $t('activity.playerRebate.currency'), key: 'currency', width: 90 },
@@ -111,8 +125,9 @@ const columns: DataTableColumns<PlayerRebateRule> = [
   {
     title: $t('activity.playerRebate.memberTiers'),
     key: 'memberTierIds',
-    width: 160,
-    render: (r) => (r.memberTierIds || []).join(', ') || '—',
+    width: 220,
+    ellipsis: { tooltip: true },
+    render: (r) => formatMemberTierLabels(r.memberTierIds),
   },
   {
     title: $t('activity.playerRebate.rateMode'),
@@ -273,6 +288,6 @@ function confirmDelete(r: PlayerRebateRule) {
 }
 
 onMounted(async () => {
-  await Promise.all([loadSettings(), loadRules()]);
+  await Promise.all([loadMemberTiers(), loadSettings(), loadRules()]);
 });
 </script>

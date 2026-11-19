@@ -376,16 +376,73 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
     },
   });
 
-  // token过期的处理 - RE-ENABLED TO FIX 401 ISSUES
-  client.addResponseInterceptor(
-    authenticateResponseInterceptor({
-      client,
-      doReAuthenticate,
-      doRefreshToken,
-      enableRefreshToken: preferences.app.enableRefreshToken,
-      formatToken,
-    }),
-  );
+  // token过期 + BO TOTP step-up (combined so TOTP 401 never triggers session refresh)
+  const authExpiredInterceptor = authenticateResponseInterceptor({
+    client,
+    doReAuthenticate,
+    doRefreshToken,
+    enableRefreshToken: preferences.app.enableRefreshToken,
+    formatToken,
+  });
+
+  client.addResponseInterceptor({
+    rejected: async (error) => {
+      const status = error?.response?.status;
+      const codeKey = error?.response?.data?.codeKey as string | undefined;
+      const config = error?.config as
+        | (Record<string, any> & { headers?: Record<string, string> })
+        | undefined;
+      const url = String(config?.url ?? '');
+
+      // Login / money TOTP challenges must not kick off refresh → logout
+      if (
+        status === 401 &&
+        typeof codeKey === 'string' &&
+        codeKey.startsWith('TOTP_')
+      ) {
+        return Promise.reject(error);
+      }
+
+      if (
+        (status === 403 || status === 401) &&
+        (codeKey === 'TOTP_CODE_REQUIRED' || codeKey === 'TOTP_INVALID') &&
+        config &&
+        !config.__totpRetried &&
+        !url.includes('/auth/admin/login') &&
+        !url.includes('/auth/admin/totp/')
+      ) {
+        try {
+          const { promptBoTotpCode } = await import('#/utils/boTotpPrompt');
+          const code = await promptBoTotpCode({
+            title:
+              codeKey === 'TOTP_INVALID'
+                ? 'Invalid code — try again'
+                : 'Google Authenticator',
+          });
+          if (!code) {
+            return Promise.reject(error);
+          }
+          config.__totpRetried = true;
+          config.headers = config.headers || {};
+          config.headers['X-Totp-Code'] = code;
+          return client.request(config.url, { ...config });
+        } catch (totpErr) {
+          return Promise.reject(totpErr);
+        }
+      }
+
+      if (status === 403 && codeKey === 'TOTP_REQUIRED') {
+        message.warning(
+          'Google Authenticator setup required. Open Account → Security.',
+          { duration: 5000 },
+        );
+        window.location.assign('/account/security');
+        return Promise.reject(error);
+      }
+
+      return authExpiredInterceptor.rejected!(error);
+    },
+  });
 
   // 通用的错误处理 - TEMPORARILY DISABLED FOR DEBUGGING
   /*

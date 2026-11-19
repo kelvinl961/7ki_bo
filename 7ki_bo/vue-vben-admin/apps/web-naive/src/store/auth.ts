@@ -61,17 +61,51 @@ export const useAuthStore = defineStore('auth', () => {
   async function authLogin(
     params: Recordable<any>,
     onSuccess?: () => Promise<void> | void,
-  ) {
-    // 异步处理用户登录操作并获取 accessToken
+  ): Promise<{
+    needsEnroll?: boolean;
+    needsTotp?: boolean;
+    userInfo: null | UserInfo;
+  }> {
     let userInfo: null | UserInfo = null;
     try {
       loginLoading.value = true;
-      const response = await loginApi(params);
+      const response = await loginApi({
+        username: params.username,
+        password: params.password,
+        totpCode: params.totpCode,
+      });
 
-      // The request client automatically unwraps the response.data
-      // So response is already the data part of { code: 0, data: {...} }
-      const { accessToken, id, realName, roles, username, homePath } =
-        response as any;
+      const data = response as Record<string, any>;
+      const accessToken = data?.accessToken || data?.token;
+
+      // Forced first-login Google Authenticator setup
+      if (data?.enrollOnly && accessToken) {
+        const { isBoAdminAccessToken } = await import('#/utils/boAccessToken');
+        if (!isBoAdminAccessToken(accessToken)) {
+          throw new Error(
+            'Login did not return an admin access token. Check API /auth/admin/login.',
+          );
+        }
+        accessStore.setAccessToken(accessToken);
+        userStore.setUserInfo({
+          id: data.id,
+          realName: data.username || data.realName || '',
+          roles: data.roles || [],
+          username: data.username,
+          homePath: '/auth/totp-enroll',
+          desc: '',
+          token: accessToken,
+          avatar: '',
+          userId: String(data.id ?? ''),
+        } as UserInfo);
+        notification.info({
+          content: $t('authentication.totpEnrollRequired'),
+          description: $t('authentication.totpEnrollRequiredDesc'),
+          duration: 4000,
+        });
+        await router.replace('/auth/totp-enroll');
+        return { needsEnroll: true, userInfo };
+      }
 
       const { isBoAdminAccessToken } = await import('#/utils/boAccessToken');
       if (!isBoAdminAccessToken(accessToken)) {
@@ -80,12 +114,10 @@ export const useAuthStore = defineStore('auth', () => {
         );
       }
 
-      // 如果成功获取到 token
       if (accessToken) {
-        // 将 token 存储到 accessStore 中
+        const { id, realName, roles, username, homePath } = data as any;
         accessStore.setAccessToken(accessToken);
 
-        // Use user info from login response instead of making separate API call
         userInfo = {
           id,
           realName,
@@ -98,47 +130,37 @@ export const useAuthStore = defineStore('auth', () => {
           userId: String(id),
         } as UserInfo;
 
-        // ✅ FIX: Set user info immediately (don't wait for codes)
         userStore.setUserInfo(userInfo);
 
-        // ✅ FIX: Load access codes in parallel (non-blocking) - don't wait for it
-        // This allows login to complete immediately and redirect faster
         getAccessCodesApi()
           .then((accessCodesResponse) => {
             accessStore.setAccessCodes(accessCodesResponse);
           })
           .catch((error) => {
             console.warn('Failed to load access codes (non-critical):', error);
-            // Set empty codes as fallback - user can still navigate
             accessStore.setAccessCodes([]);
           });
 
         if (accessStore.loginExpired) {
           accessStore.setLoginExpired(false);
+        } else if (onSuccess) {
+          await onSuccess?.();
         } else {
-          // ✅ REDIRECT: Automatically redirect to /home after successful login
-          // No longer waiting for access codes - redirect immediately
-          if (onSuccess) {
-            await onSuccess?.();
-          } else {
-            // Redirect to /home page
-            await router.replace('/home');
-          }
+          await router.replace('/home');
         }
 
-        if (userInfo?.realName) {
+        if (userInfo?.realName || userInfo?.username) {
           notification.success({
             content: $t('authentication.loginSuccess'),
-            description: `${$t('authentication.loginSuccessDesc')}:${userInfo.realName}`,
+            description: `${$t('authentication.loginSuccessDesc')}:${userInfo.realName || userInfo.username}`,
             duration: 3000,
           });
         }
       } else {
-        const body = response as Record<string, any>;
         const rawHint =
-          body?.message ||
-          body?.error ||
-          (body?.success === false ? body?.message : '') ||
+          data?.message ||
+          data?.error ||
+          (data?.success === false ? data?.message : '') ||
           '';
         const hint = rawHint
           ? normalizeLoginApiMessage(String(rawHint))
@@ -150,6 +172,19 @@ export const useAuthStore = defineStore('auth', () => {
         });
       }
     } catch (error: unknown) {
+      const e = error as Record<string, any>;
+      const codeKey = e?.response?.data?.codeKey || e?.data?.codeKey;
+      if (codeKey === 'TOTP_CODE_REQUIRED' || codeKey === 'TOTP_INVALID') {
+        if (codeKey === 'TOTP_INVALID') {
+          notification.error({
+            content: $t('authentication.loginFailed'),
+            description: $t('authentication.totpInvalid'),
+            duration: 4000,
+          });
+        }
+        return { needsTotp: true, userInfo: null };
+      }
+
       notification.error({
         content: $t('authentication.loginFailed'),
         description: getLoginErrorDescription(error),

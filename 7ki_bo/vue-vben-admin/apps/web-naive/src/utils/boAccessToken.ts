@@ -7,6 +7,7 @@ export type BoJwtClaims = {
   account?: string;
   exp?: number;
   id?: string;
+  purpose?: string;
   role?: string;
   username?: string;
 };

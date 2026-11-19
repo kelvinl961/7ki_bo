@@ -4,15 +4,26 @@ export namespace AuthApi {
   /** 登录接口参数 */
   export interface LoginParams {
     password?: string;
+    totpCode?: string;
     username?: string;
   }
 
   /** 登录接口返回值 */
   export interface LoginResult {
-    token: string;
-    user: {
+    accessToken?: string;
+    enrollOnly?: boolean;
+    homePath?: string;
+    id?: string | number;
+    realName?: string;
+    roles?: string[];
+    token?: string;
+    totpEnabled?: boolean;
+    username?: string;
+    user?: {
       role: string;
       username: string;
+      totpEnabled?: boolean;
+      enrollOnly?: boolean;
     };
   }
 

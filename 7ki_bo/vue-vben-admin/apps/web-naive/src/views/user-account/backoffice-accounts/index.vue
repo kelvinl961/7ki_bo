@@ -613,6 +613,11 @@ const handleSubmitEdit = async () => {
         status: editForm.isSuspended ? 0 : 1,
       });
       message.success($t('user.backofficeAccount.accountCreated'));
+      message.info(
+        $t('authentication.totpNewAccountHint') ||
+          'On first login they must set up Google Authenticator before using the panel.',
+        { duration: 6000 },
+      );
     } else if (currentAccount.value) {
       const updatePayload: {
         role: string;

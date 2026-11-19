@@ -403,6 +403,10 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
         return Promise.reject(error);
       }
 
+      const apiMessage = String(
+        error?.response?.data?.message || error?.response?.data?.error || '',
+      ).trim();
+
       if (
         (status === 403 || status === 401) &&
         (codeKey === 'TOTP_CODE_REQUIRED' || codeKey === 'TOTP_INVALID') &&
@@ -411,6 +415,9 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
         !url.includes('/auth/admin/login') &&
         !url.includes('/auth/admin/totp/')
       ) {
+        if (apiMessage) {
+          message.warning(apiMessage, { duration: 4500 });
+        }
         try {
           const { promptBoTotpCode } = await import('#/utils/boTotpPrompt');
           const code = await promptBoTotpCode({
@@ -418,6 +425,7 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
               codeKey === 'TOTP_INVALID'
                 ? 'Invalid code — try again'
                 : 'Google Authenticator',
+            content: apiMessage || undefined,
           });
           if (!code) {
             return Promise.reject(error);
@@ -432,11 +440,21 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
       }
 
       if (status === 403 && codeKey === 'TOTP_REQUIRED') {
-        message.warning(
-          'Google Authenticator setup required. Open Account → Security.',
-          { duration: 5000 },
+        message.error(
+          apiMessage ||
+            'Google Authenticator required for this action. Open Account → Security.',
+          { duration: 6000 },
         );
         window.location.assign('/account/security');
+        return Promise.reject(error);
+      }
+
+      if (status === 403 && codeKey === 'TOTP_SPONSOR_REQUIRED') {
+        message.error(
+          apiMessage ||
+            'Another enrolled SUPER_ADMIN must approve authenticator setup.',
+          { duration: 6000 },
+        );
         return Promise.reject(error);
       }
 

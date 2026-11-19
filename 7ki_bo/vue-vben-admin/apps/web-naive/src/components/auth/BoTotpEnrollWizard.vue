@@ -17,6 +17,7 @@ import {
 import {
   boTotpEnableApi,
   boTotpSetupApi,
+  boTotpStatusApi,
   type BoTotpSetup,
 } from '#/api/core/boTotp';
 import { $t } from '#/locales';
@@ -31,17 +32,31 @@ const loading = ref(false);
 const enabling = ref(false);
 const setup = ref<null | BoTotpSetup>(null);
 const totpCode = ref('');
+const sponsorAdminId = ref('');
+const sponsorTotpCode = ref('');
+const sponsorRequired = ref(false);
 const backupCodes = ref<string[]>([]);
 const step = ref(1); // 1 setup QR, 2 confirm code, 3 backup codes
 const copied = ref(false);
 
-const canEnable = computed(
-  () => totpCode.value.replace(/\s/g, '').length >= 6 && !enabling.value,
-);
+const canEnable = computed(() => {
+  if (totpCode.value.replace(/\s/g, '').length < 6 || enabling.value) return false;
+  if (!sponsorRequired.value) return true;
+  return (
+    Number(sponsorAdminId.value) > 0 &&
+    sponsorTotpCode.value.replace(/\s/g, '').length >= 6
+  );
+});
 
 async function loadSetup() {
   loading.value = true;
   try {
+    try {
+      const st = await boTotpStatusApi();
+      sponsorRequired.value = Boolean(st?.sponsorRequiredForEnable);
+    } catch {
+      sponsorRequired.value = false;
+    }
     setup.value = await boTotpSetupApi();
     step.value = 1;
   } catch (e: any) {
@@ -61,9 +76,26 @@ async function enable() {
     message.warning($t('authentication.totpCodeTip'));
     return;
   }
+  if (sponsorRequired.value) {
+    const sid = Number(sponsorAdminId.value);
+    const scode = sponsorTotpCode.value.replace(/\s/g, '').trim();
+    if (!sid || scode.length < 6) {
+      message.warning($t('authentication.totpSponsorTip'));
+      return;
+    }
+  }
   enabling.value = true;
   try {
-    const res = await boTotpEnableApi(code);
+    const payload: {
+      sponsorAdminId?: number;
+      sponsorTotpCode?: string;
+      totpCode: string;
+    } = { totpCode: code };
+    if (sponsorRequired.value) {
+      payload.sponsorAdminId = Number(sponsorAdminId.value);
+      payload.sponsorTotpCode = sponsorTotpCode.value.replace(/\s/g, '').trim();
+    }
+    const res = await boTotpEnableApi(payload);
     backupCodes.value = res?.backupCodes || [];
     step.value = 3;
     message.success($t('authentication.totpEnabled'));
@@ -138,6 +170,14 @@ onMounted(() => {
         <NAlert type="warning" class="mb-4" :bordered="false">
           {{ $t('authentication.totpVerifyHint') }}
         </NAlert>
+        <NAlert
+          v-if="sponsorRequired"
+          type="error"
+          class="mb-4"
+          :bordered="false"
+        >
+          {{ $t('authentication.totpSponsorHint') }}
+        </NAlert>
         <NSpace vertical>
           <NInput
             v-model:value="totpCode"
@@ -147,6 +187,19 @@ onMounted(() => {
             style="letter-spacing: 0.25em; text-align: center; font-size: 20px"
             @keydown.enter="enable"
           />
+          <template v-if="sponsorRequired">
+            <NInput
+              v-model:value="sponsorAdminId"
+              maxlength="12"
+              :placeholder="$t('authentication.totpSponsorIdPlaceholder')"
+            />
+            <NInput
+              v-model:value="sponsorTotpCode"
+              maxlength="12"
+              :placeholder="$t('authentication.totpSponsorCodePlaceholder')"
+              style="letter-spacing: 0.2em; text-align: center"
+            />
+          </template>
           <NSpace justify="space-between">
             <NButton @click="step = 1">{{ $t('authentication.totpBack') }}</NButton>
             <NButton type="primary" :disabled="!canEnable" :loading="enabling" @click="enable">

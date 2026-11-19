@@ -95,7 +95,11 @@
   "totpRefresh": "Làm mới",
   "totpStatusFailed": "Không tải được trạng thái 2FA",
   "totpRequiredBanner": "Môi trường này yêu cầu Google Authenticator. Hãy thiết lập trước khi thao tác tiền.",
-  "totpNewAccountHint": "Lần đăng nhập đầu họ phải thiết lập Google Authenticator trước khi dùng panel."
+  "totpNewAccountHint": "Lần đăng nhập đầu họ phải thiết lập Google Authenticator trước khi dùng panel.",
+  "totpSponsorHint": "Sau khi admin đầu đã enroll, cần SUPER_ADMIN khác duyệt bằng mã xác thực (chống kẻ đánh cắp mật khẩu tự gắn điện thoại).",
+  "totpSponsorTip": "Nhập ID SUPER_ADMIN bảo trợ và mã 6 số của họ",
+  "totpSponsorIdPlaceholder": "ID SUPER_ADMIN bảo trợ",
+  "totpSponsorCodePlaceholder": "Mã xác thực người bảo trợ"
 }
 
 

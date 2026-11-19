@@ -95,5 +95,9 @@
   "totpRefresh": "Refresh",
   "totpStatusFailed": "Could not load 2FA status",
   "totpRequiredBanner": "This environment requires Google Authenticator. Set it up before using money actions.",
-  "totpNewAccountHint": "On first login they must set up Google Authenticator before using the panel."
+  "totpNewAccountHint": "On first login they must set up Google Authenticator before using the panel.",
+  "totpSponsorHint": "After the first admin is enrolled, a different SUPER_ADMIN must approve with their authenticator (stops stolen-password self-bind).",
+  "totpSponsorTip": "Enter sponsor SUPER_ADMIN id and their 6-digit code",
+  "totpSponsorIdPlaceholder": "Sponsor SUPER_ADMIN id",
+  "totpSponsorCodePlaceholder": "Sponsor authenticator code"
 }

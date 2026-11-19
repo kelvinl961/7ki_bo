@@ -95,5 +95,9 @@
   "totpRefresh": "刷新",
   "totpStatusFailed": "无法加载双重验证状态",
   "totpRequiredBanner": "当前环境要求启用 Google Authenticator。请先完成绑定再进行资金操作。",
-  "totpNewAccountHint": "新账号首次登录需先绑定 Google Authenticator，才能进入后台。"
+  "totpNewAccountHint": "新账号首次登录需先绑定 Google Authenticator，才能进入后台。",
+  "totpSponsorHint": "已有管理员绑定后，需另一位 SUPER_ADMIN 用其验证器批准（防止盗密自绑攻击者手机）。",
+  "totpSponsorTip": "请填写担保 SUPER_ADMIN 的 ID 及其 6 位验证码",
+  "totpSponsorIdPlaceholder": "担保 SUPER_ADMIN ID",
+  "totpSponsorCodePlaceholder": "担保人验证码"
 }

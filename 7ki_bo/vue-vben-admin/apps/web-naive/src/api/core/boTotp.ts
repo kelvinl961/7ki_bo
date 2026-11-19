@@ -16,6 +16,9 @@ export interface BoTotpStatus {
   totpEnabledAt?: null | string;
   totpRequired: boolean;
   enrollOnly?: boolean;
+  moneyRequiresTotp?: boolean;
+  sponsorRequiredForEnable?: boolean;
+  enrolledAdminCount?: number;
 }
 
 export interface BoTotpEnableResult {
@@ -28,10 +31,12 @@ export async function boTotpSetupApi() {
   return requestClient.get<BoTotpSetup>('/auth/admin/totp/setup');
 }
 
-export async function boTotpEnableApi(totpCode: string) {
-  return requestClient.post<BoTotpEnableResult>('/auth/admin/totp/enable', {
-    totpCode,
-  });
+export async function boTotpEnableApi(params: {
+  sponsorAdminId?: number;
+  sponsorTotpCode?: string;
+  totpCode: string;
+}) {
+  return requestClient.post<BoTotpEnableResult>('/auth/admin/totp/enable', params);
 }
 
 export async function boTotpStatusApi() {

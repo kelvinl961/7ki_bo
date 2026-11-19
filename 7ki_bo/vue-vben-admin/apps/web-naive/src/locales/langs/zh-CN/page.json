@@ -4,7 +4,9 @@
     "register": "注册",
     "codeLogin": "验证码登录",
     "qrcodeLogin": "二维码登录",
-    "forgetPassword": "忘记密码"
+    "forgetPassword": "忘记密码",
+    "totpEnroll": "绑定验证器",
+    "accountSecurity": "账号安全"
   },
   "menu": {
     "userAccount": "账号管理",

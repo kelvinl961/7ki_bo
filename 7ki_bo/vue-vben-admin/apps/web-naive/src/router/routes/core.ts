@@ -102,6 +102,16 @@ const coreRoutes: RouteRecordRaw[] = [
           title: $t('page.auth.register'),
         },
       },
+      {
+        name: 'TotpEnroll',
+        path: 'totp-enroll',
+        component: () =>
+          import('#/views/_core/authentication/totp-enroll.vue'),
+        meta: {
+          ignoreAccess: true,
+          title: $t('page.auth.totpEnroll'),
+        },
+      },
     ],
   },
   {

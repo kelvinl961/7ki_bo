@@ -4,7 +4,9 @@
     "register": "Đăng ký",
     "codeLogin": "Đăng nhập bằng mã",
     "qrcodeLogin": "Đăng nhập bằng mã QR",
-    "forgetPassword": "Quên mật khẩu"
+    "forgetPassword": "Quên mật khẩu",
+    "totpEnroll": "Thiết lập xác thực",
+    "accountSecurity": "Bảo mật tài khoản"
   },
   "menu": {
     "userAccount": "Quản lý tài khoản",

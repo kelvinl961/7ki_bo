@@ -243,7 +243,13 @@ const unreadCount = computed(
 );
 
 const menus = computed(() => [
-  // Removed unwanted menu items (文档, GitHub, 问题帮助)
+  {
+    handler: () => {
+      void router.push('/account/security');
+    },
+    icon: 'mdi:shield-key-outline',
+    text: $t('page.auth.accountSecurity'),
+  },
 ]);
 
 const avatar = computed(() => {

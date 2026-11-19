@@ -56,6 +56,17 @@ function setupAccessGuard(router: Router) {
     const userStore = useUserStore();
     const authStore = useAuthStore();
 
+    // Enroll-only JWT may only use Google Authenticator setup
+    if (accessStore.accessToken) {
+      const { decodeJwtClaims } = await import('#/utils/boAccessToken');
+      const claims = decodeJwtClaims(accessStore.accessToken) as {
+        purpose?: string;
+      } | null;
+      if (claims?.purpose === 'totp_enroll' && to.path !== '/auth/totp-enroll') {
+        return { path: '/auth/totp-enroll', replace: true };
+      }
+    }
+
     // 基本路由，这些路由不需要进入权限拦截
     if (coreRouteNames.includes(to.name as string)) {
       if (to.path === LOGIN_PATH && accessStore.accessToken) {

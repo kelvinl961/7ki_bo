@@ -4,7 +4,9 @@
     "register": "Register",
     "codeLogin": "Code Login",
     "qrcodeLogin": "Qr Code Login",
-    "forgetPassword": "Forget Password"
+    "forgetPassword": "Forget Password",
+    "totpEnroll": "Set up authenticator",
+    "accountSecurity": "Account security"
   },
   "menu": {
     "userAccount": "Account Management",
